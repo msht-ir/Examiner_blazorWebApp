@@ -1,0 +1,325 @@
+﻿@page "/T_ReportStudents/{mode}/{Id}"
+@rendermode InteractiveServer
+@using ExaminerB.Service
+@inject FeService feService
+@inject NavigationManager Navman
+@inject AppState appState
+@inject IJSRuntime JS
+@implements IDisposable
+@* mode: {student|students} *@
+<h1 style="text-align:center;color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h1>
+<hr style="color:red"/>
+
+@if (!_hasFetched)
+    {
+    <_ScanSheets />
+    }
+else
+    {
+        <EditForm Model="lstStudents">
+        <div class="accordion" id="accordionReport">
+            @foreach(User student in lstStudents)
+            {
+            var collapseId = $"Student{student.UserId}";
+            <div class="accardion-item">
+                <h4 class="accordion-header" style="background-color:aliceblue">
+                    <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#@collapseId"
+                        aria-expanded="true"
+                        aria-controls="@collapseId">
+                        <h4 style="color:indianred">@student.UserName</h4>
+                    </button>
+                </h4>
+                <div id="@collapseId" class="accardion-collapse collapse" data-bs-parent="#accordionReport">
+                    <div class="accardion-body" >
+                        @* Student_Exams *@
+                        <div class="container mt-5">
+                            <div class="card">
+                                <div class="card-body bg-light">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr style="font-weight:bold">
+                                                <td>Exam</td>
+                                                <td>Result</td>
+                                            </tr>
+                                        </thead>
+                                        @foreach (StudentExam exm in student.StudentExams)
+                                            {
+                                            <tr style="align-content:center">
+                                                <td style="color:indianred;font-weight:bold;">
+                                                    <span style="color:gray;font-weight:bold;padding:0px;">@exm.CourseName</span>
+                                                    <br /> @exm.ExamTitle 
+                                                    <br /> <span style="color:black;font-weight:normal;padding:0px;">@exm.ExamDateTime</span>
+                                                    <br />
+                                                    @if(exm.StudentExamTags>=2)
+                                                        {
+                                                        <button class="btn btn-link" style="border:none" @onclick="()=>BtnResetStudentExam(exm)" >
+                                                            <img src="/icons/icoClock_rt_1.png" width="25" />
+                                                        </button>
+                                                        }
+                                                    else if(exm.StudentExamTags==1)
+                                                        {
+                                                        <button class="btn btn-link" style="border:none" @onclick="()=>BtnSetStudentExamAsFinished(exm)" >
+                                                            <img src="/icons/icoEditPen_bt_1.png" width="25" />
+                                                        </button>
+                                                        } 
+                                                    else
+                                                        {
+                                                        <button class="btn btn-link" style="border:none" @onclick="()=>BtnSetStudentExamAsFinished(exm)" >
+                                                            <img src="/icons/icoGo_gt_1.png" width="25" />
+                                                        </button>
+                                                        }
+
+                                                    <button class="btn btn-link" style="border:none" @onclick='()=>BtnReviewStudentTestsSheet(exm.StudentExamId, "studentexam")' >
+                                                        <img src="/icons/icoReport_ct_1.png" width="25" />
+                                                    </button>
+                                                    <button class="btn btn-link" @onclick='()=>BtnReviewStudentTestsSheet(exm.StudentExamId, "studentexamraw")' >
+                                                        <img src="/icons/icoReport_bt_1.png" width="25" />
+                                                    </button>
+                                                    <button class="btn btn-link" style="border:none" @onclick="()=>BtnDeleteStudentExam(exm.StudentExamId)" >
+                                                        <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                                    </button>
+                                                </td>  
+                                                <td>
+                                                @if(exm.StudentExamTags>=2)
+                                                    {
+                                                    <span style="text-align:left;padding:0px;">
+                                                        Tests: @exm.ExamNTests <br /> Time: @exm.ExamDuration min  <br /> <span style="color:indianred">Point: @exm.StudentExamPoint.ToString("F2") /20 </span>                                        
+                                                    </span>
+                                                    }
+                                                else if(exm.StudentExamTags==1)
+                                                    {
+                                                    <span style="text-align:left;padding:0px;">
+                                                        Tests: @exm.ExamNTests <br /> Time: @exm.ExamDuration min <br /> <span style="color:Green">satrted </span>
+                                                    </span>
+                                                    } 
+                                                else
+                                                    {
+                                                    <span style="text-align:left;padding:0px;">
+                                                        Tests: @exm.ExamNTests <br /> Time: @exm.ExamDuration min <br /><span style="color:royalblue">new </span>
+                                                    </span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        @* Student_Courses *@
+                        <div class="container mt-5">
+                            <div class="card">
+                                <div class="card-body bg-light">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="font-weight:bold">
+                                                <td>Course</td>
+                                                <td>Result</td>
+                                            </tr>
+                                        </thead>
+                                        @foreach (StudentCourse stCrs in student.StudentCourses)
+                                            {
+                                            <tr style="align-content:center">
+                                                <td style="color:indianred; font-weight:bold;">
+                                                    <button class="btn btn-link" style="border:none" title="Report Tests ( + answeres )" @onclick='()=>BtnReviewStudentTestsSheet(stCrs.StudentCourseId, "studentcourse")'>
+                                                        <img src="/icons/icoReport_ct_1.png" width="25" />
+                                                    </button>
+                                                    <button class="btn btn-link" style="border:none" title="Course Tests ( raw sheet )" @onclick='()=>BtnReviewStudentTestsSheet(stCrs.StudentCourseId, "studentcourseraw")'>
+                                                        <img src="/icons/icoReport_bt_1.png" width="25" />
+                                                    </button>
+                                                    <button class="btn btn-link" style="border:none" title="Delete Course !" @onclick="()=>BtnDeleteStudentCourse(stCrs.StudentCourseId)">
+                                                        <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                                    </button>
+                                                    @stCrs.CourseName
+                                                </td>
+                                                <td>
+                                                    <span style="color:black; font-weight:normal;">@stCrs.CorrectAnswers / @stCrs.NumberOfTests </span>
+                                                </td>
+                                            </tr>
+                                            }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="color:royalblue"/>
+                </div>
+            </div>
+            }
+        </div>
+        </EditForm>
+        <div style="text-align:center">
+            <br />
+            <hr style="color:red" />
+            <button class="btn btn-link" @onclick="BtnBack">
+                <img src="/icons/icoBack_bt_1.png" width="35" />
+            </button>
+        </div>
+    }
+    <script>
+        window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+    </script>
+
+@code {
+    [Parameter] public string? mode { get; set; }
+    [Parameter] public string? Id { get; set; }
+    public bool _hasFetched = false;
+    User user = new User ();
+    List<User> lstStudents = new List<User> ();
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+            int id = Convert.ToInt32 (Id);        
+            switch (mode)
+                {
+                case "students":
+                        {
+                        var result = await feService.Read_Group (id, true, true);
+                        lstStudents = result.Students;
+                        break;
+                        }
+                case "student":
+                        {
+                        User student = await feService.Read_Student (id, true, true);
+                        student.StudentExams = await feService.Read_StudentExams (id);
+                        student.StudentCourses = await feService.Read_StudentCourses (id);
+                        lstStudents.Add (student);
+                        break;
+                        }
+                }
+            appState.SetReturnPage ($"/T_ReportStudents/{mode}/{Id}");            
+        _hasFetched = true;
+        } 
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //btns
+    public async Task BtnDeleteStudentExam(int studentExamId)
+        {
+        if(await JS.InvokeAsync<bool>("confirm", "Delete Exam for this Student?"))
+            {
+            bool result = await feService.Delete_StudentExam (studentExamId);
+            if(result)
+                {
+                int id = Convert.ToInt32 (Id);
+                lstStudents.Clear();
+                switch (mode)
+                    {
+                    case "students":
+                            {
+                            var resultx = await feService.Read_Group (id, true, true);
+                            lstStudents = resultx.Students;
+                            break;
+                            }
+                    case "student":
+                            {
+                            User student = await feService.Read_Student (id, true, true);
+                            student.StudentExams = await feService.Read_StudentExams (id);
+                            student.StudentCourses = await feService.Read_StudentCourses (id);
+                            lstStudents.Add (student);
+                            break;
+                            }
+                    }
+
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nExam was not Deleted.");
+                }            
+            }
+        }
+    public async Task BtnSetStudentExamAsFinished(StudentExam studentExam)
+        {
+        if(await JS.InvokeAsync<bool>("confirm", "\n Set Exam  @exm.ExamTitle  as Finished for this Student?"))
+            {
+            bool result = await feService.Update_StudentExamTags (studentExam, "finishedOn");
+            if(result)
+                {
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nExam was not Deleted.");
+                }
+            }
+        }
+    public async Task BtnResetStudentExam(StudentExam studentExam)
+        {
+        if(await JS.InvokeAsync<bool>("confirm", "Open Exam  @exm.ExamTitle  for this Student?"))
+            {
+            bool result = await feService.Update_StudentExamTags (studentExam, "finishedOff");
+            if(result)
+                {
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nExam was not Reset.");
+                }
+            }
+        }
+    public void BtnReviewStudentTestsSheet(int Id, string mode)
+        {
+        appState.SetCmd (mode); //{studentexam|studentcourse | studentexamraw|studentcourseraw}
+        switch (mode)
+            {
+            case "studentexam":{appState.SetStudentExamId (Id); break; }
+            case "studentexamraw":{appState.SetStudentExamId (Id); break; }
+            case "studentcourse":{appState.SetStudentCourseId (Id); break; }
+            case "studentcourseraw":{appState.SetStudentCourseId (Id); break; }
+            }
+        //moved to pageInit -- appState.SetReturnPage ($"/T_ReportStudents/{mode}/{Id}");
+        Navman.NavigateTo ("/T_ReportTests");
+        }
+    public async Task BtnDeleteStudentCourse (int studentCourseId)
+        {
+        if(await JS.InvokeAsync<bool>("confirm", "Delete student from this course?"))
+            {
+            bool result = await feService.Delete_StudentCourse (studentCourseId);
+            if(result)
+                {
+                int id = Convert.ToInt32 (Id);
+                lstStudents.Clear();
+                switch (mode)
+                    {
+                    case "students":
+                            {
+                            var resultx = await feService.Read_Group (id, true, true);
+                            lstStudents = resultx.Students;
+                            break;
+                            }
+                    case "student":
+                            {
+                            User student = await feService.Read_Student (id, true, true);
+                            student.StudentExams = await feService.Read_StudentExams (id);
+                            student.StudentCourses = await feService.Read_StudentCourses (id);
+                            lstStudents.Add (student);
+                            break;
+                            }
+                    }
+
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nExam was not Deleted.");
+                }            
+            }
+        }
+    public void BtnBack()
+        {
+        Navman.NavigateTo ("/T_Students");
+        }
+}

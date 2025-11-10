@@ -1,0 +1,665 @@
+﻿@page "/T_Students"
+@using ExaminerB.Service
+@rendermode InteractiveServer
+@inject NavigationManager Navman
+@inject AppState appState
+@inject FeService feService
+@inject IJSRuntime JS
+@implements IDisposable
+@if (!_hasFetched)
+    {
+    <_Loading />
+    }
+else
+    {
+    <div style="text-align: center;">
+            <h1 style="color:steelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h1>
+            <hr style="color:red" />
+            <h2 style="color:royalblue; font-style:italic">Groups and Students</h2>
+        </div>
+        <EditForm Model="lstGroups">
+            <div class="accordion" id="accordionGroups">
+                @foreach (Group grp in lstGroups)
+                    {
+                    var collapseId = $"collapse{grp.GroupId}";
+                    string clps = "";
+                    if ((appState.GroupId ?? 0) != grp.GroupId)
+                        {
+                        clps = "collapse";
+                        }
+                    else
+                        {
+                        clps = "collapse show";
+                        }
+                    <div class="accordion-item">
+                        <h4 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#@collapseId"
+                                    aria-expanded="true"
+                                    aria-controls="@collapseId">
+                                <h4>@grp.GroupName</h4>
+                            </button>
+                        </h4>
+                        <div id="@collapseId" class="accordion-collapse @clps" data-bs-parent="#accordionGroups">
+                            <div class="accordion-body" style="background-color:rgba(252,252,252)">
+                                <div id="T1">
+                                    @if ((appState.Cmd == "EditGroup") && (appState.GroupId == grp.GroupId))
+                                        {
+                                        string btnGroupId = "btnGroupName";
+                                        <input class="form-inline" @ref="txtGroupName" @bind="grp.GroupName" style="width:60%" placeholder="Enter Group Name..." />
+                                        <button class="btn btn-link" name="@btnGroupId" @onclick="()=>BtnUpdateGroup(grp)">
+                                            <img src="/icons/icoSave_cw_1.png" width="25" />
+                                        </button>
+                                        <button class="btn btn-link" @onclick="()=>BtnDeleteGroup(grp.GroupId)" @key="grp.GroupId">
+                                            <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                        </button>
+                                        <br />
+                                        <br />
+                                        }
+                                    else
+                                        {
+                                        <div style="text-align: center;">
+                                            <button class="btn btn-link" type="button" @onclick="()=>BtnEditGroup(grp.GroupId)">
+                                                <img src="/icons/icoRename_bt_1.png" width="35" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnAddNewStudent(grp.GroupId)">
+                                                <img src="/icons/icoUserAdd_bluet_1.png" width="35" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnEditStudentsTags(grp.GroupId)">
+                                                <img src="/icons/icoSelect_bt_3.png" width="35" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnAddCourse2Students(grp.GroupId)">
+                                                <img src="/icons/icoCourseAdd_bt_1.png" width="35" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnReportStudentsExamsAndCourses(grp.GroupId)">
+                                                <img src="/icons/icoFolderReport_bt_1.png" width="35" />
+                                            </button>
+                                            <br />
+                                            @if ((appState.Cmd == "AddCourse2Students") && (appState.GroupId == grp.GroupId))
+                                                {
+                                                //GetCourses ();
+                                                <div style="background-color:white">
+                                                    <div style="text-align: center;">
+                                                        <hr style="color:red" />
+                                                        <h6 style="color:darkgoldenrod;font-weight:bold;">Add this group to a course</h6>
+                                                        <select id="cboCourses" name="cboCourses" style="width:55%" @bind="selectedCourseId">
+                                                            <option value="0"> Select a Course... </option>
+                                                            @foreach (var crs in lstCourses)
+                                                                {
+                                                                <option value="@crs.CourseId"> @crs.CourseName </option>
+                                                                }
+                                                        </select>
+                                                        <button class="btn btn-link" @onclick="()=>BtnSaveAddCourse2Students(grp.GroupId)">
+                                                            <img src="/icons/icoSave_cw_1.png" width="25" />
+                                                        </button>
+                                                        <button class="btn btn-link" @onclick="()=>BtnDeleteStudentCourses(grp.GroupId)" >
+                                                            <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                }
+                                            @if ((appState.Cmd == "EditStudentsTags") && (appState.GroupId == grp.GroupId))
+                                                {
+                                                <hr style="color:red" />
+                                                <div style="text-align:left">
+                                                    <div style="text-align: center;">
+                                                        <h5 style="color:darkgoldenrod;">Change group Tags</h5>
+                                                        <input class="form-check-input" type="checkbox" @bind=_tag01 />
+                                                        <label class="form-check-label" for="chkActive" style="color:Black"> Active </label>
+                                                        <input class="form-check-input" type="checkbox" @bind=_tag02 />
+                                                        <label class="form-check-label" for="chkAns" style="color:Black"> Pass </label>
+                                                        <input class="form-check-input" type="checkbox" @bind=_tag04 />
+                                                        <label class="form-check-label" for="chkAns" style="color:Black"> Rev.Exam </label>
+                                                        <br />
+                                                        <input class="form-check-input" type="checkbox" @bind=_tag08 />
+                                                        <label class="form-check-label" for="chkAns" style="color:Black"> Course </label>
+                                                        <input class="form-check-input" type="checkbox" @bind=_tag16 />
+                                                        <label class="form-check-label" for="chkAns" style="color:Black"> Retry </label>
+                                                        <input class="form-check-input" type="checkbox" @bind=_tag32 />
+                                                        <label class="form-check-label" for="chkAns" style="color:Black"> Rev.Course </label>
+                                                    </div>
+                                                    <br />
+                                                    <div style="text-align: center;">
+                                                        <button class="btn btn-link" @onclick="()=>BtnUpdateStudentsTags(grp.GroupId)">
+                                                            <img src="/icons/icoSave_cw_1.png" width="25" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                }
+                                            <hr style="color:red" />
+                                        </div>
+                                        @if ((appState.Cmd == "AddNewStudent") && (appState.GroupId == grp.GroupId))
+                                            {
+                                            <div style="text-align: center;">
+                                                <img src="/icons/icoUser_bluet_1.png" width="30" />
+                                                <input class="form-inline" @bind="txtNewStudentName" placeholder="New UserName..." />
+                                                <button class="btn btn-link" @onclick="()=>BtnSaveNewStudent(grp.GroupId)">
+                                                    <img src="/icons/icoSave_cw_1.png" width="25" />
+                                                </button>
+                                            </div>
+                                            }
+                                        else
+                                            {
+                                            <div style="text-align: center;">
+                                                <h4 style="color:gray">students:</h4> 
+                                            </div>
+                                            @foreach (User stdnt in grp.Students)
+                                                {
+                                                var collapseId2 = $"collapse{stdnt.UserId}";
+                                                <div class="accordion" id="accordionStudents">
+                                                    <div class="accordion-item">
+                                                        <h4 class="accordion-header">
+                                                            <button class="accordion-button collapsed" type="button"
+                                                                    data-bs-toggle="collapse"
+                                                                    data-bs-target="#@collapseId2"
+                                                                    aria-expanded="true"
+                                                                    aria-controls="@collapseId2">
+                                                                <h4>@stdnt.UserName</h4>
+                                                            </button>
+                                                        </h4>
+                                                        <div id="@collapseId2" class="accordion-collapse collapse" data-bs-parent="#accordionStudents">
+                                                            <div class="accordion-body" style="background-color:whitesmoke">
+                                                                <hr style="color:red" />                                                
+                                                                <br />
+                                                                <img src="/icons/icoUser_bluet_1.png" width="30" />
+                                                                <input class="form-inline" @bind="stdnt.UserName" placeholder="Student name" style="width:40%;font-weight:bold;color:indianred" />
+                                                                <input class="form-inline" @bind="stdnt.UserPass" placeholder="Student password" style="width:35%;font-weight:bold;" />
+                                                                <p></p>
+                                                                <span  style="margin-right: 15px;">
+                                                                    <input class="form-check-input" type="checkbox" checked="@((stdnt.UserTags & 1) == 1)" @onchange="e=>BtnUpdateStudentTagsInPlace(stdnt, 1, (bool)e.Value)" />
+                                                                    <label class="form-check-label" for="chkActive@stdnt.UserId" style="color:RoyalBlue"> Active </label>
+                                                                </span>
+                                                                <span  style="margin-right: 15px;">
+                                                                    <input class="form-check-input" type="checkbox" checked="@((stdnt.UserTags & 2) == 2)" @onchange="e=>BtnUpdateStudentTagsInPlace(stdnt, 2, (bool)e.Value)"/>
+                                                                    <label class="form-check-label" for="chkChangePassId@stdnt.UserId" style="color:RoyalBlue"> Pass </label>
+                                                                </span>
+                                                                <span  style="margin-right: 15px;">
+                                                                    <input class="form-check-input" type="checkbox" checked="@((stdnt.UserTags & 4) == 4)" @onchange="e=>BtnUpdateStudentTagsInPlace(stdnt, 4, (bool)e.Value)"/>
+                                                                    <label class="form-check-label" for="chkExamReviewId@stdnt.UserId" style="color:RoyalBlue"> Rev.Exam </label>
+                                                                </span>
+                                                                <br />
+                                                                <span  style="margin-right: 15px;">
+                                                                    <input class="form-check-input" type="checkbox" checked="@((stdnt.UserTags & 8) == 8)" @onchange="e=>BtnUpdateStudentTagsInPlace(stdnt, 8, (bool)e.Value)"/>
+                                                                    <label class="form-check-label" for="chkAns" style="color:RoyalBlue"> Course </label>
+                                                                </span>
+                                                                <span  style="margin-right: 15px;">
+                                                                    <input class="form-check-input" type="checkbox" checked="@((stdnt.UserTags & 16) == 16)" @onchange="e=>BtnUpdateStudentTagsInPlace(stdnt, 16, (bool)e.Value)"/>
+                                                                    <label class="form-check-label" for="chkRunningExamCorrectionId@stdnt.UserId" style="color:RoyalBlue"> Retry </label>
+                                                                </span>
+                                                                <span  style="margin-right: 15px;">
+                                                                    <input class="form-check-input" type="checkbox" checked="@((stdnt.UserTags & 32) == 32)" @onchange="e=>BtnUpdateStudentTagsInPlace(stdnt, 32, (bool)e.Value)"/>
+                                                                    <label class="form-check-label" for="chkRunningExamReviewId@stdnt.UserId" style="color:RoyalBlue"> Rev.Course</label>
+                                                                </span>
+                                                                <p></p>
+                                                                @if ((appState.Cmd == "AddNewStudentCourse") && (appState.StudentId == stdnt.UserId))
+                                                                    {
+                                                                    //GetCourses ();
+                                                                    <div style="background-color:white">
+                                                                        <br />
+                                                                        <div style="text-align: center;">
+                                                                            <h6 style="color:darkgoldenrod;font-weight:bold;">Add/Remove Student to/from a course</h6>
+                                                                                <select id="cboCourses" name="cboCourses" style="width:60%" @bind="selectedCourseId">
+                                                                                    <option value="0"> Select a Course... </option>
+                                                                                    @foreach (var crs in lstCourses)
+                                                                                        {
+                                                                                        <option value="@crs.CourseId"> @crs.CourseName </option>
+                                                                                        }
+                                                                                </select>
+                                                                            <br />
+                                                                            <button class="btn btn-link" @onclick="()=>BtnSaveStudentCourse(stdnt.UserId)" >
+                                                                                <img src="/icons/icoSave_cw_1.png" width="25" />
+                                                                            </button>
+                                                                            <button class="btn btn-link" @onclick="()=>BtnDeleteStudentCourse(stdnt.UserId)" >
+                                                                                <img src="/icons/icoDelete_bt_1.png" width="30" />
+                                                                            </button>
+                                                                        </div>
+                                                                        <br />
+                                                                    </div>
+                                                                    }
+                                                                else
+                                                                    {
+                                                                    <div style="text-align: center;">
+                                                                        <button class="btn btn-link" @onclick="()=>BtnUpdateStudent(stdnt)">
+                                                                            <img src="/icons/icoSave_bt_1.png" width="30" />
+                                                                        </button>
+                                                                        <button class="btn btn-link" @onclick="()=>BtnDeleteStudent(stdnt.UserId)">
+                                                                            <img src="/icons/icoDelete_bt_1.png" width="30" />
+                                                                        </button>
+                                                                        <button class="btn btn-link" @onclick="()=>BtnAddStudentCourse(stdnt.UserId)">
+                                                                            <img src="/icons/icoCourseAdd_bt_1.png" width="35" />
+                                                                        </button>
+                                                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentExamsAndCourses(stdnt.UserId)">
+                                                                            <img src="/icons/icoFolderReport_bt_1.png" width="35" />
+                                                                        </button>
+                                                                    </div>
+                                                                    }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                }
+                                            }
+                                        }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    }
+            </div>
+            @if (appState.Cmd == "AddNewGroup")
+                {
+                <hr />
+                <h4>New Group:</h4>
+                <input class="form-inline" @ref="txtNewGroup" @bind="group.GroupName" placeholder="New Group Name..." />
+                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewGroup">
+                    <img src="/icons/icoSave_cw_1.png" width="30" />
+                </button>
+                }
+            else
+                {
+                <button class="btn btn-link" @onclick="BtnAddNewGroup">
+                    <img src="/icons/icoGroupAdd_grayt_1.png" width="45" />
+                </button>
+                }
+            <hr style="color:red" />
+        </EditForm>
+        <div style="text-align:center">
+        <button class="btn btn-link" @onclick= "()=> BtnBack()">
+            <img src="/icons/icoBack_bt_1.png" style="width:45px" />
+        </button>
+    </div>
+    }
+<script>
+    window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});
+</script>
+
+@code {
+    private ElementReference txtNewGroup;
+    private ElementReference txtGroupName;
+    private readonly HttpClient _http;
+    User user = new User ();
+    List<Group> lstGroups = new ();
+    List<Course> lstCourses = new ();
+    Group group = new Group();
+    public bool _hasFetched = false;
+    private bool shouldFocusNewGroup = false;
+    bool _tag01 = true;
+    bool _tag02 = false;
+    bool _tag04 = false;
+    bool _tag08 = false;
+    bool _tag16 = false;
+    bool _tag32 = false;
+    string txtNewStudentName = "";
+    int selectedCourseId = 0; // Courses in combo box
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        var user = new User
+            {
+            UserId = Convert.ToInt32(appState.UserId),
+            UserName = appState.UserName,
+            UserPass = appState.UserPass,
+            UserRole = appState.UserRole,
+            GroupId = Convert.ToInt32(appState.GroupId)
+            };
+        if (user.UserId > 0)
+            {
+            //on second rener, user.UserId will get its value
+            lstGroups = await feService.Read_Groups (user); 
+            lstCourses = await feService.Read_Courses (user.UserId); 
+            _hasFetched = true;
+            }
+        } 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+        if (shouldFocusNewGroup)
+            {
+            shouldFocusNewGroup = false;
+            await txtNewGroup.FocusAsync();
+            }
+        }    
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //groups
+    public void BtnAddNewGroup()
+        {
+        appState.SetCmd ("AddNewGroup");
+        shouldFocusNewGroup = true; //flag to tell OnAfterRenderAsync focus on 'txtNewGroup'
+        }
+    public async Task BtnSaveNewGroup()
+        {
+        //group.GroupName is bind
+        group.UserId = Convert.ToInt32(appState.UserId);
+        bool result = await feService.Create_Group (group);
+        if (result)
+            {
+            Console.WriteLine("Group added: " + group.GroupName);
+            appState.SetCmd("");
+            // Refresh the list
+            var user = new User
+            {
+                UserId = Convert.ToInt32(appState.UserId),
+                UserName = appState.UserName,
+                UserPass = appState.UserPass,
+                UserRole = appState.UserRole,
+                GroupId = Convert.ToInt32(appState.GroupId)
+            };
+            lstGroups = await feService.Read_Groups(user);
+            group.GroupName = ""; //reset input text
+            StateHasChanged ();            
+            }
+        }
+    public void BtnEditGroup(int groupId)
+        {
+        appState.SetCmd ("EditGroup");
+        appState.SetGroupId(groupId);
+        StateHasChanged ();
+        }
+    public async Task BtnUpdateGroup(Group grp)
+        {
+        //GroupName is bind
+        grp.UserId = Convert.ToInt32(appState.UserId);
+        bool result = await feService.Update_Group (grp);
+        if (result)
+            {
+            appState.SetCmd("");
+            // Refresh the list
+            var user = new User
+            {
+                UserId = Convert.ToInt32(appState.UserId),
+                UserName = appState.UserName,
+                UserPass = appState.UserPass,
+                UserRole = appState.UserRole,
+                GroupId = Convert.ToInt32(appState.GroupId)
+            };
+            lstGroups = await feService.Read_Groups(user);
+            group.GroupName = ""; //reset input text
+            StateHasChanged ();            
+            }
+        }
+    private async Task BtnDeleteGroup(int groupId)
+        {
+        if (await JS.InvokeAsync<bool>("confirm", "\n\nDelete this group?"))
+            {
+            int result = await feService.Delete_Group (groupId);
+            if (result == 0)
+                {
+                //0: no students in the group and the group must be deleted! OK
+                appState.SetCmd("");
+                // Refresh the list
+                var user = new User
+                {
+                    UserId = Convert.ToInt32(appState.UserId),
+                    UserName = appState.UserName,
+                    UserPass = appState.UserPass,
+                    UserRole = appState.UserRole,
+                    GroupId = Convert.ToInt32(appState.GroupId)
+                };
+                lstGroups = await feService.Read_Groups(user);
+                //group.GroupName = ""; //reset input text
+                StateHasChanged ();            
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\n\nThere are students in this group.\n\nThis group cannot be deleted.");
+                }
+            }
+        }
+    public void BtnEditStudentsTags(int groupId)
+        {
+        appState.SetCmd ("EditStudentsTags");
+        appState.SetGroupId (groupId);
+        StateHasChanged ();
+        }
+    public async Task BtnUpdateStudentsTags(int groupId)
+        {
+        int tags = 0;
+        if (_tag01) tags |= 1;
+        if (_tag02) tags |= 2;
+        if (_tag04) tags |= 4;
+        if (_tag08) tags |= 8;
+        if (_tag16) tags |= 16;
+        if (_tag32) tags |= 32;
+        User student = new User () { UserName= "-", UserPass= "-", UserRole="-", UserTags = tags, GroupId=groupId};
+        bool result = await feService.Update_StudentsTags (student);
+        if (result)
+            {
+            await JS.InvokeVoidAsync("alert", "\n\nStudent tags updated.");
+            // Refresh the list
+            var user = new User
+            {
+                UserId = Convert.ToInt32(appState.UserId),
+                UserName = appState.UserName,
+                UserPass = appState.UserPass,
+                UserRole = appState.UserRole,
+                GroupId = Convert.ToInt32(appState.GroupId)
+            };
+            lstGroups = await feService.Read_Groups(user);
+            group.GroupName = ""; //reset input text
+            StateHasChanged ();
+            }
+        else
+            {
+            await JS.InvokeVoidAsync("alert", "\n\nFailed to update student tags.");
+            }
+        }
+    public void BtnUpdateStudentTagsInPlace (User stdnt, int flag , bool isChecked)
+        {
+        if (isChecked)
+            {
+            stdnt.UserTags |= flag;
+            }
+        else
+            {
+            stdnt.UserTags &= ~flag;
+            }
+        }
+    public void BtnAddCourse2Students(int groupId)
+        {      
+        appState.SetCmd ("AddCourse2Students");
+        appState.SetGroupId (groupId);
+        StateHasChanged ();
+        }
+    public async Task BtnSaveAddCourse2Students(int groupId)
+        {
+        if(selectedCourseId == 0)
+            {
+            await JS.InvokeVoidAsync ("alert", "Select a Course from List");
+            return;
+            }
+        else
+            {
+            bool result = await feService.Create_StudentCourses (groupId, selectedCourseId);
+            if(result)
+                {
+                await JS.InvokeVoidAsync("alert", "\nGroup successfully added to course.");
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nGroup did not added to the course!");
+                }
+            }
+        }
+    public void BtnReportStudentsExamsAndCourses(int groupId)
+        {      
+        string mode = "students";
+        Navman.NavigateTo ($"/T_ReportStudents/{mode}/{groupId}");
+        }
+    //students
+    public void BtnAddNewStudent(int groupId)
+        {
+        appState.SetCmd ("AddNewStudent");
+        appState.SetGroupId (groupId);
+        StateHasChanged ();
+        }
+    public async Task BtnSaveNewStudent(int groupId)
+        {
+        User student = new User () { UserName = txtNewStudentName, UserPass=txtNewStudentName, UserRole="student", UserTags= 1, GroupId=groupId };
+        bool result = await feService.Create_Student (student);
+        if (result)
+            {
+            await JS.InvokeVoidAsync ("alert", $"New Student :\n\n user: {student.UserName} \n pass: {student.UserPass} \n created!");
+            // Refresh the list
+            var user = new User
+            {
+                UserId = Convert.ToInt32(appState.UserId),
+                UserName = appState.UserName,
+                UserPass = appState.UserPass,
+                UserRole = appState.UserRole,
+                GroupId = Convert.ToInt32(appState.GroupId)
+            };
+            lstGroups = await feService.Read_Groups(user);
+            appState.SetCmd ("");
+            StateHasChanged ();
+            }
+        else
+            {
+            await JS.InvokeVoidAsync ("alert", "Cannot create the new student -- operation Failed");            
+            }
+        }
+    public async Task BtnUpdateStudent(User student)
+        {
+        bool result = await feService.Update_Student (student);
+        if (result)
+            {
+            appState.SetCmd("");
+            // Refresh the list
+            var user = new User
+            {
+                UserId = Convert.ToInt32(appState.UserId),
+                UserName = appState.UserName,
+                UserPass = appState.UserPass,
+                UserRole = appState.UserRole,
+                GroupId = Convert.ToInt32(appState.GroupId)
+            };
+            lstGroups = await feService.Read_Groups(user);
+            group.GroupName = ""; //reset input text
+            StateHasChanged ();            
+            }
+        }
+    private async Task BtnDeleteStudent(int studentId)
+        {
+        Console.WriteLine($"page: ---------------------- studentId = {studentId}");
+        if (await JS.InvokeAsync<bool>("confirm", "\n\nDelete Sudent?"))
+            {
+            bool result = await feService.Delete_Student (studentId);
+            if (result)
+                {
+                await JS.InvokeVoidAsync("alert", "\nStudent successfully removed from the group");
+                appState.SetCmd("");
+                // Refresh the list
+                var user = new User
+            {
+                UserId = Convert.ToInt32(appState.UserId),
+                UserName = appState.UserName,
+                UserPass = appState.UserPass,
+                UserRole = appState.UserRole,
+                GroupId = Convert.ToInt32(appState.GroupId)
+            };
+                lstGroups = await feService.Read_Groups(user);
+                group.GroupName = ""; //reset input text
+                StateHasChanged ();            
+                }
+            }
+        else
+            {
+            await JS.InvokeVoidAsync("alert", "\nStudent did note removed ---- operation failed!");
+            }
+        }
+    public void BtnReportStudentExamsAndCourses(int userId)
+        {
+        string mode = "student";
+        Navman.NavigateTo ($"/T_ReportStudents/{mode}/{userId}");
+        }
+    //student course
+    public void BtnAddStudentCourse(int userId)
+        {
+        appState.SetCmd ("AddNewStudentCourse");
+        appState.SetStudentId (userId);
+        StateHasChanged ();
+        }
+    public async Task BtnSaveStudentCourse(int studentId)
+        {      
+        if(selectedCourseId == 0)
+            {
+            await JS.InvokeVoidAsync ("alert", "Select a Course from List");
+            return;
+            }
+        else
+            {
+            bool result = await feService.Create_StudentCourse (studentId, selectedCourseId);
+            if(result)
+                {
+                await JS.InvokeVoidAsync("alert", "\nStudent successfully added to course.");
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nStudent did not added to the course!");
+                }
+            }
+        }
+    public async Task BtnDeleteStudentCourse(int studentId)
+        {      
+        if(selectedCourseId == 0)
+            {
+            await JS.InvokeVoidAsync ("alert", "Select a Course from List");
+            return;
+            }
+        else
+            {
+            bool result = await feService.Delete_StudentCourse (selectedCourseId);
+            if(result)
+                {
+                await JS.InvokeVoidAsync("alert", "\nStudent removed from the course.");
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nStudent did not removed from the course!");
+                }
+            }
+        }
+    public async Task BtnDeleteStudentCourses(int groupId)
+        {
+        //delete all students of a group from a course
+        if(selectedCourseId == 0)
+            {
+            await JS.InvokeVoidAsync ("alert", "Select a Course from List");
+            return;
+            }
+        else
+            {
+            bool result = await feService.Delete_StudentCourses (selectedCourseId, groupId);
+            if(result)
+                {
+                await JS.InvokeVoidAsync("alert", "\nAll students in this group are removed from the course.");
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nStudents did not removed from the course --- operation failed");
+                }
+            }
+        }
+    //back
+    public void BtnBack()
+        {    
+        Navman.NavigateTo ("/T_SwitchBoard");
+        }
+
+}

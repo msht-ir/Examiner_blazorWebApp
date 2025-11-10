@@ -1,0 +1,330 @@
+﻿@page "/T_Exam"
+@rendermode InteractiveServer
+@inject NavigationManager Navman;
+@inject AppState appState;
+@inject JSRuntime JS
+@implements IDisposable
+
+<div>
+<div style="text-align: center;">
+    <h1 style="color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small">
+            Teacher</span></h1>
+</div>
+<EditForm Model="user">
+        @if (appState.Message != "")
+        {
+            <div style="text-align: center;">
+                <h6 style="color:indianred">@appState.Message</h6>
+            </div>
+            //("MSG", "");
+        }
+        @* Exam *@
+        <hr style="color:red" />
+        <div style="font-size:130%;font-weight:bold;color:royalblue">Exam <span
+                style="font-size:small;font-weight:normal;color:gray">Title - DateTime - Duration</span></div>
+        <input class="form-inline" name="txtExamTitle" placeholder="Exam Title"
+            style="font-weight:bold;color:indianred;width:50%;" value="@exam.ExamTitle" />
+        <p></p>
+        <input class="form-inline" name="txtExamDateTime" placeholder="____-__-__ __:__"
+            style="width:180px;text-align:center" value="@exam.ExamDateTime" />
+        <input class="form-inline" Id="txtExamDuration" name="txtExamDuration" placeholder="Duration min" type="number"
+            style="width:68px;text-align:center" value="@exam.ExamDuration" /> min
+        <button class="btn btn-link" type="submit" @onclick="BtnUpdateExamInfo"
+            asp-route-id="@exam.ExamId">
+            <img src="/icons/icoSave_bt_1.png" width="25" />
+        </button>
+        <hr style="color:red" />
+        <div class="accordion" id="accordionEC">
+            @* CARD 1 - Design: ExamComposition *@
+            <div class="accordion-item">
+                @if (appState.Cmd == "AddNewExamComposition")
+                {
+                    clps = "collapse show";
+                }
+                else
+                {
+                    clps = "collapse";
+                }
+                <h4 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#ExamCompositionList" aria-expanded="false" aria-controls="ExamCompositionList">
+                        <h4 style="color:indianred"> Exam Design </h4>
+                    </button>
+                </h4>
+                <div id="ExamCompositionList" class="accordion-collapse @clps"
+                    data-bs-parent="#accordionExamComposition">
+                    <div class="accordion-body">
+                        <table class="table table-hover">
+                            <tr>
+                                <th>Course Topic</th>
+                                <th>Tests - Level</th>
+                            </tr>
+@*                             @foreach (var comp in lstExamCompositions)
+                            {
+                                <tr>
+                                    <td>
+                                        @{
+                                        string cboExamCompositionsId = "cboExamCompositions" + comp.ExamCompositionId.ToString();
+                                        }
+                                        <select id="cboExamCompositions" name="@cboExamCompositionsId"
+                                            style="width:90%; height:30px; ">
+                                            @foreach (var topic in lstCourseTopics)
+                                            {
+                                                if (topic.CourseTopicId == comp.TopicId)
+                                                {
+                                                    <option value="@topic.CourseTopicId" selected> @topic.CourseTopicTitle </option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@topic.CourseTopicId"> @topic.CourseTopicTitle </option>
+                                                }
+                                            }
+                                        </select>
+                                        <br />
+                                        @{
+                                            var compId = comp.ExamCompositionId;
+                                            var txtTestCompositionNId = $"txtTestCompositionN{compId}";
+                                            var txtTestCompositionLId = $"txtTestCompositionL{compId}";
+                                            var nTestsValueId = $"nTestsValue{compId}";
+                                            var levelValueId = $"levelValue{compId}";
+                                        }
+                                        <input type="range" name="@txtTestCompositionNId" id="@txtTestCompositionNId"
+                                            min="1" max="20" value="@comp.TopicNTests"
+                                            oninput="document.getElementById('@nTestsValueId').innerText = this.value" />
+                                        <span id="@nTestsValueId">@comp.TopicNTests</span>
+                                        <label for="@txtTestCompositionNId"
+                                            style="font-size:small;font-weight:bold">(Tests)</label>
+                                        <br />
+                                        <input type="range" name="@txtTestCompositionLId" id="@txtTestCompositionLId"
+                                            min="1" max="5" value="@comp.TestsLevel"
+                                            oninput="document.getElementById('@levelValueId').innerText = this.value" />
+                                        <span id="@levelValueId">@comp.TestsLevel</span>
+                                        <label for="@txtTestCompositionLId"
+                                            style="font-size:small;font-weight:bold">(Level)</label>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <button class="btn btn-link" type="submit"
+                                                @onclick="BtnUpdateExamComposition"
+                                                asp-route-id="@comp.ExamCompositionId">
+                                                <img src="/icons/icoSave_bt_1.png" width="25" />
+                                            </button>
+                                            <br />
+                                            <button class="btn btn-link" type="submit"
+                                                @onclick="BtnDeleteExamComposition"
+                                                asp-route-id="@comp.ExamCompositionId"
+                                                onclick="return confirm('Delete Exam Composition?')">
+                                                <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+ *@                        </table>
+                        @if (appState.Cmd != "AddNewExamComposition")
+                        {
+                            <button class="btn btn-link" type="submit" @onclick="BtnAddNewExamComposition"
+                                asp-route-id="@exam.ExamId">
+                                <img src="/icons/icoAddItem1.png" width="35" />
+                            </button>
+                            <button class="btn btn-link" type="submit"
+                                @onclick="BtnDrawRandomTestsByExamComposition" asp-route-id="@exam.ExamId">
+                                <img src="/icons/icoShuffle_bt_1.png" width="40" />
+                            </button>
+                            <br />
+                        }
+                        else
+                        {
+                            <div style=background-color:WhiteSmoke>
+                                <div style="text-align: center;">
+                                    <br>
+                                    <h5 style="color:darkgoldenrod;font-weight:bold;">New Exam composition</h5>
+                                    <select id="cboCourseTopics" name="cboCourseTopics" style="width:60%">
+                                        <option value="0"> Select a Topic... </option>
+                                        @foreach (var topic in lstCourseTopics)
+                                        {
+                                            <option value="@topic.CourseTopicId"> @topic.CourseTopicTitle </option>
+                                        }
+                                    </select>
+                                    @* Slider NTests *@
+                                    <br />
+                                    <input type="range" id="sliderNTests" name="sliderNTests" min="1" max="20" value="5"
+                                        oninput="document.getElementById('testsValue').innerText = this.value" />
+                                    <span id="testsValue">5</span>
+                                    <label for="sliderTests" style="font-size:small;font-weight:bold">Tests </label>
+                                    <br />
+                                    @* Slider Level *@
+                                    <input type="range" id="sliderLevel" name="sliderLevel" min="1" max="5" value="3"
+                                        oninput="document.getElementById('levelValue').innerText = this.value" />
+                                    <span id="levelValue">3</span>
+                                    <label for="sliderLevel" style="font-size:small;font-weight:bold">Level</label>
+                                    <br>
+                                    <button class="btn btn-link" type="submit" @onclick="BtnSaveNewExamComposition">
+                                        <img src="/icons/icoSave_cw_1.png" width="30" />
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <br>
+            @if (appState.Cmd.Contains("AddNewExamTest2List"))
+            {
+                <hr style="color:Red" />
+                <div style="background-color:White">
+                    <h5 style="color:darkgoldenrod;font-weight:bold;">Add a Test</h5>
+                    @* SEARCH *@
+                    <input id="txtSearch" name="txtSearch" type="text" placeholder="Search..." style="width:60%" />
+                    <button class="btn btn-link" type="submit" @onclick="BtnGetTestsBySearch"
+                        asp-route-id="@course.CourseId">
+                        <img src="/icons/icoFilter_bt_1.png" width="30" />
+                    </button>
+                    <button class="btn btn-link" type="submit" @onclick="BtnGetAllTestsAgain"
+                        asp-route-id="@course.CourseId">
+                        <img src="/icons/icoList_bt_1.png" width="35" />
+                    </button>
+                    <select id="cboCourseTests" name="cboCourseTests" style="font-size:small;width:95%">
+                        @foreach (var ct in lstCourseTests)
+                        {
+                            <option value="@ct.TestId"> @ct.TestId - @ct.TestTitle </option>
+                        }
+                    </select>
+                    @* END SEARCH *@
+                    <br />
+                    <br />
+                    <button class="btn btn-link" type="submit" @onclick="BtnSaveNewExamTest2List">
+                        <img src="/icons/icoSave_cw_1.png" width="30" />
+                    </button>
+                    <button class="btn btn-link" type="submit" @onclick="BtnReload">
+                        <img src="/icons/icoRetry_bt_1.png" width="35" />
+                    </button>
+                    <br />
+                    <hr style="color:Red" />
+                    <br />
+                </div>
+            }
+            @* Card 2 - List of Tests *@
+            @if (appState.Cmd.Contains("AddNewExamTest2List"))
+            {
+                clps = "collapse show";
+            }
+            else
+            {
+                clps = "collapse";
+            }
+            <div class="accordion-item">
+                <h4 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#ExamTestList" aria-expanded="false" aria-controls="ExamTestList">
+                        <h4 style="color:indianred"> Exam Tests </h4>
+                    </button>
+                </h4>
+                <div id="ExamTestList" class="accordion-collapse @clps" data-bs-parent="#accordionCourses">
+                    <div class="accordion-body" style="background-color:whitesmoke">
+                        <div style="text-align: center;">
+                            <button class="btn btn-link" type="submit" @onclick="BtnAddNewExamTest2List"
+                                asp-route-id="@exam.ExamId">
+                                <img src="/icons/icoEditPen_bt_1.png" width="30" />
+                            </button>
+                            <hr style="border-color:red; width:60%" />
+                        </div>
+                        @foreach (var tst in lstExamTests)
+                        {
+@*                             i++;
+                            testRtlStatus = ((examTest.TestTags & 1) == 1) ?
+                            "direction:rtl;text-align:right;" : "";
+                            optRtlStatus = ((examTest.TestTags & 2) == 2) ?
+                            "direction:rtl;text-align:right;" : "";
+ *@                            <div style="font-size:small; font-weight:bold">
+                                <button class="btn btn-link" type="submit" @onclick="BtnDeleteFromExamTestList" asp-route-id="@tst.TestId">
+                                    <img src="/icons/icoDelete_bt_1.png" width="20" />
+                                </button>
+                                @* @i - @tst.TestTitle *@
+                            </div>
+                            //GetTestOptions(tst.TestId);
+                            @foreach (var opt in lstTestOptions)
+                            {
+                                <div style="font-size:small"> - @opt.TestOptionTitle</div>
+                            }
+                            <hr style="border-color:red" />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div style="text-align: center;">
+            <button class="btn btn-link" type="submit" @onclick="BtnBack">
+                <img src="/icons/icoBack_bt_1.png" width="45" />
+            </button>
+        </div>
+    </EditForm>
+    <script>
+        document.getElementById("txtExamDuration").focus();
+    </script>
+
+</div>
+
+@code {
+    User user = new User ();
+    Exam exam = new ();
+    Course course = new ();
+    List<CourseTopic> lstCourseTopics = new ();
+    List<ExamComposition> lstExamCompositions = new List<ExamComposition> ();
+    List<Test> lstCourseTests = new ();
+    List<Test> lstExamTests = new ();
+    List<TestOption> lstTestOptions = new ();
+    string clps="";
+    //LifeCycleEvents
+    protected override void OnInitialized()
+        {
+        appState.OnChange += TriggerRender;
+        } 
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //btns
+    public void BtnUpdateExamInfo()
+        {       
+        }
+    public void BtnAddNewExamComposition()
+        {       
+        }
+    public void BtnDrawRandomTestsByExamComposition()
+        {       
+        }
+    public void BtnSaveNewExamComposition()
+        {       
+        }
+    public void BtnGetTestsBySearch()
+        {       
+        }
+    public void BtnGetAllTestsAgain()
+        {       
+        }
+    public void BtnSaveNewExamTest2List()
+        {       
+        }
+    public void BtnReload()
+        {       
+        }
+    public void BtnAddNewExamTest2List()
+        {       
+        }
+    public async Task BtnDeleteFromExamTestList()
+        {
+        if(await JS.InvokeAsync<bool>("conform","All instances of this Test will be Deleted.\n\n\nDelete?"))
+            {
+            
+            }
+        }
+    public void BtnBack()
+        {       
+        }
+}

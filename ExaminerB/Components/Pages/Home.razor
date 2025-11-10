@@ -1,0 +1,123 @@
+﻿@page "/"
+@using ExaminerB.Service
+@rendermode InteractiveServer
+@inject ProtectedSessionStorage sessionStorage
+@inject NavigationManager Navman
+@inject AppState appState
+@inject HttpClient http
+@inject FeService feService
+@implements IDisposable
+
+<PageTitle>Home</PageTitle>
+<br />
+<br />
+<hr />
+<div style="display: grid; place-items: center; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px;"> 
+    <div>
+        <a class="btn btn-link" href="https://www.msht.ir/">
+            <img src="/icons/icoHome_grayt_1.png" width="80" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="https://www.msht.ir/iLects.html">
+            <img src="/icons/icoCourse_ct_1.png" width="80" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="/Login">
+            <img src="/images/gifExam01.gif" width="120" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="https://www.msht.ir/iLang.html">
+            <img src="/icons/icoLang_blt_1.png" width="80" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="https://www.msht.ir/app_nexterm/NexTerm_00.html">
+            <img src="/icons/icoCalendar_gt_1.png" width="70" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="https://www.msht.ir/app_eLib/eLib_00.html">
+            <img src="/icons/icoLaptop_bt_1.png" width="80" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="https://www.msht.ir/app_alamut/Alamut_00.html">
+            <img src="/icons/icoDB_grayt_1.png" width="60" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="https://www.msht.ir/app_iris/IRIS_00.html">
+            <img src="/icons/icoCup_bluet_1.png" width="70" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="https://drive.google.com/file/d/1pPTDilV0xUa0WjhwnFHopoiH5ECHZ3gg/view">
+            <img src="/icons/icoLab_ct_1.png" width="80" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="https://www.msht.ir/app_residential/residential_00.html">
+            <img src="/icons/icoResidential_bw_1.png" width="70" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="https://drive.google.com/drive/folders/1UOY1HVgdd96mrSS-jcIiyVvMlNsHbJIw">
+            <img src="/icons/icoCalc_bluet_1.png" width="70" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="https://drive.google.com/drive/folders/1F2cELGPWeajhX7h2zhXOn3IHf0CTQo5z?usp=sharing">
+            <img src="/icons/icoBook_gt_1.png" width="80" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="https://www.msht.ir/iPortfolio.html">
+            <img src="/icons/icoFolderSearch_bt_1.png" width="80" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="https://www.msht.ir/iCode.html">
+            <img src="/icons/icoLayers_bluet_1.png" width="80" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="https://www.msht.ir/msht/msht_00.html">
+            <img src="/icons/icoUser_bluet_1.png" width="80" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+    <div>
+        <a class="btn btn-link" href="https://www.msht.ir/lsh/lsh_00.html">
+            <img src="/icons/icoUser_bluet_1.png" width="80" style="margin-left:10px;margin-right:10px" />
+        </a>
+    </div>
+</div>
+<hr />
+
+@code {
+    private bool _firstRender = true;
+    private User user = new User { UserRole = "student" };
+    //LifeCycleEvents
+    protected override void OnInitialized()
+        {
+        appState.OnChange += TriggerRender;
+        appState.SetUserLoginStatus (0);
+        appState.SetStudentTags (0);
+        appState.SetUserName ("");
+        sessionStorage.DeleteAsync("UserName");
+        sessionStorage.DeleteAsync("UserId");
+        sessionStorage.DeleteAsync("UserLoginStatus");
+        sessionStorage.DeleteAsync("UserRole");
+        sessionStorage.DeleteAsync("SelectedStudentTags");
+        }
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+}

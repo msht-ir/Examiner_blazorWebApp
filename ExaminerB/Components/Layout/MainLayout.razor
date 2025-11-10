@@ -1,0 +1,41 @@
+﻿@inherits LayoutComponentBase
+@inject ProtectedSessionStorage sessionStorage
+@inject AppState appState
+@inject NavigationManager Navman
+
+<div class="page">
+    <div class="sidebar"> 
+        @if ((Navman.Uri.Contains ("/S_Student")) | (Navman.Uri.Contains ("/T_SwitchBoard")))
+            {
+            <NavMenuS_Student />
+            }
+        else if (Navman.Uri.Contains ("/Login"))
+            {
+            <NavMenuLogin />
+            }
+        else if ((Navman.Uri.Contains ("/T_Students")) || (Navman.Uri.Contains ("/T_Courses")) )
+            {
+            <NavMenuT_Back2SwitchBoard />
+            }
+        else if (Navman.Uri.Contains ("/T_Students"))
+            {
+            <NavMenuT_Students />
+            }
+        else if (Navman.Uri.Contains ("/T_Courses"))
+            {
+            <NavMenuT_Courses />
+            }
+        else
+            {
+            <NavMenuDefault />
+            }
+    </div>   
+    <main>
+        <div class="top-row px-4">
+            <a href="https://www.msht.ir/msht/msht_00.html" target="_blank">About</a>
+        </div>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>

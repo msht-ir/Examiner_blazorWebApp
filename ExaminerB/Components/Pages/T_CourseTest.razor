@@ -1,0 +1,392 @@
+﻿@page "/T_CourseTest"
+@rendermode InteractiveServer
+@inject AppState appState
+@inject FeService feService
+@inject NavigationManager Navman
+@inject AppState appState
+@inject IJSRuntime JS
+@implements IDisposable
+@if (!_hasFetched)
+        {
+    <_ScanSheets />
+    }
+else
+    {
+    <EditForm Model="test">
+        <div style="text-align: center;">
+            <h2 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole : @courseName  </span></h2>
+            @* <h5 style="color:IndianRed">@courseName</h5> *@
+        </div>
+        @if (appState.Message != "")
+            {
+            <div style="text-align: center;">
+                <h4 style="color:indianred">@appState.Message</h4>
+            </div>
+            }
+        <hr style="color:indianRed" />
+        @* <h5>TEST # @test.TestId</h5> *@
+        @* 1-Test title *@
+        @if ((test.TestTags & 1) == 1)
+            {
+            <textarea class="form-control form-text" @ref="txtTestTitle" @bind = "test.TestTitle" placeholder="Test Title..." style="font-weight:bold; width:100%; height:60px; text-align: right;" dir="rtl">@test.TestTitle</textarea>
+            }
+        else
+            {
+            <textarea class="form-control form-text" @ref="txtTestTitle" @bind = "test.TestTitle" placeholder="Test Title..." style="font-weight:bold; width:100%;height:60px;">@test.TestTitle</textarea>
+            }
+        <br />
+        <div>
+            <div id="selectTopicComboBox" style="display: flex; gap: 20px; align-items: flex-start; background-color: whitesmoke; padding: 10px; border-radius: 12px;">  
+                @* 2- Combo: Topics *@
+                <div style="flex: 1; color: IndianRed;">
+                    <h6>Topic</h6>
+                    <select @bind="test.TopicId" style="width: 100%; height: 32px;">
+                        @foreach (var topic in lstCourseTopics)
+                            {
+                            if (topic.CourseTopicId == test.TopicId)
+                                {
+                                <option value="@topic.CourseTopicId" selected>@topic.CourseTopicTitle</option>
+                                }
+                            else
+                                {
+                                <option value="@topic.CourseTopicId">@topic.CourseTopicTitle</option>
+                                }
+                            }
+                    </select>
+                    <br />
+                    <br />
+                    <div class="form-check form-check-inline" style="padding-top:8px;">
+                        <input class="form-check-input" type="checkbox" checked="@((test.TestTags & 1) == 1)" @onchange="e=>BtnUpdateTestTagsInPlace(test, 1, (bool)e.Value)"/>
+                        <label class="form-check-label" style="font-size: small; color: RoyalBlue;padding-right:15px;">Test RTL </label>
+                    </div>
+                    <div class="form-check form-check-inline" style="padding-top:8px;">
+                        <input class="form-check-input" type="checkbox" checked="@((test.TestTags & 2) == 2)" @onchange="e=>BtnUpdateTestTagsInPlace(test, 2, (bool)e.Value)"/>
+                        <label class="form-check-label" style="font-size: small; color: RoyalBlue;">Opts RTL</label>
+                    </div>
+                </div>
+                @* 3- Combo: Levels *@
+                <div style="flex: 1; color: IndianRed;">
+                    <h6>Level</h6>
+                    <select @bind="test.TestLevel" style="width: 80%; height: 32px;">
+                        <option value="0" selected>Test Level ?</option>
+                        @for (int i = 1; i <= 5; i++)
+                            {
+                            if (test.TestLevel == i)
+                                {
+                                <option value="@i" selected>level @i</option>
+                                }
+                            else
+                                {
+                                <option value="@i">level @i</option>
+                                }
+                            }
+                    </select>
+                    <br />
+                    <br />
+                    @if (appState.Cmd == "AddNewTest")
+                        {
+                        <button class="btn btn-link" @onclick="BtnCreateTest">
+                            <img src="/icons/icoSave_bt_1.png" width="25" />
+                        </button>
+                        }
+                    else
+                        {
+                        <button class="btn btn-link" @onclick="BtnUpdateTest">
+                            <img src="/icons/icoSave_cw_1.png" width="25" />
+                        </button>
+                        <button class="btn btn-link" @onclick="BtnDeleteTest">
+                            <img src="/icons/icoDelete_bt_1.png" width="25" />
+                        </button>
+                        <button class="btn btn-link" type="submit" @onclick="BtnBack">
+                            <img src="/icons/icoBack_bt_1.png" width="25" />
+                        </button>
+                        }
+                </div>
+            </div>
+        </div>
+        <hr style="color:red" />
+        @* 4- CARD: Options *@
+        <div class="accordion" id="accordionTestOptions">
+            <div class="accordion-item ">
+                <h4 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#TestOptions"
+                            aria-expanded="false"
+                            aria-controls="TestOptions">
+                        <h4 style="color:indianred"> Options </h4>
+                    </button>
+                </h4>
+                <div id="TestOptions" class="accordion-collapse collapse" data-bs-parent="#accordionTestOptions">
+                    <div class="accordion-body" style="background-color:whitesmoke">
+                        @if (appState.Cmd != "AddNewTest")
+                            {
+                            @* 5- Optionn *@
+                            i = 0;
+                            foreach (TestOption opt in test.TestOptions)
+                                {
+                                i++;
+                                <div style="flex: 1; color: IndianRed;">
+                                <h6 style="color:indianRed">Option @i<span style="font-size:0.5em; color: gray"> / @test.TestOptions.Count</span></h6>
+                                </div>
+                                @* OptionTitle *@
+                                @if ((@test.TestTags & 2) == 2)
+                                    {
+                                    <textarea class="form-control form-text" @bind="opt.TestOptionTitle" placeholder="Option title..." style="width:100%;height:35px;text-align: right;" dir="rtl"></textarea>
+                                    }
+                                else
+                                    {
+                                    <textarea class="form-control form-text" @bind="opt.TestOptionTitle" placeholder="Option title..." style="width:100%;height:35px"></textarea>
+                                    }
+                                @* Checks: Tags {Ans, ForceLast} *@
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" checked="@((opt.TestOptionTags & 2) == 2)" @onchange="e=>BtnUpdateTestOptionTagsInPlace(opt, 2, (bool)e.Value)"/>
+                                    <label class="form-check-label" style="font-size: small; color: RoyalBlue;padding-right:15px;">Ans </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" checked="@((opt.TestOptionTags & 1) == 1)" @onchange="e=>BtnUpdateTestOptionTagsInPlace(opt, 1, (bool)e.Value)"/>
+                                    <label class="form-check-label" style="font-size: small; color: RoyalBlue;padding-right:15px;">ForceLast </label>
+                                </div>
+                                <button class="btn btn-link" type="submit" @onclick="()=>BtnUpdateTestOption(opt)">
+                                    <img src="/icons/icoSave_bt_1.png" width="25" />
+                                </button>
+                                <button class="btn btn-link" type="submit" @onclick="()=>BtnDeleteTestOption(opt.TestOptionId)">
+                                    <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                </button>
+                                <hr />
+                                }
+                            }
+                            @* Add NewTestOption *@        
+                            @if (appState.Cmd == "AddNewTestOption")
+                                {
+                                <input class="form-inline" @ref="txtNewTestOption" @bind="strNewTestOption" placeholder="New Option..." />
+                                <button class="btn btn-link" name="btnNewTestOption" type="submit" @onclick="()=>BtnCreateTestOption(test.TestId)">
+                                    <img src="/icons/icoSave_cw_1.png" width="25" />
+                                </button>
+                                }
+                            else
+                                {
+                                if (test.TestOptions?.Count < 5)
+                                    {
+                                    <button class="btn btn-link" type="submit" @onclick="BtnAddNewTestOption">
+                                        <img src="/icons/icoAddItem_gt_1.png" width="30" />
+                                    </button>
+                                    }
+                                }
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* End CARD Options *@
+        <hr style="color:Red" />
+        <div style="text-align: center;">
+            @if (appState.Cmd == "AddTestToAnExam")
+                {
+                @* Get List Of Exams (courseId) *@
+                <h6 style="color:royalblue;text-align: center;">Add this test to an exam</h6>
+                <select id="cboExams" @bind="intExam" style="width:70%; height:35px">
+                        <option value="0"> Select an exam... </option>                    
+                    @foreach (var exm in lstExams)
+                        {
+                        <option value="@exm.ExamId"> @exm.ExamTitle </option>
+                        }
+                </select>
+                <button class="btn btn-link" type="submit" @onclick="()=>BtnCreateExamTest(test)">
+                    <img src="/icons/icoSave_cw_1.png" width="25" />
+                </button>
+                }
+            else
+                {
+                <button class="btn btn-link" type="submit" @onclick="BtnAddExamTest">
+                    <img src="/icons/icoFolderExam_bt_2.png" width="40" />
+                </button>
+                }
+            <button class="btn btn-link" type="submit" @onclick="BtnBack">
+                <img src="/icons/icoBack_bt_1.png" width="30" />
+            </button>
+        </div>
+    </EditForm>
+    }
+<script>
+    window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});
+</script>
+
+@code {
+    private ElementReference txtTestTitle;
+    private ElementReference txtNewTestOption;
+    public string strNewTestOption = "";
+    bool isTestRtlChecked ;
+    bool isTestOptionsRtlChecked ;
+    public int i = 0;
+    public int courseId = 0;
+    public int intExam = 0;
+    public string courseName = "";
+    public bool _hasFetched = false;
+    User user = new User ();
+    Test test = new Test ();
+    List<CourseTopic> lstCourseTopics = new ();
+    List<Exam> lstExams = new List<Exam>();
+
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        courseId = Convert.ToInt32(appState.CourseId);
+        courseName = appState.CourseName ?? "";
+        lstCourseTopics = await feService.Read_CourseTopics (courseId);            
+        if (appState.Cmd != "AddNewTest")
+            {
+            test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
+            }
+        _hasFetched = true;
+        }
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //btns
+    public async Task BtnCreateTest ()
+        {
+        test.CourseId = courseId;
+        int result = await feService.Create_Test (test);
+        if (result > 0)
+            {
+            appState.SetTestId (result);
+            test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
+            appState.SetCmd ("");
+            StateHasChanged ();
+            }
+        }
+    public void BtnUpdateTestTagsInPlace (Test test, int flag , bool isChecked)
+        {
+        if (isChecked)
+            {
+            test.TestTags |= flag;
+            }
+        else
+            {
+            test.TestTags &= ~flag;
+            }
+        }
+    public async Task BtnUpdateTest ()
+        {
+        Console.WriteLine($"testId={test.TestId}, topicId={test.TopicId}, title= {test.TestTitle}, test/OptRTL=>{test.TestTags}, Level={test.TestLevel}");
+        bool results = await feService.Update_Test (test);
+        if (results)
+            {
+            StateHasChanged ();
+            }
+        }
+    public async Task BtnDeleteTest ()
+        {
+        if (await JS.InvokeAsync<bool>("confirm","Delete Tets?"))
+            {
+            bool result = await feService.Delete_Test (test.TestId);
+            if (result)
+                {
+                BtnBack ();
+                }
+            }
+        }
+    //TestOption
+    public void BtnAddNewTestOption ()
+        {
+        appState.SetCmd ("AddNewTestOption");
+        }
+    public async Task BtnCreateTestOption (int testId)
+        {
+        TestOption testOption = new TestOption () { TestId = testId, TestOptionTitle = strNewTestOption, TestOptionTags = 0 };
+        int result = await feService.Create_TestOption (testOption);
+        if (result > 0)
+            {
+            test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
+            appState.SetCmd ("");
+            StateHasChanged ();
+            }
+        }
+    public void BtnUpdateTestOptionTagsInPlace (TestOption opt, int flag , bool isChecked)
+        {
+        if (isChecked)
+            {
+            opt.TestOptionTags |= flag;
+            }
+        else
+            {
+            opt.TestOptionTags &= ~flag;
+            }
+        }
+    public async Task BtnUpdateTestOption (TestOption testOption)
+        {
+        // if (await JS.InvokeAsync<bool>("confirm","Update Test Option?"))
+        //     {
+        //     }
+        bool result = await feService.Update_TestOption (testOption);
+        if (result)
+            {
+            test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
+            appState.SetCmd ("");
+            StateHasChanged ();                
+            }
+        else
+            {
+            await JS.InvokeVoidAsync("alert","Option was not Updated! -- operation failed");
+            }
+        }
+    public async Task BtnDeleteTestOption (int testOptionId)
+        {
+        if (await JS.InvokeAsync<bool>("confirm","Delete Test Option?"))
+            {
+            bool result = await feService.Delete_TestOption (testOptionId);
+            test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
+            appState.SetCmd ("");
+            StateHasChanged ();
+            }
+        }
+    //Add Test2Exam
+    public async Task BtnAddExamTest ()
+        {
+        lstExams = await feService.Read_Exams (courseId);
+        appState.SetCmd ("AddTestToAnExam");
+        }
+    public async Task BtnCreateExamTest (Test tst)
+        {
+        if(intExam > 0)
+            {
+            ExamTest examTest = new ExamTest () {ExamId = intExam, TestId= tst.TestId };
+            int result = await feService.Create_ExamTest (examTest);
+            if (result > 0)
+                {
+                await JS.InvokeVoidAsync ("alert", "TEST added to the exam Successfully!");
+                test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
+                appState.SetCmd ("");
+                StateHasChanged ();
+                }
+            }
+        else
+            {
+            await JS.InvokeVoidAsync ("alert", "Select an exam!");            
+            }
+        }
+    //Exit
+    public void BtnBack ()
+        {
+        switch (appState.ReturnPage)
+            {
+            case "/T_CourseTests":
+                    {
+                    appState.SetCmd ("ListCourseTests");
+                    break;
+                    }
+            case "/T_ReportTests":
+                    {
+                    appState.SetCmd ("coursetestraw");
+                    break;
+                    }
+            }
+        Navman.NavigateTo (appState.ReturnPage?? "/Login");
+        }
+}

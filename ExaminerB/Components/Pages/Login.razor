@@ -1,0 +1,125 @@
+﻿@page "/Login"
+@using ExaminerB.Service
+@rendermode InteractiveServer
+@inject NavigationManager Navman
+@inject AppState appState
+@inject HttpClient http
+@inject FeService feService
+@implements IDisposable
+
+<PageTitle>Examiner Home</PageTitle>
+<div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    <br />
+    <h2 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h2>
+    <img src="/images/gifExam01.gif" width="200" style="margin-left:10px;margin-right:10px" />
+    <br />
+    <EditForm Model="user" OnValidSubmit="BtnLogin" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <ValidationSummary />
+        <div class="mb-3">
+            <select id="cboUserRole" @bind="user.UserRole" @ref="refRole">
+                <option value="student"> Student </option>
+                <option value="teacher"> Teacher </option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <input @ref="refUser" @bind="user.UserName" type="text" class="form-control" placeholder="Username" @onkeydown="HandleUserKeyDown" />
+        </div>
+        <div class="mb-3">
+            <input @ref="refPass" @bind="user.UserPass" type="password" class="form-control" placeholder="Password">
+        </div>
+        <button class="btn btn-link">
+            <img src="/images/gifUser1.gif" width="60" />
+        </button>
+    </EditForm>
+</div>
+<br />
+<hr style="color:blueviolet"/>
+<script>
+    document.getElementById("txtUser").focus();
+    document.getElementById("txtUser").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            document.getElementById("txtPass").focus();
+        }
+    });
+</script>
+
+@code {
+    private ElementReference refUser;
+    private ElementReference refPass;
+    private ElementReference refRole;
+    private bool _firstRender = true;
+    private User user = new User { UserRole = "student" };
+    //LifeCycleEvents
+    protected override void OnInitialized()
+        {
+        appState.OnChange += TriggerRender;
+        appState.SetUserLoginStatus (0);
+        appState.SetStudentTags (0);
+        appState.SetUserName ("");
+        } 
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+        if (_firstRender)
+            {
+            _firstRender = false;
+            await refUser.FocusAsync();
+            }
+        }
+    //btns
+    public async Task BtnLogin ()
+        {
+        //via 'OnValidSubmic of EditForm'
+        user.UserId = 0;
+        user.UserTags = 0;
+        user.GroupId = 0;
+        user = await feService.Login(user) ?? new User { UserRole = "student" };        
+        if (user.UserId != 0)
+            {
+            switch (user.UserRole)
+                {
+                case "student":
+                        {
+                        appState.SetUserLoginStatus (1);
+                        appState.SetUserId (user.UserId);
+                        appState.SetUserName (user.UserName);
+                        appState.SetUserPass (user.UserPass);
+                        appState.SetUserTags (user.UserTags);
+                        appState.SetUserRole (user.UserRole);
+                        //navigate
+                        Navman.NavigateTo("/S_Student");
+                        break;
+                        }
+                case "teacher":
+                        {
+                        appState.SetUserLoginStatus (1);
+                        appState.SetUserId (user.UserId);
+                        appState.SetUserName (user.UserName);
+                        appState.SetUserPass (user.UserPass);
+                        appState.SetUserTags (user.UserTags);
+                        appState.SetUserRole (user.UserRole);
+                        //navigate
+                        Navman.NavigateTo("/T_SwitchBoard");
+                        break;
+                        }
+                }
+            }
+        } 
+    //methods
+    public async Task HandleUserKeyDown (KeyboardEventArgs e)
+        {
+        if (e.Key == "Enter")
+            {
+            await refPass.FocusAsync ();
+            }
+        }
+}

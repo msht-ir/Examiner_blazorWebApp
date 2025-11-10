@@ -1,0 +1,208 @@
+﻿@page "/S_StudentExamTest/{studentExamTestId:long}/{testIndex:int}"
+@using ExaminerB.Service
+@rendermode InteractiveServer
+@inject FeService feService
+@inject NavigationManager Navman
+@inject AppState appState
+@inject IJSRuntime JS
+@implements IDisposable
+    <div style="text-align: center;">
+        <h1 style="font-weight:bold;">@testIndex</h1>
+        <hr />
+        @if ((studentExamTest.TestTags & 1) == 1)
+            {
+            <h5 style="direction:rtl;text-align:right;"> @studentExamTest.TestTitle</h5>
+            }
+        else
+            {
+            <h5> @studentExamTest.TestTitle</h5>        
+            }
+        <hr />
+        <EditForm Model="studentExamTest">
+            <table class="table">
+                <thead style="color:green">
+                    <tr style="font-weight:bold">
+                @if((studentExamTest.TestTags & 2) == 2)
+                    {
+                        <td style="color:darkred">گزينه ها</td>
+                        <td></td>
+                    }
+                else
+                    {
+                        <td style="color:darkred">Options</td>
+                        <td></td>
+                    }                
+                    </tr>
+                </thead>
+                @if((studentExamTest.TestTags & 2) == 2)
+                    {
+                    style = "direction:rtl;text-align:right;";
+                    strSelect = "انتخاب";
+                    }
+                else
+                    {
+                    style="direction:ltr;text-align:left;";                        
+                    strSelect = "Select";
+                    }                
+                    @foreach(TestOption opt in studentExamTest.TestOptions)
+                    {
+                        <tr style="@style">
+                            @if ((HelpShowAnswer) && (opt.TestOptionId==studentExamTest.StudentExamTestKey))
+                                {
+                                <td style="color:IndianRed">@opt.TestOptionTitle</td>
+                                //SetHelpedTestId(0); //clear guide flag
+                                }
+                            else
+                                {
+                                <td style="color:Black">@opt.TestOptionTitle</td>
+                                //SetHelpedTestId(0); //clear guide flag
+                                }
+                            <td>
+                            @if(opt.TestOptionId==studentExamTest.StudentExamTestAns)
+                                {
+                                <button class="btn btn-success btn-sm col-auto" @onclick= "()=> BtnChooseOptionAsAnswer(studentExamTest.StudentExamTestId, opt.TestOptionId) ">@strSelect</button>
+                                }
+                            else
+                                {
+                                <button class="btn btn-primary btn-sm col-auto" @onclick= "()=> BtnChooseOptionAsAnswer(studentExamTest.StudentExamTestId, opt.TestOptionId) ">@strSelect</button>
+                                }
+                            </td>
+                        </tr>                                        
+                    }
+            </table>
+            <hr style="color:red"/>
+            <table class="table">
+                <tr>
+                    <td style="text-align:center;">
+                        @if ((appState.UserTags & 16) == 16)
+                            {
+                            <button class="btn btn-link" @onclick="()=>BtnHelpShowAnswer(studentExamTest)">
+                                <img src="/icons/icoInfo_ot_1.png" width="50" />
+                            </button>                            
+                            }
+                        @if ((studentExamTest.StudentExamTestTags & 2) == 2)
+                            {
+                            <button class="btn btn-link" @onclick="()=>BtnBookmarkTest(studentExamTest, false)">
+                                <img src="/icons/icoBookmark_bt_2.png" width="45" />
+                            </button>
+                            }
+                        else
+                            {
+                            <button class="btn btn-link" @onclick="()=>BtnBookmarkTest(studentExamTest, true)">
+                                <img src="/icons/icoBookmark_bt_1.png" width="45" />
+                           </button>
+                            }
+                        <button class="btn btn-link" @onclick= "()=> BtnClearAnswer(studentExamTest)">
+                            <img src="/icons/icoEraser_bw_1.png" width="45" />
+                        </button>
+                        <button class="btn btn-link" @onclick="BtnBack">
+                            <img src="/icons/icoBack_bt_1.png" width="40" />
+                        </button>
+                    </td>
+                </tr>
+            </table>
+            <hr style="color:red"/>
+        </EditForm>
+    </div>
+    <script>
+        window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+    </script>
+
+@code {
+    [Parameter] public long studentExamTestId { get; set; }
+    [Parameter] public int testIndex { get; set; }
+    StudentExamTest studentExamTest = new StudentExamTest ();
+    private bool _firstRender = true;
+    private bool _hasFetched = false;
+    private bool hasScrolled = false;
+    bool HelpShowAnswer = false;
+    string style = "";
+    string strSelect = "";
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        if (_firstRender)
+            {
+            _firstRender = false;
+            int studentTags = Convert.ToInt32(appState.StudentTags);
+            }
+        } 
+    protected override async Task OnAfterRenderAsync (bool firstRender)
+        {
+        if (!_hasFetched)
+            {
+            _hasFetched = true;            
+            studentExamTest = await feService.Read_StudentExamTest (studentExamTestId, true);
+            StateHasChanged ();
+            }
+        if (firstRender && !hasScrolled)
+            {
+            hasScrolled = true;
+            await JS.InvokeVoidAsync("scrollToTop");
+            }
+        }
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //btns
+    public async Task BtnChooseOptionAsAnswer (long _stdExamTestId, int testOptionId)
+        {
+        //save|clear answer and set/unser Tag(answered) in: api C12 via a service
+        await feService.Update_StudentExamTestAnswer (_stdExamTestId, testOptionId);
+        if(testOptionId != 0)
+            {
+            BtnBack ();            
+            }
+        else
+            {
+            //refresh:
+            var studentExamTest = await feService.Read_TestByStudentExamTestId(studentExamTestId, true);
+            StateHasChanged(); // trigger UI update
+            }
+        }
+    public async Task BtnHelpShowAnswer (StudentExamTest stdntExamTest)
+        {
+        stdntExamTest.StudentExamTestTags = (stdntExamTest.StudentExamTestTags | 8);
+        bool result = await feService.Update_StudentExamTestTags (stdntExamTest);
+        if (result)
+            {
+            studentExamTest.StudentExamTestTags = (studentExamTest.StudentExamTestTags | 8);
+            HelpShowAnswer = true;
+            StateHasChanged();
+            } 
+        }
+    public async Task BtnBookmarkTest (StudentExamTest studentExamtest, bool status)
+        {
+        studentExamtest.StudentExamTestTags = status ? (studentExamtest.StudentExamTestTags | 2) : (studentExamtest.StudentExamTestTags & ~2);
+        bool result = false;
+        result = await feService.Update_StudentExamTestTags (studentExamTest);
+        if (result)
+            {
+            studentExamTest.StudentExamTestTags = status ? (studentExamTest.StudentExamTestTags | 2) : (studentExamTest.StudentExamTestTags & ~2);
+            StateHasChanged();
+            } 
+        }
+    public async Task BtnClearAnswer (StudentExamTest stdntExamTest)
+        {
+        await feService.Update_StudentExamTestAnswer (studentExamTest.StudentExamTestId, 0);
+        stdntExamTest.StudentExamTestTags = (stdntExamTest.StudentExamTestTags & ~4);
+        bool result = await feService.Update_StudentExamTestTags (stdntExamTest);
+        if (result)
+            {
+            studentExamTest = await feService.Read_StudentExamTest(studentExamTestId, true);
+            StateHasChanged();
+            } 
+        }    
+    public void BtnBack ()
+        {
+        int studentExamId = Convert.ToInt32(appState.StudentExamId);
+        Navman.NavigateTo ($"/S_StudentExamTests");
+        }
+
+}

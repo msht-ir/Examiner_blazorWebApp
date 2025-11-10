@@ -1,0 +1,146 @@
+﻿@page "/S_StudentCourseTest/{userId:int}/{studentCourseId:int}/{mode}"
+@using ExaminerB.Service
+@rendermode InteractiveServer
+@inject NavigationManager Navman
+@inject AppState appState
+@inject FeService feService;
+@inject IJSRuntime JS
+@implements IDisposable
+
+<br />
+<div style="text-align: center;">
+    @if (studentCourseTest.TestId == 0)
+        {
+        <img src="/images/pngExam01.png" style="width:250px" />
+        <br />
+        <img src="/images/gifRetryCorrectTests.gif" style="width:250px" />
+        <br />
+        <br />
+        <p><span style="color:green">No incorrect answers to retry!</span><br /><br /><span style="font-weight:bold;color:RoyalBlue">Take new random tests instead!</span></p>
+        <br />
+        <hr />
+        }
+    else
+        {
+        <hr />
+        @if ((studentCourseTest.TestTags & 1) == 1)
+            {
+            <h5 style="direction: rtl; text-align: right;">  @studentCourseTest.TestTitle</h5>
+            }
+        else
+            {
+            <h5>  @studentCourseTest.TestTitle</h5>        
+            }
+        <hr />
+        <EditForm Model="studentCourseTest">
+            <table class="table">
+                <thead style="color:green">
+                    <tr style="font-weight:bold">
+                        <td style="color:darkred">Options</td>                        
+                        <td></td>
+                    </tr>
+                </thead>
+                @foreach(var opt in studentCourseTest.TestOptions)
+                    {
+                    @if((studentCourseTest.TestTags & 2) == 2)
+                        {
+                        <tr style="direction:rtl;text-align:right;">
+                            <td>
+                                @opt.TestOptionTitle
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-sm col-auto" @onclick="()=>BtnSaveOptionAsAnswer(opt.TestOptionId)">انتخاب</button>
+                            </td>
+                        </tr>                                        
+                        }
+                    else
+                        {
+                        <tr style="direction:ltr;text-align:left;">
+                            <td>
+                                @opt.TestOptionTitle
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-sm col-auto" @onclick="()=>BtnSaveOptionAsAnswer (opt.TestOptionId)">Select</button>
+                            </td>
+                        </tr>                    
+                        }
+                    }
+            </table>
+        </EditForm>
+        <br />
+        <hr style="color:red"/>
+        
+        }
+
+</div>
+<div style="text-align:center">
+    <button class="btn btn-link" @onclick= "()=> BtnBack()">
+        <img src="/icons/icoBack_bt_1.png" style="width:40px" />
+    </button>   
+</div>
+<script>
+    window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+</script>
+@code {
+    [Parameter] public int studentCourseId { set; get; }
+    [Parameter] public int userId { set; get; }
+    [Parameter] public string mode { set; get; }
+    private bool hasFetched = false;
+    private bool hasScrolled = false;
+    public StudentCourseTest studentCourseTest = new StudentCourseTest ();
+    public StudentCourse studentCourse = new ();
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        studentCourse.StudentId = userId;
+        studentCourse.StudentCourseId = studentCourseId;
+        Console.WriteLine($"page ..................................... studentCourseId={studentCourseId}");
+        if (mode == "edit")
+            {
+            studentCourseTest = await feService.Read_StudentCourseTestRandom(studentCourseId, true, true);
+            }
+        else
+            {
+            studentCourseTest = await feService.Read_StudentCourseTestRandom(studentCourseId, true, false);
+            }
+            hasFetched = true;
+        }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+        if (firstRender && !hasScrolled)
+            {
+            hasScrolled = true;
+            await JS.InvokeVoidAsync("scrollToTop");
+            }
+        }
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //btn
+    public async Task BtnSaveOptionAsAnswer(int _selectedOpt)
+        {
+        foreach(TestOption testOption in studentCourseTest.TestOptions)
+            {
+            if((testOption.TestOptionTags & 2) == 2)
+                {
+                studentCourseTest.TestKey = testOption.TestOptionId;
+                break;
+                }
+            }
+        studentCourseTest.UserAns = _selectedOpt;
+        studentCourseTest.DateTime = DateTime.Now.ToString ("yyyy-MM.dd . HH:mm");
+        //update: save both ans and key (mode = new|edit)
+        var result = await feService.Update_StudentCourseTest (studentCourseTest, mode);
+        BtnBack ();
+        }
+    public void BtnBack()
+        {
+        Navman.NavigateTo ($"/S_Student");
+        }
+}

@@ -1,0 +1,241 @@
+﻿@page "/T_ReportTests"
+@using ExaminerB.Service
+@using Microsoft.VisualBasic
+@inject FeService feService
+@rendermode InteractiveServer
+@inject NavigationManager Navman
+@inject AppState appState
+@implements IDisposable
+
+@if (!_hasFetched)
+    {
+    <_ScanSheets />
+    }
+else
+    {
+    <EditForm Model = "lstxTests">
+        <br />
+        <div style="text-align: center;">
+            <button class="btn btn-link" @onclick="BtnChangeFontSize">
+                <img src="icons/icoLang_blt_1.png" title="Edit Test" alt="Edit" width="40px"/>
+                @* <br />Font *@
+            </button>
+            <button class="btn btn-link" @onclick="BtnShowAnswers">
+                <img src="icons/icoKeys_bt_1.png" title="Edit Test" alt="Edit" width="40px"/>
+                @* <br />Keys *@
+            </button>
+            <button class="btn btn-link" @onclick="BtnCourseExamStats">
+                <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="40px"/>
+                @* <br />Stats *@
+            </button>
+            <button class="btn btn-link" @onclick="BtnBack">
+                <img src="icons/icoBack_bt_1.png" title="Edit Test" alt="Edit" width="40px"/>
+                @* <br />Back *@
+            </button>
+            <hr />
+        </div>
+        @{i=0;}
+        @foreach (var tst in lstxTests) 
+            {
+            stl= (_cmd == "useSmallFont") ? "font-size:small;" : "font-size:normal;";
+            i++;
+            string testRtlStatus = ((tst.TestTags & 1) == 1) ? "direction:rtl;text-align:right;" : "";
+            string optRtlStatus = ((tst.TestTags & 2) == 2) ? "direction:rtl;text-align:right;" : "";
+            @* Show-Test *@
+            if (_cmd == "showStatistics")
+                {
+                string result = "";
+                //result = CalculateCourseExamStats (examId, tst.TestId);
+                <div style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle <span style="font-weight:normal;font-size:small;color:royalblue">
+                    <br />
+                    <button class="btn btn-link" @onclick="()=>BtnEditCourseTest(tst.TestId)" style="@testRtlStatus">
+                        <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
+                    </button>
+                    [ @result ]</span>
+                </div>
+                }
+            else
+                {
+                <div style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle</div>
+                }
+            @* Show-TestOptions *@
+            @foreach (var opt in tst.TestOptions)
+                {
+                if (appState.Cmd.EndsWith("raw"))
+                    {
+                    <div style="@stl; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                    }
+                else
+                    {
+                    if((opt.TestOptionId == tst.StudentExamTestKey) & (opt.TestOptionId == tst.StudentExamTestAns))
+                        {
+                        <div style="@stl color:darkgoldenrod;font-weight:bold; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                        }
+                    else if((opt.TestOptionId == tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
+                        {
+                        <div style="@stl color:royalblue; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                        }
+                    else if((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId == tst.StudentExamTestAns))
+                        {
+                        <div style="@stl color:indianred; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                        }
+                    else if((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
+                        {
+                        <div style="@stl color:black; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                        }
+                    }
+                }
+            @if (_cmd != "useSmallFont")
+                {
+                <hr style="border-color:red" />
+                }
+            }
+        <br />
+        <div style="text-align: center;">
+            <button class="btn btn-link" @onclick="BtnCourseExamStats">
+                <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="35px"/>
+            </button>
+            <button class="btn btn-link" type="submit" @onclick="BtnBack">
+                <img src="/icons/icoBack_bt_1.png" width="40" />
+            </button>
+        </div>
+    </EditForm>
+    }
+    <script>
+        window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+    </script>
+
+@code {
+    public bool _hasFetched = false;
+    User user = new User ();
+    List<StudentExamTest> lstxTests = new List<StudentExamTest> ();
+    int i = 0;
+    int StudentId;
+    string _cmd;
+    string stl;
+
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        switch (appState.Cmd?.ToLower())
+            {
+            case "coursetest":
+            case "coursetestraw":
+                    {
+                    Course course = new Course () {CourseId = Convert.ToInt32 (appState.CourseId) };
+                    List<Test> lstTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), 1, true);
+                    foreach(Test tst in lstTests)
+                        {
+                        lstxTests.Add (new StudentExamTest()
+                            {
+                            StudentExamId = tst.CourseId,
+                            TestId = tst.TestId,
+                            StudentExamTestKey = 0,
+                            StudentExamTestAns = 0,
+                            TestIndex = 0,
+                            TestTitle = tst.TestTitle,
+                            TestType = tst.TestType,
+                            CourseTopicId = tst.TopicId,
+                            CourseTopicTitle = "",
+                            TestTags = tst.TestTags,
+                            TestLevel = tst.TestLevel,
+                            TestOptions = tst.TestOptions
+                            }
+                        );}
+                    //find and set key
+                    foreach(StudentExamTest t in lstxTests)
+                        {
+                        foreach(TestOption opt in t.TestOptions)
+                            {
+                            if (opt.TestOptionTags >= 2)
+                                {
+                                t.StudentExamTestKey = opt.TestOptionId;
+                                break;
+                                }
+                            }
+                        }
+                    break;
+                    }
+            case"studentexam":
+            case"studentexamraw":
+                    {
+                    lstxTests = await feService.Read_StudentExamTests (Convert.ToInt32 (appState.StudentExamId),true);
+                    break;
+                    }
+            case "studentcourse":
+            case "studentcourseraw":
+                    {
+                    List<StudentCourseTest> lstStudentCourseTests = await feService.Read_StudentCourseTests (Convert.ToInt32 (appState.StudentCourseId), true);
+                    //copy data to a shared satandard list so that html code uses it
+                    foreach(StudentCourseTest sctest in lstStudentCourseTests)
+                        {
+                        lstxTests.Add (new StudentExamTest()
+                            {
+                            StudentExamId = sctest.StudentCourseId,
+                            TestId = sctest.TestId,
+                            StudentExamTestKey = sctest.TestKey,
+                            StudentExamTestAns = sctest.UserAns,
+                            TestIndex = sctest.TestIndex,
+                            TestTitle = sctest.TestTitle,
+                            TestType = sctest.TestType,
+                            CourseTopicId = sctest.CourseTopicId,
+                            CourseTopicTitle = sctest.CourseTopicTitle,
+                            TestTags = sctest.TestTags,
+                            TestLevel = sctest.TestLevel,
+                            TestOptions = sctest.TestOptions
+                            }
+                        );}
+                    break; 
+                    }
+            }
+        StudentId = Convert.ToInt32(appState.UserId);
+        stl = "";
+        _hasFetched = true;
+        } 
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //btns
+    public void BtnShowAnswers()
+        {
+        string _appstatecmd = appState.Cmd ?? "";
+        //Console.WriteLine($"page ........................................... appState.Cmd 1 = {appState.Cmd}");
+        _appstatecmd = (_appstatecmd.EndsWith ("raw")) ? (Strings.Left (_appstatecmd, _appstatecmd.Length - 3)) : (_appstatecmd + "raw");
+        appState.SetCmd (_appstatecmd);
+        //Console.WriteLine($"page ........................................... appState.Cmd 2 = {appState.Cmd}");
+        i = 0;
+        }
+    public void BtnCourseExamStats()
+        {
+        _cmd = (_cmd == "showStatistics")? "": "showStatistics";
+        i = 0;
+        }
+    public void BtnChangeFontSize()
+        {
+        _cmd = (_cmd == "useSmallFont")? "": "useSmallFont";
+        i = 0;
+        }
+    public async Task BtnEditCourseTest(int testId)
+        {
+        appState.SetTestId (testId);
+        appState.SetReturnPage ("/T_ReportTests");
+        Navman.NavigateTo ("/T_CourseTest");
+        }
+    public void BtnBack()
+        {
+        if (appState.ReturnPage != "/T_ReportTests")
+            {
+            Navman.NavigateTo (appState.ReturnPage?? "/Login");
+            }
+        else
+            {
+            Navman.NavigateTo ("/T_Courses");
+            }
+        }
+}

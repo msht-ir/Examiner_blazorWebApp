@@ -1,0 +1,96 @@
+﻿@page "/T_SwitchBoard"
+@rendermode InteractiveServer
+@inject ProtectedSessionStorage sessionStorage
+@inject NavigationManager Navman
+@inject AppState appState
+@implements IDisposable
+
+<div class="container">
+    <div style="text-align: center;">
+        <div style="text-align: center;">
+            <h1 style="color:steelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h1>
+        </div>
+        <h3 style="color:IndianRed">@appState.UserName</h3>
+        <hr style="color:red" />
+        <br />
+        <EditForm FormName="f" Model="user">
+            <table class="table">
+                <tr style="text-align:center;">
+                    <td>
+                        <button type="submit" class="btn btn-link" @onclick="GotoGroupsStudents">
+                            <img src="/images/gifGroup2.gif" width="90" />
+                        </button>
+                    </td>
+                    <td>
+                        <button type="submit" class="btn btn-link" @onclick="GotoCourses">
+                            <img src="/icons/icoBook_cw_1.png" width="65" />
+                        </button>
+                    </td>
+                </tr>
+            </table>
+            <br />
+            <hr style="color:red" />
+        </EditForm>
+    </div>
+</div>
+
+@code 
+{
+    private bool _firstRender = true;
+    User user = new User ();
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync ()
+        {
+        appState.OnChange += TriggerRender;
+        appState.SetCmd ("");
+        } 
+    protected async Task OnAfterRenderAsync()
+        {
+        var result1 = await sessionStorage.GetAsync<string> ("UserName");
+        Console.WriteLine ("result1.Value: " + result1.Value);
+        if (result1.Success)
+            {
+            appState.SetUserName (result1.Value);
+            user.UserName = appState.UserName;
+            StateHasChanged ();
+            }
+        if (_firstRender)
+            {
+            _firstRender = false;
+            var result = await sessionStorage.GetAsync<int> ("UserLoginStatus");
+            if (result.Success && result.Value == 1)
+                {
+                appState.SetUserLoginStatus (1);
+                Console.WriteLine ("T_SwitchBoard: UserLoginStatus= " + appState.UserLoginStatus);
+                appState.SetUserLoginStatus (result.Value);
+                }
+            else
+                {
+                Navman.NavigateTo ("/Login");
+                }
+            }
+        }
+    private void TriggerRender() 
+        {
+        InvokeAsync(StateHasChanged); 
+        } 
+    public void Dispose() 
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //btns
+    //methods
+    public void GotoLogin()
+        {
+        Navman.NavigateTo ("/Login");
+        }
+    public void GotoGroupsStudents ()
+        {
+        Navman.NavigateTo ("/T_Students");
+        }
+    public void GotoCourses ()
+        {
+        Navman.NavigateTo ("/T_Courses");
+        }
+
+}

@@ -1,0 +1,324 @@
+﻿@page "/T_Courses"
+@using ExaminerB.Service
+@rendermode InteractiveServer
+@inject NavigationManager Navman
+@inject AppState appState
+@inject FeService feService
+@inject IJSRuntime JS
+@implements IDisposable
+
+    <div style="text-align: center;">
+        <h1 style="color:steelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h1>
+        <hr style="color:red"/>
+        <h2>Courses</h2>
+    </div>
+@if (!_hasFetched)
+        {
+        <_Loading />
+        }
+    else
+        {
+        <EditForm Model="lstCourses">
+            <div class="accordion" id="accordionCourses">
+                 @foreach (Course crs in lstCourses)
+                    {
+                    var collapseId = $"collapse{crs.CourseId}";
+                    if ((appState.CourseId ?? 0) != crs.CourseId)
+                        {
+                        clps = "collapse";
+                        }
+                    else
+                        {
+                        clps = "collapse show";
+                        }
+                    <div class="accordion-item">
+                        <h4 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#@collapseId"
+                                aria-expanded="false"
+                                aria-controls="@collapseId">
+                                <h4>@crs.CourseName</h4>
+                            </button>
+                        </h4>
+                        <div id="@collapseId" class="accordion-collapse @clps" data-bs-parent="#accordionCourses">
+                            <div class="accordion-body" style="background-color:whitesmoke">
+                                <div id="T1">
+                                    @if ((appState.Cmd == "EditCourse") && ((appState.CourseId) == crs.CourseId))
+                                        {
+                                        <input class="form-inline" @bind=crs.CourseName placeholder="Enter Course Name..." />
+                                        <button class="btn btn-link" name="btnCourseId" @onclick="()=>BtnUpdateCourse(crs)" >
+                                            <img src="/icons/icoSave_cw_1.png" width="30" />
+                                        </button>
+                                        <br />
+                                        <br />
+                                        }
+                                    else
+                                        {
+                                         <div style="text-align: center;">
+                                            <button class="btn btn-link" title="Rename this Course" @onclick="()=>BtnEditCourse(crs.CourseId)">
+                                                <img src="/icons/icoRename_bt_1.png" width="40" />
+                                            </button>
+                                            <button class="btn btn-link" title="Delete this Course!" @onclick="()=>BtnDeleteCourse(crs.CourseId)" >
+                                                <img src="/icons/icoDelete_bt_1.png" width="30" />
+                                            </button>
+                                            <button class="btn btn-link" title="List Exams" @onclick="()=>BtnExams(crs.CourseId)" >
+                                                <img src="/icons/icoFolderExam_bt_1.png" width="32" />
+                                            </button>
+                                            <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTests(crs.CourseId)" >
+                                                <img src="/icons/icoFolderReport_bt_1.png" width="35" />
+                                            </button>
+                                            <button class="btn btn-link" title="List Tests" @onclick="()=>BtnListCourseTests(crs.CourseId, crs.CourseName)" >
+                                                <img src="/icons/icoList_bt_1.png" width="35" />
+                                            </button>
+                                            <br />
+                                        </div>
+                                        <hr style="color:red" />
+                                        <h5>Topics</h5>
+                                        //CourseTopics
+                                        @foreach (CourseTopic ct in crs.CourseTopics)
+                                            {
+                                            <input class="form-inline"  @ref="inputRefs[ct.CourseTopicId]" @bind="ct.CourseTopicTitle" placeholder="Topic name"  style="width:200px" />
+                                            <button class="btn btn-link" @onclick="()=>BtnUpdateCourseTopic (ct)">
+                                                <img src="/icons/icoSave_bt_1.png" width="25" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnDeleteCourseTopic (ct.CourseTopicId)">
+                                                <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnListCourseTopicTests (ct)">
+                                                <img src="/icons/icoList_bt_1.png" width="30" />
+                                            </button>
+                                            <br />
+                                            <br />
+                                            }
+                                        @if ((appState.Cmd == "AddNewCourseTopic") && ((appState.CourseId) == crs.CourseId))
+                                            {
+                                            <input class="form-inline" @ref="txtNewCourseTopicTitle" @bind="courseTopic.CourseTopicTitle" placeholder="New CourseTopic Name..." />
+                                            <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseTopic(crs.CourseId)">
+                                                <img src="/icons/icoSave_cw_1.png" width="30" />
+                                            </button>
+                                            }
+                                        else
+                                            {
+                                            <button class="btn btn-primary btn-sm" @onclick="()=>BtnAddNewCourseTopic(crs.CourseId)">+ New Topic</button>
+                                            }
+                                        }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    }
+             </div>
+            @if (appState.Cmd == "AddNewCourse")
+                {
+                <input class="form-inline" @ref="txtNewCourseName" @bind="course.CourseName" placeholder="New Course Name..." />
+                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewCourse">
+                    <img src="/icons/icoSave_cw_1.png" width="30" />
+                </button>
+                }
+            else
+                {
+                <button class="btn btn-link" @onclick="BtnAddNewCourse">
+                    <img src="/icons/icoCourseAdd_bt_1.png" width="40" />
+                </button>
+                }
+            <hr style="color:red" /> 
+        </EditForm>
+        <div style="text-align:center">
+            <button class="btn btn-link" @onclick= "BtnBack">
+                <img src="/icons/icoBack_bt_1.png" style="width:45px" />
+            </button>
+        </div>
+        }
+<script>
+    window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});
+</script>
+
+@code {
+    private Dictionary<int, ElementReference> inputRefs = new Dictionary<int, ElementReference>();
+    private ElementReference btnCourseId; 
+    private ElementReference txtNewCourseName; 
+    private ElementReference txtNewCourseTopicTitle; 
+    public User user = new User ();
+    public Course course = new Course ();
+    public CourseTopic courseTopic = new CourseTopic ();
+    public List<Course> lstCourses = new ();
+    public List<CourseTopic> lstCourseTopics = new ();
+    public string cmd = "";
+    public string clps = "";
+    public bool _hasFetched = false;
+
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        user.UserId = Convert.ToInt32(appState.UserId);
+        cmd = appState.Cmd ?? "";
+        if( user.UserId >0)
+            {
+            lstCourses = await feService.Read_Courses (user.UserId);
+            _hasFetched = true;
+            //Console.WriteLine("T_Course: OnInitializedAsync: user.UserId= " + user.UserId);
+            }
+        } 
+    private async Task OnAfterRenderAsync(bool firstRender)
+        {
+        if (firstRender && course?.CourseTopics?.Any() == true)
+            {
+            //only runs: Page loaded + Data exists + list Not empty
+            foreach (var ct in course.CourseTopics)
+                {
+                if (!inputRefs.ContainsKey(ct.CourseTopicId))
+                    {
+                    inputRefs[ct.CourseTopicId] = inputRefs.GetValueOrDefault(ct.CourseTopicId);
+                    }
+                }
+            }
+        }
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //Course
+    public void BtnAddNewCourse()
+        {
+        appState.SetCmd ("AddNewCourse");
+        StateHasChanged ();
+        }
+    public async Task BtnSaveNewCourse()
+        {  
+        course.UserId = user.UserId;
+        course.CourseUnits = 2;
+        course.CourseRtl = true;
+        int result = await feService.Create_Course (course);
+        if (result>0)
+            {
+            //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
+            //refresh list then refresh page
+            lstCourses = await feService.Read_Courses (user.UserId);
+            appState.SetCmd ("");
+            StateHasChanged ();
+            }
+        else
+            {
+            await JS.InvokeVoidAsync ("alert", "Course did not created --- !");
+            }
+        }
+    public void BtnEditCourse(int courseId)
+        {
+        appState.SetCmd ("EditCourse");
+        appState.SetCourseId (courseId);
+        StateHasChanged ();
+        }
+    public async Task BtnUpdateCourse(Course course)
+        {
+        bool result = await feService.Update_Course (course);
+        if (result)
+            {
+            //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
+            appState.SetCmd ("");
+            StateHasChanged ();
+            }
+        else
+            {
+            await JS.InvokeVoidAsync ("alert", "Course name did not changed --- process failed");
+            }
+        }
+    public async Task BtnDeleteCourse(int courseId)
+        {
+        if(await JS.InvokeAsync<bool> ("confirm", "Warning :  Several related data may be deleted! \n\nx Tests\nx Exams\nx Student Exams...\n\nContinue?"))
+            {
+            if(await JS.InvokeAsync<bool>("confirm", "Last warning: \n\nAre you sure? Delete?"))
+                {
+                bool result = await feService.Delete_Course (courseId);
+                if (result)
+                    {
+                    await JS.InvokeVoidAsync ("alert", "\nCourse Deleted!");
+                    //refresh list then refresh page
+                    lstCourses = await feService.Read_Courses (user.UserId);
+                    appState.SetCmd ("");
+                    StateHasChanged ();
+                    }
+                else
+                    {
+                await JS.InvokeVoidAsync ("alert", "Course did not Deleted --- process failed");
+                    }
+                }            
+            }
+        }
+    public void BtnExams(int courseId)
+        {
+        appState.SetCourseId (courseId);
+        Navman.NavigateTo ("/T_Exams");
+        }
+    public void BtnReportCourseTests(int courseId)
+        {    
+        appState.SetCmd ("coursetest");
+        appState.SetCourseId (courseId);
+        appState.SetReturnPage ("/T_Courses");
+        Navman.NavigateTo ("/T_ReportTests");
+        }
+    public void BtnListCourseTests(int courseId, string courseName)
+        {
+        appState.SetCmd ("ListCourseTests");
+        appState.SetCourseId (courseId);
+        appState.SetCourseName (courseName);
+        Navman.NavigateTo ("/T_CourseTests");
+        }
+    //CourseTopic
+    public void BtnAddNewCourseTopic(int courseId)
+        {
+        appState.SetCmd ("AddNewCourseTopic");
+        appState.SetCourseId (courseId);
+        StateHasChanged ();
+        }
+    public async Task BtnSaveNewCourseTopic(int courseId)
+        {
+        courseTopic.CourseId = courseId;
+        courseTopic.CourseTopicTitle = courseTopic.CourseTopicTitle;
+        int result = await feService.Create_CourseTopic (courseTopic);
+        if (result>0)
+            {
+            //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
+            //refresh list then refresh page
+            lstCourses = await feService.Read_Courses (user.UserId);
+            appState.SetCmd ("");
+            StateHasChanged ();
+            }
+        else
+            {
+            await JS.InvokeVoidAsync ("alert", "Course name did not changed --- process failed");
+            }        
+        }
+    public async Task BtnUpdateCourseTopic(CourseTopic courseTopic)
+        {
+        bool result = await feService.Update_CourseTopic (courseTopic);
+        if (result)
+            {
+            await JS.InvokeVoidAsync("setFocus", inputRefs[courseTopic.CourseTopicId]);
+            StateHasChanged ();
+            }
+        }
+    public async Task BtnDeleteCourseTopic(int courseTopicId)
+        {
+        await JS.InvokeVoidAsync ("alert", "Topics can not be Deleted \n\n-- This feature is not available at this time.");
+        }
+    public void BtnListCourseTopicTests(CourseTopic courseTopic)
+        {
+        appState.SetCmd ("ListCourseTopicTests");
+        appState.SetCourseId (courseTopic.CourseId);
+        appState.SetCourseTopicId (courseTopic.CourseTopicId);
+        Navman.NavigateTo ("/T_CourseTests");
+        }
+    //Back
+    public void BtnBack()
+        {
+        appState.SetCmd ("");
+        Navman.NavigateTo ("/T_SwitchBoard");
+        }
+}

@@ -1,0 +1,274 @@
+﻿@page "/T_CourseTests"
+@using ClosedXML.Excel
+@using ExaminerB.Service
+@using Microsoft.Extensions.Hosting
+@using ClosedXML
+@using Microsoft.VisualBasic
+@rendermode InteractiveServer
+@inject FeService feService
+@inject NavigationManager Navman
+@inject AppState appState
+@implements IDisposable
+
+@if (!_hasFetched)
+        {
+    <_ScanSheets />
+    }
+else
+    {
+    @if (appState.Message != "")
+        {
+        <div style="text-align: center;">
+            <h6 style="color:indianred">@appState.Message</h6>
+        </div>
+        }
+    <EditForm Model="lstCourseTests">
+        @if (appState.Cmd == "importexcelfile")
+            {
+            <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnBack">
+                <img src="/icons/icoBack_bt_1.png" width="30" />
+            </button>
+            <img src="/icons/icoExcel_gw_1.jpg" width="30" style="margin-right:10px;" />
+            <InputFile OnChange="HandleFileSelected" />
+            }
+        else
+            {
+            <button class="btn btn-link" @onclick="()=>BtnAddNewTest()">
+                <img src="/icons/icoAddItem_gt_1.png" width="30" />
+            </button>
+            <button class="btn btn-link" @onclick="BtnImportFromExcelFile">
+                <img src="/icons/icoExcel_gw_1.jpg" width="35" />
+            </button>
+            <button class="btn btn-link" @onclick="BtnBack">
+                <img src="/icons/icoBack_bt_1.png" width="35" />
+            </button>
+            <p></p>
+            <hr style="border-color:red" />
+            <h3>@course.CourseName</h3>
+            @* SEARCH *@
+            <input type="text" @ref="txtSearch" @bind ="strSearch"  placeholder="Search tests..." style="width:50%" />
+            <button class="btn btn-link" @onclick="()=>BtnReadTestsBySearch()">
+                <img src="/icons/icoSearch_bt_1.png" width="25" />
+            </button>
+            @* Paginate *@
+            <input type="number" @ref="txtPageNumber" @bind="intPageNumber" min="1" placeholder="1" style="width: 50px; display: inline-block;" />
+            <button class="btn btn-link" @onclick="()=>BtnReadAllTests(course.CourseId)">
+                <img src="/icons/icoList_bt_1.png" width="25" />
+            </button>
+            @* List of tests *@
+            <hr style="border-color:red" />
+            i = (intPageNumber - 1) * 20; //important: see pageSize in BackendService
+            @foreach (Test test in lstCourseTests)
+                {
+                i++;
+                int localId = test.TestId;
+                @if ((test.TestTags & 1) == 1)
+                    {
+                    <p style="text-align:right;" dir="rtl">- @test.TestTitle</p>
+                    <button class="btn btn-link" @onclick="()=>BtnEditCourseTest(localId)" style="text-align:right;" dir="rtl">
+                        <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
+                    </button>
+                    }
+                else
+                    {
+                    <p style="text-align:left;">- @test.TestTitle</p>
+                    <button class="btn btn-link" @onclick="()=>BtnEditCourseTest(localId)" style="text-align:right;" dir="rtl">
+                        <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
+                    </button>
+                    }
+                <hr style="border-color:red" />
+                }
+            <div style="text-align: center;">
+                <button class="btn btn-link" @onclick="BtnBack">
+                    <img src="/icons/icoBack_bt_1.png" width="40" />
+                </button>
+            </div>
+        <div id="loadingOverlay" class="d-none">
+            <div class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 z-3 d-flex justify-content-center align-items-center">
+                <div class="text-center bg-white p-4 rounded shadow">
+                    <div class="spinner-border text-primary mb-3" role="status"></div>
+                    <p class="mb-0 fw-semibold">Please wait, processing...</p>
+                </div>
+            </div>
+        </div>
+            }
+    </EditForm>
+    
+    }
+<script>
+    function showLoading() {
+        document.getElementById("loadingOverlay").style.display = "block";
+        document.querySelectorAll("button").forEach(btn => btn.disabled = true);
+    }
+</script>
+<script>
+    document.getElementById("txtSearch").focus();
+</script>
+<script>
+    window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});
+</script>
+
+@code {
+    Course course = new Course ();
+    Test test = new Test ();
+    List<Test> lstCourseTests = new List<Test>();
+    public bool _hasFetched = false;
+    private ElementReference txtSearch;
+    private ElementReference txtPageNumber;
+    public string strExcelFile = "";
+    public string strSearch = "";
+    public int intPageNumber = 1;
+    public int i = 0;
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        switch (appState.Cmd)
+            {
+            case "ListCourseTests":
+                    {
+                    lstCourseTests = await feService.Read_TestsByCourseId (Convert.ToInt32(appState.CourseId), intPageNumber, false);
+                    break;
+                    }
+            case "ListCourseTopicTests":
+                    {
+                    lstCourseTests = await feService.Read_TestsByCourseTopicId (Convert.ToInt32(appState.CourseTopicId), false);
+                    break;
+                    }
+            }
+        course.CourseId = Convert.ToInt32(appState.CourseId);
+        _hasFetched = true;
+        } 
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //btns
+    public void BtnBack()
+        {
+        Navman.NavigateTo ("/T_Courses");
+        }
+    public void BtnImportFromExcelFile()
+        {
+        appState.SetCmd ("importexcelfile");
+        }
+    public void BtnAddNewTest()
+        {
+        appState.SetCmd ("AddNewTest");
+        Navman.NavigateTo ("/T_CourseTest");
+        }
+    public async Task BtnReadTestsBySearch()
+        {
+        int courseId = Convert.ToInt32(appState.CourseId);
+        string courseName = appState.CourseName;
+        lstCourseTests = await feService.Read_TestsBySearch (strSearch, courseId, false);
+        StateHasChanged ();
+        }
+    public async Task BtnReadAllTests(int courseId)
+        {
+        _hasFetched = false;
+        StateHasChanged ();
+        lstCourseTests = await feService.Read_TestsByCourseId (Convert.ToInt32(appState.CourseId), intPageNumber, false);
+        _hasFetched = true;
+        StateHasChanged ();
+        }
+    public void BtnEditCourseTest(int testId)
+        {
+        appState.SetTestId (testId);
+        appState.SetReturnPage ("/T_CourseTests");
+        Navman.NavigateTo ("/T_CourseTest");
+        }
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+        {
+        // ------ method 1: Save excel file to server folder
+        //var file = e.File;
+        // var path = Path.Combine("wwwroot", "documents", file.Name);
+        // await using var fs = new FileStream(path, FileMode.Create);
+        // await file.OpenReadStream().CopyToAsync(fs);
+        // ------ mothod 2: Parse directly in memory
+        _hasFetched = false;
+        var file = e.File;
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
+        await ParseExcelAsync(memoryStream);
+        }
+    private async Task ParseExcelAsync(Stream stream)
+        {
+        try
+            {
+            List<CourseTopic> lstCourseTopics = await feService.Read_CourseTopics (course.CourseId);
+            using var workbook = new XLWorkbook(stream);
+            var worksheet = workbook.Worksheet(1); //1:first sheet
+            //ExcelColumns: {1:Test, 2:TestRTL, 3:OptRTL, 4:nOpts, 5-9:Opt1-5Texts, 10:Ans, 11:ForceLast, 12:TestLevel, 13:TestTopic}
+            foreach (var row in worksheet.RowsUsed().Skip(1)) //skip header
+                {
+                Test test = new Test ();
+                test.CourseId = course.CourseId;
+                test.TopicId = 0;
+                test.TestTitle = row.Cell (1).GetString ();
+                test.TestType = row.Cell (4).GetValue<int> ();
+                test.TestType = (test.TestType > 5) ? 5 : test.TestType;
+                test.TestLevel = row.Cell (12).GetValue<int> ();
+                test.TestTags = 0;
+                if (row.Cell(2).GetString().ToLower() == "y") test.TestTags += 1;
+                if (row.Cell(3).GetString().ToLower() == "y") test.TestTags += 2;
+                test.TestOptions = new List<TestOption> ();
+                //Topic handling
+                string ctt = row.Cell(13).GetString().Trim();
+                ctt = ctt.Length > 30 ? ctt[..30] : ctt;
+
+                var existingTopic = lstCourseTopics.FirstOrDefault(t => string.Equals(t.CourseTopicTitle, ctt, StringComparison.OrdinalIgnoreCase));
+                if (existingTopic != null)
+                    {
+                    test.TopicId = existingTopic.CourseTopicId;
+                    }
+                else
+                    {
+                    CourseTopic newCourseTopic = new CourseTopic { CourseId= course.CourseId, CourseTopicTitle = ctt };
+                    test.TopicId = await feService.Create_CourseTopic(newCourseTopic);
+                    newCourseTopic.CourseTopicId = test.TopicId;
+                    lstCourseTopics.Add (newCourseTopic);
+                    }
+                //Create New Test
+                test.TestId = await feService.Create_Test(test);
+                Console.WriteLine($"Row={row.RowNumber()} CourseId={test.CourseId} , TopicId={test.TopicId}");
+                //Options
+                for (int col = 5; col <= test.TestType + 4; col++)
+                    {
+                    var strOpt = row.Cell(col).GetString();
+                    test.TestOptions?.Add (new TestOption { TestOptionTitle = strOpt, TestId = test.TestId });
+                    }
+                //Answer
+                int answ = row.Cell(10).GetValue<int>();
+                if (answ > 0 && answ <= test.TestOptions?.Count)
+                    test.TestOptions[answ - 1].TestOptionTags = 2; //2:IsAns
+                //ForceLast
+                int forceLast = row.Cell(11).GetValue<int>();
+                if (forceLast > 0 && forceLast <= test.TestOptions?.Count)
+                    test.TestOptions[forceLast - 1].TestOptionTags += 1; //1:ForceLast
+                //Create options
+                foreach (TestOption opt in test.TestOptions.Take(test.TestType))
+                    {
+                    int OptId = await feService.Create_TestOption(opt);
+                    if (OptId <= 0)
+                        {
+                        Console.WriteLine($"Option not added: {opt.TestOptionTitle}");
+                        }
+                    }
+                }
+            }
+        catch (Exception ex)
+            {
+            Console.WriteLine($"Error in [ImportExcel]: {ex}");
+            }
+        _hasFetched = true;
+        appState.SetCmd ("");
+        }
+    
+
+}
