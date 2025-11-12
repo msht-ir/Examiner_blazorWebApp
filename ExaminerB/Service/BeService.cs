@@ -1314,7 +1314,12 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Delete_ExamAsync (int examId)
             {
-            string sql = "DELETE FROM Exams WHERE ExamId=@examid";
+            string sql = @"DELETE FROM Exams WHERE ExamId=@examid;
+                           DELETE FROM ExamCompositions WHERE ExamId=@examid; 
+                           DELETE FROM ExamTests WHERE ExamId=@examid; 
+                           DELETE FROM StudentExamTests WHERE StudentExamId IN (SELECT StudentExamId FROM StudentExams WHERE ExamId=@examid); 
+                           DELETE FROM StudentExams WHERE ExamId=@examid; 
+                          ";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);

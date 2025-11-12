@@ -48,7 +48,7 @@
                                 <button style="border:none" class="btn btn-link" @onclick="BtnReportExamTests">
                                     <img src="/icons/icoReport_bt_1.png" width="25" />
                                 </button>
-                                <button style="border:none" class="btn btn-link" @onclick="BtnDeleteExam" >
+                                <button style="border:none" class="btn btn-link" @onclick="()=>BtnDeleteExam(exam.ExamId)" >
                                     <img src="/icons/icoDelete_bt_1.png" width="25" />
                                 </button>
                                 <br />
@@ -110,7 +110,7 @@
                     {
                     <span style="font-weight:bold">New Exam:</span>
                     <br />
-                    <input class="form-inline" name="txtNewExamTitle" placeholder="Exam name" style="width:70%" />
+                    <input class="form-inline" @bind="txtNewExamTitle" placeholder="Exam name" style="width:70%" />
                     <button class="btn btn-link" @onclick="BtnCreateExam" >
                         <img src="/icons/icoSave_cw_1.png" width="25" />
                     </button>
@@ -136,7 +136,7 @@
     Course course = new Course ();
     List<Exam> lstCourseExams = new ();
     List<User> lstStudents = new ();
-
+    public string txtNewExamTitle = "";
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
@@ -154,16 +154,27 @@
         {
         appState.OnChange -= TriggerRender;
         }
-    public async Task BtnDeleteExam ()
+    //AddNew Exam
+    public void BtnAddNewExam ()
         {
-        if (await JS.InvokeAsync<bool>("confirm","Delete Exam?"))
+        appState.SetCmd ("AddNewExam");
+        StateHasChanged ();
+        }
+    public async Task BtnCreateExam ()
+        {
+        Exam newExam = new Exam () { CourseId = course.CourseId, ExamTitle = txtNewExamTitle, ExamDateTime=DateTime.Now.ToString("yyyy-MM-dd . HH:mm"), ExamDuration=10 };
+        int result = await feService.Create_Exam (newExam);
+        if (result > 0)
             {
+            appState.SetCmd ("");
+            lstCourseExams = await feService.Read_Exams (course.CourseId);
+            StateHasChanged ();
             }
         }
     //btns
     public void BtnEditExam (Exam exam)
         {
-        Navman.NavigateTo ("/T_Exam");
+        Navman.NavigateTo ($"/T_Exam/{exam.ExamId}");
         }
     public void BtnAddStudentExam ()
         {
@@ -177,16 +188,20 @@
     public void BtnReportExamTests ()
         {
         }
+    public async Task BtnDeleteExam (int examId)
+        {
+        if (await JS.InvokeAsync<bool>("confirm","Delete Exam?"))
+            {
+            bool result = await feService.Delete_Exam (examId);
+            if (result)
+                {
+                appState.SetCmd ("");
+                lstCourseExams = await feService.Read_Exams(course.CourseId);
+                StateHasChanged ();
+                }
+            }
+        }
     
-    //New Exam
-    public void BtnAddNewExam ()
-        {
-        appState.SetCmd ("AddNewExam");
-        StateHasChanged ();
-        }
-    public void BtnCreateExam ()
-        {
-        }
     //Exit
     public void BtnBack ()
         {
