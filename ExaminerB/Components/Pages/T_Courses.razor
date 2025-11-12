@@ -62,7 +62,7 @@
                                             <button class="btn btn-link" title="Delete this Course!" @onclick="()=>BtnDeleteCourse(crs.CourseId)" >
                                                 <img src="/icons/icoDelete_bt_1.png" width="30" />
                                             </button>
-                                            <button class="btn btn-link" title="List Exams" @onclick="()=>BtnExams(crs.CourseId)" >
+                                            <button class="btn btn-link" title="List Exams" @onclick="()=>BtnExams(crs)" >
                                                 <img src="/icons/icoFolderExam_bt_1.png" width="32" />
                                             </button>
                                             <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTests(crs.CourseId)" >
@@ -251,9 +251,10 @@
                 }            
             }
         }
-    public void BtnExams(int courseId)
+    public void BtnExams(Course course)
         {
-        appState.SetCourseId (courseId);
+        appState.SetCourseId (course.CourseId);
+        appState.SetCourseName (course.CourseName);
         Navman.NavigateTo ("/T_Exams");
         }
     public void BtnReportCourseTests(int courseId)

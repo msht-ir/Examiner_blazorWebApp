@@ -183,8 +183,8 @@ else
                 case "student":
                         {
                         User student = await feService.Read_Student (id, true, true);
-                        student.StudentExams = await feService.Read_StudentExams (id);
-                        student.StudentCourses = await feService.Read_StudentCourses (id);
+                        // student.StudentExams = await feService.Read_StudentExams (id);
+                        // student.StudentCourses = await feService.Read_StudentCourses (id);
                         lstStudents.Add (student);
                         break;
                         }

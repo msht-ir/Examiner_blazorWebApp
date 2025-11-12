@@ -1,8 +1,11 @@
 ﻿@page "/T_Exam"
+@using ExaminerB.Service
+@using Microsoft.VisualBasic
+@inject FeService feService
 @rendermode InteractiveServer
-@inject NavigationManager Navman;
-@inject AppState appState;
-@inject JSRuntime JS
+@inject NavigationManager Navman
+@inject AppState appState
+@inject IJSRuntime JS
 @implements IDisposable
 
 <div>
@@ -280,7 +283,8 @@
     protected override void OnInitialized()
         {
         appState.OnChange += TriggerRender;
-        } 
+        appState.SetCmd ("");
+        }
     private void TriggerRender()
         {
         InvokeAsync(StateHasChanged);
@@ -321,10 +325,12 @@
         {
         if(await JS.InvokeAsync<bool>("conform","All instances of this Test will be Deleted.\n\n\nDelete?"))
             {
-            
+
             }
         }
     public void BtnBack()
-        {       
+        {
+        appState.SetCmd ("");
+        Navman.NavigateTo ("/T_Exams");
         }
 }

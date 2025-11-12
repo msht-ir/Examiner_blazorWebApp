@@ -2288,7 +2288,9 @@ namespace ExaminerB.Services2Backend
         public async Task<List<StudentCourse>> Read_StudentCoursesAsync (int studentid)
             {
             List<StudentCourse> lstStudentCourses = new List<StudentCourse> ();
-            string sql = "SELECT sc.StudentCourseId, sc.StudentId, sc.CourseId, c.CourseName, sc.NumberOfTests, sc.CorrectAnswers FROM StudentCourses sc INNER JOIN Courses c ON sc.CourseId=c.CourseId WHERE StudentId=@studentid";
+            string sql = @"SELECT sc.StudentCourseId, sc.StudentId, sc.CourseId, c.CourseName, sc.NumberOfTests, sc.CorrectAnswers 
+                        FROM StudentCourses sc INNER JOIN Courses c ON sc.CourseId=c.CourseId 
+                        WHERE StudentId=@studentid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
