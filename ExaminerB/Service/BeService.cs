@@ -1542,7 +1542,6 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<List<Group>> Read_GroupsAsync (User user, bool getStudentExams, bool getStudentCourses)
             {
-            //ModelState.Clear (); // disables auto validation
             List<Group> lstGroups = new List<Group> ();
             string sql = "SELECT g.GroupId, g.GroupName, g.UserId FROM Groups g WHERE g.UserId=@userid ORDER BY g.GroupName";
             string? connString = _config.GetConnectionString ("cnni");
@@ -1650,19 +1649,38 @@ namespace ExaminerB.Services2Backend
             }
         #endregion
         #region C11:StudentExams
-        public async Task<int> Create_StudentExamAsync (StudentExam studentExam)
+        public async Task<int> Create_StudentExamAsync (int examId, int studentId)
             {
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             string sql = "INSERT INTO StudentExams (StudentId, ExamId, StartDateTime, FinishDateTime, StudentExamTags, StudentExamPoint) VALUES (@studentid, @examid, @startdatetime, @finishdatetime, @studentexamtags, @studentexampoint); SELECT CAST (scope_identity() AS int)";
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@studentid", studentExam.StudentId);
-            cmd.Parameters.AddWithValue ("@examid", studentExam.ExamId);
-            cmd.Parameters.AddWithValue ("@startdatetime", studentExam.StartDateTime);
-            cmd.Parameters.AddWithValue ("@finishdatetime", studentExam.FinishDateTime);
-            cmd.Parameters.AddWithValue ("@studentexamtags", studentExam.ExamTags);
-            cmd.Parameters.AddWithValue ("@studentexampoint", studentExam.StudentExamPoint);
+            cmd.Parameters.AddWithValue ("@studentid", studentId);
+            cmd.Parameters.AddWithValue ("@examid", examId);
+            cmd.Parameters.AddWithValue ("@startdatetime", "");
+            cmd.Parameters.AddWithValue ("@finishdatetime", "");
+            cmd.Parameters.AddWithValue ("@studentexamtags", 0);
+            cmd.Parameters.AddWithValue ("@studentexampoint", 0);
+            int i = (int) await cmd.ExecuteScalarAsync ();
+            return i;
+            }
+        public async Task<int> Create_StudentExamsAsync (int examId, int groupId)
+            {
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            string sql = @"INSERT INTO StudentExams (StudentId, ExamId, StartDateTime, FinishDateTime, StudentExamTags, StudentExamPoint) 
+                            SELECT s.StudentId, @examid, @startdatetime, @finishdatetime, @studentexamtags, @studentexampoint 
+                            From Students s WHERE s.GroupId=@groupid;
+                            SELECT CAST (scope_identity() AS int)";
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@examid", examId);
+            cmd.Parameters.AddWithValue ("@startdatetime", "");
+            cmd.Parameters.AddWithValue ("@finishdatetime", "");
+            cmd.Parameters.AddWithValue ("@studentexamtags", 0);
+            cmd.Parameters.AddWithValue ("@studentexampoint", 0);
+            cmd.Parameters.AddWithValue ("@groupid", groupId);
             int i = (int) await cmd.ExecuteScalarAsync ();
             return i;
             }

@@ -168,25 +168,36 @@ else
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
-            int id = Convert.ToInt32 (Id);        
-            switch (mode)
-                {
-                case "students":
-                        {
-                        var result = await feService.Read_Group (id, true, true);
-                        lstStudents = result.Students;
-                        break;
-                        }
-                case "student":
-                        {
-                        User student = await feService.Read_Student (id, true, true);
-                        // student.StudentExams = await feService.Read_StudentExams (id);
-                        // student.StudentCourses = await feService.Read_StudentCourses (id);
-                        lstStudents.Add (student);
-                        break;
-                        }
+        int id = Convert.ToInt32 (Id);        
+        switch (mode)
+            {
+            case "groupStudents":
+                    {
+                    appState.SetReturnPage ($"/T_Students");
+                    var result = await feService.Read_Group (id, true, true);
+                    lstStudents = result.Students;
+                    break;
+                    }
+            case "oneStudent":
+                    {
+                    appState.SetReturnPage ($"/T_Students");
+                    User student = await feService.Read_Student (id, true, true);
+                    lstStudents.Add (student);
+                    break;
+                    }
+            case "examStudents":
+                    {
+                    appState.SetReturnPage ($"/T_Exams");
+                    lstStudents = await feService.Read_StudentsByExamId (id, true, true);
+                    break;
+                    }
+            case "courseStudents":
+                    {
+                    appState.SetReturnPage ($"/T_Courses");
+                    lstStudents = await feService.Read_StudentsByCourseId (id, true, true);
+                    break;
+                    }
                 }
-            appState.SetReturnPage ($"/T_ReportStudents/{mode}/{Id}");            
         _hasFetched = true;
         } 
     private void TriggerRender()
@@ -317,6 +328,7 @@ else
         }
     public void BtnBack()
         {
-        Navman.NavigateTo ("/T_Students");
+        //Navman.NavigateTo ("/T_Students");
+        Navman.NavigateTo (appState.ReturnPage?? "/Login");
         }
 }

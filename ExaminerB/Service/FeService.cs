@@ -526,10 +526,9 @@ namespace ExaminerB.Service
                 return false;
                 }
             }
-        public async Task<List<Group>> Read_Groups (User user)
+        public async Task<List<Group>> Read_Groups (User user, bool getStudentExams, bool getStudentCourses)
             {
-            string url = "api/Read_Groups";
-            var response = await _http.PostAsJsonAsync (url, user);
+            var response = await _http.PostAsJsonAsync ($"api/Read_Groups?getStudentExams={getStudentExams}&getStudentCourses={getStudentCourses}", user);
             if (response.IsSuccessStatusCode)
                 {
                 List<Group>? groups = await response.Content.ReadFromJsonAsync<List<Group>> ();
@@ -580,9 +579,14 @@ namespace ExaminerB.Service
             }
         #endregion
         #region C11:StudentExams
-        public async Task<int> Create_StudentExam (StudentExam studentExam)
+        public async Task<int> Create_StudentExam (int studentId, int examId)
             {
-            var response = await _http.PostAsJsonAsync ("api/Create_StudentExam", studentExam);
+            var response = await _http.PostAsJsonAsync ($"api/Create_StudentExam?studentId={studentId}", examId);
+            return response.IsSuccessStatusCode ? 1 : 0;
+            }
+        public async Task<int> Create_StudentExams (int groupId, int examId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Create_StudentExams?groupId={groupId}", examId);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
         public async Task<List<StudentExam>> Read_StudentExams (int studentId)

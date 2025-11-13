@@ -365,13 +365,13 @@ namespace ExaminerB.Backend
         [HttpPost ("Read_ExamTests")]
         public async Task<ActionResult<List<ExamTest>>> Read_ExamTests ([FromBody] int examId)
             {
-            var result = await _BeService.Read_ExamCompositionsAsync (examId);
+            var result = await _BeService.Read_ExamTestsAsync (examId);
             return Ok (result);
             }
-        [HttpPost ("Read_ExamTEst")]
+        [HttpPost ("Read_ExamTest")]
         public async Task<ActionResult<ExamTest>> Read_ExamTest ([FromBody] int examTestId)
             {
-            var result = await _BeService.Read_ExamCompositionAsync (examTestId);
+            var result = await _BeService.Read_ExamTestAsync (examTestId);
             return Ok (result);
             }
         [HttpPost ("Update_ExamTest")]
@@ -433,9 +433,15 @@ namespace ExaminerB.Backend
         #endregion
         #region C11:StudentExams
         [HttpPost ("Create_StudentExam")]
-        public async Task<ActionResult<int>> Create_StudentExam ([FromBody] StudentExam studentExam)
+        public async Task<ActionResult<int>> Create_StudentExam ([FromBody] int examId, [FromQuery] int studentId)
             {
-            var result = await _BeService.Create_StudentExamAsync (studentExam);
+            var result = await _BeService.Create_StudentExamAsync (examId, studentId);
+            return Ok (result);
+            }
+        [HttpPost ("Create_StudentExams")]
+        public async Task<ActionResult<int>> Create_StudentExams ([FromBody] int examId, [FromQuery] int groupId)
+            {
+            var result = await _BeService.Create_StudentExamsAsync (examId, groupId);
             return Ok (result);
             }
         [HttpPost ("Read_StudentExams")]

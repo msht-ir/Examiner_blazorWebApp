@@ -308,7 +308,7 @@ else
         if (user.UserId > 0)
             {
             //on second rener, user.UserId will get its value
-            lstGroups = await feService.Read_Groups (user); 
+            lstGroups = await feService.Read_Groups (user, false, false); 
             lstCourses = await feService.Read_Courses (user.UserId); 
             _hasFetched = true;
             }
@@ -353,7 +353,7 @@ else
                 UserRole = appState.UserRole,
                 GroupId = Convert.ToInt32(appState.GroupId)
             };
-            lstGroups = await feService.Read_Groups(user);
+            lstGroups = await feService.Read_Groups (user, false, false);
             group.GroupName = ""; //reset input text
             StateHasChanged ();            
             }
@@ -381,7 +381,7 @@ else
                 UserRole = appState.UserRole,
                 GroupId = Convert.ToInt32(appState.GroupId)
             };
-            lstGroups = await feService.Read_Groups(user);
+            lstGroups = await feService.Read_Groups(user, false, false);
             group.GroupName = ""; //reset input text
             StateHasChanged ();            
             }
@@ -404,7 +404,7 @@ else
                     UserRole = appState.UserRole,
                     GroupId = Convert.ToInt32(appState.GroupId)
                 };
-                lstGroups = await feService.Read_Groups(user);
+                lstGroups = await feService.Read_Groups(user, false, false);
                 //group.GroupName = ""; //reset input text
                 StateHasChanged ();            
                 }
@@ -443,7 +443,7 @@ else
                 UserRole = appState.UserRole,
                 GroupId = Convert.ToInt32(appState.GroupId)
             };
-            lstGroups = await feService.Read_Groups(user);
+            lstGroups = await feService.Read_Groups(user, false, false);
             group.GroupName = ""; //reset input text
             StateHasChanged ();
             }
@@ -493,7 +493,7 @@ else
         }
     public void BtnReportStudentsExamsAndCourses(int groupId)
         {      
-        string mode = "students";
+        string mode = "groupStudents";
         Navman.NavigateTo ($"/T_ReportStudents/{mode}/{groupId}");
         }
     //students
@@ -519,7 +519,7 @@ else
                 UserRole = appState.UserRole,
                 GroupId = Convert.ToInt32(appState.GroupId)
             };
-            lstGroups = await feService.Read_Groups(user);
+            lstGroups = await feService.Read_Groups(user, false, false);
             appState.SetCmd ("");
             StateHasChanged ();
             }
@@ -543,14 +543,13 @@ else
                 UserRole = appState.UserRole,
                 GroupId = Convert.ToInt32(appState.GroupId)
             };
-            lstGroups = await feService.Read_Groups(user);
+            lstGroups = await feService.Read_Groups(user, false, false);
             group.GroupName = ""; //reset input text
             StateHasChanged ();            
             }
         }
     private async Task BtnDeleteStudent(int studentId)
         {
-        Console.WriteLine($"page: ---------------------- studentId = {studentId}");
         if (await JS.InvokeAsync<bool>("confirm", "\n\nDelete Sudent?"))
             {
             bool result = await feService.Delete_Student (studentId);
@@ -567,7 +566,7 @@ else
                 UserRole = appState.UserRole,
                 GroupId = Convert.ToInt32(appState.GroupId)
             };
-                lstGroups = await feService.Read_Groups(user);
+                lstGroups = await feService.Read_Groups(user, false, false);
                 group.GroupName = ""; //reset input text
                 StateHasChanged ();            
                 }
@@ -579,7 +578,7 @@ else
         }
     public void BtnReportStudentExamsAndCourses(int userId)
         {
-        string mode = "student";
+        string mode = "oneStudent";
         Navman.NavigateTo ($"/T_ReportStudents/{mode}/{userId}");
         }
     //student course

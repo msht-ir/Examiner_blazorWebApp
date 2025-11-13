@@ -157,6 +157,42 @@ else
                         }
                     break;
                     }
+            case"examtests":
+            case"examtestsraw":
+                    {
+                    List<Test> lstExamTests = await feService.Read_TestsByExamId (Convert.ToInt32 (appState.ExamId), true);
+                    foreach(Test tst in lstExamTests)
+                        {
+                        lstxTests.Add (new StudentExamTest()
+                            {
+                            StudentExamId = tst.CourseId,
+                            TestId = tst.TestId,
+                            StudentExamTestKey = 0,
+                            StudentExamTestAns = 0,
+                            TestIndex = 0,
+                            TestTitle = tst.TestTitle,
+                            TestType = tst.TestType,
+                            CourseTopicId = tst.TopicId,
+                            CourseTopicTitle = "",
+                            TestTags = tst.TestTags,
+                            TestLevel = tst.TestLevel,
+                            TestOptions = tst.TestOptions
+                            }
+                        );}
+                    //find and set key
+                    foreach(StudentExamTest t in lstxTests)
+                        {
+                        foreach(TestOption opt in t.TestOptions)
+                            {
+                            if (opt.TestOptionTags >= 2)
+                                {
+                                t.StudentExamTestKey = opt.TestOptionId;
+                                break;
+                                }
+                            }
+                        }
+                    break;
+                    }
             case"studentexam":
             case"studentexamraw":
                     {
