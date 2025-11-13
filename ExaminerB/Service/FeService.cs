@@ -32,7 +32,19 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Create_Teacher", user);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<List<User>> Read_Teachers () { return new List<User> (); }
+        public async Task<List<User>> Read_Teachers () 
+            {
+            var response = await _http.PostAsync ("api/Read_Teachers", null);
+            if (response.IsSuccessStatusCode)
+                {
+                List<User> lstTeachers = await response.Content.ReadFromJsonAsync<List<User>> ();
+                return lstTeachers;
+                }
+            else
+                {
+                return new List<User> ();
+                }
+            }
         public async Task<bool> Update_UserPassword (User user)
             {
             if (user.UserRole.ToLower () == "student")

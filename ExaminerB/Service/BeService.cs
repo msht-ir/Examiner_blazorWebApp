@@ -59,7 +59,7 @@ namespace ExaminerB.Services2Backend
         public async Task<User?> LoginStudentAsync (User user)
             {
             string? connString = _config.GetConnectionString ("cnni");
-            string sql = "SELECT StudentId, GroupId, StudentName, StudentPass, StudentTags FROM Students WHERE StudentName=@studentname AND StudentPass=@studentpass AND (StudentTags & 1) = 1";
+            string sql = "SELECT StudentId, GroupId, StudentName, StudentPass, StudentTags FROM Students WHERE StudentName=@studentname AND StudentPass=@studentpass AND GroupId=@groupid AND (StudentTags & 1) = 1";
             using SqlConnection cnn = new (connString);
             User userOut = new ();
             try
@@ -68,6 +68,7 @@ namespace ExaminerB.Services2Backend
                 using SqlCommand cmd = new (sql, cnn);
                 cmd.Parameters.AddWithValue ("@studentname", user.UserName);
                 cmd.Parameters.AddWithValue ("@studentpass", user.UserPass);
+                cmd.Parameters.AddWithValue ("@groupid", user.GroupId);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
@@ -124,7 +125,7 @@ namespace ExaminerB.Services2Backend
             var users = new List<User> ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
-            using SqlCommand cmd = new ("SELECT ID, UsrName, UsrPass, UsrActive FROM usrs", cnn);
+            using SqlCommand cmd = new ("SELECT ID, UsrName, UsrPass, UsrActive, UsrNickname FROM usrs", cnn);
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             while (await reader.ReadAsync ())
@@ -134,7 +135,8 @@ namespace ExaminerB.Services2Backend
                     UserId = reader.GetInt32 (0),
                     UserName = reader.GetString (1),
                     UserPass = reader.GetString (2),
-                    UserTags = Convert.ToInt32 (reader.GetBoolean (3))
+                    UserTags = Convert.ToInt32 (reader.GetBoolean (3)),
+                    UserNickname = reader.GetString (4)
                     });
                 }
             return users;
@@ -1560,7 +1562,7 @@ namespace ExaminerB.Services2Backend
                             GroupId = reader.GetInt32 (0),
                             GroupName = reader.GetString (1),
                             UserId = reader.GetInt32 (2),
-                            Students = new List<User> ()
+                            Students = new List<User> ()                            
                             };
                         group.Students = await Read_StudentsByGroupIdAsync (group.GroupId, getStudentExams, getStudentCourses);
                         lstGroups.Add (group);

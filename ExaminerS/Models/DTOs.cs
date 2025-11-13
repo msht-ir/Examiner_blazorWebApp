@@ -14,8 +14,10 @@ namespace ExaminerS.Models
         public string UserRole { get; set; } = "";
         public int UserTags { get; set; } = 0;  //1:IsActive 2:CanChangePass 4:CanReviewExam 8:CanGetStudentExamTests 16:CanCorrectStudentExamTests 32:CanReviewStudentExamTests
         public int GroupId { get; set; } = 0;
+        public string UserNickname { get; set; } = "";
         public List<StudentExam> StudentExams { get; set; } = new List<StudentExam> ();
         public List<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse> ();
+        public List<Message> Messages { get; set; } = new List<Message> ();
         }
     //02
     public class Course
@@ -170,4 +172,16 @@ namespace ExaminerS.Models
         public int TestLevel { get; set; } = 0; //[1-5]
         public List<TestOption>? TestOptions { get; set; } = new List<TestOption> ();
         }
+    //15
+    public class Message
+        {
+        public int MessageId { get; set; } = 0;
+        public int FromId { get; set; } = 0;
+        public int ToId { get; set; } = 0;
+        public string DateTimeSent { get; set; } = "";
+        public string DateTimeRead { get; set; } = "";
+        public string MessageText { get; set; } = "";
+        public int MessageTags { get; set; } = 0;
+        }
+
     }
