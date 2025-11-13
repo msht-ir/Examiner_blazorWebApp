@@ -105,7 +105,7 @@
     public async Task BtnLogin ()
         {
         //via 'OnValidSubmic of EditForm'
-        if (GroupId == 0)
+        if ((user.UserRole == "student") & (GroupId == 0))
             {
             await JS.InvokeVoidAsync ("alert", "Select your Class (group)!");
             return;
