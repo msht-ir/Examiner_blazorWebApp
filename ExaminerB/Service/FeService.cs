@@ -519,9 +519,9 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Delete_Exam", examId);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<bool> Delete_ExamTest (int examTestId)
+        public async Task<bool> Delete_ExamTest (ExamTest examTest)
             {
-            var response = await _http.PostAsJsonAsync ("api/Delete_ExamTest", examTestId);
+            var response = await _http.PostAsJsonAsync ("api/Delete_ExamTest", examTest);
             return response.IsSuccessStatusCode ? true : false;
             }
         #endregion

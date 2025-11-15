@@ -32,14 +32,14 @@
                         {
                         <tr style="align-content:center; border:none">
                             <td style="color:indianred; font-weight:bold;">
-                                <button style="border:none" class="btn btn-link" @onclick="()=>BtnEditExam(exam)" >
-                                    <img src="/icons/icoRename_bt_1.png" width="28" />
-                                </button>
                                 @exam.ExamTitle <br />
                                 <span style="color:black; font-weight:normal;">@exam.ExamDateTime</span><br />
                                     @{
                                     int examId = exam.ExamId;
                                     }
+                                <button style="border:none" class="btn btn-link" @onclick="()=>BtnEditExam(exam)" >
+                                    <img src="/icons/icoRename_bt_1.png" width="28" />
+                                </button>
                                 <button style="border:none" class="btn btn-link" @onclick="()=>BtnAddStudentExam(exam.ExamId)" >
                                     <img src="/icons/icoUserAdd_bluet_1.png" width="30" />
                                 </button>
@@ -56,9 +56,9 @@
                                 <br />
                             </td>
                             <td>
-                                Tests: @exam.ExamNTests
+                                @exam.ExamNTests Tests
                                 <br />
-                                Time: @exam.ExamDuration m 
+                                @exam.ExamDuration m 
                             </td>
                         </tr>
                         @if (appState.Cmd == "AddStudentToExam" && (@examId == appState.ExamId))

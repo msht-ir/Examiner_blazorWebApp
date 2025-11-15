@@ -85,7 +85,7 @@ namespace ExaminerB.Services2Backend
         Task<ExamTest> Read_ExamTestAsync (int examTestId);
         Task<bool> Update_ExamTestAsync (ExamTest examTest);
         Task<bool> Delete_ExamTestsAsync (int examId);
-        Task<bool> Delete_ExamTestAsync (int examTestId);
+        Task<bool> Delete_ExamTestAsync (ExamTest examTest);
         #endregion
         #region C09:Groups
         Task<int> Create_GroupAsync (Group group);

@@ -288,7 +288,7 @@ namespace ExaminerB.Services2Backend
         public async Task<List<User>> Read_StudentsByExamIdAsync (int examId, bool readStudentExams, bool readStudentCourses)
             {
             List<User> lstStudents = new List<User> ();
-            string sql = "SELECT s.StudentId, s.GroupId, s.StudentName, s.StudentPass, s.StudentTags FROM Students s INNER JOIN StudentExams se ON s.StudentId = se.StudentId WHERE se.ExamId=@examid ORDER BY s.StudentName";
+            string sql = "SELECT DISTINCT s.StudentId, s.GroupId, s.StudentName, s.StudentPass, s.StudentTags FROM Students s INNER JOIN StudentExams se ON s.StudentId = se.StudentId WHERE se.ExamId=@examid ORDER BY s.StudentName";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
@@ -1400,7 +1400,7 @@ COMMIT TRANSACTION;
             }
         public async Task<bool> Update_ExamCompositionAsync (ExamComposition examComposition)
             {
-            string sql = "UPDATE ExamCompositions SET ExamId=@examid, TopicId=@topicid, TopicNTests=@topicntests, TestsLevel=@testslevel";
+            string sql = "UPDATE ExamCompositions SET ExamId=@examid, TopicId=@topicid, TopicNTests=@topicntests, TestsLevel=@testslevel WHERE ExamCompositionId=@examcompositionid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
@@ -1408,6 +1408,7 @@ COMMIT TRANSACTION;
             cmd.Parameters.AddWithValue ("@topicid", examComposition.TopicId);
             cmd.Parameters.AddWithValue ("@topicntests", examComposition.TopicNTests);
             cmd.Parameters.AddWithValue ("@testslevel", examComposition.TestsLevel);
+            cmd.Parameters.AddWithValue ("@examcompositionid", examComposition.ExamCompositionId);
             await cnn.OpenAsync ();
             await cmd.ExecuteReaderAsync ();
             return true;
@@ -1520,13 +1521,13 @@ COMMIT TRANSACTION;
             await cmd.ExecuteReaderAsync ();
             return true;
             }
-        public async Task<bool> Delete_ExamTestAsync (int examTestId)
+        public async Task<bool> Delete_ExamTestAsync (ExamTest examTest)
             {
-            string sql = "DELETE FROM ExamTests WHERE ExamTestId=@examtestid";
+            string sql = "DELETE FROM ExamTests WHERE TestId=@testid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
-            cmd.Parameters.AddWithValue ("@examtestid", examTestId);
+            cmd.Parameters.AddWithValue ("@testid", examTest.TestId);
             await cnn.OpenAsync ();
             await cmd.ExecuteReaderAsync ();
             return true;

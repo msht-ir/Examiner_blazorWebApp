@@ -387,9 +387,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Delete_ExamTest")]
-        public async Task<ActionResult<bool>> Delete_ExamTest ([FromBody] int examTestId)
+        public async Task<ActionResult<bool>> Delete_ExamTest ([FromBody] ExamTest examTest)
             {
-            var result = await _BeService.Delete_ExamTestAsync (examTestId);
+            var result = await _BeService.Delete_ExamTestAsync (examTest);
             return Ok (result);
             }
         #endregion
