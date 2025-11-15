@@ -32,14 +32,14 @@
                         {
                         <tr style="align-content:center; border:none">
                             <td style="color:indianred; font-weight:bold;">
+                                <button style="border:none" class="btn btn-link" @onclick="()=>BtnEditExam(exam)" >
+                                    <img src="/icons/icoRename_bt_1.png" width="28" />
+                                </button>
                                 @exam.ExamTitle <br />
                                 <span style="color:black; font-weight:normal;">@exam.ExamDateTime</span><br />
                                     @{
                                     int examId = exam.ExamId;
                                     }
-                                <button style="border:none" class="btn btn-link" @onclick="()=>BtnEditExam(exam)" >
-                                    <img src="/icons/icoRename_bt_1.png" width="30" />
-                                </button>
                                 <button style="border:none" class="btn btn-link" @onclick="()=>BtnAddStudentExam(exam.ExamId)" >
                                     <img src="/icons/icoUserAdd_bluet_1.png" width="30" />
                                 </button>
@@ -64,25 +64,25 @@
                         @if (appState.Cmd == "AddStudentToExam" && (@examId == appState.ExamId))
                             {
                             <h6 style="color:lightslategray;font-weight:bold;">Add Students to Exam</h6>
-                            <select name="cboStudents2" style="width:75%">
+                            <select @bind="intGroupId" style="width:75%">
                                 <option value="0"> Select a Group... </option>
                                 @foreach (var grp in lstGroups)
                                     {
                                     <option value="@grp.GroupId"> @grp.GroupName </option>
                                     }
                             </select>
-                            <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExam (exam.ExamId)">
+                            <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExams (exam.ExamId)">
                                 <img src="/icons/icoSave_bt_1.png" width="25" />
                             </button>
                             <br />
-                            <select id="cboStudents1" name="cboStudents1" style="width:75%">
+                            <select @bind="intStudentId" style="width:75%">
                                 <option value="0"> Select a Student... </option>
                                 @foreach (var stdnt in lstStudents)
                                     {
                                     <option value="@stdnt.UserId"> @stdnt.UserName </option>
                                     }
                             </select>
-                            <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExams (exam.ExamId)">
+                            <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExam (exam.ExamId)">
                                 <img src="/icons/icoSave_bt_1.png" width="25" />
                             </button>
                             <br />
@@ -171,14 +171,14 @@
         {
         Navman.NavigateTo ($"/T_Exam/{exam.ExamId}");
         }
-    public async Task BtnAddStudentExam (int examId)
+    public async Task BtnCreateStudentExams (int examId)
         {
-        user.UserId = Convert.ToInt32(appState.UserId);
-        lstGroups = await feService.Read_Groups (user, false, false);
-        lstStudents = await feService.Read_Students (user.UserId, false, false);
-        appState.SetExamId(examId);
-        appState.SetCmd("AddStudentToExam");
-        StateHasChanged ();
+        int result = await feService.Create_StudentExams (intGroupId, examId);
+        if (result > 0)
+            {
+            appState.SetCmd("");
+            StateHasChanged ();            
+            }
         }
     public async Task BtnCreateStudentExam (int examId)
         {
@@ -189,14 +189,14 @@
             StateHasChanged ();            
             }
         }
-    public async Task BtnCreateStudentExams (int examId)
+    public async Task BtnAddStudentExam (int examId)
         {
-        int result = await feService.Create_StudentExams (intGroupId, examId);
-        if (result > 0)
-            {
-            appState.SetCmd("");
-            StateHasChanged ();            
-            }
+        user.UserId = Convert.ToInt32(appState.UserId);
+        lstGroups = await feService.Read_Groups (user, false, false);
+        lstStudents = await feService.Read_Students (user.UserId, false, false);
+        appState.SetExamId(examId);
+        appState.SetCmd("AddStudentToExam");
+        StateHasChanged ();
         }
     public void BtnReportStudents (int examId)
         {

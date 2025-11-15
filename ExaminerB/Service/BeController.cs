@@ -433,9 +433,9 @@ namespace ExaminerB.Backend
         #endregion
         #region C11:StudentExams
         [HttpPost ("Create_StudentExam")]
-        public async Task<ActionResult<int>> Create_StudentExam ([FromBody] int examId, [FromQuery] int studentId)
+        public async Task<ActionResult<int>> Create_StudentExam ([FromBody] StudentExam studentExam)
             {
-            var result = await _BeService.Create_StudentExamAsync (examId, studentId);
+            var result = await _BeService.Create_StudentExamAsync (studentExam);
             return Ok (result);
             }
         [HttpPost ("Create_StudentExams")]

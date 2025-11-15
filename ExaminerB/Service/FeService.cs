@@ -593,7 +593,8 @@ namespace ExaminerB.Service
         #region C11:StudentExams
         public async Task<int> Create_StudentExam (int studentId, int examId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Create_StudentExam?studentId={studentId}", examId);
+            StudentExam studentExam = new StudentExam () { StudentId = studentId, ExamId = examId, StartDateTime = "-", FinishDateTime = "-", StudentExamTags = 0, StudentExamPoint = 0 };
+            var response = await _http.PostAsJsonAsync ("api/Create_StudentExam", studentExam);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
         public async Task<int> Create_StudentExams (int groupId, int examId)

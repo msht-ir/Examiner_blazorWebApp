@@ -95,7 +95,6 @@
         appState.OnChange += TriggerRender;
         studentCourse.StudentId = userId;
         studentCourse.StudentCourseId = studentCourseId;
-        Console.WriteLine($"page ..................................... studentCourseId={studentCourseId}");
         if (mode == "edit")
             {
             studentCourseTest = await feService.Read_StudentCourseTestRandom(studentCourseId, true, true);
@@ -104,7 +103,7 @@
             {
             studentCourseTest = await feService.Read_StudentCourseTestRandom(studentCourseId, true, false);
             }
-            hasFetched = true;
+        hasFetched = true;
         }
     protected override async Task OnAfterRenderAsync(bool firstRender)
         {

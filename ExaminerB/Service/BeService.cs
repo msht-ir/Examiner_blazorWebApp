@@ -1289,7 +1289,7 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Update_ExamAsync (Exam exam)
             {
-            string sql = "UPDATE Exams SET CourseId=@courseid, ExamTitle=@examtitle, ExamDateTime=@examdatetime, ExamDuration=@examduration, ExamNTests= @examntests, ExamTags=@examtags";
+            string sql = "UPDATE Exams SET CourseId=@courseid, ExamTitle=@examtitle, ExamDateTime=@examdatetime, ExamDuration=@examduration, ExamNTests= @examntests, ExamTags=@examtags WHERE ExamId=@examid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
@@ -1299,13 +1299,22 @@ namespace ExaminerB.Services2Backend
             cmd.Parameters.AddWithValue ("@examduration", exam.ExamDuration);
             cmd.Parameters.AddWithValue ("@examntests", exam.ExamNTests);
             cmd.Parameters.AddWithValue ("@examtags", exam.ExamTags);
+            cmd.Parameters.AddWithValue ("@examid", exam.ExamId);
             await cnn.OpenAsync ();
             await cmd.ExecuteReaderAsync ();
             return true;
             }
         public async Task<bool> Delete_ExamsAsync (int courseId)
             {
-            string sql = "DELETE FROM Exams WHERE CourseId=@courseid";
+            string sql = @"BEGIN TRANSACTION;
+WITH ExamIds AS (SELECT ExamId FROM Exams WHERE CourseId=@courseid)
+DELETE FROM ExamCompositions WHERE ExamId IN (SELECT ExamId FROM ExamIds); 
+DELETE FROM ExamTests WHERE ExamId IN (SELECT ExamId FROM ExamIds);
+DELETE FROM StudentExamTests WHERE StudentExamId IN (SELECT StudentExamId FROM StudentExams WHERE ExamId IN (SELECT ExamId FROM ExamIds)); 
+DELETE FROM StudentExams WHERE ExamId IN (SELECT ExamId FROM ExamIds); 
+DELETE FROM Exams WHERE ExamId IN (SELECT ExamId From ExamIds);
+COMMIT TRANSACTION;
+";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
@@ -1316,12 +1325,14 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Delete_ExamAsync (int examId)
             {
-            string sql = @"DELETE FROM Exams WHERE ExamId=@examid;
-                           DELETE FROM ExamCompositions WHERE ExamId=@examid; 
-                           DELETE FROM ExamTests WHERE ExamId=@examid; 
-                           DELETE FROM StudentExamTests WHERE StudentExamId IN (SELECT StudentExamId FROM StudentExams WHERE ExamId=@examid); 
-                           DELETE FROM StudentExams WHERE ExamId=@examid; 
-                          ";
+            string sql = @"BEGIN TRANSACTION;
+DELETE FROM Exams WHERE ExamId=@examid;
+DELETE FROM ExamCompositions WHERE ExamId=@examid; 
+DELETE FROM ExamTests WHERE ExamId=@examid; 
+DELETE FROM StudentExamTests WHERE StudentExamId IN (SELECT StudentExamId FROM StudentExams WHERE ExamId=@examid); 
+DELETE FROM StudentExams WHERE ExamId=@examid; 
+COMMIT TRANSACTION;
+";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
@@ -1651,15 +1662,15 @@ namespace ExaminerB.Services2Backend
             }
         #endregion
         #region C11:StudentExams
-        public async Task<int> Create_StudentExamAsync (int examId, int studentId)
+        public async Task<int> Create_StudentExamAsync (StudentExam studentExam)
             {
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             string sql = "INSERT INTO StudentExams (StudentId, ExamId, StartDateTime, FinishDateTime, StudentExamTags, StudentExamPoint) VALUES (@studentid, @examid, @startdatetime, @finishdatetime, @studentexamtags, @studentexampoint); SELECT CAST (scope_identity() AS int)";
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@studentid", studentId);
-            cmd.Parameters.AddWithValue ("@examid", examId);
+            cmd.Parameters.AddWithValue ("@studentid", studentExam.StudentId);
+            cmd.Parameters.AddWithValue ("@examid", studentExam.ExamId);
             cmd.Parameters.AddWithValue ("@startdatetime", "");
             cmd.Parameters.AddWithValue ("@finishdatetime", "");
             cmd.Parameters.AddWithValue ("@studentexamtags", 0);

@@ -96,7 +96,7 @@ namespace ExaminerB.Services2Backend
         Task<int> Delete_GroupAsync (int groupId);
         #endregion
         #region C11:StudentExams
-        Task<int> Create_StudentExamAsync (int examId, int studentId);
+        Task<int> Create_StudentExamAsync (StudentExam studentExam);
         Task<int> Create_StudentExamsAsync (int examId, int groupId);
         Task<List<StudentExam>> Read_StudentExamsAsync (int studentId);
         Task<StudentExam> Read_StudentExamAsync (int studentExamId);

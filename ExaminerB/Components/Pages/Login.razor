@@ -18,20 +18,20 @@
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <ValidationSummary />
         <div class="mb-3 d-flex gap-2">
-            <select class="form-select w-auto" @bind="user.UserRole" @ref="refRole" @bind:event="onchange">
+            <select @ref="refRole" class="form-select w-auto" @bind="user.UserRole" @bind:event="onchange" @bind:after="async () => await OnRoleChanged()" >
                 <option value="student"> Student </option>
                 <option value="teacher"> Teacher </option>
             </select>
             @if(user.UserRole == "student")
                 {
-                <select class="form-select w-auto" style="width:110px" @onchange="OnTeacherChanged">
+                <select  @ref="refTeacher" class="form-select w-auto" style="color:royalblue;width:110px" @onchange="OnTeacherChanged">
                     <option value=0> Your teacher? </option>
                     @foreach(User teacher in lstTeachers)
                         {
                         <option value="@teacher.UserId"> @teacher.UserNickname </option>
                         }
                 </select>
-                <select class="form-select w-auto" style="width:110px" @bind="GroupId" @bind:event="onchange">
+                <select class="form-select w-auto" style="color:indianred;width:110px" @bind="GroupId" @bind:event="onchange">
                     <option value=0> Your class? </option>
                     @foreach(Group group in lstGroups)
                         {
@@ -39,9 +39,6 @@
                         }
                 </select>
                 }
-
-
-
         </div>
         <div class="mb-3">
             <input @ref="refUser" @bind="user.UserName" type="text" class="form-control" placeholder="Username" @onkeydown="HandleUserKeyDown" />
@@ -69,6 +66,7 @@
     private ElementReference refUser;
     private ElementReference refPass;
     private ElementReference refRole;
+    private ElementReference refTeacher;
     private bool _firstRender = true;
     private User user = new User { UserRole = "student" };
     private int TeacherId = 0;
@@ -165,7 +163,7 @@
         //update TeacherId from the event
         TeacherId = Convert.ToInt32(e.Value);
         user.UserId = TeacherId;
-        user.UserName = "UserName"; //just because this field is required 
+        user.UserName = ">"; //just because this field is required 
         user.UserPass = "-------";//just because this field is required
         user.UserRole = "student";
         user.UserTags = 0;
@@ -174,5 +172,18 @@
         lstGroups = await feService.Read_Groups (user, false, false);
         GroupId = 0;
         StateHasChanged();
+        }
+    private async Task OnRoleChanged()
+        {
+        StateHasChanged(); //render page to make elements appear on DOM
+        await Task.Yield(); //wait until render is completed
+        if (user.UserRole == "teacher")
+            {
+            await refUser.FocusAsync();
+            }
+        else if (user.UserRole == "student")
+            {
+            await refTeacher.FocusAsync();
+            }
         }
 }
