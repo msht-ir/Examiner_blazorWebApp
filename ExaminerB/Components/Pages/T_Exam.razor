@@ -8,8 +8,13 @@
 @inject AppState appState
 @rendermode InteractiveServer
 @implements IDisposable
-
-<div>
+@if (!_hasFetched)
+    {
+    <_Loading />
+    }
+else
+    {
+    <div>
     <div style="text-align: center;">
         <h1 style="color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small">Teacher</span></h1>
         @if (appState.Message != "")
@@ -222,6 +227,7 @@
     </script>
 
 </div>
+    }
 
 @code {
     [Parameter] public int examId { get; set; }
@@ -245,6 +251,8 @@
     List<Test> lstExamTests = new List<Test>();
     List<TestOption> lstTestOptions = new ();
     string clps="";
+    public bool _hasFetched = false;
+
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
@@ -252,8 +260,12 @@
         appState.SetCmd ("");
         exam = await feService.Read_Exam (examId);
         lstExamCompositions = await feService.Read_ExamCompositions (examId);
-        lstCourseTopics = await feService.Read_CourseTopics (exam.CourseId);
         lstExamTests = await feService.Read_TestsByExamId (examId, true);
+        lstCourseTopics = await feService.Read_CourseTopics (exam.CourseId);
+        if (lstCourseTopics.Count > 0)
+            {
+            _hasFetched = true;
+            }
         }
     private void TriggerRender()
         {
@@ -349,7 +361,6 @@
         lstCourseTests = await feService.Read_TestsBySearch (strSearch, exam.CourseId, false);
         StateHasChanged ();
         }
-
     public async Task BtnCreateExamTest()
         {
         if (cboCourseTestId == 0)
