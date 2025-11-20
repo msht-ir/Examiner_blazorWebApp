@@ -1681,9 +1681,10 @@ COMMIT TRANSACTION;
             cmd.Parameters.AddWithValue ("@studentexamtags", 0);
             cmd.Parameters.AddWithValue ("@studentexampoint", 0);
             int newStudentExamId = (int) await cmd.ExecuteScalarAsync ();
-            //return i;
+            Console.WriteLine ($"be................................................. newStudentExamId={newStudentExamId}");
             //2 read exam tests
             List<Test> lstExamTests = new List<Test> ();
+            lstExamTests = await Read_TestsByExamIdAsync (studentExam.ExamId, true);
             //3 shuffle tests into: lstExamTests
             int rnd = 0;
             for (int k = 0; k < lstExamTests.Count; k++)
@@ -1702,7 +1703,7 @@ COMMIT TRANSACTION;
                 //NOTICE: If GetTestOptions is called multiple times in rapid succession (as it is inside the loop over lstExamTests), the Random constructor will use the same seed (based on system time), resulting in identical shuffles of lstTestOptions.
                 //So even though you're calling GetTestOptions(testId) for different tests, the shuffled list ends up in the same order, and the key option (tag 2) is always in the same position�likely the first one found.
                 //to fix, use a shared Random instance: pass a single Random object to GetTestOptions
-                Read_TestOptionsAsync (testId, random);
+                Read_TestOptionsAsync (testId, cnn);
                 est.StudentId = studentExam.StudentId;
                 est.StudentExamId = newStudentExamId;
                 est.TestId = testId;
@@ -1719,20 +1720,20 @@ COMMIT TRANSACTION;
                         }
                     }
                 //insert into ExamSheets
-                string sql2 = "INSERT INTO ExamSheetTests (StudentId, StudentExamId, TestId, Opt1Id, Opt2Id, Opt3Id, Opt4Id, Opt5Id, ExamSheetTestKey, ExamSheetTestAns, ExamSheetTestTags) VALUES (@studentid, @studentexamid, @testid, @opt1id, @opt2id, @opt3id, @opt4id, @opt5id, @key, 0, 0)";
+                string sql2 = "INSERT INTO StudentExamTests (StudentExamId, TestId, Opt1Id, Opt2Id, Opt3Id, Opt4Id, Opt5Id, StudentExamTestKey, StudentExamTestAns, StudentExamTestTags) VALUES (@studentexamid, @testid, @opt1id, @opt2id, @opt3id, @opt4id, @opt5id, @key, 0, 0)";
                 var cmd2 = new Microsoft.Data.SqlClient.SqlCommand (sql2, cnn);
                 cmd2.CommandType = CommandType.Text;
-                cmd2.Parameters.AddWithValue ("@studentid", est.StudentId.ToString ());
                 cmd2.Parameters.AddWithValue ("@studentexamid", newStudentExamId);
-                cmd2.Parameters.AddWithValue ("@testid", est.TestId.ToString ());
-                cmd2.Parameters.AddWithValue ("@opt1id", est.Opt1Id.ToString ());
-                cmd2.Parameters.AddWithValue ("@opt2id", est.Opt2Id.ToString ());
-                cmd2.Parameters.AddWithValue ("@opt3id", est.Opt3Id.ToString ());
-                cmd2.Parameters.AddWithValue ("@opt4id", est.Opt4Id.ToString ());
-                cmd2.Parameters.AddWithValue ("@opt5id", est.Opt5Id.ToString ());
-                cmd2.Parameters.AddWithValue ("@key", est.StudentExamTestKey.ToString ());
-                cmd2.ExecuteNonQuery ();
+                cmd2.Parameters.AddWithValue ("@testid", est.TestId);
+                cmd2.Parameters.AddWithValue ("@opt1id", est.Opt1Id);
+                cmd2.Parameters.AddWithValue ("@opt2id", est.Opt2Id);
+                cmd2.Parameters.AddWithValue ("@opt3id", est.Opt3Id);
+                cmd2.Parameters.AddWithValue ("@opt4id", est.Opt4Id);
+                cmd2.Parameters.AddWithValue ("@opt5id", est.Opt5Id);
+                cmd2.Parameters.AddWithValue ("@key", est.StudentExamTestKey);
+                await cmd2.ExecuteNonQueryAsync ();
                 }
+            return newStudentExamId;
             }
         public async Task<int> Create_StudentExamsAsync (int examId, int groupId)
             {
