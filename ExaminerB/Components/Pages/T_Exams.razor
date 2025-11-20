@@ -171,6 +171,15 @@
         {
         Navman.NavigateTo ($"/T_Exam/{exam.ExamId}");
         }
+    public async Task BtnAddStudentExam (int examId)
+        {
+        user.UserId = Convert.ToInt32(appState.UserId);
+        lstGroups = await feService.Read_Groups (user, false, false);
+        lstStudents = await feService.Read_Students (user.UserId, false, false);
+        appState.SetExamId(examId);
+        appState.SetCmd("AddStudentToExam");
+        StateHasChanged ();
+        }
     public async Task BtnCreateStudentExams (int examId)
         {
         int result = await feService.Create_StudentExams (intGroupId, examId);
@@ -188,15 +197,6 @@
             appState.SetCmd("");
             StateHasChanged ();            
             }
-        }
-    public async Task BtnAddStudentExam (int examId)
-        {
-        user.UserId = Convert.ToInt32(appState.UserId);
-        lstGroups = await feService.Read_Groups (user, false, false);
-        lstStudents = await feService.Read_Students (user.UserId, false, false);
-        appState.SetExamId(examId);
-        appState.SetCmd("AddStudentToExam");
-        StateHasChanged ();
         }
     public void BtnReportStudents (int examId)
         {
