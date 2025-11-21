@@ -10,13 +10,13 @@ namespace ExaminerB.Services2Backend
         Task<User?> LoginStudentAsync (User user);
         Task LogAsync (int userId, SqlConnection cnn);
         #endregion
-        #region 01:usrs
+        #region C01:usrs
         Task<int> Create_TeacherAsync (User user);
         Task<List<User>> Read_TeachersAsync ();
         Task<bool> Update_TeacherPasswordAsync (User user);
         Task<bool> Delete_TeacherAsync (int userId);
         #endregion
-        #region 10:Students
+        #region C10:Students
         Task<int> Create_StudentAsync (User student);
         Task<List<User>> Read_StudentsAsync (int userId, bool readStudentExams, bool readStudentCourses);
         Task<List<User>> Read_StudentsByGroupIdAsync (int groupId, bool readStudentExams, bool readStudentCourses);
@@ -80,6 +80,7 @@ namespace ExaminerB.Services2Backend
         Task<bool> Delete_ExamCompositionAsync (int examCompositionId);
         #endregion
         #region C08:ExamTests
+        Task<int> Create_ExamTestsByExamCompositionAsync (ExamComposition examComposition);
         Task<int> Create_ExamTestAsync (ExamTest examTest);
         Task<List<ExamTest>> Read_ExamTestsAsync (int examId);
         Task<ExamTest> Read_ExamTestAsync (int examTestId);
@@ -96,8 +97,8 @@ namespace ExaminerB.Services2Backend
         Task<int> Delete_GroupAsync (int groupId);
         #endregion
         #region C11:StudentExams
+        Task<int> Create_StudentExamsAsync (StudentExam studentExam, int groupId);
         Task<int> Create_StudentExamAsync (StudentExam studentExam);
-        Task<int> Create_StudentExamsAsync (int examId, int groupId);
         Task<List<StudentExam>> Read_StudentExamsAsync (int studentId);
         Task<StudentExam> Read_StudentExamAsync (int studentExamId);
         Task<bool> Update_StudentExamAsync (StudentExam studentExam);

@@ -159,7 +159,6 @@
             {
             lstCourses = await feService.Read_Courses (user.UserId);
             _hasFetched = true;
-            //Console.WriteLine("T_Course: OnInitializedAsync: user.UserId= " + user.UserId);
             }
         } 
     private async Task OnAfterRenderAsync(bool firstRender)
@@ -301,7 +300,7 @@
         bool result = await feService.Update_CourseTopic (courseTopic);
         if (result)
             {
-            await JS.InvokeVoidAsync("setFocus", inputRefs[courseTopic.CourseTopicId]);
+            await inputRefs[courseTopic.CourseTopicId].FocusAsync();
             StateHasChanged ();
             }
         }

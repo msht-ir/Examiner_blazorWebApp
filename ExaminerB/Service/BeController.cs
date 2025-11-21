@@ -356,6 +356,12 @@ namespace ExaminerB.Backend
 
         #endregion
         #region C08:ExamTests
+        [HttpPost ("Create_ExamTestsByExamComposition")]
+        public async Task<ActionResult<int>> Create_ExamTestsByExamComposition ([FromBody] ExamComposition examComposition)
+            {
+            var result = await _BeService.Create_ExamTestsByExamCompositionAsync (examComposition);
+            return Ok (result);
+            }
         [HttpPost ("Create_ExamTest")]
         public async Task<ActionResult<int>> Create_ExamTest ([FromBody] ExamTest examTest)
             {
@@ -439,9 +445,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Create_StudentExams")]
-        public async Task<ActionResult<int>> Create_StudentExams ([FromBody] int examId, [FromQuery] int groupId)
+        public async Task<ActionResult<int>> Create_StudentExams ([FromBody] StudentExam studentExam, [FromQuery] int groupId)
             {
-            var result = await _BeService.Create_StudentExamsAsync (examId, groupId);
+            var result = await _BeService.Create_StudentExamsAsync (studentExam, groupId);
             return Ok (result);
             }
         [HttpPost ("Read_StudentExams")]

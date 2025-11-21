@@ -16,7 +16,7 @@ else
     {
     <div>
     <div style="text-align: center;">
-        <h1 style="color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small">Teacher</span></h1>
+        @* <h1 style="color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small">Teacher</span></h1> *@
         @if (appState.Message != "")
             {
             <div style="text-align: center;">
@@ -25,21 +25,22 @@ else
             }
     </div>
     <EditForm Model="exam">
-        @* Exam *@
-        <hr style="color:red" />
-        <div style="font-size:130%;font-weight:bold;color:royalblue">Exam <span style="font-size:small;font-weight:normal;color:gray">Title - DateTime - Duration</span></div>
-        <input class="form-inline" @bind="exam.ExamTitle" placeholder="Exam Title" style="font-weight:bold;color:indianred;width:50%;" />
-        <br />
-        <br />
-        <div class="mb-3">
-            <input class="form-inline" @bind="exam.ExamDateTime" placeholder="____-__-__ __:__" style="width:155px;text-align:center" />
-            <input class="form-inline" @bind="exam.ExamDuration" placeholder="Duration min" type="number" style="width:55px;text-align:center" /> min
-            <button class="btn btn-link" @onclick="BtnUpdateExam">
-                <img src="/icons/icoSave_bt_1.png" width="25" />
-            </button>
-            <hr style="color:red" />
+        @* Exam Title-DateTime-Duration*@
+        @* <hr style="color:red" /> *@
+        <div style="background-color:whitesmoke;padding-left:10px;;padding-right:10px">
+            <div style="font-size:130%;font-weight:bold;color:royalblue">Exam <span style="font-size:small;font-weight:normal;color:gray">Title - DateTime - Duration</span></div>
+            <input class="form-inline" @bind="exam.ExamTitle" placeholder="Exam Title" style="font-weight:bold;color:indianred;width:50%;" />
+            <br />
+            <br />
+            <div class="mb-3">
+                <input class="form-inline" @bind="exam.ExamDateTime" placeholder="____-__-__ __:__" style="width:155px;text-align:center" />
+                <input class="form-inline" @bind="exam.ExamDuration" placeholder="Duration min" type="number" style="width:55px;text-align:center" /> min
+                <button class="btn btn-link" @onclick="BtnUpdateExam">
+                    <img src="/icons/icoSave_bt_1.png" width="25" />
+                </button>
+            </div>
         </div>
-
+        @* <hr style="color:red" /> *@
         <div class="accordion" id="accordionEC">
             @* CARD1- ExamComposition *@
             <div class="accordion-item">
@@ -120,8 +121,7 @@ else
                             <button class="btn btn-link" @onclick="BtnAddNewExamComposition">
                                 <img src="/icons/icoAddItem_gt_1.png" width="30" />
                             </button>
-                            <button class="btn btn-link"
-                                @onclick="BtnDrawRandomTestsByExamComposition">
+                            <button class="btn btn-link" @onclick="BtnDrawRandomTestsByExamComposition">
                                 <img src="/icons/icoShuffle_bt_1.png" width="30" />
                             </button>
                             <br />
@@ -158,6 +158,7 @@ else
                                     <img src="/icons/icoSearch_bt_1.png" width="30" />
                                 </button>
                                 <select @ref="cboCourseTests" @bind="cboCourseTestId" style="font-size:small;width:80%">
+                                    <option value="0"> select from results </option>
                                     @foreach (var ct in lstCourseTests)
                                         {
                                         <option value="@ct.TestId"> @ct.TestId - @ct.TestTitle </option>
@@ -346,7 +347,23 @@ else
         }
     //Draw Tests using ExamComposition
     public async Task BtnDrawRandomTestsByExamComposition()
-        {       
+        {
+        if (lstExamCompositions.Count == 0)
+            {
+            return;
+            }
+        else
+            {
+            _hasFetched = false;
+            var result = await feService.Delete_ExamTests (examId);
+            foreach (ExamComposition ec in lstExamCompositions)
+                {
+                var result2 = await feService.Create_ExamTestsByExamComposition (ec);
+                }
+            }
+        lstExamTests = await feService.Read_TestsByExamId (examId, true);
+        _hasFetched = true;
+        StateHasChanged ();
         }
     //Tests
     public async Task BtnAddNewExamTest()
@@ -355,11 +372,6 @@ else
         StateHasChanged(); //render page to make elements appear on DOM
         await Task.Yield(); //wait until render is completed
         await txtSearchTest.FocusAsync ();
-        }
-    public async Task BtnReadTestsBySearch()
-        {
-        lstCourseTests = await feService.Read_TestsBySearch (strSearch, exam.CourseId, false);
-        StateHasChanged ();
         }
     public async Task BtnCreateExamTest()
         {
@@ -376,6 +388,11 @@ else
                 appState.SetCmd ("");
                 StateHasChanged ();
             }
+        }
+    public async Task BtnReadTestsBySearch()
+        {
+        lstCourseTests = await feService.Read_TestsBySearch (strSearch, exam.CourseId, false);
+        StateHasChanged ();
         }
     public async Task BtnDeleteExamTest(int testId)
         {

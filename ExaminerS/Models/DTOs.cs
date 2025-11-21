@@ -29,6 +29,7 @@ namespace ExaminerS.Models
         public bool CourseRtl { get; set; } = false;
         public int CourseIndex { get; set; } = 0;
         public List<CourseTopic> CourseTopics { get; set; } = new List<CourseTopic> ();
+        public List<CourseFolder> CourseFolders { get; set; } = new List<CourseFolder> ();
         }
     //03
     public class CourseTopic
@@ -173,6 +174,15 @@ namespace ExaminerS.Models
         public List<TestOption>? TestOptions { get; set; } = new List<TestOption> ();
         }
     //15
+    public class CourseFolder
+        {
+        public int CourseFolderId { get; set; } = 0;
+        public int CourseId { get; set; } = 0;
+        public string CourseFolderTitle { get; set; } = "";
+        public string CourseFolderUrl { get; set; } = "";
+        public bool CourseFolderActive { get; set; } = false;
+        }
+    //16
     public class Message
         {
         public int MessageId { get; set; } = 0;

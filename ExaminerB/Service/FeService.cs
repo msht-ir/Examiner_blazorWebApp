@@ -483,6 +483,11 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Create_ExamTest", examTest);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
+        public async Task<int> Create_ExamTestsByExamComposition (ExamComposition examComposition)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Create_ExamTestsByExamComposition", examComposition);
+            return response.IsSuccessStatusCode ? 1 : 0;
+            }
         public async Task<List<ExamTest>> Read_ExamTests (int examId)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_ExamTests", examId);
@@ -516,7 +521,7 @@ namespace ExaminerB.Service
             }
         public async Task<bool> Delete_ExamTests (int examId)
             {
-            var response = await _http.PostAsJsonAsync ("api/Delete_Exam", examId);
+            var response = await _http.PostAsJsonAsync ("api/Delete_ExamTests", examId);
             return response.IsSuccessStatusCode ? true : false;
             }
         public async Task<bool> Delete_ExamTest (ExamTest examTest)
@@ -591,15 +596,16 @@ namespace ExaminerB.Service
             }
         #endregion
         #region C11:StudentExams
+        public async Task<int> Create_StudentExams (int groupId, int examId)
+            {
+            StudentExam studentExam = new StudentExam () { StudentId = 0, ExamId = examId, StartDateTime = "-", FinishDateTime = "-", StudentExamTags = 0, StudentExamPoint = 0 };
+            var response = await _http.PostAsJsonAsync ($"api/Create_StudentExams?groupId={groupId}", studentExam);
+            return response.IsSuccessStatusCode ? 1 : 0;
+            }
         public async Task<int> Create_StudentExam (int studentId, int examId)
             {
             StudentExam studentExam = new StudentExam () { StudentId = studentId, ExamId = examId, StartDateTime = "-", FinishDateTime = "-", StudentExamTags = 0, StudentExamPoint = 0 };
             var response = await _http.PostAsJsonAsync ("api/Create_StudentExam", studentExam);
-            return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<int> Create_StudentExams (int groupId, int examId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Create_StudentExams?groupId={groupId}", examId);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
         public async Task<List<StudentExam>> Read_StudentExams (int studentId)

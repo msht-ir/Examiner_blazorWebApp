@@ -241,10 +241,8 @@ else
     public void BtnShowAnswers()
         {
         string _appstatecmd = appState.Cmd ?? "";
-        //Console.WriteLine($"page ........................................... appState.Cmd 1 = {appState.Cmd}");
         _appstatecmd = (_appstatecmd.EndsWith ("raw")) ? (Strings.Left (_appstatecmd, _appstatecmd.Length - 3)) : (_appstatecmd + "raw");
         appState.SetCmd (_appstatecmd);
-        //Console.WriteLine($"page ........................................... appState.Cmd 2 = {appState.Cmd}");
         i = 0;
         }
     public void BtnCourseExamStats()

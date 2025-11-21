@@ -31,7 +31,7 @@
                         <option value="@teacher.UserId"> @teacher.UserNickname </option>
                         }
                 </select>
-                <select class="form-select w-auto" style="color:indianred;width:110px" @bind="GroupId" @bind:event="onchange">
+                <select @ref="refGroup" class="form-select w-auto" style="color:indianred;width:110px" @bind="GroupId" @bind:event="onchange" @bind:after="async () => await OnGroupChanged()">
                     <option value=0> Your class? </option>
                     @foreach(Group group in lstGroups)
                         {
@@ -67,6 +67,7 @@
     private ElementReference refPass;
     private ElementReference refRole;
     private ElementReference refTeacher;
+    private ElementReference refGroup;
     private bool _firstRender = true;
     private User user = new User { UserRole = "student" };
     private int TeacherId = 0;
@@ -172,6 +173,7 @@
         lstGroups = await feService.Read_Groups (user, false, false);
         GroupId = 0;
         StateHasChanged();
+        await refGroup.FocusAsync ();
         }
     private async Task OnRoleChanged()
         {
@@ -184,6 +186,16 @@
         else if (user.UserRole == "student")
             {
             await refTeacher.FocusAsync();
+            }
+        }
+    private async Task OnGroupChanged()
+        {
+        if (user.UserRole == "student")
+            {
+            StateHasChanged(); //render page to make elements appear on DOM
+            user.UserName = ""; //just because this field is required 
+            user.UserPass = "";//just because this field is required
+            await refUser.FocusAsync();
             }
         }
 }
