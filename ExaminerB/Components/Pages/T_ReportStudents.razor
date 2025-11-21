@@ -165,36 +165,7 @@ else
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
-        int id = Convert.ToInt32 (Id);        
-        switch (mode)
-            {
-            case "groupStudents":
-                    {
-                    appState.SetReturnPage ($"/T_Students");
-                    var result = await feService.Read_Group (id, true, true);
-                    lstStudents = result.Students;
-                    break;
-                    }
-            case "oneStudent":
-                    {
-                    appState.SetReturnPage ($"/T_Students");
-                    User student = await feService.Read_Student (id, true, true);
-                    lstStudents.Add (student);
-                    break;
-                    }
-            case "examStudents":
-                    {
-                    appState.SetReturnPage ($"/T_Exams");
-                    lstStudents = await feService.Read_StudentsByExamId (id, true, true);
-                    break;
-                    }
-            case "courseStudents":
-                    {
-                    appState.SetReturnPage ($"/T_Courses");
-                    lstStudents = await feService.Read_StudentsByCourseId (id, true, true);
-                    break;
-                    }
-                }
+        await ReadPageDataLists ();
         _hasFetched = true;
         } 
     private void TriggerRender()
@@ -232,7 +203,7 @@ else
                             break;
                             }
                     }
-
+                await ReadPageDataLists ();
                 appState.SetCmd("");
                 StateHasChanged();
                 }
@@ -328,4 +299,39 @@ else
         //Navman.NavigateTo ("/T_Students");
         Navman.NavigateTo (appState.ReturnPage?? "/Login");
         }
+    //methods
+    public async Task ReadPageDataLists()
+        {
+        int id = Convert.ToInt32 (Id);        
+        switch (mode)
+            {
+            case "groupStudents":
+                    {
+                    appState.SetReturnPage ($"/T_Students");
+                    var result = await feService.Read_Group (id, true, true);
+                    lstStudents = result.Students;
+                    break;
+                    }
+            case "oneStudent":
+                    {
+                    appState.SetReturnPage ($"/T_Students");
+                    User student = await feService.Read_Student (id, true, true);
+                    lstStudents.Add (student);
+                    break;
+                    }
+            case "examStudents":
+                    {
+                    appState.SetReturnPage ($"/T_Exams");
+                    lstStudents = await feService.Read_StudentsByExamId (id, true, true);
+                    break;
+                    }
+            case "courseStudents":
+                    {
+                    appState.SetReturnPage ($"/T_Courses");
+                    lstStudents = await feService.Read_StudentsByCourseId (id, true, true);
+                    break;
+                    }
+            }
+        }
+
 }
