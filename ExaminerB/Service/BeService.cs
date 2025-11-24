@@ -1816,7 +1816,7 @@ COMMIT TRANSACTION;
                 " FROM StudentExams se " +
                 " INNER JOIN Exams e ON se.ExamId = e.ExamId" +
                 " INNER JOIN Courses c ON e.CourseId = c.CourseId" +
-                " WHERE se.StudentId=@studentid ORDER BY e.ExamDateTime";
+                " WHERE se.StudentId=@studentid AND (e.ExamTags & 1) = 1 ORDER BY e.ExamDateTime";
             try
                 {
                 await cnn.OpenAsync ();

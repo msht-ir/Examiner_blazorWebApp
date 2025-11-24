@@ -38,10 +38,21 @@
                                 {
                                 <tr style="align-content:center; border:none">
                                     <td style="color:indianred; font-weight:bold;">
-                                        @exam.ExamTitle <br />
+                                        <button style="border:none" class="btn btn-link" @onclick="()=>BtnStratStopExam(exam)" >
+                                            @if (exam.IsActive)
+                                                {
+                                                <img src="/icons/icoON_gw_1.png" width="28" />                                        
+                                                }
+                                            else
+                                                {
+                                                <img src="/icons/icoOff_grayw_1.png" width="28" />                                        
+                                                }
+                                        </button>
+                                        @exam.ExamTitle 
+                                        <br />
                                         <span style="color:black; font-weight:normal;">@exam.ExamDateTime</span><br />
                                             @{
-                                            int examId = exam.ExamId;
+                                            int examId = exam.ExamId;                                            
                                             }
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnEditExam(exam)" >
                                             <img src="/icons/icoRename_bt_1.png" width="32" />
@@ -177,6 +188,12 @@
             }
         }
     //btns
+    public async Task BtnStratStopExam (Exam exam)
+        {
+        exam.IsActive = (exam.IsActive) ? false : true;
+        bool result = await feService.Update_Exam (exam);
+        StateHasChanged ();
+        }
     public void BtnEditExam (Exam exam)
         {
         Navman.NavigateTo ($"/T_Exam/{exam.ExamId}");
@@ -203,12 +220,14 @@
         }
     public async Task BtnCreateStudentExam (int examId)
         {
+        _hasFetched = false;
         int result = await feService.Create_StudentExam (intStudentId, examId);
         if (result > 0)
             {
             appState.SetCmd("");
             StateHasChanged ();            
             }
+        _hasFetched = true;
         }
     public void BtnReportStudents (int examId)
         {

@@ -68,6 +68,51 @@ namespace ExaminerS.Models
         public int ExamDuration { get; set; } = 0;
         public int ExamNTests { get; set; } = 0;
         public int ExamTags { get; set; } = 0; //1:active 2:SampleTestMode 4:TrainingMode 8:RealExamMode
+        // Wrapper properties for each flag
+        public bool IsActive
+            {
+            get => (ExamTags & 1) == 1;
+            set
+                {
+                if (value)
+                    ExamTags |= 1;
+                else
+                    ExamTags &= ~1;
+                }
+            }
+        public bool IsSampleTestMode
+            {
+            get => (ExamTags & 2) == 2;
+            set
+                {
+                if (value)
+                    ExamTags |= 2;
+                else
+                    ExamTags &= ~2;
+                }
+            }
+        public bool IsTrainingMode
+            {
+            get => (ExamTags & 4) == 4;
+            set
+                {
+                if (value)
+                    ExamTags |= 4;
+                else
+                    ExamTags &= ~4;
+                }
+            }
+        public bool IsRealExamMode
+            {
+            get => (ExamTags & 8) == 8;
+            set
+                {
+                if (value)
+                    ExamTags |= 8;
+                else
+                    ExamTags &= ~8;
+                }
+            }
         }
     //07
     public class ExamComposition

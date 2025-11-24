@@ -24,7 +24,7 @@ else
                     data-bs-toggle="collapse"
                     data-bs-target="#CollapseId"
                     aria-expanded="false"
-                    aria-controls="CollapseId">
+                    aria-controls="CollapseId" style="background-color:lightgray">
                     <h4>Exams</h4>
                 </button>
             </h4>
@@ -32,11 +32,11 @@ else
                 <div class="accordion-body" style="background-color:whitesmoke">
                     <div id="T1">
                         <table class="table table-bordered">
-                            <thead>
+                            @* <thead>
                                 <tr style="font-weight:bold;border:none;">
-                                    <td style="border:none;color:royalblue;font-size:large">Exams</td>
+                                    <td style="border:none;color:royalblue;font-size:medium">Exams</td>
                                 </tr>
-                            </thead>
+                            </thead> *@
                             @foreach (var stdexam in lstStudentExams)
                                 {
                                 int Id = stdexam.StudentExamId;
