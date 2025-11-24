@@ -113,7 +113,7 @@ else
             {
             student.UserName = appState.UserName ?? "";
             studentExam.StudentExamId = studentExamId;
-            studentExam = await feService.Read_StudentExam (studentExamId);
+            studentExam = await feService.Read_StudentExam (studentExamId, true);
             _hasFetched = true;
             StateHasChanged ();
             }

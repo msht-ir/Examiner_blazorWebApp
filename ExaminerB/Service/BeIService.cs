@@ -99,8 +99,8 @@ namespace ExaminerB.Services2Backend
         #region C11:StudentExams
         Task<int> Create_StudentExamsAsync (StudentExam studentExam, int groupId);
         Task<int> Create_StudentExamAsync (StudentExam studentExam);
-        Task<List<StudentExam>> Read_StudentExamsAsync (int studentId);
-        Task<StudentExam> Read_StudentExamAsync (int studentExamId);
+        Task<List<StudentExam>> Read_StudentExamsAsync (int studentId, bool readInactiveExams);
+        Task<StudentExam> Read_StudentExamAsync (int studentExamId, bool readInactiveExams);
         Task<bool> Update_StudentExamAsync (StudentExam studentExam);
         Task<bool> Update_StudentExamTagsAsync (StudentExam tempStudentExam);
         Task<bool> Delete_StudentExamsByStudentIdAsync (int studentId);

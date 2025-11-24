@@ -1804,19 +1804,24 @@ COMMIT TRANSACTION;
                 }
             return newStudentExamId;
             }
-        public async Task<List<StudentExam>> Read_StudentExamsAsync (int studentId)
+        public async Task<List<StudentExam>> Read_StudentExamsAsync (int studentId, bool readInactiveExams)
             {
             int i = 0;
             List<StudentExam> lstStudentExams = new ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            string sql = "SELECT se.StudentExamId, c.CourseId, c.CourseName," +
-                " e.ExamId, e.ExamTitle, e.ExamDateTime, e.ExamDuration, e.ExamNTests, e.ExamTags," +
-                " se.StartDateTime, se.FinishDateTime, se.StudentExamTags, se.StudentExamPoint" +
-                " FROM StudentExams se " +
-                " INNER JOIN Exams e ON se.ExamId = e.ExamId" +
-                " INNER JOIN Courses c ON e.CourseId = c.CourseId" +
-                " WHERE se.StudentId=@studentid AND (e.ExamTags & 1) = 1 ORDER BY e.ExamDateTime";
+            string sql = @"SELECT se.StudentExamId, c.CourseId, c.CourseName,
+                e.ExamId, e.ExamTitle, e.ExamDateTime, e.ExamDuration, e.ExamNTests, e.ExamTags,
+                se.StartDateTime, se.FinishDateTime, se.StudentExamTags, se.StudentExamPoint
+                FROM StudentExams se 
+                INNER JOIN Exams e ON se.ExamId = e.ExamId
+                INNER JOIN Courses c ON e.CourseId = c.CourseId
+                WHERE se.StudentId=@studentid ";
+            if (readInactiveExams)
+                {
+                sql += " AND (e.ExamTags & 1) = 1"; 
+                }
+                sql += " ORDER BY e.ExamDateTime";
             try
                 {
                 await cnn.OpenAsync ();
@@ -1852,52 +1857,57 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             return lstStudentExams;
             }
-        public async Task<StudentExam> Read_StudentExamAsync (int studentExamId)
+        public async Task<StudentExam> Read_StudentExamAsync (int studentExamId, bool readInactiveExams)
             {
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            string sql = "SELECT TOP 1 se.StudentExamId, se.StudentId, c.CourseId, c.CourseName," +
-                " e.ExamId, e.ExamTitle, e.ExamDateTime, e.ExamDuration, e.ExamNTests, e.ExamTags," +
-                " se.StartDateTime, se.FinishDateTime, se.StudentExamTags, se.StudentExamPoint" +
-                " FROM StudentExams se " +
-                " INNER JOIN Exams e ON se.ExamId = e.ExamId" +
-                " INNER JOIN Courses c ON e.CourseId = c.CourseId" +
-                " WHERE se.StudentExamId=@studentexamid ORDER BY e.ExamDateTime";
-            try
+            string sql = @"SELECT TOP 1 se.StudentExamId, se.StudentId, c.CourseId, c.CourseName,
+                 e.ExamId, e.ExamTitle, e.ExamDateTime, e.ExamDuration, e.ExamNTests, e.ExamTags,
+                 se.StartDateTime, se.FinishDateTime, se.StudentExamTags, se.StudentExamPoint
+                 FROM StudentExams se 
+                 INNER JOIN Exams e ON se.ExamId = e.ExamId
+                 INNER JOIN Courses c ON e.CourseId = c.CourseId
+                 WHERE se.StudentExamId=@studentexamid ";
+            if (readInactiveExams)
                 {
-                var exam = new StudentExam ();
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
-                using (var reader = await cmd.ExecuteReaderAsync ())
+                sql += " AND (e.ExamTags & 1) = 1";
+                }
+                sql += " ORDER BY e.ExamDateTime";
+                try
                     {
-                    while (await reader.ReadAsync ())
+                    var exam = new StudentExam ();
+                    await cnn.OpenAsync ();
+                    SqlCommand cmd = new SqlCommand (sql, cnn);
+                    cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
+                    using (var reader = await cmd.ExecuteReaderAsync ())
                         {
-                        exam.StudentExamId = reader.GetInt32 (0);
-                        exam.StudentId = reader.GetInt32 (1);
-                        exam.CourseId = reader.GetInt32 (2);
-                        exam.CourseName = reader.GetString (3);
-                        exam.ExamId = reader.GetInt32 (4);
-                        exam.ExamIndex = 0;
-                        exam.ExamTitle = reader.GetString (5);
-                        exam.ExamDateTime = reader.GetString (6);
-                        exam.ExamDuration = reader.GetInt32 (7);
-                        exam.ExamNTests = reader.GetInt32 (8);
-                        exam.ExamTags = reader.GetInt32 (9);
-                        exam.StartDateTime = reader.GetString (10);
-                        exam.FinishDateTime = reader.GetString (11);
-                        exam.StudentExamTags = reader.GetInt32 (12);
-                        exam.StudentExamPoint = reader.GetDouble (13);
-                        exam.StudentExamTests = new List<StudentExamTest> ();
+                        while (await reader.ReadAsync ())
+                            {
+                            exam.StudentExamId = reader.GetInt32 (0);
+                            exam.StudentId = reader.GetInt32 (1);
+                            exam.CourseId = reader.GetInt32 (2);
+                            exam.CourseName = reader.GetString (3);
+                            exam.ExamId = reader.GetInt32 (4);
+                            exam.ExamIndex = 0;
+                            exam.ExamTitle = reader.GetString (5);
+                            exam.ExamDateTime = reader.GetString (6);
+                            exam.ExamDuration = reader.GetInt32 (7);
+                            exam.ExamNTests = reader.GetInt32 (8);
+                            exam.ExamTags = reader.GetInt32 (9);
+                            exam.StartDateTime = reader.GetString (10);
+                            exam.FinishDateTime = reader.GetString (11);
+                            exam.StudentExamTags = reader.GetInt32 (12);
+                            exam.StudentExamPoint = reader.GetDouble (13);
+                            exam.StudentExamTests = new List<StudentExamTest> ();
+                            }
                         }
+                    exam.StudentExamTests = await Read_StudentExamTestsAsync (exam.StudentExamId, true, cnn);
+                    return exam;
                     }
-                exam.StudentExamTests = await Read_StudentExamTestsAsync (exam.StudentExamId, true, cnn);
-                return exam;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("BeService: Read_StudentExam ERROR: \n" + ex.ToString ());
-                }
+                catch (Exception ex)
+                    {
+                    Console.WriteLine ("BeService: Read_StudentExam ERROR: \n" + ex.ToString ());
+                    }
             return new StudentExam ();
             }
         public async Task<bool> Update_StudentExamAsync (StudentExam studentExam)

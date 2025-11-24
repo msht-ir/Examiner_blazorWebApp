@@ -451,15 +451,15 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_StudentExams")]
-        public async Task<ActionResult<List<StudentExam>>> Read_StudentExams ([FromBody] int studentId)
+        public async Task<ActionResult<List<StudentExam>>> Read_StudentExams ([FromBody] int studentId, [FromQuery] bool readInactiveExams)
             {
-            var result = await _BeService.Read_StudentExamsAsync (studentId);
+            var result = await _BeService.Read_StudentExamsAsync (studentId, readInactiveExams);
             return Ok (result);
             }
         [HttpPost ("Read_StudentExam")]
-        public async Task<ActionResult<StudentExam>> Read_StudentExam ([FromBody] int studentExamId)
+        public async Task<ActionResult<StudentExam>> Read_StudentExam ([FromBody] int studentExamId, [FromQuery] bool readInactiveExams)
             {
-            var result = await _BeService.Read_StudentExamAsync (studentExamId);
+            var result = await _BeService.Read_StudentExamAsync (studentExamId, readInactiveExams);
             return Ok (result);
             }
         [HttpPost ("Update_StudentExam")]

@@ -608,12 +608,11 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Create_StudentExam", studentExam);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<List<StudentExam>> Read_StudentExams (int studentId)
+        public async Task<List<StudentExam>> Read_StudentExams (int studentId, bool readInactiveExams)
             {
             try
                 {
-                var url = $"api/Read_StudentExams";
-                var response = await _http.PostAsJsonAsync (url, studentId);
+                var response = await _http.PostAsJsonAsync ($"api/Read_StudentExams?, readInactiveExams={readInactiveExams}", studentId);
                 if (response.IsSuccessStatusCode)
                     {
                     return await response.Content.ReadFromJsonAsync<List<StudentExam>> () ?? new List<StudentExam> ();
@@ -629,9 +628,9 @@ namespace ExaminerB.Service
                 return new List<StudentExam> ();
                 }
             }
-        public async Task<StudentExam> Read_StudentExam (int studentExamId)
+        public async Task<StudentExam> Read_StudentExam (int studentExamId, bool readInactiveExams)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentExam", studentExamId);
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentExam?readInactiveExams={readInactiveExams}", studentExamId);
             if (response.IsSuccessStatusCode)
                 {
                 StudentExam studentExam = await response.Content.ReadFromJsonAsync<StudentExam> ();

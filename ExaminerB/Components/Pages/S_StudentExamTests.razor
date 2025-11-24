@@ -127,6 +127,11 @@ else
             student.UserName = appState.UserName ?? "";
             studentExam.StudentExamId = Convert.ToInt32(appState.StudentExamId);
             studentExam = await feService.Read_StudentExam(studentExam.StudentExamId);
+            if (studentExam.StudentExamTests.Count == 0)
+                {
+                await JS.InvokeVoidAsync ("alert", "Exam is just expired!");
+                BtnBack ();
+                }
             _hasFetched = true;
             }
         }
