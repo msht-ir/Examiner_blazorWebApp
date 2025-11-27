@@ -141,14 +141,17 @@
                                                         <img src="/icons/icoRetry_bt_1.png" width="24" />
                                                     </button>
                                                     }
-                                                <button class="btn btn-link" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
-                                                    <img src="/icons/icoFilter_bt_1.png" width="24" />
-                                                </button>
+                                                @* <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse, "wipeout")'>
+                                                    <img src="/icons/icoCourse_bt_1.png" width="25" />
+                                                </button> *@
                                             </td>
                                             <td style="align-content:center; color:indianred ">
                                                 <div><span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
                                                 @if ((student.UserTags & 16) == 16)
                                                     {
+                                                    <button class="btn btn-link" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
+                                                        <img src="/icons/icoFilter_bt_1.png" width="24" />
+                                                    </button>
                                                     <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse, "wipeout")'>
                                                         <img src="/icons/icoEraser_bw_1.png" width="25" />
                                                     </button>
