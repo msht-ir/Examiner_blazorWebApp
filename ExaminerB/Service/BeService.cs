@@ -223,7 +223,7 @@ namespace ExaminerB.Services2Backend
                 {
                 foreach (User student in lstStudents)
                     {
-                    student.StudentExams = await Read_StudentExamsAsync (student.UserId);
+                    student.StudentExams = await Read_StudentExamsAsync (student.UserId, true);
                     }
                 }
             if (readStudentCourses)
@@ -268,7 +268,7 @@ namespace ExaminerB.Services2Backend
                     {
                     foreach (User student in lstStudents)
                         {
-                        student.StudentExams = await Read_StudentExamsAsync (student.UserId);
+                        student.StudentExams = await Read_StudentExamsAsync (student.UserId, true);
                         }
                     }
                 if (readStudentCourses)
@@ -317,7 +317,7 @@ namespace ExaminerB.Services2Backend
                     {
                     foreach (User student in lstStudents)
                         {
-                        student.StudentExams = await Read_StudentExamsAsync (student.UserId);
+                        student.StudentExams = await Read_StudentExamsAsync (student.UserId, true);
                         }
                     }
                 if (readStudentCourses)
@@ -366,7 +366,7 @@ namespace ExaminerB.Services2Backend
                     {
                     foreach (User student in lstStudents)
                         {
-                        student.StudentExams = await Read_StudentExamsAsync (student.UserId);
+                        student.StudentExams = await Read_StudentExamsAsync (student.UserId, true);
                         }
                     }
                 if (readStudentCourses)
@@ -406,7 +406,7 @@ namespace ExaminerB.Services2Backend
                 }
             if (readStudentExams)
                 {
-                student.StudentExams = await Read_StudentExamsAsync (student.UserId);
+                student.StudentExams = await Read_StudentExamsAsync (student.UserId, true);
                 }
             if (readStudentCourses)
                 {

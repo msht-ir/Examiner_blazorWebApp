@@ -80,7 +80,7 @@ namespace ExaminerS.Models
                     ExamTags &= ~1;
                 }
             }
-        public bool IsSampleTestMode
+        public bool IsTrainingMode
             {
             get => (ExamTags & 2) == 2;
             set
@@ -89,28 +89,6 @@ namespace ExaminerS.Models
                     ExamTags |= 2;
                 else
                     ExamTags &= ~2;
-                }
-            }
-        public bool IsTrainingMode
-            {
-            get => (ExamTags & 4) == 4;
-            set
-                {
-                if (value)
-                    ExamTags |= 4;
-                else
-                    ExamTags &= ~4;
-                }
-            }
-        public bool IsRealExamMode
-            {
-            get => (ExamTags & 8) == 8;
-            set
-                {
-                if (value)
-                    ExamTags |= 8;
-                else
-                    ExamTags &= ~8;
                 }
             }
         }

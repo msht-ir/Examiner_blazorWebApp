@@ -74,7 +74,7 @@
             <table class="table">
                 <tr>
                     <td style="text-align:center;">
-                        @if ((appState.UserTags & 16) == 16)
+                        @if (((appState.UserTags & 16) == 16) & ((appState.ExamTags & 2) == 2))
                             {
                             <button class="btn btn-link" @onclick="()=>BtnHelpShowAnswer(studentExamTest)">
                                 <img src="/icons/icoInfo_ot_1.png" width="50" />

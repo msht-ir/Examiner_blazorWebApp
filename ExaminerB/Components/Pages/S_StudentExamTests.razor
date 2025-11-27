@@ -126,7 +126,7 @@ else
             student.UserId = Convert.ToInt32(appState.UserId);
             student.UserName = appState.UserName ?? "";
             studentExam.StudentExamId = Convert.ToInt32(appState.StudentExamId);
-            studentExam = await feService.Read_StudentExam(studentExam.StudentExamId);
+            studentExam = await feService.Read_StudentExam(studentExam.StudentExamId, false);
             if (studentExam.StudentExamTests.Count == 0)
                 {
                 await JS.InvokeVoidAsync ("alert", "Exam is just expired!");
@@ -173,7 +173,7 @@ else
             bool result = await feService.Update_StudentExamTestTags(studentExamTest);
             if (result)
                 {
-                studentExam = await feService.Read_StudentExam(studentExam.StudentExamId);
+                studentExam = await feService.Read_StudentExam(studentExam.StudentExamId, false);
                 StateHasChanged();
                 }
             }
@@ -184,7 +184,7 @@ else
         bool result = await feService.Update_StudentExamTestTags(studentExamTest);
         if (result)
             {
-            studentExam = await feService.Read_StudentExam(studentExam.StudentExamId);
+            studentExam = await feService.Read_StudentExam(studentExam.StudentExamId, false);
             StateHasChanged();
             }
         }

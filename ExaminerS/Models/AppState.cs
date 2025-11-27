@@ -69,6 +69,8 @@
         public void SetExamId (int _ExamId) { ExamId = _ExamId; OnChange?.Invoke (); }
         public string? ExamName { get; private set; }
         public void SetExamName (string _ExamName) { ExamName = _ExamName; OnChange?.Invoke (); }
+        public int? ExamTags { get; private set; }
+        public void SetExamTags (int _ExamTags) { ExamTags = _ExamTags; OnChange?.Invoke (); }
         public int? ExamCompositionId { get; private set; }
         public void SetExamCompositionId (int _ExamCompositionId) { ExamCompositionId = _ExamCompositionId; OnChange?.Invoke (); }
         public string? ExamCompositionName { get; private set; }
