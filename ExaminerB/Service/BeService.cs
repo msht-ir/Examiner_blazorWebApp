@@ -2,7 +2,6 @@
 using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
-using System;
 using System.Data;
 
 namespace ExaminerB.Services2Backend
@@ -1093,16 +1092,16 @@ namespace ExaminerB.Services2Backend
                                 lstOptions.Add (new TestOption { TestOptionTitle = WS0.Cell (iRow, col).Value.ToString () });
                                 }
                             int answ = Convert.ToInt32 (WS0.Cell (iRow, 10).Value.ToString () ?? "0");
-                            lstOptions[answ - 1].TestOptionTags = 2; //IsAns
+                            lstOptions [answ - 1].TestOptionTags = 2; //IsAns
                             int forceLast = Convert.ToInt32 (WS0.Cell (iRow, 11).Value.ToString () ?? "0");
                             if (forceLast != 0)
                                 {
-                                lstOptions[forceLast - 1].TestOptionTags += 1; //ForceLast
+                                lstOptions [forceLast - 1].TestOptionTags += 1; //ForceLast
                                 }
                             //Save options
                             for (int i = 0; i < test.TestType; i++)
                                 {
-                                int addOpt = await Create_TestOptionAsync (lstOptions[i]);
+                                int addOpt = await Create_TestOptionAsync (lstOptions [i]);
                                 if (addOpt != 0)
                                     {
                                     //Console.WriteLine ("testOption " + i + " was not added to db :: " + lstOptions[i].TestOptionTitle);
@@ -1162,13 +1161,13 @@ namespace ExaminerB.Services2Backend
                 TestOption tmp1 = new TestOption ();
                 for (int p = 0; p < lstTestOptions.Count; p++)
                     {
-                    if ((lstTestOptions[p].TestOptionTags & 1) == 1)
+                    if ((lstTestOptions [p].TestOptionTags & 1) == 1)
                         {
-                        tmpx = lstTestOptions[p];
+                        tmpx = lstTestOptions [p];
                         //send ForceLast to last position
-                        tmp1 = lstTestOptions[lstTestOptions.Count - 1];
-                        lstTestOptions[lstTestOptions.Count - 1] = tmpx;
-                        lstTestOptions[p] = tmp1;
+                        tmp1 = lstTestOptions [lstTestOptions.Count - 1];
+                        lstTestOptions [lstTestOptions.Count - 1] = tmpx;
+                        lstTestOptions [p] = tmp1;
                         Nshuffle = lstTestOptions.Count - 1;
                         break;
                         }
@@ -1178,9 +1177,9 @@ namespace ExaminerB.Services2Backend
                 for (int i = Nshuffle - 1; i > 0; i--)
                     {
                     int j = random.Next (0, i + 1);
-                    var temp = lstTestOptions[i];
-                    lstTestOptions[i] = lstTestOptions[j];
-                    lstTestOptions[j] = temp;
+                    var temp = lstTestOptions [i];
+                    lstTestOptions [i] = lstTestOptions [j];
+                    lstTestOptions [j] = temp;
                     }
                 return lstTestOptions;
                 }
@@ -1479,10 +1478,11 @@ COMMIT TRANSACTION;
                 var reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
-                    lstTestIds.Add (reader.GetInt32(0));
+                    lstTestIds.Add (reader.GetInt32 (0));
                     }
-                };
-            ExamTest examTest = new ExamTest { ExamId = examComposition.ExamId, TestId = 0,PercentCorrect=0,PercentIncorrect=0,PercentHelped=0 };
+                }
+            ;
+            ExamTest examTest = new ExamTest { ExamId = examComposition.ExamId, TestId = 0, PercentCorrect = 0, PercentIncorrect = 0, PercentHelped = 0 };
             foreach (int testId in lstTestIds)
                 {
                 examTest.TestId = testId;
@@ -1627,7 +1627,7 @@ COMMIT TRANSACTION;
                             GroupId = reader.GetInt32 (0),
                             GroupName = reader.GetString (1),
                             UserId = reader.GetInt32 (2),
-                            Students = new List<User> ()                            
+                            Students = new List<User> ()
                             };
                         group.Students = await Read_StudentsByGroupIdAsync (group.GroupId, getStudentExams, getStudentCourses);
                         lstGroups.Add (group);
@@ -1725,11 +1725,11 @@ COMMIT TRANSACTION;
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@groupid", groupId);
-            var reader  = await cmd.ExecuteReaderAsync ();
-            while (await reader.ReadAsync())
+            var reader = await cmd.ExecuteReaderAsync ();
+            while (await reader.ReadAsync ())
                 {
                 lstStudentIds.Add (reader.GetInt32 (0));
-                }            
+                }
             foreach (int studentId in lstStudentIds)
                 {
                 studentExam.StudentId = studentId;
@@ -1761,9 +1761,9 @@ COMMIT TRANSACTION;
             for (int k = 0; k < lstExamTests.Count; k++)
                 {
                 rnd = random.Next (k, (lstExamTests.Count));
-                Test tmpTest = lstExamTests[rnd];
-                lstExamTests[rnd] = lstExamTests[k];
-                lstExamTests[k] = tmpTest;
+                Test tmpTest = lstExamTests [rnd];
+                lstExamTests [rnd] = lstExamTests [k];
+                lstExamTests [k] = tmpTest;
                 }
             //4 options
             foreach (Test tst in lstExamTests)
@@ -1776,11 +1776,11 @@ COMMIT TRANSACTION;
                 est.StudentId = studentExam.StudentId;
                 est.StudentExamId = newStudentExamId;
                 est.TestId = tst.TestId;
-                est.Opt1Id = (tst.TestOptions.Count > 0) ? (tst.TestOptions[0].TestOptionId) : 0;
-                est.Opt2Id = (tst.TestOptions.Count > 1) ? (tst.TestOptions[1].TestOptionId) : 0;
-                est.Opt3Id = (tst.TestOptions.Count > 2) ? (tst.TestOptions[2].TestOptionId) : 0;
-                est.Opt4Id = (tst.TestOptions.Count > 3) ? (tst.TestOptions[3].TestOptionId) : 0;
-                est.Opt5Id = (tst.TestOptions.Count > 4) ? (tst.TestOptions[4].TestOptionId) : 0;
+                est.Opt1Id = (tst.TestOptions.Count > 0) ? (tst.TestOptions [0].TestOptionId) : 0;
+                est.Opt2Id = (tst.TestOptions.Count > 1) ? (tst.TestOptions [1].TestOptionId) : 0;
+                est.Opt3Id = (tst.TestOptions.Count > 2) ? (tst.TestOptions [2].TestOptionId) : 0;
+                est.Opt4Id = (tst.TestOptions.Count > 3) ? (tst.TestOptions [3].TestOptionId) : 0;
+                est.Opt5Id = (tst.TestOptions.Count > 4) ? (tst.TestOptions [4].TestOptionId) : 0;
                 foreach (TestOption opt in tst.TestOptions)
                     {
                     if ((opt.TestOptionTags & 2) == 2)
@@ -1817,11 +1817,11 @@ COMMIT TRANSACTION;
                 INNER JOIN Exams e ON se.ExamId = e.ExamId
                 INNER JOIN Courses c ON e.CourseId = c.CourseId
                 WHERE se.StudentId=@studentid ";
-            if (readInactiveExams)
+            if (!readInactiveExams)
                 {
-                sql += " AND (e.ExamTags & 1) = 1"; 
+                sql += " AND (e.ExamTags & 1) = 1";
                 }
-                sql += " ORDER BY e.ExamDateTime";
+            sql += " ORDER BY e.ExamDateTime";
             try
                 {
                 await cnn.OpenAsync ();
@@ -1868,46 +1868,46 @@ COMMIT TRANSACTION;
                  INNER JOIN Exams e ON se.ExamId = e.ExamId
                  INNER JOIN Courses c ON e.CourseId = c.CourseId
                  WHERE se.StudentExamId=@studentexamid ";
-            if (readInactiveExams)
+            if (!readInactiveExams)
                 {
                 sql += " AND (e.ExamTags & 1) = 1";
                 }
-                sql += " ORDER BY e.ExamDateTime";
-                try
+            sql += " ORDER BY e.ExamDateTime";
+            try
+                {
+                var exam = new StudentExam ();
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
+                using (var reader = await cmd.ExecuteReaderAsync ())
                     {
-                    var exam = new StudentExam ();
-                    await cnn.OpenAsync ();
-                    SqlCommand cmd = new SqlCommand (sql, cnn);
-                    cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
-                    using (var reader = await cmd.ExecuteReaderAsync ())
+                    while (await reader.ReadAsync ())
                         {
-                        while (await reader.ReadAsync ())
-                            {
-                            exam.StudentExamId = reader.GetInt32 (0);
-                            exam.StudentId = reader.GetInt32 (1);
-                            exam.CourseId = reader.GetInt32 (2);
-                            exam.CourseName = reader.GetString (3);
-                            exam.ExamId = reader.GetInt32 (4);
-                            exam.ExamIndex = 0;
-                            exam.ExamTitle = reader.GetString (5);
-                            exam.ExamDateTime = reader.GetString (6);
-                            exam.ExamDuration = reader.GetInt32 (7);
-                            exam.ExamNTests = reader.GetInt32 (8);
-                            exam.ExamTags = reader.GetInt32 (9);
-                            exam.StartDateTime = reader.GetString (10);
-                            exam.FinishDateTime = reader.GetString (11);
-                            exam.StudentExamTags = reader.GetInt32 (12);
-                            exam.StudentExamPoint = reader.GetDouble (13);
-                            exam.StudentExamTests = new List<StudentExamTest> ();
-                            }
+                        exam.StudentExamId = reader.GetInt32 (0);
+                        exam.StudentId = reader.GetInt32 (1);
+                        exam.CourseId = reader.GetInt32 (2);
+                        exam.CourseName = reader.GetString (3);
+                        exam.ExamId = reader.GetInt32 (4);
+                        exam.ExamIndex = 0;
+                        exam.ExamTitle = reader.GetString (5);
+                        exam.ExamDateTime = reader.GetString (6);
+                        exam.ExamDuration = reader.GetInt32 (7);
+                        exam.ExamNTests = reader.GetInt32 (8);
+                        exam.ExamTags = reader.GetInt32 (9);
+                        exam.StartDateTime = reader.GetString (10);
+                        exam.FinishDateTime = reader.GetString (11);
+                        exam.StudentExamTags = reader.GetInt32 (12);
+                        exam.StudentExamPoint = reader.GetDouble (13);
+                        exam.StudentExamTests = new List<StudentExamTest> ();
                         }
-                    exam.StudentExamTests = await Read_StudentExamTestsAsync (exam.StudentExamId, true, cnn);
-                    return exam;
                     }
-                catch (Exception ex)
-                    {
-                    Console.WriteLine ("BeService: Read_StudentExam ERROR: \n" + ex.ToString ());
-                    }
+                exam.StudentExamTests = await Read_StudentExamTestsAsync (exam.StudentExamId, true, cnn);
+                return exam;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("BeService: Read_StudentExam ERROR: \n" + ex.ToString ());
+                }
             return new StudentExam ();
             }
         public async Task<bool> Update_StudentExamAsync (StudentExam studentExam)
@@ -2099,10 +2099,10 @@ COMMIT TRANSACTION;
                     {
                     foreach (StudentExamTest t in lstStudentExamTests)
                         {
-                        int[] optIds = { t.Opt1Id, t.Opt2Id, t.Opt3Id, t.Opt4Id, t.Opt5Id };
+                        int [] optIds = { t.Opt1Id, t.Opt2Id, t.Opt3Id, t.Opt4Id, t.Opt5Id };
                         for (int j = 0; j < t.TestType && j < 5; j++)
                             {
-                            t.TestOptions.Add (await Read_TestOptionAsync (optIds[j], cnn));
+                            t.TestOptions.Add (await Read_TestOptionAsync (optIds [j], cnn));
                             }
                         }
                     }
@@ -2166,10 +2166,10 @@ COMMIT TRANSACTION;
                     {
                     foreach (StudentExamTest t in lstStudentExamTests)
                         {
-                        int[] optIds = { t.Opt1Id, t.Opt2Id, t.Opt3Id, t.Opt4Id, t.Opt5Id };
+                        int [] optIds = { t.Opt1Id, t.Opt2Id, t.Opt3Id, t.Opt4Id, t.Opt5Id };
                         for (int j = 0; j < t.TestType && j < 5; j++)
                             {
-                            t.TestOptions.Add (await Read_TestOptionAsync (optIds[j], cnn));
+                            t.TestOptions.Add (await Read_TestOptionAsync (optIds [j], cnn));
                             }
                         }
                     }
@@ -2229,10 +2229,10 @@ COMMIT TRANSACTION;
                     }
                 if (readOptions)
                     {
-                    int[] optIds = { studentExamTest.Opt1Id, studentExamTest.Opt2Id, studentExamTest.Opt3Id, studentExamTest.Opt4Id, studentExamTest.Opt5Id };
+                    int [] optIds = { studentExamTest.Opt1Id, studentExamTest.Opt2Id, studentExamTest.Opt3Id, studentExamTest.Opt4Id, studentExamTest.Opt5Id };
                     for (int j = 0; j < studentExamTest.TestType && j < 5; j++)
                         {
-                        studentExamTest.TestOptions.Add (await Read_TestOptionAsync (optIds[j], cnn));
+                        studentExamTest.TestOptions.Add (await Read_TestOptionAsync (optIds [j], cnn));
                         }
                     }
                 return studentExamTest;
@@ -2522,7 +2522,9 @@ COMMIT TRANSACTION;
                     cmd.Parameters.AddWithValue ("@courseid", courseId);
                     int i = cmd.ExecuteNonQuery ();
                     if (i < 0)
-                        { result = false; }
+                        {
+                        result = false;
+                        }
                     }
                 }
             catch (Exception ex)

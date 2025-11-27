@@ -32,7 +32,7 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Create_Teacher", user);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<List<User>> Read_Teachers () 
+        public async Task<List<User>> Read_Teachers ()
             {
             var response = await _http.PostAsync ("api/Read_Teachers", null);
             if (response.IsSuccessStatusCode)
@@ -62,7 +62,10 @@ namespace ExaminerB.Service
                 return false;
                 }
             }
-        public async Task<bool> Delete_Teacher (int userId) { return false; }
+        public async Task<bool> Delete_Teacher (int userId)
+            {
+            return false;
+            }
         #endregion
         #region C10:Students
         public async Task<bool> Create_Student (User student)
@@ -767,7 +770,11 @@ namespace ExaminerB.Service
             }
         public async Task<bool> Update_StudentExamTestAnswer (long studentExamTestId, int answerOptionId)
             {
-            StudentExamTest tempTest = new () { StudentExamTestId = studentExamTestId, StudentExamTestAns = answerOptionId };
+            StudentExamTest tempTest = new ()
+                {
+                StudentExamTestId = studentExamTestId,
+                StudentExamTestAns = answerOptionId
+                };
             var response = await _http.PostAsJsonAsync ($"api/Update_StudentExamTestAnswer", tempTest);
             return response.IsSuccessStatusCode ? true : false;
             }
