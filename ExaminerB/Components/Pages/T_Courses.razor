@@ -108,7 +108,10 @@
                                         //CourseFolders
                                         @foreach (CourseFolder cf in crs.CourseFolders)
                                             {
-                                            <input class="form-inline"  @ref="inputRefs[cf.CourseFolderId]" @bind="cf.CourseFolderTitle" placeholder="Topic name"  style="width:200px" />
+                                            <input class="form-inline" @ref="txtNewCourseFolderUrl" @bind="cf.CourseFolderUrl" placeholder="Folder url ..." style="width:80%;margin-bottom:5px;"/><br />
+                                            <input class="form-inline" @ref="txtNewCourseFolderTitle" @bind="cf.CourseFolderTitle" placeholder="Folder title ..." style="width:40%;margin-bottom:5px;"/>
+                                            <input class="form-inline" @bind="cf.CourseFolderActive" type="checkbox" />
+                                            <label style="padding-right:5px;">Active</label>
                                             <button class="btn btn-link" @onclick="()=>BtnUpdateCourseFolder (cf)">
                                                 <img src="/icons/icoSave_bt_1.png" width="25" />
                                             </button>
@@ -119,9 +122,14 @@
                                             }
                                         @if ((appState.Cmd == "AddNewCourseFolder") && ((appState.CourseId) == crs.CourseId))
                                             {
-                                            <input class="form-inline" @ref="txtNewCourseFolderTitle" @bind="courseFolder.CourseFolderTitle" placeholder="New Folder ..." />
+                                            <hr style="color:red" />
+                                            <h6>New Course Online Folder:</h6>
+                                            <input class="form-inline" @ref="txtNewCourseFolderUrl" @bind="courseFolder.CourseFolderUrl" placeholder="Folder url ..." style="width:80%;margin-bottom:5px;"/><br />
+                                            <input class="form-inline" @ref="txtNewCourseFolderTitle" @bind="courseFolder.CourseFolderTitle" placeholder="Folder title ..." style="width:40%;margin-bottom:5px;"/>
+                                            <input class="form-inline" @bind="courseFolder.CourseFolderActive" type="checkbox" />
+                                            <label style="padding-right:5px;">Active</label>
                                             <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseFolder(crs.CourseId)">
-                                                <img src="/icons/icoSave_cw_1.png" width="25" />
+                                                <img src="/icons/icoAddItem_gt_1.png" width="25" />
                                             </button>
                                             }
                                         else
@@ -170,6 +178,7 @@
     private ElementReference txtNewCourseName; 
     private ElementReference txtNewCourseTopicTitle; 
     private ElementReference txtNewCourseFolderTitle; 
+    private ElementReference txtNewCourseFolderUrl; 
     public User user = new User ();
     public Course course = new Course ();
     public CourseTopic courseTopic = new CourseTopic ();
@@ -187,24 +196,24 @@
         user.UserId = Convert.ToInt32(appState.UserId);
         cmd = appState.Cmd ?? "";
         if( user.UserId >0)
-            {
-            lstCourses = await feService.Read_Courses (user.UserId);
-            _hasFetched = true;
-            }
+    {
+    lstCourses = await feService.Read_Courses (user.UserId);
+    _hasFetched = true;
+    }
         } 
     private async Task OnAfterRenderAsync(bool firstRender)
         {
         if (firstRender && course?.CourseTopics?.Any() == true)
+    {
+    //only runs: Page loaded + Data exists + list Not empty
+    foreach (var ct in course.CourseTopics)
+        {
+        if (!inputRefs.ContainsKey(ct.CourseTopicId))
             {
-            //only runs: Page loaded + Data exists + list Not empty
-            foreach (var ct in course.CourseTopics)
-                {
-                if (!inputRefs.ContainsKey(ct.CourseTopicId))
-                    {
-                    inputRefs[ct.CourseTopicId] = inputRefs.GetValueOrDefault(ct.CourseTopicId);
-                    }
-                }
+            inputRefs[ct.CourseTopicId] = inputRefs.GetValueOrDefault(ct.CourseTopicId);
             }
+        }
+    }
         }
     private void TriggerRender()
         {
@@ -227,17 +236,17 @@
         course.CourseRtl = true;
         int result = await feService.Create_Course (course);
         if (result>0)
-            {
-            //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
-            //refresh list then refresh page
-            lstCourses = await feService.Read_Courses (user.UserId);
-            appState.SetCmd ("");
-            StateHasChanged ();
-            }
+    {
+    //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
+    //refresh list then refresh page
+    lstCourses = await feService.Read_Courses (user.UserId);
+    appState.SetCmd ("");
+    StateHasChanged ();
+    }
         else
-            {
-            await JS.InvokeVoidAsync ("alert", "Course did not created --- !");
-            }
+    {
+    await JS.InvokeVoidAsync ("alert", "Course did not created --- !");
+    }
         }
     public void BtnEditCourse(int courseId)
         {
@@ -249,37 +258,37 @@
         {
         bool result = await feService.Update_Course (course);
         if (result)
+    {
+    //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
+    appState.SetCmd ("");
+    StateHasChanged ();
+    }
+        else
+    {
+    await JS.InvokeVoidAsync ("alert", "Course name did not changed --- process failed");
+    }
+        }
+    public async Task BtnDeleteCourse(int courseId)
+        {
+        if(await JS.InvokeAsync<bool> ("confirm", "Warning :  Several related data may be deleted! \n\nx Tests\nx Exams\nx Student Exams...\n\nContinue?"))
+    {
+    if(await JS.InvokeAsync<bool>("confirm", "Last warning: \n\nAre you sure? Delete?"))
+        {
+        bool result = await feService.Delete_Course (courseId);
+        if (result)
             {
-            //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
+            await JS.InvokeVoidAsync ("alert", "\nCourse Deleted!");
+            //refresh list then refresh page
+            lstCourses = await feService.Read_Courses (user.UserId);
             appState.SetCmd ("");
             StateHasChanged ();
             }
         else
             {
-            await JS.InvokeVoidAsync ("alert", "Course name did not changed --- process failed");
+            await JS.InvokeVoidAsync ("alert", "Course did not Deleted --- process failed");
             }
-        }
-    public async Task BtnDeleteCourse(int courseId)
-        {
-        if(await JS.InvokeAsync<bool> ("confirm", "Warning :  Several related data may be deleted! \n\nx Tests\nx Exams\nx Student Exams...\n\nContinue?"))
-            {
-            if(await JS.InvokeAsync<bool>("confirm", "Last warning: \n\nAre you sure? Delete?"))
-                {
-                bool result = await feService.Delete_Course (courseId);
-                if (result)
-                    {
-                    await JS.InvokeVoidAsync ("alert", "\nCourse Deleted!");
-                    //refresh list then refresh page
-                    lstCourses = await feService.Read_Courses (user.UserId);
-                    appState.SetCmd ("");
-                    StateHasChanged ();
-                    }
-                else
-                    {
-                    await JS.InvokeVoidAsync ("alert", "Course did not Deleted --- process failed");
-                    }
-                }            
-            }
+        }            
+    }
         }
     public void BtnExams(Course course)
         {
@@ -314,25 +323,25 @@
         courseTopic.CourseTopicTitle = courseTopic.CourseTopicTitle;
         int result = await feService.Create_CourseTopic (courseTopic);
         if (result>0)
-            {
-            //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
-            lstCourses = await feService.Read_Courses (user.UserId);
-            appState.SetCmd ("");
-            StateHasChanged ();
-            }
+    {
+    //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
+    lstCourses = await feService.Read_Courses (user.UserId);
+    appState.SetCmd ("");
+    StateHasChanged ();
+    }
         else
-            {
-            await JS.InvokeVoidAsync ("alert", "Course Topic did not changed --- process failed");
-            }        
+    {
+    await JS.InvokeVoidAsync ("alert", "Course Topic did not changed --- process failed");
+    }        
         }
     public async Task BtnUpdateCourseTopic(CourseTopic courseTopic)
         {
         bool result = await feService.Update_CourseTopic (courseTopic);
         if (result)
-            {
-            await inputRefs[courseTopic.CourseTopicId].FocusAsync();
-            StateHasChanged ();
-            }
+    {
+    await inputRefs[courseTopic.CourseTopicId].FocusAsync();
+    StateHasChanged ();
+    }
         }
     public async Task BtnDeleteCourseTopic(int courseTopicId)
         {
@@ -354,41 +363,54 @@
         }
     public async Task BtnSaveNewCourseFolder(int courseId)
         {
+        _hasFetched = false;
         courseFolder.CourseId = courseId;
-        courseFolder.CourseFolderTitle = courseFolder.CourseFolderTitle;
-        courseFolder.CourseFolderUrl = "http://";
-        courseFolder.CourseFolderActive = true;
-
         int result = await feService.Create_CourseFolder (courseFolder);
         if (result>0)
-            {
-            lstCourses = await feService.Read_Courses (user.UserId);
-            appState.SetCmd ("");
-            StateHasChanged ();
-            }
+    {
+    lstCourses = await feService.Read_Courses (user.UserId);
+    appState.SetCmd ("");
+    StateHasChanged ();
+    }
         else
-            {
-            await JS.InvokeVoidAsync ("alert", "CourseFolder did not saved --- process failed");
-            }        
+    {
+    await JS.InvokeVoidAsync ("alert", "CourseFolder did not saved --- process failed");
+    }        
+        _hasFetched = true;
         }
     public async Task BtnUpdateCourseFolder(CourseFolder courseFolder)
         {
+        _hasFetched = false;
         bool result = await feService.Update_CourseFolder (courseFolder);
         if (result)
-            {
-            await inputRefs[courseFolder.CourseFolderId].FocusAsync();
-            StateHasChanged ();
-            }
+    {
+    //await inputRefs[courseFolder.CourseFolderId].FocusAsync();
+    lstCourses = await feService.Read_Courses (user.UserId);
+    appState.SetCmd ("");
+    StateHasChanged ();
+    }
+        _hasFetched = true;
         }
     public async Task BtnDeleteCourseFolder(int courseFolderId)
         {
-        bool result = await feService.Delete_CourseFolder (courseFolderId);
-        if (result)
-            {
-            StateHasChanged ();
-            }
+        if(await JS.InvokeAsync<bool>("confirm","Delete Folder Link?"))
+    {
+    _hasFetched = false;
+    bool result = await feService.Delete_CourseFolder (courseFolderId);
+    if (result)
+        {
+        lstCourses = await feService.Read_Courses (user.UserId);
+        appState.SetCmd ("");
+        StateHasChanged ();
         }
-    //Back
+    _hasFetched = true;            
+    }
+        }
+public void BtnUpdateCourseFolderActiveInPlace(CourseFolder courseFolder, int flag , bool isChecked)
+{
+    
+}   
+//Back
     public void BtnBack()
         {
         appState.SetCmd ("");

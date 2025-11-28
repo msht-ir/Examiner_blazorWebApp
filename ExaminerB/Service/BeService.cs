@@ -732,13 +732,15 @@ namespace ExaminerB.Services2Backend
         #region C15:CourseFolders
         public async Task<int> Create_CourseFolderAsync (CourseFolder courseFolder)
             {
-            string sql = "INSERT INTO CourseFolders (CourseId, CourseFolderTitle) VALUES (@courseid, @coursefoldertitle); SELECT CAST (scope_identity() AS int)"; //get ID of newly added record
+            string sql = "INSERT INTO CourseFolders (CourseId, CourseFolderTitle, CourseFolderUrl, CourseFolderActive) VALUES (@courseid, @coursefoldertitle, @coursefolderurl, @coursefolderactive); SELECT CAST (scope_identity() AS int)"; //get ID of newly added record
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@courseid", courseFolder.CourseId);
             cmd.Parameters.AddWithValue ("@coursefoldertitle", courseFolder.CourseFolderTitle);
+            cmd.Parameters.AddWithValue ("@coursefolderurl", courseFolder.CourseFolderUrl);
+            cmd.Parameters.AddWithValue ("@coursefolderactive", courseFolder.CourseFolderActive);
             int i = (int) cmd.ExecuteScalar ();
             return i;
             }
@@ -746,7 +748,7 @@ namespace ExaminerB.Services2Backend
             {
             List<CourseFolder> lstCourseFolders = new ();
 
-            string sql = "SELECT CourseFolderId, CourseId, CourseFolderTitle FROM CourseFolders WHERE CourseId=@courseId ORDER BY CourseFolderTitle";
+            string sql = "SELECT CourseFolderId, CourseId, CourseFolderTitle, CourseFolderUrl, CourseFolderActive FROM CourseFolders WHERE CourseId=@courseId ORDER BY CourseFolderTitle";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
@@ -764,7 +766,9 @@ namespace ExaminerB.Services2Backend
                         {
                         CourseFolderId = reader.GetInt32 (0),
                         CourseId = courseId,
-                        CourseFolderTitle = reader.GetString (2)
+                        CourseFolderTitle = reader.GetString (2),
+                        CourseFolderUrl = reader.GetString (3),
+                        CourseFolderActive = reader.GetBoolean (4)
                         });
                     }
                 return lstCourseFolders;
@@ -777,13 +781,15 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Update_CourseFolderAsync (CourseFolder courseFolder)
             {
-            string sql = "UPDATE CourseFolders SET CourseFolderTitle = @coursefoldertitle WHERE CourseTopicId = @id";
+            string sql = "UPDATE CourseFolders SET CourseFolderTitle = @coursefoldertitle, CourseFolderUrl = @coursefolderurl, CourseFolderActive = @coursefolderactive WHERE CourseFolderId = @coursefolderid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@coursefoldertitle", courseFolder.CourseFolderTitle);
-            cmd.Parameters.AddWithValue ("@id", courseFolder.CourseFolderId);
+            cmd.Parameters.AddWithValue ("@coursefolderurl", courseFolder.CourseFolderUrl);
+            cmd.Parameters.AddWithValue ("@coursefolderactive", courseFolder.CourseFolderActive);
+            cmd.Parameters.AddWithValue ("@coursefolderid", courseFolder.CourseFolderId);
             int i = cmd.ExecuteNonQuery ();
             return true;
             }
