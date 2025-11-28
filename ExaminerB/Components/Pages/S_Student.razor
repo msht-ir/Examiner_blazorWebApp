@@ -17,202 +17,199 @@
         }
     else
         {
-        @* StudentExams *@
-        <div class="accordion" id="accordionStudentExams">
+        <div class="accordion" id="accordionStudent">
+            @* StudentExams *@
             <div class="accordion-item">
-                <h4 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#CollapseId1"
-                        aria-expanded="false"
-                        aria-controls="CollapseId1" style="background-color:whitesmoke">
-                        <h4>Exams</h4>
-                    </button>
-                </h4>
-                <div id="CollapseId1" class="accordion-collapse collapse" data-bs-parent="#accordionStudentExams">
-                    <div class="accordion-body" style="background-color:white">
-                        <div id="T1">
-                            <table class="table table-bordered">
-                                @* <thead>
-                                    <tr style="font-weight:bold;border:none;">
-                                        <td style="border:none;color:royalblue;font-size:medium">Exams</td>
-                                    </tr>
-                                </thead> *@
-                                @foreach (var stdexam in lstStudentExams)
-                                    {
-                                    int Id = stdexam.StudentExamId;
-                                    <tr style="align-content:center;">
-                                        @if (stdexam.StudentExamTags == 0)
-                                            {
-                                            <td style="color:indianred; font-weight:bold;">
-                                                <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
-                                                <div>@stdexam.ExamTitle </div>
-                                                <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
-                                            </td>
-                                            <td>
-                                                <div>Tests: @stdexam.ExamNTests</div>
-                                                <div>Time: @stdexam.ExamDuration min</div>
-                                                <button style="border:none" @onclick="async () => await BtnStartExam(stdexam)">
-                                                    <img src="icons/icoGo_gt_1.png" alt="Login icon" style="width:25px;" />
-                                                </button>
-                                            </td>
-                                            }
-                                        else if (stdexam.StudentExamTags == 1)
-                                            {
-                                            <td style="color:indianred; font-weight:bold;">
-                                                <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
-                                                <div>@stdexam.ExamTitle</div>
-                                                <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>                                    
-                                            </td>
-                                            <td>
-                                                <div>Tests: @stdexam.ExamNTests</div>
-                                                <div>Time: @stdexam.ExamDuration min</div>                                    
-                                                <button style="border:none" @onclick="async () => await BtnStartExam(stdexam)">
-                                                    <img src="icons/icoEditPen_bt_1.png" alt="Login icon" style="width:22px;" />
-                                                </button>
-                                            </td>
-                                            }
-                                        else if ((stdexam.StudentExamTags & 2) == 2)
-                                            {
-                                            <td style="color:darkslategrey; font-weight:bold;">
-                                                <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
-                                                <div>@stdexam.ExamTitle</div>
-                                                <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
-                                            </td>
-                                            <td>
-                                                <div>Tests: @stdexam.ExamNTests</div>
-                                                <div>Time: @stdexam.ExamDuration min </div>
-                                                <div><span style="color:indianred;font-size:small;font-weight:bold;">Point: @stdexam.StudentExamPoint.ToString("F2") /20 </span></div>
-                                                @if ((student.UserTags & 4) == 4)
-                                                    {
-                                                    <button style="border:none" @onclick="() => BtnReportExam(Id)">
-                                                        <img src="icons/icoReport_ct_1.png" alt="Report icon" style="width:25px;" />
-                                                    </button>
-                                                    }
-                                            </td>
-                                            }
-                                    </tr>
-                                    }
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <br />
-        @* StudentCourses *@
-        <div class="accordion" id="accordionStudentCourses">
-            <div class="accordion-item">
-                <h4 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#CollapseId2"
-                        aria-expanded="false"
-                        aria-controls="CollapseId2" style="background-color:WhiteSmoke">
-                        <h4>Courses</h4>
-                    </button>
-                </h4>
-                <div id="CollapseId2" class="accordion-collapse collapse" data-bs-parent="#accordionStudentCourses">
-                    <div class="accordion-body" style="background-color:white">
-                        <div id="T2">
-                            @foreach (StudentCourse studentCourse in lstStudentCourses)
-                                {
-                                //use (double) to make result decimal not integer
-                                strRunningPoint = studentCourse.NumberOfTests == 0 ?"---": $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double)studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F2}";
-                                <div style="color:black;font-weight:bold;">@studentCourse.CourseName : <span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
-                                <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
-                                    <img src="/icons/icoCourse_bt_1.png" width="25" />
-                                </button>
-                                <button class="btn btn-link" @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
-                                    <img src="/images/gifBook1.gif" width="32" />
-                                </button>
-                                @if ((student.UserTags & 32) == 32)
-                                    {
-                                    <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
-                                        <img src="/icons/icoReport_ct_1.png" width="24" />
-                                    </button>
-                                    }
-                                @if ((student.UserTags & 16) == 16)
-                                    {
-                                    <button class="btn btn-link" @onclick="()=>BtnTryToCorrect(studentCourse.StudentCourseId)">
-                                        <img src="/icons/icoRetry_bt_1.png" width="24" />
-                                    </button>
-                                    }
-                                @if ((student.UserTags & 16) == 16)
-                                    {
-                                    <button class="btn btn-link" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
-                                        <img src="/icons/icoFilter_bt_1.png" width="24" />
-                                    </button>
-                                    <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse, "wipeout")'>
-                                        <img src="/icons/icoEraser_bw_1.png" width="25" />
-                                    </button>
-                                    }
-                                @* CourseFolders *@
-                                @if((appState.Cmd=="ShowCourseFolders") & (studentCourse.CourseId == appState.CourseId))
-                                    {
-                                    <br />
-                                    foreach(CourseFolder cf in lstCourseFolders)
+                    <h4 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#CollapseId1"
+                            aria-expanded="false"
+                            aria-controls="CollapseId1" style="background-color:whitesmoke">
+                            <h4>Exams</h4>
+                        </button>
+                    </h4>
+                    <div id="CollapseId1" class="accordion-collapse collapse" data-bs-parent="#accordionStudent">
+                        <div class="accordion-body" style="background-color:white">
+                            <div id="T1">
+                                <table class="table table-bordered">
+                                    @* <thead>
+                                        <tr style="font-weight:bold;border:none;">
+                                            <td style="border:none;color:royalblue;font-size:medium">Exams</td>
+                                        </tr>
+                                    </thead> *@
+                                    @foreach (var stdexam in lstStudentExams)
                                         {
-                                        <h6 style="padding-left:10px;"><a href="@cf.CourseFolderUrl" target="_blank">@cf.CourseFolderTitle</a></h6>
-                                        }
-                                    }
-                                <hr />
-                                }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <br />
-        @* StudentMessages *@
-        <div class="accordion" id="accordionMessages">
-            <div class="accordion-item">
-                <h4 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#CollapseId3"
-                        aria-expanded="false"
-                        aria-controls="CollapseId3" style="background-color:WhiteSmoke">
-                        <h4>Messages</h4>
-                    </button>
-                </h4>
-                <div id="CollapseId3" class="accordion-collapse collapse" data-bs-parent="#accordionMessages">
-                    <div class="accordion-body" style="background-color:white">
-                        <div id="T3">
-                            <table class="table table-bordered">
-                                    @foreach (Message message in lstMessages)
-                                        {
-                                        //use (double) to make result decimal not integer
-                                        <tr>
-                                            <td>
-                                                <div style="color:black;font-weight:bold;">@message.MessageText</div>
-                                                <div style="color:black;font-weight:bold;">@message.DateTimeSent</div>
-                                                <button class="btn btn-link" @onclick="()=>BtnTakeATest (message.MessageId)">
-                                                    <img src="/images/gifBook1.gif" width="32" />
-                                                </button>
-                                                @if ((message.MessageTags & 1) == 1)
-                                                    {
-                                                    <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
-                                                        <img src="/icons/icoReport_ct_1.png" width="24" />
+                                        int Id = stdexam.StudentExamId;
+                                        <tr style="align-content:center;">
+                                            @if (stdexam.StudentExamTags == 0)
+                                                {
+                                                <td style="color:indianred; font-weight:bold;">
+                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
+                                                    <div>@stdexam.ExamTitle </div>
+                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
+                                                </td>
+                                                <td>
+                                                    <div>Tests: @stdexam.ExamNTests</div>
+                                                    <div>Time: @stdexam.ExamDuration min</div>
+                                                    <button style="border:none" @onclick="async () => await BtnStartExam(stdexam)">
+                                                        <img src="icons/icoGo_gt_1.png" alt="Login icon" style="width:25px;" />
                                                     </button>
-                                                    }
-                                            </td>
-                                            <td style="align-content:center; color:indianred ">
-                                                <div><span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
-                                                @if ((student.UserTags & 16) == 16)
-                                                    {
-                                                    <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
-                                                        <img src="/icons/icoReport_ct_1.png" width="24" />
+                                                </td>
+                                                }
+                                            else if (stdexam.StudentExamTags == 1)
+                                                {
+                                                <td style="color:indianred; font-weight:bold;">
+                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
+                                                    <div>@stdexam.ExamTitle</div>
+                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>                                    
+                                                </td>
+                                                <td>
+                                                    <div>Tests: @stdexam.ExamNTests</div>
+                                                    <div>Time: @stdexam.ExamDuration min</div>                                    
+                                                    <button style="border:none" @onclick="async () => await BtnStartExam(stdexam)">
+                                                        <img src="icons/icoEditPen_bt_1.png" alt="Login icon" style="width:22px;" />
                                                     </button>
-                                                    }
-                                            </td>
+                                                </td>
+                                                }
+                                            else if ((stdexam.StudentExamTags & 2) == 2)
+                                                {
+                                                <td style="color:darkslategrey; font-weight:bold;">
+                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
+                                                    <div>@stdexam.ExamTitle</div>
+                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
+                                                </td>
+                                                <td>
+                                                    <div>Tests: @stdexam.ExamNTests</div>
+                                                    <div>Time: @stdexam.ExamDuration min </div>
+                                                    <div><span style="color:indianred;font-size:small;font-weight:bold;">Point: @stdexam.StudentExamPoint.ToString("F2") /20 </span></div>
+                                                    @if ((student.UserTags & 4) == 4)
+                                                        {
+                                                        <button style="border:none" @onclick="() => BtnReportExam(Id)">
+                                                            <img src="icons/icoReport_ct_1.png" alt="Report icon" style="width:25px;" />
+                                                        </button>
+                                                        }
+                                                </td>
+                                                }
                                         </tr>
                                         }
                                 </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            <br />
+            @* StudentCourses *@
+            <div class="accordion-item">
+                    <h4 class="accordion-header">
+                        <button class="accordion-button @(appState.Cmd=="ShowCourseFolders" ? "" : "collapsed")"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#CollapseId2"
+                            aria-expanded="@(appState.Cmd=="ShowCourseFolders" ? "true" : "false")"
+                            aria-controls="CollapseId2" style="background-color:WhiteSmoke">
+                            <h4>Courses</h4>
+                        </button>
+                    </h4>
+                    <div id="CollapseId2" class="accordion-collapse collapse @(appState.Cmd=="ShowCourseFolders" ? "show" : "")" data-bs-parent="#accordionStudent">
+                        <div class="accordion-body" style="background-color:white">
+                            <div id="T2">
+                                @foreach (StudentCourse studentCourse in lstStudentCourses)
+                                    {
+                                    //use (double) to make result decimal not integer
+                                    strRunningPoint = studentCourse.NumberOfTests == 0 ?"---": $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double)studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F2}";
+                                    <div style="color:black;font-weight:bold;">@studentCourse.CourseName : <span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
+                                    <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
+                                        <img src="/icons/icoCourse_bt_1.png" width="25" />
+                                    </button>
+                                    <button class="btn btn-link" @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
+                                        <img src="/images/gifBook1.gif" width="32" />
+                                    </button>
+                                    @if ((student.UserTags & 32) == 32)
+                                        {
+                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
+                                            <img src="/icons/icoReport_ct_1.png" width="24" />
+                                        </button>
+                                        }
+                                    @if ((student.UserTags & 16) == 16)
+                                        {
+                                        <button class="btn btn-link" @onclick="()=>BtnTryToCorrect(studentCourse.StudentCourseId)">
+                                            <img src="/icons/icoRetry_bt_1.png" width="24" />
+                                        </button>
+                                        }
+                                    @if ((student.UserTags & 16) == 16)
+                                        {
+                                        <button class="btn btn-link" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
+                                            <img src="/icons/icoFilter_bt_1.png" width="24" />
+                                        </button>
+                                        <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse, "wipeout")'>
+                                            <img src="/icons/icoEraser_bw_1.png" width="25" />
+                                        </button>
+                                        }
+                                    @* CourseFolders *@
+                                    @if((appState.Cmd=="ShowCourseFolders") & (studentCourse.CourseId == appState.CourseId))
+                                        {
+                                        <br />
+                                        foreach(CourseFolder cf in lstCourseFolders)
+                                            {
+                                            <h6 style="padding-left:10px;"><a href="@cf.CourseFolderUrl" target="_blank">@cf.CourseFolderTitle</a></h6>
+                                            }
+                                        }
+                                    <hr />
+                                    }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <br />
+            @* StudentMessages *@
+            <div class="accordion-item">
+                    <h4 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#CollapseId3"
+                            aria-expanded="false"
+                            aria-controls="CollapseId3" style="background-color:WhiteSmoke">
+                            <h4>Messages</h4>
+                        </button>
+                    </h4>
+                    <div id="CollapseId3" class="accordion-collapse collapse" data-bs-parent="#accordionStudent">
+                        <div class="accordion-body" style="background-color:white">
+                            <div id="T3">
+                                <table class="table table-bordered">
+                                        @foreach (Message message in lstMessages)
+                                            {
+                                            //use (double) to make result decimal not integer
+                                            <tr>
+                                                <td>
+                                                    <div style="color:black;font-weight:bold;">@message.MessageText</div>
+                                                    <div style="color:black;font-weight:bold;">@message.DateTimeSent</div>
+                                                    <button class="btn btn-link" @onclick="()=>BtnTakeATest (message.MessageId)">
+                                                        <img src="/images/gifBook1.gif" width="32" />
+                                                    </button>
+                                                    @if ((message.MessageTags & 1) == 1)
+                                                        {
+                                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
+                                                            <img src="/icons/icoReport_ct_1.png" width="24" />
+                                                        </button>
+                                                        }
+                                                </td>
+                                                <td style="align-content:center; color:indianred ">
+                                                    <div><span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
+                                                    @if ((student.UserTags & 16) == 16)
+                                                        {
+                                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
+                                                            <img src="/icons/icoReport_ct_1.png" width="24" />
+                                                        </button>
+                                                        }
+                                                </td>
+                                            </tr>
+                                            }
+                                    </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
         <hr style="color:red"/>
         <br />

@@ -914,5 +914,56 @@ namespace ExaminerB.Service
             return response.IsSuccessStatusCode ? true : false;
             }
         #endregion
+        #region C16:Messages
+        public async Task<int> Create_Message (Message message)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Create_Message", message);
+            return response.IsSuccessStatusCode ? 1 : 0;
+            }
+        public async Task<List<Message>> Read_Messages (string mode, int Id)
+            {
+            //modes: User, Group, Student, Message
+            var response = await _http.PostAsJsonAsync ($"api/Read_Messages?mode={mode}", Id);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Message>? lstMessages = await response.Content.ReadFromJsonAsync<List<Message>> ();
+                return lstMessages ?? new List<Message> ();
+                }
+            else
+                {
+                return new List<Message> ();
+                }
+            }
+        public async Task<List<Message>> Read_Messages (string mode, string key)
+            {
+            //mode: Search, Date, DateTime
+            var response = await _http.PostAsJsonAsync ($"api/Read_Messages?mode={mode}", key);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Message>? lstMessages = await response.Content.ReadFromJsonAsync<List<Message>> ();
+                return lstMessages ?? new List<Message> ();
+                }
+            else
+                {
+                return new List<Message> ();
+                }
+            }
+        public async Task<bool> Update_Message (Message message)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool> Delete_Messages (int groupId)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Delete_Messages", groupId);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool> Delete_Message (int messageId)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Delete_Message", messageId);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        #endregion
+
         }
     }

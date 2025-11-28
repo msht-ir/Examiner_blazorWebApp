@@ -61,24 +61,26 @@ else
                                         {
                                         <div style="text-align: center;">
                                             <button class="btn btn-link" type="button" @onclick="()=>BtnEditGroup(grp.GroupId)">
-                                                <img src="/icons/icoRename_bt_1.png" width="35" />
+                                                <img src="/icons/icoRename_bt_1.png" width="32" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnAddNewStudent(grp.GroupId)">
-                                                <img src="/icons/icoUserAdd_bluet_1.png" width="35" />
+                                                <img src="/icons/icoUserAdd_bluet_1.png" width="32" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnEditStudentsTags(grp.GroupId)">
-                                                <img src="/icons/icoSelect_bt_3.png" width="35" />
+                                                <img src="/icons/icoSelect_bt_3.png" width="32" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnAddCourse2Students(grp.GroupId)">
-                                                <img src="/icons/icoCourseAdd_bt_1.png" width="35" />
+                                                <img src="/icons/icoCourseAdd_bt_1.png" width="32" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnReportStudentsExamsAndCourses(grp.GroupId)">
-                                                <img src="/icons/icoFolderReport_bt_1.png" width="35" />
+                                                <img src="/icons/icoFolderReport_bt_1.png" width="32" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnAddNewMessageToGroup(grp.GroupId)">
+                                                <img src="/icons/icoEnvelop_bt_3.png" width="32" />
                                             </button>
                                             <br />
                                             @if ((appState.Cmd == "AddCourse2Students") && (appState.GroupId == grp.GroupId))
                                                 {
-                                                //GetCourses ();
                                                 <div style="background-color:white">
                                                     <div style="text-align: center;">
                                                         <hr style="color:red" />
@@ -95,6 +97,21 @@ else
                                                         </button>
                                                         <button class="btn btn-link" @onclick="()=>BtnDeleteStudentCourses(grp.GroupId)" >
                                                             <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                }
+                                            @if ((appState.Cmd == "AddNewMessageToGroup") && (appState.GroupId == grp.GroupId))
+                                                {
+                                                <div style="background-color:white">
+                                                    <div style="text-align: center;">
+                                                        <hr style="color:red" />
+                                                        <h6 style="color:indianRed;">Send this Message to members of the group</h6>
+                                                        <input class="form-inline" @ref="txtMessageText" @bind="message.MessageText" style="width:90%" placeholder="Enter Message here..." /><br />
+                                                        <input class="form-check-input" type="checkbox" @bind=_IsMessageTypeFeedback />
+                                                        <label class="form-check-label" style="color:Black"> Message Receives Feedback </label><br />
+                                                        <button class="btn btn-link" @onclick="()=>BtnSendMessageToGroup(grp.GroupId)">
+                                                            <img src="/images/gifSendMessage.gif" width="60" />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -194,7 +211,6 @@ else
                                                                 <p></p>
                                                                 @if ((appState.Cmd == "AddNewStudentCourse") && (appState.StudentId == stdnt.UserId))
                                                                     {
-                                                                    //GetCourses ();
                                                                     <div style="background-color:white">
                                                                         <br />
                                                                         <div style="text-align: center;">
@@ -278,13 +294,16 @@ else
 @code {
     private ElementReference txtNewGroup;
     private ElementReference txtGroupName;
+    private ElementReference txtMessageText;
     private readonly HttpClient _http;
     User user = new User ();
     List<Group> lstGroups = new ();
     List<Course> lstCourses = new ();
     Group group = new Group();
+    Message message = new Message();
     public bool _hasFetched = false;
     private bool shouldFocusNewGroup = false;
+    bool _IsMessageTypeFeedback = true;
     bool _tag01 = true;
     bool _tag02 = false;
     bool _tag04 = false;
@@ -496,7 +515,23 @@ else
         string mode = "groupStudents";
         Navman.NavigateTo ($"/T_ReportStudents/{mode}/{groupId}");
         }
-    //students
+    public void BtnAddNewMessageToGroup(int groupId)
+        {      
+        appState.SetCmd ("AddNewMessageToGroup");
+        appState.SetGroupId (groupId);
+        StateHasChanged ();
+        }
+    public async Task BtnSendMessageToGroup(int groupId)
+        {
+        message.FromId = user.UserId;
+        message.DateTimeSent = DateTime.Now.ToString ("yyyy-MM-dd . HH:mm");
+        //message.MessageText = IScrollToLocationHash Bind
+        message.MessageTags = _IsMessageTypeFeedback ? 32 : 0; //1:IsRead 2:IsBookMarked 4:IsDeleted 8:AnswerIsYes 16:AnswerIsNo 32:TypeIsFeedback
+        int result = await feService.Create_Message()
+        //------- SEND!
+        }
+    
+        //students
     public void BtnAddNewStudent(int groupId)
         {
         appState.SetCmd ("AddNewStudent");
