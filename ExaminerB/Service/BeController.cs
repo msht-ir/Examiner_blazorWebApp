@@ -663,5 +663,38 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
+        #region C16:CourseFolders
+        [HttpPost ("Create_Message")]
+        public async Task<ActionResult<int>> Create_Message ([FromQuery] int groupId, [FromBody] Message message)
+            {
+            var result = await _BeService.Create_MessageAsync (groupId, message);
+            return Ok (result);
+            }
+        [HttpPost ("Read_MessagesById")]
+        public async Task<ActionResult<List<Message>>> Read_Messages ([FromQuery] string mode, [FromBody] int Id)
+            {
+            var result = await _BeService.Read_MessagesAsync (mode, Id);
+            return Ok (result);
+            }
+        [HttpPost ("Read_MessagesByKey")]
+        public async Task<ActionResult<List<Message>>> Read_Messages ([FromQuery] string mode, [FromQuery] string key, [FromBody] int userId)
+            {
+            var result = await _BeService.Read_MessagesAsync (userId, mode, key);
+            return Ok (result);
+            }
+        [HttpPost ("Update_Message")]
+        public async Task<ActionResult<bool>> Update_Message ([FromBody] Message message)
+            {
+            var result = await _BeService.Update_MessageAsync (message);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_Messages")]
+        public async Task<ActionResult<bool>> Delete_Messages ([FromQuery] string mode, [FromBody] int Id)
+            {
+            var result = await _BeService.Delete_MessagesAsync (mode, Id);
+            return result ? Ok (result) : NotFound (result);
+            }
+        #endregion
+
         }
     }

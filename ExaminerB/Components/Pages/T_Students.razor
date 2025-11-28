@@ -270,7 +270,7 @@ else
                 <h4>New Group:</h4>
                 <input class="form-inline" @ref="txtNewGroup" @bind="group.GroupName" placeholder="New Group Name..." />
                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewGroup">
-                    <img src="/icons/icoSave_cw_1.png" width="30" />
+                    <img src="/icons/icoSave_cw_1.png" width="25" />
                 </button>
                 }
             else
@@ -351,8 +351,16 @@ else
     //groups
     public void BtnAddNewGroup()
         {
-        appState.SetCmd ("AddNewGroup");
-        shouldFocusNewGroup = true; //flag to tell OnAfterRenderAsync focus on 'txtNewGroup'
+        if(appState.Cmd != "AddNewGroup")
+            {
+            appState.SetCmd ("AddNewGroup");
+            shouldFocusNewGroup = true; //flag to tell OnAfterRenderAsync focus on 'txtNewGroup'
+            }
+        else
+            {
+            appState.SetCmd ("");
+            shouldFocusNewGroup = false;
+            }
         }
     public async Task BtnSaveNewGroup()
         {
@@ -435,8 +443,15 @@ else
         }
     public void BtnEditStudentsTags(int groupId)
         {
-        appState.SetCmd ("EditStudentsTags");
-        appState.SetGroupId (groupId);
+        if(appState.Cmd != "EditStudentsTags")
+            {
+            appState.SetCmd ("EditStudentsTags");
+            appState.SetGroupId (groupId);
+            }
+        else
+            {
+            appState.SetCmd ("");
+            }
         StateHasChanged ();
         }
     public async Task BtnUpdateStudentsTags(int groupId)
@@ -483,9 +498,16 @@ else
             }
         }
     public void BtnAddCourse2Students(int groupId)
-        {      
-        appState.SetCmd ("AddCourse2Students");
-        appState.SetGroupId (groupId);
+        {
+        if(appState.Cmd != "AddCourse2Students")
+            {
+            appState.SetCmd ("AddCourse2Students");
+            appState.SetGroupId (groupId);
+            }
+        else
+            {
+            appState.SetCmd ("");
+            }
         StateHasChanged ();
         }
     public async Task BtnSaveAddCourse2Students(int groupId)
@@ -516,26 +538,45 @@ else
         Navman.NavigateTo ($"/T_ReportStudents/{mode}/{groupId}");
         }
     public void BtnAddNewMessageToGroup(int groupId)
-        {      
-        appState.SetCmd ("AddNewMessageToGroup");
-        appState.SetGroupId (groupId);
+        {
+        if(appState.Cmd != "AddNewMessageToGroup")
+            {
+            appState.SetGroupId (groupId);
+            appState.SetCmd ("AddNewMessageToGroup");            
+            }
+        else
+            {
+            appState.SetCmd ("");
+            }
         StateHasChanged ();
         }
     public async Task BtnSendMessageToGroup(int groupId)
         {
-        message.FromId = user.UserId;
-        message.DateTimeSent = DateTime.Now.ToString ("yyyy-MM-dd . HH:mm");
+        _hasFetched = false;
         //message.MessageText = IScrollToLocationHash Bind
+        message.FromId = Convert.ToInt32(appState.UserId);
+        message.ToId = 0;
+        message.DateTimeSent = DateTime.Now.ToString ("yyyy-MM-dd . HH:mm");
+        message.DateTimeRead = "1300-01-01 . 00:00";
         message.MessageTags = _IsMessageTypeFeedback ? 32 : 0; //1:IsRead 2:IsBookMarked 4:IsDeleted 8:AnswerIsYes 16:AnswerIsNo 32:TypeIsFeedback
-        int result = await feService.Create_Message()
-        //------- SEND!
-        }
-    
-        //students
+        //SEND
+        int result = await feService.Create_Message (groupId, message);
+
+        appState.SetCmd ("");
+        _hasFetched = true;
+        }    
+    //students
     public void BtnAddNewStudent(int groupId)
         {
-        appState.SetCmd ("AddNewStudent");
-        appState.SetGroupId (groupId);
+        if(appState.Cmd != "AddNewStudent")
+            {
+            appState.SetCmd ("AddNewStudent");
+            appState.SetGroupId (groupId);
+            }
+        else
+            {
+            appState.SetCmd ("");
+            }
         StateHasChanged ();
         }
     public async Task BtnSaveNewStudent(int groupId)

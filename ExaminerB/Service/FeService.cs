@@ -915,15 +915,15 @@ namespace ExaminerB.Service
             }
         #endregion
         #region C16:Messages
-        public async Task<int> Create_Message (Message message)
+        public async Task<int> Create_Message (int groupId, Message message)
             {
-            var response = await _http.PostAsJsonAsync ("api/Create_Message", message);
+            var response = await _http.PostAsJsonAsync ($"api/Create_Message?groupId={groupId}", message);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
         public async Task<List<Message>> Read_Messages (string mode, int Id)
             {
             //modes: User, Group, Student, Message
-            var response = await _http.PostAsJsonAsync ($"api/Read_Messages?mode={mode}", Id);
+            var response = await _http.PostAsJsonAsync ($"api/Read_MessagesById?mode={mode}", Id);
             if (response.IsSuccessStatusCode)
                 {
                 List<Message>? lstMessages = await response.Content.ReadFromJsonAsync<List<Message>> ();
@@ -934,10 +934,10 @@ namespace ExaminerB.Service
                 return new List<Message> ();
                 }
             }
-        public async Task<List<Message>> Read_Messages (string mode, string key)
+        public async Task<List<Message>> Read_Messages (int userId, string mode, string key)
             {
             //mode: Search, Date, DateTime
-            var response = await _http.PostAsJsonAsync ($"api/Read_Messages?mode={mode}", key);
+            var response = await _http.PostAsJsonAsync ($"api/Read_MessagesByKey?mode={mode}&key={key}", userId);
             if (response.IsSuccessStatusCode)
                 {
                 List<Message>? lstMessages = await response.Content.ReadFromJsonAsync<List<Message>> ();
@@ -953,14 +953,10 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<bool> Delete_Messages (int groupId)
+        public async Task<bool> Delete_Messages (string mode, int Id)
             {
-            var response = await _http.PostAsJsonAsync ("api/Delete_Messages", groupId);
-            return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_Message (int messageId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_Message", messageId);
+            //modes: Group, Student, Message
+            var response = await _http.PostAsJsonAsync ($"api/Delete_Messages?mode={mode}", Id);
             return response.IsSuccessStatusCode ? true : false;
             }
         #endregion

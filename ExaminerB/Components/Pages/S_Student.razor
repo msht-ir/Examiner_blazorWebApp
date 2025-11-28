@@ -120,7 +120,7 @@
                                     strRunningPoint = studentCourse.NumberOfTests == 0 ?"---": $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double)studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F2}";
                                     <div style="color:black;font-weight:bold;">@studentCourse.CourseName : <span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
                                     <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
-                                        <img src="/icons/icoCourse_bt_1.png" width="25" />
+                                        <img src="/icons/icoFolderReport_bt_1.png" width="28" />
                                     </button>
                                     <button class="btn btn-link" @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
                                         <img src="/images/gifBook1.gif" width="32" />
@@ -128,7 +128,7 @@
                                     @if ((student.UserTags & 32) == 32)
                                         {
                                         <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
-                                            <img src="/icons/icoReport_ct_1.png" width="24" />
+                                            <img src="/icons/icoReport_ct_1.png" width="22" />
                                         </button>
                                         }
                                     @if ((student.UserTags & 16) == 16)
@@ -176,36 +176,57 @@
                     <div id="CollapseId3" class="accordion-collapse collapse" data-bs-parent="#accordionStudent">
                         <div class="accordion-body" style="background-color:white">
                             <div id="T3">
-                                <table class="table table-bordered">
-                                        @foreach (Message message in lstMessages)
-                                            {
-                                            //use (double) to make result decimal not integer
-                                            <tr>
-                                                <td>
-                                                    <div style="color:black;font-weight:bold;">@message.MessageText</div>
-                                                    <div style="color:black;font-weight:bold;">@message.DateTimeSent</div>
-                                                    <button class="btn btn-link" @onclick="()=>BtnTakeATest (message.MessageId)">
-                                                        <img src="/images/gifBook1.gif" width="32" />
-                                                    </button>
-                                                    @if ((message.MessageTags & 1) == 1)
-                                                        {
-                                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
-                                                            <img src="/icons/icoReport_ct_1.png" width="24" />
-                                                        </button>
-                                                        }
-                                                </td>
-                                                <td style="align-content:center; color:indianred ">
-                                                    <div><span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
-                                                    @if ((student.UserTags & 16) == 16)
-                                                        {
-                                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
-                                                            <img src="/icons/icoReport_ct_1.png" width="24" />
-                                                        </button>
-                                                        }
-                                                </td>
-                                            </tr>
-                                            }
-                                    </table>
+                                @* List messages *@
+                                @foreach (Message message in lstMessages)
+                                    {
+                                    @* IsRead *@
+                                    @if ((message.MessageTags & 1) == 1)
+                                        {
+                                        @* <img src="/icons/icoOff_grayw_1.png" width="28" /> *@
+                                        @* <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
+                                            <img src="/icons/icoOff_grayw_1.png" width="28" />
+                                        </button> *@
+                                        }
+                                    else
+                                        {
+                                        <span style="color:indianred">new</span> 
+                                        @* <img src="/icons/icoON_gw_1.png" width="28" /> *@
+                                        @* <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
+                                            <img src="/icons/icoON_gw_1.png" width="28" />
+                                        </button>                                     *@
+                                        }
+                                    @* Message *@
+                                    <span style="padding-left:5px;"> @message.DateTimeSent </span>
+                                    <div style="color:black;font-weight:bold;padding-left:10px;">@message.MessageText</div>
+                                    @* IsBookmarked *@
+                                    @* @if ((student.UserTags & 2) == 2)
+                                        {
+                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
+                                            <img src="/icons/icoBookmark_bt_1.png" width="24" />
+                                        </button>
+                                        }
+                                    else
+                                        {
+                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
+                                            <img src="/icons/icoBookmark_bt_2.png" width="24" />
+                                        </button>                                    
+                                        } *@
+                                    @* AnswerIsYes *@
+                                    @* @if ((student.UserTags & 8) == 8)
+                                        {
+                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
+                                            <img src="/icons/icoON_gw_1.png" width="24" />
+                                        </button>
+                                        } *@
+                                    @* AnswerIsNo
+                                    @if ((student.UserTags & 16) == 16)
+                                        {
+                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
+                                            <img src="/icons/icoOff_grayw_1.png" width="24" />
+                                        </button>
+                                        } *@
+                                <hr />    
+                                }
                             </div>
                         </div>
                     </div>
@@ -246,7 +267,8 @@
             lstStudentExams = await feService.Read_StudentExams(student.UserId, false)?? new List<StudentExam>();
             student.UserTags = Convert.ToInt32(appState.UserTags);
             student.UserName = appState.UserName ?? "";
-            lstStudentCourses = await feService.Read_StudentCourses (student.UserId);          
+            lstStudentCourses = await feService.Read_StudentCourses (student.UserId);
+            lstMessages = await feService.Read_Messages ("Student", student.UserId);
             _hasFetched = true;
             }
         }

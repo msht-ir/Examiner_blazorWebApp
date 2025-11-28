@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
@@ -2892,6 +2893,199 @@ COMMIT TRANSACTION;
                 Console.WriteLine ($"ERROR in: BeServ-C14_Delete_StudentCourseTestsAsync \n --- mode: {mode}\n courseId:{studentCourse.CourseId}\n student:{studentCourse.StudentId}\n" + ex);
                 return false;
                 }
+            }
+        #endregion
+        #region C16:Messages
+        public async Task<int> Create_MessageAsync (int groupId, Message message)
+            {
+            List<int> lstStudentIds = new List<int> ();
+            //Read StudentIds
+            string sql1 = "SELECT StudentId FROM Students WHERE GroupId=@groupid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd1 = new SqlCommand (sql1, cnn);
+            cmd1.Parameters.AddWithValue ("@groupid", groupId);
+            SqlDataReader reader = await cmd1.ExecuteReaderAsync ();
+            lstStudentIds.Clear ();
+            while (await reader.ReadAsync ())
+                {
+                lstStudentIds.Add (reader.GetInt32 (0));
+                }
+            //Create
+            string sql = "INSERT INTO Messages (FromId, ToId, DateTimeSent, DateTimeRead, MessageText, MessageTags) VALUES (@fromid, @toid, @datetimesent, @datetimeread, @messagetext, @messagetags)";
+            foreach (int studentId in lstStudentIds)
+                {
+                SqlCommand cmd2 = new SqlCommand (sql, cnn);
+                cmd2.Parameters.AddWithValue ("@fromid", message.FromId);
+                cmd2.Parameters.AddWithValue ("@toid", studentId);
+                cmd2.Parameters.AddWithValue ("@datetimesent", message.DateTimeSent);
+                cmd2.Parameters.AddWithValue ("@datetimeread", message.DateTimeRead);
+                cmd2.Parameters.AddWithValue ("@messagetext", message.MessageText);
+                cmd2.Parameters.AddWithValue ("@messagetags", message.MessageTags);
+                await cmd2.ExecuteNonQueryAsync ();
+                }
+            return 1;
+            }
+        public async Task<List<Message>> Read_MessagesAsync (string mode, int Id)
+            {
+            List<Message> lstMessages = new ();
+            string sql = "SELECT MessageId, FromId, ToId, DateTimeSent, DateTimeRead, MessageText, MessageTags FROM Messages";
+            switch (mode)
+                {
+                case "User":
+                        {
+                        sql += " WHERE FromId=@Id ORDER BY DateTimeSent";
+                        break;
+                        }
+                case "Group":
+                        {
+                        sql += " WHERE ToId IN (SELECT StudentId From Students WHERE GroupId=@Id) ORDER BY DateTimeSent";
+                        break;
+                        }
+                case "Student":
+                        {
+                        sql += " WHERE ToId=@Id ORDER BY DateTimeSent";
+                        break;
+                        }
+                case "Message":
+                        {
+                        sql += " WHERE MessageId=@Id ORDER BY DateTimeSent";
+                        break;
+                        }
+                }
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@Id", Id);
+                SqlDataReader reader = cmd.ExecuteReader ();
+                lstMessages.Clear ();
+                while (await reader.ReadAsync ())
+                    {
+                    lstMessages.Add (new Message
+                        {
+                        MessageId = reader.GetInt32 (0),
+                        FromId = reader.GetInt32 (1),
+                        ToId = reader.GetInt32 (2),
+                        DateTimeSent = reader.GetString (3),
+                        DateTimeRead = reader.GetString (4),
+                        MessageText = reader.GetString (5),
+                        MessageTags = reader.GetInt32 (6)
+                        });
+                    }
+                return lstMessages;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("Error: " + ex.ToString ());
+                return new List<Message> ();
+                }
+            }
+        public async Task<List<Message>> Read_MessagesAsync (int userId, string mode, string key)
+            {
+            //mode: Search, Date, DateTime
+            List<Message> lstMessages = new ();
+            string strKey = "";
+            string sql = "SELECT MessageId, FromId, ToId, DateTimeSent, DateTimeRead, MessageText, MessageTags FROM Messages";
+            switch (mode)
+                {
+                case "Search":
+                        {
+                        strKey = $"%{key}%";
+                        sql += " WHERE MessageText LIKE @strkey AND ToId=@userId ORDER BY DateTimeSent";
+                        break;
+                        }
+                case "Date":
+                        {
+                        strKey = $"%{key}%";
+                        sql += " WHERE DateTimeSent LIKE @strkey AND ToId=@userId ORDER BY DateTimeSent";
+                        break;
+                        }
+                case "DateTime":
+                        {
+                        strKey = key;
+                        sql += " WHERE DateTimeSent=@strkey AND ToId=@userId ORDER BY DateTimeSent";
+                        break;
+                        }
+                }
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@strkey", strKey);
+                cmd.Parameters.AddWithValue ("@userId", userId);
+                SqlDataReader reader = cmd.ExecuteReader ();
+                lstMessages.Clear ();
+                while (await reader.ReadAsync ())
+                    {
+                    lstMessages.Add (new Message
+                        {
+                        MessageId = reader.GetInt32 (0),
+                        FromId = reader.GetInt32 (1),
+                        ToId = reader.GetInt32 (2),
+                        DateTimeSent = reader.GetString (3),
+                        DateTimeRead = reader.GetString (4),
+                        MessageText = reader.GetString (5),
+                        MessageTags = reader.GetInt32 (6)
+                        });
+                    }
+                return lstMessages;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("Error: " + ex.ToString ());
+                return new List<Message> ();
+                }
+            }
+        public async Task<bool> Update_MessageAsync (Message message)
+            {
+            string sql = "UPDATE Messages SET (FromId=@fromid, ToId=@toid, DateTimeSent=@datetimesent, DateTimeRead=@datetimeread, MessageText=@messagetext, MessageTags=@messagetags)";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@fromid", message.FromId);
+            cmd.Parameters.AddWithValue ("@toid", message.ToId);
+            cmd.Parameters.AddWithValue ("@datetimesent", message.DateTimeSent);
+            cmd.Parameters.AddWithValue ("@datetimeread", message.DateTimeRead);
+            cmd.Parameters.AddWithValue ("@messagetext", message.MessageText);
+            cmd.Parameters.AddWithValue ("@messagetags", message.MessageTags);
+            int i = cmd.ExecuteNonQuery ();
+            return true;
+            }
+        public async Task<bool> Delete_MessagesAsync (string mode, int Id)
+            {
+            string sql = "";
+            switch (mode)
+                {
+                case "Group":
+                        {
+                        sql = @"DELETE FROM Messages WHERE ToId IN (SELECT StudentId FROM Students WHERE GroupId=@id)";
+                        break;
+                        }
+                case "Student":
+                        {
+                        sql = @"DELETE FROM Messages WHERE ToId=@id)";
+                        break;
+                        }
+                case "Message":
+                        {
+                        sql = @"DELETE FROM Messages WHERE MessageId=@id)";
+                        break;
+                        }
+                }
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@id", Id);
+            int i = cmd.ExecuteNonQuery ();
+            return (i > 0) ? true : false;
             }
         #endregion
         }

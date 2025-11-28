@@ -144,5 +144,12 @@ namespace ExaminerB.Services2Backend
         Task<bool> Update_StudentCourseTestAsync (StudentCourseTest studentCourseTest, string mode);
         Task<bool> Delete_StudentCourseTestsAsync (string mode, StudentCourse studentCourse);
         #endregion
+        #region C16:Messages
+        Task<int> Create_MessageAsync (int groupId, Message message);
+        Task<List<Message>> Read_MessagesAsync (string mode, int Id);
+        Task<List<Message>> Read_MessagesAsync (int userId, string mode, string key);
+        Task<bool> Update_MessageAsync (Message message);
+        Task<bool> Delete_MessagesAsync (string mode, int Id);
+        #endregion
         }
     }
