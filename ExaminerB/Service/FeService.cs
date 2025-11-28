@@ -227,6 +227,37 @@ namespace ExaminerB.Service
             return response.IsSuccessStatusCode ? true : false;
             }
         #endregion
+        #region C15:CourseFolders
+        public async Task<int> Create_CourseFolder (CourseFolder courseFolder)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Create_CourseFolder", courseFolder);
+            return response.IsSuccessStatusCode ? 1 : 0;
+            }
+        public async Task<List<CourseFolder>> Read_CourseFolders (int courseId)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Read_CourseFolders", courseId);
+
+            if (response.IsSuccessStatusCode)
+                {
+                List<CourseFolder> lstCourseFolders = await response.Content.ReadFromJsonAsync<List<CourseFolder>> ();
+                return lstCourseFolders ?? new List<CourseFolder> ();
+                }
+            else
+                {
+                return new List<CourseFolder> ();
+                }
+            }
+        public async Task<bool> Update_CourseFolder (CourseFolder courseFolder)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Update_CourseFolder", courseFolder);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool> Delete_CourseFolder (int courseFolderId)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Delete_CourseFolder", courseFolderId);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        #endregion
         #region C04:Tests
         public async Task<int> Create_Test (Test test)
             {

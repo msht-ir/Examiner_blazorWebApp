@@ -41,6 +41,12 @@ namespace ExaminerB.Services2Backend
         Task<bool> Update_CourseTopicAsync (CourseTopic courseTopic);
         Task<bool> Delete_CourseTopicAsync (int courseTopicId);
         #endregion
+        #region C15:CourseFolders
+        Task<int> Create_CourseFolderAsync (CourseFolder courseFolder);
+        Task<List<CourseFolder>> Read_CourseFoldersAsync (int courseId);
+        Task<bool> Update_CourseFolderAsync (CourseFolder courseFolder);
+        Task<bool> Delete_CourseFolderAsync (int courseFolderId);
+        #endregion
         #region C04:Tests
         Task<int> Create_TestAsync (Test test);
         Task<Test> Read_TestByTestIdAsync (int testId, bool readOptions);

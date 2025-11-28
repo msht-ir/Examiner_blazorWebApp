@@ -178,6 +178,32 @@ namespace ExaminerB.Backend
             return result ? Ok (result) : NotFound (result);
             }
         #endregion
+        #region C15:CourseFolders
+        [HttpPost ("Create_CourseFolder")]
+        public async Task<ActionResult<int>> Create_CourseFolder ([FromBody] CourseFolder courseFolder)
+            {
+            var result = await _BeService.Create_CourseFolderAsync (courseFolder);
+            return Ok (result);
+            }
+        [HttpPost ("Read_CourseFolders")]
+        public async Task<ActionResult<List<CourseFolder>>> Read_CourseFolders ([FromBody] int courseId)
+            {
+            var result = await _BeService.Read_CourseFoldersAsync (courseId);
+            return Ok (result);
+            }
+        [HttpPost ("Update_CourseFolder")]
+        public async Task<ActionResult<bool>> Update_CourseFolder ([FromBody] CourseFolder courseFolder)
+            {
+            var result = await _BeService.Update_CourseFolderAsync (courseFolder);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_CourseFolder")]
+        public async Task<ActionResult<bool>> Delete_CourseFolder ([FromBody] int courseFolderId)
+            {
+            var result = await _BeService.Delete_CourseFolderAsync (courseFolderId);
+            return result ? Ok (result) : NotFound (result);
+            }
+        #endregion
         #region C04:Tests
         [HttpPost ("Create_Test")]
         public async Task<ActionResult<int>> Create_Test ([FromBody] Test test)
@@ -353,7 +379,6 @@ namespace ExaminerB.Backend
             var result = await _BeService.Delete_ExamCompositionAsync (examCompositionId);
             return Ok (result);
             }
-
         #endregion
         #region C08:ExamTests
         [HttpPost ("Create_ExamTestsByExamComposition")]

@@ -33,7 +33,7 @@
                         }
                     <div class="accordion-item">
                         <h4 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button"
+                            <button class="accordion-button collapsed" type="button" style="background-color:lightgray"
                                 data-bs-toggle="collapse"
                                 data-bs-target="#@collapseId"
                                 aria-expanded="false"
@@ -89,19 +89,48 @@
                                                 <img src="/icons/icoList_bt_1.png" width="30" />
                                             </button>
                                             <br />
-                                            <br />
                                             }
                                         @if ((appState.Cmd == "AddNewCourseTopic") && ((appState.CourseId) == crs.CourseId))
                                             {
-                                            <input class="form-inline" @ref="txtNewCourseTopicTitle" @bind="courseTopic.CourseTopicTitle" placeholder="New CourseTopic Name..." />
+                                            <input class="form-inline" @ref="txtNewCourseTopicTitle" @bind="courseTopic.CourseTopicTitle" placeholder="New Topic ..." />
                                             <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseTopic(crs.CourseId)">
-                                                <img src="/icons/icoSave_cw_1.png" width="30" />
+                                                <img src="/icons/icoSave_cw_1.png" width="25" />
                                             </button>
                                             }
                                         else
                                             {
-                                            <button class="btn btn-primary btn-sm" @onclick="()=>BtnAddNewCourseTopic(crs.CourseId)">+ New Topic</button>
+                                            <button class="btn btn-link btn-sm" @onclick="()=>BtnAddNewCourseTopic(crs.CourseId)">
+                                                <img src="/icons/icoAddItem_gt_1.png" width="25" />
+                                            </button>
                                             }
+                                        <hr style="color:red" />
+                                        <h5>Online Folders</h5>
+                                        //CourseFolders
+                                        @foreach (CourseFolder cf in crs.CourseFolders)
+                                            {
+                                            <input class="form-inline"  @ref="inputRefs[cf.CourseFolderId]" @bind="cf.CourseFolderTitle" placeholder="Topic name"  style="width:200px" />
+                                            <button class="btn btn-link" @onclick="()=>BtnUpdateCourseFolder (cf)">
+                                                <img src="/icons/icoSave_bt_1.png" width="25" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnDeleteCourseFolder (cf.CourseFolderId)">
+                                                <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                            </button>
+                                            <br />
+                                            }
+                                        @if ((appState.Cmd == "AddNewCourseFolder") && ((appState.CourseId) == crs.CourseId))
+                                            {
+                                            <input class="form-inline" @ref="txtNewCourseFolderTitle" @bind="courseFolder.CourseFolderTitle" placeholder="New Folder ..." />
+                                            <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseFolder(crs.CourseId)">
+                                                <img src="/icons/icoSave_cw_1.png" width="25" />
+                                            </button>
+                                            }
+                                        else
+                                            {
+                                            <button class="btn btn-link btn-sm" @onclick="()=>BtnAddNewCourseFolder(crs.CourseId)">
+                                                <img src="/icons/icoAddItem_gt_1.png" width="25" />
+                                            </button>
+                                            }
+
                                         }
                                 </div>
                             </div>
@@ -140,9 +169,11 @@
     private ElementReference btnCourseId; 
     private ElementReference txtNewCourseName; 
     private ElementReference txtNewCourseTopicTitle; 
+    private ElementReference txtNewCourseFolderTitle; 
     public User user = new User ();
     public Course course = new Course ();
     public CourseTopic courseTopic = new CourseTopic ();
+    public CourseFolder courseFolder = new CourseFolder ();
     public List<Course> lstCourses = new ();
     public List<CourseTopic> lstCourseTopics = new ();
     public string cmd = "";
@@ -245,7 +276,7 @@
                     }
                 else
                     {
-                await JS.InvokeVoidAsync ("alert", "Course did not Deleted --- process failed");
+                    await JS.InvokeVoidAsync ("alert", "Course did not Deleted --- process failed");
                     }
                 }            
             }
@@ -285,14 +316,13 @@
         if (result>0)
             {
             //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
-            //refresh list then refresh page
             lstCourses = await feService.Read_Courses (user.UserId);
             appState.SetCmd ("");
             StateHasChanged ();
             }
         else
             {
-            await JS.InvokeVoidAsync ("alert", "Course name did not changed --- process failed");
+            await JS.InvokeVoidAsync ("alert", "Course Topic did not changed --- process failed");
             }        
         }
     public async Task BtnUpdateCourseTopic(CourseTopic courseTopic)
@@ -314,6 +344,49 @@
         appState.SetCourseId (courseTopic.CourseId);
         appState.SetCourseTopicId (courseTopic.CourseTopicId);
         Navman.NavigateTo ("/T_CourseTests");
+        }
+    //CourseFolder
+    public void BtnAddNewCourseFolder(int courseId)
+        {
+        appState.SetCmd ("AddNewCourseFolder");
+        appState.SetCourseId (courseId);
+        StateHasChanged ();
+        }
+    public async Task BtnSaveNewCourseFolder(int courseId)
+        {
+        courseFolder.CourseId = courseId;
+        courseFolder.CourseFolderTitle = courseFolder.CourseFolderTitle;
+        courseFolder.CourseFolderUrl = "http://";
+        courseFolder.CourseFolderActive = true;
+
+        int result = await feService.Create_CourseFolder (courseFolder);
+        if (result>0)
+            {
+            lstCourses = await feService.Read_Courses (user.UserId);
+            appState.SetCmd ("");
+            StateHasChanged ();
+            }
+        else
+            {
+            await JS.InvokeVoidAsync ("alert", "CourseFolder did not saved --- process failed");
+            }        
+        }
+    public async Task BtnUpdateCourseFolder(CourseFolder courseFolder)
+        {
+        bool result = await feService.Update_CourseFolder (courseFolder);
+        if (result)
+            {
+            await inputRefs[courseFolder.CourseFolderId].FocusAsync();
+            StateHasChanged ();
+            }
+        }
+    public async Task BtnDeleteCourseFolder(int courseFolderId)
+        {
+        bool result = await feService.Delete_CourseFolder (courseFolderId);
+        if (result)
+            {
+            StateHasChanged ();
+            }
         }
     //Back
     public void BtnBack()

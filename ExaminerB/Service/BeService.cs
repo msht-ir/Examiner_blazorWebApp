@@ -596,7 +596,8 @@ namespace ExaminerB.Services2Backend
                         CourseName = reader.GetString (2),
                         CourseUnits = reader.GetInt32 (3),
                         CourseRtl = reader.GetBoolean (4),
-                        CourseTopics = new List<CourseTopic> ()
+                        CourseTopics = new List<CourseTopic> (),
+                        CourseFolders = new List<CourseFolder> ()
                         });
                     }
                 foreach (Course crs in lstCourses)
@@ -605,6 +606,11 @@ namespace ExaminerB.Services2Backend
                     if (crsTopic != null)
                         {
                         crs.CourseTopics = crsTopic;
+                        }
+                    var crsFolder = await Read_CourseFoldersAsync (crs.CourseId);
+                    if (crsFolder != null)
+                        {
+                        crs.CourseFolders = crsFolder;
                         }
                     }
                 return lstCourses;
@@ -719,6 +725,76 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@coursetopicid", courseTopicId);
+            int i = cmd.ExecuteNonQuery ();
+            return (i > 0) ? true : false;
+            }
+        #endregion
+        #region C15:CourseFolders
+        public async Task<int> Create_CourseFolderAsync (CourseFolder courseFolder)
+            {
+            string sql = "INSERT INTO CourseFolders (CourseId, CourseFolderTitle) VALUES (@courseid, @coursefoldertitle); SELECT CAST (scope_identity() AS int)"; //get ID of newly added record
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@courseid", courseFolder.CourseId);
+            cmd.Parameters.AddWithValue ("@coursefoldertitle", courseFolder.CourseFolderTitle);
+            int i = (int) cmd.ExecuteScalar ();
+            return i;
+            }
+        public async Task<List<CourseFolder>> Read_CourseFoldersAsync (int courseId)
+            {
+            List<CourseFolder> lstCourseFolders = new ();
+
+            string sql = "SELECT CourseFolderId, CourseId, CourseFolderTitle FROM CourseFolders WHERE CourseId=@courseId ORDER BY CourseFolderTitle";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@courseId", courseId);
+                SqlDataReader reader = cmd.ExecuteReader ();
+                int i = 0;
+                lstCourseFolders.Clear ();
+                while (await reader.ReadAsync ())
+                    {
+                    i++;
+                    lstCourseFolders.Add (new CourseFolder
+                        {
+                        CourseFolderId = reader.GetInt32 (0),
+                        CourseId = courseId,
+                        CourseFolderTitle = reader.GetString (2)
+                        });
+                    }
+                return lstCourseFolders;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("Error: " + ex.ToString ());
+                return new List<CourseFolder> ();
+                }
+            }
+        public async Task<bool> Update_CourseFolderAsync (CourseFolder courseFolder)
+            {
+            string sql = "UPDATE CourseFolders SET CourseFolderTitle = @coursefoldertitle WHERE CourseTopicId = @id";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@coursefoldertitle", courseFolder.CourseFolderTitle);
+            cmd.Parameters.AddWithValue ("@id", courseFolder.CourseFolderId);
+            int i = cmd.ExecuteNonQuery ();
+            return true;
+            }
+        public async Task<bool> Delete_CourseFolderAsync (int courseFolderId)
+            {
+            string sql = @"DELETE FROM CourseFolders WHERE CourseFolderId=@coursefolderid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@coursefolderid", courseFolderId);
             int i = cmd.ExecuteNonQuery ();
             return (i > 0) ? true : false;
             }
