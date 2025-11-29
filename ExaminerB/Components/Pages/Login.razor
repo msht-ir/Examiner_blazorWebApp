@@ -17,21 +17,22 @@
     <EditForm Model="user" OnValidSubmit="BtnLogin" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <ValidationSummary />
-        <div class="mb-3 d-flex gap-2">
-            <select @ref="refRole" class="form-select w-auto" @bind="user.UserRole" @bind:event="onchange" @bind:after="async () => await OnRoleChanged()" >
+        <div class="mb-3 d-flex gap-1">
+            <select @ref="refRole" class="form-select w-auto" style="font-size:small;" @bind="user.UserRole" @bind:event="onchange" @bind:after="async () => await OnRoleChanged()" >
                 <option value="student"> Student </option>
                 <option value="teacher"> Teacher </option>
             </select>
+            <br />
             @if(user.UserRole == "student")
                 {
-                <select  @ref="refTeacher" class="form-select w-auto" style="color:royalblue;width:110px" @onchange="OnTeacherChanged">
+                <select  @ref="refTeacher" class="form-select w-auto" style="color:royalblue;width:100px;font-size:small" @onchange="OnTeacherChanged">
                     <option value=0> Your teacher? </option>
                     @foreach(User teacher in lstTeachers)
                         {
                         <option value="@teacher.UserId"> @teacher.UserNickname </option>
                         }
                 </select>
-                <select @ref="refGroup" class="form-select w-auto" style="color:indianred;width:110px" @bind="GroupId" @bind:event="onchange" @bind:after="async () => await OnGroupChanged()">
+                <select @ref="refGroup" class="form-select w-auto" style="color:indianred;width:100px;font-size:small" @bind="GroupId" @bind:event="onchange" @bind:after="async () => await OnGroupChanged()">
                     <option value=0> Your class? </option>
                     @foreach(Group group in lstGroups)
                         {

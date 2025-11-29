@@ -98,5 +98,8 @@
         public void SetStudentCourseId (int _StudentCourseId) { StudentCourseId = _StudentCourseId; OnChange?.Invoke (); }
         public string? StudentCourseName { get; private set; }
         public void SetStudentCourseName (string _StudentCourseName) { StudentCourseName = _StudentCourseName; OnChange?.Invoke (); }
+        //Message
+        public int? MessageId { get; private set; }
+        public void SetMessageId (int _MessageId) { MessageId = _MessageId; OnChange?.Invoke (); }
         }
     }

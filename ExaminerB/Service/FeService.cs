@@ -953,6 +953,11 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
             return response.IsSuccessStatusCode ? true : false;
             }
+        public async Task<bool> Update_MessageTags (Message message)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
+            return response.IsSuccessStatusCode ? true : false;
+            }
         public async Task<bool> Delete_Messages (string mode, int Id)
             {
             //modes: Group, Student, Message
@@ -960,6 +965,5 @@ namespace ExaminerB.Service
             return response.IsSuccessStatusCode ? true : false;
             }
         #endregion
-
         }
     }

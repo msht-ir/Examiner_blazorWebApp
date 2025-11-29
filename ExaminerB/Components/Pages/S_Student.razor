@@ -179,52 +179,68 @@
                                 @* List messages *@
                                 @foreach (Message message in lstMessages)
                                     {
-                                    @* IsRead *@
-                                    @if ((message.MessageTags & 1) == 1)
-                                        {
-                                        @* <img src="/icons/icoOff_grayw_1.png" width="28" /> *@
-                                        @* <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
-                                            <img src="/icons/icoOff_grayw_1.png" width="28" />
-                                        </button> *@
-                                        }
-                                    else
-                                        {
-                                        <span style="color:indianred">new</span> 
-                                        @* <img src="/icons/icoON_gw_1.png" width="28" /> *@
-                                        @* <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
-                                            <img src="/icons/icoON_gw_1.png" width="28" />
-                                        </button>                                     *@
-                                        }
-                                    @* Message *@
+                                if((message.MessageTags & 1) == 1)
+                                    {
                                     <span style="padding-left:5px;"> @message.DateTimeSent </span>
-                                    <div style="color:black;font-weight:bold;padding-left:10px;">@message.MessageText</div>
                                     @* IsBookmarked *@
-                                    @* @if ((student.UserTags & 2) == 2)
+                                    if ((message.MessageTags & 2) == 2)
                                         {
-                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
-                                            <img src="/icons/icoBookmark_bt_1.png" width="24" />
+                                        <button class="btn btn-link" @onclick="()=>BtnSetMessageBookmark(message, 0)">
+                                            <img src="/icons/icoBookmark_bt_2.png" width="24" />
                                         </button>
                                         }
                                     else
                                         {
-                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
-                                            <img src="/icons/icoBookmark_bt_2.png" width="24" />
+                                        <button class="btn btn-link" @onclick="()=>BtnSetMessageBookmark(message, 1)">
+                                            <img src="/icons/icoBookmark_bt_1.png" width="24" />
                                         </button>                                    
-                                        } *@
-                                    @* AnswerIsYes *@
-                                    @* @if ((student.UserTags & 8) == 8)
+                                        }
+                                    @* TypeIsFeedback *@
+                                    @if ((message.MessageTags & 32) == 32)
                                         {
-                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
-                                            <img src="/icons/icoON_gw_1.png" width="24" />
-                                        </button>
-                                        } *@
-                                    @* AnswerIsNo
-                                    @if ((student.UserTags & 16) == 16)
-                                        {
-                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(message.MessageId, message.MessageText)">
-                                            <img src="/icons/icoOff_grayw_1.png" width="24" />
-                                        </button>
-                                        } *@
+                                        @* AnswerIsYes/No *@
+                                        @if ((message.MessageTags & 8) == 8)
+                                            {
+                                            <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(message, 2)">
+                                                <img src="/icons/icoYesNo_Yes_gt_1.png" width="24" />
+                                            </button>
+                                            }
+                                        else if ((message.MessageTags & 16) == 16)
+                                            {
+                                            <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(message, 2)">
+                                                <img src="/icons/icoYesNo_No_rt_1.png" width="24" />
+                                            </button>
+                                            }
+                                        else
+                                            {
+                                            if ((appState.Cmd == "GetStudentAnswer") & (appState.MessageId == message.MessageId))
+                                                {
+                                                <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(message, 1)">
+                                                    <img src="/icons/icoYesNo_Yes_gt_1.png" width="24" />
+                                                </button>
+                                                <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(message, 0)">
+                                                    <img src="/icons/icoYesNo_No_rt_1.png" width="24" />
+                                                </button>                                                
+                                                }
+                                            else
+                                                {
+                                                //Lets GetStudentAnswer...
+                                                <button class="btn btn-link" @onclick="()=>BtnGetStudentAnswer(message.MessageId)">
+                                                    <img src="/icons/icoYesNo_cw_1.png" width="28" />
+                                                </button>
+                                                }
+                                            }
+                                        }
+                                    <div style="color:black;font-weight:normal;padding-left:10px;">@message.MessageText</div>
+                                    }
+                                else
+                                    {
+                                    <span style="padding-left:5px;"> @message.DateTimeSent </span>
+                                    <button class="btn btn-link" @onclick="()=>BtnSetMessageAsRead(message)">
+                                        <img src="/icons/icoEnvelop_bluet_1.png" width="20" />
+                                    </button>
+                                    <span style="color:black;font-weight:bold;padding-left:2px;">@message.MessageText.Substring(0,4) ...</span>
+                                    }
                                 <hr />    
                                 }
                             </div>
@@ -341,15 +357,81 @@
         //---lambda:
         string message = mode switch
             {
-            "filter" => $"Filter out correct answers in ( {studentCourse.CourseName} ) ?",
-            "wipeout" => $"Clear  ( {studentCourse.CourseName} ) ?",
-            _ => throw new ArgumentException($"Invalid mode: {mode}")
-            };
+                "filter" => $"Filter out correct answers in ( {studentCourse.CourseName} ) ?",
+                "wipeout" => $"Clear  ( {studentCourse.CourseName} ) ?",
+                _ => throw new ArgumentException($"Invalid mode: {mode}")
+                };
         if (await JS.InvokeAsync<bool> ("confirm", message))
             {
             var result = await feService.Delete_StudentCourseTests (mode, studentCourse);
             //refresh
             lstStudentCourses = await feService.Read_StudentCourses (student.UserId);        
             }
+        }
+    //btns for StudentCourses
+    private async Task BtnSetMessageAsRead(Message message)
+        {
+        //modes: setOn, setOff
+        message.MessageTags |= 1;
+        message.DateTimeRead = DateTime.Now.ToString("yyyy-MM-dd . HH:mm");
+        bool result = await feService.Update_MessageTags (message);
+        lstMessages = await feService.Read_Messages ("Student", student.UserId);
+        StateHasChanged ();
+        }
+    private async Task BtnSetMessageBookmark(Message message, int mode)
+        {
+        //modes: 0:setOff, 1:setOn
+        switch (mode)
+            {
+            case 0:
+                    {
+                    message.MessageTags &= ~2;
+                    break;
+                    }
+            case 1:
+                    {
+                    message.MessageTags |= 2;
+                    break;
+                    }
+            }
+        bool result = await feService.Update_MessageTags (message);
+        lstMessages = await feService.Read_Messages ("Student", student.UserId);
+        appState.SetCmd ("");
+        StateHasChanged ();
+        }
+    private async Task BtnGetStudentAnswer(int messageId)
+        {
+        appState.SetCmd ("GetStudentAnswer");
+        appState.SetMessageId (messageId);
+        StateHasChanged ();
+        }
+    private async Task BtnSetMyAnswer(Message message, int ans)
+        {
+        //ans: 0:No, 1:Yes
+        switch (ans)
+            {
+            case 2:
+                    {
+                    message.MessageTags &= ~8;
+                    message.MessageTags &= ~16;
+                    appState.SetCmd ("");
+                    break;
+                    }
+            case 1:
+                    {
+                    message.MessageTags |= 8;
+                    message.MessageTags &= ~16;
+                    break;
+                    }
+            case 0:
+                    {
+                    message.MessageTags &= ~8;
+                    message.MessageTags |= 16;
+                    break;
+                    }
+            }
+        bool result = await feService.Update_MessageTags (message);
+        lstMessages = await feService.Read_Messages ("Student", student.UserId);
+        StateHasChanged ();
         }
 }

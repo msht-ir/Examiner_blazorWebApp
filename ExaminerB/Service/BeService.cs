@@ -2912,11 +2912,13 @@ COMMIT TRANSACTION;
                 {
                 lstStudentIds.Add (reader.GetInt32 (0));
                 }
+            await cnn.CloseAsync ();
             //Create
-            string sql = "INSERT INTO Messages (FromId, ToId, DateTimeSent, DateTimeRead, MessageText, MessageTags) VALUES (@fromid, @toid, @datetimesent, @datetimeread, @messagetext, @messagetags)";
+            await cnn.OpenAsync ();
+            string sql2 = "INSERT INTO Messages (FromId, ToId, DateTimeSent, DateTimeRead, MessageText, MessageTags) VALUES (@fromid, @toid, @datetimesent, @datetimeread, @messagetext, @messagetags)";
             foreach (int studentId in lstStudentIds)
                 {
-                SqlCommand cmd2 = new SqlCommand (sql, cnn);
+                SqlCommand cmd2 = new SqlCommand (sql2, cnn);
                 cmd2.Parameters.AddWithValue ("@fromid", message.FromId);
                 cmd2.Parameters.AddWithValue ("@toid", studentId);
                 cmd2.Parameters.AddWithValue ("@datetimesent", message.DateTimeSent);
@@ -2925,6 +2927,7 @@ COMMIT TRANSACTION;
                 cmd2.Parameters.AddWithValue ("@messagetags", message.MessageTags);
                 await cmd2.ExecuteNonQueryAsync ();
                 }
+            await cnn.CloseAsync ();
             return 1;
             }
         public async Task<List<Message>> Read_MessagesAsync (string mode, int Id)
@@ -2976,11 +2979,13 @@ COMMIT TRANSACTION;
                         MessageTags = reader.GetInt32 (6)
                         });
                     }
+                await cnn.CloseAsync ();
                 return lstMessages;
                 }
             catch (Exception ex)
                 {
                 Console.WriteLine ("Error: " + ex.ToString ());
+                await cnn.CloseAsync ();
                 return new List<Message> ();
                 }
             }
@@ -3034,17 +3039,19 @@ COMMIT TRANSACTION;
                         MessageTags = reader.GetInt32 (6)
                         });
                     }
+                await cnn.CloseAsync ();
                 return lstMessages;
                 }
             catch (Exception ex)
                 {
                 Console.WriteLine ("Error: " + ex.ToString ());
+                await cnn.CloseAsync ();
                 return new List<Message> ();
                 }
             }
         public async Task<bool> Update_MessageAsync (Message message)
             {
-            string sql = "UPDATE Messages SET (FromId=@fromid, ToId=@toid, DateTimeSent=@datetimesent, DateTimeRead=@datetimeread, MessageText=@messagetext, MessageTags=@messagetags)";
+            string sql = "UPDATE Messages SET FromId=@fromid, ToId=@toid, DateTimeSent=@datetimesent, DateTimeRead=@datetimeread, MessageText=@messagetext, MessageTags=@messagetags WHERE MessageId=@messageid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
@@ -3055,7 +3062,9 @@ COMMIT TRANSACTION;
             cmd.Parameters.AddWithValue ("@datetimeread", message.DateTimeRead);
             cmd.Parameters.AddWithValue ("@messagetext", message.MessageText);
             cmd.Parameters.AddWithValue ("@messagetags", message.MessageTags);
+            cmd.Parameters.AddWithValue ("@messageid", message.MessageId);
             int i = cmd.ExecuteNonQuery ();
+            await cnn.CloseAsync ();
             return true;
             }
         public async Task<bool> Delete_MessagesAsync (string mode, int Id)
@@ -3085,6 +3094,7 @@ COMMIT TRANSACTION;
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@id", Id);
             int i = cmd.ExecuteNonQuery ();
+            await cnn.CloseAsync ();
             return (i > 0) ? true : false;
             }
         #endregion
