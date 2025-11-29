@@ -48,7 +48,7 @@
                                         {
                                         <input class="form-inline" @bind=crs.CourseName placeholder="Enter Course Name..." />
                                         <button class="btn btn-link" name="btnCourseId" @onclick="()=>BtnUpdateCourse(crs)" >
-                                            <img src="/icons/icoSave_cw_1.png" width="30" />
+                                            <img src="/icons/icoSave_cw_1.png" width="24" />
                                         </button>
                                         <br />
                                         <br />
@@ -57,19 +57,19 @@
                                         {
                                          <div style="text-align: center;">
                                             <button class="btn btn-link" title="Rename this Course" @onclick="()=>BtnEditCourse(crs.CourseId)">
-                                                <img src="/icons/icoRename_bt_1.png" width="40" />
+                                                <img src="/icons/icoRename_bt_1.png" width="24" />
                                             </button>
                                             <button class="btn btn-link" title="Delete this Course!" @onclick="()=>BtnDeleteCourse(crs.CourseId)" >
-                                                <img src="/icons/icoDelete_bt_1.png" width="30" />
+                                                <img src="/icons/icoDelete_bt_1.png" width="24" />
                                             </button>
                                             <button class="btn btn-link" title="List Exams" @onclick="()=>BtnExams(crs)" >
-                                                <img src="/icons/icoFolderExam_bt_2.png" width="35" />
+                                                <img src="/icons/icoFolderExam_bt_2.png" width="24" />
                                             </button>
                                             <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTests(crs.CourseId)" >
-                                                <img src="/icons/icoFolderReport_bt_1.png" width="35" />
+                                                <img src="/icons/icoFolderReport_bt_1.png" width="24" />
                                             </button>
                                             <button class="btn btn-link" title="List Tests" @onclick="()=>BtnListCourseTests(crs.CourseId, crs.CourseName)" >
-                                                <img src="/icons/icoList_bt_1.png" width="35" />
+                                                <img src="/icons/icoList_bt_1.png" width="24" />
                                             </button>
                                             <br />
                                         </div>
@@ -78,15 +78,15 @@
                                         //CourseTopics
                                         @foreach (CourseTopic ct in crs.CourseTopics)
                                             {
-                                            <input class="form-inline"  @ref="inputRefs[ct.CourseTopicId]" @bind="ct.CourseTopicTitle" placeholder="Topic name"  style="width:200px" />
+                                            <input class="form-inline"  @ref="inputRefs[ct.CourseTopicId]" @bind="ct.CourseTopicTitle" placeholder="Topic name"  style="width:140px" />
                                             <button class="btn btn-link" @onclick="()=>BtnUpdateCourseTopic (ct)">
-                                                <img src="/icons/icoSave_bt_1.png" width="25" />
+                                                <img src="/icons/icoSave_bt_1.png" width="22" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnDeleteCourseTopic (ct.CourseTopicId)">
-                                                <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                                <img src="/icons/icoDelete_bt_1.png" width="22" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnListCourseTopicTests (ct)">
-                                                <img src="/icons/icoList_bt_1.png" width="30" />
+                                                <img src="/icons/icoList_bt_1.png" width="22" />
                                             </button>
                                             <br />
                                             }
@@ -94,13 +94,13 @@
                                             {
                                             <input class="form-inline" @ref="txtNewCourseTopicTitle" @bind="courseTopic.CourseTopicTitle" placeholder="New Topic ..." />
                                             <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseTopic(crs.CourseId)">
-                                                <img src="/icons/icoSave_cw_1.png" width="25" />
+                                                <img src="/icons/icoSave_cw_1.png" width="22" />
                                             </button>
                                             }
                                         else
                                             {
                                             <button class="btn btn-link btn-sm" @onclick="()=>BtnAddNewCourseTopic(crs.CourseId)">
-                                                <img src="/icons/icoAddItem_gt_1.png" width="25" />
+                                                <img src="/icons/icoAddItem_gt_1.png" width="22" />
                                             </button>
                                             }
                                         <hr style="color:red" />
@@ -108,7 +108,7 @@
                                         //CourseFolders
                                         @foreach (CourseFolder cf in crs.CourseFolders)
                                             {
-                                            <input class="form-inline" @ref="txtNewCourseFolderUrl" @bind="cf.CourseFolderUrl" placeholder="Folder url ..." style="width:80%;margin-bottom:5px;"/><br />
+                                            <input class="form-inline" @ref="txtNewCourseFolderUrl" @bind="cf.CourseFolderUrl" placeholder="Folder url ..." style="width:90%;margin-bottom:5px;"/><br />
                                             <input class="form-inline" @ref="txtNewCourseFolderTitle" @bind="cf.CourseFolderTitle" placeholder="Folder title ..." style="width:40%;margin-bottom:5px;"/>
                                             <input class="form-inline" @bind="cf.CourseFolderActive" type="checkbox" />
                                             <label style="padding-right:5px;">Active</label>

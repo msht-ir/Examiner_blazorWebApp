@@ -120,30 +120,30 @@
                                     strRunningPoint = studentCourse.NumberOfTests == 0 ?"---": $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double)studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F2}";
                                     <div style="color:black;font-weight:bold;">@studentCourse.CourseName : <span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
                                     <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
-                                        <img src="/icons/icoFolderReport_bt_1.png" width="28" />
+                                        <img src="/icons/icoFolderReport_bt_1.png" width="25" />
                                     </button>
                                     <button class="btn btn-link" @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
-                                        <img src="/images/gifBook1.gif" width="32" />
+                                        <img src="/images/gifBook1.gif" width="28" />
                                     </button>
                                     @if ((student.UserTags & 32) == 32)
                                         {
                                         <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
-                                            <img src="/icons/icoReport_ct_1.png" width="22" />
+                                            <img src="/icons/icoReport_ct_1.png" width="20" />
                                         </button>
                                         }
                                     @if ((student.UserTags & 16) == 16)
                                         {
                                         <button class="btn btn-link" @onclick="()=>BtnTryToCorrect(studentCourse.StudentCourseId)">
-                                            <img src="/icons/icoRetry_bt_1.png" width="24" />
+                                            <img src="/icons/icoRetry_bt_1.png" width="22" />
                                         </button>
                                         }
                                     @if ((student.UserTags & 16) == 16)
                                         {
                                         <button class="btn btn-link" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
-                                            <img src="/icons/icoFilter_bt_1.png" width="24" />
+                                            <img src="/icons/icoFilter_bt_1.png" width="22" />
                                         </button>
                                         <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse, "wipeout")'>
-                                            <img src="/icons/icoEraser_bw_1.png" width="25" />
+                                            <img src="/icons/icoEraser_bw_1.png" width="22" />
                                         </button>
                                         }
                                     @* CourseFolders *@

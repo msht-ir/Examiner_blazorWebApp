@@ -61,22 +61,22 @@ else
                                         {
                                         <div style="text-align: center;">
                                             <button class="btn btn-link" type="button" @onclick="()=>BtnEditGroup(grp.GroupId)">
-                                                <img src="/icons/icoRename_bt_1.png" width="32" />
+                                                <img src="/icons/icoRename_bt_1.png" width="28" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnAddNewStudent(grp.GroupId)">
-                                                <img src="/icons/icoUserAdd_bluet_1.png" width="32" />
+                                                <img src="/icons/icoUserAdd_bluet_1.png" width="28" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnEditStudentsTags(grp.GroupId)">
-                                                <img src="/icons/icoSelect_bt_3.png" width="32" />
+                                                <img src="/icons/icoSelect_bt_3.png" width="28" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnAddCourse2Students(grp.GroupId)">
-                                                <img src="/icons/icoCourseAdd_bt_1.png" width="32" />
+                                                <img src="/icons/icoCourseAdd_bt_1.png" width="28" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnReportStudentsExamsAndCourses(grp.GroupId)">
-                                                <img src="/icons/icoFolderReport_bt_1.png" width="32" />
+                                                <img src="/icons/icoFolderReport_bt_1.png" width="28" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnAddNewMessageToGroup(grp.GroupId)">
-                                                <img src="/icons/icoEnvelop_bt_3.png" width="32" />
+                                                <img src="/icons/icoEnvelop_bt_3.png" width="28" />
                                             </button>
                                             <br />
                                             @if ((appState.Cmd == "AddCourse2Students") && (appState.GroupId == grp.GroupId))
@@ -237,16 +237,16 @@ else
                                                                     {
                                                                     <div style="text-align: center;">
                                                                         <button class="btn btn-link" @onclick="()=>BtnUpdateStudent(stdnt)">
-                                                                            <img src="/icons/icoSave_bt_1.png" width="30" />
+                                                                            <img src="/icons/icoSave_bt_1.png" width="25" />
                                                                         </button>
                                                                         <button class="btn btn-link" @onclick="()=>BtnDeleteStudent(stdnt.UserId)">
-                                                                            <img src="/icons/icoDelete_bt_1.png" width="30" />
+                                                                            <img src="/icons/icoDelete_bt_1.png" width="25" />
                                                                         </button>
                                                                         <button class="btn btn-link" @onclick="()=>BtnAddStudentCourse(stdnt.UserId)">
-                                                                            <img src="/icons/icoCourseAdd_bt_1.png" width="35" />
+                                                                            <img src="/icons/icoCourseAdd_bt_1.png" width="30" />
                                                                         </button>
                                                                         <button class="btn btn-link" @onclick="()=>BtnReportStudentExamsAndCourses(stdnt.UserId)">
-                                                                            <img src="/icons/icoFolderReport_bt_1.png" width="35" />
+                                                                            <img src="/icons/icoFolderReport_bt_1.png" width="30" />
                                                                         </button>
                                                                     </div>
                                                                     }
