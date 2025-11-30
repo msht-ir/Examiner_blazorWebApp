@@ -1,0 +1,177 @@
+﻿@page "/T_ReportMessages/{mode}/{Id:int}"
+@rendermode InteractiveServer
+@using ExaminerB.Service
+@inject FeService feService
+@inject NavigationManager Navman
+@inject AppState appState
+@inject IJSRuntime JS
+@implements IDisposable
+<h1 style="text-align:center;color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h1>
+<hr style="color:red"/>
+
+@if (!_hasFetched)
+    {
+    <_ScanSheets />
+    }
+else
+    {
+    <h6 style="text-align:center;">Messages of: <span style="color:indianred">@appState.StudentName</span></h6>
+    @if (lstMessages.Count > 0)
+        {
+        <div style="text-align:center">
+            <button class="btn btn-link" @onclick="BtnBack">
+                <img src="/icons/icoChart_bw_1.png" width="30" />
+            </button>
+            <button class="btn btn-link" @onclick="()=>BtnDelete_MessagesOfstudent(Id)">
+                <img src="/icons/icoDeleteAll_bt_1.png" width="30" />
+            </button>
+            <button class="btn btn-link" @onclick="BtnBack">
+                <img src="/icons/icoBack_bt_1.png" width="25" />
+            </button>
+        </div>        
+        }
+    <hr />
+    <EditForm Model="lstMessages">
+        @foreach(Message message in lstMessages)
+        {
+        <div class="container mt-5" style="text-align:center;">
+            <div class="card">
+                <div class="card-body bg-light">
+                    @message.MessageText
+                </div>
+                <div>Sent: @message.DateTimeSent</div>
+                @if((message.MessageTags & 1) == 1)
+                    {
+                    <div>Read: @message.DateTimeRead</div>                    
+                    }
+                @if((message.MessageTags & 2) == 2)
+                    {
+                    <span>#Bookmarked </span>                    
+                    }
+                @if((message.MessageTags & 4) == 4)
+                    {
+                    <span style="color:indianred">#Deleted </span>
+                    }
+                @if((message.MessageTags & 8) == 8)
+                    {
+                    <span>#Answer: YES </span>
+                    }
+                @if((message.MessageTags & 16) == 16)
+                    {
+                    <span>#Answer: No </span>
+                    }
+            </div>
+            <button class="btn btn-link" @onclick="BtnBack">
+                <img src="/icons/icoPie_bt_1.png" width="30" />
+            </button>
+            <button class="btn btn-link" @onclick="()=>BtnDelete_Messages(message)">
+                <img src="/icons/icoDeleteAll_bt_1.png" width="30" />
+            </button>
+            <button class="btn btn-link" @onclick="()=>BtnDelete_Message(message.MessageId)">
+                <img src="/icons/icoDelete_bt_1.png" width="22" />
+            </button>
+        </div>
+        <hr />
+        }
+    </EditForm>
+        <div style="text-align:center">
+            <br />
+            <button class="btn btn-link" @onclick="BtnBack">
+                <img src="/icons/icoBack_bt_1.png" width="35" />
+            </button>
+        </div>
+    }
+    <script>
+        window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+    </script>
+
+@code {
+    [Parameter] public string mode { get; set; }
+    [Parameter] public int Id { get; set; }
+    public bool _hasFetched = false;
+    User user = new User ();
+    List<Message> lstMessages = new List<Message> ();
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        lstMessages = await feService.Read_Messages (mode, Id);
+        _hasFetched = true;
+        } 
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //btns
+    public async Task BtnDelete_MessagesOfstudent(int studentId)
+        {
+        if(await JS.InvokeAsync<bool>("confirm", "Delete All Messages Permanently?"))
+            {
+            // int userId = Convert.ToInt32 (appState.UserId);
+            bool result = await feService.Delete_MessagesById ("Student", studentId);
+            if(result)
+                {
+                int id = Convert.ToInt32 (Id);
+                lstMessages.Clear();
+                lstMessages = await feService.Read_Messages (mode, Id);
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
+                }            
+            }
+        }
+    public async Task BtnDelete_Message(int messageId)
+        {
+        if(await JS.InvokeAsync<bool>("confirm", "Delete Message Permanently?"))
+            {
+            int userId = Convert.ToInt32 (appState.UserId);
+            bool result = await feService.Delete_MessagesById ("Message", messageId);
+            if(result)
+                {
+                int id = Convert.ToInt32 (Id);
+                lstMessages.Clear();
+                lstMessages = await feService.Read_Messages (mode, Id);
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
+                }            
+            }
+        }
+    public async Task BtnDelete_Messages(Message message)
+        {
+        if(await JS.InvokeAsync<bool>("confirm", "Delete all Message Instanses Sent to Group Permanently?"))
+            {
+            int userId = Convert.ToInt32 (appState.UserId);
+            bool result = await feService.Delete_MessagesByDateTime (userId, message);
+            if(result)
+                {
+                int id = Convert.ToInt32 (Id);
+                lstMessages.Clear();
+                lstMessages = await feService.Read_Messages (mode, Id);
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
+                }            
+            }
+        }
+    public void BtnBack()
+        {
+        Navman.NavigateTo ("/T_Students");
+        //Navman.NavigateTo (appState.ReturnPage?? "/Login");
+        }
+    //methods
+
+}

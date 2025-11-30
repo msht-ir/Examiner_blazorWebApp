@@ -150,7 +150,8 @@ namespace ExaminerB.Services2Backend
         Task<List<Message>> Read_MessagesAsync (int userId, string mode, string key);
         Task<List<Message>> Read_MessagesAsync (Message message);
         Task<bool> Update_MessageAsync (Message message);
-        Task<bool> Delete_MessagesAsync (string mode, int Id);
+        Task<bool> Delete_MessagesByIdAsync (string mode, int Id);
+        Task<bool> Delete_MessagesByDateTimeAsync (int userId, Message message);
         #endregion
         }
     }

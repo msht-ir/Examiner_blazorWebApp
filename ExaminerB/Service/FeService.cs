@@ -972,10 +972,16 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<bool> Delete_Messages (string mode, int Id)
+        public async Task<bool> Delete_MessagesById (string mode, int Id)
             {
             //modes: Group, Student, Message
-            var response = await _http.PostAsJsonAsync ($"api/Delete_Messages?mode={mode}", Id);
+            var response = await _http.PostAsJsonAsync ($"api/Delete_MessagesById?mode={mode}", Id);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool> Delete_MessagesByDateTime (int userId, Message message)
+            {
+            //modes: Group, Student, Message
+            var response = await _http.PostAsJsonAsync ($"api/Delete_MessagesByDateTime?userId={userId}", message);
             return response.IsSuccessStatusCode ? true : false;
             }
         #endregion

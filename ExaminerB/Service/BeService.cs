@@ -2951,6 +2951,11 @@ COMMIT TRANSACTION;
                         sql += " WHERE ToId=@Id AND (MessageTags & 4) = 0 ORDER BY DateTimeSent";
                         break;
                         }
+                case "StudentWithDels":
+                        {
+                        sql += " WHERE ToId=@Id ORDER BY DateTimeSent";
+                        break;
+                        }
                 case "Message":
                         {
                         sql += " WHERE MessageId=@Id ORDER BY DateTimeSent";
@@ -3107,7 +3112,7 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             return true;
             }
-        public async Task<bool> Delete_MessagesAsync (string mode, int Id)
+        public async Task<bool> Delete_MessagesByIdAsync (string mode, int Id)
             {
             string sql = "";
             switch (mode)
@@ -3119,12 +3124,12 @@ COMMIT TRANSACTION;
                         }
                 case "Student":
                         {
-                        sql = @"DELETE FROM Messages WHERE ToId=@id)";
+                        sql = @"DELETE FROM Messages WHERE ToId=@id";
                         break;
                         }
                 case "Message":
                         {
-                        sql = @"DELETE FROM Messages WHERE MessageId=@id)";
+                        sql = @"DELETE FROM Messages WHERE MessageId=@id";
                         break;
                         }
                 }
@@ -3133,6 +3138,19 @@ COMMIT TRANSACTION;
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@id", Id);
+            int i = cmd.ExecuteNonQuery ();
+            await cnn.CloseAsync ();
+            return (i > 0) ? true : false;
+            }
+        public async Task<bool> Delete_MessagesByDateTimeAsync (int userId, Message message)
+            {
+            string sql =  @"DELETE FROM Messages WHERE FromId=@fromid AND DateTimeSent=@datetimesent";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@fromid", message.FromId);
+            cmd.Parameters.AddWithValue ("@datetimesent", message.DateTimeSent);
             int i = cmd.ExecuteNonQuery ();
             await cnn.CloseAsync ();
             return (i > 0) ? true : false;

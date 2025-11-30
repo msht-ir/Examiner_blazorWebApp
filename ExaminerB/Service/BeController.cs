@@ -694,10 +694,16 @@ namespace ExaminerB.Backend
             var result = await _BeService.Update_MessageAsync (message);
             return Ok (result);
             }
-        [HttpPost ("Delete_Messages")]
-        public async Task<ActionResult<bool>> Delete_Messages ([FromQuery] string mode, [FromBody] int Id)
+        [HttpPost ("Delete_MessagesById")]
+        public async Task<ActionResult<bool>> Delete_MessagesById ([FromQuery] string mode, [FromBody] int Id)
             {
-            var result = await _BeService.Delete_MessagesAsync (mode, Id);
+            var result = await _BeService.Delete_MessagesByIdAsync (mode, Id);
+            return result ? Ok (result) : NotFound (result);
+            }
+        [HttpPost ("Delete_MessagesByDateTime")]
+        public async Task<ActionResult<bool>> Delete_MessagesByDateTime ([FromQuery] int userId, [FromBody] Message message)
+            {
+            var result = await _BeService.Delete_MessagesByDateTimeAsync (userId, message);
             return result ? Ok (result) : NotFound (result);
             }
         #endregion
