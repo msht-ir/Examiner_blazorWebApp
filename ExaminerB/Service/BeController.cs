@@ -682,6 +682,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Read_MessagesAsync (userId, mode, key);
             return Ok (result);
             }
+        [HttpPost ("Read_MessagesByMessage")]
+        public async Task<ActionResult<List<Message>>> Read_Messages ([FromBody] Message message)
+            {
+            var result = await _BeService.Read_MessagesAsync (message);
+            return Ok (result);
+            }
         [HttpPost ("Update_Message")]
         public async Task<ActionResult<bool>> Update_Message ([FromBody] Message message)
             {
@@ -695,6 +701,5 @@ namespace ExaminerB.Backend
             return result ? Ok (result) : NotFound (result);
             }
         #endregion
-
         }
     }

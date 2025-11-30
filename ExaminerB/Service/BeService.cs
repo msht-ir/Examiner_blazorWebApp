@@ -2948,7 +2948,7 @@ COMMIT TRANSACTION;
                         }
                 case "Student":
                         {
-                        sql += " WHERE ToId=@Id ORDER BY DateTimeSent";
+                        sql += " WHERE ToId=@Id AND (MessageTags & 4) = 0 ORDER BY DateTimeSent";
                         break;
                         }
                 case "Message":
@@ -3024,6 +3024,46 @@ COMMIT TRANSACTION;
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.Parameters.AddWithValue ("@strkey", strKey);
                 cmd.Parameters.AddWithValue ("@userId", userId);
+                SqlDataReader reader = cmd.ExecuteReader ();
+                lstMessages.Clear ();
+                while (await reader.ReadAsync ())
+                    {
+                    lstMessages.Add (new Message
+                        {
+                        MessageId = reader.GetInt32 (0),
+                        FromId = reader.GetInt32 (1),
+                        ToId = reader.GetInt32 (2),
+                        DateTimeSent = reader.GetString (3),
+                        DateTimeRead = reader.GetString (4),
+                        MessageText = reader.GetString (5),
+                        MessageTags = reader.GetInt32 (6)
+                        });
+                    }
+                await cnn.CloseAsync ();
+                return lstMessages;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("Error: " + ex.ToString ());
+                await cnn.CloseAsync ();
+                return new List<Message> ();
+                }
+            }
+        public async Task<List<Message>> Read_MessagesAsync (Message message)
+            {
+            //mode: Search, Date, DateTime
+            List<Message> lstMessages = new ();
+            string strKey = "";
+            string sql = "SELECT MessageId, FromId, ToId, DateTimeSent, DateTimeRead, MessageText, MessageTags FROM Messages";
+            sql += " WHERE FromId=@fromid AND DateTimeSent=@datetimesent";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@userId", message.FromId);
+                cmd.Parameters.AddWithValue ("@datetimesent", message.DateTimeSent);
                 SqlDataReader reader = cmd.ExecuteReader ();
                 lstMessages.Clear ();
                 while (await reader.ReadAsync ())

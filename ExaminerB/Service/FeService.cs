@@ -948,6 +948,20 @@ namespace ExaminerB.Service
                 return new List<Message> ();
                 }
             }
+        public async Task<List<Message>> Read_Messages (Message message)
+            {
+            //mode: Search, Date, DateTime
+            var response = await _http.PostAsJsonAsync ($"api/Read_MessagesByMessage", message);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Message>? lstMessages = await response.Content.ReadFromJsonAsync<List<Message>> ();
+                return lstMessages ?? new List<Message> ();
+                }
+            else
+                {
+                return new List<Message> ();
+                }
+            }
         public async Task<bool> Update_Message (Message message)
             {
             var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
