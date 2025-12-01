@@ -1,11 +1,14 @@
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using ExaminerB.Components;
 using ExaminerB.Service;
 using ExaminerB.Services2Backend;
 using ExaminerS.Models;
+using MudBlazor.Services;
 var builder = WebApplication.CreateBuilder (args);
 // Add services to the container.
 builder.Services.AddRazorComponents ().AddInteractiveServerComponents ();
 builder.Services.AddScoped<AppState> ();
+
 //Add Backend Services
 builder.Services.AddScoped<BeIService, BeService> ();
 // Configure HttpClient with base address from configuration or environment

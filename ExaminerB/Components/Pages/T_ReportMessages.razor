@@ -28,14 +28,14 @@ else
                     <img src="/icons/icoBack_bt_1.png" width="30" />
                 </button>
                 <br />
-                @* nMessagesAll = 0;
-                nMessagesRead = 0;
-                nMessagesBookmarked = 0;
-                nMessagesDeleted = 0;
-                nMessagesTypeIsFeedback = 0;
-                nMessagesAnsweredYes = 0;
-                nMessagesAnsweredNo = 0;
-                nMessagesNotAnswered = 0; *@
+                @* nMessagesAll
+                nMessagesRead
+                nMessagesBookmarked
+                nMessagesDeleted
+                nMessagesTypeIsFeedback
+                nMessagesAnsweredYes
+                nMessagesAnsweredNo
+                nMessagesNotAnswered *@
                 <hr/>
                 <div style="text-align:left; padding-left:25px;background-color:whitesmoke">
                     <div style="font-weight:bold">Messages <span style="font-weight:normal;"> ( @nMessagesAll ) </span></div>
@@ -47,7 +47,27 @@ else
                     <div>@nMessagesAnsweredNo No</div>
                     <div>@nMessagesNotAnswered Not answered</div>
                 </div>
-                }
+                @* <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8">
+                    <MudPaper Class="pa-8" Elevation="6">
+                        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-6">
+                            وضعیت کارها
+                        </MudText>
+
+                        <MudChart ChartType="ChartType.Donut"
+                                  InputData="@(new double[]{nMessagesAnsweredYes,nMessagesAnsweredNo,nMessagesNotAnswered})"
+                                  InputLabels="@(new[] {"Yes", "No","notSure"})"
+                                  Width="50%" 
+                                  Height="200px" />
+
+                        <MudText Align="Align.Center" Class="mt-6" Typo="Typo.h6">
+                            Total: @nMessagesTypeIsFeedback
+                        </MudText>
+                    </MudPaper>
+                </MudContainer> *@
+
+            <br />    
+            <br />    
+            }
             else
                 {
                 <button class="btn btn-link" @onclick="BtnCalcPercentsForStudent">
@@ -131,6 +151,7 @@ else
     public bool _hasFetched = false;
     User user = new User ();
     List<Message> lstMessages = new List<Message> ();
+        
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
