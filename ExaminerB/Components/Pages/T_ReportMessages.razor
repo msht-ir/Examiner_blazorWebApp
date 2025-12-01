@@ -19,15 +19,47 @@ else
     @if (lstMessages.Count > 0)
         {
         <div style="text-align:center">
-            <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/icons/icoChart_bw_1.png" width="30" />
-            </button>
-            <button class="btn btn-link" @onclick="()=>BtnDelete_MessagesOfstudent(Id)">
-                <img src="/icons/icoDeleteAll_bt_1.png" width="30" />
-            </button>
-            <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/icons/icoBack_bt_1.png" width="25" />
-            </button>
+            @if (appState.Cmd== "ShowStudentMessageStats")
+                {
+                <button class="btn btn-link" @onclick="()=>BtnDelete_MessagesOfstudent(Id)">
+                    <img src="/icons/icoDeleteAll_bt_1.png" width="35" />
+                </button>
+                <button class="btn btn-link" @onclick="BtnBack">
+                    <img src="/icons/icoBack_bt_1.png" width="30" />
+                </button>
+                <br />
+                @* nMessagesAll = 0;
+                nMessagesRead = 0;
+                nMessagesBookmarked = 0;
+                nMessagesDeleted = 0;
+                nMessagesTypeIsFeedback = 0;
+                nMessagesAnsweredYes = 0;
+                nMessagesAnsweredNo = 0;
+                nMessagesNotAnswered = 0; *@
+                <hr/>
+                <div style="text-align:left; padding-left:25px;background-color:whitesmoke">
+                    <div style="font-weight:bold">Messages <span style="font-weight:normal;"> ( @nMessagesAll ) </span></div>
+                    <div>@nMessagesRead Read</div>
+                    <div>@nMessagesBookmarked Bookmarked</div>
+                    <div>@nMessagesDeleted Deleted</div>
+                    <div style="font-weight:bold">Feedback requests<span style="font-weight:normal;"> ( @nMessagesTypeIsFeedback ) </span></div>
+                    <div>@nMessagesAnsweredYes Yes</div>
+                    <div>@nMessagesAnsweredNo No</div>
+                    <div>@nMessagesNotAnswered Not answered</div>
+                </div>
+                }
+            else
+                {
+                <button class="btn btn-link" @onclick="BtnCalcPercentsForStudent">
+                    <img src="/images/gifChart03.gif" width="40" />
+                </button>
+                <button class="btn btn-link" @onclick="()=>BtnDelete_MessagesOfstudent(Id)">
+                    <img src="/icons/icoDeleteAll_bt_1.png" width="35" />
+                </button>
+                <button class="btn btn-link" @onclick="BtnBack">
+                    <img src="/icons/icoBack_bt_1.png" width="30" />
+                </button>                
+                }
         </div>        
         }
     <hr />
@@ -44,25 +76,25 @@ else
                     {
                     <div>Read: @message.DateTimeRead</div>                    
                     }
-                @if((message.MessageTags & 2) == 2)
-                    {
-                    <span>#Bookmarked </span>                    
-                    }
-                @if((message.MessageTags & 4) == 4)
-                    {
-                    <span style="color:indianred">#Deleted </span>
-                    }
                 @if((message.MessageTags & 8) == 8)
                     {
-                    <span>#Answer: YES </span>
+                    <span style="color:royalblue;font-weight:bold"># YES </span>
                     }
                 @if((message.MessageTags & 16) == 16)
                     {
-                    <span>#Answer: No </span>
+                    <span style="color:indianred;font-weight:bold"># NO </span>
+                    }
+                @if((message.MessageTags & 2) == 2)
+                    {
+                    <span style="color:gray;font-style:italic">Bookmarked </span>
+                    }
+                @if((message.MessageTags & 4) == 4)
+                    {
+                    <span style="color:gray;font-style:italic">Deleted </span>
                     }
             </div>
             <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/icons/icoPie_bt_1.png" width="30" />
+                <img src="/icons/icoPie_bt_1.png" width="26" />
             </button>
             <button class="btn btn-link" @onclick="()=>BtnDelete_Messages(message)">
                 <img src="/icons/icoDeleteAll_bt_1.png" width="30" />
@@ -88,6 +120,14 @@ else
 @code {
     [Parameter] public string mode { get; set; }
     [Parameter] public int Id { get; set; }
+    public int nMessagesAll;
+    public int nMessagesRead;
+    public int nMessagesBookmarked;
+    public int nMessagesDeleted;
+    public int nMessagesTypeIsFeedback;
+    public int nMessagesAnsweredYes;
+    public int nMessagesAnsweredNo;
+    public int nMessagesNotAnswered;
     public bool _hasFetched = false;
     User user = new User ();
     List<Message> lstMessages = new List<Message> ();
@@ -95,6 +135,7 @@ else
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
+        appState.SetCmd ("");
         lstMessages = await feService.Read_Messages (mode, Id);
         _hasFetched = true;
         } 
@@ -106,7 +147,51 @@ else
         {
         appState.OnChange -= TriggerRender;
         }
-    //btns
+    //btns-Students
+    public void BtnCalcPercentsForStudent()
+        {
+        nMessagesAll = 0;
+        nMessagesRead = 0;
+        nMessagesBookmarked = 0;
+        nMessagesDeleted = 0;
+        nMessagesTypeIsFeedback = 0;
+        nMessagesAnsweredYes = 0;
+        nMessagesAnsweredNo = 0;
+        nMessagesNotAnswered = 0;
+        foreach (Message msg in lstMessages)
+            {
+            nMessagesAll++;
+            if((msg.MessageTags & 1) == 1)
+                {
+                nMessagesRead++;                
+                }
+            if((msg.MessageTags & 2) == 2)
+                {
+                nMessagesBookmarked++;
+                }
+            if((msg.MessageTags & 4) == 4)
+                {
+                nMessagesDeleted++;
+                }
+            if((msg.MessageTags & 32) == 32)
+                {
+                nMessagesTypeIsFeedback++;
+                if((msg.MessageTags & 8) == 8)
+                    {
+                    nMessagesAnsweredYes++;
+                    }
+                else if((msg.MessageTags & 16) == 16)
+                    {
+                    nMessagesAnsweredNo++;
+                    }
+                else
+                    {
+                    nMessagesNotAnswered++;
+                    }
+                }
+            }
+        appState.SetCmd ("ShowStudentMessageStats");
+        }
     public async Task BtnDelete_MessagesOfstudent(int studentId)
         {
         if(await JS.InvokeAsync<bool>("confirm", "Delete All Messages Permanently?"))
@@ -127,6 +212,7 @@ else
                 }            
             }
         }
+    //btns-Messages
     public async Task BtnDelete_Message(int messageId)
         {
         if(await JS.InvokeAsync<bool>("confirm", "Delete Message Permanently?"))
@@ -166,7 +252,7 @@ else
                 await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
                 }            
             }
-        }
+        }    
     public void BtnBack()
         {
         Navman.NavigateTo ("/T_Students");
