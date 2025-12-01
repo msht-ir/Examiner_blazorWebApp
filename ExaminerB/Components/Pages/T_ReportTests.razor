@@ -44,14 +44,15 @@ else
             @* Show-Test *@
             if (_cmd == "showStatistics")
                 {
-                string result = "";
                 //result = CalculateCourseExamStats (examId, tst.TestId);
-                <div style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle <span style="font-weight:normal;font-size:small;color:royalblue">
+                <div style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle
                     <br />
                     <button class="btn btn-link" @onclick="()=>BtnEditCourseTest(tst.TestId)" style="@testRtlStatus">
                         <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
                     </button>
-                    [ @result ]</span>
+                    <button class="btn btn-link" @onclick="()=>BtnEditCourseTest(tst.TestId)" style="@testRtlStatus">
+                        <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
+                    </button>
                 </div>
                 }
             else

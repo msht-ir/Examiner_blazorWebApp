@@ -3067,7 +3067,7 @@ COMMIT TRANSACTION;
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@userId", message.FromId);
+                cmd.Parameters.AddWithValue ("@fromid", message.FromId);
                 cmd.Parameters.AddWithValue ("@datetimesent", message.DateTimeSent);
                 SqlDataReader reader = cmd.ExecuteReader ();
                 lstMessages.Clear ();

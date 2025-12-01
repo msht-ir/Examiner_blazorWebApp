@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder (args);
 // Add services to the container.
 builder.Services.AddRazorComponents ().AddInteractiveServerComponents ();
 builder.Services.AddScoped<AppState> ();
-
+builder.Services.AddMudServices ();
 //Add Backend Services
 builder.Services.AddScoped<BeIService, BeService> ();
 // Configure HttpClient with base address from configuration or environment
