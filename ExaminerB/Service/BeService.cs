@@ -2326,6 +2326,66 @@ COMMIT TRANSACTION;
                 return new StudentExamTest ();
                 }
             }
+        public async Task<List<StudentExamTest>> Read_StudentsExamTestAsync (StudentExamTest studentExamTest)
+            {
+            //this [overload] has its own cnn
+            List<StudentExamTest> lstStudentExamTests = new ();
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            string sql = @"SELECT est.StudentExamTestId, se.StudentId, est.StudentExamId, est.TestId,
+            t.TestTitle, t.TestType, t.TopicId, ct.CourseTopicTitle, t.TestTags, t.TestLevel,
+            est.Opt1Id, est.Opt2Id, est.Opt3Id, est.Opt4Id, est.Opt5Id,
+            est.StudentExamTestKey, est.StudentExamTestAns, est.StudentExamTestTags
+            FROM StudentExams se
+            INNER JOIN StudentExamTests est ON se.StudentExamId = est.StudentExamId
+            INNER JOIN Tests t ON est.TestId = t.TestId
+            INNER JOIN CourseTopics ct ON t.TopicId = ct.CourseTopicId 
+            WHERE est.TestId=@testid AND se.ExamId IN (SELECT ExamId FROM StudentExams WHERE StudentExamId=@studentexamid)";
+            await cnn.OpenAsync ();
+            using SqlCommand cmd = new (sql, cnn);
+            cmd.Parameters.AddWithValue ("@testid", studentExamTest.TestId);
+            cmd.Parameters.AddWithValue ("@studentexamid", studentExamTest.StudentExamId);
+            try
+                {
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
+                    {
+                    int index = 0;
+                    while (await reader.ReadAsync ())
+                        {
+                        lstStudentExamTests.Add (new StudentExamTest
+                            {
+                            StudentExamTestId = reader.GetInt64 (0),
+                            StudentId = reader.GetInt32 (1),
+                            StudentExamId = reader.GetInt32 (2),
+                            TestId = reader.GetInt32 (3),
+                            TestTitle = reader.GetString (4),
+                            TestType = reader.GetInt32 (5),
+                            CourseTopicId = reader.GetInt32 (6),
+                            CourseTopicTitle = reader.GetString (7),
+                            TestTags = reader.GetInt32 (8),
+                            TestLevel = reader.GetInt32 (9),
+                            Opt1Id = reader.GetInt32 (10),
+                            Opt2Id = reader.GetInt32 (11),
+                            Opt3Id = reader.GetInt32 (12),
+                            Opt4Id = reader.GetInt32 (13),
+                            Opt5Id = reader.GetInt32 (14),
+                            StudentExamTestKey = reader.GetInt32 (15),
+                            StudentExamTestAns = reader.GetInt32 (16),
+                            StudentExamTestTags = reader.GetInt32 (17),
+                            TestIndex = ++index,
+                            TestOptions = new List<TestOption> ()
+                            });
+                        }
+                    }
+                return lstStudentExamTests;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine (ex.ToString ());
+                return new List<StudentExamTest> ();
+                }
+            }
+
         public async Task<bool> Update_StudentExamTestAsync (StudentExamTest studentExamTest)
             {
             string? connString = _config.GetConnectionString ("cnni");

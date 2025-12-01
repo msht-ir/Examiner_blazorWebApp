@@ -216,5 +216,4 @@ namespace ExaminerS.Models
         public string MessageText { get; set; } = "";
         public int MessageTags { get; set; } = 0;
         }
-
     }

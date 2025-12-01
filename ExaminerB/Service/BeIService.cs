@@ -119,6 +119,7 @@ namespace ExaminerB.Services2Backend
         Task<StudentExamTest> Read_StudentExamTestAsync (long studentExamTestId, bool readOptions);
         Task<List<StudentExamTest>> Read_StudentExamTestsAsync (int studentExamId, bool readOptions);
         Task<List<StudentExamTest>> Read_StudentExamTestsAsync (int studentExamId, bool readOptions, SqlConnection cnn);
+        Task<List<StudentExamTest>> Read_StudentsExamTestAsync (StudentExamTest studentExamTest);
         Task<bool> Update_StudentExamTestAsync (StudentExamTest studentExamTest);
         Task<bool> Update_StudentExamTestsTagsAsync (StudentExamTest tempStudentExamTest);
         Task<bool> Update_StudentExamTestTagsAsync (StudentExamTest tempStudentExamTest);

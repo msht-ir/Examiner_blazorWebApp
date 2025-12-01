@@ -44,13 +44,12 @@ else
             @* Show-Test *@
             if (_cmd == "showStatistics")
                 {
-                //result = CalculateCourseExamStats (examId, tst.TestId);
                 <div style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle
                     <br />
-                    <button class="btn btn-link" @onclick="()=>BtnEditCourseTest(tst.TestId)" style="@testRtlStatus">
+                    <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst.TestId)">
                         <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
                     </button>
-                    <button class="btn btn-link" @onclick="()=>BtnEditCourseTest(tst.TestId)" style="@testRtlStatus">
+                    <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnShowCourseTestStats(tst)">
                         <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
                     </button>
                 </div>
@@ -88,6 +87,35 @@ else
                 }
             @if (_cmd != "useSmallFont")
                 {
+                }
+            @if ((appState.Cmd == "ShowCourseTestStats") & (appState.TestId == tst.TestId))
+                {
+                <hr style="border-color:red" />
+                <div style="font-weight:bold;">Students:</div>
+                <div>
+                    @nStudentsVisited Visits
+                    @nStudentsAnswered Answers
+                    @nStudentsAnsweredCorrectly Correct
+                    @nStudentsAnsweredIncorrectly Incorrect
+                </div>
+                <div>
+                    NotAnswered= @nStudentsNotAnswered
+                </div>
+                <div>
+                    Opt1: @nStudentsSlectedOpt1
+                </div>
+                <div>
+                    Opt2: @nStudentsSlectedOpt2
+                </div>
+                <div>
+                    Opt3: @nStudentsSlectedOpt3
+                </div>
+                <div>
+                    Opt4: @nStudentsSlectedOpt4
+                </div>
+                <div>
+                    Opt5: @nStudentsSlectedOpt5
+                </div>
                 <hr style="border-color:red" />
                 }
             }
@@ -114,6 +142,17 @@ else
     int StudentId;
     string _cmd;
     string stl;
+    public int nStudents = 0;
+    public int nStudentsVisited = 0;
+    public int nStudentsAnswered = 0;
+    public int nStudentsAnsweredCorrectly = 0;
+    public int nStudentsAnsweredIncorrectly = 0;
+    public int nStudentsNotAnswered = 0;
+    public int nStudentsSlectedOpt1 = 0;
+    public int nStudentsSlectedOpt2 = 0;
+    public int nStudentsSlectedOpt3 = 0;
+    public int nStudentsSlectedOpt4 = 0;
+    public int nStudentsSlectedOpt5 = 0;
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
@@ -261,6 +300,67 @@ else
         appState.SetTestId (testId);
         appState.SetReturnPage ("/T_ReportTests");
         Navman.NavigateTo ("/T_CourseTest");
+        }
+    public async Task BtnShowCourseTestStats(StudentExamTest studentExamTest)
+        {
+        _hasFetched = false;
+        //Read StudentExam and StudentExamTest Across Students
+        List<StudentExamTest> lstStudentsExamTest = await feService.Read_StudentsExamTest (studentExamTest);
+        //calcs ...
+        nStudents = lstStudentsExamTest.Count;
+        nStudentsVisited = 0;
+        nStudentsAnswered = 0;
+        nStudentsAnsweredCorrectly = 0;
+        nStudentsAnsweredIncorrectly = 0;
+        nStudentsNotAnswered = 0;
+        nStudentsSlectedOpt1 = 0;
+        nStudentsSlectedOpt2 = 0;
+        nStudentsSlectedOpt3 = 0;
+        nStudentsSlectedOpt4 = 0;
+        nStudentsSlectedOpt5 = 0;
+        foreach(StudentExamTest tst in lstStudentsExamTest)
+            {
+            if((tst.StudentExamTestTags & 1) == 1)
+                {
+                nStudentsVisited++;
+                }
+            if((tst.StudentExamTestTags & 4) == 4)
+                {
+                nStudentsAnswered++;
+                if(tst.StudentExamTestAns == tst.StudentExamTestKey)
+                    {
+                    nStudentsAnsweredCorrectly++;
+                    }
+                else
+                    {
+                    nStudentsAnsweredIncorrectly++;                    
+                    }
+                }
+            if((tst.StudentExamTestAns == studentExamTest.Opt1Id))
+                {
+                nStudentsSlectedOpt1++;
+                }
+            if((tst.StudentExamTestAns == studentExamTest.Opt2Id))
+                {
+                nStudentsSlectedOpt2++;
+                }
+            if((tst.StudentExamTestAns == studentExamTest.Opt3Id))
+                {
+                nStudentsSlectedOpt3++;
+                }
+            if((tst.StudentExamTestAns == studentExamTest.Opt4Id))
+                {
+                nStudentsSlectedOpt4++;
+                }
+            if((tst.StudentExamTestAns == studentExamTest.Opt5Id))
+                {
+                nStudentsSlectedOpt5++;
+                }
+            }
+        appState.SetTestId (studentExamTest.TestId);
+        appState.SetCmd ("ShowCourseTestStats");
+        _hasFetched = true;
+        StateHasChanged ();
         }
     public void BtnBack()
         {
