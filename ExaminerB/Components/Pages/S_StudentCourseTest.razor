@@ -1,6 +1,5 @@
 ﻿@page "/S_StudentCourseTest/{userId:int}/{studentCourseId:int}/{mode}"
 @using ExaminerB.Service
-@rendermode InteractiveServer
 @inject NavigationManager Navman
 @inject AppState appState
 @inject FeService feService;
@@ -33,7 +32,7 @@
             }
         <hr />
         <EditForm Model="studentCourseTest">
-            <table class="table">
+            <table class="table table-borderless">
                 <thead style="color:green">
                     <tr style="font-weight:bold">
                         <td style="color:darkred">Options</td>                        
@@ -93,6 +92,11 @@
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            
+            Navman.NavigateTo ("/Login");
+            }
         studentCourse.StudentId = userId;
         studentCourse.StudentCourseId = studentCourseId;
         if (mode == "edit")

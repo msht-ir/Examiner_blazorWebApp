@@ -1,6 +1,5 @@
 ﻿@page "/S_ReportStudentExam/{studentExamId:int}/{pagemode}"
 @using ExaminerB.Service
-@rendermode InteractiveServer
 @inject NavigationManager Navman
 @inject AppState appState
 @inject FeService feService
@@ -17,70 +16,124 @@ else
         <div style="text-align: center;">
             <h4>@studentExam.ExamTitle <span style="font-size:small;color:royalblue;"> - @student.UserName</span></h4>
             <h6>Course: @studentExam.CourseName - code: @studentExam.StudentExamId </h6>
+            <hr />
+            <button class="btn btn-link" @onclick="BtnCalcPercents">
+                <img src="/images/gifChart03.gif" width="30" />
+            </button>
+            <button class="btn btn-link" @onclick="BtnBackToStudentExams">
+                <img src="/icons/icoBack_bt_1.png" width="30" />
+            </button>
+            @if (appState.Cmd== "ShowStudentExamStats")
+                {
+                <hr/>
+                <div style="text-align:left; padding-left:25px;background-color:whitesmoke">
+                    <div style="font-weight:bold">Tests <span style="font-weight:normal;"> ( @nTests ) </span></div>
+                    <div style="padding-left:20px">@nTestsVisited visited (@nTestsAnswered answered)</div>
+                    <div style="padding-left:35px">@nTestsAnsweredCorrectly <span style="font-style:italic;color:royalblue">correct</span></div>
+                    <div style="padding-left:35px">@nTestsAnsweredIncorrectly <span style="font-style:italic;color:indianred">incorrect</span></div>
+                    <div style="padding-left:20px"></div>
+                </div>
+                <br />
+                <div class="d-flex justify-content-center">
+                    <MudChart ChartType="ChartType.Donut"
+                        InputData="@(new double[] {nTestsAnsweredCorrectly, (nTests - nTestsAnsweredCorrectly) })"
+                        InputLabels="@(new[] { "correct: "+ nTestsAnsweredCorrectly, "rest: " + (nTests - nTestsAnsweredCorrectly) })"
+                        Width="100px" Height="100px" />
+                    <br /> 
+                </div>
+                }
         </div>
         <hr />
+    @{
+        i=0;
+    }
         @foreach (StudentExamTest studentExamTest in studentExam.StudentExamTests)
+        {
+        i++;
+        tstRTLcss = ((studentExamTest.TestTags & 1) == 1) ? "direction:rtl;text-align:right;" : "";
+        optRTLcss = ((studentExamTest.TestTags & 2) == 2) ? "direction:rtl;text-align:right;" : "";
+        @if (((studentExamTest.StudentExamTestTags & 8) == 8) && (pagemode == "Review"))
             {
-            i++;
-            tstRTLcss = ((studentExamTest.TestTags & 1) == 1) ? "direction:rtl;text-align:right;" : "";
-            optRTLcss = ((studentExamTest.TestTags & 2) == 2) ? "direction:rtl;text-align:right;" : "";
-            @if (((studentExamTest.StudentExamTestTags & 8) == 8) && (pagemode == "Review"))
+            <div style="@tstRTLcss"><span style="font-weight:bold;color:lightcoral;">@i:[H] </span>@studentExamTest.TestTitle</div>
+            }
+        else
+            {
+            <div style="@tstRTLcss"><span style="font-weight:bold;">@i: </span>@studentExamTest.TestTitle</div>
+            }
+        @foreach (TestOption opt in studentExamTest.TestOptions)
+            {
+            int optcolor = 0;
+            if (pagemode == "RawSheet")
                 {
-                <div style="@tstRTLcss"><span style="font-weight:bold;color:lightcoral;">@i:[H] </span>@studentExamTest.TestTitle</div>
+                optcolor = 0;
                 }
             else
                 {
-                <div style="@tstRTLcss"><span style="font-weight:bold;">@i: </span>@studentExamTest.TestTitle</div>
+                if (opt.TestOptionId == studentExamTest.StudentExamTestKey)
+                    {
+                    optcolor = optcolor | 1;
+                    }
+                if (opt.TestOptionId == studentExamTest.StudentExamTestAns)
+                    {
+                    optcolor = optcolor | 2;
+                    }                    
                 }
-            @foreach (TestOption opt in studentExamTest.TestOptions)
+            switch (optcolor)
                 {
-                int optcolor = 0;
-                if (pagemode == "RawSheet")
-                    {
-                    optcolor = 0;
-                    }
-                else
-                    {
-                    if (opt.TestOptionId == studentExamTest.StudentExamTestKey)
+                case 0:
                         {
-                        optcolor = optcolor | 1;
+                        <div style="@optRTLcss color:black"> - @opt.TestOptionTitle</div>
+                        break;
                         }
-                    if (opt.TestOptionId == studentExamTest.StudentExamTestAns)
+                case 1:
                         {
-                        optcolor = optcolor | 2;
-                        }                    
-                    }
-                switch (optcolor)
-                    {
-                    case 0:
-                            {
-                            <div style="@optRTLcss color:black"> - @opt.TestOptionTitle</div>
-                            break;
-                            }
-                    case 1:
-                            {
-                            <div style="@optRTLcss color:blue"> ( ) @opt.TestOptionTitle</div>
-                            break;
-                            }
-                    case 2:
-                            {
-                            <div style="@optRTLcss color:red"> (x) @opt.TestOptionTitle</div>
-                            break;
-                            }
-                    case 3:
-                            {
-                            <div style="@optRTLcss color:goldenrod;"> - @opt.TestOptionTitle</div>
-                            break;
-                            }
-                    }
+                        <div style="@optRTLcss color:blue"> ( ) @opt.TestOptionTitle</div>
+                        break;
+                        }
+                case 2:
+                        {
+                        <div style="@optRTLcss color:red"> (x) @opt.TestOptionTitle</div>
+                        break;
+                        }
+                case 3:
+                        {
+                        <div style="@optRTLcss color:goldenrod;"> - @opt.TestOptionTitle</div>
+                        break;
+                        }
                 }
-            <hr style="border-color:red" />
             }
+
+        <button class="btn btn-link" @onclick="()=>BtnShowStudentExamTestStats(studentExamTest)">
+            <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
+        </button>
+                    @if ((appState.Cmd == "ShowCourseTestStats") & (appState.TestId == studentExamTest.TestId))
+                {
+                <div style="font-weight:bold;">Students:</div>
+                <div style="padding-left:30px;">
+                    <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
+                    <div style="font-weight:bold">@nStudentsAnswered Answers</div> 
+                    <div style="padding-left:15px;">@nStudentsAnsweredCorrectly Correct</div> 
+                    <div style="padding-left:15px;">@nStudentsAnsweredIncorrectly Incorrect</div>
+                    <div style="font-weight:bold;">@nStudentsNotAnswered noAnswer</div>                
+                </div>
+                <br /> 
+                <div class="d-flex justify-content-center">
+                    <MudChart ChartType="ChartType.Donut"
+                        InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
+                        InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
+                        Width="100px" Height="100px" />
+                    <br /> 
+                </div>
+                <hr style="border-color:red" />
+                }
+
+        <hr style="border-color:red" />
+        }
     </EditForm>
     <div style="text-align:center">
         <button class="btn btn-link" @onclick= "()=> BtnBackToStudentExams()">
-            <img src="/icons/icoBack_bt_1.png" style="width:40px" />
-        </button>   
+            <img src="/icons/icoBack_bt_1.png" style="width:30px" />
+        </button>
     </div>
     }
 
@@ -93,11 +146,37 @@ else
     string tstRTLcss="";
     string optRTLcss="";
     int i = 0;
+    //Exam
+    public int nTests = 0;
+    public int nTestsVisited = 0;
+    public int nTestsAnswered = 0;
+    public int nTestsAnsweredCorrectly = 0;
+    public int nTestsAnsweredIncorrectly = 0;
+    public int nTestsNotAnswered = 0;
+    //Tests
+    public int nStudents = 0;
+    public int nStudentsVisited = 0;
+    public int nStudentsAnswered = 0;
+    public int nStudentsAnsweredCorrectly = 0;
+    public int nStudentsAnsweredIncorrectly = 0;
+    public int nStudentsNotAnswered = 0;
+    public int nStudentsSlectedOpt1 = 0;
+    public int nStudentsSlectedOpt2 = 0;
+    public int nStudentsSlectedOpt3 = 0;
+    public int nStudentsSlectedOpt4 = 0;
+    public int nStudentsSlectedOpt5 = 0;
+
     bool _hasFetched = false;
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            
+            Navman.NavigateTo ("/Login");
+            }
+        appState.SetCmd ("");
         }
     protected override async Task OnParametersSetAsync()
         {      
@@ -114,6 +193,32 @@ else
             student.UserName = appState.UserName ?? "";
             studentExam.StudentExamId = studentExamId;
             studentExam = await feService.Read_StudentExam (studentExamId, true);
+            //reset stat variables
+            nTests = studentExam.StudentExamTests.Count;
+            nTestsVisited = 0;
+            nTestsAnswered = 0;
+            nTestsAnsweredCorrectly = 0;
+            nTestsAnsweredIncorrectly = 0;
+            nTestsNotAnswered = 0;
+            foreach(StudentExamTest tst in studentExam.StudentExamTests)
+                {
+                if((tst.StudentExamTestTags & 1) == 1)
+                    {
+                    nTestsVisited++;
+                    }
+                if((tst.StudentExamTestTags & 4) == 4)
+                    {
+                    nTestsAnswered++;
+                    if(tst.StudentExamTestAns == tst.StudentExamTestKey)
+                        {
+                        nTestsAnsweredCorrectly++;
+                        }
+                    else
+                        {
+                        nTestsAnsweredIncorrectly++;                    
+                        }
+                    }
+                }
             _hasFetched = true;
             StateHasChanged ();
             }
@@ -131,5 +236,80 @@ else
         {
         Navman.NavigateTo ("/S_Student");
         }
+    public void BtnCalcPercents ()
+        {
+        if (appState.Cmd == "ShowStudentExamStats")
+            {
+            appState.SetCmd ("");
+            }
+        else
+            {
+            appState.SetCmd ("ShowStudentExamStats");
+            }
+        }
+
+
+    public async Task BtnShowStudentExamTestStats(StudentExamTest studentExamTest)
+        {
+        _hasFetched = false;
+        //Read StudentExam and StudentExamTest Across Students
+        List<StudentExamTest> lstStudentsExamTest = await feService.Read_StudentsExamTest (studentExamTest);
+        //calcs ...
+        nStudents = lstStudentsExamTest.Count;
+        nStudentsVisited = 0;
+        nStudentsAnswered = 0;
+        nStudentsAnsweredCorrectly = 0;
+        nStudentsAnsweredIncorrectly = 0;
+        nStudentsNotAnswered = 0;
+        nStudentsSlectedOpt1 = 0;
+        nStudentsSlectedOpt2 = 0;
+        nStudentsSlectedOpt3 = 0;
+        nStudentsSlectedOpt4 = 0;
+        nStudentsSlectedOpt5 = 0;
+        foreach(StudentExamTest tst in lstStudentsExamTest)
+            {
+            if((tst.StudentExamTestTags & 1) == 1)
+                {
+                nStudentsVisited++;
+                }
+            if((tst.StudentExamTestTags & 4) == 4)
+                {
+                nStudentsAnswered++;
+                if(tst.StudentExamTestAns == tst.StudentExamTestKey)
+                    {
+                    nStudentsAnsweredCorrectly++;
+                    }
+                else
+                    {
+                    nStudentsAnsweredIncorrectly++;                    
+                    }
+                }
+            if((tst.StudentExamTestAns == studentExamTest.Opt1Id))
+                {
+                nStudentsSlectedOpt1++;
+                }
+            if((tst.StudentExamTestAns == studentExamTest.Opt2Id))
+                {
+                nStudentsSlectedOpt2++;
+                }
+            if((tst.StudentExamTestAns == studentExamTest.Opt3Id))
+                {
+                nStudentsSlectedOpt3++;
+                }
+            if((tst.StudentExamTestAns == studentExamTest.Opt4Id))
+                {
+                nStudentsSlectedOpt4++;
+                }
+            if((tst.StudentExamTestAns != 0) & (tst.StudentExamTestAns == studentExamTest.Opt5Id))
+                {
+                nStudentsSlectedOpt5++;
+                }
+            }
+        appState.SetTestId (studentExamTest.TestId);
+        appState.SetCmd ("ShowCourseTestStats");
+        _hasFetched = true;
+        StateHasChanged ();
+        }
+
     //methods
     }

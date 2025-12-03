@@ -1,5 +1,4 @@
 ﻿@page "/T_ReportMessages/{mode}/{Id:int}"
-@rendermode InteractiveServer
 @using ExaminerB.Service
 @inject FeService feService
 @inject NavigationManager Navman
@@ -16,6 +15,7 @@
 else
     {
     <h6 style="text-align:center;">Messages of: <span style="color:indianred">@appState.StudentName</span></h6>
+    <h6 style="text-align:center;color:indianred">@appState.StudentNickname</h6>
     @if (lstMessages.Count > 0)
         {
         <div style="text-align:center">
@@ -171,6 +171,11 @@ else
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            
+            Navman.NavigateTo ("/Login");
+            }
         appState.SetCmd ("");
         lstMessages = await feService.Read_Messages (mode, Id);
         _hasFetched = true;

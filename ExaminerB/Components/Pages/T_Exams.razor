@@ -3,7 +3,6 @@
 @using Microsoft.VisualBasic
 @using System.Threading.Tasks
 @inject FeService feService
-@rendermode InteractiveServer
 @inject NavigationManager Navman
 @inject AppState appState
 @inject IJSRuntime JS
@@ -27,7 +26,7 @@
             <div class="card">
                 <div class="card-body">
                     <EditForm Model="lstCourseExams">
-                        <table class="table">
+                        <table class="table table-borderless">
                             <thead>
                                 <tr style="font-weight:bold; border:none">
                                     <td>Exam</td>
@@ -149,6 +148,11 @@
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            
+            Navman.NavigateTo ("/Login");
+            }
         //user
         user.UserId = Convert.ToInt32(appState.UserId);
         user.UserName = appState.UserName;

@@ -1,6 +1,5 @@
-﻿@page "/"
+﻿@page "/PortFolio"
 @using ExaminerB.Service
-@rendermode InteractiveServer
 @inject ProtectedSessionStorage sessionStorage
 @inject NavigationManager Navman
 @inject AppState appState
@@ -8,20 +7,26 @@
 @inject FeService feService
 @implements IDisposable
 
-<PageTitle>Home</PageTitle>
 <br />
-<br />
-<hr />
-<div style="display: grid; place-items: center; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px;"> 
-    <div>
-        <a class="btn btn-link" href="https://www.msht.ir/">
-            <img src="/icons/icoHome_grayt_1.png" width="80" style="margin-left:10px;margin-right:10px" />
-        </a>
+<section id="portfolioLogo" class="bg-light py-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <div>
+            <a class="btn btn-link" href="https://www.msht.ir/">
+                <img src="/icons/icoHome_grayt_1.png" width="80" style="margin-left:10px;margin-right:10px" />
+            </a>
+        </div>
+        <h1 class=" mb-4">Examiner</h1>
+      </div>
     </div>
+  </div>
+</section>
+
+<div style="display: grid; place-items: center; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px;"> 
     <div>
         <a class="btn btn-link" href="/Login">
             <img src="/images/gifExam01.gif" width="110" style="margin-left:10px;margin-right:10px" />
-            @* <img src="/icons/icoOnlineTest_cw_1.png" width="110" style="margin-left:10px;margin-right:10px" /> *@
         </a>
     </div>
     <div>
@@ -64,7 +69,7 @@
     protected override void OnInitialized()
         {
         appState.OnChange += TriggerRender;
-        appState.SetUserLoginStatus (0);
+        //appState.SetUserLoginStatus (0);
         appState.SetStudentTags (0);
         appState.SetUserName ("");
         sessionStorage.DeleteAsync("UserName");

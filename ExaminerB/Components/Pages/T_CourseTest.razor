@@ -1,5 +1,4 @@
 ﻿@page "/T_CourseTest"
-@rendermode InteractiveServer
 @inject AppState appState
 @inject FeService feService
 @inject NavigationManager Navman
@@ -231,6 +230,11 @@ else
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            
+            Navman.NavigateTo ("/Login");
+            }
         courseId = Convert.ToInt32(appState.CourseId);
         courseName = appState.CourseName ?? "";
         lstCourseTopics = await feService.Read_CourseTopics (courseId);            

@@ -1,5 +1,4 @@
 ﻿@page "/T_SwitchBoard"
-@rendermode InteractiveServer
 @inject ProtectedSessionStorage sessionStorage
 @inject NavigationManager Navman
 @inject AppState appState
@@ -10,20 +9,20 @@
         <div style="text-align: center;">
             <h1 style="color:steelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h1>
         </div>
-        <h3 style="color:IndianRed">@appState.UserName</h3>
+        <h3 style="color:IndianRed">@appState.UserNickname</h3>
         <hr style="color:red" />
         <br />
         <EditForm FormName="f" Model="user">
-            <table class="table">
+            <table class="table table-borderless">
                 <tr style="text-align:center;">
                     <td>
                         <button type="submit" class="btn btn-link" @onclick="GotoGroupsStudents">
-                            <img src="/images/gifGroup2.gif" width="90" />
+                            <img src="/images/gifGroup5.gif" width="90" />
                         </button>
                     </td>
                     <td>
                         <button type="submit" class="btn btn-link" @onclick="GotoCourses">
-                            <img src="/images/gifBook1.gif" width="75" />
+                            <img src="/images/gifBook2.gif" width="85" />
                         </button>
                     </td>
                 </tr>
@@ -45,6 +44,11 @@
     protected override async Task OnInitializedAsync ()
         {
         appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            
+            Navman.NavigateTo ("/Login");
+            }
         appState.SetCmd ("");
         } 
     protected async Task OnAfterRenderAsync()

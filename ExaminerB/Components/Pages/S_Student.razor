@@ -1,6 +1,5 @@
 ﻿@page "/S_Student"
 @using ExaminerB.Service
-@rendermode InteractiveServer
 @inject ProtectedSessionStorage sessionStorage
 @inject FeService feService
 @inject NavigationManager Navman
@@ -9,7 +8,7 @@
 @implements IDisposable
 
 <div class="container mt-5 align-items-center">
-    <p style="font-size:larger; text-align:center;color:black">e<span style="color:indianred">x</span>aminer <span style="font-size:small;color:royalblue"> @appState.UserName</span></p>
+    <p style="font-size:larger; text-align:center;color:black">e<span style="color:indianred">x</span>aminer <span style="font-size:small;color:royalblue"> @appState.UserNickname</span></p>
     <hr style="color:red"/>
     @if (!_hasFetched)
         {
@@ -32,7 +31,7 @@
                     <div id="CollapseId1" class="accordion-collapse collapse" data-bs-parent="#accordionStudent">
                         <div class="accordion-body" style="background-color:white">
                             <div id="T1">
-                                <table class="table table-bordered">
+                                <table class="table table-borderless">
                                     @* <thead>
                                         <tr style="font-weight:bold;border:none;">
                                             <td style="border:none;color:royalblue;font-size:medium">Exams</td>
@@ -80,9 +79,9 @@
                                                     <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
                                                 </td>
                                                 <td>
-                                                    <div>Tests: @stdexam.ExamNTests</div>
-                                                    <div>Time: @stdexam.ExamDuration min </div>
-                                                    <div><span style="color:indianred;font-size:small;font-weight:bold;">Point: @stdexam.StudentExamPoint.ToString("F2") /20 </span></div>
+                                                    <div>Tests @stdexam.ExamNTests</div>
+                                                    <div>Time @stdexam.ExamDuration m</div>
+                                                    <div><span style="color:indianred;font-size:small;font-weight:bold;">Pnt @stdexam.StudentExamPoint.ToString("F2")/20 </span></div>
                                                     @if ((student.UserTags & 4) == 4)
                                                         {
                                                         <button style="border:none" @onclick="() => BtnReportExam(Id)">
@@ -281,6 +280,10 @@
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            Navman.NavigateTo ("/Login");
+            }
         student.UserId = appState.UserId ?? 0;
         if(student.UserId > 0)
             {
@@ -289,6 +292,7 @@
             lstStudentExams = await feService.Read_StudentExams(student.UserId, false)?? new List<StudentExam>();
             student.UserTags = Convert.ToInt32(appState.UserTags);
             student.UserName = appState.UserName ?? "";
+            student.UserNickname = appState.UserNickname ?? "";
             lstStudentCourses = await feService.Read_StudentCourses (student.UserId);
             lstMessages = await feService.Read_Messages ("Student", student.UserId);
             _hasFetched = true;

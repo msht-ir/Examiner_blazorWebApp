@@ -2,6 +2,10 @@
     {
     public class AppState
         {
+        public AppState ()
+            {
+            Console.WriteLine ("ExaminerS.AppState Class ************** AppState instance created!");
+            }
         public event Action? OnChange;
 
         public int? Offset { get; private set; }
@@ -16,6 +20,8 @@
         //user (teacher|student)
         public int? UserId { get; private set; }
         public void SetUserId (int _UserId) { UserId = _UserId; OnChange?.Invoke (); }
+        public string? UserNickname { get; private set; }
+        public void SetUserNickname (string _userNickname) { UserNickname = _userNickname; OnChange?.Invoke (); }
         public string? UserName { get; private set; }
         public void SetUserName (string _userName) { UserName = _userName; OnChange?.Invoke (); }
         public string? UserPass { get; private set; }
@@ -40,6 +46,8 @@
         public void SetStudentName (string _StudentName) { StudentName = _StudentName; OnChange?.Invoke (); }
         public int? StudentTags { get; private set; }
         public void SetStudentTags (int _StudentTags) { StudentTags = _StudentTags; OnChange?.Invoke (); }
+        public string? StudentNickname { get; private set; }
+        public void SetStudentNickname (string _StudentNickname) { StudentNickname = _StudentNickname; OnChange?.Invoke (); }
 
         //course
         public int? CourseId { get; private set; }

@@ -1,5 +1,4 @@
 ﻿@page "/T_ReportStudents/{mode}/{Id}"
-@rendermode InteractiveServer
 @using ExaminerB.Service
 @inject FeService feService
 @inject NavigationManager Navman
@@ -9,7 +8,8 @@
 @* mode: {student|students} *@
 <h1 style="text-align:center;color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h1>
 <hr style="color:red"/>
-
+<h4 style="text-align:center">Students's Exams and Courses</h4>
+<hr style="color:red"/>
 @if (!_hasFetched)
     {
     <_ScanSheets />
@@ -21,14 +21,17 @@ else
             @foreach(User student in lstStudents)
             {
             var collapseId = $"Student{student.UserId}";
-            <div class="accardion-item">
-                <h4 class="accordion-header" style="background-color:aliceblue">
-                    <button class="accordion-button collapsed" type="button"
+            <div class="accardion-item mb-1">
+                <h4 class="accordion-header">
+                    <button
+                        class="accordion-button collapsed"
+                        style="background-color:whitesmoke; color:black;"
+                        type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#@collapseId"
                         aria-expanded="true"
                         aria-controls="@collapseId">
-                        <h4 style="color:indianred">@student.UserName</h4>
+                        <h6 style="color:indianred;">@student.UserNickname</h6>
                     </button>
                 </h4>
                 <div id="@collapseId" class="accardion-collapse collapse" data-bs-parent="#accordionReport">
@@ -37,7 +40,7 @@ else
                         <div class="container mt-5">
                             <div class="card">
                                 <div class="card-body bg-light">
-                                    <table class="table table-hover">
+                                    <table class="table table-borderless">
                                         <thead>
                                             <tr style="font-weight:bold">
                                                 <td>Exam</td>
@@ -108,7 +111,7 @@ else
                         <div class="container mt-5">
                             <div class="card">
                                 <div class="card-body bg-light">
-                                    <table class="table">
+                                    <table class="table table-borderless">
                                         <thead>
                                             <tr style="font-weight:bold">
                                                 <td>Course</td>
@@ -165,6 +168,11 @@ else
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            
+            Navman.NavigateTo ("/Login");
+            }
         await ReadPageDataLists ();
         _hasFetched = true;
         } 

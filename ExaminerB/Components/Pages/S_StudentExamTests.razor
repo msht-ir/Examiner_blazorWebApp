@@ -1,6 +1,5 @@
 ﻿@page "/S_StudentExamTests"
 @using ExaminerB.Service
-@rendermode InteractiveServer
 @inject FeService feService
 @inject NavigationManager Navman
 @inject AppState appState
@@ -49,7 +48,7 @@ else
                             </div>
                         </div>
                     </div>
-                    <table class="table">
+                    <table class="table table-borderless">
                         <thead>
                             <tr style="font-weight:bold">
                                 <td>Tests</td>
@@ -120,6 +119,11 @@ else
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            
+            Navman.NavigateTo ("/Login");
+            }
         //appState.StudentExamId is set in previous page and may have delay to become fetched (notice: its a void not async!). use it in if() below to make sure it has received its value
         if (!_hasFetched &&  (Convert.ToInt32(appState.StudentExamId) > 0))
             {

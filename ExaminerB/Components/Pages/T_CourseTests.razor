@@ -4,7 +4,6 @@
 @using Microsoft.Extensions.Hosting
 @using ClosedXML
 @using Microsoft.VisualBasic
-@rendermode InteractiveServer
 @inject FeService feService
 @inject NavigationManager Navman
 @inject AppState appState
@@ -34,13 +33,13 @@ else
         else
             {
             <button class="btn btn-link" @onclick="()=>BtnAddNewTest()">
-                <img src="/icons/icoAddItem_gt_1.png" width="30" />
+                <img src="/icons/icoAddItem_gt_1.png" width="24" />
             </button>
             <button class="btn btn-link" @onclick="BtnImportFromExcelFile">
-                <img src="/icons/icoExcel_gw_1.jpg" width="35" />
+                <img src="/icons/icoExcel_gw_1.jpg" width="30" />
             </button>
             <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/icons/icoBack_bt_1.png" width="35" />
+                <img src="/icons/icoBack_bt_1.png" width="28" />
             </button>
             <p></p>
             <hr style="border-color:red" />
@@ -80,7 +79,7 @@ else
                 }
             <div style="text-align: center;">
                 <button class="btn btn-link" @onclick="BtnBack">
-                    <img src="/icons/icoBack_bt_1.png" width="40" />
+                    <img src="/icons/icoBack_bt_1.png" width="30" />
                 </button>
             </div>
         <div id="loadingOverlay" class="d-none">
@@ -123,6 +122,11 @@ else
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            
+            Navman.NavigateTo ("/Login");
+            }
         switch (appState.Cmd)
             {
             case "ListCourseTests":

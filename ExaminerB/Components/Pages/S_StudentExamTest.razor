@@ -1,6 +1,5 @@
 ﻿@page "/S_StudentExamTest/{studentExamTestId:long}/{testIndex:int}"
 @using ExaminerB.Service
-@rendermode InteractiveServer
 @inject FeService feService
 @inject NavigationManager Navman
 @inject AppState appState
@@ -19,7 +18,7 @@
             }
         <hr />
         <EditForm Model="studentExamTest">
-            <table class="table">
+            <table class="table table-borderless">
                 <thead style="color:green">
                     <tr style="font-weight:bold">
                 @if((studentExamTest.TestTags & 2) == 2)
@@ -49,12 +48,12 @@
                         <tr style="@style">
                             @if ((HelpShowAnswer) && (opt.TestOptionId==studentExamTest.StudentExamTestKey))
                                 {
-                                <td style="color:IndianRed">@opt.TestOptionTitle</td>
+                                <td style="color:IndianRed; padding-top:5px; padding-bottom:5px;">@opt.TestOptionTitle</td>
                                 //SetHelpedTestId(0); //clear guide flag
                                 }
                             else
                                 {
-                                <td style="color:Black">@opt.TestOptionTitle</td>
+                                <td style="color:Black; padding-top:5px; padding-bottom:5px;">@opt.TestOptionTitle</td>
                                 //SetHelpedTestId(0); //clear guide flag
                                 }
                             <td>
@@ -71,7 +70,7 @@
                     }
             </table>
             <hr style="color:red"/>
-            <table class="table">
+            <table class="table table-borderless">
                 <tr>
                     <td style="text-align:center;">
                         @if (((appState.UserTags & 16) == 16) & ((appState.ExamTags & 2) == 2))
@@ -122,6 +121,11 @@
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            
+            Navman.NavigateTo ("/Login");
+            }
         if (_firstRender)
             {
             _firstRender = false;

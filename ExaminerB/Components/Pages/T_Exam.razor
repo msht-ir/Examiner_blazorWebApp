@@ -6,7 +6,6 @@
 @inject IJSRuntime JS
 @inject NavigationManager Navman
 @inject AppState appState
-@rendermode InteractiveServer
 @implements IDisposable
 @if (!_hasFetched)
     {
@@ -104,7 +103,7 @@ else
                                             }
                                     </select>
                                     <button class="btn btn-link" @onclick="BtnCreateExamComposition">
-                                        <img src="/icons/icoAddItem_gt_1.png" width="30" />
+                                        <img src="/icons/icoAddItem_gt_1.png" width="25" />
                                     </button>
                                     @* Slider NTests *@
                                     <br />
@@ -224,7 +223,7 @@ else
         <br>
         <div style="text-align: center;">
             <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/icons/icoBack_bt_1.png" width="35" />
+                <img src="/icons/icoBack_bt_1.png" width="30" />
             </button>
         </div>
     </EditForm>
@@ -262,6 +261,11 @@ else
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            
+            Navman.NavigateTo ("/Login");
+            }
         appState.SetCmd ("");
         exam = await feService.Read_Exam (examId);
         lstExamCompositions = await feService.Read_ExamCompositions (examId);

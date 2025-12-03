@@ -1,6 +1,5 @@
 ﻿@page "/T_Students"
 @using ExaminerB.Service
-@rendermode InteractiveServer
 @inject NavigationManager Navman
 @inject AppState appState
 @inject FeService feService
@@ -38,7 +37,7 @@ else
                                     data-bs-target="#@collapseId"
                                     aria-expanded="true"
                                     aria-controls="@collapseId">
-                                <h4>@grp.GroupName</h4>
+                                <h6>@grp.GroupName</h6>
                             </button>
                         </h4>
                         <div id="@collapseId" class="accordion-collapse @clps" data-bs-parent="#accordionGroups">
@@ -166,14 +165,15 @@ else
                                                 {
                                                 var collapseId2 = $"collapse{stdnt.UserId}";
                                                 <div class="accordion" id="accordionStudents">
-                                                    <div class="accordion-item">
+                                                    <div class="accordion-item mb-1">
                                                         <h4 class="accordion-header">
-                                                            <button class="accordion-button collapsed" type="button"
+                                                            <button class="accordion-button collapsed"
+                                                                    type="button"
                                                                     data-bs-toggle="collapse"
                                                                     data-bs-target="#@collapseId2"
                                                                     aria-expanded="true"
                                                                     aria-controls="@collapseId2">
-                                                                <h4>@stdnt.UserName</h4>
+                                                                <h6>@stdnt.UserNickname</h6>
                                                             </button>
                                                         </h4>
                                                         <div id="@collapseId2" class="accordion-collapse collapse" data-bs-parent="#accordionStudents">
@@ -181,8 +181,8 @@ else
                                                                 <hr style="color:red" />                                                
                                                                 <br />
                                                                 <img src="/icons/icoUser_bluet_1.png" width="30" />
-                                                                <input class="form-inline" @bind="stdnt.UserName" placeholder="Student name" style="width:40%;font-weight:bold;color:indianred" />
-                                                                <input class="form-inline" @bind="stdnt.UserPass" placeholder="Student password" style="width:35%;font-weight:bold;" />
+                                                                <input class="form-inline" @bind="stdnt.UserName" placeholder="Student name" style="width:40%;font-weight:normal;color:indianred" />
+                                                                <input class="form-inline" @bind="stdnt.UserPass" placeholder="Student password" style="width:35%;font-weight:normal;" />
                                                                 <p></p>
                                                                 <span  style="margin-right: 15px;">
                                                                     <input class="form-check-input" type="checkbox" checked="@((stdnt.UserTags & 1) == 1)" @onchange="e=>BtnUpdateStudentTagsInPlace(stdnt, 1, (bool)e.Value)" />
@@ -246,10 +246,10 @@ else
                                                                         <button class="btn btn-link" @onclick="()=>BtnAddStudentCourse(stdnt.UserId)">
                                                                             <img src="/icons/icoCourseAdd_bt_1.png" width="25" />
                                                                         </button>
-                                                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentExamsAndCourses(stdnt.UserId)">
+                                                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentExamsAndCourses(stdnt)">
                                                                             <img src="/icons/icoFolderReport_bt_1.png" width="28" />
                                                                         </button>
-                                                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentMessages(stdnt.UserId, stdnt.UserName)">
+                                                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentMessages(stdnt)">
                                                                             <img src="/icons/icoEnvelop_bluet_1.png" width="25" />
                                                                         </button>
                                                                     </div>
@@ -320,6 +320,11 @@ else
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            
+            Navman.NavigateTo ("/Login");
+            }
         var user = new User
             {
             UserId = Convert.ToInt32(appState.UserId),
@@ -656,16 +661,17 @@ else
             await JS.InvokeVoidAsync("alert", "\nStudent did note removed ---- operation failed!");
             }
         }
-    public void BtnReportStudentExamsAndCourses(int userId)
+    public void BtnReportStudentExamsAndCourses(User stdnt)
         {
         string mode = "oneStudent";
-        Navman.NavigateTo ($"/T_ReportStudents/{mode}/{userId}");
+        Navman.NavigateTo ($"/T_ReportStudents/{mode}/{stdnt.UserId}");
         }
-    public void BtnReportStudentMessages(int userId, string studentName)
+    public void BtnReportStudentMessages(User stdnt)
         {
-        appState.SetStudentName (studentName);
+        appState.SetStudentName (stdnt.UserName);
+        appState.SetStudentNickname (stdnt.UserNickname);
         string mode = "StudentWithDels";
-        Navman.NavigateTo ($"/T_ReportMessages/{mode}/{userId}");
+        Navman.NavigateTo ($"/T_ReportMessages/{mode}/{stdnt.UserId}");
         }
     //student course
     public void BtnAddStudentCourse(int userId)

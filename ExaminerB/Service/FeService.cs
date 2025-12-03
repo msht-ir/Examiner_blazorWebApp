@@ -646,7 +646,7 @@ namespace ExaminerB.Service
             {
             try
                 {
-                var response = await _http.PostAsJsonAsync ($"api/Read_StudentExams?, readInactiveExams={readInactiveExams}", studentId);
+                var response = await _http.PostAsJsonAsync ($"api/Read_StudentExams?readInactiveExams={readInactiveExams}", studentId);
                 if (response.IsSuccessStatusCode)
                     {
                     return await response.Content.ReadFromJsonAsync<List<StudentExam>> () ?? new List<StudentExam> ();

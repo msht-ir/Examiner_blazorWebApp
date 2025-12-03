@@ -2,7 +2,6 @@
 @using ExaminerB.Service
 @using Microsoft.VisualBasic
 @inject FeService feService
-@rendermode InteractiveServer
 @inject NavigationManager Navman
 @inject AppState appState
 @implements IDisposable
@@ -87,34 +86,25 @@ else
                 }
             @if (_cmd != "useSmallFont")
                 {
+                <hr style="border-color:red" />
                 }
             @if ((appState.Cmd == "ShowCourseTestStats") & (appState.TestId == tst.TestId))
                 {
-                <hr style="border-color:red" />
                 <div style="font-weight:bold;">Students:</div>
-                <div>
-                    @nStudentsVisited Visits
-                    @nStudentsAnswered Answers
-                    @nStudentsAnsweredCorrectly Correct
-                    @nStudentsAnsweredIncorrectly Incorrect
+                <div style="padding-left:30px;">
+                    <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
+                    <div style="font-weight:bold">@nStudentsAnswered Answers</div> 
+                    <div style="padding-left:15px;">@nStudentsAnsweredCorrectly Correct</div> 
+                    <div style="padding-left:15px;">@nStudentsAnsweredIncorrectly Incorrect</div>
+                    <div style="font-weight:bold;">@nStudentsNotAnswered noAnswer</div>                
                 </div>
-                <div>
-                    NotAnswered= @nStudentsNotAnswered
-                </div>
-                <div>
-                    Opt1: @nStudentsSlectedOpt1
-                </div>
-                <div>
-                    Opt2: @nStudentsSlectedOpt2
-                </div>
-                <div>
-                    Opt3: @nStudentsSlectedOpt3
-                </div>
-                <div>
-                    Opt4: @nStudentsSlectedOpt4
-                </div>
-                <div>
-                    Opt5: @nStudentsSlectedOpt5
+                <br /> 
+                <div class="d-flex justify-content-center">
+                    <MudChart ChartType="ChartType.Donut"
+                        InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
+                        InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
+                        Width="100px" Height="100px" />
+                    <br /> 
                 </div>
                 <hr style="border-color:red" />
                 }
@@ -158,6 +148,11 @@ else
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            
+            Navman.NavigateTo ("/Login");
+            }
         switch (appState.Cmd?.ToLower())
             {
             case "coursetest":
@@ -352,7 +347,7 @@ else
                 {
                 nStudentsSlectedOpt4++;
                 }
-            if((tst.StudentExamTestAns == studentExamTest.Opt5Id))
+            if((tst.StudentExamTestAns != 0) & (tst.StudentExamTestAns == studentExamTest.Opt5Id))
                 {
                 nStudentsSlectedOpt5++;
                 }
