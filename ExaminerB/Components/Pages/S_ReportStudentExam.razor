@@ -106,27 +106,26 @@ else
         <button class="btn btn-link" @onclick="()=>BtnShowStudentExamTestStats(studentExamTest)">
             <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
         </button>
-                    @if ((appState.Cmd == "ShowCourseTestStats") & (appState.TestId == studentExamTest.TestId))
-                {
-                <div style="font-weight:bold;">Students:</div>
-                <div style="padding-left:30px;">
-                    <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
-                    <div style="font-weight:bold">@nStudentsAnswered Answers</div> 
-                    <div style="padding-left:15px;">@nStudentsAnsweredCorrectly Correct</div> 
-                    <div style="padding-left:15px;">@nStudentsAnsweredIncorrectly Incorrect</div>
-                    <div style="font-weight:bold;">@nStudentsNotAnswered noAnswer</div>                
-                </div>
+        @if ((appState.Cmd == "ShowCourseTestStats") & (appState.TestId == studentExamTest.TestId))
+            {
+            <hr style="border-color:red" />
+            <div style="font-weight:bold;">Students:</div>
+            <div style="padding-left:30px;">
+                <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
+                <div style="font-weight:bold">@nStudentsAnswered Answers</div> 
+                <div style="padding-left:15px;">@nStudentsAnsweredCorrectly Correct</div> 
+                <div style="padding-left:15px;">@nStudentsAnsweredIncorrectly Incorrect</div>
+                <div style="font-weight:bold;">@nStudentsNotAnswered noAnswer</div>                
+            </div>
+            <br /> 
+            <div class="d-flex justify-content-center">
+                <MudChart ChartType="ChartType.Donut"
+                    InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
+                    InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
+                    Width="100px" Height="100px" />
                 <br /> 
-                <div class="d-flex justify-content-center">
-                    <MudChart ChartType="ChartType.Donut"
-                        InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
-                        InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
-                        Width="100px" Height="100px" />
-                    <br /> 
-                </div>
-                <hr style="border-color:red" />
-                }
-
+            </div>
+            }
         <hr style="border-color:red" />
         }
     </EditForm>

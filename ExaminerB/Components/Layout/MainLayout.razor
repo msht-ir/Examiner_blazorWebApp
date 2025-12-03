@@ -5,25 +5,25 @@
 
 <div class="page">
     <div class="sidebar"> 
-        @if ((Navman.Uri.Contains ("/S_Student")) | (Navman.Uri.Contains ("/T_SwitchBoard")))
+        @if (Navman.Uri.Contains ("/S_Student"))
             {
             <NavMenuS_Student />
+            }
+        else if (Navman.Uri.Contains ("/T_SwitchBoard"))
+            {
+            <NavMenuT_SwitchBoard />
             }
         else if (Navman.Uri.Contains ("/Login"))
             {
             <NavMenuLogin />
             }
-        else if ((Navman.Uri.Contains ("/T_Students")) || (Navman.Uri.Contains ("/T_Courses")) )
+        else if (Navman.Uri.Contains ("/T_") )
             {
             <NavMenuT_Back2SwitchBoard />
             }
-        else if (Navman.Uri.Contains ("/T_Students"))
+        else if (Navman.Uri.Contains ("/S_"))
             {
-            <NavMenuT_Students />
-            }
-        else if (Navman.Uri.Contains ("/T_Courses"))
-            {
-            <NavMenuT_Courses />
+            <NavMenuS_Back2S_Student />
             }
         else
             {
