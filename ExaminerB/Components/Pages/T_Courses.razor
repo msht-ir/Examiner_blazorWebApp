@@ -47,9 +47,14 @@
                                 <div id="T1">
                                     @if ((appState.Cmd == "EditCourse") && ((appState.CourseId) == crs.CourseId))
                                         {
-                                        <input class="form-inline" @bind=crs.CourseName placeholder="Enter Course Name..." />
+                                        <div class="mb-3">
+                                            <input class="form-control" @bind=crs.CourseName placeholder="Enter Course Name...">
+                                        </div>
                                         <button class="btn btn-link" name="btnCourseId" @onclick="()=>BtnUpdateCourse(crs)" >
-                                            <img src="/icons/icoSave_cw_1.png" width="24" />
+                                            <img src="/icons/icoSave_cw_1.png" width="22" />
+                                        </button>
+                                        <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                            <img src="/icons/icoCancel_bw_1.png" width="24" />
                                         </button>
                                         <br />
                                         <br />
@@ -79,23 +84,37 @@
                                         //CourseTopics
                                         @foreach (CourseTopic ct in crs.CourseTopics)
                                             {
-                                            <input class="form-inline"  @ref="inputRefs[ct.CourseTopicId]" @bind="ct.CourseTopicTitle" placeholder="Topic name"  style="width:140px" />
-                                            <button class="btn btn-link" @onclick="()=>BtnUpdateCourseTopic (ct)">
-                                                <img src="/icons/icoSave_bt_1.png" width="22" />
-                                            </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnDeleteCourseTopic (ct.CourseTopicId)">
-                                                <img src="/icons/icoDelete_bt_1.png" width="22" />
-                                            </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnListCourseTopicTests (ct)">
-                                                <img src="/icons/icoList_bt_1.png" width="22" />
-                                            </button>
-                                            <br />
+                                            <div class="container mt-2">
+                                                <div class="card">
+                                                    <div class="card-body bg-light">
+                                                        <div class="mb-2">
+                                                            <input class="form-control d-inline" @ref="inputRefs[ct.CourseTopicId]" @bind="ct.CourseTopicTitle" placeholder="Topic name" >
+                                                            <button class="btn btn-link" @onclick="()=>BtnUpdateCourseTopic (ct)">
+                                                                <img src="/icons/icoSave_bt_1.png" width="22" />
+                                                            </button>
+                                                            <button class="btn btn-link" @onclick="()=>BtnDeleteCourseTopic (ct.CourseTopicId)">
+                                                                <img src="/icons/icoDelete_bt_1.png" width="22" />
+                                                            </button>
+                                                            <button class="btn btn-link" @onclick="()=>BtnListCourseTopicTests (ct)">
+                                                                <img src="/icons/icoList_bt_1.png" width="22" />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             }
                                         @if ((appState.Cmd == "AddNewCourseTopic") && ((appState.CourseId) == crs.CourseId))
                                             {
-                                            <input class="form-inline" @ref="txtNewCourseTopicTitle" @bind="courseTopic.CourseTopicTitle" placeholder="New Topic ..." />
+                                            <hr style="color:red" />
+                                            <h6 style="color:royalblue">Add New Course Topic</h6>
+                                            <div class="mb-3">
+                                                <input class="form-control" @ref="txtNewCourseTopicTitle" @bind="courseTopic.CourseTopicTitle" placeholder="New Topic ...">
+                                            </div>
                                             <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseTopic(crs.CourseId)">
                                                 <img src="/icons/icoSave_cw_1.png" width="22" />
+                                            </button>
+                                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                                <img src="/icons/icoCancel_bw_1.png" width="24" />
                                             </button>
                                             }
                                         else
@@ -109,28 +128,44 @@
                                         //CourseFolders
                                         @foreach (CourseFolder cf in crs.CourseFolders)
                                             {
-                                            <input class="form-inline" @ref="txtNewCourseFolderUrl" @bind="cf.CourseFolderUrl" placeholder="Folder url ..." style="width:90%;margin-bottom:5px;"/><br />
-                                            <input class="form-inline" @ref="txtNewCourseFolderTitle" @bind="cf.CourseFolderTitle" placeholder="Folder title ..." style="width:40%;margin-bottom:5px;"/>
-                                            <input class="form-inline" @bind="cf.CourseFolderActive" type="checkbox" />
-                                            <label style="padding-right:5px;">Active</label>
-                                            <button class="btn btn-link" @onclick="()=>BtnUpdateCourseFolder (cf)">
-                                                <img src="/icons/icoSave_bt_1.png" width="25" />
-                                            </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnDeleteCourseFolder (cf.CourseFolderId)">
-                                                <img src="/icons/icoDelete_bt_1.png" width="25" />
-                                            </button>
-                                            <br />
+                                            <div class="container mt-2">
+                                                <div class="card">
+                                                    <div class="card-body bg-light">
+                                                        <div class="mb-2">
+                                                            <input class="form-control" @ref="txtNewCourseFolderUrl" @bind="cf.CourseFolderUrl" placeholder="Folder url ...">
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <input class="form-control" @ref="txtNewCourseFolderTitle" @bind="cf.CourseFolderTitle" placeholder="Folder title ...">
+                                                        </div>
+                                                        <input class="form-inline border" @bind="cf.CourseFolderActive" type="checkbox" />
+                                                        <label style="padding-right:5px;">Active</label>
+                                                        <button class="btn btn-link" @onclick="()=>BtnUpdateCourseFolder (cf)">
+                                                            <img src="/icons/icoSave_bt_1.png" width="25" />
+                                                        </button>
+                                                        <button class="btn btn-link" @onclick="()=>BtnDeleteCourseFolder (cf.CourseFolderId)">
+                                                            <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             }
                                         @if ((appState.Cmd == "AddNewCourseFolder") && ((appState.CourseId) == crs.CourseId))
                                             {
                                             <hr style="color:red" />
-                                            <h6>New Course Online Folder:</h6>
-                                            <input class="form-inline" @ref="txtNewCourseFolderUrl" @bind="courseFolder.CourseFolderUrl" placeholder="Folder url ..." style="width:80%;margin-bottom:5px;"/><br />
-                                            <input class="form-inline" @ref="txtNewCourseFolderTitle" @bind="courseFolder.CourseFolderTitle" placeholder="Folder title ..." style="width:40%;margin-bottom:5px;"/>
-                                            <input class="form-inline" @bind="courseFolder.CourseFolderActive" type="checkbox" />
+                                            <h6 style="color:royalblue">Add New Course Online Folder:</h6>
+                                            <div class="mb-2">
+                                                <input class="form-control" @ref="txtNewCourseFolderUrl" @bind="courseFolder.CourseFolderUrl" placeholder="Folder url ...">
+                                            </div>
+                                            <div class="mb-2">
+                                                <input class="form-control" @ref="txtNewCourseFolderTitle" @bind="courseFolder.CourseFolderTitle" placeholder="Folder title ...">
+                                            </div>
+                                            <input class="form-inline border" @bind="courseFolder.CourseFolderActive" type="checkbox" />
                                             <label style="padding-right:5px;">Active</label>
                                             <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseFolder(crs.CourseId)">
-                                                <img src="/icons/icoAddItem_gt_1.png" width="25" />
+                                                <img src="/icons/icoSave_cw_1.png" width="22" />
+                                            </button>
+                                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                                <img src="/icons/icoCancel_bw_1.png" width="24" />
                                             </button>
                                             }
                                         else
@@ -139,7 +174,6 @@
                                                 <img src="/icons/icoAddItem_gt_1.png" width="25" />
                                             </button>
                                             }
-
                                         }
                                 </div>
                             </div>
@@ -149,9 +183,16 @@
              </div>
             @if (appState.Cmd == "AddNewCourse")
                 {
-                <input class="form-inline" @ref="txtNewCourseName" @bind="course.CourseName" placeholder="New Course Name..." />
+                <hr style="color:red" /> 
+                <h6 style="color:royalblue">Add New Course</h6>
+                <div class="mb-3">
+                    <input class="form-control" @ref="txtNewCourseName" @bind="course.CourseName" placeholder="New Course Name...">
+                </div>
                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewCourse">
-                    <img src="/icons/icoSave_cw_1.png" width="30" />
+                    <img src="/icons/icoSave_cw_1.png" width="22" />
+                </button>
+                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                    <img src="/icons/icoCancel_bw_1.png" width="24" />
                 </button>
                 }
             else
@@ -416,6 +457,10 @@ public void BtnUpdateCourseFolderActiveInPlace(CourseFolder courseFolder, int fl
     
 }   
 //Back
+    public void BtnCancel()
+        {
+        appState.SetCmd ("");
+        }
     public void BtnBack()
         {
         appState.SetCmd ("");

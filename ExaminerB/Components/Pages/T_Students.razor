@@ -46,12 +46,17 @@ else
                                     @if ((appState.Cmd == "EditGroup") && (appState.GroupId == grp.GroupId))
                                         {
                                         string btnGroupId = "btnGroupName";
-                                        <input class="form-inline" @ref="txtGroupName" @bind="grp.GroupName" style="width:60%" placeholder="Enter Group Name..." />
+                                        <div class="mb-3">
+                                            <input class="form-control" @ref="txtGroupName" @bind="grp.GroupName" placeholder="Enter Group Name...">
+                                        </div>
                                         <button class="btn btn-link" name="@btnGroupId" @onclick="()=>BtnUpdateGroup(grp)">
                                             <img src="/icons/icoSave_cw_1.png" width="25" />
                                         </button>
                                         <button class="btn btn-link" @onclick="()=>BtnDeleteGroup(grp.GroupId)" @key="grp.GroupId">
                                             <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                        </button>
+                                        <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                            <img src="/icons/icoCancel_bw_1.png" width="24" />
                                         </button>
                                         <br />
                                         <br />
@@ -85,7 +90,7 @@ else
                                                     <div style="text-align: center;">
                                                         <hr style="color:red" />
                                                         <h6 style="color:darkgoldenrod;font-weight:bold;">Add this group to a course</h6>
-                                                        <select id="cboCourses" name="cboCourses" style="width:55%" @bind="selectedCourseId">
+                                                        <select class="form-select d-inline" id="cboCourses" name="cboCourses" style="width:55%" @bind="selectedCourseId">
                                                             <option value="0"> Select a Course... </option>
                                                             @foreach (var crs in lstCourses)
                                                                 {
@@ -107,7 +112,9 @@ else
                                                     <div style="text-align: center;">
                                                         <hr style="color:red" />
                                                         <h6 style="color:indianRed;">Send this Message to members of the group</h6>
-                                                        <input class="form-inline" @ref="txtMessageText" @bind="message.MessageText" style="width:90%" placeholder="Enter Message here..." /><br />
+                                                        <div class="mb-3">
+                                                            <input class="form-control" @ref="txtMessageText" @bind="message.MessageText" placeholder="Enter Message here...">
+                                                        </div>
                                                         <input class="form-check-input" type="checkbox" @bind=_IsMessageTypeFeedback />
                                                         <label class="form-check-label" style="color:Black"> Message Receives Feedback </label><br />
                                                         <button class="btn btn-link" @onclick="()=>BtnSendMessageToGroup(grp.GroupId)">
@@ -150,7 +157,9 @@ else
                                             {
                                             <div style="text-align: center;">
                                                 <img src="/icons/icoUser_bluet_1.png" width="30" />
-                                                <input class="form-inline" @bind="txtNewStudentName" placeholder="New UserName..." />
+                                                <div class="mb-3">
+                                                    <input class="form-control" @bind="txtNewStudentName" placeholder="New UserName...">
+                                                </div>
                                                 <button class="btn btn-link" @onclick="()=>BtnSaveNewStudent(grp.GroupId)">
                                                     <img src="/icons/icoSave_cw_1.png" width="25" />
                                                 </button>
@@ -181,8 +190,15 @@ else
                                                                 <hr style="color:red" />                                                
                                                                 <br />
                                                                 <img src="/icons/icoUser_bluet_1.png" width="30" />
-                                                                <input class="form-inline" @bind="stdnt.UserName" placeholder="Student name" style="width:40%;font-weight:normal;color:indianred" />
-                                                                <input class="form-inline" @bind="stdnt.UserPass" placeholder="Student password" style="width:35%;font-weight:normal;" />
+                                                                <div class="mb-3">
+                                                                    <input class="form-control" @bind="stdnt.UserName" placeholder="Username" style="font-weight:normal;color:indianred">
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <input class="form-control" @bind="stdnt.UserPass" placeholder="Password" style="font-weight:normal;">
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <input class="form-control" @bind="stdnt.UserNickname" placeholder="Nickname" style="font-weight:normal;">
+                                                                </div>
                                                                 <p></p>
                                                                 <span  style="margin-right: 15px;">
                                                                     <input class="form-check-input" type="checkbox" checked="@((stdnt.UserTags & 1) == 1)" @onchange="e=>BtnUpdateStudentTagsInPlace(stdnt, 1, (bool)e.Value)" />
@@ -216,7 +232,7 @@ else
                                                                         <br />
                                                                         <div style="text-align: center;">
                                                                             <h6 style="color:darkgoldenrod;font-weight:bold;">Add/Remove Student to/from a course</h6>
-                                                                                <select id="cboCourses" name="cboCourses" style="width:60%" @bind="selectedCourseId">
+                                                                                <select class="form-select d-inline" id="cboCourses" name="cboCourses" style="width:60%" @bind="selectedCourseId">
                                                                                     <option value="0"> Select a Course... </option>
                                                                                     @foreach (var crs in lstCourses)
                                                                                         {
@@ -229,6 +245,9 @@ else
                                                                             </button>
                                                                             <button class="btn btn-link" @onclick="()=>BtnDeleteStudentCourse(stdnt.UserId)" >
                                                                                 <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                                                            </button>
+                                                                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                                                                <img src="/icons/icoCancel_bw_1.png" width="24" />
                                                                             </button>
                                                                         </div>
                                                                         <br />
@@ -270,11 +289,16 @@ else
             </div>
             @if (appState.Cmd == "AddNewGroup")
                 {
-                <hr />
-                <h4>New Group:</h4>
-                <input class="form-inline" @ref="txtNewGroup" @bind="group.GroupName" placeholder="New Group Name..." />
+                <hr style="color:red"/>
+                <h4>Add New Group</h4>
+                <div class="mb-3">
+                    <input class="form-control" @ref="txtNewGroup" @bind="group.GroupName" placeholder="New Group Name...">
+                </div>
                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewGroup">
-                    <img src="/icons/icoSave_cw_1.png" width="24" />
+                    <img src="/icons/icoSave_cw_1.png" width="22" />
+                </button>
+                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                    <img src="/icons/icoCancel_bw_1.png" width="24" />
                 </button>
                 }
             else
@@ -322,7 +346,7 @@ else
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            
+
             Navman.NavigateTo ("/Login");
             }
         var user = new User
@@ -615,6 +639,7 @@ else
         }
     public async Task BtnUpdateStudent(User student)
         {
+        appState.SetGroupId (student.GroupId);
         bool result = await feService.Update_Student (student);
         if (result)
             {
@@ -748,6 +773,10 @@ else
             }
         }
     //back
+    public void BtnCancel()
+        {    
+        appState.SetCmd("");
+        }
     public void BtnBack()
         {    
         Navman.NavigateTo ("/T_SwitchBoard");

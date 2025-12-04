@@ -98,7 +98,7 @@ else
             @if ((appState.Cmd == "ShowMessageStats") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
                 {
                 <div style="text-align:left; padding-left:25px;">
-                    <div style="font-weight:bold">Students <span style="font-weight:normal;"> ( @nStudents ) </span></div>
+                    <div style="font-weight:bold">Terget Students <span style="font-weight:normal;"> ( @nStudents ) </span></div>
                     <div style="padding-left:15px;">@nStudentsRead ( @(nStudentsRead * 100 / nStudents)% ) Read</div>
                     <div style="padding-left:15px;">@nStudentsBookmarked Bookmarked</div>
                     <div style="padding-left:15px;">@nStudentsDeleted Deleted</div>

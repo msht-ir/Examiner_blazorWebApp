@@ -1,9 +1,11 @@
 ﻿using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
 using System.Data;
+using Group = ExaminerS.Models.Group;
 
 namespace ExaminerB.Services2Backend
     {
@@ -444,12 +446,13 @@ namespace ExaminerB.Services2Backend
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             string sql = "";
-            sql = "Update Students SET StudentName=@studentname, StudentPass=@studentpass, StudentTags=@studenttags WHERE StudentId=@studentid";
+            sql = "Update Students SET StudentName=@studentname, StudentPass=@studentpass, StudentTags=@studenttags, StudentNickname=@studentnickname WHERE StudentId=@studentid";
             await cnn.OpenAsync ();
             var cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@studentname", student.UserName);
             cmd.Parameters.AddWithValue ("@studentpass", student.UserPass);
             cmd.Parameters.AddWithValue ("@studenttags", student.UserTags);
+            cmd.Parameters.AddWithValue ("@studentnickname", student.UserNickname);
             cmd.Parameters.AddWithValue ("@studentid", student.UserId);
             await cmd.ExecuteNonQueryAsync ();
 

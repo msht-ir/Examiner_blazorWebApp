@@ -80,7 +80,7 @@
                                 @if (appState.Cmd == "AddStudentToExam" && (@examId == appState.ExamId))
                                     {
                                     <h6 style="color:lightslategray;font-weight:bold;">Add Students to Exam</h6>
-                                    <select @bind="intGroupId" style="width:75%">
+                                    <select class="form-select d-inline" @bind="intGroupId" style="width:75%; background-color:whitesmoke">
                                         <option value="0"> Select a Group... </option>
                                         @foreach (var grp in lstGroups)
                                             {
@@ -88,10 +88,10 @@
                                             }
                                     </select>
                                     <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExams (exam.ExamId)">
-                                        <img src="/icons/icoGroupAdd_grayt_1.png" width="25" />
+                                        <img src="/icons/icoGroupAdd_grayt_1.png" width="28" />
                                     </button>
                                     <br />
-                                    <select @bind="intStudentId" style="width:75%">
+                                    <select class="form-select d-inline" @bind="intStudentId" style="width:75%; background-color:whitesmoke">
                                         <option value="0"> Select a Student... </option>
                                         @foreach (var stdnt in lstStudents)
                                             {
@@ -99,21 +99,28 @@
                                             }
                                     </select>
                                     <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExam (exam.ExamId)">
-                                        <img src="/icons/icoUserAdd_bluet_1.png" width="22" />
+                                        <img src="/icons/icoUserAdd_bluet_1.png" width="28" />
                                     </button>
                                     <br />
-                                    <hr />
+                                    <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                        <img src="/icons/icoCancel_bw_1.png" width="24" />
+                                    </button>
                                     }
                                 }
                         </table>
                         <hr />
                         @if (appState.Cmd == "AddNewExam")
                             {
-                            <span style="font-weight:bold">New Exam:</span>
+                            <span style="font-weight:bold">Add New Exam</span>
                             <br />
-                            <input class="form-inline" @bind="txtNewExamTitle" placeholder="Exam name" style="width:70%" />
+                            <div class="mb-3">
+                                <input class="form-control" @bind="txtNewExamTitle" placeholder="Exam name" style="width:70%"/>
+                            </div>
                             <button class="btn btn-link" @onclick="BtnCreateExam" >
                                 <img src="/icons/icoSave_cw_1.png" width="22" />
+                            </button>
+                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                <img src="/icons/icoCancel_bw_1.png" width="24" />
                             </button>
                             }
                         else
@@ -259,6 +266,10 @@
             }
         }    
     //Exit
+    public void BtnCancel ()
+        {
+        appState.SetCmd ("");
+        }
     public void BtnBack ()
         {
         appState.SetCmd ("");

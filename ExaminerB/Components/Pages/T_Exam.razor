@@ -27,22 +27,19 @@ else
         @* Exam Title*@
         <div style="background-color:whitesmoke;padding-left:10px;;padding-right:10px">
             <div style="font-size:130%;font-weight:bold;color:royalblue">Exam <span style="font-size:small;font-weight:normal;color:gray">Title - DateTime - Duration</span></div>
-            <input class="form-inline" @bind="exam.ExamTitle" placeholder="Exam Title" style="font-weight:bold;color:indianred;width:50%;" /> 
-            <input class="form-inline" @bind="exam.ExamDuration" placeholder="Duration min" type="number" style="width:55px;text-align:center;" /> <span style="padding-right:10px;">min</span>
-            <br />
-            <br />
             <div class="mb-3">
-                <input class="form-inline" @bind="exam.ExamDateTime" placeholder="____-__-__ __:__" style="width:140px;text-align:center" />
-                <label style="padding-left:5px;padding-right:5px;">Active</label>
-                <input class="form-inline" @bind="exam.IsActive" type="checkbox"/>
-                <label style="padding-left:5px;padding-right:5px;">Training</label>
-                <input class="form-inline" @bind="exam.IsTrainingMode" type="checkbox"/>
-                @* <button class="btn btn-link" @onclick="BtnUpdateExam">
-                    <img src="/icons/icoSave_bt_1.png" width="25" />
-                </button> *@
-                @* <button class="btn btn-link" @onclick="BtnBack">
-                    <img src="/icons/icoBack_bt_1.png" width="25" />
-                </button> *@
+                <input class="form-control d-inline" @bind="exam.ExamTitle" placeholder="Exam Title" style="font-weight:bold;color:indianred;width:50%;"/>
+                <input class="form-control d-inline" @bind="exam.ExamDuration" placeholder="Duration min" type="number" style="width:55px;text-align:center;"/>
+                <span style="padding-right:10px;">min</span>
+            </div>
+            <div class="mb-3">
+                <div class="mb-3">
+                    <input class="form-control d-inline" @bind="exam.ExamDateTime" placeholder="____-__-__ __:__" style="width:140px;text-align:center"/>
+                    <label style="padding-left:5px;padding-right:5px;">Active</label>
+                    <input class="form-inline border" @bind="exam.IsActive" type="checkbox"/>
+                    <label style="padding-left:5px;padding-right:5px;">Training</label>
+                    <input class="form-inline border" @bind="exam.IsTrainingMode" type="checkbox"/>
+                </div>
             </div>
         </div>
         <div class="accordion" id="accordionEC">
@@ -95,7 +92,7 @@ else
                                 <div style="text-align: left;margin-left:20px;margin-rightt:10px">
                                     <br>
                                     <h5 style="color:indianred;font-weight:bold;"> New Exam Composition</h5>
-                                    <select @ref="cboCourseTopics" @bind="cboCourseTopicId" style="width:60%">
+                                    <select class="form-select d-inline" @ref="cboCourseTopics" @bind="cboCourseTopicId" style="width:60%">
                                         <option value="0"> Select a Topic... </option>
                                         @foreach (CourseTopic topic in lstCourseTopics)
                                             {
@@ -103,7 +100,10 @@ else
                                             }
                                     </select>
                                     <button class="btn btn-link" @onclick="BtnCreateExamComposition">
-                                        <img src="/icons/icoAddItem_gt_1.png" width="25" />
+                                        <img src="/icons/icoSave_bt_1.png" width="25" />
+                                    </button>
+                                    <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                        <img src="/icons/icoCancel_bw_1.png" width="24" />
                                     </button>
                                     @* Slider NTests *@
                                     <br />
@@ -156,12 +156,14 @@ else
                             {
                             @* SEARCH *@ 
                             <div class="mb-3" style="background-color:WhiteSmoke">
-                                <h6 style="color:darkgoldenrod;">Add Test to Exam</h6>
-                                <input class="form-inline" @ref="txtSearchTest" @bind="strSearch" type="text" placeholder="Search..." style="width:80%" />
-                                <button class="btn btn-link" @onclick="BtnReadTestsBySearch">
-                                    <img src="/icons/icoSearch_bt_1.png" width="30" />
-                                </button>
-                                <select @ref="cboCourseTests" @bind="cboCourseTestId" style="font-size:small;width:80%">
+                                <h6 style="color:royalblue;">Add Tests to Exam</h6>
+                                <div class="mb-3">
+                                    <input class="form-control d-inline" @ref="txtSearchTest" @bind="strSearch" type="text" placeholder="Search..." style="width:80%"/>
+                                    <button class="btn btn-link" @onclick="BtnReadTestsBySearch">
+                                        <img src="/icons/icoSearch_bt_1.png" width="30" />
+                                    </button>
+                                </div>
+                                <select class="form-select d-inline" @ref="cboCourseTests" @bind="cboCourseTestId" style="font-size:small;width:80%">
                                     <option value="0"> select from results </option>
                                     @foreach (var ct in lstCourseTests)
                                         {
@@ -418,6 +420,10 @@ else
                 StateHasChanged ();
                 }
             }
+        }
+    public async Task BtnCancel()
+        {
+        appState.SetCmd ("");
         }
     public async Task BtnBack()
         {
