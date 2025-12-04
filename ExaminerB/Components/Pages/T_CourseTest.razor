@@ -39,7 +39,7 @@ else
                 @* 2- Combo: Topics *@
                 <div style="flex: 1; color: IndianRed;">
                     <h6>Topic</h6>
-                    <select @bind="test.TopicId" style="width: 100%; height: 32px;">
+                    <select class="form-select d-inline" @bind="test.TopicId" style="width: 100%; height: 32px;">
                         @foreach (var topic in lstCourseTopics)
                             {
                             if (topic.CourseTopicId == test.TopicId)
@@ -66,7 +66,7 @@ else
                 @* 3- Combo: Levels *@
                 <div style="flex: 1; color: IndianRed;">
                     <h6>Level</h6>
-                    <select @bind="test.TestLevel" style="width: 80%; height: 32px;">
+                    <select class="form-select d-inline" @bind="test.TestLevel" style="width: 80%; height: 32px;">
                         <option value="0" selected>Test Level ?</option>
                         @for (int i = 1; i <= 5; i++)
                             {
@@ -158,7 +158,10 @@ else
                             @* Add NewTestOption *@        
                             @if (appState.Cmd == "AddNewTestOption")
                                 {
-                                <input class="form-inline border" @ref="txtNewTestOption" @bind="strNewTestOption" placeholder="New Option..." />
+                                <h5 style="color:royalblue">Add New Option</h5>
+                                <div class="mb-3">
+                                    <input class="form-control" @ref="txtNewTestOption" @bind="strNewTestOption" placeholder="New Option..."/>
+                                </div>
                                 <button class="btn btn-link" name="btnNewTestOption" type="submit" @onclick="()=>BtnCreateTestOption(test.TestId)">
                                     <img src="/icons/icoSave_cw_1.png" width="25" />
                                 </button>
@@ -182,8 +185,8 @@ else
             @if (appState.Cmd == "AddTestToAnExam")
                 {
                 @* Get List Of Exams (courseId) *@
-                <h6 style="color:royalblue;text-align: center;">Add this test to an exam</h6>
-                <select id="cboExams" @bind="intExam" style="width:70%; height:35px">
+                <h6 style="color:royalblue;">Add Test to an Exam</h6>
+                <select class="form-select d-inline" id="cboExams" @bind="intExam" style="width:60%; height:35px">
                         <option value="0"> Select an exam... </option>                    
                     @foreach (var exm in lstExams)
                         {
@@ -391,6 +394,6 @@ else
                     break;
                     }
             }
-        Navman.NavigateTo (appState.ReturnPage?? "/Login");
+        Navman.NavigateTo (appState.ReturnPage?? "/T_SwitchBoard");
         }
 }

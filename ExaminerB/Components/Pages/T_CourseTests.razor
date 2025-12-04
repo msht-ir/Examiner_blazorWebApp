@@ -24,36 +24,38 @@ else
     <EditForm Model="lstCourseTests">
         @if (appState.Cmd == "importexcelfile")
             {
-            <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnBack">
-                <img src="/icons/icoBack_bt_1.png" width="30" />
+            <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnCancel">
+                <img src="/icons/icoCancel_bw_1.png" width="22" />
             </button>
-            <img src="/icons/icoExcel_gw_1.jpg" width="30" style="margin-right:10px;" />
+            <img src="/icons/icoExcel_gw_1.jpg" width="28" style="margin-right:10px;" />
             <InputFile OnChange="HandleFileSelected" />
             }
         else
             {
-            <button class="btn btn-link" @onclick="()=>BtnAddNewTest()">
-                <img src="/icons/icoAddItem_gt_1.png" width="24" />
+            <button class="btn btn-link" @onclick="BtnBack">
+                <img src="/icons/icoBack_bt_1.png" width="28" />
             </button>
             <button class="btn btn-link" @onclick="BtnImportFromExcelFile">
                 <img src="/icons/icoExcel_gw_1.jpg" width="30" />
             </button>
-            <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/icons/icoBack_bt_1.png" width="28" />
+            <button class="btn btn-link" @onclick="()=>BtnAddNewTest()">
+                <img src="/icons/icoAddItem_gt_1.png" width="24" />
             </button>
             <p></p>
             <hr style="border-color:red" />
             <h3>@course.CourseName</h3>
             @* SEARCH *@
-            <input type="text" @ref="txtSearch" @bind ="strSearch"  placeholder="Search tests..." style="width:50%" />
-            <button class="btn btn-link" @onclick="()=>BtnReadTestsBySearch()">
-                <img src="/icons/icoSearch_bt_1.png" width="25" />
-            </button>
-            @* Paginate *@
-            <input type="number" @ref="txtPageNumber" @bind="intPageNumber" min="1" placeholder="1" style="width: 50px; display: inline-block;" />
-            <button class="btn btn-link" @onclick="()=>BtnReadAllTests(course.CourseId)">
-                <img src="/icons/icoList_bt_1.png" width="25" />
-            </button>
+            <div class="mb-3">
+                <input class="form-control d-inline" @ref="txtSearch" @bind ="strSearch"  placeholder="Search tests..." style="width:50%"/>
+                <button class="btn btn-link" @onclick="()=>BtnReadTestsBySearch()">
+                    <img src="/icons/icoSearch_bt_1.png" width="25" />
+                </button>
+                @* Paginate *@
+                <input class="form-control d-inline" type="number" @ref="txtPageNumber" @bind="intPageNumber" min="1" placeholder="1" style="width: 50px; display: inline-block;"/>
+                <button class="btn btn-link" @onclick="()=>BtnReadAllTests(course.CourseId)">
+                    <img src="/icons/icoList_bt_1.png" width="25" />
+                </button>
+            </div>
             @* List of tests *@
             <hr style="border-color:red" />
             i = (intPageNumber - 1) * 20; //important: see pageSize in BackendService
@@ -124,7 +126,7 @@ else
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            
+
             Navman.NavigateTo ("/Login");
             }
         switch (appState.Cmd)
@@ -152,10 +154,6 @@ else
         appState.OnChange -= TriggerRender;
         }
     //btns
-    public void BtnBack()
-        {
-        Navman.NavigateTo ("/T_Courses");
-        }
     public void BtnImportFromExcelFile()
         {
         appState.SetCmd ("importexcelfile");
@@ -186,6 +184,7 @@ else
         appState.SetReturnPage ("/T_CourseTests");
         Navman.NavigateTo ("/T_CourseTest");
         }
+    //methods
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
         {
         // ------ method 1: Save excel file to server folder
@@ -272,6 +271,15 @@ else
             }
         _hasFetched = true;
         appState.SetCmd ("");
+        }
+    //Exit
+    public void BtnCancel()
+        {
+        appState.SetCmd ("");
+        }
+    public void BtnBack()
+        {
+        Navman.NavigateTo ("/T_Courses");
         }
     
 
