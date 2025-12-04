@@ -68,10 +68,10 @@ namespace ExaminerB.Service
             }
         #endregion
         #region C10:Students
-        public async Task<bool> Create_Student (User student)
+        public async Task<int> Create_Student (User user)
             {
-            var response = await _http.PostAsJsonAsync ("api/Create_Student", student);
-            return response.IsSuccessStatusCode ? true : false;
+            var response = await _http.PostAsJsonAsync ("api/Create_Student", user);
+            return response.IsSuccessStatusCode ? 1 : 0;
             }
         public async Task<List<User>> Read_Students (int userId, bool getStudentExams, bool getStudentCourses)
             {

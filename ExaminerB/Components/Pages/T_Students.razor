@@ -1,4 +1,7 @@
 ﻿@page "/T_Students"
+@using ClosedXML.Excel
+@using Microsoft.Extensions.Hosting
+@using ClosedXML
 @using ExaminerB.Service
 @inject NavigationManager Navman
 @inject AppState appState
@@ -155,14 +158,18 @@ else
                                         </div>
                                         @if ((appState.Cmd == "AddNewStudent") && (appState.GroupId == grp.GroupId))
                                             {
-                                            <div style="text-align: center;">
-                                                <img src="/icons/icoUser_bluet_1.png" width="30" />
+                                            <div>
                                                 <div class="mb-3">
-                                                    <input class="form-control" @bind="txtNewStudentName" placeholder="New UserName...">
+                                                    <img src="/icons/icoUser_bluet_1.png" width="24" />
+                                                    <input class="form-control d-inline" style="width:50%" @bind="txtNewStudentName" placeholder="New UserName...">
+                                                    <button class="btn btn-link" @onclick="()=>BtnSaveNewStudent(grp.GroupId)">
+                                                        <img src="/icons/icoSave_bt_1.png" width="24" />
+                                                    </button>
                                                 </div>
-                                                <button class="btn btn-link" @onclick="()=>BtnSaveNewStudent(grp.GroupId)">
-                                                    <img src="/icons/icoSave_cw_1.png" width="25" />
-                                                </button>
+                                                <div class="mb-3">
+                                                    <img src="/icons/icoExcel_gw_1.jpg" width="24" />
+                                                    <InputFile OnChange="HandleFileSelected" />
+                                                </div>
                                             </div>
                                             }
                                         else
@@ -187,9 +194,9 @@ else
                                                         </h4>
                                                         <div id="@collapseId2" class="accordion-collapse collapse" data-bs-parent="#accordionStudents">
                                                             <div class="accordion-body" style="background-color:whitesmoke">
-                                                                <hr style="color:red" />                                                
-                                                                <br />
-                                                                <img src="/icons/icoUser_bluet_1.png" width="30" />
+                                                                <div style="text-align:center; padding-bottom:5px;">
+                                                                    <img src="/icons/icoUser_bluet_1.png" width="30" />
+                                                                </div>
                                                                 <div class="mb-3">
                                                                     <input class="form-control" @bind="stdnt.UserName" placeholder="Username" style="font-weight:normal;color:indianred">
                                                                 </div>
@@ -340,6 +347,7 @@ else
     bool _tag32 = false;
     string txtNewStudentName = "";
     int selectedCourseId = 0; // Courses in combo box
+    int i = 0;
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
@@ -614,9 +622,9 @@ else
         }
     public async Task BtnSaveNewStudent(int groupId)
         {
-        User student = new User () { UserName = txtNewStudentName, UserPass=txtNewStudentName, UserRole="student", UserTags= 1, GroupId=groupId };
-        bool result = await feService.Create_Student (student);
-        if (result)
+        User student = new User () { UserName = txtNewStudentName, UserPass=txtNewStudentName, UserRole="student", UserTags= 1, UserNickname= "new student", GroupId=groupId };
+        int result = await feService.Create_Student (student);
+        if (result > 0)
             {
             await JS.InvokeVoidAsync ("alert", $"New Student :\n\n user: {student.UserName} \n pass: {student.UserPass} \n created!");
             // Refresh the list
@@ -665,17 +673,17 @@ else
             bool result = await feService.Delete_Student (studentId);
             if (result)
                 {
-                await JS.InvokeVoidAsync("alert", "\nStudent successfully removed from the group");
+                //await JS.InvokeVoidAsync("alert", "\nStudent successfully removed from the group");
                 appState.SetCmd("");
                 // Refresh the list
                 var user = new User
-            {
-                UserId = Convert.ToInt32(appState.UserId),
-                UserName = appState.UserName,
-                UserPass = appState.UserPass,
-                UserRole = appState.UserRole,
-                GroupId = Convert.ToInt32(appState.GroupId)
-            };
+                    {
+                    UserId = Convert.ToInt32(appState.UserId),
+                    UserName = appState.UserName,
+                    UserPass = appState.UserPass,
+                    UserRole = appState.UserRole,
+                    GroupId = Convert.ToInt32(appState.GroupId)
+                    };
                 lstGroups = await feService.Read_Groups(user, false, false);
                 group.GroupName = ""; //reset input text
                 StateHasChanged ();            
@@ -697,6 +705,50 @@ else
         appState.SetStudentNickname (stdnt.UserNickname);
         string mode = "StudentWithDels";
         Navman.NavigateTo ($"/T_ReportMessages/{mode}/{stdnt.UserId}");
+        }
+    //methods for excel import
+    public void BtnImportStudentsFromExcelFile()
+        {
+        appState.SetCmd ("importstudentsfromexcelfile");
+        }
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+        {
+        _hasFetched = false;
+        var file = e.File;
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
+        await ParseStudentExcelAsync(memoryStream);
+        }
+    private async Task ParseStudentExcelAsync(Stream stream)
+        {
+        try
+            {
+            using var workbook = new XLWorkbook(stream);
+            var worksheet = workbook.Worksheet(1); //1:first sheet
+            i = 0;
+            foreach (var row in worksheet.RowsUsed().Skip(1)) //skip header
+                {
+                i++;
+                User student = new User () {
+                    UserName = row.Cell (1).GetString (),
+                    UserPass=row.Cell (2).GetString (),
+                    UserRole="student",
+                    UserTags= 1,
+                    UserNickname= $"new student {i}",
+                    GroupId=Convert.ToInt32(appState.GroupId)
+                };
+                int result = await feService.Create_Student (student);
+                }
+            //refresh
+            lstGroups = await feService.Read_Groups (user, false, false); 
+            }
+        catch (Exception ex)
+            {
+            Console.WriteLine($"Error in [ImportExcel]: {ex}");
+            }
+        _hasFetched = true;
+        appState.SetCmd ("");
         }
     //student course
     public void BtnAddStudentCourse(int userId)
@@ -749,6 +801,7 @@ else
                 }
             }
         }
+    //back
     public async Task BtnDeleteStudentCourses(int groupId)
         {
         //delete all students of a group from a course
@@ -772,7 +825,6 @@ else
                 }
             }
         }
-    //back
     public void BtnCancel()
         {    
         appState.SetCmd("");

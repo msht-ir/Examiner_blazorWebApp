@@ -60,7 +60,7 @@ namespace ExaminerB.Backend
         #endregion
         #region C10:Students
         [HttpPost ("Create_Student")]
-        public async Task<ActionResult<bool>> Create_Student ([FromBody] User student)
+        public async Task<ActionResult<int>> Create_Student ([FromBody] User student)
             {
             var result = await _BeService.Create_StudentAsync (student);
             return Ok (result);

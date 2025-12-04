@@ -117,7 +117,7 @@ else
                     </button>
                 </h4>
                 <div id="TestOptions" class="accordion-collapse collapse" data-bs-parent="#accordionTestOptions">
-                    <div class="accordion-body" style="background-color:whitesmoke">
+                    <div class="accordion-body" style="background-color:white">
                         @if (appState.Cmd != "AddNewTest")
                             {
                             @* 5- Optionn *@
@@ -125,54 +125,70 @@ else
                             foreach (TestOption opt in test.TestOptions)
                                 {
                                 i++;
-                                <div style="flex: 1; color: IndianRed;">
-                                <h6 style="color:indianRed">Option @i<span style="font-size:0.5em; color: gray"> / @test.TestOptions.Count</span></h6>
+                                <div class="container mt-2">
+                                    <div class="card">
+                                        <div class="card-body bg-light">
+                                            <div style="flex: 1; color: IndianRed;">
+                                                <h6 style="color:indianRed">Option @i<span style="font-size:0.5em; color: gray"> / @test.TestOptions.Count</span></h6>
+                                            </div>
+                                            @* OptionTitle *@
+                                            @if ((@test.TestTags & 2) == 2)
+                                                {
+                                                <textarea class="form-control form-text" @bind="opt.TestOptionTitle" placeholder="Option title..." style="width:100%;height:35px;text-align: right;" dir="rtl"></textarea>
+                                                }
+                                            else
+                                                {
+                                                <textarea class="form-control form-text" @bind="opt.TestOptionTitle" placeholder="Option title..." style="width:100%;height:35px"></textarea>
+                                                }
+                                            @* Checks: Tags {Ans, ForceLast} *@
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" checked="@((opt.TestOptionTags & 2) == 2)" @onchange="e=>BtnUpdateTestOptionTagsInPlace(opt, 2, (bool)e.Value)"/>
+                                                <label class="form-check-label" style="font-size: small; color: RoyalBlue;padding-right:15px;">Ans </label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" checked="@((opt.TestOptionTags & 1) == 1)" @onchange="e=>BtnUpdateTestOptionTagsInPlace(opt, 1, (bool)e.Value)"/>
+                                                <label class="form-check-label" style="font-size: small; color: RoyalBlue;padding-right:15px;">ForceLast </label>
+                                            </div>
+                                            <button class="btn btn-link" type="submit" @onclick="()=>BtnUpdateTestOption(opt)">
+                                                <img src="/icons/icoSave_bt_1.png" width="25" />
+                                            </button>
+                                            <button class="btn btn-link" type="submit" @onclick="()=>BtnDeleteTestOption(opt.TestOptionId)">
+                                                <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                @* OptionTitle *@
-                                @if ((@test.TestTags & 2) == 2)
-                                    {
-                                    <textarea class="form-control form-text" @bind="opt.TestOptionTitle" placeholder="Option title..." style="width:100%;height:35px;text-align: right;" dir="rtl"></textarea>
-                                    }
-                                else
-                                    {
-                                    <textarea class="form-control form-text" @bind="opt.TestOptionTitle" placeholder="Option title..." style="width:100%;height:35px"></textarea>
-                                    }
-                                @* Checks: Tags {Ans, ForceLast} *@
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" checked="@((opt.TestOptionTags & 2) == 2)" @onchange="e=>BtnUpdateTestOptionTagsInPlace(opt, 2, (bool)e.Value)"/>
-                                    <label class="form-check-label" style="font-size: small; color: RoyalBlue;padding-right:15px;">Ans </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" checked="@((opt.TestOptionTags & 1) == 1)" @onchange="e=>BtnUpdateTestOptionTagsInPlace(opt, 1, (bool)e.Value)"/>
-                                    <label class="form-check-label" style="font-size: small; color: RoyalBlue;padding-right:15px;">ForceLast </label>
-                                </div>
-                                <button class="btn btn-link" type="submit" @onclick="()=>BtnUpdateTestOption(opt)">
-                                    <img src="/icons/icoSave_bt_1.png" width="25" />
-                                </button>
-                                <button class="btn btn-link" type="submit" @onclick="()=>BtnDeleteTestOption(opt.TestOptionId)">
-                                    <img src="/icons/icoDelete_bt_1.png" width="25" />
-                                </button>
-                                <hr />
                                 }
                             }
                             @* Add NewTestOption *@        
                             @if (appState.Cmd == "AddNewTestOption")
                                 {
-                                <h5 style="color:royalblue">Add New Option</h5>
-                                <div class="mb-3">
-                                    <input class="form-control" @ref="txtNewTestOption" @bind="strNewTestOption" placeholder="New Option..."/>
+                                <div class="container mt-2">
+                                    <div class="card">
+                                        <div class="card-body bg-light">
+                                            <h5 style="color:royalblue">Add New Option</h5>
+                                            <div class="mb-3">
+                                                <input class="form-control" @ref="txtNewTestOption" @bind="strNewTestOption" placeholder="New Option..."/>
+                                            </div>
+                                            <button class="btn btn-link" name="btnNewTestOption" type="submit" @onclick="()=>BtnCreateTestOption(test.TestId)">
+                                                <img src="/icons/icoSave_cw_1.png" width="22" />
+                                            </button>        
+                                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                                <img src="/icons/icoCancel_bw_1.png" width="24" />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <button class="btn btn-link" name="btnNewTestOption" type="submit" @onclick="()=>BtnCreateTestOption(test.TestId)">
-                                    <img src="/icons/icoSave_cw_1.png" width="25" />
-                                </button>
                                 }
                             else
                                 {
                                 if (test.TestOptions?.Count < 5)
                                     {
-                                    <button class="btn btn-link" type="submit" @onclick="BtnAddNewTestOption">
-                                        <img src="/icons/icoAddItem_gt_1.png" width="30" />
-                                    </button>
+                                    <div style="text-align:center;">
+                                        <button class="btn btn-link" type="submit" @onclick="BtnAddNewTestOption">
+                                            <img src="/icons/icoAddItem_gt_1.png" width="25" />
+                                        </button>
+                                    </div>
                                     }
                                 }
                     </div>
@@ -186,7 +202,7 @@ else
                 {
                 @* Get List Of Exams (courseId) *@
                 <h6 style="color:royalblue;">Add Test to an Exam</h6>
-                <select class="form-select d-inline" id="cboExams" @bind="intExam" style="width:60%; height:35px">
+                <select class="form-select d-inline" id="cboExams" @bind="intExam" style="width:50%; height:35px">
                         <option value="0"> Select an exam... </option>                    
                     @foreach (var exm in lstExams)
                         {
@@ -196,16 +212,19 @@ else
                 <button class="btn btn-link" type="submit" @onclick="()=>BtnCreateExamTest(test)">
                     <img src="/icons/icoSave_cw_1.png" width="25" />
                 </button>
+                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                    <img src="/icons/icoCancel_bw_1.png" width="24" />
+                </button>
                 }
             else
                 {
+                <button class="btn btn-link" type="submit" @onclick="BtnBack">
+                    <img src="/icons/icoBack_bt_1.png" width="30" />
+                </button>
                 <button class="btn btn-link" type="submit" @onclick="BtnAddExamTest">
                     <img src="/icons/icoFolderExam_bt_2.png" width="40" />
                 </button>
                 }
-            <button class="btn btn-link" type="submit" @onclick="BtnBack">
-                <img src="/icons/icoBack_bt_1.png" width="30" />
-            </button>
         </div>
     </EditForm>
     }
@@ -379,6 +398,10 @@ else
             }
         }
     //Exit
+    public void BtnCancel ()
+        {
+        appState.SetCmd ("");
+        }
     public void BtnBack ()
         {
         switch (appState.ReturnPage)

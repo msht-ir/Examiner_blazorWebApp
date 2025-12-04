@@ -119,9 +119,11 @@
                                             }
                                         else
                                             {
-                                            <button class="btn btn-link btn-sm" @onclick="()=>BtnAddNewCourseTopic(crs.CourseId)">
-                                                <img src="/icons/icoAddItem_gt_1.png" width="22" />
-                                            </button>
+                                            <div style="text-align:center;">
+                                                <button class="btn btn-link btn-sm" @onclick="()=>BtnAddNewCourseTopic(crs.CourseId)">
+                                                    <img src="/icons/icoAddItem_gt_1.png" width="22" />
+                                                </button>
+                                            </div>
                                             }
                                         <hr style="color:red" />
                                         <h5>Online Folders</h5>
@@ -170,9 +172,11 @@
                                             }
                                         else
                                             {
-                                            <button class="btn btn-link btn-sm" @onclick="()=>BtnAddNewCourseFolder(crs.CourseId)">
-                                                <img src="/icons/icoAddItem_gt_1.png" width="25" />
-                                            </button>
+                                            <div style="text-align:center;">
+                                                <button class="btn btn-link btn-sm" @onclick="()=>BtnAddNewCourseFolder(crs.CourseId)">
+                                                    <img src="/icons/icoAddItem_gt_1.png" width="25" />
+                                                </button>
+                                            </div>
                                             }
                                         }
                                 </div>
@@ -452,7 +456,7 @@
     _hasFetched = true;            
     }
         }
-public void BtnUpdateCourseFolderActiveInPlace(CourseFolder courseFolder, int flag , bool isChecked)
+    public void BtnUpdateCourseFolderActiveInPlace(CourseFolder courseFolder, int flag , bool isChecked)
 {
     
 }   

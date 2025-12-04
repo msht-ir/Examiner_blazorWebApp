@@ -180,7 +180,7 @@ namespace ExaminerB.Services2Backend
         #region C10:Students
         public async Task<int> Create_StudentAsync (User student)
             {
-            string sql = "INSERT INTO Students (GroupId, StudentName, StudentPass, StudentTags) VALUES (@groupid, @studentname, @studentpass, @studenttags); SELECT CAST (scope_identity() AS int)";
+            string sql = "INSERT INTO Students (GroupId, StudentName, StudentPass, StudentTags, StudentNickname) VALUES (@groupid, @studentname, @studentpass, @studenttags, @studentnickname); SELECT CAST (scope_identity() AS int)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
@@ -191,6 +191,7 @@ namespace ExaminerB.Services2Backend
                 cmd.Parameters.AddWithValue ("@studentname", student.UserName);
                 cmd.Parameters.AddWithValue ("@studentpass", student.UserPass);
                 cmd.Parameters.AddWithValue ("@studenttags", student.UserTags);
+                cmd.Parameters.AddWithValue ("@studentnickname", student.UserNickname);
                 int i = (int) await cmd.ExecuteScalarAsync ();
                 return i;
                 }
@@ -540,31 +541,26 @@ namespace ExaminerB.Services2Backend
                 var cmd14 = new SqlCommand (sql14, cnn);
                 cmd14.Parameters.AddWithValue ("@studentid", studentId);
                 await cmd14.ExecuteNonQueryAsync ();
-                Console.WriteLine ($"DELETE for Student {studentId}: ------ 14");
                 //13
                 string sql13 = "DELETE FROM StudentCourses WHERE StudentId=@studentid";
                 var cmd13 = new SqlCommand (sql13, cnn);
                 cmd13.Parameters.AddWithValue ("@studentid", studentId);
                 await cmd13.ExecuteNonQueryAsync ();
-                Console.WriteLine ($"DELETE for Student {studentId}: ------ 13");
                 //12
                 string sql12 = "DELETE FROM StudentExamTests WHERE StudentExamId IN (SELECT StudentExamId FROM StudentExams WHERE StudentId=@studentid)";
                 var cmd12 = new SqlCommand (sql12, cnn);
                 cmd12.Parameters.AddWithValue ("@studentid", studentId);
                 await cmd12.ExecuteNonQueryAsync ();
-                Console.WriteLine ($"DELETE for Student {studentId}: ------ 12");
                 //11
                 string sql11 = "DELETE FROM StudentExams WHERE StudentId=@studentid";
                 var cmd11 = new SqlCommand (sql11, cnn);
                 cmd11.Parameters.AddWithValue ("@studentid", studentId);
                 await cmd11.ExecuteNonQueryAsync ();
-                Console.WriteLine ($"DELETE for Student {studentId}: ------ 11");
                 //10
                 string sql10 = "DELETE FROM Students WHERE StudentId=@studentid";
                 var cmd10 = new SqlCommand (sql10, cnn);
                 cmd10.Parameters.AddWithValue ("@studentid", studentId);
                 await cmd10.ExecuteNonQueryAsync ();
-                Console.WriteLine ($"DELETE for Student {studentId}: ------ 10");
                 return true;
                 }
             catch (Exception ex)
