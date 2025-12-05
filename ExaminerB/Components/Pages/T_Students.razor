@@ -194,17 +194,17 @@ else
                                                         </h4>
                                                         <div id="@collapseId2" class="accordion-collapse collapse" data-bs-parent="#accordionStudents">
                                                             <div class="accordion-body" style="background-color:whitesmoke">
-                                                                <div style="text-align:center; padding-bottom:5px;">
-                                                                    <img src="/icons/icoUser_bluet_1.png" width="30" />
+                                                                <div class="mb-1">
+                                                                    <img src="/icons/icoUser_bluet_1.png" width="24" />
+                                                                    <input class="form-control d-inline" @bind="stdnt.UserName" placeholder="Username" style="font-weight:normal;color:indianred; width:80%;">
                                                                 </div>
-                                                                <div class="mb-3">
-                                                                    <input class="form-control" @bind="stdnt.UserName" placeholder="Username" style="font-weight:normal;color:indianred">
+                                                                <div class="mb-1">
+                                                                    <img src="/icons/icoUser_bluet_1.png" width="24" />
+                                                                    <input class="form-control d-inline" @bind="stdnt.UserPass" placeholder="Password" style="font-weight:normal; width:80%;">
                                                                 </div>
-                                                                <div class="mb-3">
-                                                                    <input class="form-control" @bind="stdnt.UserPass" placeholder="Password" style="font-weight:normal;">
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <input class="form-control" @bind="stdnt.UserNickname" placeholder="Nickname" style="font-weight:normal;">
+                                                                <div class="mb-1">
+                                                                    <img src="/icons/icoUser_bluet_1.png" width="24" />
+                                                                    <input class="form-control d-inline" @bind="stdnt.UserNickname" placeholder="Nickname" style="font-weight:normal; width:80%;">
                                                                 </div>
                                                                 <p></p>
                                                                 <span  style="margin-right: 15px;">
@@ -727,21 +727,33 @@ else
             using var workbook = new XLWorkbook(stream);
             var worksheet = workbook.Worksheet(1); //1:first sheet
             i = 0;
+            group.GroupId = Convert.ToInt32 (appState.GroupId);
             foreach (var row in worksheet.RowsUsed().Skip(1)) //skip header
                 {
                 i++;
                 User student = new User () {
                     UserName = row.Cell (1).GetString (),
-                    UserPass=row.Cell (2).GetString (),
-                    UserRole="student",
-                    UserTags= 1,
-                    UserNickname= $"new student {i}",
-                    GroupId=Convert.ToInt32(appState.GroupId)
+                    UserPass = row.Cell (2).GetString (),
+                    UserRole = "student",
+                    UserTags = 1,
+                    UserNickname = row.Cell (3).GetString (),
+                    GroupId = group.GroupId
                 };
+                Console.WriteLine($"page ................................... Created: {student.UserNickname}");
                 int result = await feService.Create_Student (student);
                 }
-            //refresh
-            lstGroups = await feService.Read_Groups (user, false, false); 
+                //Refresh the list
+                var userx = new User
+                {
+                    UserId = Convert.ToInt32(appState.UserId),
+                    UserName = appState.UserName,
+                    UserPass = appState.UserPass,
+                    UserRole = appState.UserRole,
+                    GroupId = Convert.ToInt32(appState.GroupId)
+                };
+                lstGroups = await feService.Read_Groups (userx, false, false);
+                group.GroupName = "";
+                StateHasChanged ();            
             }
         catch (Exception ex)
             {
@@ -801,7 +813,6 @@ else
                 }
             }
         }
-    //back
     public async Task BtnDeleteStudentCourses(int groupId)
         {
         //delete all students of a group from a course
@@ -825,6 +836,7 @@ else
                 }
             }
         }
+    //back
     public void BtnCancel()
         {    
         appState.SetCmd("");

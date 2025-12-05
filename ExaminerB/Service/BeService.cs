@@ -187,17 +187,18 @@ namespace ExaminerB.Services2Backend
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@groupid", student.GroupId);
-                cmd.Parameters.AddWithValue ("@studentname", student.UserName);
-                cmd.Parameters.AddWithValue ("@studentpass", student.UserPass);
-                cmd.Parameters.AddWithValue ("@studenttags", student.UserTags);
-                cmd.Parameters.AddWithValue ("@studentnickname", student.UserNickname);
+                cmd.Parameters.Add ("@groupid", SqlDbType.Int).Value =  student.GroupId;
+                cmd.Parameters.Add ("@studentname", SqlDbType.NVarChar, 50).Value= student.UserName;
+                cmd.Parameters.Add ("@studentpass", SqlDbType.NVarChar, 50).Value= student.UserPass;
+                cmd.Parameters.Add ("@studenttags", SqlDbType.Int).Value= student.UserTags;
+                cmd.Parameters.Add ("@studentnickname", SqlDbType.NVarChar, 50).Value = student.UserNickname;
                 int i = (int) await cmd.ExecuteScalarAsync ();
                 return i;
                 }
-            catch
+            catch (Exception ex)
                 {
                 await cnn.CloseAsync ();
+                Console.WriteLine ($"DB error: {ex.Message}");
                 return 0;
                 }
             }
