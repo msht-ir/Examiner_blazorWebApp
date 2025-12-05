@@ -174,7 +174,7 @@
                                             {
                                             <div style="text-align:center;">
                                                 <button class="btn btn-link btn-sm" @onclick="()=>BtnAddNewCourseFolder(crs.CourseId)">
-                                                    <img src="/icons/icoAddItem_gt_1.png" width="25" />
+                                                    <img src="/icons/icoAddItem_gt_1.png" width="22" />
                                                 </button>
                                             </div>
                                             }
@@ -417,15 +417,17 @@
         courseFolder.CourseId = courseId;
         int result = await feService.Create_CourseFolder (courseFolder);
         if (result>0)
-    {
-    lstCourses = await feService.Read_Courses (user.UserId);
-    appState.SetCmd ("");
-    StateHasChanged ();
-    }
+            {
+            lstCourses = await feService.Read_Courses (user.UserId);
+            appState.SetCmd ("");
+            appState.SetCourseId (courseId);
+            StateHasChanged ();
+            }
         else
-    {
-    await JS.InvokeVoidAsync ("alert", "CourseFolder did not saved --- process failed");
-    }        
+            {
+            await JS.InvokeVoidAsync ("alert", "CourseFolder did not saved --- process failed");
+            }        
+        appState.SetCourseId (courseId);
         _hasFetched = true;
         }
     public async Task BtnUpdateCourseFolder(CourseFolder courseFolder)
@@ -433,12 +435,12 @@
         _hasFetched = false;
         bool result = await feService.Update_CourseFolder (courseFolder);
         if (result)
-    {
-    //await inputRefs[courseFolder.CourseFolderId].FocusAsync();
-    lstCourses = await feService.Read_Courses (user.UserId);
-    appState.SetCmd ("");
-    StateHasChanged ();
-    }
+            {
+            //await inputRefs[courseFolder.CourseFolderId].FocusAsync();
+            lstCourses = await feService.Read_Courses (user.UserId);
+            appState.SetCmd ("");
+            StateHasChanged ();
+            }
         _hasFetched = true;
         }
     public async Task BtnDeleteCourseFolder(int courseFolderId)

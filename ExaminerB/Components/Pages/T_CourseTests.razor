@@ -7,6 +7,7 @@
 @inject FeService feService
 @inject NavigationManager Navman
 @inject AppState appState
+@inject IJSRuntime JS
 @implements IDisposable
 
 @if (!_hasFetched)
@@ -237,9 +238,6 @@ else
                     newCourseTopic.CourseTopicId = test.TopicId;
                     lstCourseTopics.Add (newCourseTopic);
                     }
-                //Create New Test
-                test.TestId = await feService.Create_Test(test);
-                Console.WriteLine($"Row={row.RowNumber()} CourseId={test.CourseId} , TopicId={test.TopicId}");
                 //Options
                 for (int col = 5; col <= test.TestType + 4; col++)
                     {
@@ -249,11 +247,17 @@ else
                 //Answer
                 int answ = row.Cell(10).GetValue<int>();
                 if (answ > 0 && answ <= test.TestOptions?.Count)
-                    test.TestOptions[answ - 1].TestOptionTags = 2; //2:IsAns
+                    {
+                    test.TestOptions[answ - 1].TestOptionTags = 2; //2:IsAns                
+                    }
                 //ForceLast
                 int forceLast = row.Cell(11).GetValue<int>();
                 if (forceLast > 0 && forceLast <= test.TestOptions?.Count)
+                    {
                     test.TestOptions[forceLast - 1].TestOptionTags += 1; //1:ForceLast
+                    }
+                //Create New Test
+                test.TestId = await feService.Create_Test(test);
                 //Create options
                 foreach (TestOption opt in test.TestOptions.Take(test.TestType))
                     {
@@ -263,13 +267,15 @@ else
                         Console.WriteLine($"Option not added: {opt.TestOptionTitle}");
                         }
                     }
-                }
+                }                
             }
         catch (Exception ex)
             {
             Console.WriteLine($"Error in [ImportExcel]: {ex}");
             }
+        lstCourseTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), intPageNumber, false);
         _hasFetched = true;
+        await JS.InvokeVoidAsync ("alert", "Import completed!");
         appState.SetCmd ("");
         }
     //Exit

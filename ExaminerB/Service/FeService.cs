@@ -200,7 +200,12 @@ namespace ExaminerB.Service
         public async Task<int> Create_CourseTopic (CourseTopic courseTopic)
             {
             var response = await _http.PostAsJsonAsync ("api/Create_CourseTopic", courseTopic);
-            return response.IsSuccessStatusCode ? 1 : 0;
+            if (response.IsSuccessStatusCode)
+                {
+                var result = await response.Content.ReadFromJsonAsync<int> ();
+                return result;
+                }
+            return 0;
             }
         public async Task<List<CourseTopic>> Read_CourseTopics (int courseId)
             {

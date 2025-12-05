@@ -758,7 +758,7 @@ namespace ExaminerB.Services2Backend
             {
             List<CourseFolder> lstCourseFolders = new ();
 
-            string sql = "SELECT CourseFolderId, CourseId, CourseFolderTitle, CourseFolderUrl, CourseFolderActive FROM CourseFolders WHERE CourseId=@courseId ORDER BY CourseFolderTitle";
+            string sql = "SELECT CourseFolderId, CourseId, CourseFolderTitle, CourseFolderUrl, CourseFolderActive FROM CourseFolders WHERE CourseId=@courseId AND CourseFolderActive=1 ORDER BY CourseFolderTitle";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
@@ -830,6 +830,11 @@ namespace ExaminerB.Services2Backend
             cmd.Parameters.AddWithValue ("@testlevel", test.TestLevel);
             cmd.Parameters.AddWithValue ("@testtags", test.TestTags);
             int i = (int) await cmd.ExecuteScalarAsync ();
+            await cnn.CloseAsync ();
+            foreach (TestOption tstOpt in test.TestOptions)
+                {
+                await Create_TestOptionAsync (tstOpt);
+                }
             return i;
             }
         public async Task<Test> Read_TestByTestIdAsync (int testId, bool readOptions)
