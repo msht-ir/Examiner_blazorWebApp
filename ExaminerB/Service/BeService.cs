@@ -691,7 +691,7 @@ namespace ExaminerB.Services2Backend
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.Parameters.AddWithValue ("@courseId", courseId);
-                SqlDataReader reader = cmd.ExecuteReader ();
+                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 int i = 0;
                 lstCourseTopics.Clear ();
                 while (await reader.ReadAsync ())
@@ -766,7 +766,7 @@ namespace ExaminerB.Services2Backend
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.Parameters.AddWithValue ("@courseId", courseId);
-                SqlDataReader reader = cmd.ExecuteReader ();
+                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 int i = 0;
                 lstCourseFolders.Clear ();
                 while (await reader.ReadAsync ())
@@ -3044,7 +3044,7 @@ COMMIT TRANSACTION;
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.Parameters.AddWithValue ("@Id", Id);
-                SqlDataReader reader = cmd.ExecuteReader ();
+                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 lstMessages.Clear ();
                 while (await reader.ReadAsync ())
                     {
@@ -3105,7 +3105,7 @@ COMMIT TRANSACTION;
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.Parameters.AddWithValue ("@strkey", strKey);
                 cmd.Parameters.AddWithValue ("@userId", userId);
-                SqlDataReader reader = cmd.ExecuteReader ();
+                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 lstMessages.Clear ();
                 while (await reader.ReadAsync ())
                     {
@@ -3146,7 +3146,7 @@ COMMIT TRANSACTION;
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.Parameters.AddWithValue ("@fromid", message.FromId);
                 cmd.Parameters.AddWithValue ("@datetimesent", message.DateTimeSent);
-                SqlDataReader reader = cmd.ExecuteReader ();
+                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 lstMessages.Clear ();
                 while (await reader.ReadAsync ())
                     {
@@ -3234,5 +3234,249 @@ COMMIT TRANSACTION;
             return (i > 0) ? true : false;
             }
         #endregion
+        #region E20:Projects
+        public async Task<int> Create_ProjectAsync (Project project)
+            {
+            string sql = "INSERT INTO Projects (ProjectName, Notes, Active, User_ID) VALUES (@projectname, @notes, @active, @userid)";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            //Create
+            await cnn.OpenAsync ();
+            SqlCommand cmd2 = new SqlCommand (sql, cnn);
+            cmd2.Parameters.AddWithValue ("@projectname", project.ProjectName);
+            cmd2.Parameters.AddWithValue ("@note", project.ProjectNotes);
+            cmd2.Parameters.AddWithValue ("@active", project.ProjectActive);
+            cmd2.Parameters.AddWithValue ("@userid", project.ProjectUserId);
+            await cmd2.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return 1;
+            }
+        public async Task<List<Project>> Read_ProjectsAsync (int userId)
+            {
+            List<Project> lstProjects = new List<Project> ();
+            string sql = "SELECT ID, ProjectName, Notes, Active, User_ID FROM Projects WHERE User_ID=@userid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new SqlConnection (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@userid", userId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            lstProjects.Clear ();
+            while (await reader.ReadAsync ())
+                {
+                lstProjects.Add (new Project
+                    {
+                    ProjectId = reader.GetInt32 (0),
+                    ProjectName = reader.GetString (2),
+                    ProjectNotes = reader.GetString (3),
+                    ProjectActive = reader.GetBoolean (4),
+                    ProjectUserId = reader.GetInt32 (5),
+                    Subprojects = new List<Subproject> ()
+                    });
+                }
+            await cnn.CloseAsync ();
+            foreach(Project prj in lstProjects)
+                {
+                prj.Subprojects = await Read_SubprojectsAsync(prj.ProjectId, false);
+                }
+            return lstProjects;
+            }
+        public async Task<Project> Read_ProjectAsync (int projectId)
+            {
+            string sql = "SELECT ID, ProjectName, Notes, Active, User_ID FROM Projects WHERE ID=@projectid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new SqlConnection (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@projectid", projectId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            Project project = new Project();
+            while (await reader.ReadAsync ())
+                {
+                project.ProjectId = reader.GetInt32 (0);
+                project.ProjectName = reader.GetString (2);
+                project.ProjectNotes = reader.GetString (3);
+                project.ProjectActive = reader.GetBoolean (4);
+                project.ProjectUserId = reader.GetInt32 (5);
+                project.Subprojects = new List<Subproject> ();
+                }
+            await cnn.CloseAsync ();
+            project.Subprojects = await Read_SubprojectsAsync(project.ProjectId, false);
+            return project;
+            }
+        #endregion
+        #region E21:Subprojects
+        public async Task<int> Create_SubprojectAsync (Subproject subProject)
+            {
+            string sql = "INSERT INTO SubProjects (SubProjectName, Notes, Project_ID) VALUES (@subprojectname, @notes, @projectid)";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            //Create
+            await cnn.OpenAsync ();
+            SqlCommand cmd2 = new SqlCommand (sql, cnn);
+            cmd2.Parameters.AddWithValue ("@subprojectname", subProject.SubprojectName);
+            cmd2.Parameters.AddWithValue ("@note", subProject.SubprojectNotes);
+            cmd2.Parameters.AddWithValue ("@projectid", subProject.ProjectId);
+            await cmd2.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return 1;
+            }
+        public async Task<List<Subproject>> Read_SubprojectsAsync (int projectId, bool readNotes)
+            {
+            List<Subproject> lstSubprojects = new List<Subproject> ();
+            string sql = "SELECT ID, SubProjectName, Notes, Project_ID FROM SubProjects WHERE Project_ID=@projectid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new SqlConnection (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@projectid", projectId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            lstSubprojects.Clear ();
+            while (await reader.ReadAsync ())
+                {
+                lstSubprojects.Add (new Subproject
+                    {
+                    SubprojectId = reader.GetInt32 (0),
+                    SubprojectName = reader.GetString (2),
+                    SubprojectNotes = reader.GetString (3),
+                    ProjectId = reader.GetInt32 (5),
+                    Notes = new List<Note> ()
+                    });
+                }
+            await cnn.CloseAsync ();
+            if (readNotes)
+                {
+                foreach (Subproject subprj in lstSubprojects)
+                    {
+                    subprj.Notes = await Read_NotesAsync (subprj.SubprojectId);
+                    }
+                }
+                return lstSubprojects;
+            }
+        public async Task<Subproject> Read_SubprojectAsync (int subProjectId, bool readNotes)
+            {
+            string sql = "SELECT ID, SubProjectName, Notes, Project_ID FROM SubProjects WHERE ID=@subprojectid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new SqlConnection (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@subprojectid", subProjectId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            Subproject subProject = new Subproject ();
+            while (await reader.ReadAsync ())
+                {
+                subProject.SubprojectId = reader.GetInt32 (0);
+                subProject.SubprojectName = reader.GetString (2);
+                subProject.SubprojectNotes = reader.GetString (3);
+                subProject.ProjectId = reader.GetInt32 (5);
+                subProject.Notes = new List<Note> ();
+                }
+            await cnn.CloseAsync ();
+            if (readNotes)
+                {
+                    subProject.Notes = await Read_NotesAsync (subProject.SubprojectId);
+                }
+                return subProject;
+            }
+        public async Task<bool> Delete_SubprojectAsync (int subProjectId, bool delNotes)
+            {
+            string sql = "";
+            if (delNotes)
+                {
+                sql = "DELETE FROM Notes WHERE Parent_ID=@subprojectid; DELETE FROM SubProjects WHERE ID=@subprojectid";
+                }
+            else
+                {
+                sql = "DELETE FROM SubProjects WHERE ID=@subprojectid";
+                }
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new SqlConnection (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@subprojectid", subProjectId);
+            int i = await cmd.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
+            }
+        #endregion
+        #region E22:Notes
+        public async Task<int> Create_NoteAsync (Note note)
+            {
+            string sql = "INSERT INTO SubProjects (NoteDatum, Note, Parent_ID, ParentType, Rtl, Done, User_ID, Shared, ReadOnly) VALUES (@notedatum, @note, @parentid, @parenttype, @rtl, @done, @userid, @shared, @readonly)";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd2 = new SqlCommand (sql, cnn);
+            cmd2.Parameters.AddWithValue ("@notedatum", note.NoteDatum);
+            cmd2.Parameters.AddWithValue ("@note", note.NoteText);
+            cmd2.Parameters.AddWithValue ("@", note.ParentId);
+            cmd2.Parameters.AddWithValue ("@", note.ParentType);
+            cmd2.Parameters.AddWithValue ("@", note.NoteTags);//@rtl, @done, @userid, @shared, @readonly
+            await cmd2.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return 1;
+            }
+        public async Task<List<Note>> Read_NotesAsync (int parentId)
+            {
+            List<Note> lstNotes = new List<Note> ();
+            string sql = "SELECT ID, NoteDatum, Note, Parent_ID, ParentType, Rtl, Done, User_ID, Shared, ReadOnly FROM Notes WHERE Parenct_ID=@parentid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new SqlConnection (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@parentid", parentId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            lstNotes.Clear ();
+            while (await reader.ReadAsync ())
+                {
+                lstNotes.Add (new Note
+                    {
+                    NoteId = reader.GetInt32 (0),
+                    NoteDatum = reader.GetString (1),
+                    NoteText = reader.GetString (2),
+                    ParentId = reader.GetInt32 (3),
+                    ParentType = reader.GetInt32 (4),
+                    NoteTags = reader.GetInt32 (5),
+                    });
+                }
+            await cnn.CloseAsync ();
+            return lstNotes;
+            }
+        public async Task<Note> Read_NoteAsync (int noteId)
+            {
+            string sql = "SELECT ID, NoteDatum, Note, Parent_ID, ParentType, Rtl, Done, User_ID, Shared, ReadOnly FROM Notes WHERE ID=@noteid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new SqlConnection (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@noteid", noteId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            Note note = new Note ();
+            while (await reader.ReadAsync ())
+                {
+                note.NoteId = reader.GetInt32 (0);
+                note.NoteDatum = reader.GetString (1);
+                note.NoteText = reader.GetString (2);
+                note.ParentId = reader.GetInt32 (3);
+                note.ParentType = reader.GetInt32 (4);
+                note.NoteTags = reader.GetInt32 (5);
+                }
+            await cnn.CloseAsync ();
+            return note;
+            }
+        public async Task<bool> Delete_NoteAsync (int noteId)
+            {
+            string sql = "DELETE FROM Notes WHERE ID=@noteid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new SqlConnection (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@noteid", noteId);
+            int i = await cmd.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
+            }
+        #endregion
+
         }
     }

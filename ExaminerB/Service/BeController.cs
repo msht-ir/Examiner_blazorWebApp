@@ -713,5 +713,45 @@ namespace ExaminerB.Backend
             return result ? Ok (result) : NotFound (result);
             }
         #endregion
+        #region C20:Projects
+        [HttpPost ("Create_Project")]
+        public async Task<ActionResult<int>> Create_Project ([FromBody] Project project)
+            {
+            var result = await _BeService.Create_ProjectAsync (project);
+            return Ok (result);
+            }
+
+        [HttpPost ("Read_Projects")]
+        public async Task<ActionResult<List<Project>>> Read_Projects ([FromBody] int userId)
+            {
+            var result = await _BeService.Raed_ProjectsAsync (userId);
+            return Ok (result);
+            }
+        [HttpPost ("Read_Project")]
+        [HttpPost ("Delete_Project")]
+        #endregion
+        #region C21:Subprojects
+        [HttpPost ("Create_Subproject")]
+        public async Task<ActionResult<int>> Create_Subproject ([FromBody] Subproject subProject)
+            {
+            var result = await _BeService.Create_SubprojectAsync (subProject);
+            return Ok (result);
+            }
+        [HttpPost ("Read_Subprojects")]
+        [HttpPost ("Read_Subproject")]
+        [HttpPost ("Delete_Subproject")]
+        #endregion
+        #region C22:Notes
+        [HttpPost ("Create_Note")]
+        public async Task<ActionResult<int>> Create_Note ([FromBody] Note note)
+            {
+            var result = await _BeService.Create_NoteAsync (note);
+            return Ok (result);
+            }
+        [HttpPost ("Read_Notes")]
+        [HttpPost ("Read_Note")]
+        [HttpPost ("Delete_Note")]
+
+        #endregion
         }
     }

@@ -154,5 +154,22 @@ namespace ExaminerB.Services2Backend
         Task<bool> Delete_MessagesByIdAsync (string mode, int Id);
         Task<bool> Delete_MessagesByDateTimeAsync (int userId, Message message);
         #endregion
+        #region C20:Projects
+        Task<int> Create_ProjectAsync (Project project);
+        Task<List<Project>> Read_ProjectsAsync (int userId);
+        Task<Project> Read_ProjectAsync (int projectId);
+        #endregion
+        #region C21:Subprojects
+        Task<int> Create_SubprojectAsync (Subproject subProject);
+        Task<List<Subproject>> Read_SubprojectsAsync (int projectId, bool readNotes);
+        Task<Subproject> Read_SubprojectAsync (int subProjectId, bool readNotes);
+        Task<bool> Delete_SubprojectAsync (int subProjectId, bool delNotes);
+        #endregion
+        #region C22:Notes
+        Task<int> Create_NoteAsync (Note note);
+        Task<List<Note>> Read_NotesAsync (int parentId);
+        Task<Note> Read_NoteAsync (int noteId);
+        Task<bool> Delete_NoteAsync (int noteId);
+        #endregion
         }
     }

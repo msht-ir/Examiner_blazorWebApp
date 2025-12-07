@@ -1,0 +1,459 @@
+﻿@page "/E_Projects"
+
+@using ExaminerB.Service
+@inject ProtectedSessionStorage sessionStorage
+@inject FeService feService
+@inject NavigationManager Navman
+@inject AppState appState
+@inject IJSRuntime JS
+@implements IDisposable
+
+<div class="container mt-5 align-items-center">
+    <p style="font-size:larger; text-align:center;color:black">e<span style="color:indianred">x</span>aminer <span style="font-size:small;color:royalblue"> @appState.UserNickname</span></p>
+    <hr style="color:red"/>
+    @if (!_hasFetched)
+        {
+        <_Loading />
+        }
+    else
+        {
+        <div class="accordion" id="accordionProject">
+            @* ProjectSubprojects *@
+            <div class="accordion-item">
+                    <h4 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#CollapseId1"
+                            aria-expanded="false"
+                            aria-controls="CollapseId1" style="background-color:whitesmoke">
+                            <h4>Projects</h4>
+                        </button>
+                    </h4>
+                    <div id="CollapseId1" class="accordion-collapse collapse" data-bs-parent="#accordionProject">
+                        <div class="accordion-body" style="background-color:white">
+                            <div id="T1">
+                                <table class="table table-borderless">
+                                    @* <thead>
+                                        <tr style="font-weight:bold;border:none;">
+                                            <td style="border:none;color:royalblue;font-size:medium">Exams</td>
+                                        </tr>
+                                    </thead> *@
+                                    @foreach (var project in lstProjects)
+                                        {
+                                        int Id = project.ProjectId;
+                                        <tr style="align-content:center;">
+                                            @if (project.StudentExamTags == 0)
+                                                {
+                                                <td style="color:indianred; font-weight:bold;">
+                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
+                                                    <div>@stdexam.ExamTitle </div>
+                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
+                                                </td>
+                                                <td>
+                                                    <div>Tests: @stdexam.ExamNTests</div>
+                                                    <div>Time: @stdexam.ExamDuration min</div>
+                                                    <button style="border:none" @onclick="async () => await BtnStartExam(stdexam)">
+                                                        <img src="icons/icoGo_gt_1.png" alt="Login icon" style="width:25px;" />
+                                                    </button>
+                                                </td>
+                                                }
+                                            else if (stdexam.StudentExamTags == 1)
+                                                {
+                                                <td style="color:indianred; font-weight:bold;">
+                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
+                                                    <div>@stdexam.ExamTitle</div>
+                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>                                    
+                                                </td>
+                                                <td>
+                                                    <div>Tests: @stdexam.ExamNTests</div>
+                                                    <div>Time: @stdexam.ExamDuration min</div>                                    
+                                                    <button style="border:none" @onclick="async () => await BtnStartExam(stdexam)">
+                                                        <img src="icons/icoEditPen_bt_1.png" alt="Login icon" style="width:22px;" />
+                                                    </button>
+                                                </td>
+                                                }
+                                            else if ((stdexam.StudentExamTags & 2) == 2)
+                                                {
+                                                <td style="color:darkslategrey; font-weight:bold;">
+                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
+                                                    <div>@stdexam.ExamTitle</div>
+                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
+                                                </td>
+                                                <td>
+                                                    <div>Tests @stdexam.ExamNTests</div>
+                                                    <div>Time @stdexam.ExamDuration m</div>
+                                                    <div><span style="color:indianred;font-size:small;font-weight:bold;">Pnt @stdexam.StudentExamPoint.ToString("F2")/20 </span></div>
+                                                    @if ((student.UserTags & 4) == 4)
+                                                        {
+                                                        <button style="border:none" @onclick="() => BtnReportExam(Id)">
+                                                            <img src="icons/icoReport_ct_1.png" alt="Report icon" style="width:25px;" />
+                                                        </button>
+                                                        }
+                                                </td>
+                                                }
+                                        </tr>
+                                        }
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <br />
+            @* StudentCourses *@
+            <div class="accordion-item">
+                    <h4 class="accordion-header">
+                        <button class="accordion-button @(appState.Cmd=="ShowCourseFolders" ? "" : "collapsed")"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#CollapseId2"
+                            aria-expanded="@(appState.Cmd=="ShowCourseFolders" ? "true" : "false")"
+                            aria-controls="CollapseId2" style="background-color:WhiteSmoke">
+                            <h4>Courses</h4>
+                        </button>
+                    </h4>
+                    <div id="CollapseId2" class="accordion-collapse collapse @(appState.Cmd=="ShowCourseFolders" ? "show" : "")" data-bs-parent="#accordionStudent">
+                        <div class="accordion-body" style="background-color:white">
+                            <div id="T2">
+                                @foreach (StudentCourse studentCourse in lstStudentCourses)
+                                    {
+                                    //use (double) to make result decimal not integer
+                                    strRunningPoint = studentCourse.NumberOfTests == 0 ?"---": $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double)studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F2}";
+                                    <div style="color:black;font-weight:bold;">@studentCourse.CourseName : <span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
+                                    <button class="btn btn-link" @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
+                                        <img src="/images/gifBook1.gif" width="28" />
+                                    </button>
+                                    @if ((student.UserTags & 32) == 32)
+                                        {
+                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
+                                            <img src="/icons/icoReport_ct_1.png" width="20" />
+                                        </button>
+                                        }
+                                    @if ((student.UserTags & 16) == 16)
+                                        {
+                                        <button class="btn btn-link" @onclick="()=>BtnTryToCorrect(studentCourse.StudentCourseId)">
+                                            <img src="/icons/icoRetry_bt_1.png" width="22" />
+                                        </button>
+                                        }
+                                    @if ((student.UserTags & 16) == 16)
+                                        {
+                                        <button class="btn btn-link" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
+                                            <img src="/icons/icoFilter_bt_1.png" width="22" />
+                                        </button>
+                                        <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse, "wipeout")'>
+                                            <img src="/icons/icoEraser_bw_1.png" width="22" />
+                                        </button>
+                                        }
+                                    @* CourseFolders *@
+                                    @if((appState.Cmd=="ShowCourseFolders") & (studentCourse.CourseId == appState.CourseId))
+                                        {
+                                        <h6 style="padding-left:10px;">folders: </h6>
+                                        foreach(CourseFolder cf in lstCourseFolders)
+                                            {
+                                            <h6 style="padding-left:10px;"><a href="@cf.CourseFolderUrl" target="_blank">@cf.CourseFolderTitle</a></h6>
+                                            }
+                                        }
+                                    else
+                                        {
+                                        <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
+                                            <img src="/icons/icoFolderReport_bt_1.png" width="25" />
+                                        </button>
+                                        }
+                                    <hr />
+                                    }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <br />
+            @* StudentMessages *@
+            <div class="accordion-item">
+                    <h4 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#CollapseId3"
+                            aria-expanded="false"
+                            aria-controls="CollapseId3" style="background-color:WhiteSmoke">
+                            <h4>Messages</h4>
+                        </button>
+                    </h4>
+                    <div id="CollapseId3" class="accordion-collapse collapse" data-bs-parent="#accordionStudent">
+                        <div class="accordion-body" style="background-color:white">
+                            <div id="T3">
+                                @* List messages *@
+                                @foreach (Message message in lstMessages)
+                                    {
+                                if((message.MessageTags & 1) == 1)
+                                    {
+                                    <span style="padding-left:5px;"> @message.DateTimeSent </span>
+                                    <br />
+                                    <button class="btn btn-link" @onclick="()=>BtnDeleteMessage(message)">
+                                        <img src="/icons/icoDelete_bt_1.png" width="20" />
+                                    </button>
+                                    @* IsBookmarked *@
+                                    if ((message.MessageTags & 2) == 2)
+                                        {
+                                        <button class="btn btn-link" @onclick="()=>BtnSetMessageBookmark(message, 0)">
+                                            <img src="/icons/icoBookmark2_bt_1.png" width="22" />
+                                        </button>
+                                        }
+                                    else
+                                        {
+                                        <button class="btn btn-link" @onclick="()=>BtnSetMessageBookmark(message, 1)">
+                                            <img src="/icons/icoBookmark2_bt_0.png" width="22" />
+                                        </button>                                    
+                                        }
+                                    @* TypeIsFeedback *@
+                                    @if ((message.MessageTags & 32) == 32)
+                                        {
+                                        @* AnswerIsYes/No *@
+                                        @if ((message.MessageTags & 8) == 8)
+                                            {
+                                            <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(message, 2)">
+                                                <img src="/icons/icoYesNo_Yes_gt_1.png" width="20" />
+                                            </button>
+                                            }
+                                        else if ((message.MessageTags & 16) == 16)
+                                            {
+                                            <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(message, 2)">
+                                                <img src="/icons/icoYesNo_No_rt_1.png" width="20" />
+                                            </button>
+                                            }
+                                        else
+                                            {
+                                            if ((appState.Cmd == "GetStudentAnswer") & (appState.MessageId == message.MessageId))
+                                                {
+                                                <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(message, 1)">
+                                                    <img src="/icons/icoYesNo_Yes_gt_1.png" width="20" />
+                                                </button>
+                                                <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(message, 0)">
+                                                    <img src="/icons/icoYesNo_No_rt_1.png" width="20" />
+                                                </button>                                                
+                                                }
+                                            else
+                                                {
+                                                //Lets GetStudentAnswer...
+                                                <button class="btn btn-link" @onclick="()=>BtnGetStudentAnswer(message.MessageId)">
+                                                    <img src="/icons/icoYesNo_cw_1.png" width="24" />
+                                                </button>
+                                                }
+                                            }
+                                        }
+                                    <div style="color:black;font-weight:normal;padding-left:10px;">@message.MessageText</div>
+                                    }
+                                else
+                                    {
+                                    <span style="padding-left:5px;"> @message.DateTimeSent </span>
+                                    <button class="btn btn-link" @onclick="()=>BtnSetMessageAsRead(message)">
+                                        <img src="/icons/icoEnvelop_bluet_1.png" width="20" />
+                                    </button>
+                                    <span style="color:black;font-weight:bold;padding-left:2px;">@message.MessageText.Substring(0,6) ...</span>
+                                    }
+                                <hr />    
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <hr style="color:red"/>
+        <br />
+        <br />
+        <div style="text-align:center">
+            <button class="btn btn-link" @onclick= "()=> BtnExit()">
+                <img src="/icons/icoExit_bw_1.png" style="width:35px" />
+            </button>
+        </div>
+        }
+</div>
+<script>
+    window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+</script>
+
+@code {
+    User student = new User ();
+    List<CourseFolder> lstCourseFolders = new List<CourseFolder> ();
+    public List<StudentExam> lstStudentExams = new ();
+    public string? strRunningPoint = "";
+    public List<StudentCourse> lstStudentCourses = new ();
+    public List<Message> lstMessages = new ();
+    private bool _hasFetched = false;
+    private bool hasScrolled = false;
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            Navman.NavigateTo ("/Login");
+            }
+        student.UserId = appState.UserId ?? 0;
+        if(student.UserId > 0)
+            {
+            //on first run, student.UserId is 0
+            //student.UserId = appState.UserId ?? 0;
+            lstStudentExams = await feService.Read_StudentExams(student.UserId, false)?? new List<StudentExam>();
+            student.UserTags = Convert.ToInt32(appState.UserTags);
+            student.UserName = appState.UserName ?? "";
+            student.UserNickname = appState.UserNickname ?? "";
+            lstStudentCourses = await feService.Read_StudentCourses (student.UserId);
+            lstMessages = await feService.Read_Messages ("Student", student.UserId);
+            _hasFetched = true;
+            }
+        }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+        if (firstRender && !hasScrolled)
+            {
+            hasScrolled = true;
+            await JS.InvokeVoidAsync("scrollToTop");
+            }
+        }
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }    
+    //btns for StudentExams
+    public async Task BtnStartExam(StudentExam studentExam)
+        {
+        //read ExamTags : is exam training? Yes:allow Help
+        Exam exam = await feService.Read_Exam (studentExam.ExamId);
+        //keep ExamTags in appState (use in S-StudentExamTest page)
+        appState.SetExamTags (exam.ExamTags);
+        bool result = await feService.Update_StudentExamTags(studentExam, "startedOn");
+        if (result)
+            {
+            appState.SetStudentExamId (studentExam.StudentExamId);
+            Navman.NavigateTo ($"/S_StudentExamTests");
+            }
+        }
+    private void BtnReportExam(int studentExamId)
+        {
+        Navman.NavigateTo ($"/S_ReportStudentExam/{studentExamId}/Review");
+        }    
+    //btns under the table
+    private void BtnExit()
+        {
+        Navman.NavigateTo("/Login", true);
+        }
+    //btns for StudentCourses
+    private void BtnTakeATest (int studentCourseId)
+        {
+        Navman.NavigateTo ($"S_StudentCourseTest/{student.UserId}/{studentCourseId}/new");
+        }
+    private void BtnTryToCorrect (int studentCourseId)
+        {     
+        Navman.NavigateTo ($"S_StudentCourseTest/{student.UserId}/{studentCourseId}/edit");
+        }
+    private async Task BtnShowCourseFolders (StudentCourse studentCourse)
+        {
+        _hasFetched = false;
+        appState.SetCmd ("ShowCourseFolders");
+        appState.SetCourseId (studentCourse.CourseId);
+        lstCourseFolders = await feService.Read_CourseFolders (studentCourse.CourseId);
+        _hasFetched = true;
+        }
+    private void BtnReportStudentCourseTests (int studentCourseId, string courseName)
+        {
+        Navman.NavigateTo ($"/S_ReportStudentCourse/{student.UserId}/{studentCourseId}/{courseName}");
+        }
+    private async Task BtnFilterStudentCourseTests (StudentCourse studentCourse, string mode)
+        {
+        //this code replaced by lambda equivalent
+        // switch (mode)
+        //     case "filter":{message = $"Filter out correct answers in Course ( {studentCourse.CourseName} ) \n just keep incorrect ones?";break;}
+        //     case "wipeout":{message = $"Clear Running Tests in Course ( {studentCourse.CourseName} ) ?";break;}
+        //---lambda:
+        string message = mode switch
+            {
+                "filter" => $"Filter out correct answers in ( {studentCourse.CourseName} ) ?",
+                "wipeout" => $"Clear  ( {studentCourse.CourseName} ) ?",
+                _ => throw new ArgumentException($"Invalid mode: {mode}")
+                };
+        if (await JS.InvokeAsync<bool> ("confirm", message))
+            {
+            var result = await feService.Delete_StudentCourseTests (mode, studentCourse);
+            //refresh
+            lstStudentCourses = await feService.Read_StudentCourses (student.UserId);        
+            }
+        }
+    //btns for StudentCourses
+    private async Task BtnDeleteMessage(Message message)
+        {
+        if(await JS.InvokeAsync<bool>("confirm","Delete Message?"))
+            {
+            message.MessageTags |= 4;
+            bool result = await feService.Update_MessageTags (message);
+            lstMessages = await feService.Read_Messages ("Student", student.UserId);
+            }
+        StateHasChanged ();                
+        }
+    private async Task BtnSetMessageAsRead(Message message)
+        {
+        //modes: setOn, setOff
+        message.MessageTags |= 1;
+        message.DateTimeRead = DateTime.Now.ToString("yyyy-MM-dd . HH:mm");
+        bool result = await feService.Update_MessageTags (message);
+        lstMessages = await feService.Read_Messages ("Student", student.UserId);
+        StateHasChanged ();
+        }
+    private async Task BtnSetMessageBookmark(Message message, int mode)
+        {
+        //modes: 0:setOff, 1:setOn
+        switch (mode)
+            {
+            case 0:
+                    {
+                    message.MessageTags &= ~2;
+                    break;
+                    }
+            case 1:
+                    {
+                    message.MessageTags |= 2;
+                    break;
+                    }
+            }
+        bool result = await feService.Update_MessageTags (message);
+        lstMessages = await feService.Read_Messages ("Student", student.UserId);
+        appState.SetCmd ("");
+        StateHasChanged ();
+        }
+    private async Task BtnGetStudentAnswer(int messageId)
+        {
+        appState.SetCmd ("GetStudentAnswer");
+        appState.SetMessageId (messageId);
+        StateHasChanged ();
+        }
+    private async Task BtnSetMyAnswer(Message message, int ans)
+        {
+        //ans: 0:No, 1:Yes
+        switch (ans)
+            {
+            case 2:
+                    {
+                    message.MessageTags &= ~8;
+                    message.MessageTags &= ~16;
+                    appState.SetCmd ("");
+                    break;
+                    }
+            case 1:
+                    {
+                    message.MessageTags |= 8;
+                    message.MessageTags &= ~16;
+                    break;
+                    }
+            case 0:
+                    {
+                    message.MessageTags &= ~8;
+                    message.MessageTags |= 16;
+                    break;
+                    }
+            }
+        bool result = await feService.Update_MessageTags (message);
+        lstMessages = await feService.Read_Messages ("Student", student.UserId);
+        StateHasChanged ();
+        }
+}
