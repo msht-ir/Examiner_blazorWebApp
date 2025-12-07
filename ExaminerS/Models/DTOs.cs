@@ -211,6 +211,8 @@ namespace ExaminerS.Models
         public int MessageId { get; set; } = 0;
         public int FromId { get; set; } = 0;
         public int ToId { get; set; } = 0;
+        public string ToUsername { get; set; } = "";
+        public string ToNickname { get; set; } = "";
         public string DateTimeSent { get; set; } = "";
         public string DateTimeRead { get; set; } = "";
         public string MessageText { get; set; } = "";

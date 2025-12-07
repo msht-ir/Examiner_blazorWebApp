@@ -240,30 +240,30 @@
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            
+
             Navman.NavigateTo ("/Login");
             }
         user.UserId = Convert.ToInt32(appState.UserId);
         cmd = appState.Cmd ?? "";
         if( user.UserId >0)
-    {
-    lstCourses = await feService.Read_Courses (user.UserId);
-    _hasFetched = true;
-    }
+            {
+            lstCourses = await feService.Read_Courses (user.UserId);
+            _hasFetched = true;
+            }
         } 
     private async Task OnAfterRenderAsync(bool firstRender)
         {
         if (firstRender && course?.CourseTopics?.Any() == true)
-    {
-    //only runs: Page loaded + Data exists + list Not empty
-    foreach (var ct in course.CourseTopics)
-        {
-        if (!inputRefs.ContainsKey(ct.CourseTopicId))
             {
-            inputRefs[ct.CourseTopicId] = inputRefs.GetValueOrDefault(ct.CourseTopicId);
+            //only runs: Page loaded + Data exists + list Not empty
+            foreach (var ct in course.CourseTopics)
+                {
+                if (!inputRefs.ContainsKey(ct.CourseTopicId))
+                    {
+                    inputRefs[ct.CourseTopicId] = inputRefs.GetValueOrDefault(ct.CourseTopicId);
+                    }
+                }
             }
-        }
-    }
         }
     private void TriggerRender()
         {
@@ -274,10 +274,12 @@
         appState.OnChange -= TriggerRender;
         }
     //Course
-    public void BtnAddNewCourse()
+    public async Task BtnAddNewCourse()
         {
         appState.SetCmd ("AddNewCourse");
         StateHasChanged ();
+        await Task.Delay(1); //let element be available, then focus on it.
+        await txtNewCourseName.FocusAsync ();
         }
     public async Task BtnSaveNewCourse()
         {  
@@ -286,17 +288,17 @@
         course.CourseRtl = true;
         int result = await feService.Create_Course (course);
         if (result>0)
-    {
-    //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
-    //refresh list then refresh page
-    lstCourses = await feService.Read_Courses (user.UserId);
-    appState.SetCmd ("");
-    StateHasChanged ();
-    }
+            {
+            //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
+            //refresh list then refresh page
+            lstCourses = await feService.Read_Courses (user.UserId);
+            appState.SetCmd ("");
+            StateHasChanged ();
+            }
         else
-    {
-    await JS.InvokeVoidAsync ("alert", "Course did not created --- !");
-    }
+            {
+            await JS.InvokeVoidAsync ("alert", "Course did not created --- !");
+            }
         }
     public void BtnEditCourse(int courseId)
         {
@@ -321,24 +323,24 @@
     public async Task BtnDeleteCourse(int courseId)
         {
         if(await JS.InvokeAsync<bool> ("confirm", "Warning :  Several related data may be deleted! \n\nx Tests\nx Exams\nx Student Exams...\n\nContinue?"))
-    {
-    if(await JS.InvokeAsync<bool>("confirm", "Last warning: \n\nAre you sure? Delete?"))
-        {
-        bool result = await feService.Delete_Course (courseId);
-        if (result)
             {
-            await JS.InvokeVoidAsync ("alert", "\nCourse Deleted!");
-            //refresh list then refresh page
-            lstCourses = await feService.Read_Courses (user.UserId);
-            appState.SetCmd ("");
-            StateHasChanged ();
+            if(await JS.InvokeAsync<bool>("confirm", "Last warning: \n\nAre you sure? Delete?"))
+                {
+                bool result = await feService.Delete_Course (courseId);
+                if (result)
+                    {
+                    //await JS.InvokeVoidAsync ("alert", "\nCourse Deleted!");
+                    //refresh list then refresh page
+                    lstCourses = await feService.Read_Courses (user.UserId);
+                    appState.SetCmd ("");
+                    StateHasChanged ();
+                    }
+                else
+                    {
+                    await JS.InvokeVoidAsync ("alert", "Course did not Deleted --- process failed");
+                    }
+                }            
             }
-        else
-            {
-            await JS.InvokeVoidAsync ("alert", "Course did not Deleted --- process failed");
-            }
-        }            
-    }
         }
     public void BtnExams(Course course)
         {
@@ -388,10 +390,10 @@
         {
         bool result = await feService.Update_CourseTopic (courseTopic);
         if (result)
-    {
-    await inputRefs[courseTopic.CourseTopicId].FocusAsync();
-    StateHasChanged ();
-    }
+            {
+            await inputRefs[courseTopic.CourseTopicId].FocusAsync();
+            StateHasChanged ();
+            }
         }
     public async Task BtnDeleteCourseTopic(int courseTopicId)
         {

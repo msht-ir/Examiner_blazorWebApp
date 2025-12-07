@@ -968,7 +968,6 @@ namespace ExaminerB.Service
             }
         public async Task<List<Message>> Read_Messages (Message message)
             {
-            //mode: Search, Date, DateTime
             var response = await _http.PostAsJsonAsync ($"api/Read_MessagesByMessage", message);
             if (response.IsSuccessStatusCode)
                 {

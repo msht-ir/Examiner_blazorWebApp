@@ -200,6 +200,7 @@ else
         await file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(memoryStream);
         memoryStream.Position = 0;
         await ParseExcelAsync(memoryStream);
+        _hasFetched = true;
         }
     private async Task ParseExcelAsync(Stream stream)
         {
@@ -225,7 +226,6 @@ else
                 //Topic handling
                 string ctt = row.Cell(13).GetString().Trim();
                 ctt = ctt.Length > 30 ? ctt[..30] : ctt;
-
                 var existingTopic = lstCourseTopics.FirstOrDefault(t => string.Equals(t.CourseTopicTitle, ctt, StringComparison.OrdinalIgnoreCase));
                 if (existingTopic != null)
                     {
@@ -242,7 +242,7 @@ else
                 for (int col = 5; col <= test.TestType + 4; col++)
                     {
                     var strOpt = row.Cell(col).GetString();
-                    test.TestOptions?.Add (new TestOption { TestOptionTitle = strOpt, TestId = test.TestId });
+                    test.TestOptions.Add (new TestOption { TestOptionTitle = strOpt, TestId = 1 }); //initialize TestId here and set the value when test is saved to DB 
                     }
                 //Answer
                 int answ = row.Cell(10).GetValue<int>();
@@ -256,17 +256,8 @@ else
                     {
                     test.TestOptions[forceLast - 1].TestOptionTags += 1; //1:ForceLast
                     }
-                //Create New Test
+                //Create New Test+Options
                 test.TestId = await feService.Create_Test(test);
-                //Create options
-                foreach (TestOption opt in test.TestOptions.Take(test.TestType))
-                    {
-                    int OptId = await feService.Create_TestOption(opt);
-                    if (OptId <= 0)
-                        {
-                        Console.WriteLine($"Option not added: {opt.TestOptionTitle}");
-                        }
-                    }
                 }                
             }
         catch (Exception ex)

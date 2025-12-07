@@ -320,7 +320,7 @@ else
         </EditForm>
         <div style="text-align:center">
         <button class="btn btn-link" @onclick= "()=> BtnBack()">
-            <img src="/icons/icoBack_bt_1.png" style="width:38px" />
+            <img src="/icons/icoBack_bt_1.png" style="width:30px" />
         </button>
     </div>
     }
@@ -428,11 +428,13 @@ else
             StateHasChanged ();            
             }
         }
-    public void BtnEditGroup(int groupId)
+    public async Task BtnEditGroup(int groupId)
         {
         appState.SetCmd ("EditGroup");
         appState.SetGroupId(groupId);
         StateHasChanged ();
+        await Task.Delay (1);
+        await txtGroupName.FocusAsync ();
         }
     public async Task BtnUpdateGroup(Group grp)
         {
@@ -580,12 +582,14 @@ else
         string mode = "groupStudents";
         Navman.NavigateTo ($"/T_ReportStudents/{mode}/{groupId}");
         }
-    public void BtnAddNewMessageToGroup(int groupId)
+    public async Task BtnAddNewMessageToGroup(int groupId)
         {
         if(appState.Cmd != "AddNewMessageToGroup")
             {
             appState.SetGroupId (groupId);
-            appState.SetCmd ("AddNewMessageToGroup");            
+            appState.SetCmd ("AddNewMessageToGroup");
+            await Task.Delay (1);
+            await txtMessageText.FocusAsync ();
             }
         else
             {

@@ -831,9 +831,10 @@ namespace ExaminerB.Services2Backend
             cmd.Parameters.AddWithValue ("@testtags", test.TestTags);
             int i = (int) await cmd.ExecuteScalarAsync ();
             await cnn.CloseAsync ();
-            foreach (TestOption tstOpt in test.TestOptions)
+            foreach (TestOption tstOption in test.TestOptions)
                 {
-                await Create_TestOptionAsync (tstOpt);
+                tstOption.TestId = i;
+                int r = await Create_TestOptionAsync (tstOption);
                 }
             return i;
             }
@@ -1226,8 +1227,8 @@ namespace ExaminerB.Services2Backend
             cmd.Parameters.AddWithValue ("@testid", testOption.TestId);
             cmd.Parameters.AddWithValue ("@testoptiontitle", testOption.TestOptionTitle);
             cmd.Parameters.AddWithValue ("@testoptiontags", testOption.TestOptionTags);
-            int i = (int) await cmd.ExecuteScalarAsync ();
-            return i;
+            int r = (int) await cmd.ExecuteScalarAsync ();
+            return r;
             }
         public async Task<List<TestOption>> Read_TestOptionsAsync (int testId, SqlConnection cnn)
             {
@@ -3006,7 +3007,8 @@ COMMIT TRANSACTION;
         public async Task<List<Message>> Read_MessagesAsync (string mode, int Id)
             {
             List<Message> lstMessages = new ();
-            string sql = "SELECT MessageId, FromId, ToId, DateTimeSent, DateTimeRead, MessageText, MessageTags FROM Messages";
+            string sql = "SELECT MessageId, FromId, ToId, DateTimeSent, DateTimeRead, MessageText, MessageTags, Students.StudentName, Students.StudentNickname ";
+            sql += " FROM Messages INNER JOIN Students ON Messages.ToId = Students.StudentId";
             switch (mode)
                 {
                 case "User":
@@ -3072,7 +3074,8 @@ COMMIT TRANSACTION;
             //mode: Search, Date, DateTime
             List<Message> lstMessages = new ();
             string strKey = "";
-            string sql = "SELECT MessageId, FromId, ToId, DateTimeSent, DateTimeRead, MessageText, MessageTags FROM Messages";
+            string sql = "SELECT MessageId, FromId, ToId, DateTimeSent, DateTimeRead, MessageText, MessageTags, Students.StudentName, Students.StudentNickname ";
+            sql += " FROM Messages INNER JOIN Students ON Messages.ToId = Students.StudentId";
             switch (mode)
                 {
                 case "Search":
@@ -3132,7 +3135,8 @@ COMMIT TRANSACTION;
             //mode: Search, Date, DateTime
             List<Message> lstMessages = new ();
             string strKey = "";
-            string sql = "SELECT MessageId, FromId, ToId, DateTimeSent, DateTimeRead, MessageText, MessageTags FROM Messages";
+            string sql = "SELECT MessageId, FromId, ToId, DateTimeSent, DateTimeRead, MessageText, MessageTags, Students.StudentName, Students.StudentNickname ";
+            sql += " FROM Messages INNER JOIN Students ON Messages.ToId = Students.StudentId";
             sql += " WHERE FromId=@fromid AND DateTimeSent=@datetimesent";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
@@ -3153,8 +3157,9 @@ COMMIT TRANSACTION;
                         ToId = reader.GetInt32 (2),
                         DateTimeSent = reader.GetString (3),
                         DateTimeRead = reader.GetString (4),
-                        MessageText = reader.GetString (5),
-                        MessageTags = reader.GetInt32 (6)
+                        MessageTags = reader.GetInt32 (6),
+                        ToUsername = reader.GetString (7),
+                        ToNickname = reader.GetString (8)
                         });
                     }
                 await cnn.CloseAsync ();

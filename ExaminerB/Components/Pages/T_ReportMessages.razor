@@ -21,11 +21,11 @@ else
         <div style="text-align:center">
             @if (appState.Cmd== "ShowStudentMessageStats" & @nMessagesAll > 0)
                 {
-                <button class="btn btn-link" @onclick="()=>BtnDelete_MessagesOfstudent(Id)">
-                    <img src="/icons/icoDeleteAll_bt_1.png" width="35" />
-                </button>
                 <button class="btn btn-link" @onclick="BtnBack">
                     <img src="/icons/icoBack_bt_1.png" width="30" />
+                </button>
+                <button class="btn btn-link" @onclick="()=>BtnDelete_MessagesOfstudent(Id)">
+                    <img src="/icons/icoDeleteAll_bt_1.png" width="35" />
                 </button>
                 <br />
                 <hr/>
@@ -37,6 +37,10 @@ else
                     <br />
                 </div>
                 <br /> 
+                @if(nMessagesTypeIsFeedback > 0)
+                    {
+                    <div style="font-weight:bold; padding-left:25px;">Feedbacks: <span style="font-weight:normal;"> @(nMessagesAnsweredYes + nMessagesAnsweredNo) /  @nMessagesTypeIsFeedback ( @((nMessagesAnsweredYes + nMessagesAnsweredNo) * 100 / @nMessagesTypeIsFeedback)% ) </span></div>
+                    }
                 <div class="d-flex justify-content-center">
                     <MudChart ChartType="ChartType.Donut"
                         InputData="@(new double[] {nMessagesAnsweredYes, nMessagesAnsweredNo,nMessagesNotAnswered })"
@@ -44,22 +48,18 @@ else
                         Width="100px" Height="100px" />
                     <br /> 
                 </div>
-                @if(nMessagesTypeIsFeedback > 0)
-                    {
-                    <div style="font-weight:bold; padding-left:25px;">Feedback Percentage: <span style="font-weight:normal;"> @(nMessagesAnsweredYes + nMessagesAnsweredNo) /  @nMessagesTypeIsFeedback ( @((nMessagesAnsweredYes + nMessagesAnsweredNo) * 100 / @nMessagesTypeIsFeedback)% ) </span></div>
-                    }
             }
             else
                 {
+                <button class="btn btn-link" @onclick="BtnBack">
+                    <img src="/icons/icoBack_bt_1.png" width="30" />
+                </button>                
                 <button class="btn btn-link" @onclick="BtnCalcPercentsForStudent">
                     <img src="/images/gifChart03.gif" width="40" />
                 </button>
                 <button class="btn btn-link" @onclick="()=>BtnDelete_MessagesOfstudent(Id)">
                     <img src="/icons/icoDeleteAll_bt_1.png" width="35" />
                 </button>
-                <button class="btn btn-link" @onclick="BtnBack">
-                    <img src="/icons/icoBack_bt_1.png" width="30" />
-                </button>                
                 }
             </div>        
         }
@@ -102,11 +102,13 @@ else
                     <div style="padding-left:15px;">@nStudentsRead ( @(nStudentsRead * 100 / nStudents)% ) Read</div>
                     <div style="padding-left:15px;">@nStudentsBookmarked Bookmarked</div>
                     <div style="padding-left:15px;">@nStudentsDeleted Deleted</div>
-                    <br />
+                    <button class="btn btn-link" @onclick="()=>BtnListAnswersToThisMessage(message)">
+                        <img src="/icons/icoList_bt_1.png" width="26" />
+                    </button>
                 </div>
-                <br /> 
                 @if((message.MessageTags & 32) == 32)
                     {
+                    <div style="text-align:left;font-weight:bold; padding-left:25px;">Feedbacks: <span style="font-weight:normal;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>                    
                     <div class="d-flex justify-content-center">
                         <MudChart ChartType="ChartType.Donut"
                             InputData="@(new double[] {nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered })"
@@ -114,7 +116,6 @@ else
                             Width="100px" Height="100px" />
                         <br /> 
                     </div>
-                    <div style="font-weight:bold; padding-left:25px;">Feedback Percentage: <span style="font-weight:normal;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>                    
                     }
                 }
             else
@@ -129,6 +130,40 @@ else
                     <img src="/icons/icoDelete_bt_1.png" width="22" />
                 </button>                
                 }
+                @if((appState.Cmd == "ShowListOfAnswersToThisMessage") & (message.MessageId == appState.MessageId) & (message.MessageTags >= 32) & (@nStudents > 0))
+                    {
+                    <div class="container mt-5" style="text-align:center;">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-borderless">
+                            @foreach (Message msg in lstMessageInstances)
+                                {
+                                <tr>
+                                    <td style="text-align:left">
+                                            <span style="font-size:smaller;font-style:italic">stdn:</span><span style="font-size:smaller">@msg.ToUsername (@msg.ToNickname)</span>
+                                    </td>
+                                        @if((@msg.MessageTags & 8) == 8)
+                                            {
+                                            <span style="font-size:smaller;font-weight:bold; color:royalblue">YES</span>
+                                            }
+                                        else if((@msg.MessageTags & 16) == 16)
+                                            {
+                                            <span style="font-size:smaller;font-weight:bold; color:indianred">NO</span>
+                                            }
+                                        else
+                                            {
+                                            <span style="font-size:smaller;font-weight:bold; color:lightslategray">---</span>                            
+                                            }
+                                    <td>
+
+                                    </td>
+                                </tr>
+                                }
+                        </table>
+                            </div>
+                        </div>
+                    </div>
+                    }
         </div>
         <hr />
         }
@@ -301,6 +336,12 @@ else
             appState.SetCmd ("ShowMessageStats");
             appState.SetMessageId (message.MessageId);
             }
+        _hasFetched = true;
+        }
+    public async Task BtnListAnswersToThisMessage(Message message)
+        {
+        appState.SetCmd ("ShowListOfAnswersToThisMessage");
+        appState.SetMessageId (message.MessageId);
         _hasFetched = true;
         }
     public async Task BtnDelete_Message(int messageId)
