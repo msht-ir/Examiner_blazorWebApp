@@ -1,0 +1,45 @@
+﻿@if (IsOpen)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal show d-block">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Title</h5>
+                    <p>eLib: electronic Library</p>
+                    <button class="btn-close" @onclick="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @ChildContent
+                    <h2>Welcome to eLib!</h2>
+                    <div>
+                        developed by Majid SharifiTehrani<br />
+                        <br />
+                        <br />
+                        <hr />
+                        visit my website to download <span style="color:indianred">desktop</span> version of eLib<br />
+                        <a href="http://www.msht.ir" target="_blank">msht.ir</a>
+                    </div>
+                    <div style="text-align:right">
+                        <button class="btn btn-link" @onclick="BtnClose">
+                            <img src="/images/gifBook4.gif" width="40px" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string Title { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    public bool IsOpen { get; set; } = true;
+
+    public void Open() => IsOpen = true;
+    public void Close() => IsOpen = false;
+    public void BtnClose()
+        {
+        IsOpen = false;
+        }
+}

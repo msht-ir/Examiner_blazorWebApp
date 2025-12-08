@@ -3254,7 +3254,7 @@ COMMIT TRANSACTION;
         public async Task<List<Project>> Read_ProjectsAsync (int userId)
             {
             List<Project> lstProjects = new List<Project> ();
-            string sql = "SELECT ID, ProjectName, Notes, Active, User_ID FROM Projects WHERE User_ID=@userid";
+            string sql = "SELECT ID, ProjectName, Notes, Active, User_ID FROM Projects WHERE User_ID=@userid AND Active=1 ORDER BY ProjectName";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
@@ -3277,7 +3277,7 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             foreach(Project prj in lstProjects)
                 {
-                prj.Subprojects = await Read_SubprojectsAsync(prj.ProjectId, false);
+                prj.Subprojects = await Read_SubprojectsAsync(prj.ProjectId, true);
                 }
             return lstProjects;
             }
@@ -3324,7 +3324,7 @@ COMMIT TRANSACTION;
         public async Task<List<Subproject>> Read_SubprojectsAsync (int projectId, bool readNotes)
             {
             List<Subproject> lstSubprojects = new List<Subproject> ();
-            string sql = "SELECT ID, SubProjectName, Notes, Project_ID FROM SubProjects WHERE Project_ID=@projectid";
+            string sql = "SELECT ID, SubProjectName, Notes, Project_ID FROM SubProjects WHERE Project_ID=@projectid ORDER BY SubProjectName";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
@@ -3419,7 +3419,7 @@ COMMIT TRANSACTION;
         public async Task<List<Note>> Read_NotesAsync (int parentId)
             {
             List<Note> lstNotes = new List<Note> ();
-            string sql = "SELECT ID, NoteDatum, Note, Parent_ID, ParentType, Rtl, Done, User_ID, Shared, ReadOnly FROM Notes WHERE Parenct_ID=@parentid";
+            string sql = "SELECT ID, NoteDatum, Note, Parent_ID, ParentType, Rtl, Done, User_ID, Shared, ReadOnly FROM Notes WHERE Parent_ID=@parentid ORDER BY NoteDatum ";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
@@ -3429,15 +3429,19 @@ COMMIT TRANSACTION;
             lstNotes.Clear ();
             while (await reader.ReadAsync ())
                 {
-                lstNotes.Add (new Note
-                    {
-                    NoteId = reader.GetInt32 (0),
-                    NoteDatum = reader.GetString (1),
-                    NoteText = reader.GetString (2),
-                    ParentId = reader.GetInt32 (3),
-                    ParentType = reader.GetInt32 (4),
-                    NoteTags = reader.GetInt32 (5),
-                    });
+                Note note = new Note ();
+                note.NoteId = reader.GetInt32 (0);
+                note.NoteDatum = reader.GetString (1);
+                note.NoteText = reader.GetString (2);
+                note.ParentId = reader.GetInt32 (3);
+                note.ParentType = reader.GetByte (4);
+                note.NoteTags = 0;
+                note.NoteTags = reader.GetBoolean (5) ? note.NoteTags + 1 : note.NoteTags;
+                note.NoteTags = reader.GetBoolean (6) ? note.NoteTags + 2 : note.NoteTags;
+                note.UserId = reader.GetInt32 (7);
+                note.NoteTags = reader.GetBoolean (8) ? note.NoteTags + 4 : note.NoteTags;
+                note.NoteTags = reader.GetBoolean (9) ? note.NoteTags + 8 : note.NoteTags;
+                lstNotes.Add (note);
                 }
             await cnn.CloseAsync ();
             return lstNotes;
