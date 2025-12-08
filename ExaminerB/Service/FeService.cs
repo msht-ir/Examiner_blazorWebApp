@@ -1002,5 +1002,153 @@ namespace ExaminerB.Service
             return response.IsSuccessStatusCode ? true : false;
             }
         #endregion
+        #region C20:Projects
+        public async Task<int> Create_Project (Project project)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Create_Project", project);
+            return response.IsSuccessStatusCode ? 1 : 0;
+            }
+        public async Task<List<Project>> Read_Projects (int userId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_Projects", userId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Project>? lstProjects = await response.Content.ReadFromJsonAsync<List<Project>> ();
+                return lstProjects ?? new List<Project> ();
+                }
+            else
+                {
+                return new List<Project> ();
+                }
+            }
+        public async Task<Project> Read_Project (int projectId, bool readNotes)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_Project?readNotes={readNotes}", projectId);
+            if (response.IsSuccessStatusCode)
+                {
+                Project? project = await response.Content.ReadFromJsonAsync<Project> ();
+                return project ?? new Project ();
+                }
+            else
+                {
+                return new Project ();
+                }
+            }
+        public async Task<bool> Update_Project (Project project)
+            {
+            //var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
+            //return response.IsSuccessStatusCode ? true : false;
+            return false;
+            }
+        public async Task<bool> Delete_Projects (int userId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Delete_Projects", userId);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool> Delete_Project (int projectId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Delete_Project", projectId);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        #endregion
+        #region C21:Subprojects
+        public async Task<int> Create_Subproject (Subproject subProject)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Create_subproject", subProject);
+            return response.IsSuccessStatusCode ? 1 : 0;
+            }
+        public async Task<List<Subproject>> Read_Subprojects (int projectId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_SubpProjects", projectId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Subproject>? lstSubprojects = await response.Content.ReadFromJsonAsync<List<Subproject>> ();
+                return lstSubprojects ?? new List<Subproject> ();
+                }
+            else
+                {
+                return new List<Subproject> ();
+                }
+            }
+        public async Task<Subproject> Read_Subproject (int subProjectId,bool readNotes)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_Subproject?readNotes={readNotes}", subProjectId);
+            if (response.IsSuccessStatusCode)
+                {
+                Subproject? subProject = await response.Content.ReadFromJsonAsync<Subproject> ();
+                return subProject ?? new Subproject ();
+                }
+            else
+                {
+                return new Subproject ();
+                }
+            }
+        public async Task<bool> Update_Subproject (Subproject subProject)
+            {
+            //var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
+            //return response.IsSuccessStatusCode ? true : false;
+            return false;
+            }
+        public async Task<bool> Delete_Subprojects (int projectId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Delete_Subprojects", projectId);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool> Delete_Subproject (int subProjectId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Delete_Subproject", subProjectId);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        #endregion
+        #region C22:Note
+        public async Task<int> Create_Note (Note note)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Create_subproject", note);
+            return response.IsSuccessStatusCode ? 1 : 0;
+            }
+        public async Task<List<Note>> Read_Notes (int parentId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_Notes", parentId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Note>? lstNotes = await response.Content.ReadFromJsonAsync<List<Note>> ();
+                return lstNotes ?? new List<Note> ();
+                }
+            else
+                {
+                return new List<Note> ();
+                }
+            }
+        public async Task<Subproject> Read_Note (int noteId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_Note", noteId);
+            if (response.IsSuccessStatusCode)
+                {
+                Subproject? subProject = await response.Content.ReadFromJsonAsync<Subproject> ();
+                return subProject ?? new Subproject ();
+                }
+            else
+                {
+                return new Subproject ();
+                }
+            }
+        public async Task<bool> Update_Note (Note note)
+            {
+            //var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
+            //return response.IsSuccessStatusCode ? true : false;
+            return false;
+            }
+        public async Task<bool> Delete_Notes (int parentId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Delete_Notes", parentId);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool> Delete_Note (int noteId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Delete_Note", noteId);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        #endregion
+        
         }
     }

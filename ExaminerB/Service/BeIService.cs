@@ -169,6 +169,7 @@ namespace ExaminerB.Services2Backend
         Task<int> Create_NoteAsync (Note note);
         Task<List<Note>> Read_NotesAsync (int parentId);
         Task<Note> Read_NoteAsync (int noteId);
+        Task<bool> Delete_NotesAsync (int parentId);
         Task<bool> Delete_NoteAsync (int noteId);
         #endregion
         }

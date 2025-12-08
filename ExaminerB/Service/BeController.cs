@@ -720,15 +720,18 @@ namespace ExaminerB.Backend
             var result = await _BeService.Create_ProjectAsync (project);
             return Ok (result);
             }
-
         [HttpPost ("Read_Projects")]
         public async Task<ActionResult<List<Project>>> Read_Projects ([FromBody] int userId)
             {
-            var result = await _BeService.Raed_ProjectsAsync (userId);
+            var result = await _BeService.Read_ProjectsAsync (userId);
             return Ok (result);
             }
         [HttpPost ("Read_Project")]
-        [HttpPost ("Delete_Project")]
+        public async Task<ActionResult<Project>> Read_Project ([FromBody] int projectId)
+            {
+            var result = await _BeService.Read_ProjectAsync (projectId);
+            return Ok (result);
+            }
         #endregion
         #region C21:Subprojects
         [HttpPost ("Create_Subproject")]
@@ -738,8 +741,23 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_Subprojects")]
+        public async Task<ActionResult<List<Subproject>>> Read_Subprojects ([FromBody] int projectId, [FromQuery] bool readNotes)
+            {
+            var result = await _BeService.Read_SubprojectsAsync (projectId, readNotes);
+            return Ok (result);
+            }
         [HttpPost ("Read_Subproject")]
+        public async Task<ActionResult<Subproject>> Read_Subproject ([FromBody] int subProjectId, [FromQuery] bool readNotes)
+            {
+            var result = await _BeService.Read_SubprojectsAsync (subProjectId, readNotes);
+            return Ok (result);
+            }
         [HttpPost ("Delete_Subproject")]
+        public async Task<ActionResult<bool>> Delete_Subproject ([FromBody] int subProjectId, [FromQuery] bool delNotes)
+            {
+            var result = await _BeService.Read_SubprojectsAsync (subProjectId, delNotes);
+            return Ok (result);
+            }
         #endregion
         #region C22:Notes
         [HttpPost ("Create_Note")]
@@ -749,8 +767,30 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_Notes")]
+        public async Task<ActionResult<List<Note>>> Read_Notes ([FromBody] int parentId)
+            {
+            var result = await _BeService.Read_NotesAsync (parentId);
+            return Ok (result);
+            }
         [HttpPost ("Read_Note")]
+        public async Task<ActionResult<Note>> Read_Note ([FromBody] int noteId)
+            {
+            var result = await _BeService.Read_NoteAsync (noteId);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_Notes")]
+        public async Task<ActionResult<bool>> Delete_Notes ([FromBody] int parentId)
+            {
+            var result = await _BeService.Delete_NotesAsync (parentId);
+            return Ok (result);
+            }
         [HttpPost ("Delete_Note")]
+        public async Task<ActionResult<bool>> Delete_Note ([FromBody] int noteId)
+            {
+            var result = await _BeService.Delete_NoteAsync (noteId);
+            return Ok (result);
+            }
+
 
         #endregion
         }

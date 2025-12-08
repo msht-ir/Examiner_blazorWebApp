@@ -1,283 +1,211 @@
 ﻿@page "/E_Projects"
-
+@using ClosedXML.Excel
+@using Microsoft.Extensions.Hosting
+@using ClosedXML
 @using ExaminerB.Service
-@inject ProtectedSessionStorage sessionStorage
-@inject FeService feService
 @inject NavigationManager Navman
 @inject AppState appState
+@inject FeService feService
 @inject IJSRuntime JS
 @implements IDisposable
-
-<div class="container mt-5 align-items-center">
-    <p style="font-size:larger; text-align:center;color:black">e<span style="color:indianred">x</span>aminer <span style="font-size:small;color:royalblue"> @appState.UserNickname</span></p>
-    <hr style="color:red"/>
-    @if (!_hasFetched)
-        {
-        <_Loading />
-        }
-    else
-        {
-        <div class="accordion" id="accordionProject">
-            @* ProjectSubprojects *@
-            <div class="accordion-item">
-                    <h4 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#CollapseId1"
-                            aria-expanded="false"
-                            aria-controls="CollapseId1" style="background-color:whitesmoke">
-                            <h4>Projects</h4>
-                        </button>
-                    </h4>
-                    <div id="CollapseId1" class="accordion-collapse collapse" data-bs-parent="#accordionProject">
-                        <div class="accordion-body" style="background-color:white">
-                            <div id="T1">
-                                <table class="table table-borderless">
-                                    @* <thead>
-                                        <tr style="font-weight:bold;border:none;">
-                                            <td style="border:none;color:royalblue;font-size:medium">Exams</td>
-                                        </tr>
-                                    </thead> *@
-                                    @foreach (var project in lstProjects)
+@if (!_hasFetched)
+    {
+    <_Loading />
+    }
+else
+    {
+    <div style="text-align: center;">
+            <h1 style="color:steelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h1>
+            <hr style="color:red" />
+            <h2 style="color:royalblue; font-style:italic">Groups and Students</h2>
+        </div>
+        <EditForm Model="lstProjects">
+            <div class="accordion" id="accordionGroups">
+                @foreach (Project project in lstProjects)
+                    {
+                    var collapseId = $"collapse{project.ProjectId}";
+                    string clps = "";
+                    if ((appState.GroupId ?? 0) != project.ProjectId)
+                        {
+                        clps = "collapse";
+                        }
+                    else
+                        {
+                        clps = "collapse show";
+                        }
+                    <div class="accordion-item">
+                        <h4 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#@collapseId"
+                                    aria-expanded="true"
+                                    aria-controls="@collapseId">
+                                <h6>@project.ProjectName</h6>
+                            </button>
+                        </h4>
+                        <div id="@collapseId" class="accordion-collapse @clps" data-bs-parent="#accordionGroups">
+                            <div class="accordion-body" style="background-color:rgba(252,252,252)">
+                                <div id="T1">
+                                    @if ((appState.Cmd == "EditGroup") && (appState.GroupId == project.ProjectId))
                                         {
-                                        int Id = project.ProjectId;
-                                        <tr style="align-content:center;">
-                                            @if (project.StudentExamTags == 0)
-                                                {
-                                                <td style="color:indianred; font-weight:bold;">
-                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
-                                                    <div>@stdexam.ExamTitle </div>
-                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
-                                                </td>
-                                                <td>
-                                                    <div>Tests: @stdexam.ExamNTests</div>
-                                                    <div>Time: @stdexam.ExamDuration min</div>
-                                                    <button style="border:none" @onclick="async () => await BtnStartExam(stdexam)">
-                                                        <img src="icons/icoGo_gt_1.png" alt="Login icon" style="width:25px;" />
-                                                    </button>
-                                                </td>
-                                                }
-                                            else if (stdexam.StudentExamTags == 1)
-                                                {
-                                                <td style="color:indianred; font-weight:bold;">
-                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
-                                                    <div>@stdexam.ExamTitle</div>
-                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>                                    
-                                                </td>
-                                                <td>
-                                                    <div>Tests: @stdexam.ExamNTests</div>
-                                                    <div>Time: @stdexam.ExamDuration min</div>                                    
-                                                    <button style="border:none" @onclick="async () => await BtnStartExam(stdexam)">
-                                                        <img src="icons/icoEditPen_bt_1.png" alt="Login icon" style="width:22px;" />
-                                                    </button>
-                                                </td>
-                                                }
-                                            else if ((stdexam.StudentExamTags & 2) == 2)
-                                                {
-                                                <td style="color:darkslategrey; font-weight:bold;">
-                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
-                                                    <div>@stdexam.ExamTitle</div>
-                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
-                                                </td>
-                                                <td>
-                                                    <div>Tests @stdexam.ExamNTests</div>
-                                                    <div>Time @stdexam.ExamDuration m</div>
-                                                    <div><span style="color:indianred;font-size:small;font-weight:bold;">Pnt @stdexam.StudentExamPoint.ToString("F2")/20 </span></div>
-                                                    @if ((student.UserTags & 4) == 4)
-                                                        {
-                                                        <button style="border:none" @onclick="() => BtnReportExam(Id)">
-                                                            <img src="icons/icoReport_ct_1.png" alt="Report icon" style="width:25px;" />
-                                                        </button>
-                                                        }
-                                                </td>
-                                                }
-                                        </tr>
-                                        }
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <br />
-            @* StudentCourses *@
-            <div class="accordion-item">
-                    <h4 class="accordion-header">
-                        <button class="accordion-button @(appState.Cmd=="ShowCourseFolders" ? "" : "collapsed")"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#CollapseId2"
-                            aria-expanded="@(appState.Cmd=="ShowCourseFolders" ? "true" : "false")"
-                            aria-controls="CollapseId2" style="background-color:WhiteSmoke">
-                            <h4>Courses</h4>
-                        </button>
-                    </h4>
-                    <div id="CollapseId2" class="accordion-collapse collapse @(appState.Cmd=="ShowCourseFolders" ? "show" : "")" data-bs-parent="#accordionStudent">
-                        <div class="accordion-body" style="background-color:white">
-                            <div id="T2">
-                                @foreach (StudentCourse studentCourse in lstStudentCourses)
-                                    {
-                                    //use (double) to make result decimal not integer
-                                    strRunningPoint = studentCourse.NumberOfTests == 0 ?"---": $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double)studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F2}";
-                                    <div style="color:black;font-weight:bold;">@studentCourse.CourseName : <span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
-                                    <button class="btn btn-link" @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
-                                        <img src="/images/gifBook1.gif" width="28" />
-                                    </button>
-                                    @if ((student.UserTags & 32) == 32)
-                                        {
-                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
-                                            <img src="/icons/icoReport_ct_1.png" width="20" />
+                                        string btnGroupId = "btnGroupName";
+                                        <div class="mb-3">
+                                            <input class="form-control" @ref="txtProjectName" @bind="project.ProjectName" placeholder="Enter Project Name...">
+                                        </div>
+                                        <button class="btn btn-link" name="@btnGroupId" @onclick="()=>BtnUpdateProject(project)">
+                                            <img src="/icons/icoSave_cw_1.png" width="25" />
                                         </button>
-                                        }
-                                    @if ((student.UserTags & 16) == 16)
-                                        {
-                                        <button class="btn btn-link" @onclick="()=>BtnTryToCorrect(studentCourse.StudentCourseId)">
-                                            <img src="/icons/icoRetry_bt_1.png" width="22" />
+                                        <button class="btn btn-link" @onclick="()=>BtnDeleteProject(project.ProjectId)" @key="project.ProjectId">
+                                            <img src="/icons/icoDelete_bt_1.png" width="25" />
                                         </button>
-                                        }
-                                    @if ((student.UserTags & 16) == 16)
-                                        {
-                                        <button class="btn btn-link" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
-                                            <img src="/icons/icoFilter_bt_1.png" width="22" />
+                                        <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                            <img src="/icons/icoCancel_bw_1.png" width="24" />
                                         </button>
-                                        <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse, "wipeout")'>
-                                            <img src="/icons/icoEraser_bw_1.png" width="22" />
-                                        </button>
-                                        }
-                                    @* CourseFolders *@
-                                    @if((appState.Cmd=="ShowCourseFolders") & (studentCourse.CourseId == appState.CourseId))
-                                        {
-                                        <h6 style="padding-left:10px;">folders: </h6>
-                                        foreach(CourseFolder cf in lstCourseFolders)
-                                            {
-                                            <h6 style="padding-left:10px;"><a href="@cf.CourseFolderUrl" target="_blank">@cf.CourseFolderTitle</a></h6>
-                                            }
+                                        <br />
+                                        <br />
                                         }
                                     else
                                         {
-                                        <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
-                                            <img src="/icons/icoFolderReport_bt_1.png" width="25" />
-                                        </button>
-                                        }
-                                    <hr />
-                                    }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <br />
-            @* StudentMessages *@
-            <div class="accordion-item">
-                    <h4 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#CollapseId3"
-                            aria-expanded="false"
-                            aria-controls="CollapseId3" style="background-color:WhiteSmoke">
-                            <h4>Messages</h4>
-                        </button>
-                    </h4>
-                    <div id="CollapseId3" class="accordion-collapse collapse" data-bs-parent="#accordionStudent">
-                        <div class="accordion-body" style="background-color:white">
-                            <div id="T3">
-                                @* List messages *@
-                                @foreach (Message message in lstMessages)
-                                    {
-                                if((message.MessageTags & 1) == 1)
-                                    {
-                                    <span style="padding-left:5px;"> @message.DateTimeSent </span>
-                                    <br />
-                                    <button class="btn btn-link" @onclick="()=>BtnDeleteMessage(message)">
-                                        <img src="/icons/icoDelete_bt_1.png" width="20" />
-                                    </button>
-                                    @* IsBookmarked *@
-                                    if ((message.MessageTags & 2) == 2)
-                                        {
-                                        <button class="btn btn-link" @onclick="()=>BtnSetMessageBookmark(message, 0)">
-                                            <img src="/icons/icoBookmark2_bt_1.png" width="22" />
-                                        </button>
-                                        }
-                                    else
-                                        {
-                                        <button class="btn btn-link" @onclick="()=>BtnSetMessageBookmark(message, 1)">
-                                            <img src="/icons/icoBookmark2_bt_0.png" width="22" />
-                                        </button>                                    
-                                        }
-                                    @* TypeIsFeedback *@
-                                    @if ((message.MessageTags & 32) == 32)
-                                        {
-                                        @* AnswerIsYes/No *@
-                                        @if ((message.MessageTags & 8) == 8)
-                                            {
-                                            <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(message, 2)">
-                                                <img src="/icons/icoYesNo_Yes_gt_1.png" width="20" />
+                                        <div style="text-align: center;">
+                                            <button class="btn btn-link" type="button" @onclick="()=>BtnEditProject(project.ProjectId)">
+                                                <img src="/icons/icoRename_bt_1.png" width="30" />
                                             </button>
-                                            }
-                                        else if ((message.MessageTags & 16) == 16)
-                                            {
-                                            <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(message, 2)">
-                                                <img src="/icons/icoYesNo_No_rt_1.png" width="20" />
+                                            <button class="btn btn-link" @onclick="()=>BtnAddNewSubproject(project.ProjectId)">
+                                                <img src="/icons/icoUserAdd_bluet_1.png" width="30" />
                                             </button>
+                                            <br />
+                                            <br />
+                                            <hr style="color:red" />
+                                        </div>
+                                        @if ((appState.Cmd == "AddNewSubproject") && (appState.ProjectId == project.ProjectId))
+                                            {
+                                            <div>
+                                                <div class="mb-3">
+                                                    <img src="/icons/icoUser_bluet_1.png" width="24" />
+                                                    <input class="form-control d-inline" style="width:50%" @bind="txtNewSubprojectTitle" placeholder="New subproject...">
+                                                    <button class="btn btn-link" @onclick="()=>BtnSaveNewSubproject(project.ProjectId)">
+                                                        <img src="/icons/icoSave_bt_1.png" width="24" />
+                                                    </button>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <img src="/icons/icoExcel_gw_1.jpg" width="24" />
+                                                </div>
+                                            </div>
                                             }
                                         else
                                             {
-                                            if ((appState.Cmd == "GetStudentAnswer") & (appState.MessageId == message.MessageId))
+                                            <div style="text-align: center;">
+                                                <h4 style="color:gray">students:</h4> 
+                                            </div>
+                                            @foreach (Subproject subProject in project.Subprojects)
                                                 {
-                                                <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(message, 1)">
-                                                    <img src="/icons/icoYesNo_Yes_gt_1.png" width="20" />
-                                                </button>
-                                                <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(message, 0)">
-                                                    <img src="/icons/icoYesNo_No_rt_1.png" width="20" />
-                                                </button>                                                
-                                                }
-                                            else
-                                                {
-                                                //Lets GetStudentAnswer...
-                                                <button class="btn btn-link" @onclick="()=>BtnGetStudentAnswer(message.MessageId)">
-                                                    <img src="/icons/icoYesNo_cw_1.png" width="24" />
-                                                </button>
+                                                var collapseId2 = $"collapse{subProject.SubprojectId}";
+                                                <div class="accordion" id="accordionStudents">
+                                                    <div class="accordion-item mb-1">
+                                                        <h4 class="accordion-header">
+                                                            <button class="accordion-button collapsed"
+                                                                    type="button"
+                                                                    data-bs-toggle="collapse"
+                                                                    data-bs-target="#@collapseId2"
+                                                                    aria-expanded="true"
+                                                                    aria-controls="@collapseId2">
+                                                                <h6>@subProject.SubprojectName</h6>
+                                                            </button>
+                                                        </h4>
+                                                        <div id="@collapseId2" class="accordion-collapse collapse" data-bs-parent="#accordionStudents">
+                                                            <div class="accordion-body" style="background-color:whitesmoke">
+                                                                <div class="mb-1">
+                                                                    <img src="/icons/icoUser_bluet_1.png" width="24" />
+                                                                    <input class="form-control d-inline" @bind="subProject.SubprojectName" placeholder="Subproject name" style="font-weight:normal;color:indianred; width:80%;">
+                                                                </div>
+                                                                <div class="mb-1">
+                                                                    <img src="/icons/icoUser_bluet_1.png" width="24" />
+                                                                    <input class="form-control d-inline" @bind="subProject.SubprojectNotes" placeholder="subproject note" style="font-weight:normal; width:80%;">
+                                                                </div>
+                                                                <p></p>
+                                                                <br />
+                                                                <p></p>
+                                                                <div style="text-align: center;">
+                                                                    <button class="btn btn-link" @onclick="()=>BtnUpdateSubproject(subProject)">
+                                                                        <img src="/icons/icoSave_bt_1.png" width="22" />
+                                                                    </button>
+                                                                    <button class="btn btn-link" @onclick="()=>BtnDeleteSubproject(subProject.SubprojectId)">
+                                                                        <img src="/icons/icoDelete_bt_1.png" width="22" />
+                                                                    </button>
+                                                                    <button class="btn btn-link" @onclick="()=>BtnAddSubprojectNote(subProject.SubprojectId)">
+                                                                        <img src="/icons/icoCourseAdd_bt_1.png" width="25" />
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 }
                                             }
                                         }
-                                    <div style="color:black;font-weight:normal;padding-left:10px;">@message.MessageText</div>
-                                    }
-                                else
-                                    {
-                                    <span style="padding-left:5px;"> @message.DateTimeSent </span>
-                                    <button class="btn btn-link" @onclick="()=>BtnSetMessageAsRead(message)">
-                                        <img src="/icons/icoEnvelop_bluet_1.png" width="20" />
-                                    </button>
-                                    <span style="color:black;font-weight:bold;padding-left:2px;">@message.MessageText.Substring(0,6) ...</span>
-                                    }
-                                <hr />    
-                                }
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <br />
+                    }
+            </div>
+            @if (appState.Cmd == "AddNewProject")
+                {
+                <hr style="color:red"/>
+                <h4>Add New Project</h4>
+                <div class="mb-3">
+                    <input class="form-control" @ref="txtNewProject" @bind="project.ProjectName" placeholder="New project...">
                 </div>
-        </div>
-        <hr style="color:red"/>
-        <br />
-        <br />
+                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewProject">
+                    <img src="/icons/icoSave_cw_1.png" width="22" />
+                </button>
+                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                    <img src="/icons/icoCancel_bw_1.png" width="24" />
+                </button>
+                }
+            else
+                {
+                    <div style="background-color:rgba(252,252,252)">
+                        <button class="btn btn-link" @onclick="BtnAddNewProject">
+                            <img src="/images/gifUserAdd1.gif" width="110" />
+                        </button>
+                    </div>
+                }
+            <hr style="color:red" />
+        </EditForm>
         <div style="text-align:center">
-            <button class="btn btn-link" @onclick= "()=> BtnExit()">
-                <img src="/icons/icoExit_bw_1.png" style="width:35px" />
-            </button>
-        </div>
-        }
-</div>
+        <button class="btn btn-link" @onclick= "()=> BtnBack()">
+            <img src="/icons/icoBack_bt_1.png" style="width:30px" />
+        </button>
+    </div>
+    }
 <script>
-    window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+    window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});
 </script>
 
 @code {
-    User student = new User ();
-    List<CourseFolder> lstCourseFolders = new List<CourseFolder> ();
-    public List<StudentExam> lstStudentExams = new ();
-    public string? strRunningPoint = "";
-    public List<StudentCourse> lstStudentCourses = new ();
-    public List<Message> lstMessages = new ();
-    private bool _hasFetched = false;
-    private bool hasScrolled = false;
+    private ElementReference txtNewProject;
+    private ElementReference txtProjectName;
+    private ElementReference txtNewSubproject;
+    private ElementReference txtSubprojectName;
+    private ElementReference txtNoteText;
+    private readonly HttpClient _http;
+    User user = new User ();
+    List<Project> lstProjects = new ();
+    Project project = new Project();
+    Note note = new Note();
+    public bool _hasFetched = false;
+    private bool shouldFocusNewProject = false;
+    bool _IsMessageTypeFeedback = true;
+    bool _tag01 = true;
+    bool _tag02 = false;
+    bool _tag04 = false;
+    bool _tag08 = false;
+    bool _tag16 = false;
+    bool _tag32 = false;
+    string txtNewSubprojectTitle = "";
+    int i = 0;
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
@@ -286,28 +214,29 @@
             {
             Navman.NavigateTo ("/Login");
             }
-        student.UserId = appState.UserId ?? 0;
-        if(student.UserId > 0)
+        var user = new User
             {
-            //on first run, student.UserId is 0
-            //student.UserId = appState.UserId ?? 0;
-            lstStudentExams = await feService.Read_StudentExams(student.UserId, false)?? new List<StudentExam>();
-            student.UserTags = Convert.ToInt32(appState.UserTags);
-            student.UserName = appState.UserName ?? "";
-            student.UserNickname = appState.UserNickname ?? "";
-            lstStudentCourses = await feService.Read_StudentCourses (student.UserId);
-            lstMessages = await feService.Read_Messages ("Student", student.UserId);
+            UserId = Convert.ToInt32(appState.UserId),
+            UserName = appState.UserName,
+            UserPass = appState.UserPass,
+            UserRole = appState.UserRole,
+            GroupId = Convert.ToInt32(appState.GroupId)
+            };
+        if (user.UserId > 0)
+            {
+            //on second rener, user.UserId will get its value
+            lstProjects = await feService.Read_Projects (user.UserId); 
             _hasFetched = true;
             }
-        }
+        } 
     protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-        if (firstRender && !hasScrolled)
+        if (shouldFocusNewProject)
             {
-            hasScrolled = true;
-            await JS.InvokeVoidAsync("scrollToTop");
+            shouldFocusNewProject = false;
+            await txtNewProject.FocusAsync();
             }
-        }
+        }    
     private void TriggerRender()
         {
         InvokeAsync(StateHasChanged);
@@ -315,145 +244,297 @@
     public void Dispose()
         {
         appState.OnChange -= TriggerRender;
-        }    
-    //btns for StudentExams
-    public async Task BtnStartExam(StudentExam studentExam)
+        }
+    //Projects
+    public void BtnAddNewProject()
         {
-        //read ExamTags : is exam training? Yes:allow Help
-        Exam exam = await feService.Read_Exam (studentExam.ExamId);
-        //keep ExamTags in appState (use in S-StudentExamTest page)
-        appState.SetExamTags (exam.ExamTags);
-        bool result = await feService.Update_StudentExamTags(studentExam, "startedOn");
+        if(appState.Cmd != "AddNewProject")
+            {
+            appState.SetCmd ("AddNewProject");
+            shouldFocusNewProject = true; //flag to tell OnAfterRenderAsync focus on 'txtNewGroup'
+            }
+        else
+            {
+            appState.SetCmd ("");
+            shouldFocusNewProject = false;
+            }
+        }
+    public async Task BtnSaveNewProject()
+        {
+        //project.ProjectName is bind
+        project.ProjectId = Convert.ToInt32(appState.UserId);
+        int result = await feService.Create_Project (project);
+        if (result !=0)
+            {
+            Console.WriteLine("Project added: " + project.ProjectName);
+            appState.SetCmd("");
+            // Refresh the list
+            var user = new User
+            {
+                UserId = Convert.ToInt32(appState.UserId),
+                UserName = appState.UserName,
+                UserPass = appState.UserPass,
+                UserRole = appState.UserRole,
+                GroupId = Convert.ToInt32(appState.GroupId)
+            };
+            lstProjects = await feService.Read_Projects (user.UserId);
+            project.ProjectName = ""; //reset input text
+            StateHasChanged ();
+            }
+        }
+    public async Task BtnEditProject(int groupId)
+        {
+        appState.SetCmd ("EditProject");
+        appState.SetGroupId(groupId);
+        StateHasChanged ();
+        await Task.Delay (1);
+        await txtProjectName.FocusAsync ();
+        }
+    public async Task BtnUpdateProject(Project project)
+        {
+        //ProjectName is bind
+        project.ProjectUserId = Convert.ToInt32(appState.UserId);
+        bool result = await feService.Update_Project (project);
         if (result)
             {
-            appState.SetStudentExamId (studentExam.StudentExamId);
-            Navman.NavigateTo ($"/S_StudentExamTests");
+            appState.SetCmd("");
+            // Refresh the list
+            var user = new User
+            {
+                UserId = Convert.ToInt32(appState.UserId),
+                UserName = appState.UserName,
+                UserPass = appState.UserPass,
+                UserRole = appState.UserRole,
+                GroupId = Convert.ToInt32(appState.GroupId)
+            };
+            lstProjects = await feService.Read_Projects(user.UserId);
+            project.ProjectName = ""; //reset input text
+            StateHasChanged ();            
             }
         }
-    private void BtnReportExam(int studentExamId)
+    private async Task BtnDeleteProject(int projectId)
         {
-        Navman.NavigateTo ($"/S_ReportStudentExam/{studentExamId}/Review");
-        }    
-    //btns under the table
-    private void BtnExit()
-        {
-        Navman.NavigateTo("/Login", true);
-        }
-    //btns for StudentCourses
-    private void BtnTakeATest (int studentCourseId)
-        {
-        Navman.NavigateTo ($"S_StudentCourseTest/{student.UserId}/{studentCourseId}/new");
-        }
-    private void BtnTryToCorrect (int studentCourseId)
-        {     
-        Navman.NavigateTo ($"S_StudentCourseTest/{student.UserId}/{studentCourseId}/edit");
-        }
-    private async Task BtnShowCourseFolders (StudentCourse studentCourse)
-        {
-        _hasFetched = false;
-        appState.SetCmd ("ShowCourseFolders");
-        appState.SetCourseId (studentCourse.CourseId);
-        lstCourseFolders = await feService.Read_CourseFolders (studentCourse.CourseId);
-        _hasFetched = true;
-        }
-    private void BtnReportStudentCourseTests (int studentCourseId, string courseName)
-        {
-        Navman.NavigateTo ($"/S_ReportStudentCourse/{student.UserId}/{studentCourseId}/{courseName}");
-        }
-    private async Task BtnFilterStudentCourseTests (StudentCourse studentCourse, string mode)
-        {
-        //this code replaced by lambda equivalent
-        // switch (mode)
-        //     case "filter":{message = $"Filter out correct answers in Course ( {studentCourse.CourseName} ) \n just keep incorrect ones?";break;}
-        //     case "wipeout":{message = $"Clear Running Tests in Course ( {studentCourse.CourseName} ) ?";break;}
-        //---lambda:
-        string message = mode switch
+        if (await JS.InvokeAsync<bool>("confirm", "\n\nDelete this project?"))
             {
-                "filter" => $"Filter out correct answers in ( {studentCourse.CourseName} ) ?",
-                "wipeout" => $"Clear  ( {studentCourse.CourseName} ) ?",
-                _ => throw new ArgumentException($"Invalid mode: {mode}")
+            bool result = await feService.Delete_Project (projectId);
+            if (result)
+                {
+                //0: no subProjects in the project and the project must be deleted! OK
+                appState.SetCmd("");
+                // Refresh the list
+                var user = new User
+                {
+                    UserId = Convert.ToInt32(appState.UserId),
+                    UserName = appState.UserName,
+                    UserPass = appState.UserPass,
+                    UserRole = appState.UserRole,
+                    GroupId = Convert.ToInt32(appState.GroupId)
                 };
-        if (await JS.InvokeAsync<bool> ("confirm", message))
-            {
-            var result = await feService.Delete_StudentCourseTests (mode, studentCourse);
-            //refresh
-            lstStudentCourses = await feService.Read_StudentCourses (student.UserId);        
+                lstProjects = await feService.Read_Projects(user.UserId);
+                //project.ProjectName = ""; //reset input text
+                StateHasChanged ();            
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\n\nThere are subProjects in this Project.\n\nThis Project cannot be deleted.");
+                }
             }
         }
-    //btns for StudentCourses
-    private async Task BtnDeleteMessage(Message message)
+    public void BtnUpdateSubprojectTagsInPlace (User stdnt, int flag , bool isChecked)
         {
-        if(await JS.InvokeAsync<bool>("confirm","Delete Message?"))
+        if (isChecked)
             {
-            message.MessageTags |= 4;
-            bool result = await feService.Update_MessageTags (message);
-            lstMessages = await feService.Read_Messages ("Student", student.UserId);
+            stdnt.UserTags |= flag;
             }
-        StateHasChanged ();                
-        }
-    private async Task BtnSetMessageAsRead(Message message)
-        {
-        //modes: setOn, setOff
-        message.MessageTags |= 1;
-        message.DateTimeRead = DateTime.Now.ToString("yyyy-MM-dd . HH:mm");
-        bool result = await feService.Update_MessageTags (message);
-        lstMessages = await feService.Read_Messages ("Student", student.UserId);
-        StateHasChanged ();
-        }
-    private async Task BtnSetMessageBookmark(Message message, int mode)
-        {
-        //modes: 0:setOff, 1:setOn
-        switch (mode)
+        else
             {
-            case 0:
-                    {
-                    message.MessageTags &= ~2;
-                    break;
-                    }
-            case 1:
-                    {
-                    message.MessageTags |= 2;
-                    break;
-                    }
+            stdnt.UserTags &= ~flag;
             }
-        bool result = await feService.Update_MessageTags (message);
-        lstMessages = await feService.Read_Messages ("Student", student.UserId);
-        appState.SetCmd ("");
-        StateHasChanged ();
         }
-    private async Task BtnGetStudentAnswer(int messageId)
-        {
-        appState.SetCmd ("GetStudentAnswer");
-        appState.SetMessageId (messageId);
-        StateHasChanged ();
+    public void BtnReportSubprojects(int groupId)
+        {      
+        string mode = "groupStudents";
+        Navman.NavigateTo ($"/T_ReportStudents/{mode}/{groupId}");
         }
-    private async Task BtnSetMyAnswer(Message message, int ans)
+    //Subprojects
+    public void BtnAddNewSubproject(int projectId)
         {
-        //ans: 0:No, 1:Yes
-        switch (ans)
+        if(appState.Cmd != "AddNewSubproject")
             {
-            case 2:
-                    {
-                    message.MessageTags &= ~8;
-                    message.MessageTags &= ~16;
-                    appState.SetCmd ("");
-                    break;
-                    }
-            case 1:
-                    {
-                    message.MessageTags |= 8;
-                    message.MessageTags &= ~16;
-                    break;
-                    }
-            case 0:
-                    {
-                    message.MessageTags &= ~8;
-                    message.MessageTags |= 16;
-                    break;
-                    }
+            appState.SetCmd ("AddNewStudent");
+            appState.SetGroupId (projectId);
             }
-        bool result = await feService.Update_MessageTags (message);
-        lstMessages = await feService.Read_Messages ("Student", student.UserId);
+        else
+            {
+            appState.SetCmd ("");
+            }
         StateHasChanged ();
+        }
+    public async Task BtnSaveNewSubproject(int projectId)
+        {
+        Subproject subProject = new Subproject () { SubprojectName = txtNewSubprojectTitle, ProjectId=projectId };
+        int result = await feService.Create_Subproject (subProject);
+        if (result > 0)
+            {
+            await JS.InvokeVoidAsync ("alert", $"New subProject :\n\n user: {subProject.SubprojectName} \n created!");
+            // Refresh the list
+            var user = new User
+            {
+                UserId = Convert.ToInt32(appState.UserId),
+                UserName = appState.UserName,
+                UserPass = appState.UserPass,
+                UserRole = appState.UserRole,
+                GroupId = Convert.ToInt32(appState.GroupId)
+            };
+            lstProjects = await feService.Read_Projects(user.UserId);
+            appState.SetCmd ("");
+            StateHasChanged ();
+            }
+        else
+            {
+            await JS.InvokeVoidAsync ("alert", "Cannot create the new student -- operation Failed");            
+            }
+        }
+    public async Task BtnUpdateSubproject(Subproject subProject)
+        {
+        appState.SetGroupId (subProject.ProjectId);
+        bool result = await feService.Update_Subproject (subProject);
+        if (result)
+            {
+            appState.SetCmd("");
+            // Refresh the list
+            var user = new User
+            {
+                UserId = Convert.ToInt32(appState.UserId),
+                UserName = appState.UserName,
+                UserPass = appState.UserPass,
+                UserRole = appState.UserRole,
+                GroupId = Convert.ToInt32(appState.GroupId)
+            };
+            lstProjects = await feService.Read_Projects(user.UserId);
+            project.ProjectName = ""; //reset input text
+            StateHasChanged ();            
+            }
+        }
+    private async Task BtnDeleteSubproject(int subProjectId)
+        {
+        if (await JS.InvokeAsync<bool>("confirm", "\n\nDelete Sudent?"))
+            {
+            bool result = await feService.Delete_Subproject (subProjectId);
+            if (result)
+                {
+                appState.SetCmd("");
+                // Refresh the list
+                var user = new User
+                    {
+                    UserId = Convert.ToInt32(appState.UserId),
+                    UserName = appState.UserName,
+                    UserPass = appState.UserPass,
+                    UserRole = appState.UserRole,
+                    GroupId = Convert.ToInt32(appState.GroupId)
+                    };
+                lstProjects = await feService.Read_Projects(user.UserId);
+                project.ProjectName = ""; //reset input text
+                StateHasChanged ();            
+                }
+            }
+        else
+            {
+            await JS.InvokeVoidAsync("alert", "\nStudent did note removed ---- operation failed!");
+            }
+        }
+    public void BtnReportSubproject(Subproject subProject)
+        {
+        //Navman.NavigateTo ($"/T_ReportStudents/{mode}/{stdnt.UserId}");
+        }
+    public void BtnReportSubprojectNotes(Subproject subProject)
+        {
+        appState.SetSubprojectName (subProject.SubprojectName);
+        appState.SetStudentNickname (subProject.SubprojectNotes);
+        string mode = "StudentWithDels";
+        //Navman.NavigateTo ($"/T_ReportMessages/{mode}/{stdnt.UserId}");
+        }
+    //subproject notes
+    public void BtnAddSubprojectNote(int subProjectId)
+        {
+        appState.SetCmd ("AddNewStudentCourse");
+        appState.SetSubprojectId (subProjectId);
+        StateHasChanged ();
+        }
+    public async Task BtnSaveSubprojectNote(int subProjectId)
+        {      
+        if(0 == 0)
+            {
+            await JS.InvokeVoidAsync ("alert", "Select a Course from List");
+            return;
+            }
+        else
+            {
+            //bool result = await feService.Create_SubprojectNote (subProjectId, 1);
+            if(0==0)
+                {
+                await JS.InvokeVoidAsync("alert", "\nStudent successfully added to course.");
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nStudent did not added to the course!");
+                }
+            }
+        }
+    public async Task BtnDeleteSubprojectNote(int noteId)
+        {      
+        if(0 == 0)
+            {
+            await JS.InvokeVoidAsync ("alert", "Select a Course from List");
+            return;
+            }
+        else
+            {
+            bool result = await feService.Delete_StudentCourse (0);
+            if(result)
+                {
+                await JS.InvokeVoidAsync("alert", "\nStudent removed from the course.");
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nStudent did not removed from the course!");
+                }
+            }
+        }
+    public async Task BtnDeleteSubprojectNotes(int subProjectId)
+        {
+        //delete all subprojects of a Project
+        if(0 == 0)
+            {
+            await JS.InvokeVoidAsync ("alert", "Select a Course from List");
+            return;
+            }
+        else
+            {
+            //bool result = await feService.Delete_SubprojectNote (0, groupId);
+            if(0==0)
+                {
+                await JS.InvokeVoidAsync("alert", "\nAll Subprojects in this Project are removed from the course.");
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nStudents did not removed from the course --- operation failed");
+                }
+            }
+        }
+    //back
+    public void BtnCancel()
+        {    
+        appState.SetCmd("");
+        }
+    public void BtnBack()
+        {    
+        Navman.NavigateTo ("/T_SwitchBoard");
         }
 }

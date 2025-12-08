@@ -109,5 +109,20 @@
         //Message
         public int? MessageId { get; private set; }
         public void SetMessageId (int _MessageId) { MessageId = _MessageId; OnChange?.Invoke (); }
+        //Project
+        public int? ProjectId { get; private set; }
+        public void SetProjectId (int _ProjectId) { ProjectId = _ProjectId; OnChange?.Invoke (); }
+        public string? ProjectName { get; private set; }
+        public void SetProjectName (string _ProjectName) { ProjectName = _ProjectName; OnChange?.Invoke (); }
+        //Subproject
+        public int? SubprojectId { get; private set; }
+        public void SetSubprojectId (int _SubprojectId) { SubprojectId = _SubprojectId; OnChange?.Invoke (); }
+        public string? SubprojectName { get; private set; }
+        public void SetSubprojectName (string _SubprojectName) { SubprojectName = _SubprojectName; OnChange?.Invoke (); }
+        //Note
+        public int? NoteId { get; private set; }
+        public void SetNoteId (int _NoteId) { NoteId = _NoteId; OnChange?.Invoke (); }
+        public string? NoteText { get; private set; }
+        public void SetNoteText (string _NoteText) { NoteText = _NoteText; OnChange?.Invoke (); }
         }
     }

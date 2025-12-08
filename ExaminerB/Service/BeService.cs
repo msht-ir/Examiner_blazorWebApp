@@ -3267,10 +3267,10 @@ COMMIT TRANSACTION;
                 lstProjects.Add (new Project
                     {
                     ProjectId = reader.GetInt32 (0),
-                    ProjectName = reader.GetString (2),
-                    ProjectNotes = reader.GetString (3),
-                    ProjectActive = reader.GetBoolean (4),
-                    ProjectUserId = reader.GetInt32 (5),
+                    ProjectName = reader.GetString (1),
+                    ProjectNotes = reader.GetString (2),
+                    ProjectActive = reader.GetBoolean (3),
+                    ProjectUserId = reader.GetInt32 (4),
                     Subprojects = new List<Subproject> ()
                     });
                 }
@@ -3337,9 +3337,9 @@ COMMIT TRANSACTION;
                 lstSubprojects.Add (new Subproject
                     {
                     SubprojectId = reader.GetInt32 (0),
-                    SubprojectName = reader.GetString (2),
-                    SubprojectNotes = reader.GetString (3),
-                    ProjectId = reader.GetInt32 (5),
+                    SubprojectName = reader.GetString (1),
+                    SubprojectNotes = reader.GetString (2),
+                    ProjectId = reader.GetInt32 (3),
                     Notes = new List<Note> ()
                     });
                 }
@@ -3463,6 +3463,18 @@ COMMIT TRANSACTION;
                 }
             await cnn.CloseAsync ();
             return note;
+            }
+        public async Task<bool> Delete_NotesAsync (int parentId)
+            {
+            string sql = "DELETE FROM Notes WHERE Parent_ID=@parentid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new SqlConnection (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@parentid", parentId);
+            int i = await cmd.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
             }
         public async Task<bool> Delete_NoteAsync (int noteId)
             {
