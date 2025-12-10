@@ -82,6 +82,7 @@
         appState.SetUserLoginStatus (0);
         appState.SetStudentTags (0);
         appState.SetUserName ("");
+        StateHasChanged ();
         lstTeachers = await feService.Read_Teachers ();
         } 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -91,7 +92,6 @@
             _firstRender = false;
             await Task.Delay (1);
             await refRole.FocusAsync ();        
-            //await refUser.FocusAsync();
             }
         }
     private void TriggerRender()

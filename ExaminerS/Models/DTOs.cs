@@ -47,7 +47,7 @@ namespace ExaminerS.Models
         public string TestTitle { get; set; } = "";
         public int TestType { get; set; } = 0;
         public int TestLevel { get; set; } = 0;
-        public int TestTags { get; set; } = 0;            //1:TestRtl 2:OptionsRtl
+        public int TestTags { get; set; } = 0;      //1:TestRtl 2:OptionsRtl 4:IsSelected (select some tests in a list, to be added to an exam later)
         public List<TestOption>? TestOptions { get; set; } = new List<TestOption> ();
         }
     //05
@@ -163,6 +163,19 @@ namespace ExaminerS.Models
         public int TestTags { get; set; } = 0;             //1:testRtl 2:optionsRtl
         public int TestLevel { get; set; } = 0;            //[1-5]
         public List<TestOption>? TestOptions { get; set; } = new List<TestOption> ();
+        //derived property for easy binding
+        public bool IsSelected
+            {
+            get => (TestTags & 64) == 64;
+            set
+                {
+                if (value)
+                    TestTags |= 64;   //set bit 6
+                else
+                    TestTags &= ~64;  //clear bit 6
+                }
+            }
+
         }
     //13
     public class StudentCourse

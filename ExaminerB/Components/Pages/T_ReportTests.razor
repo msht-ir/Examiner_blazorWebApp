@@ -15,25 +15,36 @@ else
     <EditForm Model = "lstxTests">
         <br />
         <div style="text-align: center;">
+            @if (appState.Cmd.ToLower().Contains("coursetest"))
+                {
+                @* Paginate *@
+                <input class="form-control d-inline" type="number" @ref="txtPageNumber" @bind="intPendingPageNumber" min="1" placeholder="1" style="width: 70px; display: inline-block;"/>
+                <button class="btn btn-link" @onclick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)">
+                    <img src="/icons/icoList_bt_1.png" width="30" />
+                </button>
+                }
             <button class="btn btn-link" @onclick="BtnChangeFontSize">
-                <img src="icons/icoLang_blt_1.png" title="Edit Test" alt="Edit" width="35px"/>
+                <img src="icons/icoFont_rt_1.png" title="Edit Test" alt="Edit" width="35px"/>
                 @* <br />Font *@
             </button>
             <button class="btn btn-link" @onclick="BtnShowAnswers">
-                <img src="icons/icoKeys_bt_1.png" title="Edit Test" alt="Edit" width="35px"/>
+                <img src="icons/icoKeys_bt_1.png" title="Edit Test" alt="Edit" width="30px"/>
                 @* <br />Keys *@
             </button>
-            <button class="btn btn-link" @onclick="BtnCourseExamStats">
-                <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="35px"/>
-                @* <br />Stats *@
-            </button>
+            @if (!appState.Cmd.ToLower().Contains("coursetest"))
+                {
+                <button class="btn btn-link" @onclick="BtnCourseExamStats">
+                    <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="35px"/>
+                    @* <br />Stats *@
+                </button>
+                }
             <button class="btn btn-link" @onclick="BtnBack">
                 <img src="icons/icoBack_bt_1.png" title="Edit Test" alt="Edit" width="30px"/>
                 @* <br />Back *@
             </button>
             <hr />
         </div>
-        @{i=0;}
+        @{i= (intPageNumber - 1) * 20;}
         @foreach (var tst in lstxTests) 
             {
             stl= (_cmd == "useSmallFont") ? "font-size:small;" : "font-size:normal;";
@@ -41,22 +52,28 @@ else
             string testRtlStatus = ((tst.TestTags & 1) == 1) ? "direction:rtl;text-align:right;" : "";
             string optRtlStatus = ((tst.TestTags & 2) == 2) ? "direction:rtl;text-align:right;" : "";
             @* Show-Test *@
-            if (_cmd == "showStatistics")
-                {
-                <div style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle
-                    <br />
-                    <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst.TestId)">
-                        <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
-                    </button>
-                    <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnShowCourseTestStats(tst)">
-                        <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
-                    </button>
-                </div>
-                }
-            else
-                {
-                <div style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle</div>
-                }
+            <div style="@testRtlStatus" >
+                @if (appState.Cmd.ToLower().Contains("coursetest"))
+                    {
+                   <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected" />
+                    }
+                    @if ((_cmd == "showStatistics") & (!appState.Cmd.ToLower().Contains("coursetest")))
+                    {
+                    <span style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle
+                        <br />
+                        <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst.TestId)">
+                            <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
+                        </button>
+                        <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnShowCourseTestStats(tst)">
+                            <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
+                        </button>
+                    </span>
+                    }
+                else
+                    {
+                    <span style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle</span>
+                    }
+            </div>
             @* Show-TestOptions *@
             @foreach (var opt in tst.TestOptions)
                 {
@@ -111,12 +128,15 @@ else
             }
         <br />
         <div style="text-align: center;">
-            <button class="btn btn-link" @onclick="BtnCourseExamStats">
-                <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="35px"/>
-            </button>
             <button class="btn btn-link" type="submit" @onclick="BtnBack">
-                <img src="/icons/icoBack_bt_1.png" width="40" />
+                <img src="/icons/icoBack_bt_1.png" width="30" />
             </button>
+            @if (appState.Cmd.ToLower().Contains("coursetest"))
+                {
+                <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
+                    <img src="/images/gifScrollDown.gif" width="40" />
+                </button>
+                }
         </div>
     </EditForm>
     }
@@ -126,8 +146,13 @@ else
 
 @code {
     public bool _hasFetched = false;
+    private ElementReference txtPageNumber;
+    private int intPageNumber = 1;        //actual page used for numbering
+    private int intPendingPageNumber = 1; //value typed in the input (prevent changing i (index number) of tests in list)
     User user = new User ();
     List<StudentExamTest> lstxTests = new List<StudentExamTest> ();
+    List<Test> lstTests = new List<Test> ();
+    Course course = new Course ();
     int i = 0;
     int StudentId;
     string _cmd;
@@ -150,7 +175,6 @@ else
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-
             Navman.NavigateTo ("/Login");
             }
         switch (appState.Cmd?.ToLower())
@@ -158,38 +182,7 @@ else
             case "coursetest":
             case "coursetestraw":
                     {
-                    Course course = new Course () {CourseId = Convert.ToInt32 (appState.CourseId) };
-                    List<Test> lstTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), 1, true);
-                    foreach(Test tst in lstTests)
-                        {
-                        lstxTests.Add (new StudentExamTest()
-                            {
-                            StudentExamId = tst.CourseId,
-                            TestId = tst.TestId,
-                            StudentExamTestKey = 0,
-                            StudentExamTestAns = 0,
-                            TestIndex = 0,
-                            TestTitle = tst.TestTitle,
-                            TestType = tst.TestType,
-                            CourseTopicId = tst.TopicId,
-                            CourseTopicTitle = "",
-                            TestTags = tst.TestTags,
-                            TestLevel = tst.TestLevel,
-                            TestOptions = tst.TestOptions
-                            }
-                        );}
-                    //find and set key
-                    foreach(StudentExamTest t in lstxTests)
-                        {
-                        foreach(TestOption opt in t.TestOptions)
-                            {
-                            if (opt.TestOptionTags >= 2)
-                                {
-                                t.StudentExamTestKey = opt.TestOptionId;
-                                break;
-                                }
-                            }
-                        }
+                    await BtnReadTestsPaginated (1);
                     break;
                     }
             case"examtests":
@@ -199,20 +192,20 @@ else
                     foreach(Test tst in lstExamTests)
                         {
                         lstxTests.Add (new StudentExamTest()
-                            {
-                            StudentExamId = tst.CourseId,
-                            TestId = tst.TestId,
-                            StudentExamTestKey = 0,
-                            StudentExamTestAns = 0,
-                            TestIndex = 0,
-                            TestTitle = tst.TestTitle,
-                            TestType = tst.TestType,
-                            CourseTopicId = tst.TopicId,
-                            CourseTopicTitle = "",
-                            TestTags = tst.TestTags,
-                            TestLevel = tst.TestLevel,
-                            TestOptions = tst.TestOptions
-                            }
+                        {
+                        StudentExamId = tst.CourseId,
+                        TestId = tst.TestId,
+                        StudentExamTestKey = 0,
+                        StudentExamTestAns = 0,
+                        TestIndex = 0,
+                        TestTitle = tst.TestTitle,
+                        TestType = tst.TestType,
+                        CourseTopicId = tst.TopicId,
+                        CourseTopicTitle = "",
+                        TestTags = tst.TestTags,
+                        TestLevel = tst.TestLevel,
+                        TestOptions = tst.TestOptions
+                        }
                         );}
                     //find and set key
                     foreach(StudentExamTest t in lstxTests)
@@ -242,20 +235,20 @@ else
                     foreach(StudentCourseTest sctest in lstStudentCourseTests)
                         {
                         lstxTests.Add (new StudentExamTest()
-                            {
-                            StudentExamId = sctest.StudentCourseId,
-                            TestId = sctest.TestId,
-                            StudentExamTestKey = sctest.TestKey,
-                            StudentExamTestAns = sctest.UserAns,
-                            TestIndex = sctest.TestIndex,
-                            TestTitle = sctest.TestTitle,
-                            TestType = sctest.TestType,
-                            CourseTopicId = sctest.CourseTopicId,
-                            CourseTopicTitle = sctest.CourseTopicTitle,
-                            TestTags = sctest.TestTags,
-                            TestLevel = sctest.TestLevel,
-                            TestOptions = sctest.TestOptions
-                            }
+                        {
+                        StudentExamId = sctest.StudentCourseId,
+                        TestId = sctest.TestId,
+                        StudentExamTestKey = sctest.TestKey,
+                        StudentExamTestAns = sctest.UserAns,
+                        TestIndex = sctest.TestIndex,
+                        TestTitle = sctest.TestTitle,
+                        TestType = sctest.TestType,
+                        CourseTopicId = sctest.CourseTopicId,
+                        CourseTopicTitle = sctest.CourseTopicTitle,
+                        TestTags = sctest.TestTags,
+                        TestLevel = sctest.TestLevel,
+                        TestOptions = sctest.TestOptions
+                        }
                         );}
                     break; 
                     }
@@ -289,6 +282,43 @@ else
         {
         _cmd = (_cmd == "useSmallFont")? "": "useSmallFont";
         i = 0;
+        }
+    public async Task BtnReadTestsPaginated(int newPage)
+        {
+        intPageNumber = newPage;
+        course = new Course () {CourseId = Convert.ToInt32 (appState.CourseId) };
+        lstTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), intPageNumber, true);
+        lstxTests.Clear ();
+        foreach(Test tst in lstTests)
+            {
+            lstxTests.Add (new StudentExamTest()
+                {
+                StudentExamId = tst.CourseId,
+                TestId = tst.TestId,
+                StudentExamTestKey = 0,
+                StudentExamTestAns = 0,
+                TestIndex = 0,
+                TestTitle = tst.TestTitle,
+                TestType = tst.TestType,
+                CourseTopicId = tst.TopicId,
+                CourseTopicTitle = "",
+                TestTags = tst.TestTags,
+                TestLevel = tst.TestLevel,
+                TestOptions = tst.TestOptions
+                }
+            );}
+        //find and set key
+        foreach(StudentExamTest t in lstxTests)
+            {
+            foreach(TestOption opt in t.TestOptions)
+                {
+                if (opt.TestOptionTags >= 2)
+                    {
+                    t.StudentExamTestKey = opt.TestOptionId;
+                    break;
+                    }
+                }
+            }
         }
     public async Task BtnEditCourseTest(int testId)
         {
@@ -357,6 +387,17 @@ else
         appState.SetCmd ("ShowCourseTestStats");
         _hasFetched = true;
         StateHasChanged ();
+        }
+    public async Task BtnAddSelectedTestsToAnExam()
+        {
+        var selectedIds = lstxTests
+            .Where(t => t.IsSelected)
+            .Select(t => t.TestId)
+            .ToList();
+        foreach(int i  in selectedIds)
+            {
+            Console.WriteLine($"page ......................................... Selected Test Id = {i}");
+            }
         }
     public void BtnBack()
         {
