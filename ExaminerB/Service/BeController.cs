@@ -493,6 +493,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Update_StudentExamAsync (studentExam);
             return Ok (result);
             }
+        [HttpPost ("Update_StudentsExamTags")]
+        public async Task<ActionResult<bool>> Update_StudentsExamTags ([FromBody] int examId, [FromQuery] string mode)
+            {
+            var result = await _BeService.Update_StudentsExamTagsAsync (mode, examId);
+            return Ok (result);
+            }
         [HttpPost ("Update_StudentExamTags")]
         public async Task<ActionResult<bool>> Update_StudentExamTags ([FromBody] StudentExam tempstudentExam)
             {

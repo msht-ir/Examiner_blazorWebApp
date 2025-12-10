@@ -150,7 +150,7 @@ else
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            
+
             Navman.NavigateTo ("/Login");
             }
         switch (appState.Cmd?.ToLower())
@@ -352,6 +352,7 @@ else
                 nStudentsSlectedOpt5++;
                 }
             }
+        nStudentsNotAnswered = nStudentsVisited - nStudentsAnswered;
         appState.SetTestId (studentExamTest.TestId);
         appState.SetCmd ("ShowCourseTestStats");
         _hasFetched = true;

@@ -2008,6 +2008,59 @@ COMMIT TRANSACTION;
                 }
             return new StudentExam ();
             }
+        public async Task<List<StudentExam>> Read_StudentsExamAsync (int examId, bool readInactiveExams)
+            {
+            int i = 0;
+            List<StudentExam> lstStudentsExam = new List<StudentExam> ();
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            string sql = @"SELECT se.StudentExamId, se.StudentId, c.CourseId, c.CourseName,
+                e.ExamId, e.ExamTitle, e.ExamDateTime, e.ExamDuration, e.ExamNTests, e.ExamTags,
+                se.StartDateTime, se.FinishDateTime, se.StudentExamTags, se.StudentExamPoint
+                FROM StudentExams se 
+                INNER JOIN Exams e ON se.ExamId = e.ExamId
+                INNER JOIN Courses c ON e.CourseId = c.CourseId
+                WHERE e.ExamId=@examid ";
+            if (!readInactiveExams)
+                {
+                sql += " AND (e.ExamTags & 1) = 1";
+                }
+            sql += " ORDER BY e.ExamDateTime";
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@examid", examId.ToString ());
+                var reader = await cmd.ExecuteReaderAsync ();
+                while (await reader.ReadAsync ())
+                    {
+                    i++;
+                    var exam = new StudentExam ();
+                    exam.StudentExamId = reader.GetInt32 (0);
+                    exam.StudentId = reader.GetInt32 (1);
+                    exam.CourseId = reader.GetInt32 (2);
+                    exam.CourseName = reader.GetString (3);
+                    exam.ExamId = reader.GetInt32 (4);
+                    exam.ExamIndex = i;
+                    exam.ExamTitle = reader.GetString (5);
+                    exam.ExamDateTime = reader.GetString (6);
+                    exam.ExamDuration = reader.GetInt32 (7);
+                    exam.ExamNTests = reader.GetInt32 (8);
+                    exam.ExamTags = reader.GetInt32 (9);
+                    exam.StartDateTime = reader.GetString (10);
+                    exam.FinishDateTime = reader.GetString (11);
+                    exam.StudentExamTags = reader.GetInt32 (12);
+                    exam.StudentExamPoint = reader.GetDouble (13);
+                    lstStudentsExam.Add (exam);
+                    }
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("in API StudentExamsController : \n" + ex.ToString ());
+                }
+            await cnn.CloseAsync ();
+            return lstStudentsExam;
+            }
         public async Task<bool> Update_StudentExamAsync (StudentExam studentExam)
             {
             string? connString = _config.GetConnectionString ("cnni");
@@ -2023,6 +2076,70 @@ COMMIT TRANSACTION;
             cmd.Parameters.AddWithValue ("@studentexampoint", studentExam.StudentExamPoint);
             cmd.ExecuteNonQuery ();
             return true;
+            }
+        public async Task<bool> Update_StudentsExamTagsAsync (string mode, int examId)
+            {
+            //Update tags of an exam for all student
+            string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd . HH:mm");
+            string sql = "";
+            switch (mode)
+                {
+                case "setStudentExamStartedOn":
+                    {
+                    sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 1), StartDateTime=@currectdatetime ";
+                    break;
+                    }
+                case "setStudentExamstartedOff":
+                    {
+                    sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags & ~1), StartDateTime='' ";
+                    break;
+                    }
+                case "setStudentExamFinishedOn":
+                    {
+                    sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 2), FinishDateTime=@currectdatetime ";
+                    break;
+                    }
+                case "setStudentExamFinishedOff":
+                    {
+                    sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags & ~2) , FinishDateTime= ''";
+                    break;
+                    }                    
+                }
+            if (sql == "")
+                { 
+                return false;
+                }
+            else
+                {
+                sql += " WHERE ExamId=@examid";
+                }
+                string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@examid", examId);
+                cmd.Parameters.AddWithValue ("@currectdatetime", currentDateTime);
+                int c = cmd.ExecuteNonQuery ();
+                await cnn.CloseAsync ();
+                //get list of students have this exam
+                List<StudentExam> lstStudentsExams = await Read_StudentsExamAsync (examId, true);
+                foreach(StudentExam stdntex in lstStudentsExams)
+                    {
+                    if (stdntex.FinishDateTime.Length > 0)
+                        {
+                        bool result = await CalculatePoints_StudentExamsAsync (stdntex.StudentExamId);
+                        }
+                    }
+                return true;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("Error in: SetTags \n" + ex.ToString ());
+                await cnn.CloseAsync ();
+                return false;
+                }
             }
         public async Task<bool> Update_StudentExamTagsAsync (StudentExam tempStudentExam)
             {
@@ -3137,7 +3254,7 @@ COMMIT TRANSACTION;
             string strKey = "";
             string sql = "SELECT MessageId, FromId, ToId, DateTimeSent, DateTimeRead, MessageText, MessageTags, Students.StudentName, Students.StudentNickname ";
             sql += " FROM Messages INNER JOIN Students ON Messages.ToId = Students.StudentId";
-            sql += " WHERE FromId=@fromid AND DateTimeSent=@datetimesent";
+            sql += " WHERE FromId=@fromid AND DateTimeSent=@datetimesent ORDER BY DateTimeRead";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try

@@ -130,36 +130,48 @@ else
                     <img src="/icons/icoDelete_bt_1.png" width="22" />
                 </button>                
                 }
-                @if((appState.Cmd == "ShowListOfAnswersToThisMessage") & (message.MessageId == appState.MessageId) & (message.MessageTags >= 32) & (@nStudents > 0))
+                @if((appState.Cmd == "ShowListOfAnswersToThisMessage") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
                     {
                     <div class="container mt-5" style="text-align:center;">
                         <div class="card">
                             <div class="card-body">
                                 <table class="table table-borderless">
-                            @foreach (Message msg in lstMessageInstances)
-                                {
-                                <tr>
-                                    <td style="text-align:left">
-                                            <span style="font-size:smaller;font-style:italic">stdn:</span><span style="font-size:smaller">@msg.ToUsername (@msg.ToNickname)</span>
-                                    </td>
-                                        @if((@msg.MessageTags & 8) == 8)
-                                            {
-                                            <span style="font-size:smaller;font-weight:bold; color:royalblue">YES</span>
-                                            }
-                                        else if((@msg.MessageTags & 16) == 16)
-                                            {
-                                            <span style="font-size:smaller;font-weight:bold; color:indianred">NO</span>
-                                            }
-                                        else
-                                            {
-                                            <span style="font-size:smaller;font-weight:bold; color:lightslategray">---</span>                            
-                                            }
-                                    <td>
-
-                                    </td>
-                                </tr>
-                                }
-                        </table>
+                                    @foreach (Message msg in lstMessageInstances)
+                                        {
+                                        <tr>
+                                            <td style="text-align:left">
+                                                    @if((msg.MessageTags & 1) == 1)
+                                                        {
+                                                        <span style="font-size:x-small;font-style:normal;font-weight:bold;color:royalblue">
+                                                            @msg.DateTimeRead
+                                                        </span>                                                
+                                                        }
+                                                    else
+                                                        {
+                                                        <span style="font-size:x-small;font-style:normal;font-weight:bold;color:indianred">
+                                                            Not Read
+                                                        </span>
+                                                        }
+                                                    <br/>
+                                                    <span style="font-size:smaller">
+                                                        @msg.ToUsername (@msg.ToNickname)
+                                                    </span>
+                                            </td>
+                                                @if((@msg.MessageTags & 8) == 8)
+                                                    {
+                                                    <span style="font-size:smaller;font-weight:bold; color:royalblue">YES</span>
+                                                    }
+                                                else if((@msg.MessageTags & 16) == 16)
+                                                    {
+                                                    <span style="font-size:smaller;font-weight:bold; color:indianred">NO</span>
+                                                    }
+                                                else
+                                                    {
+                                                    <span style="font-size:smaller;font-weight:bold; color:lightslategray">--</span>                            
+                                                    }
+                                        </tr>
+                                        }
+                                </table>
                             </div>
                         </div>
                     </div>

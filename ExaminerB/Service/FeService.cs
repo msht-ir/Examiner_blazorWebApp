@@ -689,6 +689,19 @@ namespace ExaminerB.Service
                 return false;
                 }
             }
+        public async Task<bool> Update_StudentsExamTags (string mode, int ExamId)
+            {
+            //modes: setStudentExamStartedOn|Off , setStudentExamFinishedOn|Off
+            var response = await _http.PostAsJsonAsync ($"api/Update_StudentsExamTags?mode={mode}", ExamId);
+            if (response.IsSuccessStatusCode)
+                {
+                return true;
+                }
+            else
+                {
+                return false;
+                }
+            }
         public async Task<bool> Update_StudentExamTags (StudentExam studentExam, string strNewStudentExamTags)
             {
             string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd . HH:mm");

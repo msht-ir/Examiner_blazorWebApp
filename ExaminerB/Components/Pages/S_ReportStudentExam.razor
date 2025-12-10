@@ -14,8 +14,9 @@ else
     {
     <EditForm Model="studentExam">
         <div style="text-align: center;">
-            <h4>@studentExam.ExamTitle <span style="font-size:small;color:royalblue;"> - @student.UserName</span></h4>
-            <h6>Course: @studentExam.CourseName - code: @studentExam.StudentExamId </h6>
+            <h6>Course: @studentExam.CourseName </h6>
+            <h4>@studentExam.ExamTitle</h4>
+            <span style="font-size:small;color:royalblue;">@student.UserName</span>
             <hr />
             <button class="btn btn-link" @onclick="BtnCalcPercents">
                 <img src="/images/gifChart03.gif" width="30" />
@@ -304,6 +305,7 @@ else
                 nStudentsSlectedOpt5++;
                 }
             }
+        nStudentsNotAnswered = nStudentsVisited - nStudentsAnswered;
         appState.SetTestId (studentExamTest.TestId);
         appState.SetCmd ("ShowCourseTestStats");
         _hasFetched = true;

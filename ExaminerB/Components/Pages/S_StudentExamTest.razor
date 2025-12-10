@@ -44,27 +44,25 @@
                     strSelect = "Select";
                     }                
                     @foreach(TestOption opt in studentExamTest.TestOptions)
-                    {
-                        <tr style="@style">
+                        {
+                        <tr class="mb-2" style="@style">
                             @if ((HelpShowAnswer) && (opt.TestOptionId==studentExamTest.StudentExamTestKey))
                                 {
-                                <td style="color:IndianRed; padding-top:5px; padding-bottom:5px;">@opt.TestOptionTitle</td>
-                                //SetHelpedTestId(0); //clear guide flag
+                                <td class="mb-2" style="color:IndianRed; padding-top:5px; padding-bottom:5px;">@opt.TestOptionTitle</td>
                                 }
                             else
                                 {
-                                <td style="color:Black; padding-top:5px; padding-bottom:5px;">@opt.TestOptionTitle</td>
-                                //SetHelpedTestId(0); //clear guide flag
+                                <td class="mb-2" style="color:Black; padding-top:5px; padding-bottom:5px;">@opt.TestOptionTitle</td>
                                 }
-                            <td>
-                            @if(opt.TestOptionId==studentExamTest.StudentExamTestAns)
-                                {
-                                <button class="btn btn-success btn-sm col-auto" @onclick= "()=> BtnChooseOptionAsAnswer(studentExamTest.StudentExamTestId, opt.TestOptionId) ">@strSelect</button>
-                                }
-                            else
-                                {
-                                <button class="btn btn-primary btn-sm col-auto" @onclick= "()=> BtnChooseOptionAsAnswer(studentExamTest.StudentExamTestId, opt.TestOptionId) ">@strSelect</button>
-                                }
+                            <td style="display:flex; gap:8px;">
+                                @if(opt.TestOptionId==studentExamTest.StudentExamTestAns)
+                                    {
+                                    <button class="btn btn-success btn-sm mb-2 col-auto" style="margin-bottom:10px;" @onclick= "()=> BtnChooseOptionAsAnswer(studentExamTest.StudentExamTestId, opt.TestOptionId) ">@strSelect</button>
+                                    }
+                                else
+                                    {
+                                    <button class="btn btn-primary btn-sm mb-2 col-auto" style="margin-bottom:10px;" @onclick= "()=> BtnChooseOptionAsAnswer(studentExamTest.StudentExamTestId, opt.TestOptionId) ">@strSelect</button>
+                                    }
                             </td>
                         </tr>                                        
                     }

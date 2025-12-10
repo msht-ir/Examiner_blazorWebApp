@@ -49,9 +49,8 @@
                                         </button>
                                         @exam.ExamTitle 
                                         <br />
-                                        <span style="color:black; font-weight:normal;">@exam.ExamDateTime</span><br />
                                             @{
-                                            int examId = exam.ExamId;                                            
+                                            int examId = exam.ExamId;
                                             }
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnEditExam(exam)" >
                                             <img src="/icons/icoRename_bt_1.png" width="25" />
@@ -59,27 +58,31 @@
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportExamTests(exam.ExamId)">
                                             <img src="/icons/icoReport_bt_1.png" width="20" />
                                         </button>
+                                        <button style="border:none" class="btn btn-link" @onclick="()=>BtnDeleteExam(exam.ExamId)" >
+                                            <img src="/icons/icoDelete_bt_1.png" width="20" />
+                                        </button>
+                                        <br />
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnAddStudentExam(exam.ExamId)" >
                                             <img src="/icons/icoUserAdd_bluet_1.png" width="22" />
                                         </button>
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportStudents(exam.ExamId)" >
                                             <img src="/icons/icoGroup_grayt_1.png" width="22" />
                                         </button>
-                                        <button style="border:none" class="btn btn-link" @onclick="()=>BtnDeleteExam(exam.ExamId)" >
-                                            <img src="/icons/icoDelete_bt_1.png" width="20" />
+                                        <button style="border:none" class="btn btn-link" @onclick="()=>BtnSetExamAsFinishedForAllStudents(exam.ExamId)" >
+                                            <img src="/icons/icoClock_rt_1.png" width="22" />
                                         </button>
-                                        <br />
                                         <br />
                                     </td>
                                     <td>
-                                        @exam.ExamNTests Tests
-                                        <br />
+                                        @exam.ExamDateTime<br />
+                                        @exam.ExamNTests Tests<br />
                                         @exam.ExamDuration m 
                                     </td>
                                 </tr>
                                 @if (appState.Cmd == "AddStudentToExam" && (@examId == appState.ExamId))
                                     {
-                                    <h6 style="color:lightslategray;font-weight:bold;">Add Students to Exam</h6>
+                                    <br />
+                                        <h6 style="color:lightslategray;font-weight:bold;">Add Students to Exam</h6>
                                     <select class="form-select d-inline" @bind="intGroupId" style="width:75%; background-color:whitesmoke">
                                         <option value="0"> Select a Group... </option>
                                         @foreach (var grp in lstGroups)
@@ -88,7 +91,7 @@
                                             }
                                     </select>
                                     <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExams (exam.ExamId)">
-                                        <img src="/icons/icoAddItem_gt_1.png" width="22" />
+                                        <img src="/icons/icoSave_bt_1.png" width="22" />
                                     </button>
                                     <br />
                                     <select class="form-select d-inline" @bind="intStudentId" style="width:75%; background-color:whitesmoke">
@@ -99,11 +102,11 @@
                                             }
                                     </select>
                                     <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExam (exam.ExamId)">
-                                        <img src="/icons/icoAddItem_gt_1.png" width="22" />
+                                        <img src="/icons/icoSave_bt_1.png" width="22" />
                                     </button>
                                     <br />
                                     <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                        <img src="/icons/icoCancel_bw_1.png" width="24" />
+                                        <img src="/icons/icoCancel_bw_1.png" width="22" />
                                     </button>
                                     }
                                 }
@@ -157,7 +160,7 @@
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            
+
             Navman.NavigateTo ("/Login");
             }
         //user
@@ -205,18 +208,33 @@
         bool result = await feService.Update_Exam (exam);
         StateHasChanged ();
         }
+    public async Task BtnSetExamAsFinishedForAllStudents (int examId)
+        {
+        if(await JS.InvokeAsync<bool>("confirm", "Terminate all Students's Exams?\n\nSure?"))
+            {
+            bool result = await feService.Update_StudentsExamTags ("setStudentExamFinishedOn", examId);            
+            StateHasChanged ();
+            }
+        }
     public void BtnEditExam (Exam exam)
         {
         Navman.NavigateTo ($"/T_Exam/{exam.ExamId}");
         }
     public async Task BtnAddStudentExam (int examId)
         {
-        user.UserId = Convert.ToInt32(appState.UserId);
-        lstGroups = await feService.Read_Groups (user, false, false);
-        lstStudents = await feService.Read_Students (user.UserId, false, false);
-        appState.SetExamId(examId);
-        appState.SetCmd("AddStudentToExam");
-        StateHasChanged ();
+        if (appState.Cmd != "AddStudentToExam")
+            {
+            user.UserId = Convert.ToInt32 (appState.UserId);
+            lstGroups = await feService.Read_Groups (user, false, false);
+            lstStudents = await feService.Read_Students (user.UserId, false, false);
+            appState.SetExamId (examId);
+            appState.SetCmd ("AddStudentToExam");
+            StateHasChanged ();
+            }
+        else
+            {
+            appState.SetCmd ("");
+            }
         }
     public async Task BtnCreateStudentExams (int examId)
         {
