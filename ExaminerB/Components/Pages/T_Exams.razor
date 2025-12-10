@@ -22,21 +22,28 @@
         }
     else
         {
-        <div class="container mt-5">
-            <div class="card">
-                <div class="card-body">
-                    <EditForm Model="lstCourseExams">
-                        <table class="table table-borderless">
-                            <thead>
-                                <tr style="font-weight:bold; border:none">
-                                    <td>Exam</td>
-                                    <td>Info</td>
-                                </tr>
-                            </thead>
-                            @foreach (var exam in lstCourseExams)
-                                {
+        <EditForm Model="lstCourseExams">
+            @foreach (var exam in lstCourseExams)
+                {
+                int examId = exam.ExamId;
+                <div class="container mt-2">
+                    <div class="card">
+                        <div class="card-body" style="background-color:whitesmoke">
+                            <table class="table table-borderless">
                                 <tr style="align-content:center; border:none">
-                                    <td style="color:indianred; font-weight:bold;">
+                                    <td>
+                                        <span style="color:indianred; font-weight:bold;">@exam.ExamTitle</span> <br />
+                                        <span style="color:royalblue; font-weight:bold;font-size:small">@exam.ExamDateTime</span><br />
+                                        <span>@exam.ExamNTests Tests</span><br />
+                                        <span>@exam.ExamDuration m</span><br />
+                                    </td>
+                                    <td>
+                                        <button style="border:none" class="btn btn-link" @onclick="()=>BtnEditExam(exam)" >
+                                            <img src="/icons/icoRename_bt_1.png" width="28" />
+                                        </button>
+                                        <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportExamTests(exam.ExamId)">
+                                            <img src="/icons/icoReport_bt_1.png" width="20" />
+                                        </button>
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnStratStopExam(exam)" >
                                             @if (exam.IsActive)
                                                 {
@@ -47,103 +54,97 @@
                                                 <img src="/icons/icoOff_grayw_1.png" width="24" />                                        
                                                 }
                                         </button>
-                                        @exam.ExamTitle 
-                                        <br />
-                                            @{
-                                            int examId = exam.ExamId;
-                                            }
-                                        <button style="border:none" class="btn btn-link" @onclick="()=>BtnEditExam(exam)" >
-                                            <img src="/icons/icoRename_bt_1.png" width="25" />
-                                        </button>
-                                        <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportExamTests(exam.ExamId)">
-                                            <img src="/icons/icoReport_bt_1.png" width="20" />
-                                        </button>
-                                        <button style="border:none" class="btn btn-link" @onclick="()=>BtnDeleteExam(exam.ExamId)" >
-                                            <img src="/icons/icoDelete_bt_1.png" width="20" />
-                                        </button>
                                         <br />
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnAddStudentExam(exam.ExamId)" >
-                                            <img src="/icons/icoUserAdd_bluet_1.png" width="22" />
+                                            <img src="/icons/icoUserAdd_bluet_1.png" width="24" />
                                         </button>
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportStudents(exam.ExamId)" >
-                                            <img src="/icons/icoGroup_grayt_1.png" width="22" />
+                                            <img src="/icons/icoGroup_grayt_1.png" width="24" />
                                         </button>
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnSetExamAsFinishedForAllStudents(exam.ExamId)" >
                                             <img src="/icons/icoClock_rt_1.png" width="22" />
                                         </button>
-                                        <br />
-                                    </td>
-                                    <td>
-                                        @exam.ExamDateTime<br />
-                                        @exam.ExamNTests Tests<br />
-                                        @exam.ExamDuration m 
+                                        <button style="border:none" class="btn btn-link" @onclick="()=>BtnDeleteExam(exam.ExamId)" >
+                                            <img src="/icons/icoDelete_bt_1.png" width="20" />
+                                        </button>
                                     </td>
                                 </tr>
                                 @if (appState.Cmd == "AddStudentToExam" && (@examId == appState.ExamId))
                                     {
-                                    <br />
-                                        <h6 style="color:lightslategray;font-weight:bold;">Add Students to Exam</h6>
-                                    <select class="form-select d-inline" @bind="intGroupId" style="width:75%; background-color:whitesmoke">
-                                        <option value="0"> Select a Group... </option>
-                                        @foreach (var grp in lstGroups)
-                                            {
-                                            <option value="@grp.GroupId"> @grp.GroupName </option>
-                                            }
-                                    </select>
-                                    <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExams (exam.ExamId)">
-                                        <img src="/icons/icoSave_bt_1.png" width="22" />
-                                    </button>
-                                    <br />
-                                    <select class="form-select d-inline" @bind="intStudentId" style="width:75%; background-color:whitesmoke">
-                                        <option value="0"> Select a Student... </option>
-                                        @foreach (var stdnt in lstStudents)
-                                            {
-                                            <option value="@stdnt.UserId"> @stdnt.UserName </option>
-                                            }
-                                    </select>
-                                    <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExam (exam.ExamId)">
-                                        <img src="/icons/icoSave_bt_1.png" width="22" />
-                                    </button>
-                                    <br />
-                                    <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                        <img src="/icons/icoCancel_bw_1.png" width="22" />
-                                    </button>
+                                    <hr />
+                                    <h6 style="color:lightslategray;font-weight:bold;">Add Students to Exam</h6>
+                                    <tr style="align-content:center; border:none">
+                                        <td>
+                                            <select class="form-select" @bind="intGroupId" style="width:95%; background-color:white">
+                                                <option value="0"> Select a Group... </option>
+                                                @foreach (var grp in lstGroups)
+                                                    {
+                                                    <option value="@grp.GroupId"> @grp.GroupName </option>
+                                                    }
+                                            </select>
+                                            <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExams (exam.ExamId)">
+                                                <img src="/icons/icoSave_bt_1.png" width="22" />
+                                            </button>
+                                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                                <img src="/icons/icoCancel_bw_1.png" width="20" />
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <select class="form-select" @bind="intStudentId" style="width:95%; background-color:white">
+                                                <option value="0"> Select a Student... </option>
+                                                @foreach (var stdnt in lstStudents)
+                                                    {
+                                                    <option value="@stdnt.UserId"> @stdnt.UserName </option>
+                                                    }
+                                            </select>
+                                            <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExam (exam.ExamId)">
+                                                <img src="/icons/icoSave_bt_1.png" width="22" />
+                                            </button>
+                                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                                <img src="/icons/icoCancel_bw_1.png" width="20" />
+                                            </button> 
+                                        </td>
+                                    </tr>
                                     }
-                                }
-                        </table>
-                        <hr />
-                        @if (appState.Cmd == "AddNewExam")
-                            {
-                            <span style="font-weight:bold">Add New Exam</span>
-                            <br />
-                            <div class="mb-3">
-                                <input class="form-control" @bind="txtNewExamTitle" placeholder="Exam name" style="width:70%"/>
-                            </div>
-                            <button class="btn btn-link" @onclick="BtnCreateExam" >
-                                <img src="/icons/icoSave_cw_1.png" width="22" />
-                            </button>
-                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                <img src="/icons/icoCancel_bw_1.png" width="24" />
-                            </button>
-                            }
-                        else
-                            {
-                            <button class="btn btn-link" @onclick="BtnAddNewExam">
-                                <img src="/icons/icoAddItem_gt_1.png" width="24" />
-                            </button>
-                            }
-                    </EditForm>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div style="text-align: center;">
-            <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/icons/icoBack_bt_1.png" width="30" />
-            </button>
-        </div>
+                }
+            @if (appState.Cmd == "AddNewExam")
+                {
+                <br />
+                <div style="font-weight:bold; padding-bottom:10px;">Add New Exam</div>
+                    <div class="mb-3">
+                    <input class="form-control d-inline" @ref= "txtNewExamName" @bind="txtNewExamTitle" placeholder="Exam name" style="width:60%"/>
+                    <button class="btn btn-link" @onclick="BtnCreateExam" >
+                        <img src="/icons/icoSave_bt_1.png" width="22" />
+                    </button>
+                    <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                        <img src="/icons/icoCancel_bw_1.png" width="20" />
+                    </button>
+                </div>
+                }
+            else
+                {
+                <br />
+                <br />
+                <hr />
+                <div style="text-align: center;">
+                    <button class="btn btn-link" @onclick="BtnAddNewExam">
+                        <img src="/icons/icoAddItem_gt_1.png" width="24" />
+                    </button>
+                    <button class="btn btn-link" @onclick="BtnBack">
+                        <img src="/icons/icoBack_bt_1.png" width="25" />
+                    </button>
+                </div>
+                }
+        </EditForm>
         }
 
 @code {
+    private ElementReference txtNewExamName;
+
     User user = new User ();
     Course course = new Course ();
     List<Exam> lstCourseExams = new ();
@@ -185,10 +186,12 @@
         appState.OnChange -= TriggerRender;
         }
     //AddNew Exam
-    public void BtnAddNewExam ()
+    public async Task BtnAddNewExam ()
         {
         appState.SetCmd ("AddNewExam");
         StateHasChanged ();
+        await Task.Delay (1);
+        await txtNewExamName.FocusAsync ();
         }
     public async Task BtnCreateExam ()
         {

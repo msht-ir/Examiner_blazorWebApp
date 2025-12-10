@@ -7,7 +7,7 @@
 @implements IDisposable
 
     <div style="text-align: center;">
-        <h1 style="color:steelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h1>
+        <h2 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h2>
         <hr style="color:red"/>
         <h2>Courses</h2>
     </div>
@@ -62,69 +62,93 @@
                                     else
                                         {
                                          <div style="text-align: center;">
-                                            <button class="btn btn-link" title="Rename this Course" @onclick="()=>BtnEditCourse(crs.CourseId)">
-                                                <img src="/icons/icoRename_bt_1.png" width="24" />
-                                            </button>
-                                            <button class="btn btn-link" title="Delete this Course!" @onclick="()=>BtnDeleteCourse(crs.CourseId)" >
-                                                <img src="/icons/icoDelete_bt_1.png" width="22" />
-                                            </button>
                                             <button class="btn btn-link" title="List Exams" @onclick="()=>BtnExams(crs)" >
-                                                <img src="/icons/icoFolderExam_bt_2.png" width="28" />
+                                                <img src="/icons/icoFolderExam_bt_2.png" width="32" />
                                             </button>
                                             <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTests(crs.CourseId)" >
-                                                <img src="/icons/icoFolderReport_bt_1.png" width="26" />
+                                                <img src="/icons/icoFolderReport_bt_1.png" width="28" />
                                             </button>
                                             <button class="btn btn-link" title="List Tests" @onclick="()=>BtnListCourseTests(crs.CourseId, crs.CourseName)" >
-                                                <img src="/icons/icoList_bt_1.png" width="24" />
+                                                <img src="/icons/icoList_bt_1.png" width="28" />
+                                            </button>
+                                            <button class="btn btn-link" title="Rename this Course" @onclick="()=>BtnEditCourse(crs.CourseId)">
+                                                <img src="/icons/icoRename_bt_1.png" width="30" />
+                                            </button>
+                                            <button class="btn btn-link" title="Delete this Course!" @onclick="()=>BtnDeleteCourse(crs.CourseId)" >
+                                                <img src="/icons/icoDelete_bt_1.png" width="26" />
                                             </button>
                                             <br />
+                                            <br />
                                         </div>
-                                        <hr style="color:red" />
-                                        <h5>Topics</h5>
                                         //CourseTopics
-                                        @foreach (CourseTopic ct in crs.CourseTopics)
-                                            {
-                                            <div class="container mt-2">
-                                                <div class="card">
-                                                    <div class="card-body bg-light">
-                                                        <div class="mb-2">
-                                                            <input class="form-control d-inline" @ref="inputRefs[ct.CourseTopicId]" @bind="ct.CourseTopicTitle" placeholder="Topic name" >
-                                                            <button class="btn btn-link" @onclick="()=>BtnUpdateCourseTopic (ct)">
-                                                                <img src="/icons/icoSave_bt_1.png" width="22" />
-                                                            </button>
-                                                            <button class="btn btn-link" @onclick="()=>BtnDeleteCourseTopic (ct.CourseTopicId)">
-                                                                <img src="/icons/icoDelete_bt_1.png" width="22" />
-                                                            </button>
-                                                            <button class="btn btn-link" @onclick="()=>BtnListCourseTopicTests (ct)">
-                                                                <img src="/icons/icoList_bt_1.png" width="22" />
-                                                            </button>
+                                        <div class="accordion" id="accordionTopicss">
+                                            <div class="accordion-item mb-2">
+                                                <h4 class="accordion-header">
+                                                    <button class="accordion-button collapsed"
+                                                        type="button"
+                                                        style="background-color:aliceblue"
+                                                        data-bs-toggle="collapse"
+                                                        data-bs-target="#topics"
+                                                        aria-expanded="false"
+                                                        aria-controls="topics">
+                                                        <h5>Topics</h5>
+                                                    </button>
+                                                </h4>
+                                            <div id="topics" class="accordion-collapse collapse" data-bs-parent="#accordionTopics">
+                                                <div class="accordion-body" style="background-color:white">
+                                                    @foreach (CourseTopic ct in crs.CourseTopics)
+                                                    {
+                                                    <div class="container mt-2">
+                                                        <div class="card">
+                                                            <div class="card-body bg-light">
+                                                                <div class="mb-2">
+                                                                    <input class="form-control d-inline" @ref="inputRefs[ct.CourseTopicId]" @bind="ct.CourseTopicTitle" placeholder="Topic name" >
+                                                                    <button class="btn btn-link" @onclick="()=>BtnUpdateCourseTopic (ct)">
+                                                                        <img src="/icons/icoSave_bt_1.png" width="22" />
+                                                                    </button>
+                                                                    <button class="btn btn-link" @onclick="()=>BtnDeleteCourseTopic (ct.CourseTopicId)">
+                                                                        <img src="/icons/icoDelete_bt_1.png" width="22" />
+                                                                    </button>
+                                                                    <button class="btn btn-link" @onclick="()=>BtnListCourseTopicTests (ct)">
+                                                                        <img src="/icons/icoList_bt_1.png" width="22" />
+                                                                    </button>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                    }
+                                                @if ((appState.Cmd == "AddNewCourseTopic") && ((appState.CourseId) == crs.CourseId))
+                                                    {
+                                                    <hr style="color:red" />
+                                                    <h6 style="color:royalblue">Add New Course Topic</h6>
+                                                    <div class="mb-3">
+                                                        <input class="form-control" @ref="txtNewCourseTopicTitle" @bind="courseTopic.CourseTopicTitle" placeholder="New Topic ...">
+                                                    </div>
+                                                    <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseTopic(crs.CourseId)">
+                                                        <img src="/icons/icoSave_cw_1.png" width="22" />
+                                                    </button>
+                                                    <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                                        <img src="/icons/icoCancel_bw_1.png" width="24" />
+                                                    </button>
+                                                    }
+                                            else
+                                                {
+                                                <div style="text-align:center;">
+                                                    <button class="btn btn-link btn-sm" @onclick="()=>BtnAddNewCourseTopic(crs.CourseId)">
+                                                        <img src="/icons/icoAddItem_gt_1.png" width="22" />
+                                                    </button>
                                                 </div>
+                                                }
+
+            			                        </div>
                                             </div>
-                                            }
-                                        @if ((appState.Cmd == "AddNewCourseTopic") && ((appState.CourseId) == crs.CourseId))
-                                            {
-                                            <hr style="color:red" />
-                                            <h6 style="color:royalblue">Add New Course Topic</h6>
-                                            <div class="mb-3">
-                                                <input class="form-control" @ref="txtNewCourseTopicTitle" @bind="courseTopic.CourseTopicTitle" placeholder="New Topic ...">
-                                            </div>
-                                            <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseTopic(crs.CourseId)">
-                                                <img src="/icons/icoSave_cw_1.png" width="22" />
-                                            </button>
-                                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                <img src="/icons/icoCancel_bw_1.png" width="24" />
-                                            </button>
-                                            }
-                                        else
-                                            {
-                                            <div style="text-align:center;">
-                                                <button class="btn btn-link btn-sm" @onclick="()=>BtnAddNewCourseTopic(crs.CourseId)">
-                                                    <img src="/icons/icoAddItem_gt_1.png" width="22" />
-                                                </button>
-                                            </div>
-                                            }
+                                        </div>
+                                    </div>
+
+
+
+
+
                                         <hr style="color:red" />
                                         <h5>Online Folders</h5>
                                         //CourseFolders

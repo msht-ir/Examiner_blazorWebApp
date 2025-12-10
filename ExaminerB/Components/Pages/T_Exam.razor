@@ -265,7 +265,7 @@ else
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            
+
             Navman.NavigateTo ("/Login");
             }
         appState.SetCmd ("");
@@ -382,6 +382,7 @@ else
         appState.SetCmd ("AddNewExamTest");
         StateHasChanged(); //render page to make elements appear on DOM
         await Task.Yield(); //wait until render is completed
+        await Task.Delay (1);
         await txtSearchTest.FocusAsync ();
         }
     public async Task BtnCreateExamTest()

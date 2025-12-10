@@ -62,11 +62,11 @@
 </script>
 
 @code {
-    private ElementReference refUser;
-    private ElementReference refPass;
     private ElementReference refRole;
     private ElementReference refTeacher;
     private ElementReference refGroup;
+    private ElementReference refUser;
+    private ElementReference refPass;
     private bool _firstRender = true;
     private User user = new User { UserRole = "student" };
     private int TeacherId = 0;
@@ -84,6 +84,16 @@
         appState.SetUserName ("");
         lstTeachers = await feService.Read_Teachers ();
         } 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+        if (_firstRender)
+            {
+            _firstRender = false;
+            await Task.Delay (1);
+            await refRole.FocusAsync ();        
+            //await refUser.FocusAsync();
+            }
+        }
     private void TriggerRender()
         {
         InvokeAsync(StateHasChanged);
@@ -91,14 +101,6 @@
     public void Dispose()
         {
         appState.OnChange -= TriggerRender;
-        }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-        if (_firstRender)
-            {
-            _firstRender = false;
-            await refUser.FocusAsync();
-            }
         }
     //btns
     public async Task BtnLogin ()
@@ -129,7 +131,7 @@
                         //navigate
                         await Task.Delay(1);
                         Navman.NavigateTo("/S_Student");
-                       // await JS.InvokeVoidAsync ("alert", $"\n\nWelcome {user.UserNickname} !");
+                        // await JS.InvokeVoidAsync ("alert", $"\n\nWelcome {user.UserNickname} !");
                         break;
                         }
                 case "teacher":
@@ -162,6 +164,7 @@
         {
         if (e.Key == "Enter")
             {
+            await Task.Delay (1);
             await refPass.FocusAsync ();
             }
         }
@@ -179,6 +182,7 @@
         lstGroups = await feService.Read_Groups (user, false, false);
         GroupId = 0;
         StateHasChanged();
+        await Task.Delay (1);
         await refGroup.FocusAsync ();
         }
     private async Task OnRoleChanged()
