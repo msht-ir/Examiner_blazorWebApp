@@ -152,43 +152,31 @@ else
                 </h4>
                 <div id="ExamTestList" class="accordion-collapse @clps" data-bs-parent="#accordionCourses">
                     <div class="accordion-body" style="background-color:whitesmoke">
-                        @if (appState.Cmd.Contains("AddNewExamTest"))
-                            {
-                            @* SEARCH *@ 
-                            <div class="mb-3" style="background-color:WhiteSmoke">
-                                <h6 style="color:royalblue;">Add Tests to Exam</h6>
-                                <div class="mb-3">
-                                    <input class="form-control d-inline" @ref="txtSearchTest" @bind="strSearch" type="text" placeholder="Search..." style="width:80%"/>
-                                    <button class="btn btn-link" @onclick="BtnReadTestsBySearch">
-                                        <img src="/icons/icoSearch_bt_1.png" width="30" />
-                                    </button>
-                                </div>
-                                <select class="form-select d-inline" @ref="cboCourseTests" @bind="cboCourseTestId" style="font-size:small;width:80%">
-                                    <option value="0"> select from results </option>
-                                    @foreach (var ct in lstCourseTests)
-                                        {
-                                        <option value="@ct.TestId"> @ct.TestId - @ct.TestTitle </option>
-                                        }
-                                </select>                    
-                                <button class="btn btn-link" @onclick="BtnCreateExamTest">
-                                    <img src="/icons/icoAddItem_gt_1.png" width="25" />
+                        @* SEARCH *@ 
+                        <div class="mb-3" style="background-color:WhiteSmoke">
+                            <button class="btn btn-link" @onclick="()=>BtnGotoReportCourseTests(exam.CourseId)">
+                                <img src="/icons/icoFolderTests_bt_1.png" width="30" />
+                            </button>
+                            <span style="font-size:larger; font-weight:bold;color:royalblue;">Add Tests to Exam</span>
+                            <div class="mb-3">
+                                <button class="btn btn-link" @onclick="BtnReadTestsBySearch">
+                                    <img src="/icons/icoSearch_bt_1.png" width="30" />
                                 </button>
+                                <input class="form-control d-inline" @ref="txtSearchTest" @bind="strSearch" type="text" placeholder="Search..." style="width:80%"/>
                             </div>
-                            <hr style="color:Red" />
-                            <br />
-                            @* END SEARCH *@
-                            }
-                        else
-                            {
-                            <div style="text-align: center;">
-                                <button class="btn btn-link" @onclick="BtnAddNewExamTest">
-                                    <img src="/icons/icoAddItem_gt_1.png" width="30" />
-                                </button>
-                            </div>
-                            }
-                        @{
-                            i = 0;
-                        }
+                            <button class="btn btn-link" @onclick="BtnCreateExamTest">
+                                <img src="/icons/icoAddItem_gt_1.png" width="25" />
+                            </button>
+                            <select class="form-select d-inline" @ref="cboCourseTests" @bind="cboCourseTestId" style="font-size:small;width:80%">
+                                <option value="0"> select from results </option>
+                                @foreach (var ct in lstCourseTests)
+                                    {
+                                    <option value="@ct.TestId"> @ct.TestId - @ct.TestTitle </option>
+                                    }
+                            </select>                    
+                        </div>
+                        @* END SEARCH *@
+                        @{i = 0;}
                         @foreach (Test tst in lstExamTests)
                             {
                              i++;
@@ -377,6 +365,13 @@ else
         StateHasChanged ();
         }
     //Tests
+    public void BtnGotoReportCourseTests(int courseId)
+        {    
+        appState.SetCmd ("coursetest");
+        appState.SetCourseId (courseId);
+        appState.SetReturnPage ("/T_Courses");
+        Navman.NavigateTo ("/T_ReportTests");
+        }
     public async Task BtnAddNewExamTest()
         {
         appState.SetCmd ("AddNewExamTest");

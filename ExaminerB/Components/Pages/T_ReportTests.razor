@@ -132,8 +132,9 @@ else
                 <div class="container mt-2">
                     <div class="card">
                         <div class="card-body" style="background-color:whitesmoke">
-                            <span style="font-weight:bold;color:royalblue;padding-bottom:5px;">Include selected tests to Exam:</span>
-                                <select class="form-select d-inline" @bind="intExamId" style="width:80%; background-color:white">
+                            <div style="font-weight:bold;color:royalblue;padding-bottom:5px;">Include selected tests to Exam:</div>
+                                
+                            <select class="form-select d-inline" @bind="intExamId" style="width:60%; background-color:white">
                                     <option value="0"> Select an Exam... </option>
                                     @foreach (Exam exam in lstExams)
                                         {
@@ -142,6 +143,9 @@ else
                                 </select>
                                 <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
                                     <img src="/icons/icoSave_bt_1.png" width="28" />
+                                </button>
+                                <button class="btn btn-link" type="submit" @onclick="BtnEditExam">
+                                    <img src="/icons/icoFolderReport_bt_2.png" width="28" />
                                 </button>
                         </div>
                     </div>
@@ -432,6 +436,17 @@ else
             appState.SetCmd ("coursetest");
             StateHasChanged ();
             await JS.InvokeVoidAsync ("alert", $"\n\n{testCount} Tests was added to the Exam Successfully");            
+            }
+        }
+    public async Task BtnEditExam()
+        {
+        if (intExamId > 0)
+            {
+            Navman.NavigateTo ($"/T_Exam/{intExamId}");
+            }
+        else
+            {
+            await JS.InvokeVoidAsync ("alert", "Select an exam!");            
             }
         }
     public void BtnBack()
