@@ -408,26 +408,30 @@ else
         }
     public async Task BtnAddSelectedTestsToAnExam()
         {
-        var selectedIds = lstxTests
-            .Where(t => t.IsSelected)
-            .Select(t => t.TestId)
-            .ToList();
-        foreach(int intTestId in selectedIds)
+        if (intExamId <= 0)
             {
-            Console.WriteLine($"page ..................... Selected Test Id = {i}  /  Selected Exam= {intExamId}");
-
-            ExamTest examTest = new ExamTest () {ExamId = intExamId, TestId= intTestId };
-            int result = await feService.Create_ExamTest (examTest);
-            if (result > 0)
+            await JS.InvokeVoidAsync ("alert", "Select an exam!");            
+            }
+        else
+            {
+            var selectedIds = lstxTests
+                .Where(t => t.IsSelected)
+                .Select(t => t.TestId)
+                .ToList();
+            int testCount = 0;
+            foreach(int intTestId in selectedIds)
                 {
-                await JS.InvokeVoidAsync ("alert", "TEST added to the exam Successfully!");
-                appState.SetCmd ("");
-                StateHasChanged ();
+                ExamTest examTest = new ExamTest () {ExamId = intExamId, TestId= intTestId };
+                int result = await feService.Create_ExamTest (examTest);
+                if (result > 0)
+                    {
+                    testCount++;
+                    Console.WriteLine($"Test {testCount} added to Exam");
+                    }
                 }
-            else
-                {
-                await JS.InvokeVoidAsync ("alert", "Select an exam!");            
-                }
+            appState.SetCmd ("coursetest");
+            StateHasChanged ();
+            await JS.InvokeVoidAsync ("alert", $"\n\n{testCount} Tests was added to the Exam Successfully");            
             }
         }
     public void BtnBack()
