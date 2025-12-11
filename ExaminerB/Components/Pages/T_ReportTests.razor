@@ -4,6 +4,7 @@
 @inject FeService feService
 @inject NavigationManager Navman
 @inject AppState appState
+@inject IJSRuntime JS
 @implements IDisposable
 
 @if (!_hasFetched)
@@ -123,21 +124,35 @@ else
                         Width="100px" Height="100px" />
                     <br /> 
                 </div>
-                <hr style="border-color:red" />
+                <hr style="color:red" />
                 }
             }
-        <br />
-        <div style="text-align: center;">
-            <button class="btn btn-link" type="submit" @onclick="BtnBack">
-                <img src="/icons/icoBack_bt_1.png" width="30" />
-            </button>
             @if (appState.Cmd.ToLower().Contains("coursetest"))
                 {
-                <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
-                    <img src="/images/gifScrollDown.gif" width="40" />
-                </button>
+                <div class="container mt-2">
+                    <div class="card">
+                        <div class="card-body" style="background-color:whitesmoke">
+                            <span style="font-weight:bold;color:royalblue;padding-bottom:5px;">Include selected tests to Exam:</span>
+                                <select class="form-select d-inline" @bind="intExamId" style="width:80%; background-color:white">
+                                    <option value="0"> Select an Exam... </option>
+                                    @foreach (Exam exam in lstExams)
+                                        {
+                                        <option value="@exam.ExamId"> @exam.ExamTitle </option>
+                                        }
+                                </select>
+                                <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
+                                    <img src="/icons/icoSave_bt_1.png" width="28" />
+                                </button>
+                        </div>
+                    </div>
+                </div>
+                <hr style="color:red" />
                 }
-        </div>
+            <div style="text-align: center;">
+                <button class="btn btn-link" type="submit" @onclick="BtnBack">
+                    <img src="/icons/icoBack_bt_1.png" width="30" />
+                </button>
+            </div>
     </EditForm>
     }
     <script>
@@ -150,9 +165,11 @@ else
     private int intPageNumber = 1;        //actual page used for numbering
     private int intPendingPageNumber = 1; //value typed in the input (prevent changing i (index number) of tests in list)
     User user = new User ();
+    Course course = new Course ();
     List<StudentExamTest> lstxTests = new List<StudentExamTest> ();
     List<Test> lstTests = new List<Test> ();
-    Course course = new Course ();
+    List<Exam> lstExams = new List<Exam> ();
+    private int intExamId;
     int i = 0;
     int StudentId;
     string _cmd;
@@ -182,6 +199,8 @@ else
             case "coursetest":
             case "coursetestraw":
                     {
+                    course = new Course () { CourseId = Convert.ToInt32 (appState.CourseId) };
+                    lstExams = await feService.Read_Exams (course.CourseId);
                     await BtnReadTestsPaginated (1);
                     break;
                     }
@@ -286,7 +305,6 @@ else
     public async Task BtnReadTestsPaginated(int newPage)
         {
         intPageNumber = newPage;
-        course = new Course () {CourseId = Convert.ToInt32 (appState.CourseId) };
         lstTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), intPageNumber, true);
         lstxTests.Clear ();
         foreach(Test tst in lstTests)
@@ -394,9 +412,22 @@ else
             .Where(t => t.IsSelected)
             .Select(t => t.TestId)
             .ToList();
-        foreach(int i  in selectedIds)
+        foreach(int intTestId in selectedIds)
             {
-            Console.WriteLine($"page ......................................... Selected Test Id = {i}");
+            Console.WriteLine($"page ..................... Selected Test Id = {i}  /  Selected Exam= {intExamId}");
+
+            ExamTest examTest = new ExamTest () {ExamId = intExamId, TestId= intTestId };
+            int result = await feService.Create_ExamTest (examTest);
+            if (result > 0)
+                {
+                await JS.InvokeVoidAsync ("alert", "TEST added to the exam Successfully!");
+                appState.SetCmd ("");
+                StateHasChanged ();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync ("alert", "Select an exam!");            
+                }
             }
         }
     public void BtnBack()
@@ -410,4 +441,4 @@ else
             Navman.NavigateTo ("/T_Courses");
             }
         }
-}
+    }
