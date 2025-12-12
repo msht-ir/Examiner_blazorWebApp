@@ -209,22 +209,22 @@ else
             List<CourseTopic> lstCourseTopics = await feService.Read_CourseTopics (course.CourseId);
             using var workbook = new XLWorkbook(stream);
             var worksheet = workbook.Worksheet(1); //1:first sheet
-            //ExcelColumns: {1:Test, 2:TestRTL, 3:OptRTL, 4:nOpts, 5-9:Opt1-5Texts, 10:Ans, 11:ForceLast, 12:TestLevel, 13:TestTopic}
+            //ExcelColumns: {1:Topic, 2:Level, 3:Question, 4:nOpts, 5-9:Opts, 10:Ans, 11:ForceLast, 12:TestRtl,13:OptRtl}
             foreach (var row in worksheet.RowsUsed().Skip(1)) //skip header
                 {
                 Test test = new Test ();
                 test.CourseId = course.CourseId;
                 test.TopicId = 0;
-                test.TestTitle = row.Cell (1).GetString ();
+                test.TestTitle = row.Cell (3).GetString ();
                 test.TestType = row.Cell (4).GetValue<int> ();
                 test.TestType = (test.TestType > 5) ? 5 : test.TestType;
-                test.TestLevel = row.Cell (12).GetValue<int> ();
+                test.TestLevel = row.Cell (2).GetValue<int> ();
                 test.TestTags = 0;
-                if (row.Cell(2).GetString().ToLower() == "y") test.TestTags += 1;
-                if (row.Cell(3).GetString().ToLower() == "y") test.TestTags += 2;
+                if (row.Cell(12).GetString().ToLower() == "r") test.TestTags += 1;
+                if (row.Cell(13).GetString().ToLower() == "r") test.TestTags += 2;
                 test.TestOptions = new List<TestOption> ();
                 //Topic handling
-                string ctt = row.Cell(13).GetString().Trim();
+                string ctt = row.Cell(1).GetString().Trim();
                 ctt = ctt.Length > 30 ? ctt[..30] : ctt;
                 var existingTopic = lstCourseTopics.FirstOrDefault(t => string.Equals(t.CourseTopicTitle, ctt, StringComparison.OrdinalIgnoreCase));
                 if (existingTopic != null)
@@ -278,6 +278,4 @@ else
         {
         Navman.NavigateTo ("/T_Courses");
         }
-    
-
 }
