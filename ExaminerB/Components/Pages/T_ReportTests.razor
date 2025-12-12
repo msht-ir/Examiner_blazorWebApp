@@ -32,7 +32,7 @@ else
                 <img src="icons/icoKeys_bt_1.png" title="Edit Test" alt="Edit" width="30px"/>
                 @* <br />Keys *@
             </button>
-            @if (!appState.Cmd.ToLower().Contains("coursetest"))
+            @if (appState.Cmd.ToLower().Contains("studentexam"))
                 {
                 <button class="btn btn-link" @onclick="BtnCourseExamStats">
                     <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="35px"/>
@@ -106,7 +106,7 @@ else
                 {
                 <hr style="border-color:red" />
                 }
-            @if ((appState.Cmd == "ShowCourseTestStats") & (appState.TestId == tst.TestId))
+            @if ((appState.Cmd == "ShowStudentExamTestStats") & (appState.TestId == tst.TestId))
                 {
                 <div style="font-weight:bold;">Students:</div>
                 <div style="padding-left:30px;">
@@ -133,7 +133,6 @@ else
                     <div class="card">
                         <div class="card-body" style="background-color:whitesmoke">
                             <div style="font-weight:bold;color:royalblue;padding-bottom:5px;">Include selected tests to Exam:</div>
-                                
                             <select class="form-select d-inline" @bind="intExamId" style="width:60%; background-color:white">
                                     <option value="0"> Select an Exam... </option>
                                     @foreach (Exam exam in lstExams)
@@ -406,7 +405,7 @@ else
             }
         nStudentsNotAnswered = nStudentsVisited - nStudentsAnswered;
         appState.SetTestId (studentExamTest.TestId);
-        appState.SetCmd ("ShowCourseTestStats");
+        appState.SetCmd ("ShowStudentExamTestStats");
         _hasFetched = true;
         StateHasChanged ();
         }

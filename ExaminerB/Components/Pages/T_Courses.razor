@@ -62,14 +62,14 @@
                                     else
                                         {
                                          <div style="text-align: center;">
-                                            <button class="btn btn-link" title="List Exams" @onclick="()=>BtnExams(crs)" >
-                                                <img src="/images/gifExam03.gif" width="32" />
-                                            </button>
                                             <button class="btn btn-link" title="List Tests" @onclick="()=>BtnListCourseTests(crs.CourseId, crs.CourseName)" >
                                                 <img src="/icons/icoList_bt_1.png" width="28" />
                                             </button>
                                             <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTests(crs.CourseId)" >
                                                 <img src="/icons/icoFolderReport_bt_1.png" width="28" />
+                                            </button>
+                                            <button class="btn btn-link" title="List Exams" @onclick="()=>BtnExams(crs)" >
+                                                <img src="/images/gifExam03.gif" width="32" />
                                             </button>
                                             <button class="btn btn-link" title="Rename this Course" @onclick="()=>BtnEditCourse(crs.CourseId)">
                                                 <img src="/icons/icoRename_bt_1.png" width="30" />
@@ -86,7 +86,7 @@
                                                 <h4 class="accordion-header">
                                                     <button class="accordion-button collapsed"
                                                         type="button"
-                                                        style="background-color:aliceblue"
+                                                        style="background-color:lavenderblush"
                                                         data-bs-toggle="collapse"
                                                         data-bs-target="#topics"
                                                         aria-expanded="false"
@@ -103,14 +103,14 @@
                                                             <div class="card-body bg-light">
                                                                 <div class="mb-2">
                                                                     <input class="form-control d-inline" @ref="inputRefs[ct.CourseTopicId]" @bind="ct.CourseTopicTitle" placeholder="Topic name" >
+                                                                    <button class="btn btn-link" @onclick="()=>BtnListCourseTopicTests (ct)">
+                                                                        <img src="/icons/icoList_bt_1.png" width="22" />
+                                                                    </button>
                                                                     <button class="btn btn-link" @onclick="()=>BtnUpdateCourseTopic (ct)">
                                                                         <img src="/icons/icoSave_bt_1.png" width="22" />
                                                                     </button>
                                                                     <button class="btn btn-link" @onclick="()=>BtnDeleteCourseTopic (ct.CourseTopicId)">
                                                                         <img src="/icons/icoDelete_bt_1.png" width="22" />
-                                                                    </button>
-                                                                    <button class="btn btn-link" @onclick="()=>BtnListCourseTopicTests (ct)">
-                                                                        <img src="/icons/icoList_bt_1.png" width="22" />
                                                                     </button>
                                                                 </div>
                                                             </div>

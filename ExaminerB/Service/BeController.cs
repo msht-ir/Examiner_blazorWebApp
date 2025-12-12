@@ -230,9 +230,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_TestsByCourseTopicId")]
-        public async Task<ActionResult<List<Test>>> Read_TestsByCourseTopicId ([FromBody] int courseTopicId, [FromQuery] bool readOptions)
+        public async Task<ActionResult<List<Test>>> Read_TestsByCourseTopicId ([FromBody] int courseTopicId, [FromQuery] int pageNumber, [FromQuery] bool readOptions)
             {
-            var result = await _BeService.Read_TestsByCourseTopicIdAsync (courseTopicId, readOptions);
+            var result = await _BeService.Read_TestsByCourseTopicIdAsync (courseTopicId, pageNumber, readOptions);
             return Ok (result);
             }
         [HttpPost ("Read_TestsBySearch")]

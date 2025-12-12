@@ -937,15 +937,19 @@ namespace ExaminerB.Services2Backend
                 }
             return lstTests;
             }
-        public async Task<List<Test>> Read_TestsByCourseTopicIdAsync (int courseTopicId, bool readOptions)
+        public async Task<List<Test>> Read_TestsByCourseTopicIdAsync (int courseTopicId, int pageNumber, bool readOptions)
             {
+            int pageSize = 20;
+            int offset = (pageNumber - 1) * pageSize;
             List<Test> lstCourseTopicTests = new List<Test> ();
-            string sql = "SELECT t.TestId, t.CourseId, t.TopicId, t.TestTitle, t.TestType, t.TestLevel, t.TestTags FROM Tests t INNER JOIN Courses c ON t.CourseId=c.CourseId WHERE t.TopicId=@topicid";
+            string sql = "SELECT t.TestId, t.CourseId, t.TopicId, t.TestTitle, t.TestType, t.TestLevel, t.TestTags FROM Tests t INNER JOIN Courses c ON t.CourseId=c.CourseId WHERE t.TopicId=@topicid ORDER BY t.TestId OFFSET @offset ROWS FETCH NEXT @pagesize ROWS ONLY";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             using SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@topicid", courseTopicId);
+            cmd.Parameters.AddWithValue ("@offset", offset);
+            cmd.Parameters.AddWithValue ("@pagesize", pageSize);
             using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
                 {
                 while (await reader.ReadAsync ())

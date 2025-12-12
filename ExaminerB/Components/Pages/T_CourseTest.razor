@@ -404,19 +404,19 @@ else
         }
     public void BtnBack ()
         {
-        switch (appState.ReturnPage)
-            {
-            case "/T_CourseTests":
-                    {
-                    appState.SetCmd ("ListCourseTests");
-                    break;
-                    }
-            case "/T_ReportTests":
-                    {
-                    appState.SetCmd ("coursetestraw");
-                    break;
-                    }
-            }
+        // switch (appState.ReturnPage)
+        //     {
+        //     case "/T_CourseTests":
+        //             {
+        //             appState.SetCmd ("ListCourseTests");
+        //             break;
+        //             }
+        //     case "/T_ReportTests":
+        //             {
+        //             appState.SetCmd ("coursetestraw");
+        //             break;
+        //             }
+        //     }
         Navman.NavigateTo (appState.ReturnPage?? "/T_SwitchBoard");
         }
 }

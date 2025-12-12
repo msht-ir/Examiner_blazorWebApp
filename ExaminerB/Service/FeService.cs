@@ -328,9 +328,9 @@ namespace ExaminerB.Service
                 return new List<Test> ();
                 }
             }
-        public async Task<List<Test>> Read_TestsByCourseTopicId (int courseTopicId, bool readOptions)
+        public async Task<List<Test>> Read_TestsByCourseTopicId (int courseTopicId, int pageNumber, bool readOptions)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_TestsByCourseTopicId?readOptions={readOptions}", courseTopicId);
+            var response = await _http.PostAsJsonAsync ($"api/Read_TestsByCourseTopicId?pageNumber={pageNumber}&readOptions={readOptions}", courseTopicId);
             if (response.IsSuccessStatusCode)
                 {
                 List<Test>? lstTests = await response.Content.ReadFromJsonAsync<List<Test>> ();

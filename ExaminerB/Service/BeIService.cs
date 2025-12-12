@@ -52,7 +52,7 @@ namespace ExaminerB.Services2Backend
         Task<Test> Read_TestByTestIdAsync (int testId, bool readOptions);
         Task<Test> Read_TestByStudentExamTestIdAsync (long studentExamTestId, bool readOptions);
         Task<List<Test>> Read_TestsByCourseIdAsync (int courseId, int pageNumber, bool readOptions);
-        Task<List<Test>> Read_TestsByCourseTopicIdAsync (int courseTopicId, bool readOptions);
+        Task<List<Test>> Read_TestsByCourseTopicIdAsync (int courseTopicId, int pageNumber, bool readOptions);
         Task<List<Test>> Read_TestsBySearchAsync (string strSearch, int courseId, bool readOptions);
         Task<List<Test>> Read_TestsByExamIdAsync (int examId, bool readOptions);
         Task<List<Test>> Read_TestsByStudentExamIdAsync (int studentExamId, bool readOptions);

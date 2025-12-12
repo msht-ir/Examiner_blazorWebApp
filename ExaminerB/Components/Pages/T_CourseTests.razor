@@ -53,7 +53,7 @@ else
                 </button>
                 @* Paginate *@
                 <input class="form-control d-inline" type="number" @ref="txtPageNumber" @bind="intPageNumber" min="1" placeholder="1" style="width: 60px; display: inline-block;"/>
-                <button class="btn btn-link" @onclick="()=>BtnReadAllTests(course.CourseId)">
+                <button class="btn btn-link" @onclick="()=>BtnReadTestsByPage(course.CourseId)">
                     <img src="/icons/icoList_bt_1.png" width="25" />
                 </button>
             </div>
@@ -121,6 +121,7 @@ else
     public int intPageNumber = 1;
     public string strExcelFile = "";
     public int i = 0;
+    
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
@@ -139,7 +140,7 @@ else
                     }
             case "ListCourseTopicTests":
                     {
-                    lstCourseTests = await feService.Read_TestsByCourseTopicId (Convert.ToInt32(appState.CourseTopicId), false);
+                    lstCourseTests = await feService.Read_TestsByCourseTopicId (Convert.ToInt32(appState.CourseTopicId), intPageNumber, false);
                     break;
                     }
             }
@@ -171,11 +172,23 @@ else
         lstCourseTests = await feService.Read_TestsBySearch (strSearch, courseId, false);
         StateHasChanged ();
         }
-    public async Task BtnReadAllTests(int courseId)
+    public async Task BtnReadTestsByPage(int courseId)
         {
         _hasFetched = false;
         StateHasChanged ();
-        lstCourseTests = await feService.Read_TestsByCourseId (Convert.ToInt32(appState.CourseId), intPageNumber, false);
+        switch (appState.Cmd)
+            {
+            case "ListCourseTests":
+                    {
+                    lstCourseTests = await feService.Read_TestsByCourseId (Convert.ToInt32(appState.CourseId), intPageNumber, false);
+                    break;
+                    }
+            case "ListCourseTopicTests":
+                    {
+                    lstCourseTests = await feService.Read_TestsByCourseTopicId (Convert.ToInt32(appState.CourseTopicId), intPageNumber, false);
+                    break;
+                    }
+            }
         _hasFetched = true;
         StateHasChanged ();
         }
