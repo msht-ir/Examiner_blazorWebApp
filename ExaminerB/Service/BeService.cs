@@ -1605,6 +1605,18 @@ COMMIT TRANSACTION;
             cmd.Parameters.AddWithValue ("@percenthelped", examTest.PercentHelped);
             await cnn.OpenAsync ();
             int i = (int) await cmd.ExecuteScalarAsync ();
+            //update number of tests
+            sql = @"UPDATE e 
+                  SET ExamNTests = COALESCE(t.cnt, 0) 
+                  FROM Exams e 
+                  LEFT JOIN (SELECT ExamId, COUNT(*) AS cnt 
+                             FROM ExamTests 
+                             GROUP BY ExamId) t 
+                  ON e.ExamId = t.ExamId 
+                  WHERE e.ExamId = @examid";
+            using SqlCommand cmd2 = new (sql, cnn);
+            cmd2.Parameters.AddWithValue ("@examid", examTest.ExamId);
+            await cmd2.ExecuteNonQueryAsync ();
             return i;
             }
         public async Task<List<ExamTest>> Read_ExamTestsAsync (int examId)
