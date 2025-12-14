@@ -74,7 +74,7 @@ else
                                                         </button>
                                                         }
 
-                                                    <button class="btn btn-link" style="border:none" @onclick='()=>BtnReviewStudentTestsSheet(exm.StudentExamId, "studentexam")' >
+                                                    <button class="btn btn-link" style="border:none" @onclick='()=>BtnReviewStudentTestsSheet(exm.StudentExamId, "studentexamtests")' >
                                                         <img src="/icons/icoReport_ct_1.png" width="25" />
                                                     </button>
                                                     <button class="btn btn-link" style="border:none" @onclick="()=>BtnDeleteStudentExam(exm.StudentExamId)" >
@@ -122,7 +122,7 @@ else
                                             {
                                             <tr style="align-content:center">
                                                 <td style="color:indianred; font-weight:bold;">
-                                                    <button class="btn btn-link" style="border:none" title="Report Tests ( + answeres )" @onclick='()=>BtnReviewStudentTestsSheet(stCrs.StudentCourseId, "studentcourse")'>
+                                                    <button class="btn btn-link" style="border:none" title="Report Tests ( + answeres )" @onclick='()=>BtnReviewStudentTestsSheet(stCrs.StudentCourseId, "studentcoursetests")'>
                                                         <img src="/icons/icoReport_ct_1.png" width="25" />
                                                     </button>
                                                     <button class="btn btn-link" style="border:none" title="Delete Course !" @onclick="()=>BtnDeleteStudentCourse(stCrs.StudentCourseId)">
@@ -255,13 +255,11 @@ else
         }
     public void BtnReviewStudentTestsSheet(int Id, string mode)
         {
-        appState.SetCmd (mode); //{studentexam|studentcourse | studentexamraw|studentcourseraw}
+        appState.SetCmd (mode); //{studentexam|studentcourse}
         switch (mode)
             {
-            case "studentexam":{appState.SetStudentExamId (Id); break; }
-            case "studentexamraw":{appState.SetStudentExamId (Id); break; }
-            case "studentcourse":{appState.SetStudentCourseId (Id); break; }
-            case "studentcourseraw":{appState.SetStudentCourseId (Id); break; }
+            case "studentexamtests":{appState.SetStudentExamId (Id); break; }
+            case "studentcoursetests":{appState.SetStudentCourseId (Id); break; }
             }
         //moved to pageInit -- appState.SetReturnPage ($"/T_ReportStudents/{mode}/{Id}");
         Navman.NavigateTo ("/T_ReportTests");

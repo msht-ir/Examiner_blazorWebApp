@@ -13,10 +13,39 @@
     }
 else
     {
+    @if (appState.Cmd.ToLower() == "coursetests")
+        {
+        <h4 style="text-align:center">Course Tests</h4>
+        }
+    else if (appState.Cmd.ToLower() == "examtests")
+        {
+        <h4 style="text-align:center">Exam Raw Sheet Tests</h4>        
+        }
+    else if (appState.Cmd.ToLower() == "studentexamtests")
+        {
+        <h4 style="text-align:center">Student Exam Tests</h4>                
+        }
+    else if (appState.Cmd.ToLower() == "studentcoursetests")
+        {
+        <h4 style="text-align:center">Student Course Tests</h4>                
+        }
     <EditForm Model = "lstxTests">
-        <br />
+        <hr />
         <div style="text-align: center;">
-            @if (appState.Cmd.ToLower().Contains("coursetest"))
+             <!-- Heading Icons -->
+            <button class="btn btn-link" @onclick="BtnBack">
+                <img src="icons/icoBack_bt_1.png" title="Edit Test" alt="Edit" width="30px"/>
+                @* Back *@
+            </button>
+            <button class="btn btn-link" @onclick="BtnChangeFontSize">
+                <img src="icons/icoFont_rt_1.png" title="Edit Test" alt="Edit" width="35px"/>
+                @* Font *@
+            </button>
+            <button class="btn btn-link" @onclick="BtnShowAnswers">
+                <img src="icons/icoKeys_bt_1.png" title="Edit Test" alt="Edit" width="30px"/>
+                @* Keys *@
+            </button>
+            @if (appState.Cmd.ToLower() == "coursetests")
                 {
                 @* Paginate *@
                 <input class="form-control d-inline" type="number" @ref="txtPageNumber" @bind="intPendingPageNumber" min="1" placeholder="1" style="width: 70px; display: inline-block;"/>
@@ -24,56 +53,52 @@ else
                     <img src="/icons/icoList_bt_1.png" width="30" />
                 </button>
                 }
-            <button class="btn btn-link" @onclick="BtnChangeFontSize">
-                <img src="icons/icoFont_rt_1.png" title="Edit Test" alt="Edit" width="35px"/>
-                @* <br />Font *@
-            </button>
-            <button class="btn btn-link" @onclick="BtnShowAnswers">
-                <img src="icons/icoKeys_bt_1.png" title="Edit Test" alt="Edit" width="30px"/>
-                @* <br />Keys *@
-            </button>
-            @if (appState.Cmd.ToLower().Contains("studentexam"))
-                {
-                <button class="btn btn-link" @onclick="BtnCourseExamStats">
-                    <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="35px"/>
-                    @* <br />Stats *@
-                </button>
-                }
-            <button class="btn btn-link" @onclick="BtnBack">
-                <img src="icons/icoBack_bt_1.png" title="Edit Test" alt="Edit" width="30px"/>
-                @* <br />Back *@
-            </button>
             <hr />
         </div>
         @{i= (intPageNumber - 1) * 20;}
         @foreach (var tst in lstxTests) 
             {
             stl= (_cmd == "useSmallFont") ? "font-size:small;" : "font-size:normal;";
-            i++;
             string testRtlStatus = ((tst.TestTags & 1) == 1) ? "direction:rtl;text-align:right;" : "";
             string optRtlStatus = ((tst.TestTags & 2) == 2) ? "direction:rtl;text-align:right;" : "";
-            @* Show-Test *@
+            i++;
+            @* Test *@
             <div style="@testRtlStatus" >
-                @if (appState.Cmd.ToLower().Contains("coursetest"))
-                    {
-                   <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected" />
-                    }
-                    @if ((_cmd == "showStatistics") & (!appState.Cmd.ToLower().Contains("coursetest")))
-                    {
-                    <span style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle
-                        <br />
-                        <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst.TestId)">
-                            <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
-                        </button>
-                        <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnShowCourseTestStats(tst)">
-                            <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
-                        </button>
-                    </span>
-                    }
-                else
-                    {
-                    <span style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle</span>
-                    }
+            @if (appState.Cmd.ToLower() == "coursetests")
+                {
+                <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected" />
+                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst.TestId)">
+                    <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
+                </button>
+                }
+            else if (appState.Cmd.ToLower() == "examtests")
+                {                
+                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst.TestId)">
+                    <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
+                </button>
+                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst.TestId)">
+                    <img src="icons/icoDelete_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
+                </button>
+                }
+            else if (appState.Cmd.ToLower() == "studentexamtests")
+                {                
+                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst.TestId)">
+                    <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
+                </button>
+                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnShowCourseTestStats(tst)">
+                    <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
+                </button>
+                }
+            else if (appState.Cmd.ToLower() == "studentcoursetests")
+                {
+                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst.TestId)">
+                    <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
+                </button>
+                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst.TestId)">
+                    <img src="icons/icoDelete_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
+                </button>
+                }
+                <span style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle</span>
             </div>
             @* Show-TestOptions *@
             @foreach (var opt in tst.TestOptions)
@@ -106,7 +131,7 @@ else
                 {
                 <hr style="border-color:red" />
                 }
-            @if ((appState.Cmd == "ShowStudentExamTestStats") & (appState.TestId == tst.TestId))
+            @if ((appState.Cmd == "studentexamtests") & (appState.TestId == tst.TestId))
                 {
                 <div style="font-weight:bold;">Students:</div>
                 <div style="padding-left:30px;">
@@ -199,8 +224,7 @@ else
             }
         switch (appState.Cmd?.ToLower())
             {
-            case "coursetest":
-            case "coursetestraw":
+            case "coursetests":
                     {
                     course = new Course () { CourseId = Convert.ToInt32 (appState.CourseId) };
                     lstExams = await feService.Read_Exams (course.CourseId);
@@ -208,7 +232,6 @@ else
                     break;
                     }
             case"examtests":
-            case"examtestsraw":
                     {
                     List<Test> lstExamTests = await feService.Read_TestsByExamId (Convert.ToInt32 (appState.ExamId), true);
                     foreach(Test tst in lstExamTests)
@@ -243,14 +266,12 @@ else
                         }
                     break;
                     }
-            case"studentexam":
-            case"studentexamraw":
+            case"studentexamtests":
                     {
                     lstxTests = await feService.Read_StudentExamTests (Convert.ToInt32 (appState.StudentExamId),true);
                     break;
                     }
-            case "studentcourse":
-            case "studentcourseraw":
+            case "studentcoursetests":
                     {
                     List<StudentCourseTest> lstStudentCourseTests = await feService.Read_StudentCourseTests (Convert.ToInt32 (appState.StudentCourseId), true);
                     //copy data to a shared satandard list so that html code uses it
@@ -404,8 +425,15 @@ else
                 }
             }
         nStudentsNotAnswered = nStudentsVisited - nStudentsAnswered;
-        appState.SetTestId (studentExamTest.TestId);
-        appState.SetCmd ("ShowStudentExamTestStats");
+        if (appState.TestId == studentExamTest.TestId)
+            {
+            appState.SetTestId (0);
+            }
+        else
+            {
+            appState.SetTestId (studentExamTest.TestId);
+            }
+        //appState.SetCmd ("ShowStudentExamTestStats");
         _hasFetched = true;
         StateHasChanged ();
         }
@@ -432,7 +460,7 @@ else
                     Console.WriteLine($"Test {testCount} added to Exam");
                     }
                 }
-            appState.SetCmd ("coursetest");
+            appState.SetCmd ("coursetests");
             StateHasChanged ();
             await JS.InvokeVoidAsync ("alert", $"\n\n{testCount} Tests was added to the Exam Successfully");            
             }
