@@ -107,6 +107,7 @@ namespace ExaminerB.Services2Backend
         Task<int> Create_StudentExamAsync (StudentExam studentExam);
         Task<List<StudentExam>> Read_StudentExamsAsync (int studentId, bool readInactiveExams);
         Task<StudentExam> Read_StudentExamAsync (int studentExamId, bool readInactiveExams);
+        Task<List<StudentExam>> Read_StudentsExamAsync (int examId);
         Task<bool> Update_StudentExamAsync (StudentExam studentExam);
         Task<bool> Update_StudentsExamTagsAsync (string mode, int examId);
         Task<bool> Update_StudentExamTagsAsync (StudentExam tempStudentExam);

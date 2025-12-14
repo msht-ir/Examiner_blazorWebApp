@@ -2077,6 +2077,55 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             return lstStudentsExam;
             }
+        public async Task<List<StudentExam>> Read_StudentsExamAsync (int examId)
+            {
+            int i = 0;
+            List<StudentExam> lstStudentsExam = new ();
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            string sql = @"SELECT se.StudentExamId, se.StudentId, c.CourseId, c.CourseName,
+                e.ExamId, e.ExamTitle, e.ExamDateTime, e.ExamDuration, e.ExamNTests, e.ExamTags,
+                se.StartDateTime, se.FinishDateTime, se.StudentExamTags, se.StudentExamPoint
+                FROM StudentExams se 
+                INNER JOIN Exams e ON se.ExamId = e.ExamId
+                INNER JOIN Courses c ON e.CourseId = c.CourseId
+                WHERE se.ExamId=@examid 
+                ORDER BY e.ExamDateTime";
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@examid", examId.ToString ());
+                var reader = await cmd.ExecuteReaderAsync ();
+                while (await reader.ReadAsync ())
+                    {
+                    i++;
+                    var exam = new StudentExam ();
+                    exam.StudentExamId = reader.GetInt32 (0);
+                    exam.StudentId = reader.GetInt32(1);
+                    exam.CourseId = reader.GetInt32 (2);
+                    exam.CourseName = reader.GetString (3);
+                    exam.ExamId = reader.GetInt32 (4);
+                    exam.ExamIndex = i;
+                    exam.ExamTitle = reader.GetString (5);
+                    exam.ExamDateTime = reader.GetString (6);
+                    exam.ExamDuration = reader.GetInt32 (7);
+                    exam.ExamNTests = reader.GetInt32 (8);
+                    exam.ExamTags = reader.GetInt32 (9);
+                    exam.StartDateTime = reader.GetString (10);
+                    exam.FinishDateTime = reader.GetString (11);
+                    exam.StudentExamTags = reader.GetInt32 (12);
+                    exam.StudentExamPoint = reader.GetDouble (13);
+                    lstStudentsExam.Add (exam);
+                    }
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("in be StudentExams: \n" + ex.ToString ());
+                }
+            await cnn.CloseAsync ();
+            return lstStudentsExam;
+            }
         public async Task<bool> Update_StudentExamAsync (StudentExam studentExam)
             {
             string? connString = _config.GetConnectionString ("cnni");

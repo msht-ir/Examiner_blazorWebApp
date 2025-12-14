@@ -1,0 +1,202 @@
+﻿@page "/T_ReportExamPoints"
+@using ExaminerB.Service
+@using Microsoft.VisualBasic
+@inject FeService feService
+@inject NavigationManager Navman
+@inject AppState appState
+@inject IJSRuntime JS
+@implements IDisposable
+
+@if (!_hasFetched)
+    {
+    <_ScanSheets />
+    }
+else
+    {
+    //Page-Header
+    <div style="text-align:center; padding:10px;">
+        <h6>Students Exam Points</h6>
+        <h3>Exam: @exam.ExamTitle</h3>
+        <h6 style="color:indianred">course: @course.CourseName</h6>
+    </div>
+    <EditForm Model = "lstStudentsExam">
+        <hr />
+        @{
+            i = 0;
+        }
+        @foreach (var studentExam in lstStudentsExam) 
+            {
+            i++;
+            <div style="font-weight:bold;">
+                @i - @(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))
+             </div>
+            <div style="font-weight:normal;">
+                Start: @studentExam.StartDateTime <br />
+                Finish: @studentExam.FinishDateTime
+            </div>
+            <hr />
+            @if ((appState.Cmd == "studentexamtests") & (appState.StudentExamId == studentExam.StudentExamId))
+                {
+                <div style="font-weight:bold;">Students:</div>
+                <div style="padding-left:30px;">
+                    @* <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
+                    <div style="font-weight:bold">@nStudentsAnswered Answers</div> 
+                    <div style="padding-left:15px;">@nStudentsAnsweredCorrectly Correct</div> 
+                    <div style="padding-left:15px;">@nStudentsAnsweredIncorrectly Incorrect</div>
+                    <div style="font-weight:bold;">@nStudentsNotAnswered noAnswer</div>                 *@
+                </div>
+                <br /> 
+                <div class="d-flex justify-content-center">
+                    @* <MudChart ChartType="ChartType.Donut"
+                        InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
+                        InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
+                        Width="100px" Height="100px" /> *@
+                    <br /> 
+                </div>
+                <hr style="color:red" />
+                }
+            }
+            <div style="text-align: center;">
+                <button class="btn btn-link" type="submit" @onclick="BtnBack">
+                    <img src="/icons/icoBack_bt_1.png" width="30" />
+                </button>
+            </div>
+    </EditForm>
+    }
+    <script>
+        window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+    </script>
+
+@code {
+    public bool _hasFetched = false;
+
+    User user = new User ();
+    Exam exam = new Exam ();
+    Course course = new Course ();
+    List<StudentExam> lstStudentsExam = new List<StudentExam> ();
+    int i = 0;
+    public int nStudents = 0;
+    public int nStudentsStarted = 0;
+    public int nStudentsFinished = 0;
+    public int TotalPoints = 0;
+
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            Navman.NavigateTo ("/Login");
+            }
+        await RefreshPageData ();
+        _hasFetched = true;
+        } 
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //btns
+    public void BtnShowAnswers()
+        {
+        string _appstatecmd = appState.Cmd ?? "";
+        _appstatecmd = (_appstatecmd.EndsWith ("raw")) ? (Strings.Left (_appstatecmd, _appstatecmd.Length - 3)) : (_appstatecmd + "raw");
+        appState.SetCmd (_appstatecmd);
+        i = 0;
+        }
+    public async Task BtnShowCourseTestStats(StudentExamTest studentExamTest)
+        {
+        _hasFetched = false;
+        //Read StudentExam and StudentExamTest Across Students
+        List<StudentExamTest> lstStudentsExamTest = await feService.Read_StudentsExamTest (studentExamTest);
+        //calcs ...
+        nStudents = lstStudentsExamTest.Count;
+        // nStudentsVisited = 0;
+        // nStudentsAnswered = 0;
+        // nStudentsAnsweredCorrectly = 0;
+        // nStudentsAnsweredIncorrectly = 0;
+        // nStudentsNotAnswered = 0;
+        // nStudentsSlectedOpt1 = 0;
+        // nStudentsSlectedOpt2 = 0;
+        // nStudentsSlectedOpt3 = 0;
+        // nStudentsSlectedOpt4 = 0;
+        // nStudentsSlectedOpt5 = 0;
+        // foreach(StudentExamTest tst in lstStudentsExamTest)
+        //     {
+        //     if((tst.StudentExamTestTags & 1) == 1)
+        //         {
+        //         nStudentsVisited++;
+        //         }
+        //     if((tst.StudentExamTestTags & 4) == 4)
+        //         {
+        //         nStudentsAnswered++;
+        //         if(tst.StudentExamTestAns == tst.StudentExamTestKey)
+        //             {
+        //             nStudentsAnsweredCorrectly++;
+        //             }
+        //         else
+        //             {
+        //             nStudentsAnsweredIncorrectly++;                    
+        //             }
+        //         }
+        //     if((tst.StudentExamTestAns == studentExamTest.Opt1Id))
+        //         {
+        //         nStudentsSlectedOpt1++;
+        //         }
+        //     if((tst.StudentExamTestAns == studentExamTest.Opt2Id))
+        //         {
+        //         nStudentsSlectedOpt2++;
+        //         }
+        //     if((tst.StudentExamTestAns == studentExamTest.Opt3Id))
+        //         {
+        //         nStudentsSlectedOpt3++;
+        //         }
+        //     if((tst.StudentExamTestAns == studentExamTest.Opt4Id))
+        //         {
+        //         nStudentsSlectedOpt4++;
+        //         }
+        //     if((tst.StudentExamTestAns != 0) & (tst.StudentExamTestAns == studentExamTest.Opt5Id))
+        //         {
+        //         nStudentsSlectedOpt5++;
+        //         }
+        //     }
+        // nStudentsNotAnswered = nStudentsVisited - nStudentsAnswered;
+        if (appState.TestId == studentExamTest.TestId)
+            {
+            appState.SetTestId (0);
+            }
+        else
+            {
+            appState.SetTestId (studentExamTest.TestId);
+            }
+        //appState.SetCmd ("ShowStudentExamTestStats");
+        _hasFetched = true;
+        StateHasChanged ();
+        }
+    public void BtnBack()
+        {
+        if (appState.ReturnPage != "/T_ReportTests")
+            {
+            Navman.NavigateTo (appState.ReturnPage?? "/Login");
+            }
+        else
+            {
+            Navman.NavigateTo ("/T_Courses");
+            }
+        }
+    //method
+    public async Task RefreshPageData()
+        {
+        _hasFetched = false;
+        lstStudentsExam.Clear ();
+        lstStudentsExam = await feService.Read_StudentsExam (Convert.ToInt32 (appState.ExamId));
+        exam.ExamDateTime = lstStudentsExam[0].ExamDateTime;
+        exam.ExamTitle = lstStudentsExam[0].ExamTitle;
+        exam.ExamDuration = lstStudentsExam[0].ExamDuration;
+        course.CourseName = lstStudentsExam[0].CourseName;
+        _hasFetched = true;
+        }
+}

@@ -254,16 +254,18 @@ else
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            
+
             Navman.NavigateTo ("/Login");
+            }
+        //Get CourseId using ?TestId
+        if (appState.Cmd != "AddNewTest")
+            {
+            test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
+            appState.SetCourseId (test.CourseId);
             }
         courseId = Convert.ToInt32(appState.CourseId);
         courseName = appState.CourseName ?? "";
         lstCourseTopics = await feService.Read_CourseTopics (courseId);            
-        if (appState.Cmd != "AddNewTest")
-            {
-            test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
-            }
         _hasFetched = true;
         }
     private void TriggerRender()

@@ -677,6 +677,16 @@ namespace ExaminerB.Service
                 }
             return new StudentExam ();
             }
+        public async Task<List<StudentExam>> Read_StudentsExam (int examId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsExam", examId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<StudentExam>? lstStudentsExam = await response.Content.ReadFromJsonAsync<List<StudentExam>> ();
+                return lstStudentsExam ?? new List<StudentExam> ();
+                }
+            return new List<StudentExam> ();
+            }
         public async Task<bool> Update_StudentExam (StudentExam studentExam)
             {
             var response = await _http.PostAsJsonAsync ($"api/Update_StudentExam", studentExam);

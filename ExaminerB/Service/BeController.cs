@@ -487,6 +487,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Read_StudentExamAsync (studentExamId, readInactiveExams);
             return Ok (result);
             }
+        [HttpPost ("Read_StudentsExam")]
+        public async Task<ActionResult<List<StudentExam>>> Read_StudentsExam ([FromBody] int examId)
+            {
+            var result = await _BeService.Read_StudentsExamAsync (examId);
+            return Ok (result);
+            }
         [HttpPost ("Update_StudentExam")]
         public async Task<ActionResult<bool>> Update_StudentExam ([FromBody] StudentExam studentExam)
             {
