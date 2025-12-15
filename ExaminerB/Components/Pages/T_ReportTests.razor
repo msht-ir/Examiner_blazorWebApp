@@ -6,6 +6,7 @@
 @inject AppState appState
 @inject IJSRuntime JS
 @implements IDisposable
+@inject ISnackbar Snackbar
 
 @if (!_hasFetched)
     {
@@ -17,6 +18,10 @@ else
     @if (appState.Cmd.ToLower() == "coursetests")
         {
         <h4 style="text-align:center">Course Tests</h4>
+        }
+    else if (appState.Cmd.ToLower() == "coursetopictests")
+        {
+        <h4 style="text-align:center">Student Course Topic Tests</h4>                
         }
     else if (appState.Cmd.ToLower() == "examtests")
         {
@@ -48,7 +53,7 @@ else
                 <img src="icons/icoKeys_bt_1.png" title="Edit Test" alt="Edit" width="30px"/>
                 @* Keys *@
             </button>
-            @if (appState.Cmd.ToLower() == "coursetests")
+            @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
                 {
                 @* Paginate *@
                 <input class="form-control d-inline" type="number" @ref="txtPageNumber" @bind="intPendingPageNumber" min="1" placeholder="1" style="width: 70px; display: inline-block;"/>
@@ -67,12 +72,12 @@ else
             i++;
             @* Test *@
             <div style="@testRtlStatus display:flex; align-items:center; gap:2px;" >
-            @if (appState.Cmd.ToLower() == "coursetests")
+            @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
                 {
-                    <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected" />
-                    <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
-                        <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="18px"/>
-                    </button>
+                <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected" />
+                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
+                    <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="18px"/>
+                </button>
                 }
             else if (appState.Cmd.ToLower() == "examtests")
                 {                
@@ -152,7 +157,7 @@ else
                 <hr style="color:red" />
                 }
             }
-            @if (appState.Cmd.ToLower() == "coursetests")
+            @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
                 {
                 <div class="container mt-2">
                     <div class="card">
@@ -256,7 +261,14 @@ else
     public async Task BtnReadTestsPaginated(int newPage)
         {
         intPageNumber = newPage;
-        lstTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), intPageNumber, true);
+        if (appState.Cmd == "coursetests")
+            {
+            lstTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), intPageNumber, true);        
+            }
+        else if (appState.Cmd == "coursetopictests")
+            {
+            lstTests = await feService.Read_TestsByCourseTopicId (Convert.ToInt32 (appState.CourseTopicId), intPageNumber, true);           
+            }
         lstxTests.Clear ();
         foreach(Test tst in lstTests)
             {
@@ -397,9 +409,10 @@ else
                     Console.WriteLine($"Test {testCount} added to Exam");
                     }
                 }
-            appState.SetCmd ("coursetests");
-            StateHasChanged ();
-            await JS.InvokeVoidAsync ("alert", $"\n\n{testCount} Tests was added to the Exam Successfully");            
+            //appState.SetCmd ("coursetests");
+            StateHasChanged ();            
+            Snackbar.Add($"\n\n{testCount} Tests was added to the Exam Successfully", Severity.Success); //{Severity.Warning .Error | .Info | .Success} --needs: @inject ISnackbar Snackbar
+            //old code: await JS.InvokeVoidAsync ("alert", $"\n\n{testCount} Tests was added to the Exam Successfully")
             }
         }
     public async Task BtnEditExam()
@@ -431,6 +444,14 @@ else
         switch (appState.Cmd?.ToLower())
             {
             case "coursetests":
+                    {
+                    course = new Course () { CourseId = Convert.ToInt32 (appState.CourseId) };
+                    lstExams.Clear ();
+                    lstExams = await feService.Read_Exams (course.CourseId);
+                    await BtnReadTestsPaginated (1);
+                    break;
+                    }
+            case "coursetopictests":
                     {
                     course = new Course () { CourseId = Convert.ToInt32 (appState.CourseId) };
                     lstExams.Clear ();

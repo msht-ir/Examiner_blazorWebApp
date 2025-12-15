@@ -6,6 +6,7 @@
 @inject AppState appState
 @inject IJSRuntime JS
 @implements IDisposable
+@inject ISnackbar Snackbar
 
 @if (!_hasFetched)
     {
@@ -209,10 +210,20 @@ else
         //
         lstStudentsExam.Clear ();
         lstStudentsExam = await feService.Read_StudentsExam (Convert.ToInt32 (appState.ExamId));
-        exam.ExamDateTime = lstStudentsExam[0].ExamDateTime;
-        exam.ExamTitle = lstStudentsExam[0].ExamTitle;
-        exam.ExamDuration = lstStudentsExam[0].ExamDuration;
-        course.CourseName = lstStudentsExam[0].CourseName;
+        if (lstStudentsExam.Count > 0)
+            {
+            exam.ExamDateTime = lstStudentsExam[0].ExamDateTime;
+            exam.ExamTitle = lstStudentsExam[0].ExamTitle;
+            exam.ExamDuration = lstStudentsExam[0].ExamDuration;
+            course.CourseName = lstStudentsExam[0].CourseName;            
+            }
+        else
+            {
+            //needs: @inject ISnackbar Snackbar --at top of page
+            Snackbar.Add("List of Students (for this Exam) is Empty!", Severity.Warning); //Severity.Error | Severity.Info | Severity.Success
+            //--old code was: await JS.InvokeVoidAsync ("alert", "List of Students (for this Exam) is Empty!");
+            BtnBack ();
+            }
         _hasFetched = true;
         }
 }

@@ -5,6 +5,7 @@
 @inject FeService feService
 @inject IJSRuntime JS
 @implements IDisposable
+@inject ISnackbar Snackbar
 
     <div style="text-align: center;">
         <h2 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h2>
@@ -105,6 +106,9 @@
                                                                     <input class="form-control d-inline" @ref="inputRefs[ct.CourseTopicId]" @bind="ct.CourseTopicTitle" placeholder="Topic name" >
                                                                     <button class="btn btn-link" @onclick="()=>BtnListCourseTopicTests (ct)">
                                                                         <img src="/icons/icoList_bt_1.png" width="22" />
+                                                                    </button>
+                                                                    <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTopicTests(ct)" >
+                                                                        <img src="/icons/icoFolderReport_bt_1.png" width="28" />
                                                                     </button>
                                                                     <button class="btn btn-link" @onclick="()=>BtnUpdateCourseTopic (ct)">
                                                                         <img src="/icons/icoSave_bt_1.png" width="22" />
@@ -334,15 +338,16 @@
         {
         bool result = await feService.Update_Course (course);
         if (result)
-    {
-    //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
-    appState.SetCmd ("");
-    StateHasChanged ();
-    }
+            {
+            //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
+            appState.SetCmd ("");
+            StateHasChanged ();
+            }
         else
-    {
-    await JS.InvokeVoidAsync ("alert", "Course name did not changed --- process failed");
-    }
+            {
+            Snackbar.Add("Course name did not changed!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+           //await JS.InvokeVoidAsync ("alert", "Course name did not changed --- process failed");
+            }
         }
     public async Task BtnDeleteCourse(int courseId)
         {
@@ -399,16 +404,17 @@
         courseTopic.CourseTopicTitle = courseTopic.CourseTopicTitle;
         int result = await feService.Create_CourseTopic (courseTopic);
         if (result>0)
-    {
-    //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
-    lstCourses = await feService.Read_Courses (user.UserId);
-    appState.SetCmd ("");
-    StateHasChanged ();
-    }
+            {
+            Snackbar.Add("Course Topic Created!", Severity.Success); //Severity.Warning .Error | .Info | .Success
+            //old code: await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
+            lstCourses = await feService.Read_Courses (user.UserId);
+            appState.SetCmd ("");
+            StateHasChanged ();
+            }
         else
-    {
-    await JS.InvokeVoidAsync ("alert", "Course Topic did not changed --- process failed");
-    }        
+            {
+            await JS.InvokeVoidAsync ("alert", "Course Topic did not changed --- process failed");
+            }        
         }
     public async Task BtnUpdateCourseTopic(CourseTopic courseTopic)
         {
@@ -417,11 +423,15 @@
             {
             await inputRefs[courseTopic.CourseTopicId].FocusAsync();
             StateHasChanged ();
+            //needs: @inject ISnackbar Snackbar
+            Snackbar.Add("Course Topic Updated Successfully!", Severity.Success); //Severity.Warning .Error | .Info | .Success
             }
         }
     public async Task BtnDeleteCourseTopic(int courseTopicId)
         {
-        await JS.InvokeVoidAsync ("alert", "Topics can not be Deleted \n\n-- This feature is not available at this time.");
+        //needs: @inject ISnackbar Snackbar
+        Snackbar.Add("Topics can not be Deleted \n\n-- This feature is not available at this time.", Severity.Warning); //Severity.Warning .Error | .Info | .Success
+        //old code: await JS.InvokeVoidAsync ("alert", "Topics can not be Deleted \n\n-- This feature is not available at this time.");
         }
     public void BtnListCourseTopicTests(CourseTopic courseTopic)
         {
@@ -430,6 +440,14 @@
         appState.SetCourseTopicId (courseTopic.CourseTopicId);
         Navman.NavigateTo ("/T_CourseTests");
         }
+    public void BtnReportCourseTopicTests(CourseTopic courseTopic)
+        {
+        appState.SetCmd ("coursetopictests");
+        appState.SetCourseTopicId (courseTopic.CourseTopicId);
+        appState.SetReturnPage ("/T_Courses");
+        Navman.NavigateTo ("/T_ReportTests");
+        }
+
     //CourseFolder
     public void BtnAddNewCourseFolder(int courseId)
         {

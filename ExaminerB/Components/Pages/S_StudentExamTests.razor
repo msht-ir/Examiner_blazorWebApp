@@ -5,6 +5,8 @@
 @inject AppState appState
 @inject IJSRuntime JS
 @implements IDisposable
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 @if (!_hasFetched)
     {
@@ -121,7 +123,7 @@ else
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            
+
             Navman.NavigateTo ("/Login");
             }
         //appState.StudentExamId is set in previous page and may have delay to become fetched (notice: its a void not async!). use it in if() below to make sure it has received its value
@@ -133,7 +135,8 @@ else
             studentExam = await feService.Read_StudentExam(studentExam.StudentExamId, false);
             if (studentExam.StudentExamTests.Count == 0)
                 {
-                await JS.InvokeVoidAsync ("alert", "Exam is just expired!");
+                Snackbar.Add("Exam is just expired!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                //old code:await JS.InvokeVoidAsync ("alert", "Exam is just expired!");
                 BtnBack ();
                 }
             _hasFetched = true;
@@ -157,11 +160,20 @@ else
         }
     public async Task BtnFinishExam(StudentExam studentExam)
         {
-        if(await JS.InvokeAsync<bool>("confirm",$"Finish exam ( {studentExam.ExamTitle} ) ?\n\n Sure?"))
+        var message = new MarkupString($"Finish exam <strong>({studentExam.ExamTitle})</strong>?<br/><br/>Sure?");
+        bool? confirmResult = await DialogService.ShowMessageBox(
+            title: "Confirm Finish Exam",
+            markupMessage: message,
+            yesText: "Yes",
+            cancelText: "No");
+
+        if (confirmResult == true)
             {
             bool result = await feService.Update_StudentExamTags(studentExam, "finishedOn");        
+            Snackbar.Add("This exam Terminated!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             Navman.NavigateTo ("/S_Student");
             }
+        //old code: if(await JS.InvokeAsync<bool>("confirm",$"Finish exam ( {studentExam.ExamTitle} ) ?\n\n Sure?")){}
         }
     public void BtnBack()
         {
@@ -170,7 +182,9 @@ else
     //methods
     public async Task BtnClearTagTestIsAnswered(StudentExamTest studentExamTest)
         {
-        if (await JS.InvokeAsync<bool>("confirm", "Clear your answer for this Test?"))
+        var message = new MarkupString($"Clear your answer for this Test?");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             await feService.Update_StudentExamTestAnswer (studentExamTest.StudentExamTestId, 0);
             studentExamTest.StudentExamTestTags = (studentExamTest.StudentExamTestTags & ~4);
@@ -179,7 +193,7 @@ else
                 {
                 studentExam = await feService.Read_StudentExam(studentExam.StudentExamId, false);
                 StateHasChanged();
-                }
+                }            
             }
         }
     public async Task BtnClearTagTestIsBookmarked(StudentExamTest studentExamTest)

@@ -8,6 +8,7 @@
 @inject FeService feService
 @inject IJSRuntime JS
 @implements IDisposable
+@inject ISnackbar Snackbar
 
 <PageTitle>Examiner Home</PageTitle>
 <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
@@ -108,7 +109,8 @@
         //via 'OnValidSubmic of EditForm'
         if ((user.UserRole == "student") & (GroupId == 0))
             {
-            await JS.InvokeVoidAsync ("alert", "Select your Class (group)!");
+            Snackbar.Add("Select your Class (group)!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            //old code: await JS.InvokeVoidAsync ("alert", "Select your Class (group)!");
             return;
             }
         user.UserId = 0;
@@ -131,7 +133,7 @@
                         //navigate
                         await Task.Delay(1);
                         Navman.NavigateTo("/S_Student");
-                        // await JS.InvokeVoidAsync ("alert", $"\n\nWelcome {user.UserNickname} !");
+                        Snackbar.Add($"\n\nWelcome {user.UserNickname} !", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                         break;
                         }
                 case "teacher":
@@ -146,14 +148,14 @@
                         //navigate
                         await Task.Delay(1);
                         Navman.NavigateTo("/T_SwitchBoard"); 
-                        //await JS.InvokeVoidAsync ("alert", $"\n\nWelcome {user.UserNickname} !");
+                        Snackbar.Add($"\n\nWelcome {user.UserNickname} !", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                         break;
                         }
                 }
             }
         else
             {
-            await JS.InvokeVoidAsync ("alert", "\nUsername/Password was incorrect!");
+            Snackbar.Add("Incorrect Username or Password!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             user.UserRole = "student";
             GroupId = 0;
             return;

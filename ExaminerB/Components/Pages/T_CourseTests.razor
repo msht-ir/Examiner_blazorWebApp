@@ -9,6 +9,7 @@
 @inject AppState appState
 @inject IJSRuntime JS
 @implements IDisposable
+@inject ISnackbar Snackbar
 
 @if (!_hasFetched)
         {
@@ -213,6 +214,7 @@ else
         await file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(memoryStream);
         memoryStream.Position = 0;
         await ParseExcelAsync(memoryStream);
+
         _hasFetched = true;
         }
     private async Task ParseExcelAsync(Stream stream)
@@ -278,8 +280,10 @@ else
             Console.WriteLine($"Error in [ImportExcel]: {ex}");
             }
         lstCourseTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), intPageNumber, false);
+        //needs: @inject ISnackbar Snackbar
+        Snackbar.Add("Import completed!", Severity.Success); //Severity.Warning .Error | .Info | .Success
+        //old code: await JS.InvokeVoidAsync ("alert", "Import completed!");
         _hasFetched = true;
-        await JS.InvokeVoidAsync ("alert", "Import completed!");
         appState.SetCmd ("");
         }
     //Exit
