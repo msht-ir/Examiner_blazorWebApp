@@ -32,6 +32,7 @@ namespace ExaminerB.Services2Backend
         #region C02:Courses
         Task<int> Create_CourseAsync (Course course);
         Task<List<Course>> Read_CoursesAsync (int userId);
+        Task<Course> Read_CourseAsync (int courseId, bool getStudentsList);
         Task<bool> Update_CourseAsync (Course course);
         Task<bool> Delete_CourseAsync (int courseId);
         #endregion
@@ -72,7 +73,7 @@ namespace ExaminerB.Services2Backend
         #region C06:Exams
         Task<int> Create_ExamAsync (Exam exam);
         Task<List<Exam>> Read_ExamsAsync (int courseId);
-        Task<Exam> Read_ExamAsync (int examId);
+        Task<Exam> Read_ExamAsync (int examId, bool getStudentsList);
         Task<bool> Update_ExamAsync (Exam exam);
         Task<bool> Delete_ExamsAsync (int courseId);
         Task<bool> Delete_ExamAsync (int examId);

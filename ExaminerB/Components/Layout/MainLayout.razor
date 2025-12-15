@@ -35,6 +35,14 @@
             }
     </div>   
     <main>
+        @* Required *@
+        <MudThemeProvider />
+        <MudPopoverProvider />
+        @* Needed for dialogs *@
+        <MudDialogProvider />
+        @* Needed for snackbars *@
+        <MudSnackbarProvider />
+
         <div class="top-row px-4">
             @if (appState.UserLoginStatus == 1)
                 {

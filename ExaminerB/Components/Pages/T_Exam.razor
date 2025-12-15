@@ -257,7 +257,7 @@ else
             Navman.NavigateTo ("/Login");
             }
         appState.SetCmd ("");
-        exam = await feService.Read_Exam (examId);
+        exam = await feService.Read_Exam (examId, false);
         lstExamCompositions = await feService.Read_ExamCompositions (examId);
         lstExamTests = await feService.Read_TestsByExamId (examId, true);
         lstCourseTopics = await feService.Read_CourseTopics (exam.CourseId);

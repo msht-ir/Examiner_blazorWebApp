@@ -319,7 +319,7 @@
     public async Task BtnStartExam(StudentExam studentExam)
         {
         //read ExamTags : is exam training? Yes:allow Help
-        Exam exam = await feService.Read_Exam (studentExam.ExamId);
+        Exam exam = await feService.Read_Exam (studentExam.ExamId, false);
         //keep ExamTags in appState (use in S-StudentExamTest page)
         appState.SetExamTags (exam.ExamTags);
         bool result = await feService.Update_StudentExamTags(studentExam, "startedOn");

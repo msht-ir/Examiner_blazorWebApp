@@ -28,12 +28,20 @@ else
             {
             i++;
             <div style="font-weight:bold;">
-                @i - @(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))
+                @i: @studentExam.StudentName - @studentExam.StudentNickname
              </div>
             <div style="font-weight:normal;">
-                Start: @studentExam.StartDateTime <br />
-                Finish: @studentExam.FinishDateTime
+                <img src="/icons/icoClock_bt_1.png" width="18" />
+                <span style="color:green">Start : </span> @studentExam.StartDateTime <br />
+                <img src="/icons/icoClock_rt_1.png" width="18" />
+                <span style="color:royalblue">Finish: </span> @studentExam.FinishDateTime
             </div>
+            <div style="display:flex; align-items:center;font-weight:bold;">
+                <span style="color:indianred">Point: </span> @(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))
+                <button class="btn btn-link" @onclick="async ()=> await BtnShowStudentExamTests(studentExam)">
+                    <img src="/icons/icoList_bt_1.png" width="18" />
+                </button>
+             </div>
             <hr />
             @if ((appState.Cmd == "studentexamtests") & (appState.StudentExamId == studentExam.StudentExamId))
                 {
@@ -69,11 +77,11 @@ else
 
 @code {
     public bool _hasFetched = false;
-
-    User user = new User ();
-    Exam exam = new Exam ();
-    Course course = new Course ();
+    public List<User> lstStudents = new List<User> ();
     List<StudentExam> lstStudentsExam = new List<StudentExam> ();
+    User user = new User ();
+    Course course = new Course ();
+    Exam exam = new Exam ();
     int i = 0;
     public int nStudents = 0;
     public int nStudentsStarted = 0;
@@ -176,6 +184,14 @@ else
         _hasFetched = true;
         StateHasChanged ();
         }
+    public async Task BtnShowStudentExamTests(StudentExam studentExam)
+        {
+        appState.SetCmd ("studentexamtests"); //{studentexamtests|studentcoursetests}
+        appState.SetStudentExamId (studentExam.StudentExamId);
+        appState.SetStudentName (studentExam.StudentName);
+        appState.SetStudentNickname (studentExam.StudentNickname);
+        Navman.NavigateTo ("/T_ReportTests");
+        }
     public void BtnBack()
         {
         if (appState.ReturnPage != "/T_ReportTests")
@@ -190,7 +206,10 @@ else
     //method
     public async Task RefreshPageData()
         {
+        exam.ExamId = Convert.ToInt32 (appState.ExamId);
         _hasFetched = false;
+        exam = await feService.Read_Exam (exam.ExamId, true);
+        //
         lstStudentsExam.Clear ();
         lstStudentsExam = await feService.Read_StudentsExam (Convert.ToInt32 (appState.ExamId));
         exam.ExamDateTime = lstStudentsExam[0].ExamDateTime;

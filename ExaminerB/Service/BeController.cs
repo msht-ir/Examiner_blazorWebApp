@@ -139,6 +139,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Read_CoursesAsync (userId);
             return Ok (result);
             }
+        [HttpPost ("Read_Course")]
+        public async Task<ActionResult<Course>> Read_Course ([FromBody] int courseId, [FromQuery] bool getStudentsList)
+            {
+            var result = await _BeService.Read_CourseAsync (courseId, getStudentsList);
+            return Ok (result);
+            }
         [HttpPost ("Update_Course")]
         public async Task<ActionResult<bool>> Update_Course ([FromBody] Course course)
             {
@@ -318,9 +324,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_Exam")]
-        public async Task<ActionResult<Exam>> Read_Exam ([FromBody] int examId)
+        public async Task<ActionResult<Exam>> Read_Exam ([FromBody] int examId, [FromQuery] bool getStudentsList)
             {
-            var result = await _BeService.Read_ExamAsync (examId);
+            var result = await _BeService.Read_ExamAsync (examId, getStudentsList);
             return Ok (result);
             }
         [HttpPost ("Update_Exam")]

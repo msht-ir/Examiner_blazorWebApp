@@ -185,6 +185,20 @@ namespace ExaminerB.Service
                 return new List<Course> ();
                 }
             }
+        public async Task<Course> Read_Course (int courseId, bool getStudentsList)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_Course?getStudentList{getStudentsList}", courseId);
+            if (response.IsSuccessStatusCode)
+                {
+                Course? course = await response.Content.ReadFromJsonAsync<Course> ();
+                return course ?? new Course ();
+                }
+            else
+                {
+                var errorContent = await response.Content.ReadAsStringAsync ();
+                return new Course ();
+                }
+            }
         public async Task<bool> Update_Course (Course course)
             {
             var response = await _http.PostAsJsonAsync ("api/Update_Course", course);
@@ -439,9 +453,9 @@ namespace ExaminerB.Service
                 return new List<Exam> ();
                 }
             }
-        public async Task<Exam> Read_Exam (int examId)
+        public async Task<Exam> Read_Exam (int examId, bool getStudentsList)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Exam", examId);
+            var response = await _http.PostAsJsonAsync ($"api/Read_Exam?getStudentList={getStudentsList}", examId);
             if (response.IsSuccessStatusCode)
                 {
                 Exam? exam = await response.Content.ReadFromJsonAsync<Exam> ();

@@ -164,6 +164,7 @@ else
     public bool _hasFetched = false;
     User user = new User ();
     List<User> lstStudents = new List<User> ();
+    
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
@@ -185,6 +186,49 @@ else
         appState.OnChange -= TriggerRender;
         }
     //btns
+    public async Task BtnSetStudentExamAsFinished(StudentExam studentExam)
+        {
+        if(await JS.InvokeAsync<bool>("confirm", "\n Set Exam  @exm.ExamTitle  as Finished for this Student?"))
+            {
+            bool result = await feService.Update_StudentExamTags (studentExam, "finishedOn");
+            if(result)
+                {
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nExam was not Deleted.");
+                }
+            }
+        }
+    public async Task BtnResetStudentExam(StudentExam studentExam)
+        {
+        if(await JS.InvokeAsync<bool>("confirm", "Open Exam  @exm.ExamTitle  for this Student?"))
+            {
+            bool result = await feService.Update_StudentExamTags (studentExam, "finishedOff");
+            if(result)
+                {
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nExam was not Reset.");
+                }
+            }
+        }
+    public void BtnReviewStudentTestsSheet(int Id, string mode)
+        {
+        appState.SetCmd (mode); //{studentexamtests|studentcoursetests}
+        switch (mode)
+            {
+            case "studentexamtests":{appState.SetStudentExamId (Id); break; }
+            case "studentcoursetests":{appState.SetStudentCourseId (Id); break; }
+            }
+        //moved to pageInit -- appState.SetReturnPage ($"/T_ReportStudents/{mode}/{Id}");
+        Navman.NavigateTo ("/T_ReportTests");
+        }
     public async Task BtnDeleteStudentExam(int studentExamId)
         {
         if(await JS.InvokeAsync<bool>("confirm", "Delete Exam for this Student?"))
@@ -220,49 +264,6 @@ else
                 await JS.InvokeVoidAsync("alert", "\nExam was not Deleted.");
                 }            
             }
-        }
-    public async Task BtnSetStudentExamAsFinished(StudentExam studentExam)
-        {
-        if(await JS.InvokeAsync<bool>("confirm", "\n Set Exam  @exm.ExamTitle  as Finished for this Student?"))
-            {
-            bool result = await feService.Update_StudentExamTags (studentExam, "finishedOn");
-            if(result)
-                {
-                appState.SetCmd("");
-                StateHasChanged();
-                }
-            else
-                {
-                await JS.InvokeVoidAsync("alert", "\nExam was not Deleted.");
-                }
-            }
-        }
-    public async Task BtnResetStudentExam(StudentExam studentExam)
-        {
-        if(await JS.InvokeAsync<bool>("confirm", "Open Exam  @exm.ExamTitle  for this Student?"))
-            {
-            bool result = await feService.Update_StudentExamTags (studentExam, "finishedOff");
-            if(result)
-                {
-                appState.SetCmd("");
-                StateHasChanged();
-                }
-            else
-                {
-                await JS.InvokeVoidAsync("alert", "\nExam was not Reset.");
-                }
-            }
-        }
-    public void BtnReviewStudentTestsSheet(int Id, string mode)
-        {
-        appState.SetCmd (mode); //{studentexam|studentcourse}
-        switch (mode)
-            {
-            case "studentexamtests":{appState.SetStudentExamId (Id); break; }
-            case "studentcoursetests":{appState.SetStudentCourseId (Id); break; }
-            }
-        //moved to pageInit -- appState.SetReturnPage ($"/T_ReportStudents/{mode}/{Id}");
-        Navman.NavigateTo ("/T_ReportTests");
         }
     public async Task BtnDeleteStudentCourse (int studentCourseId)
         {

@@ -224,7 +224,6 @@ namespace ExaminerB.Services2Backend
                     UserRole = "-",
                     StudentExams = new List<StudentExam> (),
                     StudentCourses = new List<StudentCourse> ()
-
                     });
                 }
             if (readStudentExams)
@@ -607,7 +606,8 @@ namespace ExaminerB.Services2Backend
                         CourseUnits = reader.GetInt32 (3),
                         CourseRtl = reader.GetBoolean (4),
                         CourseTopics = new List<CourseTopic> (),
-                        CourseFolders = new List<CourseFolder> ()
+                        CourseFolders = new List<CourseFolder> (),
+                        Students = new List<User> ()
                         });
                     }
                 foreach (Course crs in lstCourses)
@@ -629,6 +629,94 @@ namespace ExaminerB.Services2Backend
                 {
                 Console.WriteLine ("C02 - Error\n" + ex.ToString ());
                 return lstCourses;
+                }
+            }
+        public async Task<Course> Read_CourseAsync (int courseId, bool getStudentsList)
+            {
+            Course course = new Course ();
+            string sql = "SELECT CourseId, UserId, CourseName, CourseUnits, CourseRtl FROM Courses WHERE CourseId=@courseid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@courseid", courseId); 
+                var reader = await cmd.ExecuteReaderAsync ();
+                while (await reader.ReadAsync ())
+                    {
+                    course.CourseId = reader.GetInt32 (0);
+                    course.UserId = reader.GetInt32 (1);
+                    course.CourseName = reader.GetString (2);
+                    course.CourseUnits = reader.GetInt32 (3);
+                    course.CourseRtl = reader.GetBoolean (4);
+                    course.CourseTopics = new List<CourseTopic> ();
+                    course.CourseFolders = new List<CourseFolder> ();
+                    course.Students = new List<User> ();
+                    }
+                var crsTopic = await Read_CourseTopicsAsync (course.CourseId);
+                if (crsTopic != null)
+                    {
+                    course.CourseTopics = crsTopic;
+                    }
+                var crsFolder = await Read_CourseFoldersAsync (course.CourseId);
+                if (crsFolder != null)
+                    {
+                    course.CourseFolders = crsFolder;
+                    }
+                //get students
+                if (getStudentsList)
+                    {
+                    var crsStudents = await Read_CourseStudentsAsync (course.CourseId);
+                    if (crsStudents != null)
+                        {
+                        course.Students = crsStudents;
+                        }
+                    }
+                return course;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("C02 - Error\n" + ex.ToString ());
+                return course;
+                }
+            }
+        public async Task<List<User>> Read_CourseStudentsAsync (int courseId)
+            {
+            List<User> lstCourseStudents = new List<User>();
+            string sql = "SELECT s.StudentId, s.GroupId, s.StudentName, s.StudentPass, s.StudentTags, s.StudentNickname FROM Students s WHERE s.StudentId IN (SELECT StudentId FROM StudentCourses WHERE CourseId=@courseid)";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@courseId", courseId);
+                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+                int i = 0;
+                lstCourseStudents.Clear ();
+                while (await reader.ReadAsync ())
+                    {
+                    i++;
+                    lstCourseStudents.Add (new User
+                        {
+                        UserId = reader.GetInt32 (0),
+                        GroupId = reader.GetInt32 (1),
+                        UserName = reader.GetString (2),
+                        UserPass = reader.GetString (3),
+                        UserTags = reader.GetInt32 (4),
+                        UserNickname = reader.GetString (5),
+                        UserRole = "-",
+                        StudentExams = new List<StudentExam> (),
+                        StudentCourses = new List<StudentCourse> ()
+                        });
+                    }
+                return lstCourseStudents;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("Error: " + ex.ToString ());
+                return new List<User> ();
                 }
             }
         public async Task<bool> Update_CourseAsync (Course course)
@@ -1395,7 +1483,7 @@ namespace ExaminerB.Services2Backend
                 }
             return lstExams;
             }
-        public async Task<Exam> Read_ExamAsync (int examId)
+        public async Task<Exam> Read_ExamAsync (int examId, bool getStudentsList)
             {
             Exam exam = new Exam ();
             string? connString = _config.GetConnectionString ("cnni");
@@ -1413,6 +1501,16 @@ namespace ExaminerB.Services2Backend
                 exam.ExamDuration = reader.GetInt32 (4);
                 exam.ExamNTests = reader.GetInt32 (5);
                 exam.ExamTags = reader.GetInt32 (6);
+                exam.Students = new List<User> ();
+                //get students
+                if (getStudentsList)
+                    {
+                    var examStudents = await Read_StudentsByExamIdAsync (exam.ExamId, false, false);
+                    if (examStudents != null)
+                        {
+                        exam.Students = examStudents;
+                        }
+                    }
                 }
             return exam;
             }
@@ -1924,12 +2022,13 @@ COMMIT TRANSACTION;
             List<StudentExam> lstStudentExams = new ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            string sql = @"SELECT se.StudentExamId, c.CourseId, c.CourseName,
+            string sql = @"SELECT se.StudentExamId, s.StudentName, s.StudentNickname, c.CourseId, c.CourseName,
                 e.ExamId, e.ExamTitle, e.ExamDateTime, e.ExamDuration, e.ExamNTests, e.ExamTags,
                 se.StartDateTime, se.FinishDateTime, se.StudentExamTags, se.StudentExamPoint
                 FROM StudentExams se 
                 INNER JOIN Exams e ON se.ExamId = e.ExamId
                 INNER JOIN Courses c ON e.CourseId = c.CourseId
+                INNER JOIN Students s ON se.StudentId = s.StudentId
                 WHERE se.StudentId=@studentid ";
             if (!readInactiveExams)
                 {
@@ -1948,19 +2047,21 @@ COMMIT TRANSACTION;
                     var exam = new StudentExam ();
                     exam.StudentExamId = reader.GetInt32 (0);
                     exam.StudentId = studentId;
-                    exam.CourseId = reader.GetInt32 (1);
-                    exam.CourseName = reader.GetString (2);
-                    exam.ExamId = reader.GetInt32 (3);
+                    exam.StudentName = reader.GetString (1);
+                    exam.StudentNickname = reader.GetString (2);
+                    exam.CourseId = reader.GetInt32 (3);
+                    exam.CourseName = reader.GetString (4);
+                    exam.ExamId = reader.GetInt32 (5);
                     exam.ExamIndex = i;
-                    exam.ExamTitle = reader.GetString (4);
-                    exam.ExamDateTime = reader.GetString (5);
-                    exam.ExamDuration = reader.GetInt32 (6);
-                    exam.ExamNTests = reader.GetInt32 (7);
-                    exam.ExamTags = reader.GetInt32 (8);
-                    exam.StartDateTime = reader.GetString (9);
-                    exam.FinishDateTime = reader.GetString (10);
-                    exam.StudentExamTags = reader.GetInt32 (11);
-                    exam.StudentExamPoint = reader.GetDouble (12);
+                    exam.ExamTitle = reader.GetString (6);
+                    exam.ExamDateTime = reader.GetString (7);
+                    exam.ExamDuration = reader.GetInt32 (8);
+                    exam.ExamNTests = reader.GetInt32 (9);
+                    exam.ExamTags = reader.GetInt32 (10);
+                    exam.StartDateTime = reader.GetString (11);
+                    exam.FinishDateTime = reader.GetString (12);
+                    exam.StudentExamTags = reader.GetInt32 (13);
+                    exam.StudentExamPoint = reader.GetDouble (14);
                     lstStudentExams.Add (exam);
                     }
                 }
@@ -1975,12 +2076,13 @@ COMMIT TRANSACTION;
             {
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            string sql = @"SELECT TOP 1 se.StudentExamId, se.StudentId, c.CourseId, c.CourseName,
+            string sql = @"SELECT TOP 1 se.StudentExamId, se.StudentId, s.StudentName, s.StudentNickname, c.CourseId, c.CourseName,
                  e.ExamId, e.ExamTitle, e.ExamDateTime, e.ExamDuration, e.ExamNTests, e.ExamTags,
                  se.StartDateTime, se.FinishDateTime, se.StudentExamTags, se.StudentExamPoint
                  FROM StudentExams se 
                  INNER JOIN Exams e ON se.ExamId = e.ExamId
                  INNER JOIN Courses c ON e.CourseId = c.CourseId
+                 INNER JOIN Students s ON se.StudentId = s.StudentId
                  WHERE se.StudentExamId=@studentexamid ";
             if (!readInactiveExams)
                 {
@@ -1999,19 +2101,21 @@ COMMIT TRANSACTION;
                         {
                         exam.StudentExamId = reader.GetInt32 (0);
                         exam.StudentId = reader.GetInt32 (1);
-                        exam.CourseId = reader.GetInt32 (2);
-                        exam.CourseName = reader.GetString (3);
-                        exam.ExamId = reader.GetInt32 (4);
+                        exam.StudentName = reader.GetString (2);
+                        exam.StudentNickname = reader.GetString (3);
+                        exam.CourseId = reader.GetInt32 (4);
+                        exam.CourseName = reader.GetString (5);
+                        exam.ExamId = reader.GetInt32 (6);
                         exam.ExamIndex = 0;
-                        exam.ExamTitle = reader.GetString (5);
-                        exam.ExamDateTime = reader.GetString (6);
-                        exam.ExamDuration = reader.GetInt32 (7);
-                        exam.ExamNTests = reader.GetInt32 (8);
-                        exam.ExamTags = reader.GetInt32 (9);
-                        exam.StartDateTime = reader.GetString (10);
-                        exam.FinishDateTime = reader.GetString (11);
-                        exam.StudentExamTags = reader.GetInt32 (12);
-                        exam.StudentExamPoint = reader.GetDouble (13);
+                        exam.ExamTitle = reader.GetString (7);
+                        exam.ExamDateTime = reader.GetString (8);
+                        exam.ExamDuration = reader.GetInt32 (9);
+                        exam.ExamNTests = reader.GetInt32 (10);
+                        exam.ExamTags = reader.GetInt32 (11);
+                        exam.StartDateTime = reader.GetString (12);
+                        exam.FinishDateTime = reader.GetString (13);
+                        exam.StudentExamTags = reader.GetInt32 (14);
+                        exam.StudentExamPoint = reader.GetDouble (15);
                         exam.StudentExamTests = new List<StudentExamTest> ();
                         }
                     }
@@ -2030,12 +2134,13 @@ COMMIT TRANSACTION;
             List<StudentExam> lstStudentsExam = new List<StudentExam> ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            string sql = @"SELECT se.StudentExamId, se.StudentId, c.CourseId, c.CourseName,
+            string sql = @"SELECT se.StudentExamId, se.StudentId, s.StudentName, s.StudentNickname, c.CourseId, c.CourseName,
                 e.ExamId, e.ExamTitle, e.ExamDateTime, e.ExamDuration, e.ExamNTests, e.ExamTags,
                 se.StartDateTime, se.FinishDateTime, se.StudentExamTags, se.StudentExamPoint
                 FROM StudentExams se 
                 INNER JOIN Exams e ON se.ExamId = e.ExamId
                 INNER JOIN Courses c ON e.CourseId = c.CourseId
+                INNER JOIN Students s ON se.StudentId = s.StudentId
                 WHERE e.ExamId=@examid ";
             if (!readInactiveExams)
                 {
@@ -2054,19 +2159,21 @@ COMMIT TRANSACTION;
                     var exam = new StudentExam ();
                     exam.StudentExamId = reader.GetInt32 (0);
                     exam.StudentId = reader.GetInt32 (1);
-                    exam.CourseId = reader.GetInt32 (2);
-                    exam.CourseName = reader.GetString (3);
-                    exam.ExamId = reader.GetInt32 (4);
+                    exam.StudentName = reader.GetString (2);
+                    exam.StudentNickname = reader.GetString (3);
+                    exam.CourseId = reader.GetInt32 (4);
+                    exam.CourseName = reader.GetString (5);
+                    exam.ExamId = reader.GetInt32 (6);
                     exam.ExamIndex = i;
-                    exam.ExamTitle = reader.GetString (5);
-                    exam.ExamDateTime = reader.GetString (6);
-                    exam.ExamDuration = reader.GetInt32 (7);
-                    exam.ExamNTests = reader.GetInt32 (8);
-                    exam.ExamTags = reader.GetInt32 (9);
-                    exam.StartDateTime = reader.GetString (10);
-                    exam.FinishDateTime = reader.GetString (11);
-                    exam.StudentExamTags = reader.GetInt32 (12);
-                    exam.StudentExamPoint = reader.GetDouble (13);
+                    exam.ExamTitle = reader.GetString (7);
+                    exam.ExamDateTime = reader.GetString (8);
+                    exam.ExamDuration = reader.GetInt32 (9);
+                    exam.ExamNTests = reader.GetInt32 (10);
+                    exam.ExamTags = reader.GetInt32 (11);
+                    exam.StartDateTime = reader.GetString (12);
+                    exam.FinishDateTime = reader.GetString (13);
+                    exam.StudentExamTags = reader.GetInt32 (14);
+                    exam.StudentExamPoint = reader.GetDouble (15);
                     lstStudentsExam.Add (exam);
                     }
                 }
@@ -2083,12 +2190,13 @@ COMMIT TRANSACTION;
             List<StudentExam> lstStudentsExam = new ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            string sql = @"SELECT se.StudentExamId, se.StudentId, c.CourseId, c.CourseName,
+            string sql = @"SELECT se.StudentExamId, se.StudentId, s.StudentName, s.StudentNickname, c.CourseId, c.CourseName,
                 e.ExamId, e.ExamTitle, e.ExamDateTime, e.ExamDuration, e.ExamNTests, e.ExamTags,
                 se.StartDateTime, se.FinishDateTime, se.StudentExamTags, se.StudentExamPoint
                 FROM StudentExams se 
                 INNER JOIN Exams e ON se.ExamId = e.ExamId
                 INNER JOIN Courses c ON e.CourseId = c.CourseId
+                INNER JOIN Students s ON se.StudentId = s.StudentId
                 WHERE se.ExamId=@examid 
                 ORDER BY e.ExamDateTime";
             try
@@ -2103,19 +2211,21 @@ COMMIT TRANSACTION;
                     var exam = new StudentExam ();
                     exam.StudentExamId = reader.GetInt32 (0);
                     exam.StudentId = reader.GetInt32(1);
-                    exam.CourseId = reader.GetInt32 (2);
-                    exam.CourseName = reader.GetString (3);
-                    exam.ExamId = reader.GetInt32 (4);
+                    exam.StudentName = reader.GetString (2);
+                    exam.StudentNickname = reader.GetString (3);
+                    exam.CourseId = reader.GetInt32 (4);
+                    exam.CourseName = reader.GetString (5);
+                    exam.ExamId = reader.GetInt32 (6);
                     exam.ExamIndex = i;
-                    exam.ExamTitle = reader.GetString (5);
-                    exam.ExamDateTime = reader.GetString (6);
-                    exam.ExamDuration = reader.GetInt32 (7);
-                    exam.ExamNTests = reader.GetInt32 (8);
-                    exam.ExamTags = reader.GetInt32 (9);
-                    exam.StartDateTime = reader.GetString (10);
-                    exam.FinishDateTime = reader.GetString (11);
-                    exam.StudentExamTags = reader.GetInt32 (12);
-                    exam.StudentExamPoint = reader.GetDouble (13);
+                    exam.ExamTitle = reader.GetString (7);
+                    exam.ExamDateTime = reader.GetString (8);
+                    exam.ExamDuration = reader.GetInt32 (9);
+                    exam.ExamNTests = reader.GetInt32 (10);
+                    exam.ExamTags = reader.GetInt32 (11);
+                    exam.StartDateTime = reader.GetString (12);
+                    exam.FinishDateTime = reader.GetString (13);
+                    exam.StudentExamTags = reader.GetInt32 (14);
+                    exam.StudentExamPoint = reader.GetDouble (15);
                     lstStudentsExam.Add (exam);
                     }
                 }

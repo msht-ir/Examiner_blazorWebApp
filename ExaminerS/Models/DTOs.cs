@@ -30,6 +30,7 @@ namespace ExaminerS.Models
         public int CourseIndex { get; set; } = 0;
         public List<CourseTopic> CourseTopics { get; set; } = new List<CourseTopic> ();
         public List<CourseFolder> CourseFolders { get; set; } = new List<CourseFolder> ();
+        public List<User> Students { get; set; } = new List<User> ();
         }
     //03
     public class CourseTopic
@@ -91,6 +92,7 @@ namespace ExaminerS.Models
                     ExamTags &= ~2;
                 }
             }
+        public List<User> Students { get; set; } = new List<User> ();
         }
     //07
     public class ExamComposition
@@ -125,6 +127,8 @@ namespace ExaminerS.Models
         {
         public int StudentExamId { get; set; } = 0;
         public int StudentId { get; set; } = 0;
+        public string StudentName { get; set; } = "";
+        public string StudentNickname { get; set; } = "";
         public int CourseId { get; set; } = 0;
         public string CourseName { get; set; } = "";
         public int ExamId { get; set; } = 0;

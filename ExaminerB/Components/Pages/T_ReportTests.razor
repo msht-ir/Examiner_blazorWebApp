@@ -24,7 +24,9 @@ else
         }
     else if (appState.Cmd.ToLower() == "studentexamtests")
         {
-        <h4 style="text-align:center">Student Exam Tests</h4>                
+        <h5 style="text-align:center">
+            Student Exam Tests <br /> @appState.StudentName - @appState.StudentNickname
+        </h5>
         }
     else if (appState.Cmd.ToLower() == "studentcoursetests")
         {
@@ -475,6 +477,9 @@ else
             case"studentexamtests":
                     {
                     lstxTests.Clear ();
+                    StudentExam studentExam = await feService.Read_StudentExam (Convert.ToInt32 (appState.StudentExamId), false);
+                    appState.SetStudentName (studentExam.StudentName);
+                    appState.SetStudentNickname (studentExam.StudentNickname);
                     lstxTests = await feService.Read_StudentExamTests (Convert.ToInt32 (appState.StudentExamId),true);
                     break;
                     }
