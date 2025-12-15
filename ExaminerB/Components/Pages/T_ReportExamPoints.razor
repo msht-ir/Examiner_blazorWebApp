@@ -27,42 +27,39 @@ else
         @foreach (var studentExam in lstStudentsExam) 
             {
             i++;
-            <div style="font-weight:bold;">
-                @i: @studentExam.StudentName - @studentExam.StudentNickname
-             </div>
-            <div style="font-weight:normal;">
-                <img src="/icons/icoClock_bt_1.png" width="18" />
-                <span style="color:green">Start : </span> @studentExam.StartDateTime <br />
-                <img src="/icons/icoClock_rt_1.png" width="18" />
-                <span style="color:royalblue">Finish: </span> @studentExam.FinishDateTime
-            </div>
-            <div style="display:flex; align-items:center;font-weight:bold;">
-                <span style="color:indianred">Point: </span> @(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))
-                <button class="btn btn-link" @onclick="async ()=> await BtnShowStudentExamTests(studentExam)">
-                    <img src="/icons/icoList_bt_1.png" width="18" />
-                </button>
-             </div>
-            <hr />
-            @if ((appState.Cmd == "studentexamtests") & (appState.StudentExamId == studentExam.StudentExamId))
-                {
-                <div style="font-weight:bold;">Students:</div>
-                <div style="padding-left:30px;">
-                    @* <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
-                    <div style="font-weight:bold">@nStudentsAnswered Answers</div> 
-                    <div style="padding-left:15px;">@nStudentsAnsweredCorrectly Correct</div> 
-                    <div style="padding-left:15px;">@nStudentsAnsweredIncorrectly Incorrect</div>
-                    <div style="font-weight:bold;">@nStudentsNotAnswered noAnswer</div>                 *@
+                <div class="container mt-2">
+                    <div class="card">
+                        <div class="card-body" style="background-color:whitesmoke">
+                            <div style="font-weight:bold;">
+                                @i: @studentExam.StudentName - @studentExam.StudentNickname
+                                <hr />
+                            </div>
+                            <div style="font-weight:normal;">
+                                <img src="/icons/icoCover_bt_1.png" width="20" />
+                                <span style="color:green">Start : </span> @studentExam.StartDateTime <br />
+                                <img src="/icons/icoClock_rt_1.png" width="18" />
+                                <span style="color:royalblue">Finish: </span> @studentExam.FinishDateTime
+                            </div>
+                            <div style="display:flex; align-items:center;font-weight:bold;">
+                                <button class="btn btn-link" @onclick="async ()=> await BtnShowStudentExamTests(studentExam)">
+                                    <img src="/icons/icoList_bt_1.png" width="18" />
+                                </button>
+                                @if(studentExam.StudentExamPoint < 10)
+                                    {
+                                    <span style="color:red">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
+                                    }
+                                else if (studentExam.StudentExamPoint < 17)
+                                    {
+                                    <span style="color:royalblue">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
+                                    }
+                                else 
+                                    {
+                                    <span style="color:darkgoldenrod">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
+                                    }
+                                </div>
+                        </div>
+                    </div>
                 </div>
-                <br /> 
-                <div class="d-flex justify-content-center">
-                    @* <MudChart ChartType="ChartType.Donut"
-                        InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
-                        InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
-                        Width="100px" Height="100px" /> *@
-                    <br /> 
-                </div>
-                <hr style="color:red" />
-                }
             }
             <div style="text-align: center;">
                 <button class="btn btn-link" type="submit" @onclick="BtnBack">
