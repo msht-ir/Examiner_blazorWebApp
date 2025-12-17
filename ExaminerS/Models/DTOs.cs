@@ -226,14 +226,24 @@ namespace ExaminerS.Models
     public class Message
         {
         public int MessageId { get; set; } = 0;
-        public int FromId { get; set; } = 0;
-        public int ToId { get; set; } = 0;
-        public string ToUsername { get; set; } = "";
-        public string ToNickname { get; set; } = "";
+        public int UserId { get; set; } = 0;
+        public string DateTimeCreated { get; set; } = "";
+        public string MessageTitle { get; set; } = "";
+        public string MessageBody { get; set; } = "";
+        public List<StudentMessage> StudentMessages { get; set; } = new List<StudentMessage> ();
+        }
+    //17
+    public class StudentMessage
+        {
+        public int StudentMessageId { get; set; } = 0;
+        public int MessageId { get; set; } = 0;
+        public int StudentId { get; set; } = 0;
+        public string StudentName { get; set; } = "";
+        public string StudentNickname { get; set; } = "";
+        public string DateTimeCreated { get; set; } = "";
         public string DateTimeSent { get; set; } = "";
         public string DateTimeRead { get; set; } = "";
-        public string MessageText { get; set; } = "";
-        public int MessageTags { get; set; } = 0;
+        public int StudentMessageTags { get; set; } = 0;
         }
     //20
     public class Project
