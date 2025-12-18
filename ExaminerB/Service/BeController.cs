@@ -687,7 +687,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
-        #region C16:CourseFolders
+        #region C16:Messages
         [HttpPost ("Create_Message")]
         public async Task<ActionResult<int>> Create_Message ([FromQuery] int groupId, [FromBody] Message message)
             {
@@ -730,6 +730,9 @@ namespace ExaminerB.Backend
             var result = await _BeService.Delete_MessagesByDateTimeAsync (userId, message);
             return result ? Ok (result) : NotFound (result);
             }
+        #endregion
+        #region C17:StudentMessages
+
         #endregion
         #region C20:Projects
         [HttpPost ("Create_Project")]

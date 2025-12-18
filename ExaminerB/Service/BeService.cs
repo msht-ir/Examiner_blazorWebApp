@@ -3321,7 +3321,7 @@ COMMIT TRANSACTION;
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@datetimecreated", message.DateTimeCreated);
+            cmd.Parameters.AddWithValue ("@datetimecreated", DateTime.Now.ToString("yyyy-MM-dd . HH:mm"));
             cmd.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
             cmd.Parameters.AddWithValue ("@messagebody", message.MessageBody);
             cmd.Parameters.AddWithValue ("@messageid", message.MessageId);
@@ -3336,26 +3336,31 @@ COMMIT TRANSACTION;
                 {
                 case "onemessage":
                         {
-                        sql = @"DELETE FROM StudentMessages WHERE MessageId=@recipientid"; //all instances of a message sent, be deleted
+                        //all instances sent from a message, be deleted. message is also deleted! 
+                        sql = @"DELETE FROM StudentMessages WHERE MessageId=@recipientid; DELETE FROM Messages WHERE MessageId=@recipientid"; 
                         break;
                         }
                 case "togroupmembers":
                         {
+                        //all instances of all messages sent to all students in a group, be deleted. (messages are kept).
                         sql = @"DELETE FROM StudentMessages WHERE studentId IN (SELECT StudentId FROM Students WHERE GroupId=@recipientid)";
                         break;
                         }
                 case "tocoursemembers":
                         {
+                        //all instances of all messages sent to all students in a course, be deleted. (messages are kept).
                         sql = @"DELETE FROM StudentMessages WHERE StudentId IN (SELECT StudentId FROM StudentCourses WHERE CourseId=@recipientid)";
                         break;
                         }
                 case "toexammembers":
                         {
+                        //all instances of all messages sent to all students in an exam, be deleted. (messages are kept).
                         sql = @"DELETE FROM StudentMessages WHERE StudentId IN (SELECT StudentId FROM StudentExams WHERE ExamId=@recipientid)";
                         break;
                         }
                 case "toonestudent":
                         {
+                        //all instances of all messages sent to a student, be deleted. (messages are kept).
                         sql = @"DELETE FROM StudentMessages WHERE StudentId=@recipientid";
                         break;
                         }
@@ -3373,7 +3378,7 @@ COMMIT TRANSACTION;
         #region C17:StudentMessages
         public async Task<int> Create_StudentMessageAsync (Message message, string mode, int recipientId, bool typeFeedback)
             {
-            //Read StudentIds
+            //mode: read studentIds
             List<int> lstStudentIds = new List<int> ();
             string sql1 = "";
             string? connString = _config.GetConnectionString ("cnni");
@@ -3381,29 +3386,34 @@ COMMIT TRANSACTION;
             switch (mode.ToLower ())
                 {
                 case "togroupmembers":
-                        {
-                        sql1 = "SELECT StudentId FROM Students WHERE GroupId=@recipientid;";
-                        break;
-                        }
+                    {
+                    sql1 = "SELECT StudentId FROM Students WHERE GroupId=@recipientid;";
+                    break;
+                    }
                 case "tocoursemembers":
-                        {
-                        sql1 = "SELECT StudentId FROM StudentCourses WHERE StudentCourseId=@recipientid";
-                        break;
-                        }
+                    {
+                    sql1 = "SELECT StudentId FROM StudentCourses WHERE StudentCourseId=@recipientid";
+                    break;
+                    }
                 case "toexammembers":
-                        {
-                        sql1 = "SELECT StudentId FROM StudentExams WHERE StudentExamId=@recipientid";
-                        break;
-                        }
+                    {
+                    sql1 = "SELECT StudentId FROM StudentExams WHERE StudentExamId=@recipientid";
+                    break;
+                    }
                 case "toonestudent":
-                        {
-                        sql1 = "";
-                        lstStudentIds.Add (recipientId);
+                    {
+                    sql1 = "";
+                    lstStudentIds.Add (recipientId); //get one studentId
                         break;
-                        }
+                    }
+                default:
+                    {
+                     return 0;
+                    }
                 }
             if (sql1 != "")
                 {
+                //get studentIds
                 await cnn.OpenAsync ();
                 SqlCommand cmd1 = new SqlCommand (sql1, cnn);
                 cmd1.Parameters.AddWithValue ("@recipientid", recipientId);
@@ -3417,15 +3427,17 @@ COMMIT TRANSACTION;
                 }
             //create message body
             await cnn.OpenAsync ();
-            string sql2 = "INSERT INTO Messages (UserId, MessageText) VALUES (@userid, @messagetext); SELECT CAST (scope_identity() AS int)";
+            string sql2 = "INSERT INTO Messages (UserId, DateTimeCreated, MessageTitle, MessageBody) VALUES (@userid, @datetimecreated, @messagetitle, @messagebody); SELECT CAST (scope_identity() AS int)";
             foreach (int studentId in lstStudentIds)
                 {
                 SqlCommand cmd2 = new SqlCommand (sql2, cnn);
                 cmd2.Parameters.AddWithValue ("@userid", message.UserId);
-                cmd2.Parameters.AddWithValue ("@messagetext", message.MessageText);
+                cmd2.Parameters.AddWithValue ("@datetimecreated", message.DateTimeCreated);
+                cmd2.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
+                cmd2.Parameters.AddWithValue ("@messagebody", message.MessageBody);
                 int newMessageId = (int) await cmd2.ExecuteScalarAsync ();
                 }
-            //send messages
+            //create studentMessages
             string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd . HH:mm");
             foreach (int recipient in lstStudentIds)
                 {
@@ -3477,6 +3489,7 @@ COMMIT TRANSACTION;
                         });
                     }
                 await cnn.CloseAsync ();
+                //find messages to put each studentMessage in its own message
                 foreach (StudentMessage stmsg in lstStudentMessages)
                     {
                     message = await Read_MessageAsync (stmsg.MessageId, false);
@@ -3494,90 +3507,94 @@ COMMIT TRANSACTION;
             }
         public async Task<List<StudentMessage>> Read_StudentMessagesByMessageIdAsync (int messageId)
             {
-            string sql = "SELECT MessageId, UserId, DateTimeCreated, MessageTitle, MessageBody FROM Messages WHERE MessageId=@id";
-            List<Message> lstMessages = new ();
+            string sql = "SELECT StudentMessageId, StudentId, MessageId, DateTimeSent, DeateTimrRead, StudentMessageTags FROM StudentMessages WHERE MessageId=@messageid";
+            List<StudentMessage> lstStudentMessages = new List<StudentMessage>();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@id", messageId);
+                cmd.Parameters.AddWithValue ("@messageid", messageId);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-                lstMessages.Clear ();
+                lstStudentMessages.Clear ();
                 while (await reader.ReadAsync ())
                     {
-                    lstMessages.Add (new Message
+                    lstStudentMessages.Add (new StudentMessage
                         {
-                        MessageId = reader.GetInt32 (0),
-                        UserId = reader.GetInt32 (1),
-                        DateTimeCreated = reader.GetString (2),
-                        MessageTitle = reader.GetString (3),
-                        MessageBody = reader.GetString (4),
-                        StudentMessages = new List<StudentMessage> ()
+                        StudentMessageId = reader.GetInt32 (0),
+                        StudentId = reader.GetInt32 (1),
+                        MessageId = reader.GetInt32 (2),
+                        DateTimeSent = reader.GetString (3),
+                        DateTimeRead = reader.GetString (4),
+                        StudentMessageTags = reader.GetInt32 (5)
                         });
                     }
                 await cnn.CloseAsync ();
-                foreach (Message msg in lstMessages)
-                    {
-                    await Read_StudentMessage (msg.MessageId)
-                    }
-                return lstMessages;
+                return lstStudentMessages;
                 }
             catch (Exception ex)
                 {
                 Console.WriteLine ("Error: " + ex.ToString ());
                 await cnn.CloseAsync ();
-                return new List<Message> ();
+                return new List<StudentMessage> ();
                 }
             }
-        public async Task<List<Message>> Read_StudentMessageAsync (int messageId)
+        public async Task<Message> Read_StudentMessageAsync (int studentMessageId)
             {
-            string sql = "SELECT MessageId, UserId, DateTimeCreated, MessageTitle, MessageBody FROM Messages WHERE MessageId=@id";
-            List<Message> lstMessages = new ();
+            //by reading a studentMessage, its message (title, body) is also needed. so, a message (containing a studentMessage) is retured.
+            string sql = "SELECT StudentMessageId, StudentId, MessageId, DateTimeSent, DateTimeRead, MessageTags FROM StudentMessages WHERE StudentMessageId=@studentmessageid";
+            StudentMessage studentMessage = new StudentMessage();
+            Message message = new Message();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@id", messageId);
+                cmd.Parameters.AddWithValue ("@studentmessageid", studentMessageId);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-                lstMessages.Clear ();
                 while (await reader.ReadAsync ())
                     {
-                    lstMessages.Add (new Message
-                        {
-                        MessageId = reader.GetInt32 (0),
-                        UserId = reader.GetInt32 (1),
-                        DateTimeCreated = reader.GetString (2),
-                        MessageTitle = reader.GetString (3),
-                        MessageBody = reader.GetString (4),
-                        StudentMessages = new List<StudentMessage> ()
-                        });
+                    studentMessage.StudentMessageId = reader.GetInt32 (0);
+                    studentMessage.StudentId = reader.GetInt32 (1);
+                    studentMessage.MessageId = reader.GetInt32 (2);
+                    studentMessage.DateTimeSent = reader.GetString (3);
+                    studentMessage.DateTimeRead = reader.GetString (4);
+                    studentMessage.StudentMessageTags = reader.GetInt32 (5);
                     }
                 await cnn.CloseAsync ();
-                foreach (Message msg in lstMessages)
-                    {
-                    await Read_StudentMessage (msg.MessageId);
-                    }
-                return lstMessages;
+                message = await Read_MessageAsync (studentMessage.MessageId, false);
+                return message;
                 }
             catch (Exception ex)
                 {
                 Console.WriteLine ("Error: " + ex.ToString ());
                 await cnn.CloseAsync ();
-                return new List<Message> ();
+                return new Message ();
                 }
             }
         public async Task<bool> Update_StudentMessageTagsAsync (StudentMessage studentMessage)
             {
-            string sql = "UPDATE StudentMessages SET MessageTags=@messagetags WHERE StudentMessageId=@studentmessageid";
+            string sql = "UPDATE StudentMessages SET StudentMessageTags=@studentmessagetags WHERE StudentMessageId=@studentmessageid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@messagetags", studentMessage.StudentMessageTags);
+            cmd.Parameters.AddWithValue ("@studentmessagetags", studentMessage.StudentMessageTags);
+            cmd.Parameters.AddWithValue ("@studentmessageid", studentMessage.StudentMessageId);
+            int i = cmd.ExecuteNonQuery ();
+            await cnn.CloseAsync ();
+            return true;
+            }
+        public async Task<bool> Update_StudentMessageSetAsReadAsync (StudentMessage studentMessage)
+            {
+            string sql = "UPDATE StudentMessages SET StudentMessageTags=(StudentMessagetags | 1), DateTimeRead=@datetimeread WHERE StudentMessageId=@studentmessageid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@datetimeread", DateTime.Now.ToString ("yyyy-MM.dd . HH.mm"));
             cmd.Parameters.AddWithValue ("@studentmessageid", studentMessage.StudentMessageId);
             int i = cmd.ExecuteNonQuery ();
             await cnn.CloseAsync ();
@@ -3855,6 +3872,5 @@ COMMIT TRANSACTION;
             return true;
             }
         #endregion
-
         }
     }

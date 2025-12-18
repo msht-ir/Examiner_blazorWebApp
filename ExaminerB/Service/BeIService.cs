@@ -150,12 +150,18 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region C16:Messages
         Task<int> Create_MessageAsync (Message message);
-        Task<List<Message>> Read_MessagesAsync (string mode, int Id);
-        Task<List<Message>> Read_MessagesAsync (int userId, string mode, string key);
-        Task<List<Message>> Read_MessagesAsync (Message message);
+        Task<Message> Read_MessageAsync (int messageId, bool getStudentMessages);
         Task<bool> Update_MessageAsync (Message message);
-        Task<bool> Delete_MessagesByIdAsync (string mode, int Id);
-        Task<bool> Delete_MessagesByDateTimeAsync (int userId, Message message);
+        Task<bool> Delete_MessagesAsync (string mode, int recipientId);
+        #endregion
+        #region C17:StudentMessages
+        Task<int> Create_StudentMessageAsync (Message message, string mode, int recipientId, bool typeFeedback);
+        Task<List<Message>> Read_StudentMessagesByStudentIdAsync (int studentId);
+        Task<List<StudentMessage>> Read_StudentMessagesByMessageIdAsync (int messageId);
+        Task<Message> Read_StudentMessageAsync (int studentMessageId);
+        Task<bool> Update_StudentMessageTagsAsync (StudentMessage studentMessage);
+        Task<bool> Update_StudentMessageSetAsReadAsync (StudentMessage studentMessage);
+        Task<bool> Delete_StudentMessageAsync (int studentMessageId);
         #endregion
         #region C20:Projects
         Task<int> Create_ProjectAsync (Project project);
