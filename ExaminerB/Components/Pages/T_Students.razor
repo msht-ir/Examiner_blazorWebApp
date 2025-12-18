@@ -116,7 +116,10 @@ else
                                                         <hr style="color:red" />
                                                         <h6 style="color:indianRed;">Send this Message to members of the group</h6>
                                                         <div class="mb-3">
-                                                            <input class="form-control" @ref="txtMessageText" @bind="message.MessageText" placeholder="Enter Message here...">
+                                                            <input class="form-control" @ref="txtMessageTitle" @bind="message.MessageTitle" placeholder="Enter Message Title here...">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <input class="form-control" @ref="txtMessageBody" @bind="message.MessageBody" placeholder="Enter Message Body here...">
                                                         </div>
                                                         <input class="form-check-input" type="checkbox" @bind=_IsMessageTypeFeedback />
                                                         <label class="form-check-label" style="color:Black"> Message Receives Feedback </label><br />
@@ -331,7 +334,8 @@ else
 @code {
     private ElementReference txtNewGroup;
     private ElementReference txtGroupName;
-    private ElementReference txtMessageText;
+    private ElementReference txtMessageTitle;
+    private ElementReference txtMessageBody;
     private readonly HttpClient _http;
     User user = new User ();
     List<Group> lstGroups = new ();
@@ -589,7 +593,7 @@ else
             appState.SetGroupId (groupId);
             appState.SetCmd ("AddNewMessageToGroup");
             await Task.Delay (1);
-            await txtMessageText.FocusAsync ();
+            await txtMessageTitle.FocusAsync ();
             }
         else
             {
@@ -600,14 +604,11 @@ else
     public async Task BtnSendMessageToGroup(int groupId)
         {
         _hasFetched = false;
-        //message.MessageText = IScrollToLocationHash Bind
-        message.FromId = Convert.ToInt32(appState.UserId);
-        message.ToId = 0;
-        message.DateTimeSent = DateTime.Now.ToString ("yyyy-MM-dd . HH:mm");
-        message.DateTimeRead = "1300-01-01 . 00:00";
-        message.MessageTags = _IsMessageTypeFeedback ? 32 : 0; //1:IsRead 2:IsBookMarked 4:IsDeleted 8:AnswerIsYes 16:AnswerIsNo 32:TypeIsFeedback
+        //message.MessageTitle, messageMessageBody are binded
+        message.UserId = Convert.ToInt32(appState.UserId);
+        message.DateTimeCreated = "0000-00-00 . 00:00";
         //SEND
-        int result = await feService.Create_Message (groupId, message);
+        int result = await feService.Create_Message (message);
 
         appState.SetCmd ("");
         _hasFetched = true;

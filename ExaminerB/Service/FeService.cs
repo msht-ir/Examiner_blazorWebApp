@@ -970,50 +970,22 @@ namespace ExaminerB.Service
             }
         #endregion
         #region C16:Messages
-        public async Task<int> Create_Message (int groupId, Message message)
+        public async Task<int> Create_Message (Message message)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Create_Message?groupId={groupId}", message);
+            var response = await _http.PostAsJsonAsync ($"api/Create_Message", message);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<List<Message>> Read_Messages (string mode, int Id)
+        public async Task<Message> Read_Message (int messageId, bool getStudentMessages)
             {
-            //modes: User, Group, Student, Message
-            var response = await _http.PostAsJsonAsync ($"api/Read_MessagesById?mode={mode}", Id);
+            var response = await _http.PostAsJsonAsync ($"api/Read_Message?getStudentMessages={getStudentMessages}", messageId);
             if (response.IsSuccessStatusCode)
                 {
-                List<Message>? lstMessages = await response.Content.ReadFromJsonAsync<List<Message>> ();
-                return lstMessages ?? new List<Message> ();
+                Message? message = await response.Content.ReadFromJsonAsync<Message> ();
+                return message ?? new Message ();
                 }
             else
                 {
-                return new List<Message> ();
-                }
-            }
-        public async Task<List<Message>> Read_Messages (int userId, string mode, string key)
-            {
-            //mode: Search, Date, DateTime
-            var response = await _http.PostAsJsonAsync ($"api/Read_MessagesByKey?mode={mode}&key={key}", userId);
-            if (response.IsSuccessStatusCode)
-                {
-                List<Message>? lstMessages = await response.Content.ReadFromJsonAsync<List<Message>> ();
-                return lstMessages ?? new List<Message> ();
-                }
-            else
-                {
-                return new List<Message> ();
-                }
-            }
-        public async Task<List<Message>> Read_Messages (Message message)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_MessagesByMessage", message);
-            if (response.IsSuccessStatusCode)
-                {
-                List<Message>? lstMessages = await response.Content.ReadFromJsonAsync<List<Message>> ();
-                return lstMessages ?? new List<Message> ();
-                }
-            else
-                {
-                return new List<Message> ();
+                return new Message ();
                 }
             }
         public async Task<bool> Update_Message (Message message)
@@ -1021,21 +993,71 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<bool> Update_MessageTags (Message message)
+        public async Task<bool> Delete_Messages (string mode, int recipientId)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
+            //modes: onemessage, togroupmembers, tocoursemembers, toexammembers, toonestudent
+            var response = await _http.PostAsJsonAsync ($"api/Delete_Messages?mode={mode}", recipientId);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<bool> Delete_MessagesById (string mode, int Id)
+        #endregion
+        #region C17:StudentMessages
+        public async Task<int> Create_StudentMessage (Message message, string mode, int recipientId, bool typeFeedback)
             {
-            //modes: Group, Student, Message
-            var response = await _http.PostAsJsonAsync ($"api/Delete_MessagesById?mode={mode}", Id);
+            var response = await _http.PostAsJsonAsync ($"api/Create_Message", message);
+            return response.IsSuccessStatusCode ? 1 : 0;
+            }
+        public async Task<List<Message>> Read_StudentMessagesByStudentIdAsync (int studentId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentMessagesByStudentId", studentId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Message>? lstMessages = await response.Content.ReadFromJsonAsync<List<Message>> ();
+                return lstMessages ?? new List<Message> ();
+                }
+            else
+                {
+                return new List<Message> ();
+                }
+            }
+        public async Task<List<StudentMessage>> Read_StudentMessagesByMessageId (int messageId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentMessagesByMessageId", messageId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<StudentMessage>? lstStudentMessages = await response.Content.ReadFromJsonAsync<List<StudentMessage>> ();
+                return lstStudentMessages ?? new List<StudentMessage> ();
+                }
+            else
+                {
+                return new List<StudentMessage> ();
+                }
+            }
+        public async Task<Message> Read_StudentMessage (int studentMessageId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentMessage", studentMessageId);
+            if (response.IsSuccessStatusCode)
+                {
+                Message? message = await response.Content.ReadFromJsonAsync<Message> ();
+                return message ?? new Message ();
+                }
+            else
+                {
+                return new Message ();
+                }
+            }
+        public async Task<bool> Update_StudentMessageTags (StudentMessage studentMessage)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Update_StudentMessageTags", studentMessage);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<bool> Delete_MessagesByDateTime (int userId, Message message)
+        public async Task<bool> Update_StudentMessageSetAsRead (StudentMessage studentMessage)
             {
-            //modes: Group, Student, Message
-            var response = await _http.PostAsJsonAsync ($"api/Delete_MessagesByDateTime?userId={userId}", message);
+            var response = await _http.PostAsJsonAsync ("api/Update_StudentMessagesetAsRead", studentMessage);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool> Delete_StudentMessage (int studentMessageId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Delete_StudentMessage", studentMessageId);
             return response.IsSuccessStatusCode ? true : false;
             }
         #endregion

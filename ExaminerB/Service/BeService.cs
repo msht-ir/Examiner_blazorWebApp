@@ -3264,18 +3264,26 @@ COMMIT TRANSACTION;
         #region C16:Messages
         public async Task<int> Create_MessageAsync (Message message)
             {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            string sql = "INSERT INTO Messages (UserId, DateTimeCreated, MessageTitle, MessageBody) VALUES (@userid, @datetimecreated, @messagetitle, @messagebody); SELECT CAST (scope_identity() AS int)";
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@userid", message.UserId);
-            cmd.Parameters.AddWithValue ("@datetimecreated", message.DateTimeCreated);
-            cmd.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
-            cmd.Parameters.AddWithValue ("@messagebody", message.MessageBody);
-            int newMessageId = (int) await cmd.ExecuteScalarAsync ();
-            await cnn.CloseAsync ();
-            return newMessageId;
+            try
+                {
+                string? connString = _config.GetConnectionString ("cnni");
+                using SqlConnection cnn = new (connString);
+                string sql = "INSERT INTO Messages (UserId, DateTimeCreated, MessageTitle, MessageBody) VALUES (@userid, @datetimecreated, @messagetitle, @messagebody); SELECT CAST (scope_identity() AS int)";
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@userid", message.UserId);
+                cmd.Parameters.AddWithValue ("@datetimecreated", message.DateTimeCreated);
+                cmd.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
+                cmd.Parameters.AddWithValue ("@messagebody", message.MessageBody);
+                int newMessageId = (int) await cmd.ExecuteScalarAsync ();
+                await cnn.CloseAsync ();
+                return newMessageId;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ($"be error (create message failed):\n{ex}");
+                return 0;
+                }
             }
         public async Task<Message> Read_MessageAsync (int messageId, bool getStudentMessages)
             {
@@ -3378,11 +3386,10 @@ COMMIT TRANSACTION;
         #region C17:StudentMessages
         public async Task<int> Create_StudentMessageAsync (Message message, string mode, int recipientId, bool typeFeedback)
             {
-            //mode: read studentIds
-            List<int> lstStudentIds = new List<int> ();
             string sql1 = "";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
+            List<int> lstStudentIds = new List<int> ();
             switch (mode.ToLower ())
                 {
                 case "togroupmembers":
@@ -3426,36 +3433,33 @@ COMMIT TRANSACTION;
                 await cnn.CloseAsync ();
                 }
             //create message body
-            await cnn.OpenAsync ();
-            string sql2 = "INSERT INTO Messages (UserId, DateTimeCreated, MessageTitle, MessageBody) VALUES (@userid, @datetimecreated, @messagetitle, @messagebody); SELECT CAST (scope_identity() AS int)";
-            foreach (int studentId in lstStudentIds)
+            int newMessageId = await Create_MessageAsync (message);
+            if (newMessageId ==0)
                 {
-                SqlCommand cmd2 = new SqlCommand (sql2, cnn);
-                cmd2.Parameters.AddWithValue ("@userid", message.UserId);
-                cmd2.Parameters.AddWithValue ("@datetimecreated", message.DateTimeCreated);
-                cmd2.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
-                cmd2.Parameters.AddWithValue ("@messagebody", message.MessageBody);
-                int newMessageId = (int) await cmd2.ExecuteScalarAsync ();
+                return 0;
                 }
-            //create studentMessages
-            string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd . HH:mm");
-            foreach (int recipient in lstStudentIds)
+            else
                 {
-                string sql3 = "INSERT INTO StudentMessages (StudentId, MessageId, DateTimeSent, DateTimeRead, MessageTags) VALUES (@studentid, @messageid, @datetimesent, @datetimeread, @messagetags)";
-                foreach (int studentId in lstStudentIds)
+                //create studentMessages
+                await cnn.OpenAsync ();
+                string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd . HH:mm");
+                foreach (int recipient in lstStudentIds)
                     {
-                    SqlCommand cmd3 = new SqlCommand (sql3, cnn);
-                    cmd3.Parameters.AddWithValue ("@studentid", recipient);
-                    cmd3.Parameters.AddWithValue ("@messageid", studentId);
-                    cmd3.Parameters.AddWithValue ("@datetimesent", currentDateTime);
-                    cmd3.Parameters.AddWithValue ("@datetimeread", "");
-                    cmd3.Parameters.AddWithValue ("@messagetags", typeFeedback ? true : false);
-                    await cmd3.ExecuteNonQueryAsync ();
+                    string sql3 = "INSERT INTO StudentMessages (StudentId, MessageId, DateTimeSent, DateTimeRead, MessageTags) VALUES (@studentid, @messageid, @datetimesent, @datetimeread, @messagetags)";
+                    foreach (int studentId in lstStudentIds)
+                        {
+                        SqlCommand cmd3 = new SqlCommand (sql3, cnn);
+                        cmd3.Parameters.AddWithValue ("@studentid", recipient);
+                        cmd3.Parameters.AddWithValue ("@messageid", studentId);
+                        cmd3.Parameters.AddWithValue ("@datetimesent", currentDateTime);
+                        cmd3.Parameters.AddWithValue ("@datetimeread", "");
+                        cmd3.Parameters.AddWithValue ("@messagetags", typeFeedback ? true : false);
+                        await cmd3.ExecuteNonQueryAsync ();
+                        }
                     }
+                await cnn.CloseAsync ();
+                return 1;
                 }
-            //close connection
-            await cnn.CloseAsync ();
-            return 1;
             }
         public async Task<List<Message>> Read_StudentMessagesByStudentIdAsync (int studentId)
             {
