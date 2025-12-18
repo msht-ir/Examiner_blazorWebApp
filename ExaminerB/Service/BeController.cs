@@ -689,27 +689,15 @@ namespace ExaminerB.Backend
         #endregion
         #region C16:Messages
         [HttpPost ("Create_Message")]
-        public async Task<ActionResult<int>> Create_Message ([FromQuery] int groupId, [FromBody] Message message)
+        public async Task<ActionResult<int>> Create_Message ([FromBody] Message message)
             {
-            var result = await _BeService.Create_MessageAsync (groupId, message);
+            var result = await _BeService.Create_MessageAsync (message);
             return Ok (result);
             }
-        [HttpPost ("Read_MessagesById")]
-        public async Task<ActionResult<List<Message>>> Read_Messages ([FromQuery] string mode, [FromBody] int Id)
+        [HttpPost ("Read_Message")]
+        public async Task<ActionResult<Message>> Read_Message ([FromBody] int messageId, [FromQuery] bool getStudentMessages)
             {
-            var result = await _BeService.Read_MessagesAsync (mode, Id);
-            return Ok (result);
-            }
-        [HttpPost ("Read_MessagesByKey")]
-        public async Task<ActionResult<List<Message>>> Read_Messages ([FromQuery] string mode, [FromQuery] string key, [FromBody] int userId)
-            {
-            var result = await _BeService.Read_MessagesAsync (userId, mode, key);
-            return Ok (result);
-            }
-        [HttpPost ("Read_MessagesByMessage")]
-        public async Task<ActionResult<List<Message>>> Read_Messages ([FromBody] Message message)
-            {
-            var result = await _BeService.Read_MessagesAsync (message);
+            var result = await _BeService.Read_MessageAsync (messageId, getStudentMessages);
             return Ok (result);
             }
         [HttpPost ("Update_Message")]
@@ -718,21 +706,56 @@ namespace ExaminerB.Backend
             var result = await _BeService.Update_MessageAsync (message);
             return Ok (result);
             }
-        [HttpPost ("Delete_MessagesById")]
-        public async Task<ActionResult<bool>> Delete_MessagesById ([FromQuery] string mode, [FromBody] int Id)
+        [HttpPost ("Delete_Messages")]
+        public async Task<ActionResult<bool>> Delete_MessagesById ([FromQuery] string mode, [FromBody] int recipientId)
             {
-            var result = await _BeService.Delete_MessagesByIdAsync (mode, Id);
-            return result ? Ok (result) : NotFound (result);
-            }
-        [HttpPost ("Delete_MessagesByDateTime")]
-        public async Task<ActionResult<bool>> Delete_MessagesByDateTime ([FromQuery] int userId, [FromBody] Message message)
-            {
-            var result = await _BeService.Delete_MessagesByDateTimeAsync (userId, message);
+            var result = await _BeService.Delete_MessagesAsync (mode, recipientId);
             return result ? Ok (result) : NotFound (result);
             }
         #endregion
         #region C17:StudentMessages
-
+        [HttpPost ("Create_StudentMessage")]
+        public async Task<ActionResult<int>> Create_StudentMessage ([FromBody] Message message, [FromQuery] string mode, [FromQuery] int recipientId, [FromQuery] bool typeFeedback)
+            {
+            var result = await _BeService.Create_StudentMessageAsync (message, mode, recipientId, typeFeedback);
+            return Ok (result);
+            }
+        [HttpPost ("Read_StudentMessagesByStudentId")]
+        public async Task<ActionResult<List<Message>>> Read_StudentMessagesByStudentId ([FromBody] int studentId)
+            {
+            var result = await _BeService.Read_StudentMessagesByStudentIdAsync (studentId);
+            return Ok (result);
+            }
+        [HttpPost ("Read_StudentMessagesByMessageId")]
+        public async Task<ActionResult<List<StudentMessage>>> Read_StudentMessagesByMessageId ([FromBody] int messageId)
+            {
+            var result = await _BeService.Read_StudentMessagesByMessageIdAsync (messageId);
+            return Ok (result);
+            }
+        [HttpPost ("Read_StudentMessage")]
+        public async Task<ActionResult<Message>> Read_StudentMessage ([FromBody] int studentMessageId)
+            {
+            var result = await _BeService.Read_StudentMessageAsync (studentMessageId);
+            return Ok (result);
+            }
+        [HttpPost ("Update_StudentMessageTags")]
+        public async Task<ActionResult<bool>> Update_StudentMessageTags ([FromBody] StudentMessage studentMessage)
+            {
+            var result = await _BeService.Update_StudentMessageTagsAsync (studentMessage);
+            return Ok (result);
+            }
+        [HttpPost ("Update_StudentMessageSetAsRead")]
+        public async Task<ActionResult<bool>> Update_StudentMessageSetAsRead ([FromBody] StudentMessage studentMessage)
+            {
+            var result = await _BeService.Update_StudentMessageSetAsReadAsync (studentMessage);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_StudentMessage")]
+        public async Task<ActionResult<bool>> Delete_StudentMessage ([FromBody] int studentMessageId)
+            {
+            var result = await _BeService.Delete_StudentMessageAsync (studentMessageId);
+            return Ok (result);
+            }
         #endregion
         #region C20:Projects
         [HttpPost ("Create_Project")]
