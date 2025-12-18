@@ -68,82 +68,84 @@ else
     <EditForm Model="lstMessages">
         @foreach(Message message in lstMessages)
         {
-        <div class="container mt-5" style="text-align:center;">
-            <div class="card">
-                <div class="card-body bg-light">
-                    @message.MessageText
+        <div class="card-body bg-light">
+            @message.MessageTitle
+        </div>
+        foreach(StudentMessage stmsg in message.StudentMessages)
+            {
+            <div class="container mt-5" style="text-align:center;">
+                <div class="card">
+                    <div>Sent: @stmsg.DateTimeSent</div>
+                    @if((stmsg.StudentMessageTags & 1) == 1)
+                        {
+                        <div>Read: @stmsg.DateTimeRead</div>                    
+                        }
+                    @if((stmsg.StudentMessageTags & 16) == 16)
+                        {
+                        <span style="color:royalblue;font-weight:bold"># YES </span>
+                        }
+                    @if((stmsg.StudentMessageTags & 32) == 32)
+                        {
+                        <span style="color:indianred;font-weight:bold"># NO </span>
+                        }
+                    @if((stmsg.StudentMessageTags & 2) == 2)
+                        {
+                        <span style="color:gray;font-style:italic">Bookmarked </span>
+                        }
+                    @if((stmsg.StudentMessageTags & 4) == 4)
+                        {
+                        <span style="color:gray;font-style:italic">Deleted </span>
+                        }
                 </div>
-                <div>Sent: @message.DateTimeSent</div>
-                @if((message.MessageTags & 1) == 1)
+                @if ((appState.Cmd == "ShowMessageStats") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
                     {
-                    <div>Read: @message.DateTimeRead</div>                    
-                    }
-                @if((message.MessageTags & 8) == 8)
-                    {
-                    <span style="color:royalblue;font-weight:bold"># YES </span>
-                    }
-                @if((message.MessageTags & 16) == 16)
-                    {
-                    <span style="color:indianred;font-weight:bold"># NO </span>
-                    }
-                @if((message.MessageTags & 2) == 2)
-                    {
-                    <span style="color:gray;font-style:italic">Bookmarked </span>
-                    }
-                @if((message.MessageTags & 4) == 4)
-                    {
-                    <span style="color:gray;font-style:italic">Deleted </span>
-                    }
-            </div>
-            @if ((appState.Cmd == "ShowMessageStats") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
-                {
-                <div style="text-align:left; padding-left:25px;">
-                    <div style="font-weight:bold">Terget Students <span style="font-weight:normal;"> ( @nStudents ) </span></div>
-                    <div style="padding-left:15px;">@nStudentsRead ( @(nStudentsRead * 100 / nStudents)% ) Read</div>
-                    <div style="padding-left:15px;">@nStudentsBookmarked Bookmarked</div>
-                    <div style="padding-left:15px;">@nStudentsDeleted Deleted</div>
-                    <button class="btn btn-link" @onclick="()=>BtnListAnswersToThisMessage(message)">
-                        <img src="/icons/icoList_bt_1.png" width="26" />
-                    </button>
-                </div>
-                @if((message.MessageTags & 32) == 32)
-                    {
-                    <div style="text-align:left;font-weight:bold; padding-left:25px;">Feedbacks: <span style="font-weight:normal;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>                    
-                    <div class="d-flex justify-content-center">
-                        <MudChart ChartType="ChartType.Donut"
-                            InputData="@(new double[] {nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered })"
-                            InputLabels="@(new[] { "Yes: "+ @nStudentsAnsweredYes, "No: " + nStudentsAnsweredNo, "notSure: "+ nStudentsNotAnswered })"
-                            Width="100px" Height="100px" />
-                        <br /> 
+                    <div style="text-align:left; padding-left:25px;">
+                        <div style="font-weight:bold">Terget Students <span style="font-weight:normal;"> ( @nStudents ) </span></div>
+                        <div style="padding-left:15px;">@nStudentsRead ( @(nStudentsRead * 100 / nStudents)% ) Read</div>
+                        <div style="padding-left:15px;">@nStudentsBookmarked Bookmarked</div>
+                        <div style="padding-left:15px;">@nStudentsDeleted Deleted</div>
+                        <button class="btn btn-link" @onclick="()=>BtnListAnswersToThisMessage(message)">
+                            <img src="/icons/icoList_bt_1.png" width="26" />
+                        </button>
                     </div>
+                    @if((stmsg.StudentMessageTags & 8) == 8)
+                        {
+                        <div style="text-align:left;font-weight:bold; padding-left:25px;">Feedbacks: <span style="font-weight:normal;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>                    
+                        <div class="d-flex justify-content-center">
+                            <MudChart ChartType="ChartType.Donut"
+                                InputData="@(new double[] {nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered })"
+                                InputLabels="@(new[] { "Yes: "+ @nStudentsAnsweredYes, "No: " + nStudentsAnsweredNo, "notSure: "+ nStudentsNotAnswered })"
+                                Width="100px" Height="100px" />
+                            <br /> 
+                        </div>
+                        }
                     }
-                }
-            else
-                {
-                <button class="btn btn-link" @onclick="()=>BtnCalcPercentsForMessage(message)">
-                    <img src="/icons/icoPie_bt_1.png" width="26" />
-                </button>
-                <button class="btn btn-link" @onclick="()=>BtnDelete_Messages(message)">
-                    <img src="/icons/icoDeleteAll_bt_1.png" width="30" />
-                </button>
-                <button class="btn btn-link" @onclick="()=>BtnDelete_Message(message.MessageId)">
-                    <img src="/icons/icoDelete_bt_1.png" width="22" />
-                </button>                
-                }
-                @if((appState.Cmd == "ShowListOfAnswersToThisMessage") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
+                else
                     {
-                    <div class="container mt-5" style="text-align:center;">
-                        <div class="card">
-                            <div class="card-body">
-                                <table class="table table-borderless">
-                                    @foreach (Message msg in lstMessageInstances)
-                                        {
-                                        <tr>
-                                            <td style="text-align:left">
-                                                    @if((msg.MessageTags & 1) == 1)
+                    <button class="btn btn-link" @onclick="()=>BtnCalcPercentsForMessage(message)">
+                        <img src="/icons/icoPie_bt_1.png" width="26" />
+                    </button>
+                    <button class="btn btn-link" @onclick="()=>BtnDelete_Messages(message)">
+                        <img src="/icons/icoDeleteAll_bt_1.png" width="30" />
+                    </button>
+                    <button class="btn btn-link" @onclick="()=>BtnDelete_Message(message.MessageId)">
+                        <img src="/icons/icoDelete_bt_1.png" width="22" />
+                    </button>                
+                    }
+                    @if((appState.Cmd == "ShowListOfAnswersToThisMessage") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
+                        {
+                        <div class="container mt-5" style="text-align:center;">
+                            <div class="card">
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        @foreach (StudentMessage studentMessage in lstStudentMessageInstances)
+                                            {
+                                            <tr>
+                                                <td style="text-align:left">
+                                                    @if((studentMessage.StudentMessageTags & 1) == 1)
                                                         {
                                                         <span style="font-size:x-small;font-style:normal;font-weight:bold;color:royalblue">
-                                                            @msg.DateTimeRead
+                                                            @studentMessage.DateTimeRead
                                                         </span>                                                
                                                         }
                                                     else
@@ -154,30 +156,31 @@ else
                                                         }
                                                     <br/>
                                                     <span style="font-size:smaller">
-                                                        @msg.ToUsername (@msg.ToNickname)
+                                                        @studentMessage.StudentName (@studentMessage.StudentNickname)
                                                     </span>
-                                            </td>
-                                                @if((@msg.MessageTags & 8) == 8)
-                                                    {
-                                                    <span style="font-size:smaller;font-weight:bold; color:royalblue">YES</span>
-                                                    }
-                                                else if((@msg.MessageTags & 16) == 16)
-                                                    {
-                                                    <span style="font-size:smaller;font-weight:bold; color:indianred">NO</span>
-                                                    }
-                                                else
-                                                    {
-                                                    <span style="font-size:smaller;font-weight:bold; color:lightslategray">--</span>                            
-                                                    }
-                                        </tr>
-                                        }
-                                </table>
+                                                </td>
+                                                    @if((@studentMessage.StudentMessageTags & 8) == 8)
+                                                        {
+                                                        <span style="font-size:smaller;font-weight:bold; color:royalblue">YES</span>
+                                                        }
+                                                    else if((@studentMessage.StudentMessageTags & 16) == 16)
+                                                        {
+                                                        <span style="font-size:smaller;font-weight:bold; color:indianred">NO</span>
+                                                        }
+                                                    else
+                                                        {
+                                                        <span style="font-size:smaller;font-weight:bold; color:lightslategray">--</span>                            
+                                                        }
+                                            </tr>
+                                            }
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    }
-        </div>
-        <hr />
+                        }
+            </div>
+            <hr />
+            }
         }
     </EditForm>
         <div style="text-align:center">
@@ -212,7 +215,7 @@ else
     public int nStudentsNotAnswered = 0;
     User user = new User ();
     List<Message> lstMessages = new List<Message> ();
-    List<Message> lstMessageInstances = new List<Message> ();
+    List<StudentMessage> lstStudentMessageInstances = new List<StudentMessage> ();
     public bool _hasFetched = false;
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
@@ -220,11 +223,10 @@ else
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            
             Navman.NavigateTo ("/Login");
             }
         appState.SetCmd ("");
-        lstMessages = await feService.Read_Messages (mode, Id);
+        lstMessages = await feService.Read_StudentMessagesByStudentId (Id);
         _hasFetched = true;
         } 
     private void TriggerRender()
@@ -246,66 +248,69 @@ else
         nMessagesAnsweredYes = 0;
         nMessagesAnsweredNo = 0;
         nMessagesNotAnswered = 0;
-        foreach (Message msg in lstMessages)
+        foreach (Message message in lstMessages)
             {
-            nMessagesAll++;
-            if((msg.MessageTags & 1) == 1)
+            foreach(StudentMessage stmsg in message.StudentMessages)
                 {
-                nMessagesRead++;                
-                }
-            if((msg.MessageTags & 2) == 2)
-                {
-                nMessagesBookmarked++;
-                }
-            if((msg.MessageTags & 4) == 4)
-                {
-                nMessagesDeleted++;
-                }
-            if((msg.MessageTags & 32) == 32)
-                {
-                nMessagesTypeIsFeedback++;
-                if((msg.MessageTags & 8) == 8)
+                nMessagesAll++;
+                if((stmsg.StudentMessageTags & 1) == 1)
                     {
-                    nMessagesAnsweredYes++;
+                    nMessagesRead++;                
                     }
-                else if((msg.MessageTags & 16) == 16)
+                if((stmsg.StudentMessageTags & 2) == 2)
                     {
-                    nMessagesAnsweredNo++;
+                    nMessagesBookmarked++;
                     }
-                else
+                if((stmsg.StudentMessageTags & 4) == 4)
                     {
-                    nMessagesNotAnswered++;
+                    nMessagesDeleted++;
                     }
+                if((stmsg.StudentMessageTags & 8) == 8)
+                    {
+                    nMessagesTypeIsFeedback++;
+                    if((stmsg.StudentMessageTags & 16) == 16)
+                        {
+                        nMessagesAnsweredYes++;
+                        }
+                    else if((stmsg.StudentMessageTags & 32) == 32)
+                        {
+                        nMessagesAnsweredNo++;
+                        }
+                    else
+                        {
+                        nMessagesNotAnswered++;
+                        }
+                    }                
                 }
             }
         appState.SetCmd ("ShowStudentMessageStats");
         }
     public async Task BtnDelete_MessagesOfstudent(int studentId)
         {
-        if(await JS.InvokeAsync<bool>("confirm", "Delete All Messages Permanently?"))
-            {
-            // int userId = Convert.ToInt32 (appState.UserId);
-            bool result = await feService.Delete_MessagesById ("Student", studentId);
-            if(result)
-                {
-                int id = Convert.ToInt32 (Id);
-                lstMessages.Clear();
-                lstMessages = await feService.Read_Messages (mode, Id);
-                appState.SetCmd("");
-                StateHasChanged();
-                }
-            else
-                {
-                await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
-                }            
-            }
+        // if(await JS.InvokeAsync<bool>("confirm", "Delete All Messages Permanently?"))
+        //     {
+        //     // int userId = Convert.ToInt32 (appState.UserId);
+        //     bool result = await feService.Delete_MessagesById ("Student", studentId);
+        //     if(result)
+        //         {
+        //         int id = Convert.ToInt32 (Id);
+        //         lstMessages.Clear();
+        //         lstMessages = await feService.Read_Messages (mode, Id);
+        //         appState.SetCmd("");
+        //         StateHasChanged();
+        //         }
+        //     else
+        //         {
+        //         await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
+        //         }            
+        //     }
         }
     //btns-Messages
     public async Task BtnCalcPercentsForMessage(Message message)
         {
        _hasFetched = false;
-        lstMessageInstances = await feService.Read_Messages (message);
-        if (lstMessageInstances.Count > 0)
+        lstStudentMessageInstances = await feService.Read_StudentMessagesByMessageId (message.MessageId);
+        if (lstStudentMessageInstances.Count > 0)
             {
             nStudents = 0;
             nStudentsRead = 0;
@@ -314,28 +319,28 @@ else
             nStudentsAnsweredYes = 0;
             nStudentsAnsweredNo = 0;
             nStudentsNotAnswered = 0;
-            foreach (Message msg in lstMessageInstances)
+            foreach (StudentMessage stmsg in lstStudentMessageInstances)
                 {
                 nStudents++;
-                if((msg.MessageTags & 1) == 1)
+                if((stmsg.StudentMessageTags & 1) == 1)
                     {
                     nStudentsRead++;                
                     }
-                if((msg.MessageTags & 2) == 2)
+                if((stmsg.StudentMessageTags & 2) == 2)
                     {
                     nStudentsBookmarked++;
                     }
-                if((msg.MessageTags & 4) == 4)
+                if((stmsg.StudentMessageTags & 4) == 4)
                     {
                     nStudentsDeleted++;
                     }
-                if((msg.MessageTags & 32) == 32)
+                if((stmsg.StudentMessageTags & 8) == 8)
                     {
-                    if((msg.MessageTags & 8) == 8)
+                    if((stmsg.StudentMessageTags & 16) == 16)
                         {
                         nStudentsAnsweredYes++;
                         }
-                    else if((msg.MessageTags & 16) == 16)
+                    else if((stmsg.StudentMessageTags & 32) ==32)
                         {
                         nStudentsAnsweredNo++;
                         }
@@ -358,43 +363,43 @@ else
         }
     public async Task BtnDelete_Message(int messageId)
         {
-        if(await JS.InvokeAsync<bool>("confirm", "Delete Message Permanently?"))
-            {
-            int userId = Convert.ToInt32 (appState.UserId);
-            bool result = await feService.Delete_MessagesById ("Message", messageId);
-            if(result)
-                {
-                int id = Convert.ToInt32 (Id);
-                lstMessages.Clear();
-                lstMessages = await feService.Read_Messages (mode, Id);
-                appState.SetCmd("");
-                StateHasChanged();
-                }
-            else
-                {
-                await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
-                }            
-            }
+        // if(await JS.InvokeAsync<bool>("confirm", "Delete Message Permanently?"))
+        //     {
+        //     int userId = Convert.ToInt32 (appState.UserId);
+        //     bool result = await feService.Delete_MessagesById ("Message", messageId);
+        //     if(result)
+        //         {
+        //         int id = Convert.ToInt32 (Id);
+        //         lstMessages.Clear();
+        //         lstMessages = await feService.Read_Messages (mode, Id);
+        //         appState.SetCmd("");
+        //         StateHasChanged();
+        //         }
+        //     else
+        //         {
+        //         await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
+        //         }            
+        //     }
         }
     public async Task BtnDelete_Messages(Message message)
         {
-        if(await JS.InvokeAsync<bool>("confirm", "Delete all Message Instanses Sent to Group Permanently?"))
-            {
-            int userId = Convert.ToInt32 (appState.UserId);
-            bool result = await feService.Delete_MessagesByDateTime (userId, message);
-            if(result)
-                {
-                int id = Convert.ToInt32 (Id);
-                lstMessages.Clear();
-                lstMessages = await feService.Read_Messages (mode, Id);
-                appState.SetCmd("");
-                StateHasChanged();
-                }
-            else
-                {
-                await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
-                }            
-            }
+        // if(await JS.InvokeAsync<bool>("confirm", "Delete all Message Instanses Sent to Group Permanently?"))
+        //     {
+        //     int userId = Convert.ToInt32 (appState.UserId);
+        //     bool result = await feService.Delete_MessagesByDateTime (userId, message);
+        //     if(result)
+        //         {
+        //         int id = Convert.ToInt32 (Id);
+        //         lstMessages.Clear();
+        //         lstMessages = await feService.Read_Messages (mode, Id);
+        //         appState.SetCmd("");
+        //         StateHasChanged();
+        //         }
+        //     else
+        //         {
+        //         await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
+        //         }            
+        //     }
         }    
     public void BtnBack()
         {

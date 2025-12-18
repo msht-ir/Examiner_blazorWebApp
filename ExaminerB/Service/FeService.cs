@@ -1006,7 +1006,7 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ($"api/Create_Message", message);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<List<Message>> Read_StudentMessagesByStudentIdAsync (int studentId)
+        public async Task<List<Message>> Read_StudentMessagesByStudentId (int studentId)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_StudentMessagesByStudentId", studentId);
             if (response.IsSuccessStatusCode)

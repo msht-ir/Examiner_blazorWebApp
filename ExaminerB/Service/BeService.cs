@@ -5,6 +5,7 @@ using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
 using System.Data;
+using System.Linq;
 using Group = ExaminerS.Models.Group;
 
 namespace ExaminerB.Services2Backend
