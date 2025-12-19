@@ -287,23 +287,23 @@ else
         }
     public async Task BtnDelete_MessagesOfstudent(int studentId)
         {
-        // if(await JS.InvokeAsync<bool>("confirm", "Delete All Messages Permanently?"))
-        //     {
-        //     // int userId = Convert.ToInt32 (appState.UserId);
-        //     bool result = await feService.Delete_MessagesById ("Student", studentId);
-        //     if(result)
-        //         {
-        //         int id = Convert.ToInt32 (Id);
-        //         lstMessages.Clear();
-        //         lstMessages = await feService.Read_Messages (mode, Id);
-        //         appState.SetCmd("");
-        //         StateHasChanged();
-        //         }
-        //     else
-        //         {
-        //         await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
-        //         }            
-        //     }
+        if(await JS.InvokeAsync<bool>("confirm", "Delete All Messages Permanently?"))
+            {
+            // int userId = Convert.ToInt32 (appState.UserId);
+            bool result = await feService.Delete_Messages ("toonestudent", studentId);
+            if(result)
+                {
+                int id = Convert.ToInt32 (Id);
+                lstMessages.Clear();
+                lstMessages = await feService.Read_StudentMessagesByStudentId (Id);
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
+                }            
+            }
         }
     //btns-Messages
     public async Task BtnCalcPercentsForMessage(Message message)
@@ -363,43 +363,43 @@ else
         }
     public async Task BtnDelete_Message(int messageId)
         {
-        // if(await JS.InvokeAsync<bool>("confirm", "Delete Message Permanently?"))
-        //     {
-        //     int userId = Convert.ToInt32 (appState.UserId);
-        //     bool result = await feService.Delete_MessagesById ("Message", messageId);
-        //     if(result)
-        //         {
-        //         int id = Convert.ToInt32 (Id);
-        //         lstMessages.Clear();
-        //         lstMessages = await feService.Read_Messages (mode, Id);
-        //         appState.SetCmd("");
-        //         StateHasChanged();
-        //         }
-        //     else
-        //         {
-        //         await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
-        //         }            
-        //     }
+        if(await JS.InvokeAsync<bool>("confirm", "Delete Message Permanently?"))
+            {
+            int userId = Convert.ToInt32 (appState.UserId);
+            bool result = await feService.Delete_Messages ("onemessage", messageId);
+            if(result)
+                {
+                int id = Convert.ToInt32 (Id);
+                lstMessages.Clear();
+                lstMessages = await feService.Read_StudentMessagesByStudentId (Id);
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
+                }            
+            }
         }
     public async Task BtnDelete_Messages(Message message)
         {
-        // if(await JS.InvokeAsync<bool>("confirm", "Delete all Message Instanses Sent to Group Permanently?"))
-        //     {
-        //     int userId = Convert.ToInt32 (appState.UserId);
-        //     bool result = await feService.Delete_MessagesByDateTime (userId, message);
-        //     if(result)
-        //         {
-        //         int id = Convert.ToInt32 (Id);
-        //         lstMessages.Clear();
-        //         lstMessages = await feService.Read_Messages (mode, Id);
-        //         appState.SetCmd("");
-        //         StateHasChanged();
-        //         }
-        //     else
-        //         {
-        //         await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
-        //         }            
-        //     }
+        if(await JS.InvokeAsync<bool>("confirm", "Delete all Message Instanses Sent to Group Permanently?"))
+            {
+            int groupId = Convert.ToInt32 (appState.GroupId);
+            bool result = await feService.Delete_Messages ("togroupmembers", groupId);
+            if(result)
+                {
+                int id = Convert.ToInt32 (Id);
+                lstMessages.Clear();
+                lstMessages = await feService.Read_StudentMessagesByStudentId (Id);
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
+                }            
+            }
         }    
     public void BtnBack()
         {

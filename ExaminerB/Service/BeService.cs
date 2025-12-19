@@ -3469,7 +3469,7 @@ COMMIT TRANSACTION;
             List<StudentMessage> lstStudentMessages = new List<StudentMessage>();
             string sql = @"SELECT sm.StudentMessageId, sm.StudentId, sm.MessageId, sm.DateTimeSent, sm.DateTimeRead, sm.MessageTags, s.StudentName, s.StudentNickname
                         FROM StudentMessages sm INNER JOIN Students s ON sm.StudentId = s.StudentId
-                        WHERE StudentId=@studentid)";
+                        WHERE sm.StudentId=@studentid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try

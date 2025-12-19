@@ -19,35 +19,25 @@
     <EditForm Model="user" OnValidSubmit="BtnLogin" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <div class="mb-3 d-flex gap-1">
-            <select @ref="refRole" class="form-select w-auto" style="font-size:small;" @bind="user.UserRole" @bind:event="onchange" @bind:after="async () => await OnRoleChanged()" >
-                <option value="student"> Student </option>
-                <option value="teacher"> Teacher </option>
-            </select>
+            <MudSelect T="string" @ref="refRole" Label="Role" Value="user.UserRole" ValueChanged="@((string role) => OnRoleChanged(role))" Class="w-auto" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="font-size:small;">
+                <MudSelectItem Value=@("student")>Student</MudSelectItem>
+                <MudSelectItem Value=@("teacher")>Teacher</MudSelectItem>
+            </MudSelect>
             <br />
             @if(user.UserRole == "student")
                 {
-                <select  @ref="refTeacher" class="form-select w-auto" style="color:royalblue;width:100px;font-size:small" @onchange="OnTeacherChanged">
-                    <option value=0> Your teacher? </option>
-                    @foreach(User teacher in lstTeachers)
-                        {
-                        <option value="@teacher.UserId"> @teacher.UserNickname </option>
-                        }
-                </select>
-                <select @ref="refGroup" class="form-select w-auto" style="color:indianred;width:100px;font-size:small" @bind="GroupId" @bind:event="onchange" @bind:after="async () => await OnGroupChanged()">
-                    <option value=0> Your class? </option>
-                    @foreach(Group group in lstGroups)
-                        {
-                        <option value="@group.GroupId"> @group.GroupName </option>
-                        }
-                </select>
+                <MudSelect T="int" @ref="refTeacher" Label="Teacher" Value="selectedTeacherId" ValueChanged="OnTeacherChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:100px;font-size:small">
+                    <MudSelectItem Value="0">Your teacher?</MudSelectItem>
+                    @foreach (var teacher in lstTeachers) { <MudSelectItem Value="@teacher.UserId">@teacher.UserNickname</MudSelectItem> }
+                </MudSelect>
+                <MudSelect T="int" @ref="refGroup" Label="Class" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:100px;font-size:small">
+                    <MudSelectItem Value="0">Your Class?</MudSelectItem>
+                    @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
+                </MudSelect>
                 }
         </div>
-        <div class="mb-3">
-            <input @ref="refUser" @bind="user.UserName" type="text" class="form-control" placeholder="Username" @onkeydown="HandleUserKeyDown" />
-        </div>
-        <div class="mb-3">
-            <input @ref="refPass" @bind="user.UserPass" type="password" class="form-control" placeholder="Password">
-        </div>
+        <MudTextField @ref="refUser" @bind-Value="user.UserName" Label="Username" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+        <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" InputType="InputType.Password"/>
         <button class="btn btn-link">
             <img src="/images/gifUser1.gif" width="60" />
         </button>
@@ -63,13 +53,24 @@
 </script>
 
 @code {
-    private ElementReference refRole;
-    private ElementReference refTeacher;
-    private ElementReference refGroup;
-    private ElementReference refUser;
-    private ElementReference refPass;
-    private bool _firstRender = true;
+    //private ElementReference refRole;
+    private MudSelect<string> refRole;
     private User user = new User { UserRole = "student" };
+
+    //private ElementReference refTeacher;
+    private MudSelect<int> refTeacher;
+    private int selectedTeacherId;
+
+    //private ElementReference refGroup;
+    private MudSelect<int> refGroup;
+
+    // private ElementReference refUser;
+    private MudTextField<string> refUser;
+
+    // private ElementReference refPass;
+    private MudTextField<string> refPass;
+
+    private bool _firstRender = true;
     private int TeacherId = 0;
     private int GroupId = 0;
     private List<User> lstTeachers = new List<User> (); 
@@ -170,10 +171,10 @@
             await refPass.FocusAsync ();
             }
         }
-    private async Task OnTeacherChanged(ChangeEventArgs e)
+    private async Task OnTeacherChanged(int newValue) 
         {
         //update TeacherId from the event
-        TeacherId = Convert.ToInt32(e.Value);
+        TeacherId = newValue;
         user.UserId = TeacherId;
         user.UserName = "-"; //just because this field is required 
         user.UserPass = "-------";//just because this field is required
@@ -186,9 +187,10 @@
         StateHasChanged();
         await Task.Delay (1);
         await refGroup.FocusAsync ();
-        }
-    private async Task OnRoleChanged()
+        } 
+    private async Task OnRoleChanged(string newRole) 
         {
+        user.UserRole = newRole;
         StateHasChanged(); //render page to make elements appear on DOM
         await Task.Yield(); //wait until render is completed
         if (user.UserRole == "teacher")
@@ -200,8 +202,9 @@
             await refTeacher.FocusAsync();
             }
         }
-    private async Task OnGroupChanged()
+    private async Task OnGroupChanged(int newValue) 
         {
+        GroupId = newValue;
         if (user.UserRole == "student")
             {
             StateHasChanged(); //render page to make elements appear on DOM
@@ -210,4 +213,6 @@
             await refUser.FocusAsync();
             }
         }
+
+
 }

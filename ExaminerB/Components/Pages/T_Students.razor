@@ -115,13 +115,8 @@ else
                                                     <div style="text-align: center;">
                                                         <hr style="color:red" />
                                                         <h6 style="color:indianRed;">Send this Message to members of the group</h6>
-                                                        <div class="mb-3">
-                                                            <input class="form-control" @ref="txtMessageTitle" @bind="message.MessageTitle" placeholder="Enter Message Title here...">
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <input class="form-control" @ref="txtMessageBody" @bind="message.MessageBody" placeholder="Enter Message Body here...">
-                                                        </div>
-                                                        <input class="form-check-input" type="checkbox" @bind=_IsMessageTypeFeedback />
+                                                        <MudTextField @ref="txtMessageTitle" @bind-Value="message.MessageTitle" Label="Message Title" Variant="Variant.Outlined" Class="my-textfield" />
+                                                        <MudTextField @ref="txtMessageBody" @bind-Value="message.MessageBody" Placeholder="Message Body..." Lines="4" Variant="Variant.Outlined" Class="my-textarea" TextFieldStyle="TextFieldStyle.TextArea" />                                                        <input class="form-check-input" type="checkbox" @bind=_IsMessageTypeFeedback />
                                                         <label class="form-check-label" style="color:Black"> Message Receives Feedback </label><br />
                                                         <button class="btn btn-link" @onclick="()=>BtnSendMessageToGroup(grp.GroupId)">
                                                             <img src="/images/gifSendMessage.gif" width="60" />
@@ -334,8 +329,8 @@ else
 @code {
     private ElementReference txtNewGroup;
     private ElementReference txtGroupName;
-    private ElementReference txtMessageTitle;
-    private ElementReference txtMessageBody;
+    private MudTextField<string> txtMessageTitle;
+    private MudTextField<string> txtMessageBody;
     private readonly HttpClient _http;
     User user = new User ();
     List<Group> lstGroups = new ();
