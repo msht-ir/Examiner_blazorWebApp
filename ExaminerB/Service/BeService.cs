@@ -3450,13 +3450,13 @@ COMMIT TRANSACTION;
                 int i = 0;
                 foreach (int recipient in lstStudentIds)
                     {
-                    string sql3 = "INSERT INTO StudentMessages (StudentId, MessageId, DateTimeSent, DateTimeRead, MessageTags) VALUES (@studentid, @messageid, @datetimesent, @datetimeread, @messagetags)";
+                    string sql3 = "INSERT INTO StudentMessages (StudentId, MessageId, DateTimeSent, DateTimeRead, StudentMessageTags) VALUES (@studentid, @messageid, @datetimesent, @datetimeread, @studentmessagetags)";
                     SqlCommand cmd3 = new SqlCommand (sql3, cnn);
                     cmd3.Parameters.AddWithValue ("@studentid", recipient);
                     cmd3.Parameters.AddWithValue ("@messageid", newMessageId);
                     cmd3.Parameters.AddWithValue ("@datetimesent", currentDateTime);
                     cmd3.Parameters.AddWithValue ("@datetimeread", "-");
-                    cmd3.Parameters.AddWithValue ("@messagetags", typeFeedback ? true : false);
+                    cmd3.Parameters.AddWithValue ("@studentmessagetags", typeFeedback ? 8 : 0);
                     await cmd3.ExecuteNonQueryAsync ();
                     i++;
                     Console.WriteLine ($"{i} - message {newMessageId} sent to {recipientId}");                    
@@ -3471,7 +3471,7 @@ COMMIT TRANSACTION;
             List<Message> lstMessages = new List<Message> ();
             Message message = new Message ();
             List<StudentMessage> lstStudentMessages = new List<StudentMessage>();
-            string sql = @"SELECT sm.StudentMessageId, sm.StudentId, sm.MessageId, sm.DateTimeSent, sm.DateTimeRead, sm.MessageTags, s.StudentName, s.StudentNickname
+            string sql = @"SELECT sm.StudentMessageId, sm.StudentId, sm.MessageId, sm.DateTimeSent, sm.DateTimeRead, sm.StudentMessageTags, s.StudentName, s.StudentNickname
                         FROM StudentMessages sm INNER JOIN Students s ON sm.StudentId = s.StudentId
                         WHERE sm.StudentId=@studentid";
             string? connString = _config.GetConnectionString ("cnni");
@@ -3516,7 +3516,7 @@ COMMIT TRANSACTION;
             }
         public async Task<List<StudentMessage>> Read_StudentMessagesByMessageIdAsync (int messageId)
             {
-            string sql = "SELECT StudentMessageId, StudentId, MessageId, DateTimeSent, DeateTimrRead, StudentMessageTags FROM StudentMessages WHERE MessageId=@messageid";
+            string sql = "SELECT sm.StudentMessageId, sm.MessageId, sm.StudentId, s.StudentName, s.StudentNickname, sm.DateTimeSent, sm.DateTimeRead, sm.StudentMessageTags FROM StudentMessages sm INNER JOIN Students s ON sm.StudentId = s.StudentId WHERE sm.MessageId=@messageid ORDER BY sm.DateTimeSent";
             List<StudentMessage> lstStudentMessages = new List<StudentMessage>();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
@@ -3532,11 +3532,13 @@ COMMIT TRANSACTION;
                     lstStudentMessages.Add (new StudentMessage
                         {
                         StudentMessageId = reader.GetInt32 (0),
-                        StudentId = reader.GetInt32 (1),
-                        MessageId = reader.GetInt32 (2),
-                        DateTimeSent = reader.GetString (3),
-                        DateTimeRead = reader.GetString (4),
-                        StudentMessageTags = reader.GetInt32 (5)
+                        MessageId = reader.GetInt32 (1),
+                        StudentId = reader.GetInt32 (2),
+                        StudentName = reader.GetString (3),
+                        StudentNickname = reader.GetString (4),
+                        DateTimeSent = reader.GetString (5),
+                        DateTimeRead = reader.GetString (6),
+                        StudentMessageTags = reader.GetInt32 (7)
                         });
                     }
                 await cnn.CloseAsync ();
@@ -3552,7 +3554,7 @@ COMMIT TRANSACTION;
         public async Task<Message> Read_StudentMessageAsync (int studentMessageId)
             {
             //by reading a studentMessage, its message (title, body) is also needed. so, a message (containing a studentMessage) is retured.
-            string sql = "SELECT StudentMessageId, StudentId, MessageId, DateTimeSent, DateTimeRead, MessageTags FROM StudentMessages WHERE StudentMessageId=@studentmessageid";
+            string sql = "SELECT StudentMessageId, StudentId, MessageId, DateTimeSent, DateTimeRead, StudentMessageTags FROM StudentMessages WHERE StudentMessageId=@studentmessageid";
             StudentMessage studentMessage = new StudentMessage();
             Message message = new Message();
             string? connString = _config.GetConnectionString ("cnni");

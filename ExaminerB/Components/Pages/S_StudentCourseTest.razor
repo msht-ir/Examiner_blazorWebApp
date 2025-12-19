@@ -39,30 +39,47 @@
                         <td></td>
                     </tr>
                 </thead>
+                @if((studentCourseTest.TestTags & 2) == 2)
+                    {
+                    style = "direction:rtl;text-align:right;";
+                    strSelect = "انتخاب";
+                    }
+                else
+                    {
+                    style="direction:ltr;text-align:left;";                        
+                    strSelect = "Select";
+                    }                
+
                 @foreach(var opt in studentCourseTest.TestOptions)
                     {
-                    @if((studentCourseTest.TestTags & 2) == 2)
-                        {
-                        <tr style="direction:rtl;text-align:right;">
-                            <td>
-                                @opt.TestOptionTitle
-                            </td>
-                            <td>
-                                <button class="btn btn-primary btn-sm col-auto" @onclick="()=>BtnSaveOptionAsAnswer(opt.TestOptionId)">انتخاب</button>
-                            </td>
-                        </tr>                                        
-                        }
-                    else
-                        {
-                        <tr style="direction:ltr;text-align:left;">
-                            <td>
-                                @opt.TestOptionTitle
-                            </td>
-                            <td>
-                                <button class="btn btn-primary btn-sm col-auto" @onclick="()=>BtnSaveOptionAsAnswer (opt.TestOptionId)">Select</button>
-                            </td>
-                        </tr>                    
-                        }
+                    <MudContainer Class="mt-2 px-0">
+                        <MudCard Class="mx-0">
+                            <MudCardContent Style="background-color:whitesmoke;">
+                                @if((studentCourseTest.TestTags & 2) == 2)
+                                    {
+                                    <MudGrid Style="@style">
+                                        <MudItem xs="10">
+                                            @opt.TestOptionTitle
+                                        </MudItem>
+                                        <MudItem xs="2">
+                                            <button class="btn btn-primary btn-sm col-auto" @onclick="()=>BtnSaveOptionAsAnswer(opt.TestOptionId)">انتخاب</button>
+                                        </MudItem>
+                                    </MudGrid>                                       
+                                    }
+                                else
+                                    {
+                                    <MudGrid Style="@style">
+                                        <MudItem xs="10">
+                                            @opt.TestOptionTitle
+                                        </MudItem>
+                                        <MudItem xs="2">
+                                            <button class="btn btn-primary btn-sm col-auto" @onclick="()=>BtnSaveOptionAsAnswer (opt.TestOptionId)">Select</button>
+                                        </MudItem>
+                                    </MudGrid>                                       
+                                    }                            
+                            </MudCardContent>
+                        </MudCard>
+                    </MudContainer>
                     }
             </table>
         </EditForm>
@@ -88,6 +105,9 @@
     private bool hasScrolled = false;
     public StudentCourseTest studentCourseTest = new StudentCourseTest ();
     public StudentCourse studentCourse = new ();
+    string style = "";
+    string strSelect = "";
+
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {

@@ -65,21 +65,26 @@ else
                 {
                 i++;
                 int localId = test.TestId;
-                @if ((test.TestTags & 1) == 1)
-                    {
-                    <p style="text-align:right;" dir="rtl">- @test.TestTitle</p>
-                    <button class="btn btn-link" @onclick="()=>BtnEditCourseTest(localId)" style="text-align:right;" dir="rtl">
-                        <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
-                    </button>
-                    }
-                else
-                    {
-                    <p style="text-align:left;">- @test.TestTitle</p>
-                    <button class="btn btn-link" @onclick="()=>BtnEditCourseTest(localId)" style="text-align:right;" dir="rtl">
-                        <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
-                    </button>
-                    }
-                <hr style="border-color:red" />
+                <MudContainer Class="mt-2 px-0">
+                    <MudCard Class="mx-0">
+                        <MudCardContent Style="background-color:whitesmoke;">
+                            @if ((test.TestTags & 1) == 1)
+                                {
+                                <p style="text-align:right;" dir="rtl">- @test.TestTitle</p>
+                                <button class="btn btn-link" @onclick="()=>BtnEditCourseTest(localId)" style="text-align:right;" dir="rtl">
+                                    <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
+                                </button>
+                                }
+                            else
+                                {
+                                <p style="text-align:left;">- @test.TestTitle</p>
+                                <button class="btn btn-link" @onclick="()=>BtnEditCourseTest(localId)" style="text-align:right;" dir="rtl">
+                                    <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
+                                </button>
+                                }                
+                        </MudCardContent>
+                    </MudCard>
+                </MudContainer>
                 }
             <div style="text-align: center;">
                 <button class="btn btn-link" @onclick="BtnBack">

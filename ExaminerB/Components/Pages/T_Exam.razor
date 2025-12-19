@@ -7,6 +7,8 @@
 @inject NavigationManager Navman
 @inject AppState appState
 @implements IDisposable
+@inject IDialogService DialogService
+
 @if (!_hasFetched)
     {
     <_Loading />
@@ -25,23 +27,28 @@ else
     </div>
     <EditForm Model="exam">
         @* Exam Title*@
-        <div style="background-color:whitesmoke;padding-left:10px;;padding-right:10px">
-            <div style="font-size:130%;font-weight:bold;color:royalblue">Exam <span style="font-size:small;font-weight:normal;color:gray">Title - DateTime - Duration</span></div>
-            <div class="mb-3">
-                <input class="form-control d-inline" @bind="exam.ExamTitle" placeholder="Exam Title" style="font-weight:bold;color:indianred;width:50%;"/>
-                <input class="form-control d-inline" @bind="exam.ExamDuration" placeholder="Duration min" type="number" style="width:55px;text-align:center;"/>
-                <span style="padding-right:10px;">min</span>
-            </div>
-            <div class="mb-3">
-                <div class="mb-3">
-                    <input class="form-control d-inline" @bind="exam.ExamDateTime" placeholder="____-__-__ __:__" style="width:140px;text-align:center"/>
-                    <label style="padding-left:5px;padding-right:5px;">Active</label>
-                    <input class="form-inline border" @bind="exam.IsActive" type="checkbox"/>
-                    <label style="padding-left:5px;padding-right:5px;">Training</label>
-                    <input class="form-inline border" @bind="exam.IsTrainingMode" type="checkbox"/>
-                </div>
-            </div>
-        </div>
+        <MudContainer Class="mt-2 px-0">
+            <MudCard Class="mx-0">
+                <MudCardContent Style="background-color:whitesmoke;">                                         
+                    <div style="font-size:130%;font-weight:bold;color:royalblue">Exam <span style="font-size:small;font-weight:normal;color:gray">Title - DateTime - Duration</span></div>
+                    <div class="mb-3">
+                        <input class="form-control d-inline" @bind="exam.ExamTitle" placeholder="Exam Title" style="font-weight:bold;color:indianred;width:50%;"/>
+                        <input class="form-control d-inline" @bind="exam.ExamDuration" placeholder="Duration min" type="number" style="width:55px;text-align:center;"/>
+                        <span style="padding-right:10px;">min</span>
+                    </div>
+                    <div class="mb-3">
+                        <div class="mb-3">
+                            <input class="form-control d-inline" @bind="exam.ExamDateTime" placeholder="____-__-__ __:__" style="width:140px;text-align:center"/>
+                            <label style="padding-left:5px;padding-right:5px;">Active</label>
+                            <input class="form-inline border" @bind="exam.IsActive" type="checkbox"/>
+                            <label style="padding-left:5px;padding-right:5px;">Training</label>
+                            <input class="form-inline border" @bind="exam.IsTrainingMode" type="checkbox"/>
+                        </div>
+                    </div>
+                </MudCardContent>
+            </MudCard>
+        </MudContainer>
+        <br />
         <div class="accordion" id="accordionEC">
             @* CARD1- ExamComposition *@
             <div class="accordion-item">
@@ -179,33 +186,37 @@ else
                         @{i = 0;}
                         @foreach (Test tst in lstExamTests)
                             {
-                             i++;
-                            @* List of tests *@
-                            <hr style="border-color:red" />
-                                int localTestId = tst.TestId;
-                                @if ((tst.TestTags & 1) == 1)
-                                    {
-                                    <p style="text-align:right;" dir="rtl">@i - @tst.TestTitle</p>
-                                    }
-                                else
-                                    {
-                                        <p style="text-align:left;">- @tst.TestTitle</p>
-                                    }
-                                    @foreach (TestOption opt in tst.TestOptions)
-                                        {
+                            <MudContainer Class="mt-2 px-0">
+                                <MudCard Class="mx-0">
+                                    <MudCardContent Style="background-color:ghostwhite;">                                         
+                                        @* List of tests *@
+                                        @{i++; int localTestId = tst.TestId;}
                                         @if ((tst.TestTags & 1) == 1)
                                             {
-                                            <div style="font-size:small;text-align:right;" dir="rtl"> - @opt.TestOptionTitle</div>
+                                            <p style="text-align:right;" dir="rtl">@i - @tst.TestTitle</p>
                                             }
                                         else
                                             {
-                                            <div style="font-size:small;text-align:left;"> - @opt.TestOptionTitle</div>
+                                                <p style="text-align:left;">- @tst.TestTitle</p>
                                             }
-                                        }
-                                <button class="btn btn-link" style="text-align:right;" dir="rtl" @onclick="()=>BtnDeleteExamTest(localTestId)" >
-                                    <img src="icons/icoDelete_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
-                                </button>
-                                }
+                                            @foreach (TestOption opt in tst.TestOptions)
+                                                {
+                                                @if ((tst.TestTags & 1) == 1)
+                                                    {
+                                                    <div style="font-size:small;text-align:right;" dir="rtl"> - @opt.TestOptionTitle</div>
+                                                    }
+                                                else
+                                                    {
+                                                    <div style="font-size:small;text-align:left;"> - @opt.TestOptionTitle</div>
+                                                    }
+                                                }
+                                        <button class="btn btn-link" style="text-align:right;" dir="rtl" @onclick="()=>BtnDeleteExamTest(localTestId)" >
+                                            <img src="icons/icoDelete_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
+                                        </button>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
+                            }
                     </div>
                 </div>
             </div>
@@ -423,9 +434,15 @@ else
         }
     public async Task BtnBack()
         {
-        if(await JS.InvokeAsync<bool>("confirm", "Save Exam Properties?"))
+        var message = new MarkupString($"Save Exam Changes?");
+        bool? confirmResult = await DialogService.ShowMessageBox(
+            title: "Confirm Exam Changes",
+            markupMessage: message,
+            yesText: "Yes",
+            cancelText: "No");
+        if (confirmResult == true)
             {
-            BtnUpdateExam ();
+            BtnUpdateExam ();            
             }
         appState.SetCmd ("");
         Navman.NavigateTo ("/T_Exams");

@@ -32,66 +32,70 @@
                         <div class="accordion-body" style="background-color:white">
                             <div id="T1">
                                 <table class="table table-borderless">
-                                    @* <thead>
-                                        <tr style="font-weight:bold;border:none;">
-                                            <td style="border:none;color:royalblue;font-size:medium">Exams</td>
-                                        </tr>
-                                    </thead> *@
                                     @foreach (var stdexam in lstStudentExams)
-                                        {
-                                        int Id = stdexam.StudentExamId;
-                                        <tr style="align-content:center;">
-                                            @if (stdexam.StudentExamTags == 0)
-                                                {
-                                                <td style="color:indianred; font-weight:bold;">
-                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
-                                                    <div>@stdexam.ExamTitle </div>
-                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
-                                                </td>
-                                                <td>
-                                                    <div>Tests: @stdexam.ExamNTests</div>
-                                                    <div>Time: @stdexam.ExamDuration min</div>
-                                                    <button style="border:none" @onclick="async () => await BtnStartExam(stdexam)">
-                                                        <img src="icons/icoGo_gt_1.png" alt="Login icon" style="width:25px;" />
-                                                    </button>
-                                                </td>
-                                                }
-                                            else if (stdexam.StudentExamTags == 1)
-                                                {
-                                                <td style="color:indianred; font-weight:bold;">
-                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
-                                                    <div>@stdexam.ExamTitle</div>
-                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>                                    
-                                                </td>
-                                                <td>
-                                                    <div>Tests: @stdexam.ExamNTests</div>
-                                                    <div>Time: @stdexam.ExamDuration min</div>                                    
-                                                    <button style="border:none" @onclick="async () => await BtnStartExam(stdexam)">
-                                                        <img src="icons/icoEditPen_bt_1.png" alt="Login icon" style="width:22px;" />
-                                                    </button>
-                                                </td>
-                                                }
-                                            else if ((stdexam.StudentExamTags & 2) == 2)
-                                                {
-                                                <td style="color:darkslategrey; font-weight:bold;">
-                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
-                                                    <div>@stdexam.ExamTitle</div>
-                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
-                                                </td>
-                                                <td>
-                                                    <div>Tests @stdexam.ExamNTests</div>
-                                                    <div>Time @stdexam.ExamDuration m</div>
-                                                    <div><span style="color:indianred;font-size:small;font-weight:bold;">Pnt @stdexam.StudentExamPoint.ToString("F2")/20 </span></div>
-                                                    @if ((student.UserTags & 4) == 4)
-                                                        {
-                                                        <button style="border:none" @onclick="() => BtnReportExam(Id)">
-                                                            <img src="icons/icoReport_ct_1.png" alt="Report icon" style="width:25px;" />
-                                                        </button>
-                                                        }
-                                                </td>
-                                                }
-                                        </tr>
-                                        }
+                                    {
+                                        <MudContainer Class="mt-2 px-0">
+                                            <MudCard Class="mx-0">
+                                                <MudCardContent Style="background-color:whitesmoke;">
+                                                    <MudGrid>
+                                                        <!-- Left column -->
+                                                        <MudItem xs="6">
+                                                            @if (stdexam.StudentExamTags == 0)
+                                                                {
+                                                                <div style="color:indianred; font-weight:bold;">
+                                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
+                                                                    <div>@stdexam.ExamTitle</div>
+                                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
+                                                                </div>
+                                                                }
+                                                            else if (stdexam.StudentExamTags == 1)
+                                                                {
+                                                                <div style="color:indianred; font-weight:bold;">
+                                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
+                                                                    <div>@stdexam.ExamTitle</div>
+                                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
+                                                                </div>
+                                                                }
+                                                            else if ((stdexam.StudentExamTags & 2) == 2)
+                                                                {
+                                                                <div style="color:darkslategrey; font-weight:bold;">
+                                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
+                                                                    <div>@stdexam.ExamTitle</div>
+                                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
+                                                                </div>
+                                                                }
+                                                        </MudItem>
+                                                        <!-- Right column -->
+                                                        <MudItem xs="6">
+                                                            <div>Tests: @stdexam.ExamNTests</div>
+                                                            <div>Time: @stdexam.ExamDuration min</div>
+                                                            @if (stdexam.StudentExamTags == 0)
+                                                                {
+                                                                <MudIconButton Icon="@Icons.Material.Filled.PlayArrow" Size="Size.Small" OnClick="async () => await BtnStartExam(stdexam)" />
+                                                                }
+                                                            else if (stdexam.StudentExamTags == 1)
+                                                                {
+                                                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="async () => await BtnStartExam(stdexam)" />
+                                                                }
+                                                            else if ((stdexam.StudentExamTags & 2) == 2)
+                                                                {
+                                                                <div>
+                                                                    <span style="color:indianred;font-size:small;font-weight:bold;">
+                                                                        Pnt @stdexam.StudentExamPoint.ToString("F2")/20
+                                                                    </span>
+                                                                </div>
+
+                                                                @if ((student.UserTags & 4) == 4)
+                                                                    {
+                                                                    <MudIconButton Icon="@Icons.Material.Filled.Assignment" Size="Size.Small" OnClick="() => BtnReportExam(stdexam.StudentExamId)" />
+                                                                    }
+                                                                }
+                                                        </MudItem>
+                                                    </MudGrid>
+                                                </MudCardContent>
+                                            </MudCard>
+                                        </MudContainer>
+                                    }
                                 </table>
                             </div>
                         </div>
@@ -115,49 +119,54 @@
                             <div id="T2">
                                 @foreach (StudentCourse studentCourse in lstStudentCourses)
                                     {
-                                    //use (double) to make result decimal not integer
-                                    strRunningPoint = studentCourse.NumberOfTests == 0 ?"---": $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double)studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F2}";
-                                    <div style="color:black;font-weight:bold;">@studentCourse.CourseName : <span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
-                                    <button class="btn btn-link" @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
-                                        <img src="/images/gifBook1.gif" width="28" />
-                                    </button>
-                                    @if ((student.UserTags & 32) == 32)
-                                        {
-                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
-                                            <img src="/icons/icoReport_ct_1.png" width="20" />
-                                        </button>
-                                        }
-                                    @if ((student.UserTags & 16) == 16)
-                                        {
-                                        <button class="btn btn-link" @onclick="()=>BtnTryToCorrect(studentCourse.StudentCourseId)">
-                                            <img src="/icons/icoRetry_bt_1.png" width="22" />
-                                        </button>
-                                        }
-                                    @if ((student.UserTags & 16) == 16)
-                                        {
-                                        <button class="btn btn-link" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
-                                            <img src="/icons/icoFilter_bt_1.png" width="22" />
-                                        </button>
-                                        <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse, "wipeout")'>
-                                            <img src="/icons/icoEraser_bw_1.png" width="22" />
-                                        </button>
-                                        }
-                                    @* CourseFolders *@
-                                    @if((appState.Cmd=="ShowCourseFolders") & (studentCourse.CourseId == appState.CourseId))
-                                        {
-                                        <h6 style="padding-left:10px;">folders: </h6>
-                                        foreach(CourseFolder cf in lstCourseFolders)
-                                            {
-                                            <h6 style="padding-left:10px;"><a href="@cf.CourseFolderUrl" target="_blank">@cf.CourseFolderTitle</a></h6>
-                                            }
-                                        }
-                                    else
-                                        {
-                                        <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
-                                            <img src="/icons/icoFolderReport_bt_1.png" width="25" />
-                                        </button>
-                                        }
-                                    <hr />
+                                    <MudContainer Class="mt-2 px-0">
+                                        <MudCard Class="mx-0">
+                                            <MudCardContent Style="background-color: rgba(250,250,2250);">
+                                                @* use (double) to make result decimal not integer *@
+                                                @{strRunningPoint = studentCourse.NumberOfTests == 0 ?"---": $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double)studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F2}";}
+                                                <div style="color:black;font-weight:bold;">@studentCourse.CourseName : <span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
+                                                <button class="btn btn-link" @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
+                                                    <img src="/images/gifBook1.gif" width="28" />
+                                                </button>
+                                                @if ((student.UserTags & 32) == 32)
+                                                    {
+                                                    <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
+                                                        <img src="/icons/icoReport_ct_1.png" width="20" />
+                                                    </button>
+                                                    }
+                                                @if ((student.UserTags & 16) == 16)
+                                                    {
+                                                    <button class="btn btn-link" @onclick="()=>BtnTryToCorrect(studentCourse.StudentCourseId)">
+                                                        <img src="/icons/icoRetry_bt_1.png" width="22" />
+                                                    </button>
+                                                    }
+                                                @if ((student.UserTags & 16) == 16)
+                                                    {
+                                                    <button class="btn btn-link" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
+                                                        <img src="/icons/icoFilter_bt_1.png" width="22" />
+                                                    </button>
+                                                    <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse, "wipeout")'>
+                                                        <img src="/icons/icoEraser_bw_1.png" width="22" />
+                                                    </button>
+                                                    }
+                                                @* CourseFolders *@
+                                                @if((appState.Cmd=="ShowCourseFolders") & (studentCourse.CourseId == appState.CourseId))
+                                                    {
+                                                    <h6 style="padding-left:10px;">folders: </h6>
+                                                    foreach(CourseFolder cf in lstCourseFolders)
+                                                        {
+                                                        <h6 style="padding-left:10px;"><a href="@cf.CourseFolderUrl" target="_blank">@cf.CourseFolderTitle</a></h6>
+                                                        }
+                                                    }
+                                                else
+                                                    {
+                                                    <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
+                                                        <img src="/icons/icoFolderReport_bt_1.png" width="25" />
+                                                    </button>
+                                                    }
+                                            </MudCardContent>
+                                        </MudCard>
+                                    </MudContainer>
                                     }
                             </div>
                         </div>
@@ -172,7 +181,7 @@
                             data-bs-target="#CollapseId3"
                             aria-expanded="false"
                             aria-controls="CollapseId3" style="background-color:WhiteSmoke">
-                            <h4>Messages</h4>
+                            <h4>Messages <span style="font-weight:bold;font-size:x-small;color:indianred">( @unreadCount <span style="color:blue">/@lstMessages.Count</span> )</span></h4>
                         </button>
                     </h4>
                     <div id="CollapseId3" class="accordion-collapse collapse" data-bs-parent="#accordionStudent">
@@ -183,74 +192,86 @@
                                     {
                                     foreach(StudentMessage studentMessage in message.StudentMessages)
                                         {                                  
-                                        if((studentMessage.StudentMessageTags & 1) == 1)
-                                                {
-                                                <span style="padding-left:5px;"> @studentMessage.DateTimeSent </span>
-                                                <br />
-                                                <button class="btn btn-link" @onclick="()=>BtnDeleteStudentMessage(studentMessage)">
-                                                    <img src="/icons/icoDelete_bt_1.png" width="20" />
-                                                </button>
-                                                @* IsBookmarked *@
-                                                if ((studentMessage.StudentMessageTags & 2) == 2)
-                                                    {
-                                                    <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageBookmark(studentMessage, 0)">
-                                                        <img src="/icons/icoBookmark2_bt_1.png" width="22" />
-                                                    </button>
-                                                    }
-                                                else
-                                                    {
-                                                    <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageBookmark(studentMessage, 1)">
-                                                        <img src="/icons/icoBookmark2_bt_0.png" width="22" />
-                                                    </button>                                    
-                                                    }
-                                                @* TypeIsFeedback *@
-                                                @if ((studentMessage.StudentMessageTags & 32) == 32)
-                                                    {
-                                                    @* AnswerIsYes/No *@
-                                                    @if ((studentMessage.StudentMessageTags & 8) == 8)
+                                        <MudContainer Class="mt-2 px-0">
+                                            <MudCard Class="mx-0">
+                                                <MudCardContent Style="background-color:whitesmoke;">
+                                                    @if((studentMessage.StudentMessageTags & 1) == 1)
                                                         {
-                                                        <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 2)">
-                                                            <img src="/icons/icoYesNo_Yes_gt_1.png" width="20" />
-                                                        </button>
-                                                        }
-                                                    else if ((studentMessage.StudentMessageTags & 16) == 16)
-                                                        {
-                                                        <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 2)">
-                                                            <img src="/icons/icoYesNo_No_rt_1.png" width="20" />
-                                                        </button>
-                                                        }
-                                                    else
-                                                        {
-                                                        if ((appState.Cmd == "GetStudentAnswer") & (appState.MessageId == studentMessage.MessageId))
-                                                            {
-                                                            <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 1)">
-                                                                <img src="/icons/icoYesNo_Yes_gt_1.png" width="20" />
-                                                            </button>
-                                                            <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 0)">
-                                                                <img src="/icons/icoYesNo_No_rt_1.png" width="20" />
-                                                            </button>                                                
+                                                        <div style="color:black;font-weight:normal;padding-left:10px; text-align:center">
+                                                            @message.MessageTitle
+                                                            <div style="font-size:smaller; font-weight:bold;color:indianred">
+                                                               @studentMessage.DateTimeSent
+                                                            </div>
+                                                        </div>
+                                                        <hr style="color:gray" />
+                                                        <div style="color:black;font-weight:normal;padding-left:10px;">@message.MessageBody</div>
+                                                            <hr style="color:gray" />
+                                                            <div style="text-align:center">
+                                                                <button class="btn btn-link" @onclick="()=>BtnDeleteStudentMessage(studentMessage)">
+                                                                    <img src="/icons/icoDelete_bt_1.png" width="20" />
+                                                                </button>
+                                                                @* IsBookmarked *@
+                                                                @if ((studentMessage.StudentMessageTags & 2) == 2)
+                                                                    {
+                                                                    <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageBookmark(studentMessage, 0)">
+                                                                        <img src="/icons/icoBookmark2_bt_1.png" width="22" />
+                                                                    </button>
+                                                                    }
+                                                                else
+                                                                    {
+                                                                    <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageBookmark(studentMessage, 1)">
+                                                                        <img src="/icons/icoBookmark2_bt_0.png" width="22" />
+                                                                    </button>                                    
+                                                                    }
+                                                                @* TypeIsFeedback *@
+                                                                @if ((studentMessage.StudentMessageTags & 8) == 8)
+                                                                    {
+                                                                    @* AnswerIsYes/No *@
+                                                                    @if ((studentMessage.StudentMessageTags & 16) == 16)
+                                                                        {
+                                                                        <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 2)">
+                                                                            <img src="/icons/icoYesNo_Yes_gt_1.png" width="20" />
+                                                                        </button>
+                                                                        }
+                                                                    else if ((studentMessage.StudentMessageTags & 32) == 32)
+                                                                        {
+                                                                        <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 2)">
+                                                                            <img src="/icons/icoYesNo_No_rt_1.png" width="20" />
+                                                                        </button>
+                                                                        }
+                                                                    else
+                                                                        {
+                                                                        if ((appState.Cmd == "GetStudentAnswer") & (appState.MessageId == studentMessage.MessageId))
+                                                                            {
+                                                                            <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 1)">
+                                                                                <img src="/icons/icoYesNo_Yes_gt_1.png" width="20" />
+                                                                            </button>
+                                                                            <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 0)">
+                                                                                <img src="/icons/icoYesNo_No_rt_1.png" width="20" />
+                                                                            </button>                                                
+                                                                            }
+                                                                        else
+                                                                            {
+                                                                            //Lets GetStudentAnswer...
+                                                                            <button class="btn btn-link" @onclick="()=>BtnGetStudentAnswer(studentMessage.MessageId)">
+                                                                                <img src="/icons/icoYesNo_cw_1.png" width="24" />
+                                                                            </button>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                            </div>
                                                             }
                                                         else
                                                             {
-                                                            //Lets GetStudentAnswer...
-                                                            <button class="btn btn-link" @onclick="()=>BtnGetStudentAnswer(studentMessage.MessageId)">
-                                                                <img src="/icons/icoYesNo_cw_1.png" width="24" />
+                                                            <span style="padding-left:5px; color:indianred"> @studentMessage.DateTimeSent </span>
+                                                            <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageAsRead(studentMessage)">
+                                                                <img src="/icons/icoEnvelop_bluet_1.png" width="20" />
                                                             </button>
+                                                            <span style="color:black;font-weight:bold;padding-left:2px;">@message.MessageTitle.Substring(0,6) ...</span>
                                                             }
-                                                        }
-                                                    }
-                                                <div style="color:black;font-weight:normal;padding-left:10px; text-align:center">@message.MessageTitle<hr /></div>
-                                                <div style="color:black;font-weight:normal;padding-left:10px;">@message.MessageBody</div>
-                                                }
-                                            else
-                                                {
-                                                <span style="padding-left:5px;"> @studentMessage.DateTimeSent </span>
-                                                <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageAsRead(studentMessage)">
-                                                    <img src="/icons/icoEnvelop_bluet_1.png" width="20" />
-                                                </button>
-                                                <span style="color:black;font-weight:bold;padding-left:2px;">@message.MessageTitle.Substring(0,6) ...</span>
-                                                }
-                                            <hr />    
+                                                </MudCardContent>
+                                            </MudCard>
+                                        </MudContainer>
                                         }
                                     }
                             </div>
@@ -260,10 +281,9 @@
         </div>
         <hr style="color:red"/>
         <br />
-        <br />
         <div style="text-align:center">
             <button class="btn btn-link" @onclick= "()=> BtnExit()">
-                <img src="/icons/icoExit_bw_1.png" style="width:35px" />
+                <img src="/images/gifLogout01.gif" style="width:125px" />
             </button>
         </div>
         }
@@ -281,7 +301,8 @@
     public string? strRunningPoint = "";
     private bool _hasFetched = false;
     private bool hasScrolled = false;
-    
+    private int unreadCount = 0;
+
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
@@ -300,7 +321,7 @@
             student.UserName = appState.UserName ?? "";
             student.UserNickname = appState.UserNickname ?? "";
             lstStudentCourses = await feService.Read_StudentCourses (student.UserId);
-            lstMessages = await feService.Read_StudentMessagesByStudentId (student.UserId);
+            await ReadMessageList ();
             _hasFetched = true;
             }
         }
@@ -391,7 +412,7 @@
             {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags (studentMessage);
-            lstMessages = await feService.Read_StudentMessagesByStudentId (student.UserId);
+            await ReadMessageList ();
             }
         StateHasChanged ();                
         }
@@ -400,8 +421,8 @@
         //modes: setOn, setOff
         studentMessage.StudentMessageTags |= 1;
         studentMessage.DateTimeRead = DateTime.Now.ToString("yyyy-MM-dd . HH:mm");
-        bool result = await feService.Update_StudentMessageTags (studentMessage);
-        lstMessages = await feService.Read_StudentMessagesByStudentId (student.UserId);
+        bool result = await feService.Update_StudentMessageSetAsRead (studentMessage);
+        await ReadMessageList ();
         StateHasChanged ();
         }
     private async Task BtnSetStudentMessageBookmark(StudentMessage studentMessage, int mode)
@@ -421,7 +442,7 @@
                     }
             }
         bool result = await feService.Update_StudentMessageTags (studentMessage);
-        lstMessages = await feService.Read_StudentMessagesByStudentId (student.UserId);
+        await ReadMessageList ();
         appState.SetCmd ("");
         StateHasChanged ();
         }
@@ -438,26 +459,36 @@
             {
             case 2:
                     {
-                    studentMessage.StudentMessageTags &= ~8;
                     studentMessage.StudentMessageTags &= ~16;
+                    studentMessage.StudentMessageTags &= ~32;
                     appState.SetCmd ("");
                     break;
                     }
             case 1:
                     {
-                    studentMessage.StudentMessageTags |= 8;
-                    studentMessage.StudentMessageTags &= ~16;
+                    studentMessage.StudentMessageTags |= 16;
+                    studentMessage.StudentMessageTags &= ~32;
                     break;
                     }
             case 0:
                     {
-                    studentMessage.StudentMessageTags &= ~8;
-                    studentMessage.StudentMessageTags |= 16;
+                    studentMessage.StudentMessageTags &= ~16;
+                    studentMessage.StudentMessageTags |= 32;
                     break;
                     }
             }
         bool result = await feService.Update_StudentMessageTags (studentMessage);
-        lstMessages = await feService.Read_StudentMessagesByStudentId (student.UserId);
+        await ReadMessageList ();
         StateHasChanged ();
+        }
+    //methods
+    private async Task ReadMessageList()
+        {
+        lstMessages = await feService.Read_StudentMessagesByStudentId (student.UserId);        
+        //first bit: 0 = unread, 1 = read
+        unreadCount = lstMessages
+            .SelectMany(msg => msg.StudentMessages)
+            .Count(sm => (sm.StudentMessageTags & 1) == 0);
+
         }
 }
