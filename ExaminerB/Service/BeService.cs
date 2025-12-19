@@ -3273,7 +3273,7 @@ COMMIT TRANSACTION;
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.Parameters.AddWithValue ("@userid", message.UserId);
-                cmd.Parameters.AddWithValue ("@datetimecreated", message.DateTimeCreated);
+                cmd.Parameters.AddWithValue ("@datetimecreated", DateTime.Now.ToString ("yyyy-MM-dd . HH:mm"));
                 cmd.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
                 cmd.Parameters.AddWithValue ("@messagebody", message.MessageBody);
                 int newMessageId = (int) await cmd.ExecuteScalarAsync ();
@@ -3387,6 +3387,12 @@ COMMIT TRANSACTION;
         #region C17:StudentMessages
         public async Task<int> Create_StudentMessageAsync (Message message, string mode, int recipientId, bool typeFeedback)
             {
+            //create message body
+            int newMessageId = await Create_MessageAsync (message);
+            if (newMessageId == 0)
+                {
+                return 0; 
+                }
             string sql1 = "";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
@@ -3426,16 +3432,13 @@ COMMIT TRANSACTION;
                 SqlCommand cmd1 = new SqlCommand (sql1, cnn);
                 cmd1.Parameters.AddWithValue ("@recipientid", recipientId);
                 SqlDataReader reader = await cmd1.ExecuteReaderAsync ();
-                lstStudentIds.Clear ();
                 while (await reader.ReadAsync ())
                     {
                     lstStudentIds.Add (reader.GetInt32 (0));
                     }
                 await cnn.CloseAsync ();
                 }
-            //create message body
-            int newMessageId = await Create_MessageAsync (message);
-            if (newMessageId ==0)
+            if(lstStudentIds.Count == 0)
                 {
                 return 0;
                 }
@@ -3444,21 +3447,22 @@ COMMIT TRANSACTION;
                 //create studentMessages
                 await cnn.OpenAsync ();
                 string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd . HH:mm");
+                int i = 0;
                 foreach (int recipient in lstStudentIds)
                     {
                     string sql3 = "INSERT INTO StudentMessages (StudentId, MessageId, DateTimeSent, DateTimeRead, MessageTags) VALUES (@studentid, @messageid, @datetimesent, @datetimeread, @messagetags)";
-                    foreach (int studentId in lstStudentIds)
-                        {
-                        SqlCommand cmd3 = new SqlCommand (sql3, cnn);
-                        cmd3.Parameters.AddWithValue ("@studentid", recipient);
-                        cmd3.Parameters.AddWithValue ("@messageid", studentId);
-                        cmd3.Parameters.AddWithValue ("@datetimesent", currentDateTime);
-                        cmd3.Parameters.AddWithValue ("@datetimeread", "");
-                        cmd3.Parameters.AddWithValue ("@messagetags", typeFeedback ? true : false);
-                        await cmd3.ExecuteNonQueryAsync ();
-                        }
+                    SqlCommand cmd3 = new SqlCommand (sql3, cnn);
+                    cmd3.Parameters.AddWithValue ("@studentid", recipient);
+                    cmd3.Parameters.AddWithValue ("@messageid", newMessageId);
+                    cmd3.Parameters.AddWithValue ("@datetimesent", currentDateTime);
+                    cmd3.Parameters.AddWithValue ("@datetimeread", "-");
+                    cmd3.Parameters.AddWithValue ("@messagetags", typeFeedback ? true : false);
+                    await cmd3.ExecuteNonQueryAsync ();
+                    i++;
+                    Console.WriteLine ($"{i} - message {newMessageId} sent to {recipientId}");                    
                     }
                 await cnn.CloseAsync ();
+                Console.WriteLine ($"{i} messages sent");
                 return 1;
                 }
             }

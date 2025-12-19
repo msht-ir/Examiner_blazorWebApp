@@ -19,25 +19,25 @@
     <EditForm Model="user" OnValidSubmit="BtnLogin" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <div class="mb-3 d-flex gap-1">
-            <MudSelect T="string" @ref="refRole" Label="Role" Value="user.UserRole" ValueChanged="@((string role) => OnRoleChanged(role))" Class="w-auto" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="font-size:small;">
+            <MudSelect T="string" @ref="refRole" Label="Role نقش" Value="user.UserRole" ValueChanged="@((string role) => OnRoleChanged(role))" Class="w-auto" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="font-size:small;">
                 <MudSelectItem Value=@("student")>Student</MudSelectItem>
                 <MudSelectItem Value=@("teacher")>Teacher</MudSelectItem>
             </MudSelect>
             <br />
             @if(user.UserRole == "student")
                 {
-                <MudSelect T="int" @ref="refTeacher" Label="Teacher" Value="selectedTeacherId" ValueChanged="OnTeacherChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:100px;font-size:small">
+                <MudSelect T="int" @ref="refTeacher" Label="Teacher استاد" Value="TeacherId" ValueChanged="OnTeacherChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:100px;font-size:small;">
                     <MudSelectItem Value="0">Your teacher?</MudSelectItem>
                     @foreach (var teacher in lstTeachers) { <MudSelectItem Value="@teacher.UserId">@teacher.UserNickname</MudSelectItem> }
                 </MudSelect>
-                <MudSelect T="int" @ref="refGroup" Label="Class" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:100px;font-size:small">
+                <MudSelect T="int" @ref="refGroup" Label="Class کلاس" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:100px;font-size:small;">
                     <MudSelectItem Value="0">Your Class?</MudSelectItem>
                     @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
                 </MudSelect>
                 }
         </div>
-        <MudTextField @ref="refUser" @bind-Value="user.UserName" Label="Username" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
-        <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" InputType="InputType.Password"/>
+        <MudTextField @ref="refUser" @bind-Value="user.UserName" Label="Username يوزر" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+        <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password پسورد" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" InputType="InputType.Password"/>
         <button class="btn btn-link">
             <img src="/images/gifUser1.gif" width="60" />
         </button>

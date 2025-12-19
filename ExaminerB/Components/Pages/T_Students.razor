@@ -114,10 +114,11 @@ else
                                                 <div style="background-color:white">
                                                     <div style="text-align: center;">
                                                         <hr style="color:red" />
-                                                        <h6 style="color:indianRed;">Send this Message to members of the group</h6>
+                                                        <h6 style="color:indianRed;">Send Message to group</h6>
                                                         <MudTextField @ref="txtMessageTitle" @bind-Value="message.MessageTitle" Label="Message Title" Variant="Variant.Outlined" Class="my-textfield" />
-                                                        <MudTextField @ref="txtMessageBody" @bind-Value="message.MessageBody" Placeholder="Message Body..." Lines="4" Variant="Variant.Outlined" Class="my-textarea" TextFieldStyle="TextFieldStyle.TextArea" />                                                        <input class="form-check-input" type="checkbox" @bind=_IsMessageTypeFeedback />
-                                                        <label class="form-check-label" style="color:Black"> Message Receives Feedback </label><br />
+                                                        <MudTextField @ref="txtMessageBody" @bind-Value="message.MessageBody" Placeholder="Message Body..." Lines="4" Variant="Variant.Outlined" Class="my-textarea" TextFieldStyle="TextFieldStyle.TextArea" />
+                                                        <input class="form-check-input" type="checkbox" @bind=_IsMessageTypeFeedback />
+                                                        <label class="form-check-label" style="color:Black"> Feedback </label><br />
                                                         <button class="btn btn-link" @onclick="()=>BtnSendMessageToGroup(grp.GroupId)">
                                                             <img src="/images/gifSendMessage.gif" width="60" />
                                                         </button>
@@ -599,12 +600,10 @@ else
     public async Task BtnSendMessageToGroup(int groupId)
         {
         _hasFetched = false;
-        //message.MessageTitle, messageMessageBody are binded
+        //notice: message.MessageTitle, messageMessageBody are binded
         message.UserId = Convert.ToInt32(appState.UserId);
-        message.DateTimeCreated = "0000-00-00 . 00:00";
-        //SEND
-        int result = await feService.Create_Message (message);
-
+        message.DateTimeCreated = "0000-00-00 . 00:00"; //will be replaced with current date-time in the backend-service
+        int result = await feService.Create_StudentMessage (message, "togroupmembers",groupId, _IsMessageTypeFeedback);
         appState.SetCmd ("");
         _hasFetched = true;
         }    

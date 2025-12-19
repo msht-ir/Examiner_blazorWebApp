@@ -1003,7 +1003,7 @@ namespace ExaminerB.Service
         #region C17:StudentMessages
         public async Task<int> Create_StudentMessage (Message message, string mode, int recipientId, bool typeFeedback)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Create_Message", message);
+            var response = await _http.PostAsJsonAsync ($"api/Create_StudentMessage?mode={mode}&recipientId={recipientId}&typeFeedback={typeFeedback}", message);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
         public async Task<List<Message>> Read_StudentMessagesByStudentId (int studentId)

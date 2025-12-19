@@ -181,76 +181,77 @@
                                 @* List messages *@
                                 @foreach (Message message in lstMessages)
                                     {
-                                foreach(StudentMessage studentMessage in message.StudentMessages)
-                                    {                                  
-                                    if((studentMessage.StudentMessageTags & 1) == 1)
-                                            {
-                                            <span style="padding-left:5px;"> @studentMessage.DateTimeSent </span>
-                                            <br />
-                                            <button class="btn btn-link" @onclick="()=>BtnDeleteStudentMessage(studentMessage)">
-                                                <img src="/icons/icoDelete_bt_1.png" width="20" />
-                                            </button>
-                                            @* IsBookmarked *@
-                                            if ((studentMessage.StudentMessageTags & 2) == 2)
+                                    foreach(StudentMessage studentMessage in message.StudentMessages)
+                                        {                                  
+                                        if((studentMessage.StudentMessageTags & 1) == 1)
                                                 {
-                                                <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageBookmark(studentMessage, 0)">
-                                                    <img src="/icons/icoBookmark2_bt_1.png" width="22" />
+                                                <span style="padding-left:5px;"> @studentMessage.DateTimeSent </span>
+                                                <br />
+                                                <button class="btn btn-link" @onclick="()=>BtnDeleteStudentMessage(studentMessage)">
+                                                    <img src="/icons/icoDelete_bt_1.png" width="20" />
                                                 </button>
-                                                }
-                                            else
-                                                {
-                                                <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageBookmark(studentMessage, 1)">
-                                                    <img src="/icons/icoBookmark2_bt_0.png" width="22" />
-                                                </button>                                    
-                                                }
-                                            @* TypeIsFeedback *@
-                                            @if ((studentMessage.StudentMessageTags & 32) == 32)
-                                                {
-                                                @* AnswerIsYes/No *@
-                                                @if ((studentMessage.StudentMessageTags & 8) == 8)
+                                                @* IsBookmarked *@
+                                                if ((studentMessage.StudentMessageTags & 2) == 2)
                                                     {
-                                                    <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 2)">
-                                                        <img src="/icons/icoYesNo_Yes_gt_1.png" width="20" />
-                                                    </button>
-                                                    }
-                                                else if ((studentMessage.StudentMessageTags & 16) == 16)
-                                                    {
-                                                    <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 2)">
-                                                        <img src="/icons/icoYesNo_No_rt_1.png" width="20" />
+                                                    <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageBookmark(studentMessage, 0)">
+                                                        <img src="/icons/icoBookmark2_bt_1.png" width="22" />
                                                     </button>
                                                     }
                                                 else
                                                     {
-                                                    if ((appState.Cmd == "GetStudentAnswer") & (appState.MessageId == studentMessage.MessageId))
+                                                    <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageBookmark(studentMessage, 1)">
+                                                        <img src="/icons/icoBookmark2_bt_0.png" width="22" />
+                                                    </button>                                    
+                                                    }
+                                                @* TypeIsFeedback *@
+                                                @if ((studentMessage.StudentMessageTags & 32) == 32)
+                                                    {
+                                                    @* AnswerIsYes/No *@
+                                                    @if ((studentMessage.StudentMessageTags & 8) == 8)
                                                         {
-                                                        <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 1)">
+                                                        <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 2)">
                                                             <img src="/icons/icoYesNo_Yes_gt_1.png" width="20" />
                                                         </button>
-                                                        <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 0)">
+                                                        }
+                                                    else if ((studentMessage.StudentMessageTags & 16) == 16)
+                                                        {
+                                                        <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 2)">
                                                             <img src="/icons/icoYesNo_No_rt_1.png" width="20" />
-                                                        </button>                                                
+                                                        </button>
                                                         }
                                                     else
                                                         {
-                                                        //Lets GetStudentAnswer...
-                                                        <button class="btn btn-link" @onclick="()=>BtnGetStudentAnswer(studentMessage.MessageId)">
-                                                            <img src="/icons/icoYesNo_cw_1.png" width="24" />
-                                                        </button>
+                                                        if ((appState.Cmd == "GetStudentAnswer") & (appState.MessageId == studentMessage.MessageId))
+                                                            {
+                                                            <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 1)">
+                                                                <img src="/icons/icoYesNo_Yes_gt_1.png" width="20" />
+                                                            </button>
+                                                            <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 0)">
+                                                                <img src="/icons/icoYesNo_No_rt_1.png" width="20" />
+                                                            </button>                                                
+                                                            }
+                                                        else
+                                                            {
+                                                            //Lets GetStudentAnswer...
+                                                            <button class="btn btn-link" @onclick="()=>BtnGetStudentAnswer(studentMessage.MessageId)">
+                                                                <img src="/icons/icoYesNo_cw_1.png" width="24" />
+                                                            </button>
+                                                            }
                                                         }
                                                     }
+                                                <div style="color:black;font-weight:normal;padding-left:10px; text-align:center">@message.MessageTitle<hr /></div>
+                                                <div style="color:black;font-weight:normal;padding-left:10px;">@message.MessageBody</div>
                                                 }
-                                            <div style="color:black;font-weight:normal;padding-left:10px;">@message.MessageTitle</div>
-                                            }
-                                        else
-                                            {
-                                            <span style="padding-left:5px;"> @studentMessage.DateTimeSent </span>
-                                            <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageAsRead(studentMessage)">
-                                                <img src="/icons/icoEnvelop_bluet_1.png" width="20" />
-                                            </button>
-                                            <span style="color:black;font-weight:bold;padding-left:2px;">@message.MessageTitle.Substring(0,6) ...</span>
-                                            }
-                                        <hr />    
-                                    }
+                                            else
+                                                {
+                                                <span style="padding-left:5px;"> @studentMessage.DateTimeSent </span>
+                                                <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageAsRead(studentMessage)">
+                                                    <img src="/icons/icoEnvelop_bluet_1.png" width="20" />
+                                                </button>
+                                                <span style="color:black;font-weight:bold;padding-left:2px;">@message.MessageTitle.Substring(0,6) ...</span>
+                                                }
+                                            <hr />    
+                                        }
                                     }
                             </div>
                         </div>
