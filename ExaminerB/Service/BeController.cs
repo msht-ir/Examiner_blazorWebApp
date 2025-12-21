@@ -32,7 +32,7 @@ namespace ExaminerB.Backend
             return result;
             }
         #endregion
-        #region C01:usrs
+        #region U:usrs
         [HttpPost ("Create_Teacher")]
         public async Task<ActionResult<bool>> Create_Teacher ([FromBody] User user)
             {
@@ -58,7 +58,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
-        #region C10:Students
+        #region S:Students
         [HttpPost ("Create_Student")]
         public async Task<ActionResult<int>> Create_Student ([FromBody] User student)
             {
@@ -126,7 +126,47 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
-        #region C02:Courses
+        #region G:Groups
+        [HttpPost ("Create_Group")]
+        public async Task<ActionResult<int>> Create_Group ([FromBody] Group group)
+            {
+            var result = await _BeService.Create_GroupAsync (group);
+            return Ok (result);
+            }
+        [HttpPost ("Read_Groups")]
+        public async Task<ActionResult<List<Group>>> Read_Groups ([FromBody] User user, [FromQuery] bool getStudentExams, [FromQuery] bool getStudentCourses)
+            {
+            var result = await _BeService.Read_GroupsAsync (user, getStudentExams, getStudentCourses);
+            return Ok (result);
+            }
+        [HttpPost ("Read_Group")]
+        public async Task<ActionResult<Group>> Read_Group ([FromBody] int groupId, [FromQuery] bool getStudentExams, [FromQuery] bool getStudentCourses)
+            {
+            var result = await _BeService.Read_GroupAsync (groupId, getStudentExams, getStudentCourses);
+            return Ok (result);
+            }
+        [HttpPost ("Update_Group")]
+        public async Task<ActionResult<bool>> Update_Group ([FromBody] Group group)
+            {
+            var result = await _BeService.Update_GroupAsync (group);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_Groups")]
+        public async Task<ActionResult<bool>> Delete_Groups ([FromBody] User user)
+            {
+            var result = await _BeService.Delete_GroupsAsync (user);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_Group")]
+        public async Task<ActionResult<int>> Delete_Group ([FromBody] int groupId)
+            {
+            var result = await _BeService.Delete_GroupAsync (groupId);
+            return Ok (result);
+            }
+        #endregion
+        #region SG:StudentGroups
+        #endregion
+        #region C:Courses
         [HttpPost ("Create_Course")]
         public async Task<ActionResult<int>> Create_Course ([FromBody] Course course)
             {
@@ -158,33 +198,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
-        #region C03:CourseTopics
-        [HttpPost ("Create_CourseTopic")]
-        public async Task<ActionResult<int>> Create_CourseTopic ([FromBody] CourseTopic courseTopic)
-            {
-            var result = await _BeService.Create_CourseTopicAsync (courseTopic);
-            return Ok (result);
-            }
-        [HttpPost ("Read_CourseTopics")]
-        public async Task<ActionResult<List<CourseTopic>>> Read_CourseTopics ([FromBody] int courseId)
-            {
-            var result = await _BeService.Read_CourseTopicsAsync (courseId);
-            return Ok (result);
-            }
-        [HttpPost ("Update_CourseTopic")]
-        public async Task<ActionResult<bool>> Update_CourseTopic ([FromBody] CourseTopic courseTopic)
-            {
-            var result = await _BeService.Update_CourseTopicAsync (courseTopic);
-            return Ok (result);
-            }
-        [HttpPost ("Delete_CourseTopic")]
-        public async Task<ActionResult<bool>> Delete_CourseTopic ([FromBody] int courseTopicId)
-            {
-            var result = await _BeService.Delete_CourseTopicAsync (courseTopicId);
-            return result ? Ok (result) : NotFound (result);
-            }
-        #endregion
-        #region C15:CourseFolders
+        #region CF:CourseFolders
         [HttpPost ("Create_CourseFolder")]
         public async Task<ActionResult<int>> Create_CourseFolder ([FromBody] CourseFolder courseFolder)
             {
@@ -210,7 +224,116 @@ namespace ExaminerB.Backend
             return result ? Ok (result) : NotFound (result);
             }
         #endregion
-        #region C04:Tests
+        #region CT:CourseTopics
+        [HttpPost ("Create_CourseTopic")]
+        public async Task<ActionResult<int>> Create_CourseTopic ([FromBody] CourseTopic courseTopic)
+            {
+            var result = await _BeService.Create_CourseTopicAsync (courseTopic);
+            return Ok (result);
+            }
+        [HttpPost ("Read_CourseTopics")]
+        public async Task<ActionResult<List<CourseTopic>>> Read_CourseTopics ([FromBody] int courseId)
+            {
+            var result = await _BeService.Read_CourseTopicsAsync (courseId);
+            return Ok (result);
+            }
+        [HttpPost ("Update_CourseTopic")]
+        public async Task<ActionResult<bool>> Update_CourseTopic ([FromBody] CourseTopic courseTopic)
+            {
+            var result = await _BeService.Update_CourseTopicAsync (courseTopic);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_CourseTopic")]
+        public async Task<ActionResult<bool>> Delete_CourseTopic ([FromBody] int courseTopicId)
+            {
+            var result = await _BeService.Delete_CourseTopicAsync (courseTopicId);
+            return result ? Ok (result) : NotFound (result);
+            }
+        #endregion
+        #region SC:StudentCourses
+        [HttpPost ("Create_StudentCourses")]
+        public async Task<ActionResult<bool>> Create_StudentCourses ([FromBody] int groupId, [FromQuery] int courseId)
+            {
+            var result = await _BeService.Create_StudentCoursesAsync (groupId, courseId);
+            return Ok (result);
+            }
+        [HttpPost ("Create_StudentCourse")]
+        public async Task<ActionResult<bool>> Create_StudentCourse ([FromBody] int studentId, [FromQuery] int courseId)
+            {
+            var result = await _BeService.Create_StudentCourseAsync (studentId, courseId);
+            return Ok (result);
+            }
+        [HttpPost ("Read_StudentCourses")]
+        public async Task<ActionResult<List<StudentCourse>>> Read_StudentCourses ([FromBody] int studentid)
+            {
+            var result = await _BeService.Read_StudentCoursesAsync (studentid);
+            return Ok (result);
+            }
+        [HttpPost ("Read_StudentCourse")]
+        public async Task<ActionResult<List<StudentCourse>>> Read_StudentCourse ([FromBody] int studentCourseId)
+            {
+            var result = await _BeService.Read_StudentCourseAsync (studentCourseId);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_StudentCourses")]
+        public async Task<ActionResult<bool>> Delete_StudentCourses ([FromQuery] int courseId, [FromBody] int groupId)
+            {
+            var result = await _BeService.Delete_StudentCoursesAsync (courseId, groupId);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_StudentCourse")]
+        public async Task<ActionResult<bool>> Delete_StudentCourse ([FromBody] int studentCourseId)
+            {
+            var result = await _BeService.Delete_StudentCourseAsync (studentCourseId);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_StudentCourseByStudentCourseId")]
+        public async Task<ActionResult<bool>> Delete_StudentCourseByStudentCourseId ([FromBody] int studentCourseId)
+            {
+            var result = await _BeService.Delete_StudentCourseByStudentCourseIdAsync (studentCourseId);
+            return Ok (result);
+            }
+        [HttpPost ("CalculatePoints_StudentCourse")]
+        public async Task<ActionResult<bool>> CalculatePoints_StudentCourse ([FromBody] StudentCourse studentCourse)
+            {
+            var result = await _BeService.CalculatePoints_StudentCourseAsync (studentCourse);
+            return Ok (result);
+            }
+        #endregion
+        #region SCT:StudentExamTests
+        [HttpPost ("Create_StudentCourseTest")]
+        public async Task<ActionResult<bool>> Create_StudentCourseTest ([FromBody] StudentCourseTest studentCourseTest)
+            {
+            var result = await _BeService.Create_StudentCourseTestAsync (studentCourseTest);
+            return Ok (result);
+            }
+        [HttpPost ("Read_StudentCourseTests")]
+        public async Task<ActionResult<List<StudentCourseTest>>> Read_StudentCourseTests ([FromBody] StudentCourse studentCourse, [FromQuery] bool readOptions)
+            {
+            var result = await _BeService.Read_StudentCourseTestsAsync (studentCourse, readOptions);
+
+            return Ok (result);
+            }
+        [HttpPost ("Read_StudentCourseTestRandom")]
+        public async Task<ActionResult<StudentCourseTest>> Read_StudentCourseTestRandom ([FromBody] int studentCourseId, [FromQuery] bool readOptions, [FromQuery] bool retry)
+            {
+            var result = await _BeService.Read_StudentCourseTestRandomAsync (studentCourseId, readOptions, retry);
+            return Ok (result);
+            }
+        [HttpPost ("Update_StudentCourseTest")]
+        public async Task<ActionResult<bool>> Update_StudentCourseTest ([FromBody] StudentCourseTest studentCourseTest, [FromQuery] string mode)
+            {
+            var result = await _BeService.Update_StudentCourseTestAsync (studentCourseTest, mode);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_StudentCourseTests")]
+        public async Task<ActionResult<bool>> Delete_StudentCourseTests ([FromQuery] string mode, [FromBody] StudentCourse studentCourse)
+            {
+            var result = await _BeService.Delete_StudentCourseTestsAsync (mode, studentCourse);
+            return Ok (result);
+            }
+        #endregion
+        #region T:Tests
         [HttpPost ("Create_Test")]
         public async Task<ActionResult<int>> Create_Test ([FromBody] Test test)
             {
@@ -284,7 +407,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
-        #region C05:TestOptions
+        #region TO:TestOptions
         [HttpPost ("Create_TestOption")]
         public async Task<ActionResult<int>> Create_TestOption ([FromBody] TestOption testOption)
             {
@@ -310,7 +433,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
-        #region C06:Exams
+        #region E:Exams
         [HttpPost ("Create_Exam")]
         public async Task<ActionResult<int>> Create_Exam ([FromBody] Exam exam)
             {
@@ -348,7 +471,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
-        #region C07:ExamCompositions
+        #region EC:ExamCompositions
         [HttpPost ("Create_ExamComposition")]
         public async Task<ActionResult<int>> Create_ExamComposition ([FromBody] ExamComposition examComposition)
             {
@@ -386,7 +509,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
-        #region C08:ExamTests
+        #region ET:ExamTests
         [HttpPost ("Create_ExamTestsByExamComposition")]
         public async Task<ActionResult<int>> Create_ExamTestsByExamComposition ([FromBody] ExamComposition examComposition)
             {
@@ -430,45 +553,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
-        #region 09:Groups
-        [HttpPost ("Create_Group")]
-        public async Task<ActionResult<int>> Create_Group ([FromBody] Group group)
-            {
-            var result = await _BeService.Create_GroupAsync (group);
-            return Ok (result);
-            }
-        [HttpPost ("Read_Groups")]
-        public async Task<ActionResult<List<Group>>> Read_Groups ([FromBody] User user, [FromQuery] bool getStudentExams, [FromQuery] bool getStudentCourses)
-            {
-            var result = await _BeService.Read_GroupsAsync (user, getStudentExams, getStudentCourses);
-            return Ok (result);
-            }
-        [HttpPost ("Read_Group")]
-        public async Task<ActionResult<Group>> Read_Group ([FromBody] int groupId, [FromQuery] bool getStudentExams, [FromQuery] bool getStudentCourses)
-            {
-            var result = await _BeService.Read_GroupAsync (groupId, getStudentExams, getStudentCourses);
-            return Ok (result);
-            }
-        [HttpPost ("Update_Group")]
-        public async Task<ActionResult<bool>> Update_Group ([FromBody] Group group)
-            {
-            var result = await _BeService.Update_GroupAsync (group);
-            return Ok (result);
-            }
-        [HttpPost ("Delete_Groups")]
-        public async Task<ActionResult<bool>> Delete_Groups ([FromBody] User user)
-            {
-            var result = await _BeService.Delete_GroupsAsync (user);
-            return Ok (result);
-            }
-        [HttpPost ("Delete_Group")]
-        public async Task<ActionResult<int>> Delete_Group ([FromBody] int groupId)
-            {
-            var result = await _BeService.Delete_GroupAsync (groupId);
-            return Ok (result);
-            }
-        #endregion
-        #region C11:StudentExams
+        #region SE:StudentExams
         [HttpPost ("Create_StudentExam")]
         public async Task<ActionResult<int>> Create_StudentExam ([FromBody] StudentExam studentExam)
             {
@@ -542,7 +627,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
-        #region C12:StudentExamTests
+        #region SET:StudentExamTests
         [HttpPost ("Create_StudentExamTest")]
         public async Task<ActionResult<int>> Create_StudentExamTest ([FromBody] StudentExamTest studentExamTest)
             {
@@ -604,90 +689,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
-        #region C13:StudentCourses
-        [HttpPost ("Create_StudentCourses")]
-        public async Task<ActionResult<bool>> Create_StudentCourses ([FromBody] int groupId, [FromQuery] int courseId)
-            {
-            var result = await _BeService.Create_StudentCoursesAsync (groupId, courseId);
-            return Ok (result);
-            }
-        [HttpPost ("Create_StudentCourse")]
-        public async Task<ActionResult<bool>> Create_StudentCourse ([FromBody] int studentId, [FromQuery] int courseId)
-            {
-            var result = await _BeService.Create_StudentCourseAsync (studentId, courseId);
-            return Ok (result);
-            }
-        [HttpPost ("Read_StudentCourses")]
-        public async Task<ActionResult<List<StudentCourse>>> Read_StudentCourses ([FromBody] int studentid)
-            {
-            var result = await _BeService.Read_StudentCoursesAsync (studentid);
-            return Ok (result);
-            }
-        [HttpPost ("Read_StudentCourse")]
-        public async Task<ActionResult<List<StudentCourse>>> Read_StudentCourse ([FromBody] int studentCourseId)
-            {
-            var result = await _BeService.Read_StudentCourseAsync (studentCourseId);
-            return Ok (result);
-            }
-        [HttpPost ("Delete_StudentCourses")]
-        public async Task<ActionResult<bool>> Delete_StudentCourses ([FromQuery] int courseId, [FromBody] int groupId)
-            {
-            var result = await _BeService.Delete_StudentCoursesAsync (courseId, groupId);
-            return Ok (result);
-            }
-        [HttpPost ("Delete_StudentCourse")]
-        public async Task<ActionResult<bool>> Delete_StudentCourse ([FromBody] int studentCourseId)
-            {
-            var result = await _BeService.Delete_StudentCourseAsync (studentCourseId);
-            return Ok (result);
-            }
-        [HttpPost ("Delete_StudentCourseByStudentCourseId")]
-        public async Task<ActionResult<bool>> Delete_StudentCourseByStudentCourseId ([FromBody] int studentCourseId)
-            {
-            var result = await _BeService.Delete_StudentCourseByStudentCourseIdAsync (studentCourseId);
-            return Ok (result);
-            }
-        [HttpPost ("CalculatePoints_StudentCourse")]
-        public async Task<ActionResult<bool>> CalculatePoints_StudentCourse ([FromBody] StudentCourse studentCourse)
-            {
-            var result = await _BeService.CalculatePoints_StudentCourseAsync (studentCourse);
-            return Ok (result);
-            }
-        #endregion
-        #region C14:StudentExamTests
-        [HttpPost ("Create_StudentCourseTest")]
-        public async Task<ActionResult<bool>> Create_StudentCourseTest ([FromBody] StudentCourseTest studentCourseTest)
-            {
-            var result = await _BeService.Create_StudentCourseTestAsync (studentCourseTest);
-            return Ok (result);
-            }
-        [HttpPost ("Read_StudentCourseTests")]
-        public async Task<ActionResult<List<StudentCourseTest>>> Read_StudentCourseTests ([FromBody] StudentCourse studentCourse, [FromQuery] bool readOptions)
-            {
-            var result = await _BeService.Read_StudentCourseTestsAsync (studentCourse, readOptions);
-
-            return Ok (result);
-            }
-        [HttpPost ("Read_StudentCourseTestRandom")]
-        public async Task<ActionResult<StudentCourseTest>> Read_StudentCourseTestRandom ([FromBody] int studentCourseId, [FromQuery] bool readOptions, [FromQuery] bool retry)
-            {
-            var result = await _BeService.Read_StudentCourseTestRandomAsync (studentCourseId, readOptions, retry);
-            return Ok (result);
-            }
-        [HttpPost ("Update_StudentCourseTest")]
-        public async Task<ActionResult<bool>> Update_StudentCourseTest ([FromBody] StudentCourseTest studentCourseTest, [FromQuery] string mode)
-            {
-            var result = await _BeService.Update_StudentCourseTestAsync (studentCourseTest, mode);
-            return Ok (result);
-            }
-        [HttpPost ("Delete_StudentCourseTests")]
-        public async Task<ActionResult<bool>> Delete_StudentCourseTests ([FromQuery] string mode, [FromBody] StudentCourse studentCourse)
-            {
-            var result = await _BeService.Delete_StudentCourseTestsAsync (mode, studentCourse);
-            return Ok (result);
-            }
-        #endregion
-        #region C16:Messages
+        #region M:Messages
         [HttpPost ("Create_Message")]
         public async Task<ActionResult<int>> Create_Message ([FromBody] Message message)
             {
@@ -713,7 +715,7 @@ namespace ExaminerB.Backend
             return result ? Ok (result) : NotFound (result);
             }
         #endregion
-        #region C17:StudentMessages
+        #region SM:StudentMessages
         [HttpPost ("Create_StudentMessage")]
         public async Task<ActionResult<int>> Create_StudentMessage ([FromBody] Message message, [FromQuery] string mode, [FromQuery] int recipientId, [FromQuery] bool typeFeedback)
             {
@@ -757,7 +759,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
-        #region C20:Projects
+        #region P:Projects
         [HttpPost ("Create_Project")]
         public async Task<ActionResult<int>> Create_Project ([FromBody] Project project)
             {
@@ -777,7 +779,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
-        #region C21:Subprojects
+        #region SP:Subprojects
         [HttpPost ("Create_Subproject")]
         public async Task<ActionResult<int>> Create_Subproject ([FromBody] Subproject subProject)
             {
@@ -803,7 +805,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
-        #region C22:Notes
+        #region N:Notes
         [HttpPost ("Create_Note")]
         public async Task<ActionResult<int>> Create_Note ([FromBody] Note note)
             {
@@ -834,8 +836,6 @@ namespace ExaminerB.Backend
             var result = await _BeService.Delete_NoteAsync (noteId);
             return Ok (result);
             }
-
-
         #endregion
         }
     }

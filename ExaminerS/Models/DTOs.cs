@@ -2,7 +2,7 @@
 
 namespace ExaminerS.Models
     {
-    //01
+    //U
     public class User
         {
         public int UserId { get; set; } = 0;
@@ -18,8 +18,26 @@ namespace ExaminerS.Models
         public List<StudentExam> StudentExams { get; set; } = new List<StudentExam> ();
         public List<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse> ();
         public List<Message> Messages { get; set; } = new List<Message> ();
+        public List<Group> Groups { get; set; } = new List<Group> ();
         }
-    //02
+    //G
+    public class Group
+        {
+        public int GroupId { get; set; } = 0;
+        public string GroupName { get; set; } = "";
+        public int UserId { get; set; } = 0;
+        public List<User> Students { get; set; } = new List<User> ();
+        }
+     //SG
+    public class StudentGroup
+        {
+        public int StudentGroupId { get; set; } = 0;
+        public int StudentId { get; set; } = 0;
+        public int GroupId { get; set; } = 0;
+        public string DateTimeJoined { get; set; } = "";
+        public int StudentGroupTags { get; set; } = 0;
+        }  
+    //C
     public class Course
         {
         public int CourseId { get; set; } = 0;
@@ -31,15 +49,56 @@ namespace ExaminerS.Models
         public List<CourseTopic> CourseTopics { get; set; } = new List<CourseTopic> ();
         public List<CourseFolder> CourseFolders { get; set; } = new List<CourseFolder> ();
         public List<User> Students { get; set; } = new List<User> ();
+        }   
+    //CF
+    public class CourseFolder
+        {
+        public int CourseFolderId { get; set; } = 0;
+        public int CourseId { get; set; } = 0;
+        public string CourseFolderTitle { get; set; } = "";
+        public string CourseFolderUrl { get; set; } = "";
+        public bool CourseFolderActive { get; set; } = false;
         }
-    //03
+    //CT
     public class CourseTopic
         {
         public int CourseTopicId { get; set; } = 0;
         public int CourseId { get; set; } = 0;
         public string CourseTopicTitle { get; set; } = "";
         }
-    //04
+    //SC
+    public class StudentCourse
+        {
+        public int StudentCourseId { get; set; } = 0;
+        public int StudentId { get; set; } = 0;
+        public int CourseId { get; set; } = 0;
+        public string CourseName { get; set; } = "";
+        public int NumberOfTests { get; set; } = 0;
+        public int CorrectAnswers { get; set; } = 0;
+        }
+    //SCT
+    public class StudentCourseTest
+        {
+        public int StudentCourseId { get; set; } = 0;
+        public int TestId { get; set; } = 0;
+        public int Opt1Id { get; set; } = 0;
+        public int Opt2Id { get; set; } = 0;
+        public int Opt3Id { get; set; } = 0;
+        public int Opt4Id { get; set; } = 0;
+        public int Opt5Id { get; set; } = 0;
+        public int TestKey { get; set; } = 0;
+        public int UserAns { get; set; } = 0;
+        public string DateTime { get; set; } = "";
+        public int TestIndex { get; set; } = 0; //not used?
+        public string TestTitle { get; set; } = "";
+        public int TestType { get; set; } = 0; //[1-5]
+        public int CourseTopicId { get; set; } = 0;
+        public string CourseTopicTitle { get; set; } = "";
+        public int TestTags { get; set; } = 0; //1:testRtl 2:optionsRtl
+        public int TestLevel { get; set; } = 0; //[1-5]
+        public List<TestOption>? TestOptions { get; set; } = new List<TestOption> ();
+        }
+    //T
     public class Test
         {
         public int TestId { get; set; } = 0;
@@ -51,7 +110,7 @@ namespace ExaminerS.Models
         public int TestTags { get; set; } = 0;      //1:TestRtl 2:OptionsRtl 4:IsSelected (select some tests in a list, to be added to an exam later)
         public List<TestOption>? TestOptions { get; set; } = new List<TestOption> ();
         }
-    //05
+    //TO
     public class TestOption
         {
         public int TestOptionId { get; set; } = 0;
@@ -59,7 +118,7 @@ namespace ExaminerS.Models
         public string TestOptionTitle { get; set; } = "";
         public int TestOptionTags { get; set; } = 0; //1:ForceLast 2:IsAns
         }
-    //06
+    //E
     public class Exam
         {
         public int ExamId { get; set; } = 0;
@@ -94,7 +153,7 @@ namespace ExaminerS.Models
             }
         public List<User> Students { get; set; } = new List<User> ();
         }
-    //07
+    //EC
     public class ExamComposition
         {
         public int ExamCompositionId { get; set; } = 0;
@@ -103,7 +162,7 @@ namespace ExaminerS.Models
         public int TopicNTests { get; set; } = 0;
         public int TestsLevel { get; set; } = 0;
         }
-    //08
+    //ET
     public class ExamTest
         {
         public int ExamTestId { get; set; } = 0;
@@ -114,15 +173,7 @@ namespace ExaminerS.Models
         public int PercentHelped { get; set; } = 0;
         public List<TestOption>? TestOptions { get; set; } = new List<TestOption> ();
         }
-    //09
-    public class Group
-        {
-        public int GroupId { get; set; } = 0;
-        public string GroupName { get; set; } = "";
-        public int UserId { get; set; } = 0;
-        public List<User> Students { get; set; } = new List<User> ();
-        }
-    //11
+    //SE
     public class StudentExam
         {
         public int StudentExamId { get; set; } = 0;
@@ -144,7 +195,7 @@ namespace ExaminerS.Models
         public int ExamIndex { get; set; } = 0;
         public List<StudentExamTest> StudentExamTests { get; set; } = new List<StudentExamTest> ();
         }
-    //12
+    //SET
     public class StudentExamTest
         {
         public long StudentExamTestId { get; set; } = 0;
@@ -181,48 +232,7 @@ namespace ExaminerS.Models
             }
 
         }
-    //13
-    public class StudentCourse
-        {
-        public int StudentCourseId { get; set; } = 0;
-        public int StudentId { get; set; } = 0;
-        public int CourseId { get; set; } = 0;
-        public string CourseName { get; set; } = "";
-        public int NumberOfTests { get; set; } = 0;
-        public int CorrectAnswers { get; set; } = 0;
-        }
-    //14
-    public class StudentCourseTest
-        {
-        public int StudentCourseId { get; set; } = 0;
-        public int TestId { get; set; } = 0;
-        public int Opt1Id { get; set; } = 0;
-        public int Opt2Id { get; set; } = 0;
-        public int Opt3Id { get; set; } = 0;
-        public int Opt4Id { get; set; } = 0;
-        public int Opt5Id { get; set; } = 0;
-        public int TestKey { get; set; } = 0;
-        public int UserAns { get; set; } = 0;
-        public string DateTime { get; set; } = "";
-        public int TestIndex { get; set; } = 0; //not used?
-        public string TestTitle { get; set; } = "";
-        public int TestType { get; set; } = 0; //[1-5]
-        public int CourseTopicId { get; set; } = 0;
-        public string CourseTopicTitle { get; set; } = "";
-        public int TestTags { get; set; } = 0; //1:testRtl 2:optionsRtl
-        public int TestLevel { get; set; } = 0; //[1-5]
-        public List<TestOption>? TestOptions { get; set; } = new List<TestOption> ();
-        }
-    //15
-    public class CourseFolder
-        {
-        public int CourseFolderId { get; set; } = 0;
-        public int CourseId { get; set; } = 0;
-        public string CourseFolderTitle { get; set; } = "";
-        public string CourseFolderUrl { get; set; } = "";
-        public bool CourseFolderActive { get; set; } = false;
-        }
-    //16
+    //M
     public class Message
         {
         public int MessageId { get; set; } = 0;
@@ -232,7 +242,7 @@ namespace ExaminerS.Models
         public string MessageBody { get; set; } = "";
         public List<StudentMessage> StudentMessages { get; set; } = new List<StudentMessage> ();
         }
-    //17
+    //SM
     public class StudentMessage
         {
         public int StudentMessageId { get; set; } = 0;
@@ -245,7 +255,7 @@ namespace ExaminerS.Models
         public string DateTimeRead { get; set; } = "";
         public int StudentMessageTags { get; set; } = 0;
         }
-    //20
+    //P
     public class Project
         {
         public int ProjectId { get; set; } = 0;
@@ -255,7 +265,7 @@ namespace ExaminerS.Models
         public bool ProjectActive { get; set; }
         public List<Subproject> Subprojects { get; set; } = new List<Subproject> ();
         }
-    //21
+    //SP
     public class Subproject
         {
         public int SubprojectId { get; set; } = 0;
@@ -264,7 +274,7 @@ namespace ExaminerS.Models
         public string SubprojectNotes { get; set; } = "";
         public List<Note> Notes { get; set; } = new List<Note> ();
         }
-    //22
+    //N
     public class Note
         {
         public int NoteId { get; set; } = 0;

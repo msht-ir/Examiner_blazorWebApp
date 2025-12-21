@@ -113,7 +113,7 @@ namespace ExaminerB.Services2Backend
             await cmd.ExecuteNonQueryAsync ();
             }
         #endregion
-        #region C01:usrs
+        #region U:Usrs
         public async Task<int> Create_TeacherAsync (User user)
             {
             string sql = "INSERT INTO usrs (UsrName, UsrPass, UsrActive) VALUES (@usrname, @usrpass, 1); SELECT CAST (scope_identity() AS int)";
@@ -178,7 +178,7 @@ namespace ExaminerB.Services2Backend
             return true;
             }
         #endregion
-        #region C10:Students
+        #region S:Students
         public async Task<int> Create_StudentAsync (User student)
             {
             string sql = "INSERT INTO Students (GroupId, StudentName, StudentPass, StudentTags, StudentNickname) VALUES (@groupid, @studentname, @studentpass, @studenttags, @studentnickname); SELECT CAST (scope_identity() AS int)";
@@ -572,7 +572,139 @@ namespace ExaminerB.Services2Backend
                 }
             }
         #endregion
-        #region C02:Courses
+        #region G:Groups
+        public async Task<int> Create_GroupAsync (Group group)
+            {
+            string sql = "INSERT INTO Groups (GroupName, UserId) VALUES (@groupname, @userid); SELECT CAST (scope_identity() AS int)";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@groupname", group.GroupName);
+                cmd.Parameters.AddWithValue ("@userid", group.UserId);
+                int i = (int) await cmd.ExecuteScalarAsync ();
+                return i;
+                }
+            catch
+                {
+                await cnn.CloseAsync ();
+                return 0;
+                }
+            }
+        public async Task<List<Group>> Read_GroupsAsync (User user, bool getStudentExams, bool getStudentCourses)
+            {
+            List<Group> lstGroups = new List<Group> ();
+            string sql = "SELECT g.GroupId, g.GroupName, g.UserId FROM Groups g WHERE g.UserId=@userid ORDER BY g.GroupName";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@userid", user.UserId);
+                using (var reader = await cmd.ExecuteReaderAsync ())
+                    {
+                    while (await reader.ReadAsync ())
+                        {
+                        var group = new Group
+                            {
+                            GroupId = reader.GetInt32 (0),
+                            GroupName = reader.GetString (1),
+                            UserId = reader.GetInt32 (2),
+                            Students = new List<User> ()
+                            };
+                        group.Students = await Read_StudentsByGroupIdAsync (group.GroupId, getStudentExams, getStudentCourses);
+                        lstGroups.Add (group);
+                        }
+                    }
+                return lstGroups;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("C10 : \n" + ex.ToString ());
+                return new List<Group> ();
+                }
+            }
+        public async Task<Group> Read_GroupAsync (int groupId, bool getStudentExams, bool getStudentCourses)
+            {
+            //ModelState.Clear (); // disables auto validation
+            Group group = new Group ();
+            string sql = "SELECT g.GroupId, g.GroupName, g.UserId FROM Groups g WHERE g.GroupId=@groupid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@groupid", groupId);
+                using (var reader = await cmd.ExecuteReaderAsync ())
+                    {
+                    while (await reader.ReadAsync ())
+                        {
+                        group.GroupId = reader.GetInt32 (0);
+                        group.GroupName = reader.GetString (1);
+                        group.UserId = reader.GetInt32 (2);
+                        group.Students = new List<User> ();
+                        }
+                    }
+                group.Students = await Read_StudentsByGroupIdAsync (groupId, getStudentExams, getStudentCourses);
+                return group;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("C10 : \n" + ex.ToString ());
+                return new Group ();
+                }
+            }
+        public async Task<bool> Update_GroupAsync (Group group)
+            {
+            string sql = "UPDATE Groups SET GroupName=@groupname WHERE GroupId=@groupid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@groupname", group.GroupName);
+                cmd.Parameters.AddWithValue ("@groupid", group.GroupId);
+                await cmd.ExecuteNonQueryAsync ();
+                return true;
+                }
+            catch
+                {
+                await cnn.CloseAsync ();
+                return false;
+                }
+            }
+        public async Task<bool> Delete_GroupsAsync (User user)
+            {
+            string sql = "DELETE FROM Groups WHERE UserId=@userid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@userid", user.UserId);
+            cmd.ExecuteNonQuery ();
+            return true;
+            }
+        public async Task<int> Delete_GroupAsync (int groupId)
+            {
+            string sql = "DELETE FROM Groups WHERE (GroupId=@groupid AND NOT EXISTS (SELECT 1 FROM Students WHERE GroupId=@groupid)); SELECT COUNT (StudentId) FROM Students WHERE GroupId=@groupid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@groupid", groupId);
+            int i = (int) cmd.ExecuteScalar ();
+            return i;
+            }
+        #endregion
+        #region SG:StudentGroups
+        //
+        #endregion
+        #region C:Courses
         public async Task<int> Create_CourseAsync (Course course)
             {
             string sql = "INSERT INTO Courses (UserId, CourseName) VALUES (@userid, @coursename); SELECT CAST (scope_identity() AS int)"; //get ID of newly added record
@@ -755,80 +887,7 @@ namespace ExaminerB.Services2Backend
             return true;
             }
         #endregion
-        #region C03:CourseTopics
-        public async Task<int> Create_CourseTopicAsync (CourseTopic courseTopic)
-            {
-            string sql = "INSERT INTO CourseTopics (CourseId, CourseTopicTitle) VALUES (@courseid, @coursetopictitle); SELECT CAST (scope_identity() AS int)"; //get ID of newly added record
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@courseid", courseTopic.CourseId);
-            cmd.Parameters.AddWithValue ("@coursetopictitle", courseTopic.CourseTopicTitle);
-            int i = (int) cmd.ExecuteScalar ();
-            return i;
-            }
-        public async Task<List<CourseTopic>> Read_CourseTopicsAsync (int courseId)
-            {
-            List<CourseTopic> lstCourseTopics = new ();
-
-            string sql = "SELECT CourseTopicId, CourseId, CourseTopicTitle FROM CourseTopics WHERE CourseId=@courseId ORDER BY CourseTopicTitle";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@courseId", courseId);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-                int i = 0;
-                lstCourseTopics.Clear ();
-                while (await reader.ReadAsync ())
-                    {
-                    i++;
-                    lstCourseTopics.Add (new CourseTopic
-                        {
-                        CourseTopicId = reader.GetInt32 (0),
-                        CourseId = courseId,
-                        CourseTopicTitle = reader.GetString (2)
-                        });
-                    }
-                return lstCourseTopics;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("Error: " + ex.ToString ());
-                return new List<CourseTopic> ();
-                }
-            }
-        public async Task<bool> Update_CourseTopicAsync (CourseTopic courseTopic)
-            {
-            string sql = "UPDATE CourseTopics SET CourseTopicTitle = @coursetopictitle WHERE CourseTopicId = @id";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@coursetopictitle", courseTopic.CourseTopicTitle);
-            cmd.Parameters.AddWithValue ("@id", courseTopic.CourseTopicId);
-            int i = cmd.ExecuteNonQuery ();
-            return true;
-            }
-        public async Task<bool> Delete_CourseTopicAsync (int courseTopicId)
-            {
-            string sql = @"DELETE FROM CourseTopics 
-                            WHERE CourseTopicId=@coursetopicid 
-                            AND NOT EXISTS (SELECT 1 FROM Tests WHERE TopicId=@coursetopicid) 
-                            AND NOT EXISTS (SELECT 1 FROM ExamCompositions WHERE TopicId=@coursetopicid)";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@coursetopicid", courseTopicId);
-            int i = cmd.ExecuteNonQuery ();
-            return (i > 0) ? true : false;
-            }
-        #endregion
-        #region C15:CourseFolders
+        #region CF:CourseFolders
         public async Task<int> Create_CourseFolderAsync (CourseFolder courseFolder)
             {
             string sql = "INSERT INTO CourseFolders (CourseId, CourseFolderTitle, CourseFolderUrl, CourseFolderActive) VALUES (@courseid, @coursefoldertitle, @coursefolderurl, @coursefolderactive); SELECT CAST (scope_identity() AS int)"; //get ID of newly added record
@@ -904,7 +963,481 @@ namespace ExaminerB.Services2Backend
             return (i > 0) ? true : false;
             }
         #endregion
-        #region C04:Tests
+        #region CT:CourseTopics
+        public async Task<int> Create_CourseTopicAsync (CourseTopic courseTopic)
+            {
+            string sql = "INSERT INTO CourseTopics (CourseId, CourseTopicTitle) VALUES (@courseid, @coursetopictitle); SELECT CAST (scope_identity() AS int)"; //get ID of newly added record
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@courseid", courseTopic.CourseId);
+            cmd.Parameters.AddWithValue ("@coursetopictitle", courseTopic.CourseTopicTitle);
+            int i = (int) cmd.ExecuteScalar ();
+            return i;
+            }
+        public async Task<List<CourseTopic>> Read_CourseTopicsAsync (int courseId)
+            {
+            List<CourseTopic> lstCourseTopics = new ();
+
+            string sql = "SELECT CourseTopicId, CourseId, CourseTopicTitle FROM CourseTopics WHERE CourseId=@courseId ORDER BY CourseTopicTitle";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@courseId", courseId);
+                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+                int i = 0;
+                lstCourseTopics.Clear ();
+                while (await reader.ReadAsync ())
+                    {
+                    i++;
+                    lstCourseTopics.Add (new CourseTopic
+                        {
+                        CourseTopicId = reader.GetInt32 (0),
+                        CourseId = courseId,
+                        CourseTopicTitle = reader.GetString (2)
+                        });
+                    }
+                return lstCourseTopics;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("Error: " + ex.ToString ());
+                return new List<CourseTopic> ();
+                }
+            }
+        public async Task<bool> Update_CourseTopicAsync (CourseTopic courseTopic)
+            {
+            string sql = "UPDATE CourseTopics SET CourseTopicTitle = @coursetopictitle WHERE CourseTopicId = @id";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@coursetopictitle", courseTopic.CourseTopicTitle);
+            cmd.Parameters.AddWithValue ("@id", courseTopic.CourseTopicId);
+            int i = cmd.ExecuteNonQuery ();
+            return true;
+            }
+        public async Task<bool> Delete_CourseTopicAsync (int courseTopicId)
+            {
+            string sql = @"DELETE FROM CourseTopics 
+                            WHERE CourseTopicId=@coursetopicid 
+                            AND NOT EXISTS (SELECT 1 FROM Tests WHERE TopicId=@coursetopicid) 
+                            AND NOT EXISTS (SELECT 1 FROM ExamCompositions WHERE TopicId=@coursetopicid)";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@coursetopicid", courseTopicId);
+            int i = cmd.ExecuteNonQuery ();
+            return (i > 0) ? true : false;
+            }
+        #endregion
+        #region SC:StudentCourses
+        public async Task<bool> Create_StudentCoursesAsync (int groupId, int courseId)
+            {
+            string sql = @"INSERT INTO StudentCourses (StudentId, CourseId) SELECT s.StudentId, @courseid FROM Students s
+                        WHERE s.GroupId=@groupid
+                        AND NOT EXISTS (SELECT 1 FROM StudentCourses sc WHERE sc.StudentId=s.StudentId AND Sc.CourseId=@courseid);";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@courseid", courseId);
+            cmd.Parameters.AddWithValue ("@groupid", groupId);
+            await cmd.ExecuteNonQueryAsync ();
+            return true;
+            }
+        public async Task<bool> Create_StudentCourseAsync (int studentId, int courseId)
+            {
+            string sql = "INSERT INTO StudentCourses (StudentId, CourseId) VALUES (@studentid, @courseid)";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@studentid", studentId);
+            cmd.Parameters.AddWithValue ("@courseid", courseId);
+            int i = await cmd.ExecuteNonQueryAsync ();
+            return true;
+            }
+        public async Task<List<StudentCourse>> Read_StudentCoursesAsync (int studentid)
+            {
+            List<StudentCourse> lstStudentCourses = new List<StudentCourse> ();
+            string sql = @"SELECT sc.StudentCourseId, sc.StudentId, sc.CourseId, c.CourseName, sc.NumberOfTests, sc.CorrectAnswers 
+                        FROM StudentCourses sc INNER JOIN Courses c ON sc.CourseId=c.CourseId 
+                        WHERE StudentId=@studentid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@studentid", studentid);
+                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+                while (await reader.ReadAsync ())
+                    {
+                    lstStudentCourses.Add (new StudentCourse
+                        {
+                        StudentCourseId = reader.GetInt32 (0),
+                        StudentId = reader.GetInt32 (1),
+                        CourseId = reader.GetInt32 (2),
+                        CourseName = reader.GetString (3),
+                        NumberOfTests = reader.GetInt32 (4),
+                        CorrectAnswers = reader.GetInt32 (5)
+                        });
+                    }
+                await cnn.CloseAsync ();
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("Error in C14 - GetStudentCouses: " + ex);
+                await cnn.CloseAsync ();
+                }
+            return lstStudentCourses;
+            }
+        public async Task<StudentCourse> Read_StudentCourseAsync (int studentCourseId)
+            {
+            StudentCourse studentCourse = new StudentCourse ();
+            string sql = "SELECT sc.StudentCourseId, sc.StudentId, sc.CourseId, c.CourseName, sc.NumberOfTests, sc.CorrectAnswers FROM StudentCourses sc INNER JOIN Courses c ON sc.CourseId=c.CourseId WHERE StudentCourseId=@studentcourseid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseId);
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
+                    {
+                    while (await reader.ReadAsync ())
+                        {
+                        studentCourse.StudentCourseId = reader.GetInt32 (0);
+                        studentCourse.StudentId = reader.GetInt32 (1);
+                        studentCourse.CourseId = reader.GetInt32 (2);
+                        studentCourse.CourseName = reader.GetString (3);
+                        studentCourse.NumberOfTests = reader.GetInt32 (4);
+                        studentCourse.CorrectAnswers = reader.GetInt32 (5);
+                        }
+                    }
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("Error in C14 - GetStudentCouses: " + ex);
+                await cnn.CloseAsync ();
+                }
+            return studentCourse;
+            }
+        public async Task<bool> Delete_StudentCoursesAsync (int courseId, int groupId)
+            {
+            bool result = true;
+            List<User> lstStudents = new List<User> ();
+            lstStudents = await Read_StudentsByGroupIdAsync (groupId, false, false);
+            string sql = "DELETE FROM StudentCourses WHERE StudentId=@studentid AND CourseId=@courseid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            try
+                {
+                foreach (User student in lstStudents)
+                    {
+                    SqlCommand cmd = new SqlCommand (sql, cnn);
+                    cmd.Parameters.AddWithValue ("@studentid", student.UserId);
+                    cmd.Parameters.AddWithValue ("@courseid", courseId);
+                    int i = cmd.ExecuteNonQuery ();
+                    if (i < 0)
+                        {
+                        result = false;
+                        }
+                    }
+                }
+            catch (Exception ex)
+                {
+                result = false;
+                }
+            await cnn.CloseAsync ();
+            return result;
+            }
+        public async Task<bool> Delete_StudentCourseAsync (int studentCourseId)
+            {
+            string sql = "DELETE FROM StudentCourses WHERE StudentCourseId=@studentcourseid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseId);
+            await cmd.ExecuteNonQueryAsync ();
+            return true;
+            }
+        public async Task<bool> Delete_StudentCourseByStudentCourseIdAsync (int studentCourseId)
+            {
+            string sql = "DELETE FROM StudentCourses WHERE StudentCourseId=@studentcourseid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseId);
+            await cmd.ExecuteNonQueryAsync ();
+            return true;
+            }
+        public async Task<bool> CalculatePoints_StudentCourseAsync (StudentCourse studentCourse)
+            {
+            try
+                {
+                string? connString = _config.GetConnectionString ("cnni");
+                using SqlConnection cnn = new (connString);
+                await cnn.OpenAsync ();
+                //count nTests
+                string sql1 = "SELECT Count (TestKey) AS t FROM RunningExams WHERE StudentId=@studentid AND CourseId=@courseid";
+                SqlCommand cmd1 = new SqlCommand (sql1, cnn);
+                cmd1.Parameters.AddWithValue ("@studentid", studentCourse.StudentId);
+                cmd1.Parameters.AddWithValue ("@courseid", studentCourse.CourseId);
+                int n = (int) cmd1.ExecuteScalar ();
+                //count nCorrects
+                string sql2 = "SELECT Count (TestKey) AS t FROM RunningExams WHERE StudentId=@studentid AND CourseId=@courseid AND TestKey=UserAns";
+                SqlCommand cmd2 = new SqlCommand (sql2, cnn);
+                cmd2.Parameters.AddWithValue ("@studentid", studentCourse.StudentId);
+                cmd2.Parameters.AddWithValue ("@courseid", studentCourse.CourseId);
+                int c = (int) cmd2.ExecuteScalar ();
+                //Save n,c
+                string sql3 = "UPDATE StudentCourses SET NumberOfTests=@numberoftests, CorrectAnswers-@correctanswers WHERE StudentId=@studentid AND CourseId=@courseid";
+                var cmd3 = new SqlCommand (sql3, cnn);
+                cmd3.Parameters.AddWithValue ("@numberoftests", n);
+                cmd3.Parameters.AddWithValue ("@correctanswers", c);
+                cmd3.Parameters.AddWithValue ("@studentid", studentCourse.StudentId);
+                cmd3.Parameters.AddWithValue ("@courseid", studentCourse.CourseId);
+                await cmd3.ExecuteNonQueryAsync ();
+                return true;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("Error in ReCalcRunningPoint:\n" + ex.ToString ());
+                return false;
+                }
+            }
+        #endregion
+        #region SCT:StudentCourseTests
+        public async Task<bool> Create_StudentCourseTestAsync (StudentCourseTest studentCourseTest)
+            {
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            string sql = "INSERT INTO StudentExamTests (UserAns, [DateTime], StudentCourseId, TestId, TestKey) VALUES (@userans, @datetime, @studentcourseid, @testid, @testkey)";
+            await cnn.OpenAsync ();
+            var cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@userans", studentCourseTest.UserAns.ToString ());
+            cmd.Parameters.AddWithValue ("@datetime", studentCourseTest.DateTime);
+            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId.ToString ());
+            cmd.Parameters.AddWithValue ("@testid", studentCourseTest.TestId.ToString ());
+            cmd.Parameters.AddWithValue ("@testkey", studentCourseTest.TestKey.ToString ());
+            await cmd.ExecuteNonQueryAsync ();
+            //update counts
+            sql = "UPDATE StudentCourses SET ";
+            sql += (studentCourseTest.UserAns == studentCourseTest.TestKey) ? "NumberOfTests = NumberOfTests +1 ,CorrectAnswers = CorrectAnswers +1 " : "NumberOfTests = NumberOfTests +1 ";
+            sql += "WHERE StudentCourseId=@studentcourseid";
+            var cmd2 = new SqlCommand (sql, cnn);
+            cmd2.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId.ToString ());
+            await cmd2.ExecuteNonQueryAsync ();
+            return true;
+            }
+        public async Task<List<StudentCourseTest>> Read_StudentCourseTestsAsync (StudentCourse studentCourse, bool readOptions)
+            {
+            List<StudentCourseTest> lstStudentCourseTests = new ();
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            string sql = @"SELECT sct.StudentCourseId, sct.TestId,
+            t.TestTitle, t.TestType, t.TopicId, ct.CourseTopicTitle, t.TestTags, t.TestLevel,
+            sct.TestKey, sct.UserAns, sct.DateTime
+            FROM StudentCourseTests sct
+            INNER JOIN Tests t ON sct.TestId = t.TestId
+            INNER JOIN CourseTopics ct ON t.TopicId = ct.CourseTopicId 
+            WHERE sct.StudentCourseId=@studentcourseid";
+            await cnn.OpenAsync ();
+            using SqlCommand cmd = new (sql, cnn);
+            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourse.StudentCourseId);
+            try
+                {
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
+                    {
+                    int index = 0;
+                    while (await reader.ReadAsync ())
+                        {
+                        var sct = new StudentCourseTest
+                            {
+                            StudentCourseId = reader.GetInt32 (0),
+                            TestId = reader.GetInt32 (1),
+                            TestTitle = reader.GetString (2),
+                            TestType = reader.GetInt32 (3),
+                            CourseTopicId = reader.GetInt32 (4),
+                            CourseTopicTitle = reader.GetString (5),
+                            TestTags = reader.GetInt32 (6),
+                            TestLevel = reader.GetInt32 (7),
+                            TestKey = reader.GetInt32 (8),
+                            UserAns = reader.GetInt32 (9),
+                            DateTime = reader.GetString (10),
+                            TestIndex = ++index,
+                            TestOptions = new List<TestOption> ()
+                            };
+                        lstStudentCourseTests.Add (sct);
+                        }
+                    }
+                if (readOptions)
+                    {
+                    foreach (StudentCourseTest t in lstStudentCourseTests)
+                        {
+                        t.TestOptions = await Read_TestOptionsAsync (t.TestId, cnn);
+                        }
+                    }
+                return lstStudentCourseTests;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine (ex.ToString ());
+                return new List<StudentCourseTest> ();
+                }
+            }
+        public async Task<StudentCourseTest> Read_StudentCourseTestRandomAsync (int studentCourseId, bool readOptions, bool retry)
+            {
+            StudentCourseTest studentCourseTest = new StudentCourseTest ();
+            string sql = @"SELECT TOP (1) sc.StudentCourseId, t.TestId, t.TestTitle, t.TestType, t.TopicId, ct.CourseTopicTitle, t.TestTags, t.TestLevel
+                         FROM Tests t
+                         INNER JOIN Courses c ON t.CourseId = c.CourseId 
+                         INNER JOIN CourseTopics ct ON t.TopicId = ct.CourseTopicId
+                         INNER JOIN StudentCourses sc ON sc.CourseId = c.CourseId AND sc.StudentCourseId = @studentcourseid";
+            if (retry)
+                {
+                sql += " WHERE t.TestId IN (SELECT sct.TestId FROM StudentCourseTests sct WHERE sct.StudentCourseId=@studentcourseid AND sct.UserAns <> sct.TestKey) ORDER BY NEWID()";
+                }
+            else
+                {
+                sql += " ORDER BY NEWID()";
+                }
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            using SqlCommand cmd = new (sql, cnn);
+            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseId);
+            try
+                {
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
+                    {
+                    int index = 0;
+                    while (await reader.ReadAsync ())
+                        {
+                        studentCourseTest.StudentCourseId = reader.GetInt32 (0);
+                        studentCourseTest.TestId = reader.GetInt32 (1);
+                        studentCourseTest.TestTitle = reader.GetString (2);
+                        studentCourseTest.TestType = reader.GetInt32 (3);
+                        studentCourseTest.CourseTopicId = reader.GetInt32 (4);
+                        studentCourseTest.CourseTopicTitle = reader.GetString (5);
+                        studentCourseTest.TestTags = reader.GetInt32 (6);
+                        studentCourseTest.TestLevel = reader.GetInt32 (7);
+                        studentCourseTest.TestIndex = ++index;
+                        studentCourseTest.TestOptions = new List<TestOption> ();
+                        }
+                    }
+                if (readOptions)
+                    {
+                    studentCourseTest.TestOptions = await Read_TestOptionsAsync (studentCourseTest.TestId, cnn);
+                    }
+                return studentCourseTest;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine (ex.ToString ());
+                return new StudentCourseTest ();
+                }
+            }
+        public async Task<bool> Update_StudentCourseTestAsync (StudentCourseTest studentCourseTest, string mode)
+            {
+            Console.WriteLine ($"be ........................ mode= {mode}");
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            string sql = "";
+            if (mode == "new")
+                {
+                sql = "INSERT INTO StudentCourseTests (StudentCourseId, TestId, TestKey, UserAns, [DateTime]) VALUES (@studentcourseid, @testid, @testkey, @userans, @datetime)";
+                await cnn.OpenAsync ();
+                var cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId);
+                cmd.Parameters.AddWithValue ("@testid", studentCourseTest.TestId);
+                cmd.Parameters.AddWithValue ("@testkey", studentCourseTest.TestKey);
+                cmd.Parameters.AddWithValue ("@userans", studentCourseTest.UserAns);
+                cmd.Parameters.AddWithValue ("@datetime", studentCourseTest.DateTime);
+                await cmd.ExecuteNonQueryAsync ();
+                sql = (studentCourseTest.UserAns == studentCourseTest.TestKey) ? "UPDATE StudentCourses SET CorrectAnswers=(CorrectAnswers + 1), NumberOfTests=(NumberOfTests + 1)  WHERE StudentCourseId=@studentcourseid" : "UPDATE StudentCourses SET NumberOfTests=(NumberOfTests + 1) WHERE StudentCourseId=@studentcourseid";
+                var cmd2 = new SqlCommand (sql, cnn);
+                cmd2.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId);
+                await cmd2.ExecuteNonQueryAsync ();
+                return true;
+                }
+            else if (mode == "edit")
+                {
+                sql = "UPDATE StudentCourseTests SET TestKey=@testkey, UserAns=@userans, [DateTime]=@datetime WHERE StudentCourseId=@studentcourseid AND TestId=@testid";
+                await cnn.OpenAsync ();
+                var cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@testkey", studentCourseTest.TestKey);
+                cmd.Parameters.AddWithValue ("@userans", studentCourseTest.UserAns);
+                cmd.Parameters.AddWithValue ("@datetime", studentCourseTest.DateTime);
+                cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId);
+                cmd.Parameters.AddWithValue ("@testid", studentCourseTest.TestId);
+                await cmd.ExecuteNonQueryAsync ();
+                sql = (studentCourseTest.UserAns == studentCourseTest.TestKey) ? "UPDATE StudentCourses SET CorrectAnswers=(CorrectAnswers + 1) WHERE StudentCourseId=@studentcourseid" : "";
+                Console.WriteLine ($"be..............  \n TestId={studentCourseTest.TestId} \n studentCourseId={studentCourseTest.StudentCourseId} \n Key={studentCourseTest.TestKey} \n Ans={studentCourseTest.UserAns} \n sql={sql}");
+                if (sql != "")
+                    {
+                    var cmd2 = new SqlCommand (sql, cnn);
+                    cmd2.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId);
+                    await cmd2.ExecuteNonQueryAsync ();
+                    }
+                return true;
+                }
+            else
+                {
+                return false;
+                }
+            //update counts
+            }
+        public async Task<bool> Delete_StudentCourseTestsAsync (string mode, StudentCourse studentCourse)
+            {
+            string sql = "";
+            switch (mode)
+                {
+                case "filter":
+                        {
+                        sql = @"DELETE FROM StudentCourseTests WHERE StudentCourseId=@studentcourseid AND UserAns=TestKey; 
+                                UPDATE StudentCourses 
+                                SET NumberOfTests=(SELECT COUNT(TestId) FROM StudentCourseTests WHERE StudentCourseId=@studentcourseid), 
+                                CorrectAnswers=(SELECT COUNT(TestId) FROM StudentCourseTests WHERE StudentCourseId=@studentcourseid AND TestKey=UserAns) 
+                                WHERE StudentCourseId=@studentcourseid";
+                        break;
+                        }
+                case "wipeout":
+                        {
+                        sql = @"DELETE FROM StudentCourseTests WHERE StudentCourseId=@studentcourseid; 
+                                UPDATE StudentCourses SET NumberOfTests=0, CorrectAnswers=0 WHERE StudentCourseId=@studentcourseid;";
+                        break;
+                        }
+                }
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            try
+                {
+                await cnn.OpenAsync ();
+                cmd.Parameters.AddWithValue ("@studentcourseid", studentCourse.StudentCourseId);
+                cmd.ExecuteNonQuery ();
+                await cnn.CloseAsync ();
+                return true;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ($"ERROR in: BeServ-C14_Delete_StudentCourseTestsAsync \n --- mode: {mode}\n courseId:{studentCourse.CourseId}\n student:{studentCourse.StudentId}\n" + ex);
+                return false;
+                }
+            }
+        #endregion
+        #region T:Tests
         public async Task<int> Create_TestAsync (Test test)
             {
             string sql = "INSERT INTO Tests (CourseId, TopicId, TestTitle, TestType, TestLevel, TestTags) VALUES (@courseid, @topicid, @testtitle, @testtype, @testlevel, @testtags); SELECT CAST (scope_identity() AS int)"; //get ID of newly added record
@@ -1309,7 +1842,7 @@ namespace ExaminerB.Services2Backend
             return true;
             }
         #endregion
-        #region C05:TestOptions
+        #region TO:TestOptions
         public async Task<int> Create_TestOptionAsync (TestOption testOption)
             {
             string sql = "INSERT INTO TestOptions (TestId, TestOptionTitle, TestOptionTags) VALUES (@testid, @testoptiontitle, @testoptiontags); SELECT CAST (scope_identity() AS int)"; //get ID of newly added record
@@ -1443,7 +1976,7 @@ namespace ExaminerB.Services2Backend
             return true;
             }
         #endregion
-        #region C06:Exams
+        #region E:Exams
         public async Task<int> Create_ExamAsync (Exam exam)
             {
             string sql = "INSERT INTO Exams (CourseId, ExamTitle, ExamDateTime, ExamDuration, ExamNTests, ExamTags) VALUES (@courseid, @examtitle, @examdatetime, @examduration, @examntests, @examtags); SELECT CAST (scope_identity() AS int)"; //get ID of newly added record
@@ -1570,7 +2103,7 @@ COMMIT TRANSACTION;
             return true;
             }
         #endregion
-        #region C07:ExamCompositions
+        #region EC:ExamCompositions
         public async Task<int> Create_ExamCompositionAsync (ExamComposition examComposition)
             {
             string sql = "INSERT INTO ExamCompositions (ExamId, TopicId, TopicNTests, TestsLevel) VALUES (@examid, @topicid, @topicntests, @testslevel); SELECT CAST (scope_identity() AS int)"; //get ID of newly added record
@@ -1664,7 +2197,7 @@ COMMIT TRANSACTION;
             return true;
             }
         #endregion
-        #region C08:ExamTests
+        #region ET:ExamTests
         public async Task<int> Create_ExamTestsByExamCompositionAsync (ExamComposition examComposition)
             {
             List<int> lstTestIds = new List<int> ();
@@ -1799,136 +2332,7 @@ COMMIT TRANSACTION;
             return true;
             }
         #endregion
-        #region C09:Groups
-        public async Task<int> Create_GroupAsync (Group group)
-            {
-            string sql = "INSERT INTO Groups (GroupName, UserId) VALUES (@groupname, @userid); SELECT CAST (scope_identity() AS int)";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@groupname", group.GroupName);
-                cmd.Parameters.AddWithValue ("@userid", group.UserId);
-                int i = (int) await cmd.ExecuteScalarAsync ();
-                return i;
-                }
-            catch
-                {
-                await cnn.CloseAsync ();
-                return 0;
-                }
-            }
-        public async Task<List<Group>> Read_GroupsAsync (User user, bool getStudentExams, bool getStudentCourses)
-            {
-            List<Group> lstGroups = new List<Group> ();
-            string sql = "SELECT g.GroupId, g.GroupName, g.UserId FROM Groups g WHERE g.UserId=@userid ORDER BY g.GroupName";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@userid", user.UserId);
-                using (var reader = await cmd.ExecuteReaderAsync ())
-                    {
-                    while (await reader.ReadAsync ())
-                        {
-                        var group = new Group
-                            {
-                            GroupId = reader.GetInt32 (0),
-                            GroupName = reader.GetString (1),
-                            UserId = reader.GetInt32 (2),
-                            Students = new List<User> ()
-                            };
-                        group.Students = await Read_StudentsByGroupIdAsync (group.GroupId, getStudentExams, getStudentCourses);
-                        lstGroups.Add (group);
-                        }
-                    }
-                return lstGroups;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("C10 : \n" + ex.ToString ());
-                return new List<Group> ();
-                }
-            }
-        public async Task<Group> Read_GroupAsync (int groupId, bool getStudentExams, bool getStudentCourses)
-            {
-            //ModelState.Clear (); // disables auto validation
-            Group group = new Group ();
-            string sql = "SELECT g.GroupId, g.GroupName, g.UserId FROM Groups g WHERE g.GroupId=@groupid";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@groupid", groupId);
-                using (var reader = await cmd.ExecuteReaderAsync ())
-                    {
-                    while (await reader.ReadAsync ())
-                        {
-                        group.GroupId = reader.GetInt32 (0);
-                        group.GroupName = reader.GetString (1);
-                        group.UserId = reader.GetInt32 (2);
-                        group.Students = new List<User> ();
-                        }
-                    }
-                group.Students = await Read_StudentsByGroupIdAsync (groupId, getStudentExams, getStudentCourses);
-                return group;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("C10 : \n" + ex.ToString ());
-                return new Group ();
-                }
-            }
-        public async Task<bool> Update_GroupAsync (Group group)
-            {
-            string sql = "UPDATE Groups SET GroupName=@groupname WHERE GroupId=@groupid";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@groupname", group.GroupName);
-                cmd.Parameters.AddWithValue ("@groupid", group.GroupId);
-                await cmd.ExecuteNonQueryAsync ();
-                return true;
-                }
-            catch
-                {
-                await cnn.CloseAsync ();
-                return false;
-                }
-            }
-        public async Task<bool> Delete_GroupsAsync (User user)
-            {
-            string sql = "DELETE FROM Groups WHERE UserId=@userid";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@userid", user.UserId);
-            cmd.ExecuteNonQuery ();
-            return true;
-            }
-        public async Task<int> Delete_GroupAsync (int groupId)
-            {
-            string sql = "DELETE FROM Groups WHERE (GroupId=@groupid AND NOT EXISTS (SELECT 1 FROM Students WHERE GroupId=@groupid)); SELECT COUNT (StudentId) FROM Students WHERE GroupId=@groupid";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@groupid", groupId);
-            int i = (int) cmd.ExecuteScalar ();
-            return i;
-            }
-        #endregion
-        #region C11:StudentExams
+        #region SE:StudentExams
         public async Task<int> Create_StudentExamsAsync (StudentExam studentExam, int groupId)
             {
             List<int> lstStudentIds = new List<int> ();
@@ -2414,7 +2818,7 @@ COMMIT TRANSACTION;
                 }
             }
         #endregion
-        #region C12:StudentExamTests
+        #region SET:StudentExamTests
         public async Task<int> Create_StudentExamTestAsync (StudentExamTest studentExamTest)
             {
             string? connString = _config.GetConnectionString ("cnni");
@@ -2861,408 +3265,7 @@ COMMIT TRANSACTION;
             return result;
             }
         #endregion
-        #region C13:StudentCourses
-        public async Task<bool> Create_StudentCoursesAsync (int groupId, int courseId)
-            {
-            string sql = @"INSERT INTO StudentCourses (StudentId, CourseId) SELECT s.StudentId, @courseid FROM Students s
-                        WHERE s.GroupId=@groupid
-                        AND NOT EXISTS (SELECT 1 FROM StudentCourses sc WHERE sc.StudentId=s.StudentId AND Sc.CourseId=@courseid);";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@courseid", courseId);
-            cmd.Parameters.AddWithValue ("@groupid", groupId);
-            await cmd.ExecuteNonQueryAsync ();
-            return true;
-            }
-        public async Task<bool> Create_StudentCourseAsync (int studentId, int courseId)
-            {
-            string sql = "INSERT INTO StudentCourses (StudentId, CourseId) VALUES (@studentid, @courseid)";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@studentid", studentId);
-            cmd.Parameters.AddWithValue ("@courseid", courseId);
-            int i = await cmd.ExecuteNonQueryAsync ();
-            return true;
-            }
-        public async Task<List<StudentCourse>> Read_StudentCoursesAsync (int studentid)
-            {
-            List<StudentCourse> lstStudentCourses = new List<StudentCourse> ();
-            string sql = @"SELECT sc.StudentCourseId, sc.StudentId, sc.CourseId, c.CourseName, sc.NumberOfTests, sc.CorrectAnswers 
-                        FROM StudentCourses sc INNER JOIN Courses c ON sc.CourseId=c.CourseId 
-                        WHERE StudentId=@studentid";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@studentid", studentid);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-                while (await reader.ReadAsync ())
-                    {
-                    lstStudentCourses.Add (new StudentCourse
-                        {
-                        StudentCourseId = reader.GetInt32 (0),
-                        StudentId = reader.GetInt32 (1),
-                        CourseId = reader.GetInt32 (2),
-                        CourseName = reader.GetString (3),
-                        NumberOfTests = reader.GetInt32 (4),
-                        CorrectAnswers = reader.GetInt32 (5)
-                        });
-                    }
-                await cnn.CloseAsync ();
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("Error in C14 - GetStudentCouses: " + ex);
-                await cnn.CloseAsync ();
-                }
-            return lstStudentCourses;
-            }
-        public async Task<StudentCourse> Read_StudentCourseAsync (int studentCourseId)
-            {
-            StudentCourse studentCourse = new StudentCourse ();
-            string sql = "SELECT sc.StudentCourseId, sc.StudentId, sc.CourseId, c.CourseName, sc.NumberOfTests, sc.CorrectAnswers FROM StudentCourses sc INNER JOIN Courses c ON sc.CourseId=c.CourseId WHERE StudentCourseId=@studentcourseid";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseId);
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
-                    {
-                    while (await reader.ReadAsync ())
-                        {
-                        studentCourse.StudentCourseId = reader.GetInt32 (0);
-                        studentCourse.StudentId = reader.GetInt32 (1);
-                        studentCourse.CourseId = reader.GetInt32 (2);
-                        studentCourse.CourseName = reader.GetString (3);
-                        studentCourse.NumberOfTests = reader.GetInt32 (4);
-                        studentCourse.CorrectAnswers = reader.GetInt32 (5);
-                        }
-                    }
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("Error in C14 - GetStudentCouses: " + ex);
-                await cnn.CloseAsync ();
-                }
-            return studentCourse;
-            }
-        public async Task<bool> Delete_StudentCoursesAsync (int courseId, int groupId)
-            {
-            bool result = true;
-            List<User> lstStudents = new List<User> ();
-            lstStudents = await Read_StudentsByGroupIdAsync (groupId, false, false);
-            string sql = "DELETE FROM StudentCourses WHERE StudentId=@studentid AND CourseId=@courseid";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            try
-                {
-                foreach (User student in lstStudents)
-                    {
-                    SqlCommand cmd = new SqlCommand (sql, cnn);
-                    cmd.Parameters.AddWithValue ("@studentid", student.UserId);
-                    cmd.Parameters.AddWithValue ("@courseid", courseId);
-                    int i = cmd.ExecuteNonQuery ();
-                    if (i < 0)
-                        {
-                        result = false;
-                        }
-                    }
-                }
-            catch (Exception ex)
-                {
-                result = false;
-                }
-            await cnn.CloseAsync ();
-            return result;
-            }
-        public async Task<bool> Delete_StudentCourseAsync (int studentCourseId)
-            {
-            string sql = "DELETE FROM StudentCourses WHERE StudentCourseId=@studentcourseid";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseId);
-            await cmd.ExecuteNonQueryAsync ();
-            return true;
-            }
-        public async Task<bool> Delete_StudentCourseByStudentCourseIdAsync (int studentCourseId)
-            {
-            string sql = "DELETE FROM StudentCourses WHERE StudentCourseId=@studentcourseid";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseId);
-            await cmd.ExecuteNonQueryAsync ();
-            return true;
-            }
-        public async Task<bool> CalculatePoints_StudentCourseAsync (StudentCourse studentCourse)
-            {
-            try
-                {
-                string? connString = _config.GetConnectionString ("cnni");
-                using SqlConnection cnn = new (connString);
-                await cnn.OpenAsync ();
-                //count nTests
-                string sql1 = "SELECT Count (TestKey) AS t FROM RunningExams WHERE StudentId=@studentid AND CourseId=@courseid";
-                SqlCommand cmd1 = new SqlCommand (sql1, cnn);
-                cmd1.Parameters.AddWithValue ("@studentid", studentCourse.StudentId);
-                cmd1.Parameters.AddWithValue ("@courseid", studentCourse.CourseId);
-                int n = (int) cmd1.ExecuteScalar ();
-                //count nCorrects
-                string sql2 = "SELECT Count (TestKey) AS t FROM RunningExams WHERE StudentId=@studentid AND CourseId=@courseid AND TestKey=UserAns";
-                SqlCommand cmd2 = new SqlCommand (sql2, cnn);
-                cmd2.Parameters.AddWithValue ("@studentid", studentCourse.StudentId);
-                cmd2.Parameters.AddWithValue ("@courseid", studentCourse.CourseId);
-                int c = (int) cmd2.ExecuteScalar ();
-                //Save n,c
-                string sql3 = "UPDATE StudentCourses SET NumberOfTests=@numberoftests, CorrectAnswers-@correctanswers WHERE StudentId=@studentid AND CourseId=@courseid";
-                var cmd3 = new SqlCommand (sql3, cnn);
-                cmd3.Parameters.AddWithValue ("@numberoftests", n);
-                cmd3.Parameters.AddWithValue ("@correctanswers", c);
-                cmd3.Parameters.AddWithValue ("@studentid", studentCourse.StudentId);
-                cmd3.Parameters.AddWithValue ("@courseid", studentCourse.CourseId);
-                await cmd3.ExecuteNonQueryAsync ();
-                return true;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("Error in ReCalcRunningPoint:\n" + ex.ToString ());
-                return false;
-                }
-            }
-        #endregion
-        #region C14:StudentCourseTests
-        public async Task<bool> Create_StudentCourseTestAsync (StudentCourseTest studentCourseTest)
-            {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            string sql = "INSERT INTO StudentExamTests (UserAns, [DateTime], StudentCourseId, TestId, TestKey) VALUES (@userans, @datetime, @studentcourseid, @testid, @testkey)";
-            await cnn.OpenAsync ();
-            var cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@userans", studentCourseTest.UserAns.ToString ());
-            cmd.Parameters.AddWithValue ("@datetime", studentCourseTest.DateTime);
-            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId.ToString ());
-            cmd.Parameters.AddWithValue ("@testid", studentCourseTest.TestId.ToString ());
-            cmd.Parameters.AddWithValue ("@testkey", studentCourseTest.TestKey.ToString ());
-            await cmd.ExecuteNonQueryAsync ();
-            //update counts
-            sql = "UPDATE StudentCourses SET ";
-            sql += (studentCourseTest.UserAns == studentCourseTest.TestKey) ? "NumberOfTests = NumberOfTests +1 ,CorrectAnswers = CorrectAnswers +1 " : "NumberOfTests = NumberOfTests +1 ";
-            sql += "WHERE StudentCourseId=@studentcourseid";
-            var cmd2 = new SqlCommand (sql, cnn);
-            cmd2.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId.ToString ());
-            await cmd2.ExecuteNonQueryAsync ();
-            return true;
-            }
-        public async Task<List<StudentCourseTest>> Read_StudentCourseTestsAsync (StudentCourse studentCourse, bool readOptions)
-            {
-            List<StudentCourseTest> lstStudentCourseTests = new ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            string sql = @"SELECT sct.StudentCourseId, sct.TestId,
-            t.TestTitle, t.TestType, t.TopicId, ct.CourseTopicTitle, t.TestTags, t.TestLevel,
-            sct.TestKey, sct.UserAns, sct.DateTime
-            FROM StudentCourseTests sct
-            INNER JOIN Tests t ON sct.TestId = t.TestId
-            INNER JOIN CourseTopics ct ON t.TopicId = ct.CourseTopicId 
-            WHERE sct.StudentCourseId=@studentcourseid";
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new (sql, cnn);
-            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourse.StudentCourseId);
-            try
-                {
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
-                    {
-                    int index = 0;
-                    while (await reader.ReadAsync ())
-                        {
-                        var sct = new StudentCourseTest
-                            {
-                            StudentCourseId = reader.GetInt32 (0),
-                            TestId = reader.GetInt32 (1),
-                            TestTitle = reader.GetString (2),
-                            TestType = reader.GetInt32 (3),
-                            CourseTopicId = reader.GetInt32 (4),
-                            CourseTopicTitle = reader.GetString (5),
-                            TestTags = reader.GetInt32 (6),
-                            TestLevel = reader.GetInt32 (7),
-                            TestKey = reader.GetInt32 (8),
-                            UserAns = reader.GetInt32 (9),
-                            DateTime = reader.GetString (10),
-                            TestIndex = ++index,
-                            TestOptions = new List<TestOption> ()
-                            };
-                        lstStudentCourseTests.Add (sct);
-                        }
-                    }
-                if (readOptions)
-                    {
-                    foreach (StudentCourseTest t in lstStudentCourseTests)
-                        {
-                        t.TestOptions = await Read_TestOptionsAsync (t.TestId, cnn);
-                        }
-                    }
-                return lstStudentCourseTests;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
-                return new List<StudentCourseTest> ();
-                }
-            }
-        public async Task<StudentCourseTest> Read_StudentCourseTestRandomAsync (int studentCourseId, bool readOptions, bool retry)
-            {
-            StudentCourseTest studentCourseTest = new StudentCourseTest ();
-            string sql = @"SELECT TOP (1) sc.StudentCourseId, t.TestId, t.TestTitle, t.TestType, t.TopicId, ct.CourseTopicTitle, t.TestTags, t.TestLevel
-                         FROM Tests t
-                         INNER JOIN Courses c ON t.CourseId = c.CourseId 
-                         INNER JOIN CourseTopics ct ON t.TopicId = ct.CourseTopicId
-                         INNER JOIN StudentCourses sc ON sc.CourseId = c.CourseId AND sc.StudentCourseId = @studentcourseid";
-            if (retry)
-                {
-                sql += " WHERE t.TestId IN (SELECT sct.TestId FROM StudentCourseTests sct WHERE sct.StudentCourseId=@studentcourseid AND sct.UserAns <> sct.TestKey) ORDER BY NEWID()";
-                }
-            else
-                {
-                sql += " ORDER BY NEWID()";
-                }
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new (sql, cnn);
-            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseId);
-            try
-                {
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
-                    {
-                    int index = 0;
-                    while (await reader.ReadAsync ())
-                        {
-                        studentCourseTest.StudentCourseId = reader.GetInt32 (0);
-                        studentCourseTest.TestId = reader.GetInt32 (1);
-                        studentCourseTest.TestTitle = reader.GetString (2);
-                        studentCourseTest.TestType = reader.GetInt32 (3);
-                        studentCourseTest.CourseTopicId = reader.GetInt32 (4);
-                        studentCourseTest.CourseTopicTitle = reader.GetString (5);
-                        studentCourseTest.TestTags = reader.GetInt32 (6);
-                        studentCourseTest.TestLevel = reader.GetInt32 (7);
-                        studentCourseTest.TestIndex = ++index;
-                        studentCourseTest.TestOptions = new List<TestOption> ();
-                        }
-                    }
-                if (readOptions)
-                    {
-                    studentCourseTest.TestOptions = await Read_TestOptionsAsync (studentCourseTest.TestId, cnn);
-                    }
-                return studentCourseTest;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
-                return new StudentCourseTest ();
-                }
-            }
-        public async Task<bool> Update_StudentCourseTestAsync (StudentCourseTest studentCourseTest, string mode)
-            {
-            Console.WriteLine ($"be ........................ mode= {mode}");
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            string sql = "";
-            if (mode == "new")
-                {
-                sql = "INSERT INTO StudentCourseTests (StudentCourseId, TestId, TestKey, UserAns, [DateTime]) VALUES (@studentcourseid, @testid, @testkey, @userans, @datetime)";
-                await cnn.OpenAsync ();
-                var cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId);
-                cmd.Parameters.AddWithValue ("@testid", studentCourseTest.TestId);
-                cmd.Parameters.AddWithValue ("@testkey", studentCourseTest.TestKey);
-                cmd.Parameters.AddWithValue ("@userans", studentCourseTest.UserAns);
-                cmd.Parameters.AddWithValue ("@datetime", studentCourseTest.DateTime);
-                await cmd.ExecuteNonQueryAsync ();
-                sql = (studentCourseTest.UserAns == studentCourseTest.TestKey) ? "UPDATE StudentCourses SET CorrectAnswers=(CorrectAnswers + 1), NumberOfTests=(NumberOfTests + 1)  WHERE StudentCourseId=@studentcourseid" : "UPDATE StudentCourses SET NumberOfTests=(NumberOfTests + 1) WHERE StudentCourseId=@studentcourseid";
-                var cmd2 = new SqlCommand (sql, cnn);
-                cmd2.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId);
-                await cmd2.ExecuteNonQueryAsync ();
-                return true;
-                }
-            else if (mode == "edit")
-                {
-                sql = "UPDATE StudentCourseTests SET TestKey=@testkey, UserAns=@userans, [DateTime]=@datetime WHERE StudentCourseId=@studentcourseid AND TestId=@testid";
-                await cnn.OpenAsync ();
-                var cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@testkey", studentCourseTest.TestKey);
-                cmd.Parameters.AddWithValue ("@userans", studentCourseTest.UserAns);
-                cmd.Parameters.AddWithValue ("@datetime", studentCourseTest.DateTime);
-                cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId);
-                cmd.Parameters.AddWithValue ("@testid", studentCourseTest.TestId);
-                await cmd.ExecuteNonQueryAsync ();
-                sql = (studentCourseTest.UserAns == studentCourseTest.TestKey) ? "UPDATE StudentCourses SET CorrectAnswers=(CorrectAnswers + 1) WHERE StudentCourseId=@studentcourseid" : "";
-                Console.WriteLine ($"be..............  \n TestId={studentCourseTest.TestId} \n studentCourseId={studentCourseTest.StudentCourseId} \n Key={studentCourseTest.TestKey} \n Ans={studentCourseTest.UserAns} \n sql={sql}");
-                if (sql != "")
-                    {
-                    var cmd2 = new SqlCommand (sql, cnn);
-                    cmd2.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId);
-                    await cmd2.ExecuteNonQueryAsync ();
-                    }
-                return true;
-                }
-            else
-                {
-                return false;
-                }
-            //update counts
-            }
-        public async Task<bool> Delete_StudentCourseTestsAsync (string mode, StudentCourse studentCourse)
-            {
-            string sql = "";
-            switch (mode)
-                {
-                case "filter":
-                        {
-                        sql = @"DELETE FROM StudentCourseTests WHERE StudentCourseId=@studentcourseid AND UserAns=TestKey; 
-                                UPDATE StudentCourses 
-                                SET NumberOfTests=(SELECT COUNT(TestId) FROM StudentCourseTests WHERE StudentCourseId=@studentcourseid), 
-                                CorrectAnswers=(SELECT COUNT(TestId) FROM StudentCourseTests WHERE StudentCourseId=@studentcourseid AND TestKey=UserAns) 
-                                WHERE StudentCourseId=@studentcourseid";
-                        break;
-                        }
-                case "wipeout":
-                        {
-                        sql = @"DELETE FROM StudentCourseTests WHERE StudentCourseId=@studentcourseid; 
-                                UPDATE StudentCourses SET NumberOfTests=0, CorrectAnswers=0 WHERE StudentCourseId=@studentcourseid;";
-                        break;
-                        }
-                }
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            try
-                {
-                await cnn.OpenAsync ();
-                cmd.Parameters.AddWithValue ("@studentcourseid", studentCourse.StudentCourseId);
-                cmd.ExecuteNonQuery ();
-                await cnn.CloseAsync ();
-                return true;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ($"ERROR in: BeServ-C14_Delete_StudentCourseTestsAsync \n --- mode: {mode}\n courseId:{studentCourse.CourseId}\n student:{studentCourse.StudentId}\n" + ex);
-                return false;
-                }
-            }
-        #endregion
-        #region C16:Messages
+        #region M:Messages
         public async Task<int> Create_MessageAsync (Message message)
             {
             try
@@ -3384,7 +3387,7 @@ COMMIT TRANSACTION;
             return (i > 0) ? true : false;
             }
         #endregion
-        #region C17:StudentMessages
+        #region SM:StudentMessages
         public async Task<int> Create_StudentMessageAsync (Message message, string mode, int recipientId, bool typeFeedback)
             {
             //create message body
@@ -3624,7 +3627,7 @@ COMMIT TRANSACTION;
             return (i > 0) ? true : false;
             }
         #endregion
-        #region E20:Projects
+        #region P:Projects
         public async Task<int> Create_ProjectAsync (Project project)
             {
             string sql = "INSERT INTO Projects (ProjectName, Notes, Active, User_ID) VALUES (@projectname, @notes, @active, @userid)";
@@ -3695,7 +3698,7 @@ COMMIT TRANSACTION;
             return project;
             }
         #endregion
-        #region E21:Subprojects
+        #region SP:Subprojects
         public async Task<int> Create_SubprojectAsync (Subproject subProject)
             {
             string sql = "INSERT INTO SubProjects (SubProjectName, Notes, Project_ID) VALUES (@subprojectname, @notes, @projectid)";
@@ -3789,7 +3792,7 @@ COMMIT TRANSACTION;
             return true;
             }
         #endregion
-        #region E22:Notes
+        #region N:Notes
         public async Task<int> Create_NoteAsync (Note note)
             {
             string sql = "INSERT INTO SubProjects (NoteDatum, Note, Parent_ID, ParentType, Rtl, Done, User_ID, Shared, ReadOnly) VALUES (@notedatum, @note, @parentid, @parenttype, @rtl, @done, @userid, @shared, @readonly)";
