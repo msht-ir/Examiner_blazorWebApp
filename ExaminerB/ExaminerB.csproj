@@ -21,4 +21,8 @@
     <ProjectReference Include="..\ExaminerS\ExaminerS.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\img\" />
+  </ItemGroup>
+
 </Project>

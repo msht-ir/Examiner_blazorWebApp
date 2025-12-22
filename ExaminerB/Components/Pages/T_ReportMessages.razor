@@ -22,10 +22,10 @@ else
             @if (appState.Cmd== "ShowStudentMessageStats" & @nMessagesAll > 0)
                 {
                 <button class="btn btn-link" @onclick="BtnBack">
-                    <img src="/icons/icoBack_bt_1.png" width="30" />
+                    <img src="/img/icoBack.png" width="30" />
                 </button>
                 <button class="btn btn-link" @onclick="()=>BtnDelete_MessagesOfstudent(Id)">
-                    <img src="/icons/icoDeleteAll_bt_1.png" width="35" />
+                    <img src="/img/icoDelete2.png" width="35" />
                 </button>
                 <br />
                 <hr />
@@ -52,13 +52,13 @@ else
             else
                 {
                 <button class="btn btn-link" @onclick="BtnBack">
-                    <img src="/icons/icoBack_bt_1.png" width="30" />
+                    <img src="/img/icoBack.png" width="30" />
                 </button>                
                 <button class="btn btn-link" @onclick="BtnCalcPercentsForStudent">
-                    <img src="/images/gifChart03.gif" width="40" />
+                    <img src="/img/gifChartPie.gif" width="40" />
                 </button>
                 <button class="btn btn-link" @onclick="()=>BtnDelete_MessagesOfstudent(Id)">
-                    <img src="/icons/icoDeleteAll_bt_1.png" width="35" />
+                    <img src="/img/icoDelete2.png" width="35" />
                 </button>
                 }
             </div>        
@@ -112,7 +112,7 @@ else
                                 <div style="padding-left:15px;">@nStudentsBookmarked Bookmarked</div>
                                 <div style="padding-left:15px;">@nStudentsDeleted Deleted</div>
                                 <button class="btn btn-link" @onclick="()=>BtnListAnswersToThisMessage(message)">
-                                    <img src="/icons/icoList_bt_1.png" width="26" />
+                                    <img src="/img/icoListM.png" width="26" />
                                 </button>
                             </div>
                             @if((stmsg.StudentMessageTags & 8) == 8)
@@ -131,13 +131,13 @@ else
                             {
                             <div style="text-align:center">
                                 <button class="btn btn-link" @onclick="()=>BtnCalcPercentsForMessage(message)">
-                                    <img src="/icons/icoPie_bt_1.png" width="26" />
+                                    <img src="/img/icoChartPie.png" width="26" />
                                 </button>
                                 <button class="btn btn-link" @onclick="()=>BtnDelete_Messages(message)">
-                                    <img src="/icons/icoDeleteAll_bt_1.png" width="30" />
+                                    <img src="/img/icoDelete2.png" width="30" />
                                 </button>
                                 <button class="btn btn-link" @onclick="()=>BtnDelete_Message(message.MessageId)">
-                                    <img src="/icons/icoDelete_bt_1.png" width="22" />
+                                    <img src="/img/icoDelete1.png" width="22" />
                                 </button>                
                             </div>
                             }
@@ -197,7 +197,7 @@ else
         <div style="text-align:center">
             <br />
             <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/icons/icoBack_bt_1.png" width="35" />
+                <img src="/img/icoBack.png" width="35" />
             </button>
         </div>
     <script>

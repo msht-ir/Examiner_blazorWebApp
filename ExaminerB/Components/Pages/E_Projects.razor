@@ -53,23 +53,23 @@ else
                                             <input class="form-control" @ref="txtProjectName" @bind="project.ProjectName" placeholder="Enter Project Name...">
                                         </div>
                                         <button class="btn btn-link" name="@btnProjectId" @onclick="()=>BtnUpdateProject(project)">
-                                            <img src="/icons/icoSave_cw_1.png" width="25" />
+                                            <img src="/img/icoSave.png" width="25" />
                                         </button>
                                         <button class="btn btn-link" @onclick="()=>BtnDeleteProject(project.ProjectId)" @key="project.ProjectId">
-                                            <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                            <img src="/img/icoDelete1.png" width="25" />
                                         </button>
                                         <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                            <img src="/icons/icoCancel_bw_1.png" width="24" />
+                                            <img src="/img/icoCancel.png" width="24" />
                                         </button>
                                         }
                                     else
                                         {
                                         <div style="text-align: center;">
                                             <button class="btn btn-link" type="button" @onclick="()=>BtnEditProject(project.ProjectId)">
-                                                <img src="/icons/icoRename_bt_1.png" width="32" />
+                                                <img src="/img/icoRename_bt_1.png" width="32" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnAddNewSubproject(project.ProjectId)">
-                                                <img src="/icons/icoCluster_bw_02v.png" width="30" />
+                                                <img src="/img/icoCluster_bw_02v.png" width="30" />
                                             </button>
                                             <hr style="color:red" />
                                         </div>
@@ -77,13 +77,13 @@ else
                                             {
                                             <div>
                                                 <div class="mb-3">
-                                                    <img src="/icons/icoCluster_bw_02.png" width="24" />
+                                                    <img src="/img/icoCluster_bw_02.png" width="24" />
                                                     <input class="form-control d-inline" style="width:60%" @ref="txtNewSubproject" @bind="txtNewSubprojectTitle" placeholder="New subproject...">
                                                     <button class="btn btn-link" @onclick="()=>BtnSaveNewSubproject(project.ProjectId)">
-                                                        <img src="/icons/icoSave_bt_1.png" width="24" />
+                                                        <img src="/img/icoSave.png" width="24" />
                                                     </button>
                                                     <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                        <img src="/icons/icoCancel_bw_1.png" width="24" />
+                                                        <img src="/img/icoCancel.png" width="24" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -106,7 +106,7 @@ else
                                                                 aria-expanded="true"
                                                                 aria-controls="@collapseId2">
                                                             <h6>
-                                                                @* <img src="/icons/icoCluster_bw_02v.png" width="15" /> *@
+                                                                @* <img src="/img/icoCluster_bw_02v.png" width="15" /> *@
                                                                 @subProject.SubprojectName
                                                                 </h6>
                                                         </button>
@@ -121,10 +121,10 @@ else
                                                             </div>
                                                             <div style="text-align: center;">
                                                                 <button class="btn btn-link" @onclick="()=>BtnUpdateSubproject(subProject)">
-                                                                    <img src="/icons/icoSave_bt_1.png" width="22" />
+                                                                    <img src="/img/icoSave.png" width="22" />
                                                                 </button>
                                                                 <button class="btn btn-link" @onclick="()=>BtnDeleteSubproject(subProject.SubprojectId)">
-                                                                    <img src="/icons/icoDelete_bt_1.png" width="22" />
+                                                                    <img src="/img/icoDelete1.png" width="22" />
                                                                 </button>
                                                                 <hr syle="color:red" />
                                                                 @foreach (Note notex in subProject.Notes)
@@ -133,7 +133,7 @@ else
                                                                     {
                                                                         <div class="mt-3 text-end">
                                                                             <h6 style="color:indianred">
-                                                                                <img src="/icons/icoCalendar_gt_1.png" width="18" />
+                                                                                <img src="/img/icoCalendar_gt_1.png" width="18" />
                                                                                 @notex.NoteDatum
                                                                             </h6>
                                                                             <div class="card">
@@ -147,7 +147,7 @@ else
                                                                         {
                                                                         <div class="mt-3 text-start">
                                                                             <h6 style="color:indianred">
-                                                                                <img src="/icons/icoCalendar_gt_1.png" width="18" />
+                                                                                <img src="/img/icoCalendar_gt_1.png" width="18" />
                                                                                 @notex.NoteDatum
                                                                             </h6>
                                                                             <div class="card">
@@ -181,17 +181,17 @@ else
                     <input class="form-control" @ref="txtNewProject" @bind="project.ProjectName" placeholder="New project...">
                 </div>
                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewProject">
-                    <img src="/icons/icoSave_cw_1.png" width="22" />
+                    <img src="/img/icoSave.png" width="22" />
                 </button>
                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                    <img src="/icons/icoCancel_bw_1.png" width="24" />
+                    <img src="/img/icoCancel.png" width="24" />
                 </button>
                 }
             else
                 {
                     <div style="background-color:rgba(252,252,252)">
                         <button class="btn btn-link" @onclick="BtnAddNewProject">
-                            <img src="/images/gifAddItem.gif" width="50" />
+                            <img src="/img/gifAddItem.gif" width="50" />
                         </button>
                     </div>
                 }
@@ -199,7 +199,7 @@ else
         </EditForm>
         <div style="text-align:center">
         <button class="btn btn-link" @onclick= "()=> BtnBack()">
-            <img src="/icons/icoBack_bt_1.png" style="width:30px" />
+            <img src="/img/icoBack.png" style="width:30px" />
         </button>
     </div>
     }

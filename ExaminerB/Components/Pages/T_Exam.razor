@@ -86,10 +86,10 @@ else
                             <label style="font-size:small;font-weight:bold">(Level)</label>
                             <br />
                             <button class="btn btn-link" @onclick="()=>BtnUpdateExamComposition (comp)" >
-                                <img src="/icons/icoSave_bt_1.png" width="25" />
+                                <img src="/img/icoSave.png" width="25" />
                             </button>
                             <button class="btn btn-link" @onclick="()=>BtnDeleteExamComposition(comp.ExamCompositionId)">
-                                <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                <img src="/img/icoDelete1.png" width="25" />
                             </button>
                             <hr />
                             }
@@ -107,10 +107,10 @@ else
                                             }
                                     </select>
                                     <button class="btn btn-link" @onclick="BtnCreateExamComposition">
-                                        <img src="/icons/icoSave_bt_1.png" width="25" />
+                                        <img src="/img/icoSave.png" width="25" />
                                     </button>
                                     <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                        <img src="/icons/icoCancel_bw_1.png" width="24" />
+                                        <img src="/img/icoCancel.png" width="24" />
                                     </button>
                                     @* Slider NTests *@
                                     <br />
@@ -130,10 +130,10 @@ else
                         else
                             {
                             <button class="btn btn-link" @onclick="BtnAddNewExamComposition">
-                                <img src="/icons/icoAddItem_gt_1.png" width="30" />
+                                <img src="/img/icoAddItem.png" width="30" />
                             </button>
                             <button class="btn btn-link" @onclick="BtnDrawRandomTestsByExamComposition">
-                                <img src="/icons/icoShuffle_bt_1.png" width="30" />
+                                <img src="/img/icoShuffle.png" width="30" />
                             </button>
                             <br />
                             }
@@ -162,17 +162,17 @@ else
                         @* SEARCH *@ 
                         <div class="mb-3" style="background-color:WhiteSmoke">
                             <button class="btn btn-link" @onclick="()=>BtnGotoReportCourseTests(exam.CourseId)">
-                                <img src="/icons/icoFolderTests_bt_1.png" width="30" />
+                                <img src="/img/icoFolderT.png" width="30" />
                             </button>
                             <span style="font-size:larger; font-weight:bold;color:royalblue;">Add Tests to Exam</span>
                             <div class="mb-3">
                                 <button class="btn btn-link" @onclick="BtnReadTestsBySearch">
-                                    <img src="/icons/icoSearch_bt_1.png" width="30" />
+                                    <img src="/img/icoSearch.png" width="30" />
                                 </button>
                                 <input class="form-control d-inline" @ref="txtSearchTest" @bind="strSearch" type="text" placeholder="Search..." style="width:80%"/>
                             </div>
                             <button class="btn btn-link" @onclick="BtnCreateExamTest">
-                                <img src="/icons/icoAddItem_gt_1.png" width="25" />
+                                <img src="/img/icoAddItem.png" width="25" />
                             </button>
                             <select class="form-select d-inline" @ref="cboCourseTests" @bind="cboCourseTestId" style="font-size:small;width:80%">
                                 <option value="0"> select from results </option>
@@ -224,7 +224,7 @@ else
         <br>
         <div style="text-align: center;">
             <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/icons/icoBack_bt_1.png" width="30" />
+                <img src="/img/icoBack.png" width="30" />
             </button>
         </div>
     </EditForm>

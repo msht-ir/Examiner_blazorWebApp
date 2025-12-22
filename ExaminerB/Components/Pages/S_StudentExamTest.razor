@@ -84,26 +84,26 @@
                         @if (((appState.UserTags & 16) == 16) & ((appState.ExamTags & 2) == 2))
                             {
                             <button class="btn btn-link" @onclick="()=>BtnHelpShowAnswer(studentExamTest)">
-                                <img src="/icons/icoInfo_ot_1.png" width="30" />
+                                <img src="/img/icoInfo_ot_1.png" width="30" />
                             </button>                            
                             }
                         @if ((studentExamTest.StudentExamTestTags & 2) == 2)
                             {
                             <button class="btn btn-link" @onclick="()=>BtnBookmarkTest(studentExamTest, false)">
-                                <img src="/icons/icoBookmark2_bt_1.png" width="28" />
+                                <img src="/img/icoBookmark2_bt_1.png" width="28" />
                             </button>
                             }
                         else
                             {
                             <button class="btn btn-link" @onclick="()=>BtnBookmarkTest(studentExamTest, true)">
-                                <img src="/icons/icoBookmark2_bt_0.png" width="28" />
+                                <img src="/img/icoBookmark2_bt_0.png" width="28" />
                            </button>
                             }
                         <button class="btn btn-link" @onclick= "()=> BtnClearAnswer(studentExamTest)">
-                            <img src="/icons/icoEraser_bw_1.png" width="30" />
+                            <img src="/img/icoEraser_bw_1.png" width="30" />
                         </button>
                         <button class="btn btn-link" @onclick="BtnBack">
-                            <img src="/icons/icoBack_bt_1.png" width="28" />
+                            <img src="/img/icoBack.png" width="28" />
                         </button>
                     </td>
                 </tr>

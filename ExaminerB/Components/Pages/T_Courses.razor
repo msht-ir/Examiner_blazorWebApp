@@ -52,10 +52,10 @@
                                             <input class="form-control" @bind=crs.CourseName placeholder="Enter Course Name...">
                                         </div>
                                         <button class="btn btn-link" name="btnCourseId" @onclick="()=>BtnUpdateCourse(crs)" >
-                                            <img src="/icons/icoSave_cw_1.png" width="22" />
+                                            <img src="/img/icoSave.png" width="22" />
                                         </button>
                                         <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                            <img src="/icons/icoCancel_bw_1.png" width="24" />
+                                            <img src="/img/icoCancel.png" width="24" />
                                         </button>
                                         <br />
                                         <br />
@@ -64,19 +64,19 @@
                                         {
                                          <div style="text-align: center;">
                                             <button class="btn btn-link" title="List Tests" @onclick="()=>BtnListCourseTests(crs.CourseId, crs.CourseName)" >
-                                                <img src="/icons/icoList_bt_1.png" width="28" />
+                                                <img src="/img/icoListT.png" width="28" />
                                             </button>
                                             <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTests(crs.CourseId)" >
-                                                <img src="/icons/icoFolderReport_bt_1.png" width="28" />
+                                                <img src="/img/icoFolderSearch.png" width="28" />
                                             </button>
                                             <button class="btn btn-link" title="List Exams" @onclick="()=>BtnExams(crs)" >
-                                                <img src="/images/gifExam03.gif" width="32" />
+                                                <img src="/img/icoListE.png" width="32" />
                                             </button>
                                             <button class="btn btn-link" title="Rename this Course" @onclick="()=>BtnEditCourse(crs.CourseId)">
-                                                <img src="/icons/icoRename_bt_1.png" width="30" />
+                                                <img src="/img/icoRename.png" width="30" />
                                             </button>
                                             <button class="btn btn-link" title="Delete this Course!" @onclick="()=>BtnDeleteCourse(crs.CourseId)" >
-                                                <img src="/icons/icoDelete_bt_1.png" width="26" />
+                                                <img src="/img/icoDelete1.png" width="26" />
                                             </button>
                                             <br />
                                             <br />
@@ -105,16 +105,16 @@
                                                                 <div class="mb-2">
                                                                     <input class="form-control d-inline" @ref="inputRefs[ct.CourseTopicId]" @bind="ct.CourseTopicTitle" placeholder="Topic name" >
                                                                     <button class="btn btn-link" @onclick="()=>BtnListCourseTopicTests (ct)">
-                                                                        <img src="/icons/icoList_bt_1.png" width="22" />
+                                                                        <img src="/img/icoList.png" width="22" />
                                                                     </button>
                                                                     <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTopicTests(ct)" >
-                                                                        <img src="/icons/icoFolderReport_bt_1.png" width="28" />
+                                                                        <img src="/img/icoFolderReport1.png" width="28" />
                                                                     </button>
                                                                     <button class="btn btn-link" @onclick="()=>BtnUpdateCourseTopic (ct)">
-                                                                        <img src="/icons/icoSave_bt_1.png" width="22" />
+                                                                        <img src="/img/icoSave.png" width="22" />
                                                                     </button>
                                                                     <button class="btn btn-link" @onclick="()=>BtnDeleteCourseTopic (ct.CourseTopicId)">
-                                                                        <img src="/icons/icoDelete_bt_1.png" width="22" />
+                                                                        <img src="/img/icoDelete1.png" width="22" />
                                                                     </button>
                                                                 </div>
                                                             </div>
@@ -129,17 +129,17 @@
                                                         <input class="form-control" @ref="txtNewCourseTopicTitle" @bind="courseTopic.CourseTopicTitle" placeholder="New Topic ...">
                                                     </div>
                                                     <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseTopic(crs.CourseId)">
-                                                        <img src="/icons/icoSave_cw_1.png" width="22" />
+                                                        <img src="/img/icoSave.png" width="22" />
                                                     </button>
                                                     <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                        <img src="/icons/icoCancel_bw_1.png" width="24" />
+                                                        <img src="/img/icoCancel.png" width="24" />
                                                     </button>
                                                     }
                                             else
                                                 {
                                                 <div style="text-align:center;">
                                                     <button class="btn btn-link btn-sm" @onclick="()=>BtnAddNewCourseTopic(crs.CourseId)">
-                                                        <img src="/icons/icoAddItem_gt_1.png" width="22" />
+                                                        <img src="/img/icoAddItem.png" width="22" />
                                                     </button>
                                                 </div>
                                                 }
@@ -148,10 +148,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-
-
-
 
                                         <hr style="color:red" />
                                         <h5>Online Folders</h5>
@@ -170,10 +166,10 @@
                                                         <input class="form-inline border" @bind="cf.CourseFolderActive" type="checkbox" />
                                                         <label style="padding-right:5px;">Active</label>
                                                         <button class="btn btn-link" @onclick="()=>BtnUpdateCourseFolder (cf)">
-                                                            <img src="/icons/icoSave_bt_1.png" width="25" />
+                                                            <img src="/img/icoSave.png" width="25" />
                                                         </button>
                                                         <button class="btn btn-link" @onclick="()=>BtnDeleteCourseFolder (cf.CourseFolderId)">
-                                                            <img src="/icons/icoDelete_bt_1.png" width="25" />
+                                                            <img src="/img/icoDelete1.png" width="25" />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -192,17 +188,17 @@
                                             <input class="form-inline border" @bind="courseFolder.CourseFolderActive" type="checkbox" />
                                             <label style="padding-right:5px;">Active</label>
                                             <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseFolder(crs.CourseId)">
-                                                <img src="/icons/icoSave_cw_1.png" width="22" />
+                                                <img src="/img/icoSave.png" width="22" />
                                             </button>
                                             <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                <img src="/icons/icoCancel_bw_1.png" width="24" />
+                                                <img src="/img/icoCancel.png" width="24" />
                                             </button>
                                             }
                                         else
                                             {
                                             <div style="text-align:center;">
                                                 <button class="btn btn-link btn-sm" @onclick="()=>BtnAddNewCourseFolder(crs.CourseId)">
-                                                    <img src="/icons/icoAddItem_gt_1.png" width="22" />
+                                                    <img src="/img/icoAddItem.png" width="22" />
                                                 </button>
                                             </div>
                                             }
@@ -221,23 +217,23 @@
                     <input class="form-control" @ref="txtNewCourseName" @bind="course.CourseName" placeholder="New Course Name...">
                 </div>
                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewCourse">
-                    <img src="/icons/icoSave_cw_1.png" width="22" />
+                    <img src="/img/icoSave.png" width="22" />
                 </button>
                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                    <img src="/icons/icoCancel_bw_1.png" width="24" />
+                    <img src="/img/icoCancel.png" width="24" />
                 </button>
                 }
             else
                 {
                 <button class="btn btn-link" @onclick="BtnAddNewCourse">
-                    <img src="/icons/icoCourseAdd_bt_1.png" width="35" />
+                    <img src="/img/icoCourseAddNew.png" width="35" />
                 </button>
                 }
             <hr style="color:red" /> 
         </EditForm>
         <div style="text-align:center">
             <button class="btn btn-link" @onclick= "BtnBack">
-                <img src="/icons/icoBack_bt_1.png" style="width:35px" />
+                <img src="/img/icoBack.png" style="width:35px" />
             </button>
         </div>
         }

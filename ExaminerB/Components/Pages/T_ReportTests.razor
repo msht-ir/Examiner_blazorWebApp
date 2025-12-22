@@ -42,15 +42,15 @@ else
         <div style="text-align: center;">
              <!-- Heading Icons -->
             <button class="btn btn-link" @onclick="BtnBack">
-                <img src="icons/icoBack_bt_1.png" title="Edit Test" alt="Edit" width="30px"/>
+                <img src="img/icoBack.png" title="Edit Test" alt="Edit" width="30px"/>
                 @* Back *@
             </button>
             <button class="btn btn-link" @onclick="BtnChangeFontSize">
-                <img src="icons/icoFont_rt_1.png" title="Edit Test" alt="Edit" width="35px"/>
+                <img src="img/icoFontSize.png" title="Edit Test" alt="Edit" width="35px"/>
                 @* Font *@
             </button>
             <button class="btn btn-link" @onclick="BtnShowAnswers">
-                <img src="icons/icoKeys_bt_1.png" title="Edit Test" alt="Edit" width="30px"/>
+                <img src="img/icoKeys.png" title="Edit Test" alt="Edit" width="30px"/>
                 @* Keys *@
             </button>
             @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
@@ -58,7 +58,7 @@ else
                 @* Paginate *@
                 <input class="form-control d-inline" type="number" @ref="txtPageNumber" @bind="intPendingPageNumber" min="1" placeholder="1" style="width: 70px; display: inline-block;"/>
                 <button class="btn btn-link" @onclick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)">
-                    <img src="/icons/icoList_bt_1.png" width="30" />
+                    <img src="/img/icoList.png" width="30" />
                 </button>
                 }
             <hr />
@@ -76,31 +76,31 @@ else
                 {
                 <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected" />
                 <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
-                    <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="18px"/>
+                    <img src="img/icoEditPen.png" title="Edit Test" alt="Edit" width="18px"/>
                 </button>
                 }
             else if (appState.Cmd.ToLower() == "examtests")
                 {                
                 <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
-                    <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
+                    <img src="img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px"/>
                 </button>
                 <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnDeleteTestFromExamRawSheet(tst)">
-                    <img src="icons/icoDelete_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
+                    <img src="img/icoDelete1.png" title="Edit Test" alt="Edit" width="20px"/>
                 </button>
                 }
             else if (appState.Cmd.ToLower() == "studentexamtests")
                 {                
                 <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
-                    <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
+                    <img src="img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px"/>
                 </button>
                 <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnShowCourseTestStats(tst)">
-                    <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
+                    <img src="img/icoChartPie.png" title="Edit Test" alt="Edit" width="25px"/>
                 </button>
                 }
             else if (appState.Cmd.ToLower() == "studentcoursetests")
                 {
                 <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
-                    <img src="icons/icoEditPen_bt_1.png" title="Edit Test" alt="Edit" width="20px"/>
+                    <img src="img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px"/>
                 </button>
                 }
             <span style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle</span>
@@ -171,10 +171,10 @@ else
                                         }
                                 </select>
                                 <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
-                                    <img src="/icons/icoSave_bt_1.png" width="28" />
+                                    <img src="/img/icoSave.png" width="28" />
                                 </button>
                                 <button class="btn btn-link" type="submit" @onclick="BtnEditExam">
-                                    <img src="/icons/icoFolderReport_bt_2.png" width="28" />
+                                    <img src="/img/icoFolderReport1.png" width="28" />
                                 </button>
                         </div>
                     </div>
@@ -183,7 +183,7 @@ else
                 }
             <div style="text-align: center;">
                 <button class="btn btn-link" type="submit" @onclick="BtnBack">
-                    <img src="/icons/icoBack_bt_1.png" width="30" />
+                    <img src="/img/icoBack.png" width="30" />
                 </button>
             </div>
     </EditForm>

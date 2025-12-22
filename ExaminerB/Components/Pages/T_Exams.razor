@@ -39,36 +39,36 @@
                                     </td>
                                     <td>
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnEditExam(exam)" >
-                                            <img src="/icons/icoRename_bt_1.png" width="26" />
+                                            <img src="/img/icoRename.png" width="26" />
                                         </button>
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportExamTests(exam.ExamId)">
-                                            <img src="/icons/icoReport_bt_1.png" width="20" />
+                                            <img src="/img/icoReport1.png" width="20" />
                                         </button>
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnAddStudentExam(exam.ExamId)" >
-                                            <img src="/icons/icoUserAdd_bluet_1.png" width="24" />
+                                            <img src="/img/icoUserAddNew.png" width="24" />
                                         </button>
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportStudents(exam.ExamId)" >
-                                            <img src="/icons/icoGroup_grayt_1.png" width="26" />
+                                            <img src="/img/icoFolderUser.png" width="26" />
                                         </button>
                                         <br />
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnStratStopExam(exam)" >
                                             @if (exam.IsActive)
                                                 {
-                                                <img src="/icons/icoON_gw_1.png" width="22" />                                        
+                                                <img src="/img/icoOn.png" width="22" />                                        
                                                 }
                                             else
                                                 {
-                                                <img src="/icons/icoOff_grayw_1.png" width="22" />                                        
+                                                <img src="/img/icoOff.png" width="22" />                                        
                                                 }
                                         </button>
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnSetExamAsFinishedForAllStudents(exam.ExamId)" >
-                                            <img src="/icons/icoClock_rt_1.png" width="22" />
+                                            <img src="/img/icoClock2.png" width="22" />
                                         </button>
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportExamPoints(exam.ExamId)" >
-                                            <img src="/icons/icoFolderReport_bt_3.png" width="26" />
+                                            <img src="/img/icoFolderSearch.png" width="26" />
                                         </button>
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnDeleteExam(exam.ExamId)" >
-                                            <img src="/icons/icoDelete_bt_1.png" width="20" />
+                                            <img src="/img/icoDelete1.png" width="20" />
                                         </button>
                                     </td>
                                 </tr>
@@ -86,10 +86,10 @@
                                                     }
                                             </select>
                                             <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExams (exam.ExamId)">
-                                                <img src="/icons/icoSave_bt_1.png" width="22" />
+                                                <img src="/img/icoSave.png" width="22" />
                                             </button>
                                             <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                <img src="/icons/icoCancel_bw_1.png" width="20" />
+                                                <img src="/img/icoCancel.png" width="20" />
                                             </button>
                                         </td>
                                         <td>
@@ -101,10 +101,10 @@
                                                     }
                                             </select>
                                             <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExam (exam.ExamId)">
-                                                <img src="/icons/icoSave_bt_1.png" width="22" />
+                                                <img src="/img/icoSave.png" width="22" />
                                             </button>
                                             <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                <img src="/icons/icoCancel_bw_1.png" width="20" />
+                                                <img src="/img/icoCancel.png" width="20" />
                                             </button> 
                                         </td>
                                     </tr>
@@ -121,10 +121,10 @@
                     <div class="mb-3">
                     <input class="form-control d-inline" @ref= "txtNewExamName" @bind="txtNewExamTitle" placeholder="Exam name" style="width:60%"/>
                     <button class="btn btn-link" @onclick="BtnCreateExam" >
-                        <img src="/icons/icoSave_bt_1.png" width="22" />
+                        <img src="/img/icoSave.png" width="22" />
                     </button>
                     <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                        <img src="/icons/icoCancel_bw_1.png" width="20" />
+                        <img src="/img/icoCancel.png" width="20" />
                     </button>
                 </div>
                 }
@@ -135,10 +135,10 @@
                 <hr />
                 <div style="text-align: center;">
                     <button class="btn btn-link" @onclick="BtnAddNewExam">
-                        <img src="/icons/icoAddItem_gt_1.png" width="24" />
+                        <img src="/img/icoAddItem.png" width="24" />
                     </button>
                     <button class="btn btn-link" @onclick="BtnBack">
-                        <img src="/icons/icoBack_bt_1.png" width="25" />
+                        <img src="/img/icoBack.png" width="25" />
                     </button>
                 </div>
                 }

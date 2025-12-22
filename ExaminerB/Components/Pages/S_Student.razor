@@ -126,27 +126,27 @@
                                                 @{strRunningPoint = studentCourse.NumberOfTests == 0 ?"---": $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double)studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F2}";}
                                                 <div style="color:black;font-weight:bold;">@studentCourse.CourseName : <span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
                                                 <button class="btn btn-link" @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
-                                                    <img src="/images/gifBook1.gif" width="28" />
+                                                    <img src="/img/gifBook1.gif" width="28" />
                                                 </button>
                                                 @if ((student.UserTags & 32) == 32)
                                                     {
                                                     <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
-                                                        <img src="/icons/icoReport_ct_1.png" width="20" />
+                                                        <img src="/img/icoReport_ct_1.png" width="20" />
                                                     </button>
                                                     }
                                                 @if ((student.UserTags & 16) == 16)
                                                     {
                                                     <button class="btn btn-link" @onclick="()=>BtnTryToCorrect(studentCourse.StudentCourseId)">
-                                                        <img src="/icons/icoRetry_bt_1.png" width="22" />
+                                                        <img src="/img/icoRetry_bt_1.png" width="22" />
                                                     </button>
                                                     }
                                                 @if ((student.UserTags & 16) == 16)
                                                     {
                                                     <button class="btn btn-link" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
-                                                        <img src="/icons/icoFilter_bt_1.png" width="22" />
+                                                        <img src="/img/icoFilter_bt_1.png" width="22" />
                                                     </button>
                                                     <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse, "wipeout")'>
-                                                        <img src="/icons/icoEraser_bw_1.png" width="22" />
+                                                        <img src="/img/icoEraser_bw_1.png" width="22" />
                                                     </button>
                                                     }
                                                 @* CourseFolders *@
@@ -161,7 +161,7 @@
                                                 else
                                                     {
                                                     <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
-                                                        <img src="/icons/icoFolderReport_bt_1.png" width="25" />
+                                                        <img src="/img/icoFolderReport_bt_1.png" width="25" />
                                                     </button>
                                                     }
                                             </MudCardContent>
@@ -208,19 +208,19 @@
                                                             <hr style="color:gray" />
                                                             <div style="text-align:center">
                                                                 <button class="btn btn-link" @onclick="()=>BtnDeleteStudentMessage(studentMessage)">
-                                                                    <img src="/icons/icoDelete_bt_1.png" width="20" />
+                                                                    <img src="/img/icoDelete1.png" width="20" />
                                                                 </button>
                                                                 @* IsBookmarked *@
                                                                 @if ((studentMessage.StudentMessageTags & 2) == 2)
                                                                     {
                                                                     <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageBookmark(studentMessage, 0)">
-                                                                        <img src="/icons/icoBookmark2_bt_1.png" width="22" />
+                                                                        <img src="/img/icoBookmark2_bt_1.png" width="22" />
                                                                     </button>
                                                                     }
                                                                 else
                                                                     {
                                                                     <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageBookmark(studentMessage, 1)">
-                                                                        <img src="/icons/icoBookmark2_bt_0.png" width="22" />
+                                                                        <img src="/img/icoBookmark2_bt_0.png" width="22" />
                                                                     </button>                                    
                                                                     }
                                                                 @* TypeIsFeedback *@
@@ -230,13 +230,13 @@
                                                                     @if ((studentMessage.StudentMessageTags & 16) == 16)
                                                                         {
                                                                         <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 2)">
-                                                                            <img src="/icons/icoYesNo_Yes_gt_1.png" width="20" />
+                                                                            <img src="/img/icoYesNo_Yes_gt_1.png" width="20" />
                                                                         </button>
                                                                         }
                                                                     else if ((studentMessage.StudentMessageTags & 32) == 32)
                                                                         {
                                                                         <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 2)">
-                                                                            <img src="/icons/icoYesNo_No_rt_1.png" width="20" />
+                                                                            <img src="/img/icoYesNo_No_rt_1.png" width="20" />
                                                                         </button>
                                                                         }
                                                                     else
@@ -244,17 +244,17 @@
                                                                         if ((appState.Cmd == "GetStudentAnswer") & (appState.MessageId == studentMessage.MessageId))
                                                                             {
                                                                             <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 1)">
-                                                                                <img src="/icons/icoYesNo_Yes_gt_1.png" width="20" />
+                                                                                <img src="/img/icoYesNo_Yes_gt_1.png" width="20" />
                                                                             </button>
                                                                             <button class="btn btn-link" @onclick="()=>BtnSetMyAnswer(studentMessage, 0)">
-                                                                                <img src="/icons/icoYesNo_No_rt_1.png" width="20" />
+                                                                                <img src="/img/icoYesNo_No_rt_1.png" width="20" />
                                                                             </button>                                                
                                                                             }
                                                                         else
                                                                             {
                                                                             //Lets GetStudentAnswer...
                                                                             <button class="btn btn-link" @onclick="()=>BtnGetStudentAnswer(studentMessage.MessageId)">
-                                                                                <img src="/icons/icoYesNo_cw_1.png" width="24" />
+                                                                                <img src="/img/icoYesNo_cw_1.png" width="24" />
                                                                             </button>
                                                                             }
                                                                         }
@@ -265,7 +265,7 @@
                                                             {
                                                             <span style="padding-left:5px; color:indianred"> @studentMessage.DateTimeSent </span>
                                                             <button class="btn btn-link" @onclick="()=>BtnSetStudentMessageAsRead(studentMessage)">
-                                                                <img src="/icons/icoEnvelop_bluet_1.png" width="20" />
+                                                                <img src="/img/icoEnvelop_bluet_1.png" width="20" />
                                                             </button>
                                                             <span style="color:black;font-weight:bold;padding-left:2px;">@message.MessageTitle.Substring(0,6) ...</span>
                                                             }
@@ -283,7 +283,7 @@
         <br />
         <div style="text-align:center">
             <button class="btn btn-link" @onclick= "()=> BtnExit()">
-                <img src="/images/gifLogout01.gif" style="width:125px" />
+                <img src="/img/gifLogout01.gif" style="width:125px" />
             </button>
         </div>
         }

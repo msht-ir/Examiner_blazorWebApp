@@ -27,21 +27,21 @@ else
         @if (appState.Cmd == "importexcelfile")
             {
             <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnCancel">
-                <img src="/icons/icoCancel_bw_1.png" width="22" />
+                <img src="/img/icoCancel.png" width="22" />
             </button>
-            <img src="/icons/icoExcel_gw_1.jpg" width="28" style="margin-right:10px;" />
+            <img src="/img/icoDownload.png" width="28" style="margin-right:10px;" />
             <InputFile OnChange="HandleFileSelected" />
             }
         else
             {
             <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/icons/icoBack_bt_1.png" width="28" />
+                <img src="/img/icoBack.png" width="28" />
             </button>
             <button class="btn btn-link" @onclick="BtnImportFromExcelFile">
-                <img src="/icons/icoExcel_gw_1.jpg" width="30" />
+                <img src="/img/icoDownload.png" width="30" />
             </button>
             <button class="btn btn-link" @onclick="()=>BtnAddNewTest()">
-                <img src="/icons/icoAddItem_gt_1.png" width="24" />
+                <img src="/img/icoAddItem.png" width="24" />
             </button>
             <p></p>
             <hr style="border-color:red" />
@@ -50,12 +50,12 @@ else
             <div class="mb-3">
                 <input class="form-control d-inline" @ref="txtSearch" @bind ="strSearch"  placeholder="Search tests..." style="width:50%"/>
                 <button class="btn btn-link" @onclick="()=>BtnReadTestsBySearch()">
-                    <img src="/icons/icoSearch_bt_1.png" width="25" />
+                    <img src="/img/icoSearch.png" width="25" />
                 </button>
                 @* Paginate *@
                 <input class="form-control d-inline" type="number" @ref="txtPageNumber" @bind="intPageNumber" min="1" placeholder="1" style="width: 60px; display: inline-block;"/>
                 <button class="btn btn-link" @onclick="()=>BtnReadTestsByPage(course.CourseId)">
-                    <img src="/icons/icoList_bt_1.png" width="25" />
+                    <img src="/img/icoList.png" width="25" />
                 </button>
             </div>
             @* List of tests *@
@@ -88,7 +88,7 @@ else
                 }
             <div style="text-align: center;">
                 <button class="btn btn-link" @onclick="BtnBack">
-                    <img src="/icons/icoBack_bt_1.png" width="30" />
+                    <img src="/img/icoBack.png" width="30" />
                 </button>
             </div>
             <div id="loadingOverlay" class="d-none">

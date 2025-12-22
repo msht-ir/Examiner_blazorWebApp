@@ -74,23 +74,23 @@ else
                                     <div style="display:flex; gap:5px; align-items:center;">
                                         @if ((tst.StudentExamTestTags & 1) == 1)
                                             {
-                                            <img src="/icons/icoCourse_grayt_1.png" style="width:25px" />
+                                            <img src="/img/icoCourse_grayt_1.png" style="width:25px" />
                                             }
                                         @if ((tst.StudentExamTestTags & 4) == 4)
                                             {
                                             <button class="btn btn-link" @onclick= "()=> BtnClearTagTestIsAnswered(localTst) ">
-                                                <img src="/icons/icoGo_gt_1.png" style="width:25px" />
+                                                <img src="/img/icoGo_gt_1.png" style="width:25px" />
                                             </button>
                                             }
                                         @if ((tst.StudentExamTestTags & 2) == 2)
                                             {
                                             <button class="btn btn-link" @onclick="()=>BtnClearTagTestIsBookmarked(localTst)">
-                                                <img src="/icons/icoBookmark2_bt_1.png" style="width:22px" />
+                                                <img src="/img/icoBookmark2_bt_1.png" style="width:22px" />
                                            </button>
                                             }
                                         @if ((tst.StudentExamTestTags & 8) == 8)
                                             {
-                                            <img src="/icons/icoInfo_ot_1.png" style="width:25px" />
+                                            <img src="/img/icoInfo_ot_1.png" style="width:25px" />
                                             }
                                     </div>
                                 </td>
@@ -102,7 +102,7 @@ else
         </div>
         <br />
         <button class="btn btn-link" @onclick= "()=> BtnBack()">
-            <img src="/icons/icoBack_bt_1.png" style="width:35px" />
+            <img src="/img/icoBack.png" style="width:35px" />
         </button>
         <button class="btn btn-link" @onclick= "()=> BtnFinishExam(studentExam)">
             <img src="icons/icoClock_rt_1.png" alt="icon" style="width:35px; margin-right:8px;" />
