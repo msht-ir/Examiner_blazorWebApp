@@ -921,7 +921,7 @@ namespace ExaminerB.Service
             if (response.IsSuccessStatusCode)
                 {
                 var lstStudentsExamTest = await response.Content.ReadFromJsonAsync<List<StudentExamTest>> ();
-                return lstStudentsExamTest?? new List<StudentExamTest> ();
+                return lstStudentsExamTest ?? new List<StudentExamTest> ();
                 }
             else
                 {
@@ -1131,7 +1131,7 @@ namespace ExaminerB.Service
                 return new List<Subproject> ();
                 }
             }
-        public async Task<Subproject> Read_Subproject (int subProjectId,bool readNotes)
+        public async Task<Subproject> Read_Subproject (int subProjectId, bool readNotes)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_Subproject?readNotes={readNotes}", subProjectId);
             if (response.IsSuccessStatusCode)

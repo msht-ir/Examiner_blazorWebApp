@@ -64,13 +64,13 @@
                                         {
                                          <div style="text-align: center;">
                                             <button class="btn btn-link" title="List Tests" @onclick="()=>BtnListCourseTests(crs.CourseId, crs.CourseName)" >
-                                                <img src="/img/icoListT.png" width="28" />
+                                                <img src="/img/icoFolderT.png" width="26" />
                                             </button>
                                             <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTests(crs.CourseId)" >
-                                                <img src="/img/icoFolderSearch.png" width="28" />
+                                                <img src="/img/icoListT.png" width="34" />
                                             </button>
                                             <button class="btn btn-link" title="List Exams" @onclick="()=>BtnExams(crs)" >
-                                                <img src="/img/icoListE.png" width="32" />
+                                                <img src="/img/icoListE.png" width="34" />
                                             </button>
                                             <button class="btn btn-link" title="Rename this Course" @onclick="()=>BtnEditCourse(crs.CourseId)">
                                                 <img src="/img/icoRename.png" width="30" />
@@ -105,10 +105,10 @@
                                                                 <div class="mb-2">
                                                                     <input class="form-control d-inline" @ref="inputRefs[ct.CourseTopicId]" @bind="ct.CourseTopicTitle" placeholder="Topic name" >
                                                                     <button class="btn btn-link" @onclick="()=>BtnListCourseTopicTests (ct)">
-                                                                        <img src="/img/icoList.png" width="22" />
+                                                                        <img src="/img/icoFolderT.png" width="26" />
                                                                     </button>
                                                                     <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTopicTests(ct)" >
-                                                                        <img src="/img/icoFolderReport1.png" width="28" />
+                                                                        <img src="/img/icoListT.png" width="34" />
                                                                     </button>
                                                                     <button class="btn btn-link" @onclick="()=>BtnUpdateCourseTopic (ct)">
                                                                         <img src="/img/icoSave.png" width="22" />

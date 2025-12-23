@@ -1,4 +1,3 @@
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using ExaminerB.Components;
 using ExaminerB.Service;
 using ExaminerB.Services2Backend;
@@ -14,11 +13,11 @@ builder.Services.AddScoped<BeIService, BeService> ();
 // Configure HttpClient with base address from configuration or environment
 builder.Services.AddHttpClient<FeService> (client =>
     {
-    var baseAddress = builder.Configuration["BaseAddress"] ?? "https://localhost:7139";  //local server
-    //var baseAddress = builder.Configuration ["BaseAddress"] ?? "https://x.msht.ir";      //remote server: [x].msht.ir
-    //var baseAddress = builder.Configuration["BaseAddress"] ?? "https://www.msht.ir";      //remote server: wwww.msht.ir
-    client.BaseAddress = new Uri (baseAddress);
-    client.Timeout = TimeSpan.FromSeconds (120);
+        var baseAddress = builder.Configuration["BaseAddress"] ?? "https://localhost:7139";  //local server
+                                                                                             //var baseAddress = builder.Configuration ["BaseAddress"] ?? "https://x.msht.ir";      //remote server: [x].msht.ir
+                                                                                             //var baseAddress = builder.Configuration["BaseAddress"] ?? "https://www.msht.ir";      //remote server: wwww.msht.ir
+        client.BaseAddress = new Uri (baseAddress);
+        client.Timeout = TimeSpan.FromSeconds (120);
     });
 builder.Services.AddServerSideBlazor ();
 builder.Services.AddControllers ();
