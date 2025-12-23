@@ -53,7 +53,7 @@ else
                                             <input class="form-control" @ref="txtProjectName" @bind="project.ProjectName" placeholder="Enter Project Name...">
                                         </div>
                                         <button class="btn btn-link" name="@btnProjectId" @onclick="()=>BtnUpdateProject(project)">
-                                            <img src="/img/icoSave.png" width="25" />
+                                            <img src="/img/icoSave2.png" width="25" />
                                         </button>
                                         <button class="btn btn-link" @onclick="()=>BtnDeleteProject(project.ProjectId)" @key="project.ProjectId">
                                             <img src="/img/icoDelete1.png" width="25" />
@@ -80,7 +80,7 @@ else
                                                     <img src="/img/icoCluster_bw_02.png" width="24" />
                                                     <input class="form-control d-inline" style="width:60%" @ref="txtNewSubproject" @bind="txtNewSubprojectTitle" placeholder="New subproject...">
                                                     <button class="btn btn-link" @onclick="()=>BtnSaveNewSubproject(project.ProjectId)">
-                                                        <img src="/img/icoSave.png" width="24" />
+                                                        <img src="/img/icoSave2.png" width="24" />
                                                     </button>
                                                     <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
                                                         <img src="/img/icoCancel.png" width="24" />
@@ -121,7 +121,7 @@ else
                                                             </div>
                                                             <div style="text-align: center;">
                                                                 <button class="btn btn-link" @onclick="()=>BtnUpdateSubproject(subProject)">
-                                                                    <img src="/img/icoSave.png" width="22" />
+                                                                    <img src="/img/icoSave2.png" width="22" />
                                                                 </button>
                                                                 <button class="btn btn-link" @onclick="()=>BtnDeleteSubproject(subProject.SubprojectId)">
                                                                     <img src="/img/icoDelete1.png" width="22" />
@@ -181,7 +181,7 @@ else
                     <input class="form-control" @ref="txtNewProject" @bind="project.ProjectName" placeholder="New project...">
                 </div>
                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewProject">
-                    <img src="/img/icoSave.png" width="22" />
+                    <img src="/img/icoSave2.png" width="22" />
                 </button>
                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
                     <img src="/img/icoCancel.png" width="24" />
@@ -244,7 +244,7 @@ else
             UserName = appState.UserName,
             UserPass = appState.UserPass,
             UserRole = appState.UserRole,
-            GroupId = Convert.ToInt32(appState.GroupId)
+            TeacherId = 0
             };
         if (user.UserId > 0)
             {
@@ -299,7 +299,7 @@ else
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
                 UserRole = appState.UserRole,
-                GroupId = Convert.ToInt32(appState.GroupId)
+                TeacherId = 0
             };
             lstProjects = await feService.Read_Projects (user.UserId);
             project.ProjectName = ""; //reset input text
@@ -329,7 +329,7 @@ else
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
                 UserRole = appState.UserRole,
-                GroupId = Convert.ToInt32(appState.GroupId)
+                TeacherId = 0
             };
             lstProjects = await feService.Read_Projects(user.UserId);
             project.ProjectName = ""; //reset input text
@@ -352,7 +352,7 @@ else
                     UserName = appState.UserName,
                     UserPass = appState.UserPass,
                     UserRole = appState.UserRole,
-                    GroupId = Convert.ToInt32(appState.GroupId)
+                    TeacherId = 0
                 };
                 lstProjects = await feService.Read_Projects(user.UserId);
                 //project.ProjectName = ""; //reset input text
@@ -410,7 +410,7 @@ else
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
                 UserRole = appState.UserRole,
-                GroupId = Convert.ToInt32(appState.GroupId)
+                TeacherId = 0
             };
             lstProjects = await feService.Read_Projects(user.UserId);
             appState.SetCmd ("");
@@ -435,7 +435,7 @@ else
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
                 UserRole = appState.UserRole,
-                GroupId = Convert.ToInt32(appState.GroupId)
+                TeacherId = 0
             };
             lstProjects = await feService.Read_Projects(user.UserId);
             project.ProjectName = ""; //reset input text
@@ -457,7 +457,7 @@ else
                     UserName = appState.UserName,
                     UserPass = appState.UserPass,
                     UserRole = appState.UserRole,
-                    GroupId = Convert.ToInt32(appState.GroupId)
+                    TeacherId = 0
                     };
                 lstProjects = await feService.Read_Projects(user.UserId);
                 project.ProjectName = ""; //reset input text

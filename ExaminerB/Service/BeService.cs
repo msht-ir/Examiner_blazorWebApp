@@ -32,7 +32,7 @@ namespace ExaminerB.Services2Backend
                     if ((user.UserName.ToLower () == reader.GetString (1).ToLower ()) && (user.UserPass == reader.GetString (2)))
                         {
                         userOut.UserId = reader.GetInt32 (0);
-                        userOut.GroupId = 0;
+                        userOut.TeacherId = 0;
                         userOut.UserName = reader.GetString (1);
                         userOut.UserPass = reader.GetString (2);
                         userOut.UserRole = "teacher";
@@ -61,7 +61,7 @@ namespace ExaminerB.Services2Backend
         public async Task<User?> LoginStudentAsync (User user)
             {
             string? connString = _config.GetConnectionString ("cnni");
-            string sql = "SELECT StudentId, GroupId, StudentName, StudentPass, StudentTags, StudentNickname FROM Students WHERE StudentName=@studentname AND StudentPass=@studentpass AND GroupId=@groupid AND (StudentTags & 1) = 1";
+            string sql = "SELECT StudentId, TeacherId, StudentName, StudentPass, StudentTags, StudentNickname FROM Students WHERE StudentName=@studentname AND StudentPass=@studentpass AND TeacherId=@teacherid AND (StudentTags & 1) = 1";
             using SqlConnection cnn = new (connString);
             User userOut = new ();
             try
@@ -70,14 +70,14 @@ namespace ExaminerB.Services2Backend
                 using SqlCommand cmd = new (sql, cnn);
                 cmd.Parameters.AddWithValue ("@studentname", user.UserName);
                 cmd.Parameters.AddWithValue ("@studentpass", user.UserPass);
-                cmd.Parameters.AddWithValue ("@groupid", user.GroupId);
+                cmd.Parameters.AddWithValue ("@teacherid", user.TeacherId);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
                     if ((user.UserName.ToLower () == reader.GetString (2).ToLower ()) && (user.UserPass == reader.GetString (3)))
                         {
                         userOut.UserId = reader.GetInt32 (0);
-                        userOut.GroupId = reader.GetInt32 (1);
+                        userOut.TeacherId = reader.GetInt32 (1);
                         userOut.UserName = reader.GetString (2);
                         userOut.UserPass = reader.GetString (3);
                         userOut.UserRole = "student";
@@ -178,14 +178,14 @@ namespace ExaminerB.Services2Backend
         #region S:Students
         public async Task<int> Create_StudentAsync (User student)
             {
-            string sql = "INSERT INTO Students (GroupId, StudentName, StudentPass, StudentTags, StudentNickname) VALUES (@groupid, @studentname, @studentpass, @studenttags, @studentnickname); SELECT CAST (scope_identity() AS int)";
+            string sql = "INSERT INTO Students (TeacherId, StudentName, StudentPass, StudentTags, StudentNickname) VALUES (@teacherid, @studentname, @studentpass, @studenttags, @studentnickname); SELECT CAST (scope_identity() AS int)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.Add ("@groupid", SqlDbType.Int).Value = student.GroupId;
+                cmd.Parameters.Add ("@teacherid", SqlDbType.Int).Value = student.TeacherId;
                 cmd.Parameters.Add ("@studentname", SqlDbType.NVarChar, 50).Value = student.UserName;
                 cmd.Parameters.Add ("@studentpass", SqlDbType.NVarChar, 50).Value = student.UserPass;
                 cmd.Parameters.Add ("@studenttags", SqlDbType.Int).Value = student.UserTags;
@@ -205,7 +205,7 @@ namespace ExaminerB.Services2Backend
             var lstStudents = new List<User> ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new ("SELECT s.StudentId, s.GroupId, s.StudentName, s.StudentPass, s.StudentTags, s.StudentNickname FROM Students s INNER JOIN Groups g ON s.GroupId=g.GroupId WHERE g.UserId=@userid", cnn);
+            using SqlCommand cmd = new ("SELECT s.StudentId, s.TeacherId, s.StudentName, s.StudentPass, s.StudentTags, s.StudentNickname FROM Students s INNER JOIN Groups g ON s.GroupId=g.GroupId WHERE g.UserId=@userid", cnn);
             cmd.Parameters.AddWithValue ("@userid", userId);
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
@@ -214,7 +214,7 @@ namespace ExaminerB.Services2Backend
                 lstStudents.Add (new User
                     {
                     UserId = reader.GetInt32 (0),
-                    GroupId = reader.GetInt32 (1),
+                    TeacherId = reader.GetInt32 (1),
                     UserName = reader.GetString (2),
                     UserPass = reader.GetString (3),
                     UserTags = reader.GetInt32 (4),
@@ -240,17 +240,17 @@ namespace ExaminerB.Services2Backend
                 }
             return lstStudents;
             }
-        public async Task<List<User>> Read_StudentsByGroupIdAsync (int groupId, bool readStudentExams, bool readStudentCourses)
+        public async Task<List<User>> Read_StudentsByGroupIdAsync (int teacherId, bool readStudentExams, bool readStudentCourses)
             {
             List<User> lstStudents = new List<User> ();
-            string sql = "SELECT s.StudentId, s.GroupId, s.StudentName, s.StudentPass, s.StudentTags, s.StudentNickname FROM Students s WHERE s.GroupId=@groupid ORDER BY s.StudentName";
+            string sql = "SELECT s.StudentId, s.TeacherId, s.StudentName, s.StudentPass, s.StudentTags, s.StudentNickname FROM Students s WHERE s.TeacherId=@teacherid ORDER BY s.StudentName";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@groupid", groupId);
+                cmd.Parameters.AddWithValue ("@teacherid", teacherId);
                 using (var reader = await cmd.ExecuteReaderAsync ())
                     {
                     while (await reader.ReadAsync ())
@@ -258,7 +258,7 @@ namespace ExaminerB.Services2Backend
                         var student = new User
                             {
                             UserId = reader.GetInt32 (0),
-                            GroupId = reader.GetInt32 (1),
+                            TeacherId = reader.GetInt32 (1),
                             UserName = reader.GetString (2),
                             UserPass = reader.GetString (3),
                             UserTags = reader.GetInt32 (4),
@@ -309,7 +309,7 @@ namespace ExaminerB.Services2Backend
                     var student = new User
                         {
                         UserId = reader.GetInt32 (0),
-                        GroupId = reader.GetInt32 (1),
+                        TeacherId = reader.GetInt32 (1),
                         UserName = reader.GetString (2),
                         UserPass = reader.GetString (3),
                         UserTags = reader.GetInt32 (4),
@@ -359,7 +359,7 @@ namespace ExaminerB.Services2Backend
                     var student = new User
                         {
                         UserId = reader.GetInt32 (0),
-                        GroupId = reader.GetInt32 (1),
+                        TeacherId = reader.GetInt32 (1),
                         UserName = reader.GetString (2),
                         UserPass = reader.GetString (3),
                         UserTags = reader.GetInt32 (4),
@@ -404,7 +404,7 @@ namespace ExaminerB.Services2Backend
             while (await reader.ReadAsync ())
                 {
                 student.UserId = reader.GetInt32 (0);
-                student.GroupId = reader.GetInt32 (1);
+                student.TeacherId = reader.GetInt32 (1);
                 student.UserName = reader.GetString (2);
                 student.UserPass = reader.GetString (3);
                 student.UserTags = reader.GetInt32 (4);
@@ -434,7 +434,7 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             var cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@studenttags", student.UserTags); //tags from: received template
-            cmd.Parameters.AddWithValue ("@groupid", student.GroupId);
+            cmd.Parameters.AddWithValue ("@groupid", student.TeacherId);
             await cmd.ExecuteNonQueryAsync ();
             return true;
             }
@@ -814,7 +814,7 @@ namespace ExaminerB.Services2Backend
         public async Task<List<User>> Read_CourseStudentsAsync (int courseId)
             {
             List<User> lstCourseStudents = new List<User> ();
-            string sql = "SELECT s.StudentId, s.GroupId, s.StudentName, s.StudentPass, s.StudentTags, s.StudentNickname FROM Students s WHERE s.StudentId IN (SELECT StudentId FROM StudentCourses WHERE CourseId=@courseid)";
+            string sql = "SELECT s.StudentId, s.TeacherId, s.StudentName, s.StudentPass, s.StudentTags, s.StudentNickname FROM Students s WHERE s.StudentId IN (SELECT StudentId FROM StudentCourses WHERE CourseId=@courseid)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
@@ -831,7 +831,7 @@ namespace ExaminerB.Services2Backend
                     lstCourseStudents.Add (new User
                         {
                         UserId = reader.GetInt32 (0),
-                        GroupId = reader.GetInt32 (1),
+                        TeacherId = reader.GetInt32 (1),
                         UserName = reader.GetString (2),
                         UserPass = reader.GetString (3),
                         UserTags = reader.GetInt32 (4),

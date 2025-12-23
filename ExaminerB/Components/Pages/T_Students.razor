@@ -8,6 +8,9 @@
 @inject FeService feService
 @inject IJSRuntime JS
 @implements IDisposable
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
 @if (!_hasFetched)
     {
     <_Loading />
@@ -52,38 +55,39 @@ else
                                         <div class="mb-3">
                                             <input class="form-control" @ref="txtGroupName" @bind="grp.GroupName" placeholder="Enter Group Name...">
                                         </div>
-                                        <button class="btn btn-link" name="@btnGroupId" @onclick="()=>BtnUpdateGroup(grp)">
-                                            <img src="/img/icoSave.png" width="25" />
-                                        </button>
-                                        <button class="btn btn-link" @onclick="()=>BtnDeleteGroup(grp.GroupId)" @key="grp.GroupId">
-                                            <img src="/img/icoDelete1.png" width="25" />
-                                        </button>
-                                        <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                            <img src="/img/icoCancel.png" width="24" />
-                                        </button>
-                                        <br />
+                                        <div style="text-align:center">
+                                            <button class="btn btn-link" name="@btnGroupId" @onclick="()=>BtnUpdateGroup(grp)" title="Save Changes ذخيره تغييرات" >
+                                                <img src="/img/icoSave2.png" width="25" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnDeleteGroup(grp)" @key="grp.GroupId" title="Delete Group حذف گروه">
+                                                <img src="/img/icoDelete1.png" width="25" />
+                                            </button>
+                                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel" title="Cancel انصراف">
+                                                <img src="/img/icoCancel.png" width="24" />
+                                            </button>
+                                        </div>
                                         <br />
                                         }
                                     else
                                         {
                                         <div style="text-align: center;">
-                                            <button class="btn btn-link" type="button" @onclick="()=>BtnEditGroup(grp.GroupId)">
+                                            <button class="btn btn-link" type="button" @onclick="()=>BtnEditGroup(grp.GroupId)" title="Edit Group Name ويرايش نام گروه">
                                                 <img src="/img/icoRename.png" width="30" />
                                             </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnAddNewStudent(grp.GroupId)">
+                                            <button class="btn btn-link" @onclick="()=>BtnAddNewStudent(grp.GroupId)" title="Add New Student to Group افزودن دانشجوي جديد به گروه">
                                                 <img src="/img/icoUserAddNew.png" width="30" />
                                             </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnEditStudentsTags(grp.GroupId)">
+                                            <button class="btn btn-link" @onclick="()=>BtnEditStudentsTags(grp.GroupId)" title="Student Tags دسترسي هاي دانشجويان در اين گروه">
                                                 <img src="/img/icoSelect.png" width="30" />
                                             </button>
                                             <br />
-                                            <button class="btn btn-link" @onclick="()=>BtnAddCourse2Students(grp.GroupId)">
+                                            <button class="btn btn-link" @onclick="()=>BtnAddCourse2Students(grp.GroupId)" title="Add Students to a Course افزودن دانشجويان به يک درس">
                                                 <img src="/img/icoCourseAddNew.png" width="28" />
                                             </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnReportStudentsExamsAndCourses(grp.GroupId)">
+                                            <button class="btn btn-link" @onclick="()=>BtnReportStudentsExamsAndCourses(grp.GroupId)" title="Report Courses and Exams of Students in this Group درس ها و آزمون هاي دانشجويان اين گروه">
                                                 <img src="/img/icoFolderSearch.png" width="30" />
                                             </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnAddNewMessageToGroup(grp.GroupId)">
+                                            <button class="btn btn-link" @onclick="()=>BtnAddNewMessageToGroup(grp.GroupId)" title="send Message to Students of this Group ارسال پيام به دانشجويان اين گروه">
                                                 <img src="/img/icoEnvelop1.png" width="28" />
                                             </button>
                                             <br />
@@ -101,7 +105,7 @@ else
                                                                 }
                                                         </select>
                                                         <button class="btn btn-link" @onclick="()=>BtnSaveAddCourse2Students(grp.GroupId)">
-                                                            <img src="/img/icoSave.png" width="25" />
+                                                            <img src="/img/icoSave2.png" width="25" />
                                                         </button>
                                                         <button class="btn btn-link" @onclick="()=>BtnDeleteStudentCourses(grp.GroupId)" >
                                                             <img src="/img/icoDelete1.png" width="25" />
@@ -148,7 +152,7 @@ else
                                                     <br />
                                                     <div style="text-align: center;">
                                                         <button class="btn btn-link" @onclick="()=>BtnUpdateStudentsTags(grp.GroupId)">
-                                                            <img src="/img/icoSave.png" width="25" />
+                                                            <img src="/img/icoSave2.png" width="25" />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -162,11 +166,11 @@ else
                                                     <img src="/img/icoUser.png" width="24" />
                                                     <input class="form-control d-inline" style="width:50%" @bind="txtNewStudentName" placeholder="New UserName...">
                                                     <button class="btn btn-link" @onclick="()=>BtnSaveNewStudent(grp.GroupId)">
-                                                        <img src="/img/icoSave.png" width="24" />
+                                                        <img src="/img/icoSave2.png" width="24" />
                                                     </button>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <img src="/img/icoDownload.jpg" width="24" />
+                                                    <img src="/img/icoDownload.png" width="24" />
                                                     <InputFile OnChange="HandleFileSelected" />
                                                 </div>
                                             </div>
@@ -247,7 +251,7 @@ else
                                                                                 </select>
                                                                             <br />
                                                                             <button class="btn btn-link" @onclick="()=>BtnSaveStudentCourse(stdnt.UserId)" >
-                                                                                <img src="/img/icoSave.png" width="22" />
+                                                                                <img src="/img/icoSave2.png" width="22" />
                                                                             </button>
                                                                             <button class="btn btn-link" @onclick="()=>BtnDeleteStudentCourse(stdnt.UserId)" >
                                                                                 <img src="/img/icoDelete1.png" width="25" />
@@ -269,7 +273,7 @@ else
                                                                             <img src="/img/icoFolderSearch.png" width="28" />
                                                                         </button>
                                                                         <button class="btn btn-link" @onclick="()=>BtnUpdateStudent(stdnt)">
-                                                                            <img src="/img/icoSave.png" width="22" />
+                                                                            <img src="/img/icoSave2.png" width="22" />
                                                                         </button>
                                                                         <button class="btn btn-link" @onclick="()=>BtnDeleteStudent(stdnt.UserId)">
                                                                             <img src="/img/icoDelete1.png" width="22" />
@@ -301,7 +305,7 @@ else
                     <input class="form-control" @ref="txtNewGroup" @bind="group.GroupName" placeholder="New Group Name...">
                 </div>
                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewGroup">
-                    <img src="/img/icoSave.png" width="22" />
+                    <img src="/img/icoSave2.png" width="22" />
                 </button>
                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
                     <img src="/img/icoCancel.png" width="24" />
@@ -310,7 +314,7 @@ else
             else
                 {
                     <div style="background-color:rgba(252,252,252)">
-                        <button class="btn btn-link" @onclick="BtnAddNewGroup">
+                        <button class="btn btn-link" @onclick="BtnAddNewGroup" title="Create New Group ايجاد گروه جديد">
                             <img src="/img/gifUserAddNew.gif" width="110" />
                         </button>
                     </div>
@@ -318,8 +322,8 @@ else
             <hr style="color:red" />
         </EditForm>
         <div style="text-align:center">
-        <button class="btn btn-link" @onclick= "()=> BtnBack()">
-            <img src="/img/icoBack.png" style="width:30px" />
+        <button class="btn btn-link" @onclick= "()=> BtnBack()" title="Back to SwitchBoard بازگشت به صفحه اول">
+            <img src="/img/icoBack2.png" style="width:30px" />
         </button>
     </div>
     }
@@ -365,7 +369,7 @@ else
             UserName = appState.UserName,
             UserPass = appState.UserPass,
             UserRole = appState.UserRole,
-            GroupId = Convert.ToInt32(appState.GroupId)
+            TeacherId = Convert.ToInt32(appState.GroupId)
             };
         if (user.UserId > 0)
             {
@@ -421,7 +425,7 @@ else
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
                 UserRole = appState.UserRole,
-                GroupId = Convert.ToInt32(appState.GroupId)
+                TeacherId = Convert.ToInt32(appState.GroupId)
             };
             lstGroups = await feService.Read_Groups (user, false, false);
             group.GroupName = ""; //reset input text
@@ -451,18 +455,25 @@ else
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
                 UserRole = appState.UserRole,
-                GroupId = Convert.ToInt32(appState.GroupId)
+                TeacherId = Convert.ToInt32(appState.GroupId)
             };
             lstGroups = await feService.Read_Groups(user, false, false);
             group.GroupName = ""; //reset input text
             StateHasChanged ();            
             }
         }
-    private async Task BtnDeleteGroup(int groupId)
+    private async Task BtnDeleteGroup(Group group)
         {
-        if (await JS.InvokeAsync<bool>("confirm", "\n\nDelete this group?"))
+        var message = new MarkupString($"<hr style=color:blue>Delete <strong>({group.GroupName})</strong>?<br>Sure?<hr style=color:blue>");
+        bool? confirmResult = await DialogService.ShowMessageBox(
+            title: "Confirm Delete Group",
+            markupMessage: message,
+            yesText: "Yes",
+            cancelText: "No");
+
+        if (confirmResult == true)
             {
-            int result = await feService.Delete_Group (groupId);
+            int result = await feService.Delete_Group (group.GroupId);
             if (result == 0)
                 {
                 //0: no students in the group and the group must be deleted! OK
@@ -474,7 +485,7 @@ else
                     UserName = appState.UserName,
                     UserPass = appState.UserPass,
                     UserRole = appState.UserRole,
-                    GroupId = Convert.ToInt32(appState.GroupId)
+                    TeacherId = Convert.ToInt32(appState.GroupId)
                 };
                 lstGroups = await feService.Read_Groups(user, false, false);
                 //group.GroupName = ""; //reset input text
@@ -483,7 +494,7 @@ else
             else
                 {
                 await JS.InvokeVoidAsync("alert", "\n\nThere are students in this group.\n\nThis group cannot be deleted.");
-                }
+                }            
             }
         }
     public void BtnEditStudentsTags(int groupId)
@@ -499,7 +510,7 @@ else
             }
         StateHasChanged ();
         }
-    public async Task BtnUpdateStudentsTags(int groupId)
+    public async Task BtnUpdateStudentsTags(int teacherId)
         {
         int tags = 0;
         if (_tag01) tags |= 1;
@@ -508,7 +519,7 @@ else
         if (_tag08) tags |= 8;
         if (_tag16) tags |= 16;
         if (_tag32) tags |= 32;
-        User student = new User () { UserName= "-", UserPass= "-", UserRole="-", UserTags = tags, GroupId=groupId};
+        User student = new User () { UserName= "-", UserPass= "-", UserRole="-", UserTags = tags, TeacherId=teacherId};
         bool result = await feService.Update_StudentsTags (student);
         if (result)
             {
@@ -520,7 +531,7 @@ else
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
                 UserRole = appState.UserRole,
-                GroupId = Convert.ToInt32(appState.GroupId)
+                TeacherId = Convert.ToInt32(appState.GroupId)
             };
             lstGroups = await feService.Read_Groups(user, false, false);
             group.GroupName = ""; //reset input text
@@ -623,7 +634,7 @@ else
         }
     public async Task BtnSaveNewStudent(int groupId)
         {
-        User student = new User () { UserName = txtNewStudentName, UserPass=txtNewStudentName, UserRole="student", UserTags= 1, UserNickname= "new student", GroupId=groupId };
+        User student = new User () { UserName = txtNewStudentName, UserPass=txtNewStudentName, UserRole="student", UserTags= 1, UserNickname= "new student", TeacherId=groupId };
         int result = await feService.Create_Student (student);
         if (result > 0)
             {
@@ -635,7 +646,7 @@ else
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
                 UserRole = appState.UserRole,
-                GroupId = Convert.ToInt32(appState.GroupId)
+                TeacherId = Convert.ToInt32(appState.GroupId)
             };
             lstGroups = await feService.Read_Groups(user, false, false);
             appState.SetCmd ("");
@@ -648,7 +659,7 @@ else
         }
     public async Task BtnUpdateStudent(User student)
         {
-        appState.SetGroupId (student.GroupId);
+        appState.SetGroupId (student.TeacherId);
         bool result = await feService.Update_Student (student);
         if (result)
             {
@@ -660,7 +671,7 @@ else
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
                 UserRole = appState.UserRole,
-                GroupId = Convert.ToInt32(appState.GroupId)
+                TeacherId = Convert.ToInt32(appState.GroupId)
             };
             lstGroups = await feService.Read_Groups(user, false, false);
             group.GroupName = ""; //reset input text
@@ -683,7 +694,7 @@ else
                     UserName = appState.UserName,
                     UserPass = appState.UserPass,
                     UserRole = appState.UserRole,
-                    GroupId = Convert.ToInt32(appState.GroupId)
+                    TeacherId = Convert.ToInt32(appState.GroupId)
                     };
                 lstGroups = await feService.Read_Groups(user, false, false);
                 group.GroupName = ""; //reset input text
@@ -738,9 +749,8 @@ else
                     UserRole = "student",
                     UserTags = 1,
                     UserNickname = row.Cell (3).GetString (),
-                    GroupId = group.GroupId
+                    TeacherId = group.GroupId
                 };
-                Console.WriteLine($"page ................................... Created: {student.UserNickname}");
                 int result = await feService.Create_Student (student);
                 }
                 //Refresh the list
@@ -750,7 +760,7 @@ else
                     UserName = appState.UserName,
                     UserPass = appState.UserPass,
                     UserRole = appState.UserRole,
-                    GroupId = Convert.ToInt32(appState.GroupId)
+                    TeacherId = Convert.ToInt32(appState.GroupId)
                 };
                 lstGroups = await feService.Read_Groups (userx, false, false);
                 group.GroupName = "";

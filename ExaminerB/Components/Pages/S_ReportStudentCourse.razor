@@ -19,52 +19,59 @@
     <hr />
     @foreach (StudentCourseTest tst in lstStudentCourseTests)
         {
-        i++;
-        testDirection = ((tst.TestTags & 1) == 1) ? "direction: rtl;text-align:right;" : "";
-        <div style="@testDirection"><span style="font-weight:bold;">@i: @tst.TestTitle</span></div>
-        optionDirection = ((tst.TestTags & 2) == 2) ? "direction: rtl;text-align:right;" : "";
-         @foreach (var opt in tst.TestOptions)
-            {
-            int optcolor = 0;
-            if (opt.TestOptionId == tst.TestKey)
-                {
-                optcolor = optcolor | 1;
-                }
-            if (opt.TestOptionId == tst.UserAns)
-                {
-                optcolor = optcolor | 2;
-                }
-            switch (optcolor)
-                {
-                case 0:
+        <MudContainer Class="mt-2 px-0">
+            <MudCard Class="mx-0">
+                <MudCardContent Style="background-color:whitesmoke;">
+                    @{
+                    i++;
+                    testDirection = ((tst.TestTags & 1) == 1) ? "direction: rtl;text-align:right;" : "";
+                    optionDirection = ((tst.TestTags & 2) == 2) ? "direction: rtl;text-align:right;" : "";
+                    }
+                    <div style="@testDirection"><span style="font-weight:bold;">@i: @tst.TestTitle</span></div>
+                     @foreach (var opt in tst.TestOptions)
                         {
-                        <div style="@optionDirection color:black"> - @opt.TestOptionTitle</div>
-                        break;
+                        int optcolor = 0;
+                        if (opt.TestOptionId == tst.TestKey)
+                            {
+                            optcolor = optcolor | 1;
+                            }
+                        if (opt.TestOptionId == tst.UserAns)
+                            {
+                            optcolor = optcolor | 2;
+                            }
+                        switch (optcolor)
+                            {
+                            case 0:
+                                    {
+                                    <div style="@optionDirection color:black"> - @opt.TestOptionTitle</div>
+                                    break;
+                                    }
+                            case 1:
+                                    {
+                                    <div style="@optionDirection color:blue"> ( ) @opt.TestOptionTitle</div>
+                                    break;
+                                    }
+                            case 2:
+                                    {
+                                    <div style="@optionDirection color:red"> (x) @opt.TestOptionTitle</div>
+                                    break;
+                                    }
+                            case 3:
+                                    {
+                                    <div style="@optionDirection color:goldenrod;font-weight:bold"> - @opt.TestOptionTitle</div>
+                                    break;
+                                    }
+                            }
                         }
-                case 1:
-                        {
-                        <div style="@optionDirection color:blue"> ( ) @opt.TestOptionTitle</div>
-                        break;
-                        }
-                case 2:
-                        {
-                        <div style="@optionDirection color:red"> (x) @opt.TestOptionTitle</div>
-                        break;
-                        }
-                case 3:
-                        {
-                        <div style="@optionDirection color:goldenrod;font-weight:bold"> - @opt.TestOptionTitle</div>
-                        break;
-                        }
-                }
-            }
-        <hr style="border-color:red" />
+                </MudCardContent>
+            </MudCard>
+        </MudContainer>        
         }
 </EditForm>
 <br />
 <div style="text-align:center">
     <button class="btn btn-link" @onclick= "()=> BtnBack()">
-        <img src="/img/icoBack.png" style="width:40px" />
+        <img src="/img/icoBack2.png" style="width:40px" />
     </button>   
 </div>
 

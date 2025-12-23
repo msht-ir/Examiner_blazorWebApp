@@ -42,7 +42,7 @@
                                             <img src="/img/icoRename.png" width="26" />
                                         </button>
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportExamTests(exam.ExamId)">
-                                            <img src="/img/icoFolderT.png" width="24" />
+                                            <img src="/img/icoListT.png" width="30" />
                                         </button>
                                         <button style="border:none" class="btn btn-link" @onclick="()=>BtnAddStudentExam(exam.ExamId)" >
                                             <img src="/img/icoUserAddNew.png" width="24" />
@@ -86,7 +86,7 @@
                                                     }
                                             </select>
                                             <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExams (exam.ExamId)">
-                                                <img src="/img/icoSave.png" width="22" />
+                                                <img src="/img/icoSave2.png" width="22" />
                                             </button>
                                             <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
                                                 <img src="/img/icoCancel.png" width="20" />
@@ -101,7 +101,7 @@
                                                     }
                                             </select>
                                             <button style="border:none" class="btn btn-link" @onclick="()=>BtnCreateStudentExam (exam.ExamId)">
-                                                <img src="/img/icoSave.png" width="22" />
+                                                <img src="/img/icoSave2.png" width="22" />
                                             </button>
                                             <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
                                                 <img src="/img/icoCancel.png" width="20" />
@@ -121,7 +121,7 @@
                     <div class="mb-3">
                     <input class="form-control d-inline" @ref= "txtNewExamName" @bind="txtNewExamTitle" placeholder="Exam name" style="width:60%"/>
                     <button class="btn btn-link" @onclick="BtnCreateExam" >
-                        <img src="/img/icoSave.png" width="22" />
+                        <img src="/img/icoSave2.png" width="22" />
                     </button>
                     <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
                         <img src="/img/icoCancel.png" width="20" />
@@ -173,7 +173,7 @@
         user.UserPass = appState.UserPass;
         user.UserRole = "-";
         user.UserTags = 0;
-        user.GroupId = 0;
+        user.TeacherId = 0;
         //
         course.CourseId = Convert.ToInt32(appState.CourseId);
         course.CourseName = appState.CourseName ?? "";
