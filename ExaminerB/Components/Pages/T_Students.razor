@@ -22,306 +22,240 @@ else
             <hr style="color:red" />
             <h2 style="color:royalblue; font-style:italic">Students</h2>
         </div>
-        <EditForm Model="lstGroups">
-            <div class="accordion" id="accordionGroups">
-                @foreach (Group grp in lstGroups)
-                    {
-                    var collapseId = $"collapse{grp.GroupId}";
-                    string clps = "";
-                    if ((appState.GroupId ?? 0) != grp.GroupId)
-                        {
-                        clps = "collapse";
-                        }
-                    else
-                        {
-                        clps = "collapse show";
-                        }
-                    <div class="accordion-item">
-                        <h4 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button"
-                                    data-bs-toggle="collapse"
-                                    data-bs-target="#@collapseId"
-                                    aria-expanded="true"
-                                    aria-controls="@collapseId">
-                                <h6>@grp.GroupName</h6>
-                            </button>
-                        </h4>
-                        <div id="@collapseId" class="accordion-collapse @clps" data-bs-parent="#accordionGroups">
-                            <div class="accordion-body" style="background-color:rgba(252,252,252)">
-                                <div id="T1">
-                                    @if ((appState.Cmd == "EditGroup") && (appState.GroupId == grp.GroupId))
-                                        {
-                                        string btnGroupId = "btnGroupName";
-                                        <div class="mb-3">
-                                            <input class="form-control" @ref="txtGroupName" @bind="grp.GroupName" placeholder="Enter Group Name...">
-                                        </div>
+    <EditForm Model="lstGroups">
+        <div class="accordion" id="accordionTStudents">
+            @* Search & COMBOs GCEM *@
+            <div class="accordion-item">
+                <h4 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#Accordion_GCEM"
+                        aria-expanded="false"
+                        aria-controls="Accordion_GCEM" style="background-color:whitesmoke">
+                        <h6>Students</h6>
+                    </button>
+                </h4>
+                <div id="Accordion_GCEM" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
+                    <div class="accordion-body" style="background-color:white">
+                        <div id="T1">
+                            <MudContainer Class="mt-2 px-0">
+                                <MudCard Class="mx-0">
+                                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                                        @* NEW STUDENT *@
+                                        <MudGrid>
+                                            <MudItem xs="6">
+                                                <MudTextField  @ref="refNewUser"  @bind-Value="user.UserName"  Label="Username يوزر"   Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield" />
+                                            </MudItem>
+                                            <MudItem xs="6">
+                                                <MudTextField  @ref="refNewPass"  @bind-Value="user.UserPass"  Label="Password پسورد"  Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield"  InputType="InputType.Password"/>
+                                            </MudItem>
+                                        </MudGrid>
+                                        <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnCancel">
+                                            <img src="/img/icoSave2.png" width="24" />
+                                        </button>
+                                        <InputFile OnChange="HandleFileSelected" />                                    
+                                        <hr style="color:red" />
+                                        @* Combos GCEM *@
+                                        <MudSelect T="int" @ref="refGroups" Label="Group گروه" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <MudSelectItem Value="0">Select a Group</MudSelectItem>
+                                            @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
+                                        </MudSelect>
+                                        <MudSelect T="int" @ref="refCourses" Label="Course درس" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <MudSelectItem Value="0">Select a Course</MudSelectItem>
+                                            @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
+                                        </MudSelect>
+                                        <MudSelect T="int" @ref="refExams" Label="Exam آزمون" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <MudSelectItem Value="0">Select an Exam</MudSelectItem>
+                                            @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
+                                        </MudSelect>
+                                        <MudSelect T="int" @ref="refMessages" Label="Message پيام" Value="MessageId" ValueChanged="OnMessageChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <MudSelectItem Value="0">Select a Message</MudSelectItem>
+                                            @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
+                                        </MudSelect>
+                                        <hr style="color:red" />
+                                        @* SEARCH *@
+                                        <MudGrid Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                                            <MudItem xs="12">
+                                                <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="Search جستجو" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                            </MudItem>
+                                        </MudGrid>
                                         <div style="text-align:center">
-                                            <button class="btn btn-link" name="@btnGroupId" @onclick="()=>BtnUpdateGroup(grp)" title="Save Changes ذخيره تغييرات" >
-                                                <img src="/img/icoSave2.png" width="25" />
-                                            </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnDeleteGroup(grp)" @key="grp.GroupId" title="Delete Group حذف گروه">
-                                                <img src="/img/icoDelete1.png" width="25" />
-                                            </button>
-                                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel" title="Cancel انصراف">
-                                                <img src="/img/icoCancel.png" width="24" />
+                                            <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
+                                                <img src="/img/icoSearch.png" width="25" />
                                             </button>
                                         </div>
-                                        <br />
-                                        }
-                                    else
-                                        {
-                                        <div style="text-align: center;">
-                                            <button class="btn btn-link" type="button" @onclick="()=>BtnEditGroup(grp.GroupId)" title="Edit Group Name ويرايش نام گروه">
-                                                <img src="/img/icoRename.png" width="30" />
-                                            </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnAddNewStudent(grp.GroupId)" title="Add New Student to Group افزودن دانشجوي جديد به گروه">
-                                                <img src="/img/icoUserAddNew.png" width="30" />
-                                            </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnEditStudentsTags(grp.GroupId)" title="Student Tags دسترسي هاي دانشجويان در اين گروه">
-                                                <img src="/img/icoSelect.png" width="30" />
-                                            </button>
-                                            <br />
-                                            <button class="btn btn-link" @onclick="()=>BtnAddCourse2Students(grp.GroupId)" title="Add Students to a Course افزودن دانشجويان به يک درس">
-                                                <img src="/img/icoCourseAddNew.png" width="28" />
-                                            </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnReportStudentsExamsAndCourses(grp.GroupId)" title="Report Courses and Exams of Students in this Group درس ها و آزمون هاي دانشجويان اين گروه">
-                                                <img src="/img/icoFolderSearch.png" width="30" />
-                                            </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnAddNewMessageToGroup(grp.GroupId)" title="send Message to Students of this Group ارسال پيام به دانشجويان اين گروه">
-                                                <img src="/img/icoEnvelop1.png" width="28" />
-                                            </button>
-                                            <br />
-                                            @if ((appState.Cmd == "AddCourse2Students") && (appState.GroupId == grp.GroupId))
-                                                {
-                                                <div style="background-color:white">
-                                                    <div style="text-align: center;">
-                                                        <hr style="color:red" />
-                                                        <h6 style="color:darkgoldenrod;font-weight:bold;">Add this group to a course</h6>
-                                                        <select class="form-select d-inline" id="cboCourses" name="cboCourses" style="width:55%" @bind="selectedCourseId">
-                                                            <option value="0"> Select a Course... </option>
-                                                            @foreach (var crs in lstCourses)
-                                                                {
-                                                                <option value="@crs.CourseId"> @crs.CourseName </option>
-                                                                }
-                                                        </select>
-                                                        <button class="btn btn-link" @onclick="()=>BtnSaveAddCourse2Students(grp.GroupId)">
-                                                            <img src="/img/icoSave2.png" width="25" />
-                                                        </button>
-                                                        <button class="btn btn-link" @onclick="()=>BtnDeleteStudentCourses(grp.GroupId)" >
-                                                            <img src="/img/icoDelete1.png" width="25" />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                }
-                                            @if ((appState.Cmd == "AddNewMessageToGroup") && (appState.GroupId == grp.GroupId))
-                                                {
-                                                <div style="background-color:white">
-                                                    <div style="text-align: center;">
-                                                        <hr style="color:red" />
-                                                        <h6 style="color:indianRed;">Send Message to group</h6>
-                                                        <MudTextField @ref="txtMessageTitle" @bind-Value="message.MessageTitle" Label="Message Title" Variant="Variant.Outlined" Class="my-textfield" />
-                                                        <MudTextField @ref="txtMessageBody" @bind-Value="message.MessageBody" Placeholder="Message Body..." Lines="4" Variant="Variant.Outlined" Class="my-textarea" TextFieldStyle="TextFieldStyle.TextArea" />
-                                                        <input class="form-check-input" type="checkbox" @bind=_IsMessageTypeFeedback />
-                                                        <label class="form-check-label" style="color:Black"> Feedback </label><br />
-                                                        <button class="btn btn-link" @onclick="()=>BtnSendMessageToGroup(grp.GroupId)">
-                                                            <img src="/img/gifSendMessage.gif" width="60" />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                }
-                                            @if ((appState.Cmd == "EditStudentsTags") && (appState.GroupId == grp.GroupId))
-                                                {
-                                                <hr style="color:red" />
-                                                <div style="text-align:left">
-                                                    <div style="text-align: center;">
-                                                        <h5 style="color:darkgoldenrod;">Change group Tags</h5>
-                                                        <input class="form-check-input" type="checkbox" @bind=_tag01 />
-                                                        <label class="form-check-label" for="chkActive" style="color:Black"> Active </label>
-                                                        <input class="form-check-input" type="checkbox" @bind=_tag02 />
-                                                        <label class="form-check-label" for="chkAns" style="color:Black"> Pass </label>
-                                                        <input class="form-check-input" type="checkbox" @bind=_tag04 />
-                                                        <label class="form-check-label" for="chkAns" style="color:Black"> Rev.Exam </label>
-                                                        <br />
-                                                        <input class="form-check-input" type="checkbox" @bind=_tag08 />
-                                                        <label class="form-check-label" for="chkAns" style="color:Black"> Course </label>
-                                                        <input class="form-check-input" type="checkbox" @bind=_tag16 />
-                                                        <label class="form-check-label" for="chkAns" style="color:Black"> Retry </label>
-                                                        <input class="form-check-input" type="checkbox" @bind=_tag32 />
-                                                        <label class="form-check-label" for="chkAns" style="color:Black"> Rev.Course </label>
-                                                    </div>
-                                                    <br />
-                                                    <div style="text-align: center;">
-                                                        <button class="btn btn-link" @onclick="()=>BtnUpdateStudentsTags(grp.GroupId)">
-                                                            <img src="/img/icoSave2.png" width="25" />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                }
-                                            <hr style="color:red" />
-                                        </div>
-                                        @if ((appState.Cmd == "AddNewStudent") && (appState.GroupId == grp.GroupId))
-                                            {
-                                            <div>
-                                                <div class="mb-3">
-                                                    <img src="/img/icoUser.png" width="24" />
-                                                    <input class="form-control d-inline" style="width:50%" @bind="txtNewStudentName" placeholder="New UserName...">
-                                                    <button class="btn btn-link" @onclick="()=>BtnSaveNewStudent(grp.GroupId)">
-                                                        <img src="/img/icoSave2.png" width="24" />
-                                                    </button>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <img src="/img/icoDownload.png" width="24" />
-                                                    <InputFile OnChange="HandleFileSelected" />
-                                                </div>
-                                            </div>
-                                            }
-                                        else
-                                            {
-                                            <div style="text-align: center;">
-                                                <h4 style="color:gray">students:</h4> 
-                                            </div>
-                                            @foreach (User stdnt in grp.Students)
-                                                {
-                                                var collapseId2 = $"collapse{stdnt.UserId}";
-                                                <div class="accordion" id="accordionStudents">
-                                                    <div class="accordion-item mb-1">
-                                                        <h4 class="accordion-header">
-                                                            <button class="accordion-button collapsed"
-                                                                    type="button"
-                                                                    data-bs-toggle="collapse"
-                                                                    data-bs-target="#@collapseId2"
-                                                                    aria-expanded="true"
-                                                                    aria-controls="@collapseId2">
-                                                                <h6>@stdnt.UserNickname</h6>
-                                                            </button>
-                                                        </h4>
-                                                        <div id="@collapseId2" class="accordion-collapse collapse" data-bs-parent="#accordionStudents">
-                                                            <div class="accordion-body" style="background-color:whitesmoke">
-                                                                <div class="mb-1">
-                                                                    <img src="/img/icoUser.png" width="24" />
-                                                                    <input class="form-control d-inline" @bind="stdnt.UserName" placeholder="Username" style="font-weight:normal;color:indianred; width:80%;">
-                                                                </div>
-                                                                <div class="mb-1">
-                                                                    <img src="/img/icoUser.png" width="24" />
-                                                                    <input class="form-control d-inline" @bind="stdnt.UserPass" placeholder="Password" style="font-weight:normal; width:80%;">
-                                                                </div>
-                                                                <div class="mb-1">
-                                                                    <img src="/img/icoUser.png" width="24" />
-                                                                    <input class="form-control d-inline" @bind="stdnt.UserNickname" placeholder="Nickname" style="font-weight:normal; width:80%;">
-                                                                </div>
-                                                                <p></p>
-                                                                <span  style="margin-right: 15px;">
-                                                                    <input class="form-check-input" type="checkbox" checked="@((stdnt.UserTags & 1) == 1)" @onchange="e=>BtnUpdateStudentTagsInPlace(stdnt, 1, (bool)e.Value)" />
-                                                                    <label class="form-check-label" for="chkActive@stdnt.UserId" style="color:RoyalBlue"> Active </label>
-                                                                </span>
-                                                                <span  style="margin-right: 15px;">
-                                                                    <input class="form-check-input" type="checkbox" checked="@((stdnt.UserTags & 2) == 2)" @onchange="e=>BtnUpdateStudentTagsInPlace(stdnt, 2, (bool)e.Value)"/>
-                                                                    <label class="form-check-label" for="chkChangePassId@stdnt.UserId" style="color:RoyalBlue"> Pass </label>
-                                                                </span>
-                                                                <span  style="margin-right: 15px;">
-                                                                    <input class="form-check-input" type="checkbox" checked="@((stdnt.UserTags & 4) == 4)" @onchange="e=>BtnUpdateStudentTagsInPlace(stdnt, 4, (bool)e.Value)"/>
-                                                                    <label class="form-check-label" for="chkExamReviewId@stdnt.UserId" style="color:RoyalBlue"> Rev.Exam </label>
-                                                                </span>
-                                                                <br />
-                                                                <span  style="margin-right: 15px;">
-                                                                    <input class="form-check-input" type="checkbox" checked="@((stdnt.UserTags & 8) == 8)" @onchange="e=>BtnUpdateStudentTagsInPlace(stdnt, 8, (bool)e.Value)"/>
-                                                                    <label class="form-check-label" for="chkAns" style="color:RoyalBlue"> Course </label>
-                                                                </span>
-                                                                <span  style="margin-right: 15px;">
-                                                                    <input class="form-check-input" type="checkbox" checked="@((stdnt.UserTags & 16) == 16)" @onchange="e=>BtnUpdateStudentTagsInPlace(stdnt, 16, (bool)e.Value)"/>
-                                                                    <label class="form-check-label" for="chkRunningExamCorrectionId@stdnt.UserId" style="color:RoyalBlue"> Retry </label>
-                                                                </span>
-                                                                <span  style="margin-right: 15px;">
-                                                                    <input class="form-check-input" type="checkbox" checked="@((stdnt.UserTags & 32) == 32)" @onchange="e=>BtnUpdateStudentTagsInPlace(stdnt, 32, (bool)e.Value)"/>
-                                                                    <label class="form-check-label" for="chkRunningExamReviewId@stdnt.UserId" style="color:RoyalBlue"> Rev.Course</label>
-                                                                </span>
-                                                                <p></p>
-                                                                @if ((appState.Cmd == "AddNewStudentCourse") && (appState.StudentId == stdnt.UserId))
-                                                                    {
-                                                                    <div style="background-color:white">
-                                                                        <br />
-                                                                        <div style="text-align: center;">
-                                                                            <h6 style="color:darkgoldenrod;font-weight:bold;">Add/Remove Student to/from a course</h6>
-                                                                                <select class="form-select d-inline" id="cboCourses" name="cboCourses" style="width:60%" @bind="selectedCourseId">
-                                                                                    <option value="0"> Select a Course... </option>
-                                                                                    @foreach (var crs in lstCourses)
-                                                                                        {
-                                                                                        <option value="@crs.CourseId"> @crs.CourseName </option>
-                                                                                        }
-                                                                                </select>
-                                                                            <br />
-                                                                            <button class="btn btn-link" @onclick="()=>BtnSaveStudentCourse(stdnt.UserId)" >
-                                                                                <img src="/img/icoSave2.png" width="22" />
-                                                                            </button>
-                                                                            <button class="btn btn-link" @onclick="()=>BtnDeleteStudentCourse(stdnt.UserId)" >
-                                                                                <img src="/img/icoDelete1.png" width="25" />
-                                                                            </button>
-                                                                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                                                <img src="/img/icoCancel.png" width="24" />
-                                                                            </button>
-                                                                        </div>
-                                                                        <br />
-                                                                    </div>
-                                                                    }
-                                                                else
-                                                                    {
-                                                                    <div style="text-align: center;">
-                                                                        <button class="btn btn-link" @onclick="()=>BtnAddStudentCourse(stdnt.UserId)">
-                                                                            <img src="/img/icoCourseAddNew.png" width="25" />
-                                                                        </button>
-                                                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentExamsAndCourses(stdnt)">
-                                                                            <img src="/img/icoFolderSearch.png" width="28" />
-                                                                        </button>
-                                                                        <button class="btn btn-link" @onclick="()=>BtnUpdateStudent(stdnt)">
-                                                                            <img src="/img/icoSave2.png" width="22" />
-                                                                        </button>
-                                                                        <button class="btn btn-link" @onclick="()=>BtnDeleteStudent(stdnt.UserId)">
-                                                                            <img src="/img/icoDelete1.png" width="22" />
-                                                                        </button>
-                                                                        <button class="btn btn-link" @onclick="()=>BtnReportStudentMessages(stdnt)">
-                                                                            <img src="/img/icoEnvelop2.png" width="25" />
-                                                                        </button>
-                                                                    </div>
-                                                                    }
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                }
-                                            }
-                                        }
-                                </div>
-                            </div>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
                         </div>
                     </div>
-                    <br />
-                    }
-            </div>
-            @if (appState.Cmd == "AddNewGroup")
-                {
-                <hr style="color:red"/>
-                <h4>Add New Group</h4>
-                <div class="mb-3">
-                    <input class="form-control" @ref="txtNewGroup" @bind="group.GroupName" placeholder="New Group Name...">
                 </div>
-                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewGroup">
-                    <img src="/img/icoSave2.png" width="22" />
-                </button>
-                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                    <img src="/img/icoCancel.png" width="24" />
-                </button>
-                }
-            else
-                {
-                    <div style="background-color:rgba(252,252,252)">
-                        <button class="btn btn-link" @onclick="BtnAddNewGroup" title="Create New Group ايجاد گروه جديد">
-                            <img src="/img/gifUserAddNew.gif" width="110" />
-                        </button>
-                    </div>
-                }
+            </div>
+        
+            @* LIST STUDENTs *@
+            <MudContainer Class="mt-2 px-0">
+                <MudCard Class="mx-0">
+                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                        @foreach(User student in lstStudents)
+                            {
+                            <div>
+                                <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
+                                    <img src="/img/icoEditPen.png" width="25" />
+                                </button>
+                                @student.UserName
+                                <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
+                                    <img src="/img/icoFolderS.png" width="25" />
+                                </button>
+                            </div>
+                            }
+                    </MudCardContent>
+                </MudCard>
+            </MudContainer>
+        
             <hr style="color:red" />
-        </EditForm>
-        <div style="text-align:center">
+            @* SELECT A GROUP *@
+            <div class="accordion-item mb-2" >
+                <h4 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#Accordion_Group"
+                        aria-expanded="false"
+                        aria-controls="Accordion_Group" style="background-color:whitesmoke">
+                        <h6>Add to Group...</h6>
+                    </button>
+                </h4>
+                <div id="Accordion_Group" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
+                    <div class="accordion-body" style="background-color:white">
+                        <div id="T1">
+                            <MudContainer Class="mt-2 px-0">
+                                <MudCard Class="mx-0">
+                                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                                        <MudSelect T="int" @ref="refGroups" Label="Group گروه" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <MudSelectItem Value="0">Select a Group</MudSelectItem>
+                                            @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
+                                        </MudSelect>
+                                        <div style="text-align:center">
+                                            <button class="btn btn-link" @onclick="BtnReadStudentsByPage">
+                                                <img src="/img/icoListAddNew1.png" width="38" />
+                                            </button>
+                                        </div>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @* SELECT A COURSE *@
+            <div class="accordion-item mb-2">
+                <h4 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#Accordion_Course"
+                        aria-expanded="false"
+                        aria-controls="Accordion_Course" style="background-color:whitesmoke">
+                        <h6>Add to Course...</h6>
+                    </button>
+                </h4>
+                <div id="Accordion_Course" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
+                    <div class="accordion-body" style="background-color:white">
+                        <div id="T1">
+                            <MudContainer Class="mt-2 px-0">
+                                <MudCard Class="mx-0">
+                                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                                        <MudSelect T="int" @ref="refCourses" Label="Course درس" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <MudSelectItem Value="0">Select a Course</MudSelectItem>
+                                            @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
+                                        </MudSelect>
+                                        <div style="text-align:center">
+                                            <button class="btn btn-link" @onclick="BtnReadStudentsByPage">
+                                                <img src="/img/icoListAddNew1.png" width="38" />
+                                            </button>
+                                        </div>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @* SELECT AN EXAM *@
+            <div class="accordion-item mb-2">
+                <h4 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#Accordion_Exam"
+                        aria-expanded="false"
+                        aria-controls="Accordion_Exam" style="background-color:whitesmoke">
+                        <h6>Add to Exam...</h6>
+                    </button>
+                </h4>
+                <div id="Accordion_Exam" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
+                    <div class="accordion-body" style="background-color:white">
+                        <div id="T1">
+                            <MudContainer Class="mt-2 px-0">
+                                <MudCard Class="mx-0">
+                                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                                        <MudSelect T="int" @ref="refCourses" Label="Course درس" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <MudSelectItem Value="0">Select a Course</MudSelectItem>
+                                            @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
+                                        </MudSelect>
+                                        <MudSelect T="int" @ref="refExams" Label="Exam آزمون" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <MudSelectItem Value="0">Select an Exam</MudSelectItem>
+                                            @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
+                                        </MudSelect>
+                                        <div style="text-align:center">
+                                            <button class="btn btn-link" @onclick="BtnReadStudentsByPage">
+                                                <img src="/img/icoListAddNew1.png" width="38" />
+                                            </button>
+                                        </div>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudContainer>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @* SELECT A MESSAGE *@
+            <div class="accordion-item mb-2">
+                <h4 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#Accordion_Message"
+                        aria-expanded="false"
+                        aria-controls="Accordion_Message" style="background-color:whitesmoke">
+                        <h6>Send Message...</h6>
+                    </button>
+                </h4>
+                <div id="Accordion_Message" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
+                    <div class="accordion-body" style="background-color:white">
+                        <div id="T1">
+                            <MudContainer Class="mt-2 px-0">
+                                <MudCard Class="mx-0">
+                                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                                        <MudSelect T="int" @ref="refMessages" Label="Message پيام" Value="MessageId" ValueChanged="OnMessageChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <MudSelectItem Value="0">Select a Message</MudSelectItem>
+                                            @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
+                                        </MudSelect>
+                                        <div style="text-align:center">
+                                            <button class="btn btn-link" @onclick="BtnReadStudentsByPage">
+                                                <img src="/img/icoListAddNew1.png" width="38" />
+                                            </button>
+                                        </div>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        </div>
+    </EditForm>
+    <hr style="color:red" />
+    @* Footer *@
+    <br />
+    <div style="text-align:center">
         <button class="btn btn-link" @onclick= "()=> BtnBack()" title="Back to SwitchBoard بازگشت به صفحه اول">
             <img src="/img/icoBack2.png" style="width:30px" />
         </button>
@@ -332,35 +266,47 @@ else
 </script>
 
 @code {
-    private ElementReference txtNewGroup;
-    private ElementReference txtGroupName;
-    private MudTextField<string> txtMessageTitle;
-    private MudTextField<string> txtMessageBody;
-    private readonly HttpClient _http;
     User user = new User ();
+    private MudTextField<string> refNewUser;
+    private MudTextField<string> refNewPass;
+    private MudTextField<string> reftxtSearch;
+    private MudNumericField<int> txtPageNumber;
+    string txtNewStudentName = "";
+    string strSearch = "";
+    int intPageNumber = 0;
+
+    private MudSelect<int> refGroups;
+    private MudSelect<int> refCourses;
+    private MudSelect<int> refExams;
+    private MudSelect<int> refMessages;
+    int GroupId = 0;
+    int CourseId = 0;
+    int ExamId = 0;
+    int MessageId = 0;
+
     List<Group> lstGroups = new ();
     List<Course> lstCourses = new ();
+    List<Exam> lstExams = new ();
+    List<Message> lstMessages = new ();
+    List<User> lstStudents = new ();
+
     Group group = new Group();
+    Course course = new Course();
+    Exam exam = new Exam();
     Message message = new Message();
-    public bool _hasFetched = false;
-    private bool shouldFocusNewGroup = false;
-    bool _IsMessageTypeFeedback = true;
-    bool _tag01 = true;
-    bool _tag02 = false;
-    bool _tag04 = false;
-    bool _tag08 = false;
-    bool _tag16 = false;
-    bool _tag32 = false;
-    string txtNewStudentName = "";
-    int selectedCourseId = 0; // Courses in combo box
+    User student = new User ();
+
     int i = 0;
+    private bool shouldFocusNewGroup = false;
+    int selectedCourseId = 0; // Courses in combo box
+    public bool _hasFetched = false;
+
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-
             Navman.NavigateTo ("/Login");
             }
         var user = new User
@@ -374,18 +320,14 @@ else
         if (user.UserId > 0)
             {
             //on second rener, user.UserId will get its value
-            lstGroups = await feService.Read_Groups (user, false, false); 
-            lstCourses = await feService.Read_Courses (user.UserId); 
+            //lstGroups = await feService.Read_Groups (user, false, false); 
+            //lstCourses = await feService.Read_Courses (user.UserId); 
             _hasFetched = true;
             }
         } 
     protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-        if (shouldFocusNewGroup)
-            {
-            shouldFocusNewGroup = false;
-            await txtNewGroup.FocusAsync();
-            }
+        
         }    
     private void TriggerRender()
         {
@@ -431,14 +373,6 @@ else
             group.GroupName = ""; //reset input text
             StateHasChanged ();            
             }
-        }
-    public async Task BtnEditGroup(int groupId)
-        {
-        appState.SetCmd ("EditGroup");
-        appState.SetGroupId(groupId);
-        StateHasChanged ();
-        await Task.Delay (1);
-        await txtGroupName.FocusAsync ();
         }
     public async Task BtnUpdateGroup(Group grp)
         {
@@ -510,38 +444,6 @@ else
             }
         StateHasChanged ();
         }
-    public async Task BtnUpdateStudentsTags(int teacherId)
-        {
-        int tags = 0;
-        if (_tag01) tags |= 1;
-        if (_tag02) tags |= 2;
-        if (_tag04) tags |= 4;
-        if (_tag08) tags |= 8;
-        if (_tag16) tags |= 16;
-        if (_tag32) tags |= 32;
-        User student = new User () { UserName= "-", UserPass= "-", UserRole="-", UserTags = tags, TeacherId=teacherId};
-        bool result = await feService.Update_StudentsTags (student);
-        if (result)
-            {
-            await JS.InvokeVoidAsync("alert", "\n\nStudent tags updated.");
-            // Refresh the list
-            var user = new User
-            {
-                UserId = Convert.ToInt32(appState.UserId),
-                UserName = appState.UserName,
-                UserPass = appState.UserPass,
-                UserRole = appState.UserRole,
-                TeacherId = Convert.ToInt32(appState.GroupId)
-            };
-            lstGroups = await feService.Read_Groups(user, false, false);
-            group.GroupName = ""; //reset input text
-            StateHasChanged ();
-            }
-        else
-            {
-            await JS.InvokeVoidAsync("alert", "\n\nFailed to update student tags.");
-            }
-        }
     public void BtnUpdateStudentTagsInPlace (User stdnt, int flag , bool isChecked)
         {
         if (isChecked)
@@ -593,31 +495,6 @@ else
         string mode = "groupStudents";
         Navman.NavigateTo ($"/T_ReportStudents/{mode}/{groupId}");
         }
-    public async Task BtnAddNewMessageToGroup(int groupId)
-        {
-        if(appState.Cmd != "AddNewMessageToGroup")
-            {
-            appState.SetGroupId (groupId);
-            appState.SetCmd ("AddNewMessageToGroup");
-            await Task.Delay (1);
-            await txtMessageTitle.FocusAsync ();
-            }
-        else
-            {
-            appState.SetCmd ("");
-            }
-        StateHasChanged ();
-        }
-    public async Task BtnSendMessageToGroup(int groupId)
-        {
-        _hasFetched = false;
-        //notice: message.MessageTitle, messageMessageBody are binded
-        message.UserId = Convert.ToInt32(appState.UserId);
-        message.DateTimeCreated = "0000-00-00 . 00:00"; //will be replaced with current date-time in the backend-service
-        int result = await feService.Create_StudentMessage (message, "togroupmembers",groupId, _IsMessageTypeFeedback);
-        appState.SetCmd ("");
-        _hasFetched = true;
-        }    
     //students
     public void BtnAddNewStudent(int groupId)
         {
@@ -718,61 +595,6 @@ else
         string mode = "StudentWithDels";
         Navman.NavigateTo ($"/T_ReportMessages/{mode}/{stdnt.UserId}");
         }
-    //methods for excel import
-    public void BtnImportStudentsFromExcelFile()
-        {
-        appState.SetCmd ("importstudentsfromexcelfile");
-        }
-    private async Task HandleFileSelected(InputFileChangeEventArgs e)
-        {
-        _hasFetched = false;
-        var file = e.File;
-        using var memoryStream = new MemoryStream();
-        await file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(memoryStream);
-        memoryStream.Position = 0;
-        await ParseStudentExcelAsync(memoryStream);
-        }
-    private async Task ParseStudentExcelAsync(Stream stream)
-        {
-        try
-            {
-            using var workbook = new XLWorkbook(stream);
-            var worksheet = workbook.Worksheet(1); //1:first sheet
-            i = 0;
-            group.GroupId = Convert.ToInt32 (appState.GroupId);
-            foreach (var row in worksheet.RowsUsed().Skip(1)) //skip header
-                {
-                i++;
-                User student = new User () {
-                    UserName = row.Cell (1).GetString (),
-                    UserPass = row.Cell (2).GetString (),
-                    UserRole = "student",
-                    UserTags = 1,
-                    UserNickname = row.Cell (3).GetString (),
-                    TeacherId = group.GroupId
-                };
-                int result = await feService.Create_Student (student);
-                }
-                //Refresh the list
-                var userx = new User
-                {
-                    UserId = Convert.ToInt32(appState.UserId),
-                    UserName = appState.UserName,
-                    UserPass = appState.UserPass,
-                    UserRole = appState.UserRole,
-                    TeacherId = Convert.ToInt32(appState.GroupId)
-                };
-                lstGroups = await feService.Read_Groups (userx, false, false);
-                group.GroupName = "";
-                StateHasChanged ();            
-            }
-        catch (Exception ex)
-            {
-            Console.WriteLine($"Error in [ImportExcel]: {ex}");
-            }
-        _hasFetched = true;
-        appState.SetCmd ("");
-        }
     //student course
     public void BtnAddStudentCourse(int userId)
         {
@@ -846,7 +668,7 @@ else
                 await JS.InvokeVoidAsync("alert", "\nStudents did not removed from the course --- operation failed");
                 }
             }
-        }
+        }           
     //back
     public void BtnCancel()
         {    
@@ -856,5 +678,96 @@ else
         {    
         Navman.NavigateTo ("/T_SwitchBoard");
         }
+    //new methods
+    public async Task BtnReadStudentsBySearch()
+        {
+        
+        }
+    public async Task BtnReadStudentsByPage()
+        {
+        
+        }
 
+    private async Task OnGroupChanged(int newValue) 
+        {
+        //update GroupId from the event
+        GroupId = newValue;
+        group.GroupId = GroupId;
+        group.GroupName = "-"; //just because this field is required 
+        group.UserId = 0;
+        StateHasChanged();
+        } 
+    private async Task OnCourseChanged(int newValue) 
+        {
+        //update CourseId from the event
+        CourseId = newValue;
+        StateHasChanged();
+        } 
+    private async Task OnExamChanged(int newValue) 
+        {
+        //update ExamId from the event
+        ExamId = newValue;
+        StateHasChanged();
+        } 
+    private async Task OnMessageChanged(int newValue) 
+        {
+        //update MessageId from the event
+        MessageId = newValue;
+        StateHasChanged();
+        } 
+    //methods for excel import
+    public void BtnImportStudentsFromExcelFile()
+        {
+        appState.SetCmd ("importstudentsfromexcelfile");
+        }
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+        {
+        _hasFetched = false;
+        var file = e.File;
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
+        await ParseStudentExcelAsync(memoryStream);
+        }
+    private async Task ParseStudentExcelAsync(Stream stream)
+        {
+        try
+            {
+            using var workbook = new XLWorkbook(stream);
+            var worksheet = workbook.Worksheet(1); //1:first sheet
+            i = 0;
+            group.GroupId = Convert.ToInt32 (appState.GroupId);
+            foreach (var row in worksheet.RowsUsed().Skip(1)) //skip header
+                {
+                i++;
+                User student = new User () {
+                    UserName = row.Cell (1).GetString (),
+                    UserPass = row.Cell (2).GetString (),
+                    UserRole = "student",
+                    UserTags = 1,
+                    UserNickname = row.Cell (3).GetString (),
+                    TeacherId = group.GroupId
+                };
+                int result = await feService.Create_Student (student);
+                }
+            //Refresh the list
+            var userx = new User
+                {
+                    UserId = Convert.ToInt32(appState.UserId),
+                    UserName = appState.UserName,
+                    UserPass = appState.UserPass,
+                    UserRole = appState.UserRole,
+                    TeacherId = Convert.ToInt32(appState.GroupId)
+                };
+            lstGroups = await feService.Read_Groups (userx, false, false);
+            group.GroupName = "";
+            StateHasChanged ();            
+            }
+        catch (Exception ex)
+            {
+            Console.WriteLine($"Error in [ImportExcel]: {ex}");
+            }
+        _hasFetched = true;
+        appState.SetCmd ("");
+        }
 }

@@ -6,7 +6,7 @@
 @inject AppState appState
 @inject IJSRuntime JS
 @implements IDisposable
-
+@inject IDialogService DialogService
 <div class="container mt-5 align-items-center">
     <p style="font-size:larger; text-align:center;color:black">e<span style="color:indianred">x</span>aminer <span style="font-size:small;color:royalblue"> @appState.UserNickname</span></p>
     <hr style="color:red"/>
@@ -392,20 +392,27 @@
         //     case "filter":{message = $"Filter out correct answers in Course ( {studentCourse.CourseName} ) \n just keep incorrect ones?";break;}
         //     case "wipeout":{message = $"Clear Running Tests in Course ( {studentCourse.CourseName} ) ?";break;}
         //---lambda:
-        string message = mode switch
+        string msg = mode switch
             {
-                "filter" => $"Filter out correct answers in ( {studentCourse.CourseName} ) ?",
-                "wipeout" => $"Clear  ( {studentCourse.CourseName} ) ?",
+                "filter" => $"Filter out your correct answers in ( {studentCourse.CourseName} ) ?",
+                "wipeout" => $"Clear all your sample tests in ( {studentCourse.CourseName} ) ?",
                 _ => throw new ArgumentException($"Invalid mode: {mode}")
                 };
-        if (await JS.InvokeAsync<bool> ("confirm", message))
+        
+        var message = new MarkupString($"{msg}");
+        bool? confirmResult = await DialogService.ShowMessageBox(
+            title: "Confirm Clear your data",
+            markupMessage: message,
+            yesText: "Yes",
+            cancelText: "No");
+        if (confirmResult == true)
             {
             var result = await feService.Delete_StudentCourseTests (mode, studentCourse);
             //refresh
             lstStudentCourses = await feService.Read_StudentCourses (student.UserId);        
             }
         }
-    //btns for StudentCourses
+    //btns for StudentMessages
     private async Task BtnDeleteStudentMessage(StudentMessage studentMessage)
         {
         if(await JS.InvokeAsync<bool>("confirm","Delete Message?"))
