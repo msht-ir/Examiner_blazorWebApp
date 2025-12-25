@@ -23,7 +23,7 @@ else
             <h2 style="color:royalblue; font-style:italic">Students</h2>
         </div>
     <EditForm Model="lstGroups">
-        <div class="accordion" id="accordionTStudents">
+        <div class="accordion" id="accordionTStudents" style="max-width:600px; margin: 0 auto;">
             @* Search & COMBOs GCEM *@
             <div class="accordion-item">
                 <h4 class="accordion-header">
@@ -38,8 +38,8 @@ else
                 <div id="Accordion_GCEM" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
                     <div class="accordion-body" style="background-color:white">
                         <div id="T1">
-                            <MudContainer Class="mt-2 px-0">
-                                <MudCard Class="mx-0">
+                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                <MudCard Class="mx-auto">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                         @* NEW STUDENT *@
                                         <MudGrid>
@@ -93,7 +93,7 @@ else
             </div>
         
             @* LIST STUDENTs *@
-            <MudContainer Class="mt-2 px-0">
+            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                 <MudCard Class="mx-0">
                     <MudCardContent Style="background-color:rgba(249,249,249);">
                         @foreach(User student in lstStudents)
@@ -127,7 +127,7 @@ else
                 <div id="Accordion_Group" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
                     <div class="accordion-body" style="background-color:white">
                         <div id="T1">
-                            <MudContainer Class="mt-2 px-0">
+                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                         <MudSelect T="int" @ref="refGroups" Label="Group گروه" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
@@ -160,7 +160,7 @@ else
                 <div id="Accordion_Course" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
                     <div class="accordion-body" style="background-color:white">
                         <div id="T1">
-                            <MudContainer Class="mt-2 px-0">
+                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                         <MudSelect T="int" @ref="refCourses" Label="Course درس" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
@@ -193,7 +193,7 @@ else
                 <div id="Accordion_Exam" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
                     <div class="accordion-body" style="background-color:white">
                         <div id="T1">
-                            <MudContainer Class="mt-2 px-0">
+                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                         <MudSelect T="int" @ref="refCourses" Label="Course درس" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
@@ -230,7 +230,7 @@ else
                 <div id="Accordion_Message" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
                     <div class="accordion-body" style="background-color:white">
                         <div id="T1">
-                            <MudContainer Class="mt-2 px-0">
+                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                         <MudSelect T="int" @ref="refMessages" Label="Message پيام" Value="MessageId" ValueChanged="OnMessageChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
@@ -249,17 +249,16 @@ else
                     </div>
                 </div>
             </div>
-        
+            <hr style="color:red" />
+            @* Footer *@
+            <br />
+            <div style="text-align:center">
+                <button class="btn btn-link" @onclick= "()=> BtnBack()" title="Back to SwitchBoard بازگشت به صفحه اول">
+                    <img src="/img/icoBack2.png" style="width:30px" />
+                </button>
+            </div>        
         </div>
     </EditForm>
-    <hr style="color:red" />
-    @* Footer *@
-    <br />
-    <div style="text-align:center">
-        <button class="btn btn-link" @onclick= "()=> BtnBack()" title="Back to SwitchBoard بازگشت به صفحه اول">
-            <img src="/img/icoBack2.png" style="width:30px" />
-        </button>
-    </div>
     }
 <script>
     window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});

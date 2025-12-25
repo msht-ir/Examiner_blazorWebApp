@@ -22,11 +22,11 @@
         }
     else
         {
-        <EditForm Model="lstCourseExams">
+        <EditForm Model="lstCourseExams" style="max-width:600px; margin: 0 auto;">
             @foreach (var exam in lstCourseExams)
                 {
                 int examId = exam.ExamId;
-                <MudContainer Class="mt-2 px-0">
+                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                     <MudCard Class="mx-0">
                         <MudCardContent Style="background-color:whitesmoke;">
                             <table class="table table-borderless">

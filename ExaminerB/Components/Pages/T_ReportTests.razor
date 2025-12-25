@@ -37,7 +37,7 @@ else
         {
         <h4 style="text-align:center">Student Course Tests</h4>                
         }
-    <EditForm Model = "lstxTests">
+    <EditForm Model = "lstxTests" style="max-width:600px; margin: 0 auto;">
         <hr />
         <div style="text-align: center;">
              <!-- Heading Icons -->
@@ -67,7 +67,7 @@ else
         @foreach (var tst in lstxTests) 
             {
             @* Test *@
-            <MudContainer Class="mt-2 px-0">
+            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                 <MudCard Class="mx-0">
                     <MudCardContent Style="background-color:whitesmoke;">
                         @{

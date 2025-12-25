@@ -23,7 +23,7 @@ else
             <h6 style="color:indianred">@appState.Message</h6>
         </div>
         }
-    <EditForm Model="lstCourseTests">
+    <EditForm Model="lstCourseTests" style="max-width:600px; margin: 0 auto;">
         @if (appState.Cmd == "importexcelfile")
             {
             <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnCancel">
