@@ -73,20 +73,7 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Create_Student", user);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<List<User>> Read_Students (int userId, bool getStudentExams, bool getStudentCourses)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Students?getStudentExams={getStudentExams}&getStudentCourses={getStudentCourses}", userId);
-            if (response.IsSuccessStatusCode)
-                {
-                List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
-                return lstStudents;
-                }
-            else
-                {
-                return new List<User> ();
-                }
-            }
-        public async Task<List<User>> Read_StudentsByGroupId (int groupId, bool getStudentExams, bool getStudentCourses)
+        public async Task<List<User>> Read_StudentsByGroupId (int groupId, int getGCEM)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByGroupId?getStudentExams={getStudentExams}&getStudentCourses={getStudentCourses}", groupId);
             if (response.IsSuccessStatusCode)
@@ -99,20 +86,7 @@ namespace ExaminerB.Service
                 return new List<User> ();
                 }
             }
-        public async Task<List<User>> Read_StudentsByExamId (int examId, bool getStudentExams, bool getStudentCourses)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByExamId?getStudentExams={getStudentExams}&getStudentCourses={getStudentCourses}", examId);
-            if (response.IsSuccessStatusCode)
-                {
-                List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
-                return lstStudents;
-                }
-            else
-                {
-                return new List<User> ();
-                }
-            }
-        public async Task<List<User>> Read_StudentsByCourseId (int courseId, bool getStudentExams, bool getStudentCourses)
+        public async Task<List<User>> Read_StudentsByCourseId (int courseId, int getGCEM)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByCourseId?getStudentExams={getStudentExams}&getStudentCourses={getStudentCourses}", courseId);
             if (response.IsSuccessStatusCode)
@@ -125,7 +99,46 @@ namespace ExaminerB.Service
                 return new List<User> ();
                 }
             }
-        public async Task<User> Read_Student (int studentId, bool getStudentExams, bool getStudentCourses)
+        public async Task<List<User>> Read_StudentsByExamId (int examId, int getGCEM)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByExamId?getStudentExams={getStudentExams}&getStudentCourses={getStudentCourses}", examId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
+                return lstStudents;
+                }
+            else
+                {
+                return new List<User> ();
+                }
+            }
+        public async Task<List<User>> Read_StudentsByMessageId (int messageId, int getGCEM)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByExamId?getGCEM={getGCEM}", messageId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
+                return lstStudents;
+                }
+            else
+                {
+                return new List<User> ();
+                }
+            }
+        public async Task<List<User>> Read_StudentsByKeyword (int userId, string keyword, int getGCEM)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_Students?getStudentExams={getStudentExams}&getStudentCourses={getStudentCourses}", userId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
+                return lstStudents;
+                }
+            else
+                {
+                return new List<User> ();
+                }
+            }
+        public async Task<User> Read_Student (int studentId, int getGCEM)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_Student?getStudentExams={getStudentExams}&getStudentCourses={getStudentCourses}", studentId);
             if (response.IsSuccessStatusCode)

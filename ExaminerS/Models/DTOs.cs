@@ -15,10 +15,10 @@ namespace ExaminerS.Models
         public string UserRole { get; set; } = "";
         public string UserNickname { get; set; } = "";
         public int UserTags { get; set; } = 0;  //1:IsActive 2:CanChangePass 4:CanReviewExam 8:CanGetStudentExamTests 16:CanCorrectStudentExamTests 32:CanReviewStudentExamTests
-        public List<StudentExam> StudentExams { get; set; } = new List<StudentExam> ();
+        public List<StudentGroup> StudentGroups { get; set; } = new List<StudentGroup> ();
         public List<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse> ();
-        public List<Message> Messages { get; set; } = new List<Message> ();
-        public List<Group> Groups { get; set; } = new List<Group> ();
+        public List<StudentExam> StudentExams { get; set; } = new List<StudentExam> ();
+        public List<StudentMessage> StudentMessages { get; set; } = new List<StudentMessage> ();
         }
     //G
     public class Group
@@ -26,7 +26,7 @@ namespace ExaminerS.Models
         public int GroupId { get; set; } = 0;
         public string GroupName { get; set; } = "";
         public int UserId { get; set; } = 0;
-        public List<User> Students { get; set; } = new List<User> ();
+        public List<StudentGroup> Students { get; set; } = new List<StudentGroup> ();
         }
      //SG
     public class StudentGroup
@@ -36,6 +36,10 @@ namespace ExaminerS.Models
         public int GroupId { get; set; } = 0;
         public string DateTimeJoined { get; set; } = "";
         public int StudentGroupTags { get; set; } = 0;
+        public string GroupName { get; set; } = "";
+        public string StudentName { get; set; } = "";
+        public string StudentNickname { get; set; } = "";
+        public int StudentTags { get; set; } = 0;
         }  
     //C
     public class Course
@@ -48,7 +52,7 @@ namespace ExaminerS.Models
         public int CourseIndex { get; set; } = 0;
         public List<CourseTopic> CourseTopics { get; set; } = new List<CourseTopic> ();
         public List<CourseFolder> CourseFolders { get; set; } = new List<CourseFolder> ();
-        public List<User> Students { get; set; } = new List<User> ();
+        public List<StudentCourse> Students { get; set; } = new List<StudentCourse> ();
         }   
     //CF
     public class CourseFolder
@@ -73,8 +77,11 @@ namespace ExaminerS.Models
         public int StudentId { get; set; } = 0;
         public int CourseId { get; set; } = 0;
         public string CourseName { get; set; } = "";
+        public string StudentName { get; set; } = "";
+        public string StudentNickname { get; set; } = "";
         public int NumberOfTests { get; set; } = 0;
         public int CorrectAnswers { get; set; } = 0;
+        public int StudentCourseTags { get; set;  } = 0;
         }
     //SCT
     public class StudentCourseTest
@@ -128,7 +135,7 @@ namespace ExaminerS.Models
         public int ExamDuration { get; set; } = 0;
         public int ExamNTests { get; set; } = 0;
         public int ExamTags { get; set; } = 0; //1:active 2:SampleTestMode 4:TrainingMode 8:RealExamMode
-        // Wrapper properties for each flag
+        //wrapper properties for each flag
         public bool IsActive
             {
             get => (ExamTags & 1) == 1;
@@ -151,7 +158,7 @@ namespace ExaminerS.Models
                     ExamTags &= ~2;
                 }
             }
-        public List<User> Students { get; set; } = new List<User> ();
+        public List<StudentExam> Students { get; set; } = new List<StudentExam> ();
         }
     //EC
     public class ExamComposition
@@ -240,7 +247,7 @@ namespace ExaminerS.Models
         public string DateTimeCreated { get; set; } = "";
         public string MessageTitle { get; set; } = "";
         public string MessageBody { get; set; } = "";
-        public List<StudentMessage> StudentMessages { get; set; } = new List<StudentMessage> ();
+        public List<StudentMessage> Students { get; set; } = new List<StudentMessage> ();
         }
     //SM
     public class StudentMessage
