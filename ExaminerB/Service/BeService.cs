@@ -1971,10 +1971,10 @@ namespace ExaminerB.Services2Backend
                 //get students
                 if (getStudentsList)
                     {
-                    var lstStudents = await Read_StudentsByGCEMSIdAsync (exam.ExamId, "E", 4); //4:E
+                    var lstStudents = await Read_StudentExamsAsync (exam.ExamId, "ByExamId");
                     if (lstStudents != null)
                         {
-                        exam.Students = lstStudents[0].ExamStudents;
+                        exam.Students = lstStudents;
                         }
                     }
                 }
@@ -2526,7 +2526,7 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             return lstStudentsExam;
             }
-        public async Task<List<StudentExam>> Read_StudentsExamAsync (int examId)
+        public async Task<List<StudentExam>> Read_StudentExamsAsync (int Id, string mode)
             {
             int i = 0;
             List<StudentExam> lstStudentsExam = new ();
@@ -2538,14 +2538,25 @@ COMMIT TRANSACTION;
                 FROM StudentExams se 
                 INNER JOIN Exams e ON se.ExamId = e.ExamId
                 INNER JOIN Courses c ON e.CourseId = c.CourseId
-                INNER JOIN Students s ON se.StudentId = s.StudentId
-                WHERE se.ExamId=@examid 
-                ORDER BY e.ExamDateTime";
+                INNER JOIN Students s ON se.StudentId = s.StudentId ";
+            switch (mode)
+                {
+                case "ByStudentId":
+                    {
+                    sql+= " WHERE se.StudentId=@id ORDER BY e.ExamDateTime";   
+                    break;
+                    }
+                case "ByExamId":
+                    {
+                    sql+= " WHERE se.ExamId=@id ORDER BY e.ExamDateTime";   
+                    break;
+                    }
+                }
             try
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@examid", examId.ToString ());
+                cmd.Parameters.AddWithValue ("@id", Id);
                 var reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
