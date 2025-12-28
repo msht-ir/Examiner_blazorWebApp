@@ -232,7 +232,7 @@
             {
             user.UserId = Convert.ToInt32 (appState.UserId);
             lstGroups = await feService.Read_Groups (user, false, false);
-            lstStudents = await feService.Read_Students (user.UserId, false, false);
+            lstStudents = await feService.Read_StudentsByCourseId (user.UserId, 0);
             appState.SetExamId (examId);
             appState.SetCmd ("AddStudentToExam");
             StateHasChanged ();

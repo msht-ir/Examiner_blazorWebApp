@@ -18,26 +18,21 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region S:Students
         Task<int> Create_StudentAsync (User student);
-        Task<List<User>> Read_StudentsAsync (int userId, bool readStudentExams, bool readStudentCourses);
-        Task<List<User>> Read_StudentsByGroupIdAsync (int groupId, bool readStudentExams, bool readStudentCourses);
-        Task<List<User>> Read_StudentsByExamIdAsync (int examId, bool readStudentExams, bool readStudentCourses);
-        Task<List<User>> Read_StudentsByCourseIdAsync (int courseId, bool readStudentExams, bool readStudentCourses);
-        Task<User> Read_StudentAsync (int studentId, bool readStudentExams, bool readStudentCourses);
-        Task<bool> Update_StudentsTagsAsync (User student);
-        Task<bool> Update_StudentAsync (User studen);
-        Task<bool> Update_StudentPasswordAsync (User user);
-        Task<bool> Delete_StudentsAsync (int groupId);
+        Task<List<User>> Read_StudentsByKeywordAsync (int userId, string keyword, int readStudentGCEM);
+        Task<List<User>> Read_StudentsByGCEMSIdAsync (int Id, string mode, int readStudentGCEM);
+        Task<bool> Update_StudentAsync (User student);
+        Task<bool> Remove_StudentFromListAsync (int studentId, string mode);
         Task<bool> Delete_StudentAsync (int studentId);
         #endregion
         #region G:Groups
         Task<int> Create_GroupAsync (Group group);
-        Task<List<Group>> Read_GroupsAsync (User user, bool getStudentExams, bool getStudentCourses);
-        Task<Group> Read_GroupAsync (int groupId, bool getStudentExams, bool getStudentCourses);
+        Task<List<Group>> Read_GroupsAsync (User user, bool getGroupStudents);
+        Task<Group> Read_GroupAsync (int groupId);
         Task<bool> Update_GroupAsync (Group group);
-        Task<bool> Delete_GroupsAsync (User user);
         Task<int> Delete_GroupAsync (int groupId);
         #endregion
         #region SG:StudentGroups
+        Task<List<StudentGroup>> Read_StudentGroupsAsync (int Id, string mode);
         #endregion
         #region C:Courses
         Task<int> Create_CourseAsync (Course course);
@@ -61,11 +56,10 @@ namespace ExaminerB.Services2Backend
         #region SC:StudentCourses
         Task<bool> Create_StudentCoursesAsync (int groupId, int courseId);
         Task<bool> Create_StudentCourseAsync (int studentId, int courseId);
-        Task<List<StudentCourse>> Read_StudentCoursesAsync (int studentid);
+        Task<List<StudentCourse>> Read_StudentCoursesAsync (int Id, string mode);
         Task<StudentCourse> Read_StudentCourseAsync (int studentCourseId);
-        Task<bool> Delete_StudentCoursesAsync (int courseId, int groupId);
+        Task<bool> Delete_StudentCoursesAsync (int Id, string mode);
         Task<bool> Delete_StudentCourseAsync (int studentCourseId);
-        Task<bool> Delete_StudentCourseByStudentCourseIdAsync (int studentCourseId);
         Task<bool> CalculatePoints_StudentCourseAsync (StudentCourse studentCourse);
         #endregion
         #region SCT:StudentCourseTests
@@ -94,8 +88,8 @@ namespace ExaminerB.Services2Backend
         Task<List<TestOption>> Read_TestOptionsAsync (int testId, SqlConnection cnn);
         Task<TestOption> Read_TestOptionAsync (int testOptionId, SqlConnection cnn);
         Task<bool> Update_TestOptionAsync (TestOption testOption);
-        Task<bool> Delete_TestOptionsAsync (int testOptionId);
-        Task<bool> Delete_TestOptionAsync (int testId);
+        Task<bool> Delete_TestOptionsAsync (int testId);
+        Task<bool> Delete_TestOptionAsync (int testOptionId);
         #endregion
         #region E:Exams
         Task<int> Create_ExamAsync (Exam exam);
@@ -125,9 +119,10 @@ namespace ExaminerB.Services2Backend
         #region SE:StudentExams
         Task<int> Create_StudentExamsAsync (StudentExam studentExam, int groupId);
         Task<int> Create_StudentExamAsync (StudentExam studentExam);
-        Task<List<StudentExam>> Read_StudentExamsAsync (int studentId, bool readInactiveExams);
+        Task<List<StudentExam>> Read_StudentExamsByStudentIdAsync (int studentId, int getParams);
         Task<StudentExam> Read_StudentExamAsync (int studentExamId, bool readInactiveExams);
-        Task<List<StudentExam>> Read_StudentsExamAsync (int examId);
+        Task<List<StudentExam>> Read_StudentsExamAsync (int examId, bool readInactiveExams);
+        Task<List<StudentExam>> Read_StudentExamsAsync (int Id, string mode);
         Task<bool> Update_StudentExamAsync (StudentExam studentExam);
         Task<bool> Update_StudentsExamTagsAsync (string mode, int examId);
         Task<bool> Update_StudentExamTagsAsync (StudentExam tempStudentExam);
@@ -158,7 +153,7 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region SM:StudentMessages
         Task<int> Create_StudentMessageAsync (Message message, string mode, int recipientId, bool typeFeedback);
-        Task<List<Message>> Read_StudentMessagesByStudentIdAsync (int studentId);
+        Task<List<StudentMessage>> Read_StudentMessagesByStudentIdAsync (int studentId);
         Task<List<StudentMessage>> Read_StudentMessagesByMessageIdAsync (int messageId);
         Task<Message> Read_StudentMessageAsync (int studentMessageId);
         Task<bool> Update_StudentMessageTagsAsync (StudentMessage studentMessage);

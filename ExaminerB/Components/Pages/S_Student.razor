@@ -190,7 +190,7 @@
                                 @* List messages *@
                                 @foreach (Message message in lstMessages)
                                     {
-                                    foreach(StudentMessage studentMessage in message.StudentMessages)
+                                    foreach(StudentMessage studentMessage in message.Students)
                                         {                                  
                                         <MudContainer Class="mt-2 px-0">
                                             <MudCard Class="mx-0">
@@ -494,7 +494,7 @@
         lstMessages = await feService.Read_StudentMessagesByStudentId (student.UserId);        
         //first bit: 0 = unread, 1 = read
         unreadCount = lstMessages
-            .SelectMany(msg => msg.StudentMessages)
+            .SelectMany(msg => msg.Students)
             .Count(sm => (sm.StudentMessageTags & 1) == 0);
 
         }

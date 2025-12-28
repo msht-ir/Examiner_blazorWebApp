@@ -68,7 +68,7 @@ else
     <EditForm Model="lstMessages">
         @foreach(Message message in lstMessages)
         {
-        foreach(StudentMessage stmsg in message.StudentMessages)
+        foreach(StudentMessage stmsg in message.Students)
             {
             <MudContainer Class="mt-2 px-0">
                 <MudCard Class="mx-0">
@@ -261,7 +261,7 @@ else
         nMessagesNotAnswered = 0;
         foreach (Message message in lstMessages)
             {
-            foreach(StudentMessage stmsg in message.StudentMessages)
+            foreach(StudentMessage stmsg in message.Students)
                 {
                 nMessagesAll++;
                 if((stmsg.StudentMessageTags & 1) == 1)

@@ -602,7 +602,6 @@ namespace ExaminerB.Services2Backend
             }
         #endregion
         #region SG:StudentGroups
-        //Create SG
         public async Task<List<StudentGroup>> Read_StudentGroupsAsync (int Id, string mode)
             {
             //read SG records
@@ -658,8 +657,7 @@ namespace ExaminerB.Services2Backend
                 return new List<StudentGroup> ();
                 }
             }
-        //Update Tags
-        //Delete SG
+        //Update Tags , Delete SG
         #endregion
         #region C:Courses
         public async Task<int> Create_CourseAsync (Course course)
