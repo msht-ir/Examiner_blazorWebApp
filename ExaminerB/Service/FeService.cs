@@ -688,23 +688,23 @@ namespace ExaminerB.Service
             }
         #endregion
         #region SE:StudentExams
-        public async Task<int> Create_StudentExams (int groupId, int examId)
+        public async Task<int> Create_StudentExams (int Id, string mode, int examId)
             {
             StudentExam studentExam = new StudentExam () { StudentId = 0, ExamId = examId, StartDateTime = "-", FinishDateTime = "-", StudentExamTags = 0, StudentExamPoint = 0 };
-            var response = await _http.PostAsJsonAsync ($"api/Create_StudentExams?groupId={groupId}", studentExam);
+            var response = await _http.PostAsJsonAsync ($"api/Create_StudentExams?mode={mode}&examId={examId}", Id);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<int> Create_StudentExam (int studentId, int examId)
+        public async Task<int> Create_StudentExam (StudentExam studentExam)
             {
-            StudentExam studentExam = new StudentExam () { StudentId = studentId, ExamId = examId, StartDateTime = "-", FinishDateTime = "-", StudentExamTags = 0, StudentExamPoint = 0 };
             var response = await _http.PostAsJsonAsync ("api/Create_StudentExam", studentExam);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<List<StudentExam>> Read_StudentExams (int studentId, bool readInactiveExams)
+        public async Task<List<StudentExam>> Read_StudentExams (int Id, string mode)
             {
             try
                 {
-                var response = await _http.PostAsJsonAsync ($"api/Read_StudentExams?readInactiveExams={readInactiveExams}", studentId);
+                //modes: BystudentId, ByExamId
+                var response = await _http.PostAsJsonAsync ($"api/Read_StudentExams?mode={mode}", Id);
                 if (response.IsSuccessStatusCode)
                     {
                     return await response.Content.ReadFromJsonAsync<List<StudentExam>> () ?? new List<StudentExam> ();
@@ -729,16 +729,6 @@ namespace ExaminerB.Service
                 return studentExam;
                 }
             return new StudentExam ();
-            }
-        public async Task<List<StudentExam>> Read_StudentsExam (int examId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsExam", examId);
-            if (response.IsSuccessStatusCode)
-                {
-                List<StudentExam>? lstStudentsExam = await response.Content.ReadFromJsonAsync<List<StudentExam>> ();
-                return lstStudentsExam ?? new List<StudentExam> ();
-                }
-            return new List<StudentExam> ();
             }
         public async Task<bool> Update_StudentExam (StudentExam studentExam)
             {
@@ -820,30 +810,12 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Delete_StudentExam", studentExamId);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<bool> CalculatePoints_StudentExams (int studentexamid)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/ClaculatePoints_StudentExams", studentexamid);
-            return (response.IsSuccessStatusCode) ? true : false;
-            }
         #endregion
         #region SET:StudentExamTests
         public async Task<int> Create_StudentExamTest (StudentExamTest studentExamTest)
             {
             var response = await _http.PostAsJsonAsync ("api/Create_StudentExamTest", studentExamTest);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<List<StudentExamTest>> Read_StudentExamTests (int studentExamId, bool readOptions)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentExamTests?readOptions={readOptions}", studentExamId);
-            if (response.IsSuccessStatusCode)
-                {
-                var lstStudentExamTests = await response.Content.ReadFromJsonAsync<List<StudentExamTest>> ();
-                return lstStudentExamTests ?? new List<StudentExamTest> ();
-                }
-            else
-                {
-                return new List<StudentExamTest> ();
-                }
             }
         public async Task<StudentExamTest> Read_StudentExamTest (long studentExamTestId, bool readOptions)
             {
@@ -856,6 +828,19 @@ namespace ExaminerB.Service
             else
                 {
                 return new StudentExamTest ();
+                }
+            }
+        public async Task<List<StudentExamTest>> Read_StudentExamTests (int studentExamId, bool readOptions)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentExamTests?readOptions={readOptions}", studentExamId);
+            if (response.IsSuccessStatusCode)
+                {
+                var lstStudentExamTests = await response.Content.ReadFromJsonAsync<List<StudentExamTest>> ();
+                return lstStudentExamTests ?? new List<StudentExamTest> ();
+                }
+            else
+                {
+                return new List<StudentExamTest> ();
                 }
             }
         public async Task<List<StudentExamTest>> Read_StudentsExamTest (StudentExamTest studentExamTest)
@@ -912,6 +897,11 @@ namespace ExaminerB.Service
             {
             var response = await _http.PostAsJsonAsync ("api/Delete_StudentExamTest", studentExamTestId);
             return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool> CalculatePoints_StudentExams (int studentexamid)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/ClaculatePoints_StudentExams", studentexamid);
+            return (response.IsSuccessStatusCode) ? true : false;
             }
         #endregion
         #region M:Messages

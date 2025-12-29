@@ -514,9 +514,9 @@ namespace ExaminerB.Backend
         #endregion
         #region SE:StudentExams
         [HttpPost ("Create_StudentExams")]
-        public async Task<ActionResult<int>> Create_StudentExams ([FromBody] StudentExam studentExam, [FromQuery] int groupId)
+        public async Task<ActionResult<int>> Create_StudentExams ([FromBody] int Id, [FromQuery] string mode, [FromQuery] int examId)
             {
-            var result = await _BeService.Create_StudentExamsAsync (studentExam, groupId);
+            var result = await _BeService.Create_StudentExamsAsync (Id, mode, examId);
             return Ok (result);
             }
         [HttpPost ("Create_StudentExam")]
@@ -525,30 +525,18 @@ namespace ExaminerB.Backend
             var result = await _BeService.Create_StudentExamAsync (studentExam);
             return Ok (result);
             }
-        [HttpPost ("Read_StudentExamsByStudentId")]
-        public async Task<ActionResult<List<StudentExam>>> Read_StudentExamsByStudentId ([FromBody] int studentId, [FromQuery] int getParams)
-            {
-            var result = await _BeService.Read_StudentExamsByStudentIdAsync (studentId, getParams);
-            return Ok (result);
-            }
-        [HttpPost ("Read_StudentExam")]
-        public async Task<ActionResult<StudentExam>> Read_StudentExam ([FromBody] int studentExamId, [FromQuery] bool readInactiveExams)
-            {
-            var result = await _BeService.Read_StudentExamAsync (studentExamId, readInactiveExams);
-            return Ok (result);
-            }
-        [HttpPost ("Read_StudentsExam")]
-        public async Task<ActionResult<List<StudentExam>>> Read_StudentsExam ([FromBody] int examId, [FromQuery] bool readInactiveExams)
-            {
-            var result = await _BeService.Read_StudentsExamAsync (examId, readInactiveExams);
-            return Ok (result);
-            }
         [HttpPost ("Read_StudentExams")]
         public async Task<ActionResult<List<StudentExam>>> Read_StudentExams ([FromBody] int Id, [FromQuery] string mode)
             {
             var result = await _BeService.Read_StudentExamsAsync (Id, mode);
             return Ok (result);
             }   
+        [HttpPost ("Read_StudentExam")]
+        public async Task<ActionResult<StudentExam>> Read_StudentExam ([FromBody] int studentExamId, [FromQuery] bool readInactiveExams)
+            {
+            var result = await _BeService.Read_StudentExamAsync (studentExamId, readInactiveExams);
+            return Ok (result);
+            }
         [HttpPost ("Update_StudentExam")]
         public async Task<ActionResult<bool>> Update_StudentExam ([FromBody] StudentExam studentExam)
             {
@@ -583,12 +571,6 @@ namespace ExaminerB.Backend
         public async Task<ActionResult<bool>> Delete_StudentExam ([FromBody] int studentExamId)
             {
             var result = await _BeService.Delete_StudentExamAsync (studentExamId);
-            return Ok (result);
-            }
-        [HttpPost ("CalculatePoints_StudentExams")]
-        public async Task<ActionResult<bool>> CalculatePoints_StudentExams (int studentexamid)
-            {
-            var result = await _BeService.CalculatePoints_StudentExamsAsync (studentexamid);
             return Ok (result);
             }
         #endregion
@@ -648,9 +630,15 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Delete_StudentExamTest")]
-        public async Task<ActionResult<bool>> Delete_StudentExamTest ([FromBody] long studentExamTestId, int answerid)
+        public async Task<ActionResult<bool>> Delete_StudentExamTest ([FromBody] long studentExamTestId)
             {
             var result = await _BeService.Delete_StudentExamTestAsync (studentExamTestId);
+            return Ok (result);
+            }
+        [HttpPost ("CalculatePoints_StudentExams")]
+        public async Task<ActionResult<bool>> CalculatePoints_StudentExams (int studentexamid)
+            {
+            var result = await _BeService.CalculatePoints_StudentExamsAsync (studentexamid);
             return Ok (result);
             }
         #endregion
