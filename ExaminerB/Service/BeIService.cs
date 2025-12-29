@@ -85,8 +85,6 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region TO:TestOptions
         Task<int> Create_TestOptionAsync (TestOption testOption);
-        Task<List<TestOption>> Read_TestOptionsAsync (int testId, SqlConnection cnn);
-        Task<TestOption> Read_TestOptionAsync (int testOptionId, SqlConnection cnn);
         Task<bool> Update_TestOptionAsync (TestOption testOption);
         Task<bool> Delete_TestOptionsAsync (int testId);
         Task<bool> Delete_TestOptionAsync (int testOptionId);
