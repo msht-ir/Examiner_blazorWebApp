@@ -511,7 +511,8 @@ else
             case "studentcoursetests":
                     {
                     lstxTests.Clear ();
-                    List<StudentCourseTest> lstStudentCourseTests = await feService.Read_StudentCourseTests (Convert.ToInt32 (appState.StudentCourseId), true);
+                    StudentCourse studentCourse = new StudentCourse (); //{ CourseId = Convert.ToInt32 (appState.CourseId) };
+                    List<StudentCourseTest> lstStudentCourseTests = await feService.Read_StudentCourseTests (studentCourse, true);
                     //copy data to a shared satandard list so that html code uses it
                     foreach(StudentCourseTest sctest in lstStudentCourseTests)
                         {

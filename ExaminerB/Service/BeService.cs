@@ -282,7 +282,7 @@ namespace ExaminerB.Services2Backend
                 {
                 foreach (User student in lstStudents)
                     {
-                    student.StudentExams = await Read_StudentExamsByStudentIdAsync (student.UserId, 3); //3: get {1:inactives + 2:testOptions} 
+                    student.StudentExams = await Read_StudentExamsAsync (Id:student.UserId, mode:"ByStudentExam"); //3: get {1:inactives + 2:testOptions} 
                     }
                 }
             if ((readStudentGCEM & 8) == 8)
@@ -374,7 +374,7 @@ namespace ExaminerB.Services2Backend
                     //read studentExams records
                     foreach(User student in lstStudents)
                         {
-                        student.StudentExams = await Read_StudentExamsByStudentIdAsync (student.UserId, 1); //1:getActives
+                        student.StudentExams = await Read_StudentExamsAsync (student.UserId, "ByStudentId"); //1:getActives
                         }
                     }
                 if((readStudentGCEM & 8) == 8)
@@ -2556,7 +2556,7 @@ COMMIT TRANSACTION;
                 int c = cmd.ExecuteNonQuery ();
                 await cnn.CloseAsync ();
                 //get list of students have this exam
-                List<StudentExam> lstStudentsExams = await Read_StudentsExamAsync (examId, true);
+                List<StudentExam> lstStudentsExams = await Read_StudentExamsAsync (examId, "ByExamid");
                 foreach (StudentExam stdntex in lstStudentsExams)
                     {
                     if (stdntex.FinishDateTime.Length > 0)

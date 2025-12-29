@@ -164,14 +164,14 @@ else
     public bool _hasFetched = false;
     User user = new User ();
     List<User> lstStudents = new List<User> ();
-    
+
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            
+
             Navman.NavigateTo ("/Login");
             }
         await ReadPageDataLists ();
@@ -242,15 +242,15 @@ else
                     {
                     case "students":
                             {
-                            var resultx = await feService.Read_StudentsByGroupId (id, 15);
+                            var resultx = await feService.Read_StudentsByGCEMId (id, "ByGroupId", 15);
                             lstStudents = resultx;
                             break;
                             }
                     case "student":
                             {
-                            User student = await feService.Read_Student (id, 15); //15 = all GCEM
-                            student.StudentExams = await feService.Read_StudentExams (id, true);
-                            student.StudentCourses = await feService.Read_StudentCourses (id);
+                            List<User> students = await feService.Read_StudentsByGCEMId (id, "S", 15); //15 = all GCEM
+                            students[0].StudentExams = await feService.Read_StudentExams (id, "ByStudentId");
+                            students[0].StudentCourses = await feService.Read_StudentCourses (id, "ByStudentId");
                             //lstStudents.Add (student);
                             break;
                             }
@@ -278,16 +278,16 @@ else
                     {
                     case "students":
                             {
-                            var resultx = await feService.Read_StudentsByGroupId (id, 15);
+                            var resultx = await feService.Read_StudentsByGCEMId (id,"G", 15);
                             lstStudents = resultx;
                             break;
                             }
                     case "student":
                             {
-                            User student = await feService.Read_Student (id, 15);
-                            student.StudentExams = await feService.Read_StudentExams (id, true);
-                            student.StudentCourses = await feService.Read_StudentCourses (id);
-                            lstStudents.Add (student);
+                            List<User> student = await feService.Read_StudentsByGCEMId (id, "S", 15);
+                            student[0].StudentExams = await feService.Read_StudentExams (id, "ByStudentId");
+                            student[0].StudentCourses = await feService.Read_StudentCourses (id, "ByStudentId");
+                            lstStudents.Add (student[0]);
                             break;
                             }
                     }
@@ -315,27 +315,27 @@ else
             case "groupStudents":
                     {
                     appState.SetReturnPage ($"/T_Students");
-                    var result = await feService.Read_StudentsByGroupId (id, 15);
+                    var result = await feService.Read_StudentsByGCEMId (id, "ByGroupId", 15);
                     lstStudents = result;
                     break;
                     }
             case "oneStudent":
                     {
                     appState.SetReturnPage ($"/T_Students");
-                    User student = await feService.Read_Student (id, 15);
-                    lstStudents.Add (student);
+                    List<User> students = await feService.Read_StudentsByGCEMId (id, "ByStudentId", 15);
+                    lstStudents.Add (students[0]);
                     break;
                     }
             case "examStudents":
                     {
                     appState.SetReturnPage ($"/T_Exams");
-                    lstStudents = await feService.Read_StudentsByExamId (id, 15);
+                    lstStudents = await feService.Read_StudentsByGCEMId (id, "ByExamId", 15);
                     break;
                     }
             case "courseStudents":
                     {
                     appState.SetReturnPage ($"/T_Courses");
-                    lstStudents = await feService.Read_StudentsByCourseId (id, 15);
+                    lstStudents = await feService.Read_StudentsByGCEMId (id, "ByCourseId", 15);
                     break;
                     }
             }

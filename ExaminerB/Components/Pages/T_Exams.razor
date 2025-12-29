@@ -231,8 +231,8 @@
         if (appState.Cmd != "AddStudentToExam")
             {
             user.UserId = Convert.ToInt32 (appState.UserId);
-            lstGroups = await feService.Read_Groups (user, false, false);
-            lstStudents = await feService.Read_StudentsByCourseId (user.UserId, 0);
+            lstGroups = await feService.Read_Groups (user, false);
+            lstStudents = await feService.Read_StudentsByGCEMId (user.UserId, "ByCourseId", 0);
             appState.SetExamId (examId);
             appState.SetCmd ("AddStudentToExam");
             StateHasChanged ();
@@ -245,7 +245,7 @@
     public async Task BtnCreateStudentExams (int examId)
         {
         _hasFetched = false;
-        int result = await feService.Create_StudentExams (intGroupId, examId);
+        int result = await feService.Create_StudentExams (intGroupId,"G",examId);
         if (result > 0)
             {
             appState.SetCmd("");
@@ -256,7 +256,8 @@
     public async Task BtnCreateStudentExam (int examId)
         {
         _hasFetched = false;
-        int result = await feService.Create_StudentExam (intStudentId, examId);
+        StudentExam studentExam = new StudentExam ();
+        int result = await feService.Create_StudentExam (studentExam);
         if (result > 0)
             {
             appState.SetCmd("");

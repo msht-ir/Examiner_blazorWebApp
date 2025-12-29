@@ -94,7 +94,7 @@
             Navman.NavigateTo ("/Login");
             }
         student.UserName = appState.UserName;
-        lstStudentCourseTests = await feService.Read_StudentCourseTests (studentCourseId, true);
+        lstStudentCourseTests = await feService.Read_StudentCourseTests (studentCourse, true);
         if (!hasFetched)
             hasFetched = true; 
         } 

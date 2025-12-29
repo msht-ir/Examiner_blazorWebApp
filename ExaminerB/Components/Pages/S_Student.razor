@@ -316,11 +316,11 @@
             {
             //on first run, student.UserId is 0
             //student.UserId = appState.UserId ?? 0;
-            lstStudentExams = await feService.Read_StudentExams(student.UserId, false)?? new List<StudentExam>();
+            lstStudentExams = await feService.Read_StudentExams(student.UserId, "ByStudentId")?? new List<StudentExam>();
             student.UserTags = Convert.ToInt32(appState.UserTags);
             student.UserName = appState.UserName ?? "";
             student.UserNickname = appState.UserNickname ?? "";
-            lstStudentCourses = await feService.Read_StudentCourses (student.UserId);
+            lstStudentCourses = await feService.Read_StudentCourses (student.UserId, "ByStudentId");
             await ReadMessageList ();
             _hasFetched = true;
             }
@@ -409,7 +409,7 @@
             {
             var result = await feService.Delete_StudentCourseTests (mode, studentCourse);
             //refresh
-            lstStudentCourses = await feService.Read_StudentCourses (student.UserId);        
+            lstStudentCourses = await feService.Read_StudentCourses (student.UserId, "ByStudentId");        
             }
         }
     //btns for StudentMessages

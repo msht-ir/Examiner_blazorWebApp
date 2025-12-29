@@ -375,7 +375,7 @@ else
         if (user.UserId > 0)
             {
             //on second rener, user.UserId will get its value
-            lstGroups = await feService.Read_Groups (user, false, false); 
+            lstGroups = await feService.Read_Groups (user, false); 
             lstCourses = await feService.Read_Courses (user.UserId); 
             _hasFetched = true;
             }
@@ -428,7 +428,7 @@ else
                 UserRole = appState.UserRole,
                 TeacherId = Convert.ToInt32(appState.GroupId)
             };
-            lstGroups = await feService.Read_Groups (user, false, false);
+            lstGroups = await feService.Read_Groups (user, false);
             group.GroupName = ""; //reset input text
             StateHasChanged ();            
             }
@@ -458,7 +458,7 @@ else
                 UserRole = appState.UserRole,
                 TeacherId = Convert.ToInt32(appState.GroupId)
             };
-            lstGroups = await feService.Read_Groups(user, false, false);
+            lstGroups = await feService.Read_Groups(user, false);
             group.GroupName = ""; //reset input text
             StateHasChanged ();            
             }
@@ -488,7 +488,7 @@ else
                     UserRole = appState.UserRole,
                     TeacherId = Convert.ToInt32(appState.GroupId)
                 };
-                lstGroups = await feService.Read_Groups(user, false, false);
+                lstGroups = await feService.Read_Groups(user, false);
                 //group.GroupName = ""; //reset input text
                 StateHasChanged ();            
                 }
@@ -521,7 +521,7 @@ else
         if (_tag16) tags |= 16;
         if (_tag32) tags |= 32;
         User student = new User () { UserName= "-", UserPass= "-", UserRole="-", UserTags = tags, TeacherId=teacherId};
-        bool result = await feService.Update_StudentsTags (student);
+        bool result = await feService.Update_Student (student);
         if (result)
             {
             await JS.InvokeVoidAsync("alert", "\n\nStudent tags updated.");
@@ -534,7 +534,7 @@ else
                 UserRole = appState.UserRole,
                 TeacherId = Convert.ToInt32(appState.GroupId)
             };
-            lstGroups = await feService.Read_Groups(user, false, false);
+            lstGroups = await feService.Read_Groups(user, false);
             group.GroupName = ""; //reset input text
             StateHasChanged ();
             }
@@ -649,7 +649,7 @@ else
                 UserRole = appState.UserRole,
                 TeacherId = Convert.ToInt32(appState.GroupId)
             };
-            lstGroups = await feService.Read_Groups(user, false, false);
+            lstGroups = await feService.Read_Groups(user, false);
             appState.SetCmd ("");
             StateHasChanged ();
             }
@@ -674,7 +674,7 @@ else
                 UserRole = appState.UserRole,
                 TeacherId = Convert.ToInt32(appState.GroupId)
             };
-            lstGroups = await feService.Read_Groups(user, false, false);
+            lstGroups = await feService.Read_Groups(user, false);
             group.GroupName = ""; //reset input text
             StateHasChanged ();            
             }
@@ -697,7 +697,7 @@ else
                     UserRole = appState.UserRole,
                     TeacherId = Convert.ToInt32(appState.GroupId)
                     };
-                lstGroups = await feService.Read_Groups(user, false, false);
+                lstGroups = await feService.Read_Groups(user, false);
                 group.GroupName = ""; //reset input text
                 StateHasChanged ();            
                 }
@@ -763,7 +763,7 @@ else
                     UserRole = appState.UserRole,
                     TeacherId = Convert.ToInt32(appState.GroupId)
                 };
-                lstGroups = await feService.Read_Groups (userx, false, false);
+                lstGroups = await feService.Read_Groups (userx, false);
                 group.GroupName = "";
                 StateHasChanged ();            
             }
@@ -835,7 +835,7 @@ else
             }
         else
             {
-            bool result = await feService.Delete_StudentCourses (selectedCourseId, groupId);
+            bool result = await feService.Delete_StudentCourses (selectedCourseId, "ByCourseId");
             if(result)
                 {
                 await JS.InvokeVoidAsync("alert", "\nAll students in this group are removed from the course.");

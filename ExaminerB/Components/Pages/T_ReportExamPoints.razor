@@ -209,7 +209,7 @@ else
         exam = await feService.Read_Exam (exam.ExamId, true);
         //
         lstStudentsExam.Clear ();
-        lstStudentsExam = await feService.Read_StudentsExam (Convert.ToInt32 (appState.ExamId));
+        lstStudentsExam = await feService.Read_StudentExams (Convert.ToInt32 (appState.ExamId), "ByExamId");
         if (lstStudentsExam.Count > 0)
             {
             exam.ExamDateTime = lstStudentsExam[0].ExamDateTime;
