@@ -10,17 +10,17 @@
 @implements IDisposable
 @if (!_hasFetched)
     {
-    <_Loading />
+    <_LoadingTimer />
     }
 else
     {
-    <_Salam />
-    <div style="text-align: center;">
+    @* <_eLibWecome /> *@
+    <div style="text-align: center;max-width:500px; margin: 0 auto;">
             <h3 style="font-style:italic;color:steelblue">e<span style="color:lightpink">L</span>ib<span style="font-size:small"> Teacher -Projects</span></h3>
             <hr style="color:red" />
         </div>
         <EditForm Model="lstProjects">
-            <div class="accordion" id="accordionProjects">
+            <div class="accordion" id="accordionProjects" style="max-width:500px; margin: 0 auto;">
                 @foreach (Project project in lstProjects)
                     {
                     var collapseId = $"collapse{project.ProjectId}";
@@ -34,8 +34,10 @@ else
                         clps = "collapse show";
                         }
                     <div class="accordion-item">
-                        <h4 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button"
+                        <h4 class="accordion-header" style="background-color:rgba(252,252,252)">
+                            <button class="accordion-button collapsed" 
+                                    style="background-color:rgba(245,245,245)"
+                                    type="button"
                                     data-bs-toggle="collapse"
                                     data-bs-target="#@collapseId"
                                     aria-expanded="true"
@@ -44,13 +46,13 @@ else
                             </button>
                         </h4>
                         <div id="@collapseId" class="accordion-collapse collapse" data-bs-parent="#accordionProjects">
-                            <div class="accordion-body" style="background-color:rgba(252,252,252)">
+                            <div class="accordion-body" style="background-color:rgba(250,250,250)">
                                 <div id="T1">
                                     @if ((appState.Cmd == "EditProject") && (appState.ProjectId == project.ProjectId))
                                         {
                                         string btnProjectId = "btnProjectName";
                                         <div class="mb-3">
-                                            <input class="form-control" @ref="txtProjectName" @bind="project.ProjectName" placeholder="Enter Project Name...">
+                                            <MudTextField @ref="refProjectName" @bind-Value="project.ProjectName" Label="Project Name... نام پروژه" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                         </div>
                                         <button class="btn btn-link" name="@btnProjectId" @onclick="()=>BtnUpdateProject(project)">
                                             <img src="/img/icoSave2.png" width="25" />
@@ -77,8 +79,8 @@ else
                                             {
                                             <div>
                                                 <div class="mb-3">
-                                                    <img src="/img/icoCluster_bw_02.png" width="24" />
-                                                    <input class="form-control d-inline" style="width:60%" @ref="txtNewSubproject" @bind="txtNewSubprojectTitle" placeholder="New subproject...">
+                                                    <img src="/img/icoFolderSearch.png" width="24" />
+                                                    <MudTextField @ref="refNewSubproject" @bind-Value="txtNewSubprojectTitle" Label="New subproject...زيرپروژه جديد " Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                                     <button class="btn btn-link" @onclick="()=>BtnSaveNewSubproject(project.ProjectId)">
                                                         <img src="/img/icoSave2.png" width="24" />
                                                     </button>
@@ -97,7 +99,7 @@ else
                                             @foreach (Subproject subProject in project.Subprojects)
                                                 {
                                                 var collapseId2 = $"collapse{subProject.SubprojectId}";
-                                                <div class="accordion-item mb-1">
+                                                <div class="accordion-item mb-2">
                                                     <h4 class="accordion-header">
                                                         <button class="accordion-button collapsed"
                                                                 type="button"
@@ -106,18 +108,17 @@ else
                                                                 aria-expanded="true"
                                                                 aria-controls="@collapseId2">
                                                             <h6>
-                                                                @* <img src="/img/icoCluster_bw_02v.png" width="15" /> *@
                                                                 @subProject.SubprojectName
-                                                                </h6>
+                                                            </h6>
                                                         </button>
                                                     </h4>
                                                     <div id="@collapseId2" class="accordion-collapse collapse" data-bs-parent="#accordionSubprojects-@project.ProjectId">
-                                                        <div class="accordion-body" style="background-color:whitesmoke">
+                                                        <div class="accordion-body" style="background-color:rgba(252,252,252)">
                                                             <div class="mb-1">
-                                                                <input class="form-control d-inline" @bind="subProject.SubprojectName" placeholder="Subproject name" style="font-weight:normal; width:90%;">
+                                                                <MudTextField @ref="refSubprojectName" @bind-Value="subProject.SubprojectName" Label="Subproject name نام زير پروژه" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                                             </div>
                                                             <div class="mb-1">
-                                                                <input class="form-control d-inline" @bind="subProject.SubprojectNotes" placeholder="subproject note" style="font-weight:normal; width:90%;">
+                                                                <MudTextField @ref="refSubprojectNote" @bind-Value="subProject.SubprojectNotes" Label="Note توضيحات" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                                             </div>
                                                             <div style="text-align: center;">
                                                                 <button class="btn btn-link" @onclick="()=>BtnUpdateSubproject(subProject)">
@@ -129,32 +130,48 @@ else
                                                                 <hr syle="color:red" />
                                                                 @foreach (Note notex in subProject.Notes)
                                                                     {
+                                                                    if((appState.SelectedNoteId == Convert.ToInt32(notex.NoteId)) & (_cmd == "ShowNoteInDialog"))
+                                                                        {
+                                                                        <E_Modal_ShowNote />
+                                                                        }
                                                                     if ((notex.NoteTags & 1) == 1)
-                                                                    {
+                                                                        {
                                                                         <div class="mt-3 text-end">
-                                                                            <h6 style="color:indianred">
+                                                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
                                                                                 <img src="/img/icoCalendar.png" width="18" />
+                                                                            </button>
+                                                                            <span style="color:indianred; font-weight:bold;">
                                                                                 @notex.NoteDatum
-                                                                            </h6>
-                                                                            <div class="card">
-                                                                                <div class="card-body bg-light" style="font-size:x-small;font-weight:bold;">
-                                                                                    @notex.NoteText
-                                                                                </div>
-                                                                            </div>
+                                                                            </span>
+                                                                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                                                                <MudCard Class="mx-0">
+                                                                                    <MudCardContent Style="background-color:whitesmoke;">
+                                                                                        <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:x-small">
+                                                                                            @notex.NoteText
+                                                                                        </div>
+                                                                                    </MudCardContent>
+                                                                                </MudCard>
+                                                                            </MudContainer>
                                                                         </div>
-                                                                    }
+                                                                        }
                                                                     else
                                                                         {
                                                                         <div class="mt-3 text-start">
-                                                                            <h6 style="color:indianred">
+                                                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
                                                                                 <img src="/img/icoCalendar.png" width="18" />
+                                                                            </button>
+                                                                            <span style="color:indianred; font-weight:bold;">
                                                                                 @notex.NoteDatum
-                                                                            </h6>
-                                                                            <div class="card">
-                                                                                <div class="card-body bg-light" style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:x-small">
-                                                                                    @notex.NoteText
-                                                                                </div>
-                                                                            </div>
+                                                                            </span>
+                                                                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                                                                <MudCard Class="mx-0">
+                                                                                    <MudCardContent Style="background-color:whitesmoke;">
+                                                                                        <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:x-small">
+                                                                                            @notex.NoteText
+                                                                                        </div>
+                                                                                    </MudCardContent>
+                                                                                </MudCard>
+                                                                            </MudContainer>
                                                                         </div>
                                                                         }
                                                                     }
@@ -172,34 +189,34 @@ else
                     </div>
                     <br />
                     }
-            </div>
-            @if (appState.Cmd == "AddNewProject")
-                {
-                <hr style="color:red"/>
-                <h4>Add New Project</h4>
-                <div class="mb-3">
-                    <input class="form-control" @ref="txtNewProject" @bind="project.ProjectName" placeholder="New project...">
-                </div>
-                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewProject">
-                    <img src="/img/icoSave2.png" width="22" />
-                </button>
-                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                    <img src="/img/icoCancel.png" width="24" />
-                </button>
-                }
-            else
-                {
-                    <div style="background-color:rgba(252,252,252)">
-                        <button class="btn btn-link" @onclick="BtnAddNewProject">
-                            <img src="/img/gifAddItem.gif" width="50" />
-                        </button>
+                @if (appState.Cmd == "AddNewProject")
+                    {
+                    <hr style="color:red"/>
+                    <h6>New Project</h6>
+                    <div class="mb-3">
+                        <MudTextField @ref="refNewProject" @bind-Value="project.ProjectName" Label="Project Name... نام پروژه" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                     </div>
-                }
-            <hr style="color:red" />
+                    <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewProject">
+                        <img src="/img/icoSave2.png" width="22" />
+                    </button>
+                    <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                        <img src="/img/icoCancel.png" width="24" />
+                    </button>
+                    }
+                else
+                    {
+                        <div style="background-color:rgba(252,252,252);max-width:500px; margin: 0 auto;">
+                            <button class="btn btn-link" @onclick="BtnAddNewProject">
+                                <img src="/img/gifAddItem.gif" width="50" />
+                            </button>
+                        </div>
+                    }
+                <hr style="color:red" />
+            </div>
         </EditForm>
-        <div style="text-align:center">
+    <div style="text-align:center; max-width:500px; margin: 0 auto;">
         <button class="btn btn-link" @onclick= "()=> BtnBack()">
-            <img src="/img/icoBack.png" style="width:30px" />
+            <img src="/img/icoBack2.png" style="width:30px" />
         </button>
     </div>
     }
@@ -208,11 +225,15 @@ else
 </script>
 
 @code {
-    private ElementReference txtNewProject;
-    private ElementReference txtProjectName;
-    private ElementReference txtNewSubproject;
-    private ElementReference txtSubprojectName;
-    private ElementReference txtNoteText;
+    private MudTextField<string> refNewProject;
+    private MudTextField<string> refProjectName;
+
+    private MudTextField<string> refNewSubproject;
+    private MudTextField<string> refSubprojectName;
+    private MudTextField<string> refSubprojectNote;
+
+    private MudTextField<string> refNoteText;
+
     private readonly HttpClient _http;
     User user = new User ();
     List<Project> lstProjects = new ();
@@ -230,6 +251,7 @@ else
     bool _tag32 = false;
     string txtNewSubprojectTitle = "";
     int i = 0;
+    string _cmd = "";
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
@@ -258,7 +280,7 @@ else
         if (shouldFocusNewProject)
             {
             shouldFocusNewProject = false;
-            await txtNewProject.FocusAsync();
+            await refNewProject.FocusAsync();
             }
         }    
     private void TriggerRender()
@@ -312,7 +334,7 @@ else
         appState.SetProjectId(projectId);
         StateHasChanged ();
         await Task.Delay (1);
-        await txtProjectName.FocusAsync ();
+        await refProjectName.FocusAsync ();
         }
     public async Task BtnUpdateProject(Project project)
         {
@@ -388,7 +410,7 @@ else
             appState.SetCmd ("AddNewSubproject");
             appState.SetProjectId (projectId);
             await Task.Delay (1);
-            await txtNewSubproject.FocusAsync ();
+            await refNewSubproject.FocusAsync ();
             }
         else
             {
@@ -553,6 +575,14 @@ else
                 await JS.InvokeVoidAsync("alert", "\nStudents did not removed from the course --- operation failed");
                 }
             }
+        }
+    public async Task BtnShowNoteInDialog(Note note)
+        {
+        _cmd = "ShowNoteInDialog";
+        appState.SetSelectedNoteId (note.NoteId);
+        appState.SetNoteDatum (note.NoteDatum);
+        appState.SetNoteText (note.NoteText);
+        StateHasChanged ();
         }
     //back
     public void BtnCancel()

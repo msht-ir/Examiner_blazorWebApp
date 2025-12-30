@@ -10,11 +10,11 @@
 
 @if (!_hasFetched)
     {
-    <_StartExam />
+    <_LoadingTimer />
     }
 else
     {
-    <div style="text-align: center;">
+    <div style="text-align: center; max-width:500px; margin: 0 auto;">
     <EditForm Model="studentExam">
         <div class="container primary mt-5">
             <div class="card">

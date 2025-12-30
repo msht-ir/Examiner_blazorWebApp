@@ -12,9 +12,8 @@
 
 <PageTitle>Examiner Home</PageTitle>
 <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-    <br />
-    <h2 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h2>
-    <img src="/img/gifExam.gif" width="150" style="margin-left:10px;margin-right:10px" />
+    <h3 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h3>
+    <img src="/img/gifExam.gif" width="120" style="margin-left:10px;margin-right:10px" />
     <EditForm Model="user" OnValidSubmit="BtnLogin" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <MudContainer Class="mt-2 px-0">
@@ -26,7 +25,6 @@
                             <MudSelectItem Value=@("student")>Student</MudSelectItem>
                             <MudSelectItem Value=@("teacher")>Teacher</MudSelectItem>
                         </MudSelect>
-                        <br />
                         @if(user.UserRole == "student")
                             {
                             <MudSelect T="int" @ref="refTeacher" Label="Teacher استاد" Value="TeacherId" ValueChanged="OnTeacherChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
@@ -36,14 +34,11 @@
                             }
                         <hr />
                     </div>
-                    <br />
                     <MudTextField @ref="refUser" @bind-Value="user.UserName" Label="Username يوزر" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                     <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password پسورد" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" InputType="InputType.Password"/>
-                    <br />
                 </MudCardContent>
             </MudCard>
         </MudContainer>    
-        <br />
         <button class="btn btn-link">
             <img src="/img/gifUserLogin.gif" width="60" />
         </button>

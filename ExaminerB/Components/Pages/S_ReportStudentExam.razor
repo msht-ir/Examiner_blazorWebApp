@@ -13,7 +13,7 @@
 else
     {
     <EditForm Model="studentExam">
-        <div style="text-align: center;">
+        <div style="text-align: center; max-width:500px; margin: 0 auto;">
             <h6>Course: @studentExam.CourseName </h6>
             <h4>@studentExam.ExamTitle</h4>
             <span style="font-size:small;color:royalblue;">@student.UserName</span>
@@ -43,99 +43,101 @@ else
                     <br /> 
                 </div>
                 }
+            <hr />
         </div>
-        <hr />
-    @{
-        i=0;
-    }
-    @foreach (StudentExamTest studentExamTest in studentExam.StudentExamTests)
-        {
-        <MudContainer Class="mt-2 px-0">
-            <MudCard Class="mx-0">
-                <MudCardContent Style="background-color:whitesmoke;">
-                    @{
-                    i++;
-                    tstRTLcss = ((studentExamTest.TestTags & 1) == 1) ? "direction:rtl;text-align:right;" : "";
-                    optRTLcss = ((studentExamTest.TestTags & 2) == 2) ? "direction:rtl;text-align:right;" : "";
+        @{
+            i=0;
+        }
+        <div style="max-width:500px; margin: 0 auto;">
+            @foreach (StudentExamTest studentExamTest in studentExam.StudentExamTests)
+    {
+    <MudContainer Class="mt-2 px-0">
+        <MudCard Class="mx-0">
+            <MudCardContent Style="background-color:whitesmoke;">
+                @{
+                i++;
+                tstRTLcss = ((studentExamTest.TestTags & 1) == 1) ? "direction:rtl;text-align:right;" : "";
+                optRTLcss = ((studentExamTest.TestTags & 2) == 2) ? "direction:rtl;text-align:right;" : "";
+                }
+                @if (((studentExamTest.StudentExamTestTags & 8) == 8) && (pagemode == "Review"))
+                    {
+                    <div style="@tstRTLcss"><span style="font-weight:bold;color:lightcoral;">@i:[H] </span>@studentExamTest.TestTitle</div>
                     }
-                    @if (((studentExamTest.StudentExamTestTags & 8) == 8) && (pagemode == "Review"))
+                else
+                    {
+                    <div style="@tstRTLcss"><span style="font-weight:bold;">@i: </span>@studentExamTest.TestTitle</div>
+                    }
+                @foreach (TestOption opt in studentExamTest.TestOptions)
+                    {
+                    int optcolor = 0;
+                    if (pagemode == "RawSheet")
                         {
-                        <div style="@tstRTLcss"><span style="font-weight:bold;color:lightcoral;">@i:[H] </span>@studentExamTest.TestTitle</div>
+                        optcolor = 0;
                         }
                     else
                         {
-                        <div style="@tstRTLcss"><span style="font-weight:bold;">@i: </span>@studentExamTest.TestTitle</div>
-                        }
-                    @foreach (TestOption opt in studentExamTest.TestOptions)
-                        {
-                        int optcolor = 0;
-                        if (pagemode == "RawSheet")
+                        if (opt.TestOptionId == studentExamTest.StudentExamTestKey)
                             {
-                            optcolor = 0;
+                            optcolor = optcolor | 1;
                             }
-                        else
+                        if (opt.TestOptionId == studentExamTest.StudentExamTestAns)
                             {
-                            if (opt.TestOptionId == studentExamTest.StudentExamTestKey)
+                            optcolor = optcolor | 2;
+                            }                    
+                        }
+                    switch (optcolor)
+                        {
+                        case 0:
                                 {
-                                optcolor = optcolor | 1;
+                                <div style="@optRTLcss color:black"> - @opt.TestOptionTitle</div>
+                                break;
                                 }
-                            if (opt.TestOptionId == studentExamTest.StudentExamTestAns)
+                        case 1:
                                 {
-                                optcolor = optcolor | 2;
-                                }                    
-                            }
-                        switch (optcolor)
-                            {
-                            case 0:
-                                    {
-                                    <div style="@optRTLcss color:black"> - @opt.TestOptionTitle</div>
-                                    break;
-                                    }
-                            case 1:
-                                    {
-                                    <div style="@optRTLcss color:blue"> ( ) @opt.TestOptionTitle</div>
-                                    break;
-                                    }
-                            case 2:
-                                    {
-                                    <div style="@optRTLcss color:red"> (x) @opt.TestOptionTitle</div>
-                                    break;
-                                    }
-                            case 3:
-                                    {
-                                    <div style="@optRTLcss color:goldenrod;"> - @opt.TestOptionTitle</div>
-                                    break;
-                                    }
-                            }
+                                <div style="@optRTLcss color:blue"> ( ) @opt.TestOptionTitle</div>
+                                break;
+                                }
+                        case 2:
+                                {
+                                <div style="@optRTLcss color:red"> (x) @opt.TestOptionTitle</div>
+                                break;
+                                }
+                        case 3:
+                                {
+                                <div style="@optRTLcss color:goldenrod;"> - @opt.TestOptionTitle</div>
+                                break;
+                                }
                         }
-                    <button class="btn btn-link" @onclick="()=>BtnShowStudentExamTestStats(studentExamTest)">
-                        <img src="icons/icoPie_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
-                    </button>
-                    @if ((appState.Cmd == "ShowStudentExamTestStats") & (appState.TestId == studentExamTest.TestId))
-                        {
-                        <hr style="border-color:red" />
-                        <div style="font-weight:bold;">Students:</div>
-                        <div style="padding-left:30px;">
-                            <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
-                            <div style="font-weight:bold">@nStudentsAnswered Answers</div> 
-                            <div style="padding-left:15px;">@nStudentsAnsweredCorrectly Correct</div> 
-                            <div style="padding-left:15px;">@nStudentsAnsweredIncorrectly Incorrect</div>
-                            <div style="font-weight:bold;">@nStudentsNotAnswered noAnswer</div>                
-                        </div>
+                    }
+                <button class="btn btn-link" @onclick="()=>BtnShowStudentExamTestStats(studentExamTest)">
+                    <img src="img/icoChartPie.png" title="Edit Test" alt="Edit" width="25px"/>
+                </button>
+                @if ((appState.Cmd == "ShowStudentExamTestStats") & (appState.TestId == studentExamTest.TestId))
+                    {
+                    <hr style="border-color:red" />
+                    <div style="font-weight:bold;">Students:</div>
+                    <div style="padding-left:30px;">
+                        <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
+                        <div style="font-weight:bold">@nStudentsAnswered Answers</div> 
+                        <div style="padding-left:15px;">@nStudentsAnsweredCorrectly Correct</div> 
+                        <div style="padding-left:15px;">@nStudentsAnsweredIncorrectly Incorrect</div>
+                        <div style="font-weight:bold;">@nStudentsNotAnswered noAnswer</div>                
+                    </div>
+                    <br /> 
+                    <div class="d-flex justify-content-center">
+                        <MudChart ChartType="ChartType.Donut"
+                            InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
+                            InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
+                            Width="100px" Height="100px" />
                         <br /> 
-                        <div class="d-flex justify-content-center">
-                            <MudChart ChartType="ChartType.Donut"
-                                InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
-                                InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
-                                Width="100px" Height="100px" />
-                            <br /> 
-                        </div>
-                        }
+                    </div>
+                    }
 
-                </MudCardContent>
-            </MudCard>
-        </MudContainer>        
-        }
+            </MudCardContent>
+        </MudCard>
+    </MudContainer>        
+    }
+        </div>
     </EditForm>
     <div style="text-align:center">
         <button class="btn btn-link" @onclick= "()=> BtnBackToStudentExams()">

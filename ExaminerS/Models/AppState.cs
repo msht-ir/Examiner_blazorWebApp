@@ -124,5 +124,9 @@
         public void SetNoteId (int _NoteId) { NoteId = _NoteId; OnChange?.Invoke (); }
         public string? NoteText { get; private set; }
         public void SetNoteText (string _NoteText) { NoteText = _NoteText; OnChange?.Invoke (); }
+        public string? NoteDatum { get; private set; }
+        public void SetNoteDatum (string _NoteDatum) { NoteDatum = _NoteDatum; OnChange?.Invoke (); }
+        public int? SelectedNoteId { get; private set; }
+        public void SetSelectedNoteId (int _SelectedNoteId) { SelectedNoteId = _SelectedNoteId; OnChange?.Invoke (); }
         }
     }
