@@ -12,14 +12,13 @@
 
 <PageTitle>Examiner Home</PageTitle>
 <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-    <h3 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h3>
-    <img src="/img/gifExam.gif" width="120" style="margin-left:10px;margin-right:10px" />
+    @* <h5 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h5> *@
+    <img src="/img/gifExam.gif" width="140" style="margin-left:10px;margin-right:10px" />
     <EditForm Model="user" OnValidSubmit="BtnLogin" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <MudContainer Class="mt-2 px-0">
             <MudCard Class="mx-0">
-                <MudCardContent Style="background-color:rgba(249,249,249);">
-                    <br />
+                <MudCardContent Style="background-color:rgba(250,250,250);">
                     <div class="mb-3 d-flex gap-1">
                         <MudSelect T="string" @ref="refRole" Label="Role نقش" Value="user.UserRole" ValueChanged="@((string role) => OnRoleChanged(role))" Class="w-auto" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="font-size:small;">
                             <MudSelectItem Value=@("student")>Student</MudSelectItem>
@@ -32,7 +31,6 @@
                                 @foreach (var teacher in lstTeachers) { <MudSelectItem Value="@teacher.UserId">@teacher.UserNickname</MudSelectItem> }
                             </MudSelect>
                             }
-                        <hr />
                     </div>
                     <MudTextField @ref="refUser" @bind-Value="user.UserName" Label="Username يوزر" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                     <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password پسورد" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" InputType="InputType.Password"/>
@@ -44,7 +42,6 @@
         </button>
     </EditForm>
 </div>
-<hr style="color:blueviolet"/>
 <script>
     document.getElementById("txtUser").focus();
     document.getElementById("txtUser").addEventListener("keydown", function(event) {

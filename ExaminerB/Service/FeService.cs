@@ -941,26 +941,13 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ($"api/Create_StudentMessage?mode={mode}&recipientId={recipientId}&typeFeedback={typeFeedback}", message);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<List<Message>> Read_StudentMessagesByStudentId (int studentId)
+        public async Task<List<StudentMessage>> Read_StudentMessages (int Id, string mode)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentMessagesByStudentId", studentId);
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentMessages?mode={mode}", Id);
             if (response.IsSuccessStatusCode)
                 {
-                List<Message>? lstMessages = await response.Content.ReadFromJsonAsync<List<Message>> ();
-                return lstMessages ?? new List<Message> ();
-                }
-            else
-                {
-                return new List<Message> ();
-                }
-            }
-        public async Task<List<StudentMessage>> Read_StudentMessagesByMessageId (int messageId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentMessagesByMessageId", messageId);
-            if (response.IsSuccessStatusCode)
-                {
-                List<StudentMessage>? lstStudentMessages = await response.Content.ReadFromJsonAsync<List<StudentMessage>> ();
-                return lstStudentMessages ?? new List<StudentMessage> ();
+                List<StudentMessage>? lstMessages = await response.Content.ReadFromJsonAsync<List<StudentMessage>> ();
+                return lstMessages ?? new List<StudentMessage> ();
                 }
             else
                 {

@@ -257,10 +257,13 @@ namespace ExaminerS.Models
         public int StudentId { get; set; } = 0;
         public string StudentName { get; set; } = "";
         public string StudentNickname { get; set; } = "";
+        public string MessageTitle { get; set; } = "";
+        public string MessageBody { get; set; } = "";
         public string DateTimeCreated { get; set; } = "";
         public string DateTimeSent { get; set; } = "";
         public string DateTimeRead { get; set; } = "";
         public int StudentMessageTags { get; set; } = 0;
+
         }
     //P
     public class Project

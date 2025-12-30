@@ -289,7 +289,7 @@ namespace ExaminerB.Services2Backend
                 {
                 foreach (User student in lstStudents)
                     {
-                    student.StudentMessages = await Read_StudentMessagesByStudentIdAsync (student.UserId);
+                    student.StudentMessages = await Read_StudentMessagesAsync (student.UserId, "ByStudentIdByStudentId");
                     }
                 }
             return lstStudents;
@@ -382,7 +382,7 @@ namespace ExaminerB.Services2Backend
                     //read studentMessages records
                     foreach(User student in lstStudents)
                         {
-                        student.StudentMessages = await Read_StudentMessagesByStudentIdAsync (student.UserId);
+                        student.StudentMessages = await Read_StudentMessagesAsync (student.UserId, "ByStudentId");
                         }
                     }
                 return lstStudents;
@@ -3166,7 +3166,7 @@ COMMIT TRANSACTION;
                 await cnn.CloseAsync ();
                 if (getStudentMessages)
                     {
-                    lstStudentMessages = await Read_StudentMessagesByMessageIdAsync (message.MessageId);
+                    lstStudentMessages = await Read_StudentMessagesAsync (message.MessageId, "ByMessageId");
                     message.Students = lstStudentMessages;
                     }
                 return message;
@@ -3321,59 +3321,34 @@ COMMIT TRANSACTION;
                 return 1;
                 }
             }
-        public async Task<List<StudentMessage>> Read_StudentMessagesByStudentIdAsync (int studentId)
+        public async Task<List<StudentMessage>> Read_StudentMessagesAsync (int Id, string mode)
             {
             List<StudentMessage> lstStudentMessages = new List<StudentMessage> ();
             Message message = new Message ();
-            string sql = @"SELECT sm.StudentMessageId, sm.MessageId, sm.StudentId, s.StudentName, s.StudentNickname, m.DateTimeCreated, sm.DateTimeSent, sm.DateTimeRead, sm.StudentMessageTags
+            string sql = @"SELECT sm.StudentMessageId, sm.MessageId, sm.StudentId, s.StudentName, s.StudentNickname, m.MessageTitle, m.MessageBody, m.DateTimeCreated, sm.DateTimeSent, sm.DateTimeRead, sm.StudentMessageTags
                         FROM StudentMessages sm 
                         INNER JOIN Messages m ON sm.MessageId = m.MessageId 
-                        INNER JOIN Students s ON sm.StudentId = s.StudentId
-                        WHERE sm.StudentId=@studentid";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            try
+                        INNER JOIN Students s ON sm.StudentId = s.StudentId";
+            switch (mode)
                 {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@studentid", studentId);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-                lstStudentMessages.Clear ();
-                while (await reader.ReadAsync ())
-                    {
-                    lstStudentMessages.Add (new StudentMessage
+                case "ByStudentId":
                         {
-                        StudentMessageId = reader.GetInt32 (0),
-                        StudentId = reader.GetInt32 (1),
-                        MessageId = reader.GetInt32 (2),
-                        DateTimeSent = reader.GetString (3),
-                        DateTimeRead = reader.GetString (4),
-                        StudentMessageTags = reader.GetInt32 (5),
-                        StudentName = reader.GetString (6),
-                        StudentNickname = reader.GetString (7),
-                        });
-                    }
-                await cnn.CloseAsync ();
-                return lstStudentMessages;
+                        sql += " WHERE sm.StudentId=@id";
+                        break;
+                        }
+                case "ByMessageId":
+                        {
+                        sql += " WHERE sm.MessageId=@id";
+                        break;
+                        }
                 }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("Error: " + ex.ToString ());
-                await cnn.CloseAsync ();
-                return new List<StudentMessage> ();
-                }
-            }
-        public async Task<List<StudentMessage>> Read_StudentMessagesByMessageIdAsync (int messageId)
-            {
-            string sql = "SELECT sm.StudentMessageId, sm.MessageId, sm.StudentId, s.StudentName, s.StudentNickname, sm.DateTimeSent, sm.DateTimeRead, sm.StudentMessageTags FROM StudentMessages sm INNER JOIN Students s ON sm.StudentId = s.StudentId WHERE sm.MessageId=@messageid ORDER BY sm.DateTimeSent";
-            List<StudentMessage> lstStudentMessages = new List<StudentMessage> ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@messageid", messageId);
+                cmd.Parameters.AddWithValue ("@id", Id);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 lstStudentMessages.Clear ();
                 while (await reader.ReadAsync ())
@@ -3385,9 +3360,12 @@ COMMIT TRANSACTION;
                         StudentId = reader.GetInt32 (2),
                         StudentName = reader.GetString (3),
                         StudentNickname = reader.GetString (4),
-                        DateTimeSent = reader.GetString (5),
-                        DateTimeRead = reader.GetString (6),
-                        StudentMessageTags = reader.GetInt32 (7)
+                        MessageTitle = reader.GetString(5),
+                        MessageBody = reader.GetString(6),
+                        DateTimeCreated = reader.GetString (7),
+                        DateTimeSent = reader.GetString (8),
+                        DateTimeRead = reader.GetString (9),
+                        StudentMessageTags = reader.GetInt32 (10)
                         });
                     }
                 await cnn.CloseAsync ();
