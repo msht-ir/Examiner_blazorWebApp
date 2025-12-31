@@ -13,12 +13,12 @@
 <PageTitle>Examiner Home</PageTitle>
 <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
     @* <h5 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h5> *@
-    <img src="/img/gifExam.gif" width="140" style="margin-left:10px;margin-right:10px" />
+    <img src="/img/gifExam.gif" width="160" style="margin-left:10px;margin-right:10px" />
     <EditForm Model="user" OnValidSubmit="BtnLogin" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <MudContainer Class="mt-2 px-0">
             <MudCard Class="mx-0">
-                <MudCardContent Style="background-color:rgba(250,250,250);">
+                <MudCardContent Style="background-color:rgba(248,248,248, 1);">
                     <div class="mb-3 d-flex gap-1">
                         <MudSelect T="string" @ref="refRole" Label="Role نقش" Value="user.UserRole" ValueChanged="@((string role) => OnRoleChanged(role))" Class="w-auto" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="font-size:small;">
                             <MudSelectItem Value=@("student")>Student</MudSelectItem>
@@ -51,23 +51,15 @@
 </script>
 
 @code {
-    //private ElementReference refRole;
     private MudSelect<string> refRole;
     private User user = new User { UserRole = "student" };
-
-    //private ElementReference refTeacher;
     private MudSelect<int> refTeacher;
-    private int selectedTeacherId;
-
-    // private ElementReference refUser;
     private MudTextField<string> refUser;
-
-    // private ElementReference refPass;
-    private MudTextField<string> refPass;
-
-    private bool _firstRender = true;
+    private MudTextField<string> refPass; // private ElementReference refPass;
     private int TeacherId = 0;
+    private int selectedTeacherId;
     private List<User> lstTeachers = new List<User> (); 
+    private bool _firstRender = true;
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()

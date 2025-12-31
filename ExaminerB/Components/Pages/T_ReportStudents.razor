@@ -58,27 +58,27 @@ else
                                                 @if(exm.StudentExamTags>=2)
                                                     {
                                                     <button class="btn btn-link" style="border:none" @onclick="()=>BtnResetStudentExam(exm)" >
-                                                        <img src="/images/icoClock2.png" width="25" />
+                                                        <img src="/img/icoClock2.png" width="25" />
                                                     </button>
                                                     }
                                                 else if(exm.StudentExamTags==1)
                                                     {
                                                     <button class="btn btn-link" style="border:none" @onclick="()=>BtnSetStudentExamAsFinished(exm)" >
-                                                        <img src="/images/icoEditPen.png" width="25" />
+                                                        <img src="/img/icoEditPen.png" width="25" />
                                                     </button>
                                                     } 
                                                 else
                                                     {
                                                     <button class="btn btn-link" style="border:none" @onclick="()=>BtnSetStudentExamAsFinished(exm)" >
-                                                        <img src="/images/icoGo1.png" width="25" />
+                                                        <img src="/img/icoGo1.png" width="25" />
                                                     </button>
                                                     }
 
                                                 <button class="btn btn-link" style="border:none" @onclick='()=>BtnReviewStudentTestsSheet(exm.StudentExamId, "studentexamtests")' >
-                                                    <img src="/images/icoReport1.png" width="25" />
+                                                    <img src="/img/icoReport1.png" width="25" />
                                                 </button>
                                                 <button class="btn btn-link" style="border:none" @onclick="()=>BtnDeleteStudentExam(exm.StudentExamId)" >
-                                                    <img src="/images/icoDelete1.png" width="25" />
+                                                    <img src="/img/icoDelete1.png" width="25" />
                                                 </button>
                                             </td>  
                                             <td>
@@ -123,10 +123,10 @@ else
                                         <tr style="align-content:center">
                                             <td style="color:indianred; font-weight:bold;">
                                                 <button class="btn btn-link" style="border:none" title="Report Tests ( + answeres )" @onclick='()=>BtnReviewStudentTestsSheet(stCrs.StudentCourseId, "studentcoursetests")'>
-                                                    <img src="/images/icoReport1.png" width="25" />
+                                                    <img src="/img/icoReport1.png" width="25" />
                                                 </button>
                                                 <button class="btn btn-link" style="border:none" title="Delete Course !" @onclick="()=>BtnDeleteStudentCourse(stCrs.StudentCourseId)">
-                                                    <img src="/images/icoDelete1.png" width="25" />
+                                                    <img src="/img/icoDelete1.png" width="25" />
                                                 </button>
                                                 @stCrs.CourseName
                                             </td>
@@ -150,7 +150,7 @@ else
         <br />
         <hr style="color:red" />
         <button class="btn btn-link" @onclick="BtnBack">
-            <img src="/images/icoBack2.png" width="35" />
+            <img src="/img/icoBack2.png" width="35" />
         </button>
     </div>
     }

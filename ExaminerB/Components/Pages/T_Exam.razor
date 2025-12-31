@@ -165,22 +165,21 @@ else
                                 <img src="/img/icoFolderT.png" width="30" />
                             </button>
                             <span style="font-size:larger; font-weight:bold;color:royalblue;">Add Tests to Exam</span>
-                            <div class="mb-3">
+                            <div class="d-flex align-items-center mb-3">
                                 <button class="btn btn-link" @onclick="BtnReadTestsBySearch">
                                     <img src="/img/icoSearch.png" width="30" />
                                 </button>
-                                <input class="form-control d-inline" @ref="txtSearchTest" @bind="strSearch" type="text" placeholder="Search..." style="width:80%"/>
+                                <MudTextField @ref="txtSearchTest" @bind-Value="strSearch" Label="Search..." Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';" />
                             </div>
-                            <button class="btn btn-link" @onclick="BtnCreateExamTest">
-                                <img src="/img/icoAddItem.png" width="25" />
-                            </button>
-                            <select class="form-select d-inline" @ref="cboCourseTests" @bind="cboCourseTestId" style="font-size:small;width:80%">
-                                <option value="0"> select from results </option>
-                                @foreach (var ct in lstCourseTests)
-                                    {
-                                    <option value="@ct.TestId"> @ct.TestId - @ct.TestTitle </option>
-                                    }
-                            </select>                    
+                            <div class="d-flex align-atems-center mb-3">
+                                <button class="btn btn-link" @onclick="BtnCreateExamTest">
+                                    <img src="/img/icoAddItem.png" width="25" />
+                                </button>
+                                <MudSelect T="int" Label="Result نتيجه" @bind-Value="cboCourseTestId" Class="w-auto my-select d-inline" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:80%;font-size:small; font-family:'Segoe UI';text-overflow: ellipsis;">
+                                    <MudSelectItem Value="0">select from results</MudSelectItem>
+                                    @foreach (var ct in lstCourseTests) { <MudSelectItem Value="@ct.TestId" Style="font-family:'Segoe UI';text-overflow: ellipsis;"> @ct.TestId - @(ct.TestTitle.Length > 50 ? ct.TestTitle.Substring(0, 50) : ct.TestTitle)</MudSelectItem> }
+                                </MudSelect>
+                            </div>
                         </div>
                         @* END SEARCH *@
                         @{i = 0;}
@@ -197,7 +196,7 @@ else
                                             }
                                         else
                                             {
-                                                <p style="text-align:left;">- @tst.TestTitle</p>
+                                            <p style="text-align:left;">- @tst.TestTitle</p>
                                             }
                                             @foreach (TestOption opt in tst.TestOptions)
                                                 {
@@ -211,7 +210,7 @@ else
                                                     }
                                                 }
                                         <button class="btn btn-link" style="text-align:right;" dir="rtl" @onclick="()=>BtnDeleteExamTest(localTestId)" >
-                                            <img src="icons/icoDelete_bt_1.png" title="Edit Test" alt="Edit" width="25px"/>
+                                            <img src="img/icoDelete1.png" title="Edit Test" alt="Edit" width="25px"/>
                                         </button>
                                     </MudCardContent>
                                 </MudCard>
@@ -224,7 +223,7 @@ else
         <br>
         <div style="text-align: center;">
             <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/img/icoBack.png" width="30" />
+                <img src="/img/icoBack2.png" width="30" />
             </button>
         </div>
     </EditForm>
@@ -236,7 +235,7 @@ else
 
 @code {
     [Parameter] public int examId { get; set; }
-    private ElementReference txtSearchTest;
+    private MudTextField<string> txtSearchTest;
     private ElementReference cboCourseTopics;
     private ElementReference cboCourseTests;
     int cboCourseTopicId = 0;
@@ -414,19 +413,20 @@ else
         }
     public async Task BtnDeleteExamTest(int testId)
         {
-        if(await JS.InvokeAsync<bool>("confirm","All instances of this Test will be Deleted.\n\n\nDelete?"))
+        var message = new MarkupString($"This Test will be removed from Exam test list<br/><br/>Remove?");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             ExamTest examTest = new ExamTest () { ExamId=exam.ExamId, TestId=testId, PercentCorrect=0, PercentIncorrect=0, PercentHelped=0 };
             bool result = await feService.Delete_ExamTest (examTest);
             if (result)
                 {
-                await JS.InvokeVoidAsync ("alert", "\nDeleted!");
                 lstExamTests.Clear ();
                 lstExamTests = await feService.Read_TestsByExamId (examId, true);
                 appState.SetCmd ("");
                 StateHasChanged ();
-                }
-            }
+                }         
+             }
         }
     public async Task BtnCancel()
         {

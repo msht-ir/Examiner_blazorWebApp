@@ -110,52 +110,52 @@ else
                             }
                         <span style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle</span>
                         </div>
-                    @* Show-TestOptions *@
-                    @foreach (var opt in tst.TestOptions)
-                        {
-                        if (appState.Cmd.EndsWith("raw"))
+                        @* Show-TestOptions *@
+                        @foreach (var opt in tst.TestOptions)
                             {
-                            <div style="@stl; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                            if (appState.Cmd.EndsWith("raw"))
+                                {
+                                <div style="@stl; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                                }
+                            else
+                                {
+                                if((opt.TestOptionId == tst.StudentExamTestKey) & (opt.TestOptionId == tst.StudentExamTestAns))
+                                    {
+                                    <div style="@stl color:darkgoldenrod;font-weight:bold; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                                    }
+                                else if((opt.TestOptionId == tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
+                                    {
+                                    <div style="@stl color:royalblue; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                                    }
+                                else if((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId == tst.StudentExamTestAns))
+                                    {
+                                    <div style="@stl color:indianred; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                                    }
+                                else if((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
+                                    {
+                                    <div style="@stl color:black; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                                    }
+                                }
                             }
-                        else
-                            {
-                            if((opt.TestOptionId == tst.StudentExamTestKey) & (opt.TestOptionId == tst.StudentExamTestAns))
+                            @if ((appState.Cmd == "studentexamtests") & (appState.TestId == tst.TestId))
                                 {
-                                <div style="@stl color:darkgoldenrod;font-weight:bold; @optRtlStatus"> - @opt.TestOptionTitle</div>
-                                }
-                            else if((opt.TestOptionId == tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
-                                {
-                                <div style="@stl color:royalblue; @optRtlStatus"> - @opt.TestOptionTitle</div>
-                                }
-                            else if((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId == tst.StudentExamTestAns))
-                                {
-                                <div style="@stl color:indianred; @optRtlStatus"> - @opt.TestOptionTitle</div>
-                                }
-                            else if((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
-                                {
-                                <div style="@stl color:black; @optRtlStatus"> - @opt.TestOptionTitle</div>
-                                }
-                            }
-                        }
-                    @if ((appState.Cmd == "studentexamtests") & (appState.TestId == tst.TestId))
-                        {
-                        <div style="font-weight:bold;">Students:</div>
-                        <div style="padding-left:30px;">
-                            <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
-                            <div style="font-weight:bold">@nStudentsAnswered Answers</div> 
-                            <div style="padding-left:15px;">@nStudentsAnsweredCorrectly Correct</div> 
-                            <div style="padding-left:15px;">@nStudentsAnsweredIncorrectly Incorrect</div>
-                            <div style="font-weight:bold;">@nStudentsNotAnswered noAnswer</div>                
+                                <div style="font-weight:bold;">Students:</div>
+                                <div style="padding-left:30px;">
+                                    <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
+                                    <div style="font-weight:bold">@nStudentsAnswered Answers</div> 
+                                    <div style="padding-left:15px;">@nStudentsAnsweredCorrectly Correct</div> 
+                                    <div style="padding-left:15px;">@nStudentsAnsweredIncorrectly Incorrect</div>
+                                    <div style="font-weight:bold;">@nStudentsNotAnswered noAnswer</div>                
+                                </div>
+                                <br /> 
+                                <div class="d-flex justify-content-center">
+                            <MudChart ChartType="ChartType.Donut"
+                                InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
+                                InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
+                                Width="100px" Height="100px" />
+                            <br /> 
                         </div>
-                        <br /> 
-                        <div class="d-flex justify-content-center">
-                    <MudChart ChartType="ChartType.Donut"
-                        InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
-                        InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
-                        Width="100px" Height="100px" />
-                    <br /> 
-                </div>
-                }
+                        }
 
                     </MudCardContent>
                 </MudCard>
@@ -163,26 +163,23 @@ else
             }
             @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
                 {
-                <div class="container mt-2">
-                    <div class="card">
-                        <div class="card-body" style="background-color:whitesmoke">
-                            <div style="font-weight:bold;color:royalblue;padding-bottom:5px;">Include selected tests to Exam:</div>
-                            <select class="form-select d-inline" @bind="intExamId" style="width:60%; background-color:white">
-                                    <option value="0"> Select an Exam... </option>
-                                    @foreach (Exam exam in lstExams)
-                                        {
-                                        <option value="@exam.ExamId"> @exam.ExamTitle </option>
-                                        }
-                                </select>
-                                <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
-                                    <img src="/img/icoSave2.png" width="26" />
-                                </button>
-                                <button class="btn btn-link" type="submit" @onclick="BtnEditExam">
-                                    <img src="/img/icoFolderE.png" width="32" />
-                                </button>
-                        </div>
-                    </div>
-                </div>
+                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                    <MudCard Class="mx-0">
+                        <MudCardContent Style="background-color:whitesmoke;">
+                            <div style="font-weight:bold;color:royalblue;padding-bottom:5px;">Add selected tests to Exam:</div>
+                            <MudSelect T="int" Label="Exam آزمون" @bind-Value="intExamId" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
+                                @foreach (Exam exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
+                            </MudSelect>
+                            <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
+                                <img src="/img/icoSave2.png" width="26" />
+                            </button>
+                            <button class="btn btn-link" type="submit" @onclick="BtnEditExam">
+                                <img src="/img/icoFolderE.png" width="32" />
+                            </button>
+                        </MudCardContent>
+                    </MudCard>
+                </MudContainer>
                 <hr style="color:red" />
                 }
             <div style="text-align: center;">
