@@ -978,15 +978,14 @@ namespace ExaminerB.Services2Backend
             int i = await cmd.ExecuteNonQueryAsync ();
             return true;
             }
-        public async Task<List<StudentCourse>> Read_StudentCoursesAsync (int Id, string mode)
+    public async Task<List<StudentCourse>> Read_StudentCoursesAsync (int Id, string mode)
             {
             //read SC records for one Student
             List<StudentCourse> lstStudentCourses = new List<StudentCourse> ();
             string sql = @"SELECT sc.StudentCourseId, sc.StudentId, sc.CourseId, c.CourseName, s.StudentName, s.StudentNickname, sc.NumberOfTests, sc.CorrectAnswers, sc.StudentCourseTags 
                         FROM StudentCourses sc 
                         INNER JOIN Courses c ON sc.CourseId = c.CourseId 
-                        INNER JOIN Students s ON sc.StudentId = s.StudentId 
-                        WHERE sc.StudentId=@studentid";
+                        INNER JOIN Students s ON sc.StudentId = s.StudentId ";
             switch (mode)
                 {
                 case "ByStudentId":
@@ -1187,30 +1186,31 @@ namespace ExaminerB.Services2Backend
             cmd.Parameters.AddWithValue ("@studentcourseid", studentCourse.StudentCourseId);
             try
                 {
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
-                    {
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
                     int index = 0;
-                    while (await reader.ReadAsync ())
-                        {
+                    while (await reader.ReadAsync())
+                    {
                         var sct = new StudentCourseTest
-                            {
-                            StudentCourseId = reader.GetInt32 (0),
-                            TestId = reader.GetInt32 (1),
-                            TestTitle = reader.GetString (2),
-                            TestType = reader.GetInt32 (3),
-                            CourseTopicId = reader.GetInt32 (4),
-                            CourseTopicTitle = reader.GetString (5),
-                            TestTags = reader.GetInt32 (6),
-                            TestLevel = reader.GetInt32 (7),
-                            TestKey = reader.GetInt32 (8),
-                            UserAns = reader.GetInt32 (9),
-                            DateTime = reader.GetString (10),
+                        {
+                            StudentCourseId = reader.GetInt32(0),
+                            TestId = reader.GetInt32(1),
+                            TestTitle = reader.GetString(2),
+                            TestType = reader.GetInt32(3),
+                            CourseTopicId = reader.GetInt32(4),
+                            CourseTopicTitle = reader.GetString(5),
+                            TestTags = reader.GetInt32(6),
+                            TestLevel = reader.GetInt32(7),
+                            TestKey = reader.GetInt32(8),
+                            UserAns = reader.GetInt32(9),
+                            DateTime = reader.GetString(10),
                             TestIndex = ++index,
-                            TestOptions = new List<TestOption> ()
-                            };
-                        lstStudentCourseTests.Add (sct);
-                        }
+                            TestOptions = new List<TestOption>()
+                        };
+                        lstStudentCourseTests.Add(sct);
                     }
+                }
+                Console.WriteLine($"be.........................................lstStudentCourseTests COUNT = {lstStudentCourseTests.Count} ");
                 if (readOptions)
                     {
                     foreach (StudentCourseTest t in lstStudentCourseTests)
