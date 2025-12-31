@@ -20,31 +20,27 @@ else
             <hr style="color:red" />
         </div>
         <EditForm Model="lstProjects">
-            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
-                <MudCard Class="mx-0">
-                    <MudCardContent Style="background-color:whitesmoke;">
-                        @* SEARCH *@ 
-                        <div class="mb-3" style="background-color:WhiteSmoke">
-                            @* <span style="font-size:larger; font-weight:bold;color:royalblue;">Search</span> *@
-                            <div class="d-flex align-items-center mb-3">
-                                <button class="btn btn-link" @onclick="BtnReadNotesBySearch">
-                                    <img src="/img/icoSearch.png" width="30" />
-                                </button>
-                                <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search... جستجو" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';width:90%" />
-                                <button class="btn btn-link" @onclick="BtnCancelSearch">
-                                    <img src="/img/icoCancel.png" width="22" />
-                                </button>
-                            </div>
-                        </div>
-                        @* END SEARCH *@
-                    </MudCardContent>
-                </MudCard>
-            </MudContainer>
-            @* SEARCH RESULT *@ 
+            @* SEARCH *@ 
+            <div class="mb-3" style="max-width:500px; margin:0 auto">
+                @* <span style="font-size:larger; font-weight:bold;color:royalblue;">Search</span> *@
+                <div class="d-flex align-items-center mb-3">
+                    <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search... جستجو" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';width:90%" />
+                    <button class="btn btn-link" @onclick="BtnReadNotesBySearch">
+                        <img src="/img/icoSearch.png" width="30" />
+                    </button>
+                @if(lstNotes.Count > 0)
+                    {
+                    <button class="btn btn-link" @onclick="BtnCancelSearch">
+                        <img src="/img/icoCancel.png" width="22" />
+                    </button>                            
+                    }
+                </div>
+            </div>
+            @* END SEARCH *@
+            @* SHOW SEARCH RESULTS *@ 
             @if(lstNotes.Count > 0)
                 {
                 <div>
-                    <br />
                     <h6 style="text-align:center">TOP 10 Results:</h6>
                 </div>
                 foreach (Note note in lstNotes)
@@ -60,9 +56,6 @@ else
                                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
-                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
-                                                <img src="/img/icoCalendar.png" width="18" />
-                                            </button>
                                             <span style="color:indianred; font-weight:bold;">
                                                 @note.NoteDatum
                                             </span>
@@ -70,7 +63,7 @@ else
                                             @if(note.NoteText.Length >60)
                                                 {
                                                 <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
-                                                    @note.NoteText.Substring(1,60)
+                                                    @note.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span>
                                                 </div>
                                                 }
                                             else
@@ -79,6 +72,12 @@ else
                                                     @note.NoteText
                                                 </div>
                                                 }
+                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
+                                                <img src="/img/icoNote1.png" width="24" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
+                                                <img src="/img/icoDelete1.png" width="24" />
+                                            </button>
                                         </MudCardContent>
                                     </MudCard>
                                 </MudContainer>
@@ -90,9 +89,6 @@ else
                                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
-                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
-                                                <img src="/img/icoCalendar.png" width="18" />
-                                            </button>
                                             <span style="color:indianred; font-weight:bold;">
                                                 @note.NoteDatum
                                             </span>
@@ -100,7 +96,7 @@ else
                                             @if(note.NoteText.Length >60)
                                                 {
                                                 <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
-                                                    @note.NoteText.Substring(1,60)
+                                                    @note.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span>
                                                 </div>
                                                 }
                                             else
@@ -109,6 +105,12 @@ else
                                                     @note.NoteText
                                                 </div>
                                                 }
+                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
+                                                <img src="/img/icoNote1.png" width="24" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
+                                                <img src="/img/icoDelete1.png" width="24" />
+                                            </button>
                                         </MudCardContent>
                                     </MudCard>
                                 </MudContainer>
@@ -229,18 +231,29 @@ else
                                                                     if ((notex.NoteTags & 1) == 1)
                                                                         {
                                                                         <div class="mt-3 text-end">
-                                                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                                                <img src="/img/icoCalendar.png" width="18" />
-                                                                            </button>
-                                                                            <span style="color:indianred; font-weight:bold;">
-                                                                                @notex.NoteDatum
-                                                                            </span>
                                                                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                                                                 <MudCard Class="mx-0">
                                                                                     <MudCardContent Style="background-color:whitesmoke;">
-                                                                                        <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:x-small">
-                                                                                            @notex.NoteText
+                                                                                        <span style="color:indianred; font-weight:bold;">
+                                                                                            @notex.NoteDatum
+                                                                                        </span>
+                                                                                        <hr />
+                                                                                        <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
+                                                                                            @if(notex.NoteText.Length > 60)
+                                                                                                {
+                                                                                                <div> @notex.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span></div>
+                                                                                                }
+                                                                                            else
+                                                                                                {
+                                                                                                <div> @notex.NoteText</div>
+                                                                                                }
                                                                                         </div>
+                                                                                        <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
+                                                                                            <img src="/img/icoNote1.png" width="24" />
+                                                                                        </button>
+                                                                                        <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
+                                                                                            <img src="/img/icoDelete1.png" width="24" />
+                                                                                        </button>
                                                                                     </MudCardContent>
                                                                                 </MudCard>
                                                                             </MudContainer>
@@ -249,18 +262,29 @@ else
                                                                     else
                                                                         {
                                                                         <div class="mt-3 text-start">
-                                                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                                                <img src="/img/icoCalendar.png" width="18" />
-                                                                            </button>
-                                                                            <span style="color:indianred; font-weight:bold;">
-                                                                                @notex.NoteDatum
-                                                                            </span>
                                                                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                                                                 <MudCard Class="mx-0">
                                                                                     <MudCardContent Style="background-color:whitesmoke;">
-                                                                                        <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:x-small">
-                                                                                            @notex.NoteText
+                                                                                        <span style="color:indianred; font-weight:bold;">
+                                                                                            @notex.NoteDatum
+                                                                                        </span>
+                                                                                        <hr />
+                                                                                        <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
+                                                                                            @if(notex.NoteText.Length > 60)
+                                                                                                {
+                                                                                                <div> @notex.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span></div>
+                                                                                                }
+                                                                                            else
+                                                                                                {
+                                                                                                <div> @notex.NoteText</div>
+                                                                                                }
                                                                                         </div>
+                                                                                        <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
+                                                                                            <img src="/img/icoNote1.png" width="24" />
+                                                                                        </button>
+                                                                                        <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
+                                                                                            <img src="/img/icoDelete1.png" width="24" />
+                                                                                        </button>
                                                                                     </MudCardContent>
                                                                                 </MudCard>
                                                                             </MudContainer>

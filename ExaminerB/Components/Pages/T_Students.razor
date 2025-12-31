@@ -98,25 +98,27 @@ else
             </div>
         
             @* LIST STUDENTs *@
-            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
-                <MudCard Class="mx-0">
-                    <MudCardContent Style="background-color:rgba(249,249,249);">
-                        @foreach(User student in lstStudents)
-                            {
-                            <div>
-                                <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
-                                    <img src="/img/icoEditPen.png" width="25" />
-                                </button>
-                                @student.UserName
-                                <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
-                                    <img src="/img/icoFolderS.png" width="25" />
-                                </button>
-                            </div>
-                            }
-                    </MudCardContent>
-                </MudCard>
-            </MudContainer>
-        
+            @if(lstStudents.Count >0)
+                {
+                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                    <MudCard Class="mx-0">
+                        <MudCardContent Style="background-color:rgba(249,249,249);">
+                            @foreach(User student in lstStudents)
+                                {
+                                <div>
+                                    <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
+                                        <img src="/img/icoEditPen.png" width="25" />
+                                    </button>
+                                    @student.UserName
+                                    <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
+                                        <img src="/img/icoFolderS.png" width="25" />
+                                    </button>
+                                </div>
+                                }
+                        </MudCardContent>
+                    </MudCard>
+                </MudContainer>                
+                }        
             <hr style="color:red" />
             @* SELECT A GROUP *@
             <div class="accordion-item mb-2" >
