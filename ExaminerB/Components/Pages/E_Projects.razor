@@ -20,19 +20,111 @@ else
             <hr style="color:red" />
         </div>
         <EditForm Model="lstProjects">
+            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
+                <MudCard Class="mx-0">
+                    <MudCardContent Style="background-color:whitesmoke;">
+                        @* SEARCH *@ 
+                        <div class="mb-3" style="background-color:WhiteSmoke">
+                            @* <span style="font-size:larger; font-weight:bold;color:royalblue;">Search</span> *@
+                            <div class="d-flex align-items-center mb-3">
+                                <button class="btn btn-link" @onclick="BtnReadNotesBySearch">
+                                    <img src="/img/icoSearch.png" width="30" />
+                                </button>
+                                <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search... جستجو" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';width:90%" />
+                                <button class="btn btn-link" @onclick="BtnCancelSearch">
+                                    <img src="/img/icoCancel.png" width="22" />
+                                </button>
+                            </div>
+                        </div>
+                        @* END SEARCH *@
+                    </MudCardContent>
+                </MudCard>
+            </MudContainer>
+            @* SEARCH RESULT *@ 
+            @if(lstNotes.Count > 0)
+                {
+                <div>
+                    <br />
+                    <h6 style="text-align:center">TOP 10 Results:</h6>
+                </div>
+                foreach (Note note in lstNotes)
+                    {
+                    <div>
+                        @if((appState.SelectedNoteId == Convert.ToInt32(note.NoteId)) & (_cmd == "ShowNoteInDialog"))
+                            {
+                            <E_Modal_ShowNote />
+                            }
+                        @if ((note.NoteTags & 1) == 1)
+                            {
+                            <div class="mt-3 text-end">
+                                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
+                                    <MudCard Class="mx-0">
+                                        <MudCardContent Style="background-color:whitesmoke;">
+                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
+                                                <img src="/img/icoCalendar.png" width="18" />
+                                            </button>
+                                            <span style="color:indianred; font-weight:bold;">
+                                                @note.NoteDatum
+                                            </span>
+                                            <hr />
+                                            @if(note.NoteText.Length >60)
+                                                {
+                                                <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
+                                                    @note.NoteText.Substring(1,60)
+                                                </div>
+                                                }
+                                            else
+                                                {
+                                                <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
+                                                    @note.NoteText
+                                                </div>
+                                                }
+                                        </MudCardContent>
+                                    </MudCard>
+                                </MudContainer>
+                            </div>
+                            }
+                        else
+                            {
+                            <div class="mt-3 text-start">
+                                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
+                                    <MudCard Class="mx-0">
+                                        <MudCardContent Style="background-color:whitesmoke;">
+                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
+                                                <img src="/img/icoCalendar.png" width="18" />
+                                            </button>
+                                            <span style="color:indianred; font-weight:bold;">
+                                                @note.NoteDatum
+                                            </span>
+                                            <hr />
+                                            @if(note.NoteText.Length >60)
+                                                {
+                                                <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
+                                                    @note.NoteText.Substring(1,60)
+                                                </div>
+                                                }
+                                            else
+                                                {
+                                                <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
+                                                    @note.NoteText
+                                                </div>
+                                                }
+                                        </MudCardContent>
+                                    </MudCard>
+                                </MudContainer>
+                            </div>
+                            }
+                    </div>
+                }
+            }
+            @* END SEARCH RESULT *@
+            <br/>
             <div class="accordion" id="accordionProjects" style="max-width:500px; margin: 0 auto;">
                 @foreach (Project project in lstProjects)
                     {
                     var collapseId = $"collapse{project.ProjectId}";
                     string clps = "";
-                    if ((appState.GroupId ?? 0) != project.ProjectId)
-                        {
-                        clps = "collapse";
-                        }
-                    else
-                        {
-                        clps = "collapse show";
-                        }
+                    clps = ((appState.GroupId ?? 0) != project.ProjectId) ? "collapse" : "collapse show";
                     <div class="accordion-item">
                         <h4 class="accordion-header" style="background-color:rgba(252,252,252)">
                             <button class="accordion-button collapsed" 
@@ -233,12 +325,15 @@ else
     private MudTextField<string> refSubprojectNote;
 
     private MudTextField<string> refNoteText;
+    private MudTextField<string> refSearchNote;
 
     private readonly HttpClient _http;
     User user = new User ();
     List<Project> lstProjects = new ();
     Project project = new Project();
     Note note = new Note();
+    List<Note> lstNotes = new List<Note> ();
+    public string strSearchKey = "";
     public string dirx = "";
     public bool _hasFetched = false;
     private bool shouldFocusNewProject = false;
@@ -582,6 +677,17 @@ else
         appState.SetSelectedNoteId (note.NoteId);
         appState.SetNoteDatum (note.NoteDatum);
         appState.SetNoteText (note.NoteText);
+        StateHasChanged ();
+        }
+    public async Task BtnReadNotesBySearch()
+        {
+        lstNotes = await feService.Read_NotesBySearchKey (strSearchKey);
+        Console.WriteLine($"page ........................................ Number of notes for {strSearchKey} = {lstNotes.Count}");
+        StateHasChanged ();
+        }
+    public async Task BtnCancelSearch()
+        {
+        lstNotes.Clear ();
         StateHasChanged ();
         }
     //back

@@ -1100,17 +1100,30 @@ namespace ExaminerB.Service
                 return new List<Note> ();
                 }
             }
-        public async Task<Subproject> Read_Note (int noteId)
+        public async Task<List<Note>> Read_NotesBySearchKey (string searchKey)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_NotesBySearchKey", searchKey);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Note>? lstNotes = await response.Content.ReadFromJsonAsync<List<Note>> ();
+                return lstNotes ?? new List<Note> ();
+                }
+            else
+                {
+                return new List<Note> ();
+                }
+            }
+        public async Task<Note> Read_Note (int noteId)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_Note", noteId);
             if (response.IsSuccessStatusCode)
                 {
-                Subproject? subProject = await response.Content.ReadFromJsonAsync<Subproject> ();
-                return subProject ?? new Subproject ();
+                Note? note = await response.Content.ReadFromJsonAsync<Note> ();
+                return note ?? new Note ();
                 }
             else
                 {
-                return new Subproject ();
+                return new Note ();
                 }
             }
         public async Task<bool> Update_Note (Note note)

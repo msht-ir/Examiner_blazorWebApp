@@ -3663,6 +3663,40 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             return lstNotes;
             }
+        public async Task<List<Note>> Read_NotesBySearchKeyAsync (string searchKey)
+            {
+            searchKey = "%" + searchKey + "%";
+            List<Note> lstNotes = new List<Note> ();
+            string sql = @"SELECT ID, NoteDatum, Note, Parent_ID, ParentType, Rtl, Done, User_ID, Shared, ReadOnly FROM Notes 
+                        WHERE Note LIKE @key
+                        ORDER BY NoteDatum 
+                        OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY ";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new SqlConnection (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@key", searchKey);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            lstNotes.Clear ();
+            while (await reader.ReadAsync ())
+                {
+                Note note = new Note ();
+                note.NoteId = reader.GetInt32 (0);
+                note.NoteDatum = reader.GetString (1);
+                note.NoteText = reader.GetString (2);
+                note.ParentId = reader.GetInt32 (3);
+                note.ParentType = reader.GetByte (4);
+                note.NoteTags = 0;
+                note.NoteTags = reader.GetBoolean (5) ? note.NoteTags + 1 : note.NoteTags;
+                note.NoteTags = reader.GetBoolean (6) ? note.NoteTags + 2 : note.NoteTags;
+                note.UserId = reader.GetInt32 (7);
+                note.NoteTags = reader.GetBoolean (8) ? note.NoteTags + 4 : note.NoteTags;
+                note.NoteTags = reader.GetBoolean (9) ? note.NoteTags + 8 : note.NoteTags;
+                lstNotes.Add (note);
+                }
+            await cnn.CloseAsync ();
+            return lstNotes;
+            }
         public async Task<Note> Read_NoteAsync (int noteId)
             {
             string sql = "SELECT ID, NoteDatum, Note, Parent_ID, ParentType, Rtl, Done, User_ID, Shared, ReadOnly FROM Notes WHERE ID=@noteid";
