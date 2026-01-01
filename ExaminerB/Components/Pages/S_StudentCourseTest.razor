@@ -10,13 +10,11 @@
 <div style="text-align: center;">
     @if (studentCourseTest.TestId == 0)
         {
-        <img src="/img/pngExam01.png" style="width:250px" />
-        <br />
-        <img src="/img/gifRetryCorrectTests.gif" style="width:250px" />
+        <img src="/img/gifExam.gif" style="width:250px" />
         <br />
         <br />
-        <p><span style="color:green">No incorrect answers to retry!</span><br /><br /><span style="font-weight:bold;color:RoyalBlue">Take new random tests instead!</span></p>
-        <br />
+        <span style="color:green">All tests are answered correctly!</span>
+        <br /><br />
         <hr />
         }
     else
@@ -32,56 +30,58 @@
             }
         <hr />
         <EditForm Model="studentCourseTest">
-            <table class="table table-borderless">
-                <thead style="color:green">
-                    <tr style="font-weight:bold">
-                        <td style="color:darkred">Options</td>                        
-                        <td></td>
-                    </tr>
-                </thead>
-                @if((studentCourseTest.TestTags & 2) == 2)
-                    {
-                    style = "direction:rtl;text-align:right;";
-                    strSelect = "انتخاب";
-                    }
-                else
-                    {
-                    style="direction:ltr;text-align:left;";                        
-                    strSelect = "Select";
-                    }                
+            <div style="max-width:500px; margin:0 auto">
+                <table class="table table-borderless">
+                    <thead style="color:green">
+                        <tr style="font-weight:bold">
+                            <td style="color:darkred">Options</td>                        
+                            <td></td>
+                        </tr>
+                    </thead>
+                    @if((studentCourseTest.TestTags & 2) == 2)
+                        {
+                        style = "direction:rtl;text-align:right;";
+                        strSelect = "انتخاب";
+                        }
+                    else
+                        {
+                        style="direction:ltr;text-align:left;";                        
+                        strSelect = "Select";
+                        }                
 
-                @foreach(var opt in studentCourseTest.TestOptions)
-                    {
-                    <MudContainer Class="mt-2 px-0">
-                        <MudCard Class="mx-0">
-                            <MudCardContent Style="background-color:whitesmoke;">
-                                @if((studentCourseTest.TestTags & 2) == 2)
-                                    {
-                                    <MudGrid Style="@style">
-                                        <MudItem xs="10">
-                                            @opt.TestOptionTitle
-                                        </MudItem>
-                                        <MudItem xs="2">
-                                            <button class="btn btn-primary btn-sm col-auto" @onclick="()=>BtnSaveOptionAsAnswer(opt.TestOptionId)">انتخاب</button>
-                                        </MudItem>
-                                    </MudGrid>                                       
-                                    }
-                                else
-                                    {
-                                    <MudGrid Style="@style">
-                                        <MudItem xs="10">
-                                            @opt.TestOptionTitle
-                                        </MudItem>
-                                        <MudItem xs="2">
-                                            <button class="btn btn-primary btn-sm col-auto" @onclick="()=>BtnSaveOptionAsAnswer (opt.TestOptionId)">Select</button>
-                                        </MudItem>
-                                    </MudGrid>                                       
-                                    }                            
-                            </MudCardContent>
-                        </MudCard>
-                    </MudContainer>
-                    }
-            </table>
+                    @foreach(var opt in studentCourseTest.TestOptions)
+                        {
+                        <MudContainer Class="mt-2 px-0">
+                            <MudCard Class="mx-0">
+                                <MudCardContent Style="background-color:whitesmoke;">
+                                    @if((studentCourseTest.TestTags & 2) == 2)
+                                        {
+                                        <MudGrid Style="@style">
+                                            <MudItem xs="10">
+                                                @opt.TestOptionTitle
+                                            </MudItem>
+                                            <MudItem xs="2">
+                                                <button class="btn btn-primary btn-sm col-auto" @onclick="()=>BtnSaveOptionAsAnswer(opt.TestOptionId)">انتخاب</button>
+                                            </MudItem>
+                                        </MudGrid>                                       
+                                        }
+                                    else
+                                        {
+                                        <MudGrid Style="@style">
+                                            <MudItem xs="10">
+                                                @opt.TestOptionTitle
+                                            </MudItem>
+                                            <MudItem xs="2">
+                                                <button class="btn btn-primary btn-sm col-auto" @onclick="()=>BtnSaveOptionAsAnswer (opt.TestOptionId)">Select</button>
+                                            </MudItem>
+                                        </MudGrid>                                       
+                                        }                            
+                                </MudCardContent>
+                            </MudCard>
+                        </MudContainer>
+                        }
+                </table>
+            </div>
         </EditForm>
         <br />
         <hr style="color:red"/>

@@ -19,7 +19,7 @@
     <hr />
     @foreach (StudentCourseTest tst in lstStudentCourseTests)
         {
-        <MudContainer Class="mt-2 px-0">
+        <MudContainer Class="mt-2 px-0" style="max-width:500px; margin:0 auto;">
             <MudCard Class="mx-0">
                 <MudCardContent Style="background-color:whitesmoke;">
                     @{
@@ -86,15 +86,14 @@
     List<StudentCourseTest> lstStudentCourseTests = new List<StudentCourseTest> ();
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
-        {
+    {
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            
             Navman.NavigateTo ("/Login");
             }
         student.UserName = appState.UserName;
-        Console.WriteLine($"page ***************************************************** studentCourse.StudentCourseId = {studentCourse.StudentCourseId}");       
+        studentCourse.StudentCourseId = studentCourseId;
         lstStudentCourseTests = await feService.Read_StudentCourseTests (studentCourse, true);
         if (!hasFetched)
             hasFetched = true; 
