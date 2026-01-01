@@ -94,6 +94,7 @@
             Navman.NavigateTo ("/Login");
             }
         student.UserName = appState.UserName;
+        Console.WriteLine($"page ***************************************************** studentCourse.StudentCourseId = {studentCourse.StudentCourseId}");       
         lstStudentCourseTests = await feService.Read_StudentCourseTests (studentCourse, true);
         if (!hasFetched)
             hasFetched = true; 

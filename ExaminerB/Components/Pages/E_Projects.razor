@@ -211,9 +211,6 @@ else
                                                             <div class="mb-1">
                                                                 <MudTextField @ref="refSubprojectName" @bind-Value="subProject.SubprojectName" Label="Subproject name نام زير پروژه" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                                             </div>
-                                                            <div class="mb-1">
-                                                                <MudTextField @ref="refSubprojectNote" @bind-Value="subProject.SubprojectNotes" Label="Note توضيحات" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
-                                                            </div>
                                                             <div style="text-align: center;">
                                                                 <button class="btn btn-link" @onclick="()=>BtnUpdateSubproject(subProject)">
                                                                     <img src="/img/icoSave2.png" width="22" />
@@ -458,7 +455,7 @@ else
     public async Task BtnUpdateProject(Project project)
         {
         //ProjectName is bind
-        project.ProjectUserId = Convert.ToInt32(appState.UserId);
+        project.UserId = Convert.ToInt32(appState.UserId);
         bool result = await feService.Update_Project (project);
         if (result)
             {
@@ -617,7 +614,6 @@ else
     public void BtnReportSubprojectNotes(Subproject subProject)
         {
         appState.SetSubprojectName (subProject.SubprojectName);
-        appState.SetStudentNickname (subProject.SubprojectNotes);
         string mode = "StudentWithDels";
         //Navman.NavigateTo ($"/T_ReportMessages/{mode}/{stdnt.UserId}");
         }

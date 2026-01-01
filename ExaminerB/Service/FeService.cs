@@ -89,7 +89,7 @@ namespace ExaminerB.Service
             }
         public async Task<List<User>> Read_StudentsByGCEMId (int Id, string mode, int readStudentGCEM)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByGCEMId?mode={mode}&readStudentGCEM={readStudentGCEM}", Id);
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByGCEMSId?mode={mode}&readStudentGCEM={readStudentGCEM}", Id);
             if (response.IsSuccessStatusCode)
                 {
                 List<User>? lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();

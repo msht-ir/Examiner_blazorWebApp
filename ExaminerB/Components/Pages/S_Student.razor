@@ -489,7 +489,6 @@
     private async Task ReadMessageList()
         {
         lstStudentMessages = await feService.Read_StudentMessages (student.UserId, "ByStudentId");        
-        Console.WriteLine($"page: T_Student ******************* lstStudentMessages.Count = {lstStudentMessages.Count}");
         //first bit: 0 = unread, 1 = read
         unreadCount = lstStudentMessages.Count(m => (m.StudentMessageTags & (1 << 1)) == 0);
         }

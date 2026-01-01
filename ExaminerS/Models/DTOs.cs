@@ -19,6 +19,7 @@ namespace ExaminerS.Models
         public List<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse> ();
         public List<StudentExam> StudentExams { get; set; } = new List<StudentExam> ();
         public List<StudentMessage> StudentMessages { get; set; } = new List<StudentMessage> ();
+        public List<Note> StudentNotes { get; set; } = new List<Note> ();
         }
     //G
     public class Group
@@ -269,11 +270,11 @@ namespace ExaminerS.Models
     public class Project
         {
         public int ProjectId { get; set; } = 0;
-        public int ProjectUserId { get; set; } = 0;
+        public int UserId { get; set; } = 0;
         public string ProjectName { get; set; } = "";
-        public string ProjectNotes { get; set; } = "";
-        public bool ProjectActive { get; set; }
+        public int ProjectTags { get; set; }
         public List<Subproject> Subprojects { get; set; } = new List<Subproject> ();
+        public List<Note> Notes { get; set; } = new List<Note> ();
         }
     //SP
     public class Subproject
@@ -281,18 +282,24 @@ namespace ExaminerS.Models
         public int SubprojectId { get; set; } = 0;
         public int ProjectId { get; set; } = 0;
         public string SubprojectName { get; set; } = "";
-        public string SubprojectNotes { get; set; } = "";
+        public int SubprojectTags { get; set; } = 0;
         public List<Note> Notes { get; set; } = new List<Note> ();
         }
     //N
     public class Note
         {
         public int NoteId { get; set; } = 0;
-        public int UserId { get; set; } = 0;
-        public string NoteDatum { get; set; } = "";
-        public string NoteText { get; set; } = "";
         public int ParentId { get; set; } = 0;
         public int ParentType { get; set; } = 0;
+        public string NoteDatum { get; set; } = "";
+        public string NoteText { get; set; } = "";
         public int NoteTags { get; set; } = 0; //1:rtl 2:done 3:shared 4:readonly 
+        }
+    //NN
+    public class NoteNet
+        {
+        public int NoteNetId { get; set; } = 0;
+        public int NoteAId { get; set; } = 0;
+        public int NoteBId { get; set; } = 0;
         }
     }

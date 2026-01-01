@@ -19,7 +19,7 @@ namespace ExaminerB.Services2Backend
         public async Task<User?> LoginTeacherAsync (User user)
             {
             string? connString = _config.GetConnectionString ("cnni");
-            string sql = "SELECT Id, UsrName, UsrPass, UsrActive, UsrNickname FROM usrs WHERE UsrName=@usr AND UsrPass=@pwd AND UsrActive=1";
+            string sql = "SELECT UsrId, UsrName, UsrPass, UsrNickname, UsrTags FROM usrs WHERE UsrName=@usr AND UsrPass=@pwd AND ((UsrTags & 1) = 1)";
             using SqlConnection cnn = new (connString);
             User userOut = new ();
             try
@@ -29,7 +29,6 @@ namespace ExaminerB.Services2Backend
                 cmd.Parameters.AddWithValue ("@usr", user.UserName);
                 cmd.Parameters.AddWithValue ("@pwd", user.UserPass);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-
                 while (await reader.ReadAsync ())
                     {
                     if ((user.UserName.ToLower () == reader.GetString (1).ToLower ()) && (user.UserPass == reader.GetString (2)))
@@ -38,12 +37,11 @@ namespace ExaminerB.Services2Backend
                         userOut.TeacherId = 0;
                         userOut.UserName = reader.GetString (1);
                         userOut.UserPass = reader.GetString (2);
+                        userOut.UserNickname = reader.GetString (3);
                         userOut.UserRole = "teacher";
-                        userOut.UserTags = Convert.ToInt32 (reader.GetBoolean (3));
-                        userOut.UserNickname = reader.GetString (4);
+                        userOut.UserTags = reader.GetInt32 (4);
                         }
                     }
-
                 await cnn.CloseAsync ();
 
                 if (userOut.UserId > 0)
@@ -103,11 +101,11 @@ namespace ExaminerB.Services2Backend
             }
         public async Task LogAsync (int userId, SqlConnection cnn)
             {
-            string sql = "INSERT INTO usrsLogs (UserId, UserLog, DateTime) VALUES (@userid, @userlog, @datetime)";
+            string sql = "INSERT INTO usrsLogs (UserId, UserLogText, DateTime) VALUES (@userid, @userlogtext, @datetime)";
             await cnn.OpenAsync ();
             SqlCommand cmd = new (sql, cnn);
             cmd.Parameters.AddWithValue ("@userid", userId);
-            cmd.Parameters.AddWithValue ("@userlog", 21);
+            cmd.Parameters.AddWithValue ("@userlogtext", 21);
             cmd.Parameters.AddWithValue ("@datetime", DateTime.Now.ToString ("yyyy-MM-dd . HH:mm"));
             await cmd.ExecuteNonQueryAsync ();
             }
@@ -132,7 +130,7 @@ namespace ExaminerB.Services2Backend
             var users = new List<User> ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
-            using SqlCommand cmd = new ("SELECT ID, UsrName, UsrPass, UsrActive, UsrNickname FROM usrs WHERE UsrActive = 1", cnn);
+            using SqlCommand cmd = new ("SELECT UsrId, UsrName, UsrPass, UsrNickname, UsrTags FROM usrs WHERE (UsrTags & 1) = 1", cnn);
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             while (await reader.ReadAsync ())
@@ -142,8 +140,8 @@ namespace ExaminerB.Services2Backend
                     UserId = reader.GetInt32 (0),
                     UserName = reader.GetString (1),
                     UserPass = reader.GetString (2),
-                    UserTags = Convert.ToInt32 (reader.GetBoolean (3)),
-                    UserNickname = reader.GetString (4)
+                    UserNickname = reader.GetString (3),
+                    UserTags = Convert.ToInt32 (reader.GetInt32 (4))
                     });
                 }
             return users;
@@ -343,13 +341,14 @@ namespace ExaminerB.Services2Backend
                         TeacherId = reader.GetInt32 (1),
                         UserName = reader.GetString (2),
                         UserPass = reader.GetString (3),
-                        UserTags = reader.GetInt32 (4),
-                        UserNickname = reader.GetString (5),
+                        UserNickname = reader.GetString (4),
+                        UserTags = reader.GetInt32 (5),
                         UserRole = "-",
                         StudentGroups = new List<StudentGroup> (),
                         StudentCourses = new List<StudentCourse> (),
                         StudentExams = new List<StudentExam> (),
                         StudentMessages = new List<StudentMessage> (),
+                        StudentNotes = new List<Note> ()
                         };
                     lstStudents.Add (student);
                     }
@@ -389,7 +388,7 @@ namespace ExaminerB.Services2Backend
                 }
             catch (Exception ex)
                 {
-                Console.WriteLine ("C10 : \n" + ex.ToString ());
+                Console.WriteLine ("********************************************************C10 : \n" + ex.ToString ());
                 return new List<User> ();
                 }
             }
@@ -985,8 +984,7 @@ namespace ExaminerB.Services2Backend
             string sql = @"SELECT sc.StudentCourseId, sc.StudentId, sc.CourseId, c.CourseName, s.StudentName, s.StudentNickname, sc.NumberOfTests, sc.CorrectAnswers, sc.StudentCourseTags 
                         FROM StudentCourses sc 
                         INNER JOIN Courses c ON sc.CourseId = c.CourseId 
-                        INNER JOIN Students s ON sc.StudentId = s.StudentId 
-                        WHERE sc.StudentId=@studentid";
+                        INNER JOIN Students s ON sc.StudentId = s.StudentId ";
             switch (mode)
                 {
                 case "ByStudentId":
@@ -1211,6 +1209,7 @@ namespace ExaminerB.Services2Backend
                         lstStudentCourseTests.Add (sct);
                         }
                     }
+                Console.WriteLine ($"be +++++++++++++++++++++++++++++++++++++++++++++++ lstStudentCourseTests Count = {lstStudentCourseTests.Count}");
                 if (readOptions)
                     {
                     foreach (StudentCourseTest t in lstStudentCourseTests)
@@ -3454,16 +3453,15 @@ COMMIT TRANSACTION;
         #region P:Projects
         public async Task<int> Create_ProjectAsync (Project project)
             {
-            string sql = "INSERT INTO Projects (ProjectName, Notes, Active, User_ID) VALUES (@projectname, @notes, @active, @userid)";
+            string sql = "INSERT INTO Projects (UserId, ProjectName, ProjectTags ) VALUES (@userid, @projectname, @projecttags)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             //Create
             await cnn.OpenAsync ();
             SqlCommand cmd2 = new SqlCommand (sql, cnn);
+            cmd2.Parameters.AddWithValue ("@userid", project.UserId);
             cmd2.Parameters.AddWithValue ("@projectname", project.ProjectName);
-            cmd2.Parameters.AddWithValue ("@note", project.ProjectNotes);
-            cmd2.Parameters.AddWithValue ("@active", project.ProjectActive);
-            cmd2.Parameters.AddWithValue ("@userid", project.ProjectUserId);
+            cmd2.Parameters.AddWithValue ("@active", project.ProjectTags);
             await cmd2.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
             return 1;
@@ -3471,7 +3469,7 @@ COMMIT TRANSACTION;
         public async Task<List<Project>> Read_ProjectsAsync (int userId)
             {
             List<Project> lstProjects = new List<Project> ();
-            string sql = "SELECT ID, ProjectName, Notes, Active, User_ID FROM Projects WHERE User_ID=@userid AND Active=1 ORDER BY ProjectName";
+            string sql = "SELECT ProjectId, UserId, ProjectName, ProjectTags FROM Projects WHERE UserId=@userid AND (ProjectTags & 1)=1 ORDER BY ProjectName";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
@@ -3484,10 +3482,9 @@ COMMIT TRANSACTION;
                 lstProjects.Add (new Project
                     {
                     ProjectId = reader.GetInt32 (0),
-                    ProjectName = reader.GetString (1),
-                    ProjectNotes = reader.GetString (2),
-                    ProjectActive = reader.GetBoolean (3),
-                    ProjectUserId = reader.GetInt32 (4),
+                    UserId = reader.GetInt32 (1),
+                    ProjectName = reader.GetString (2),
+                    ProjectTags = reader.GetInt32 (3),
                     Subprojects = new List<Subproject> ()
                     });
                 }
@@ -3500,7 +3497,7 @@ COMMIT TRANSACTION;
             }
         public async Task<Project> Read_ProjectAsync (int projectId)
             {
-            string sql = "SELECT ID, ProjectName, Notes, Active, User_ID FROM Projects WHERE ID=@projectid";
+            string sql = "SELECT ProjectId, UserId, ProjectName, ProjectTags FROM Projects WHERE ProjectId=@projectid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
@@ -3511,10 +3508,9 @@ COMMIT TRANSACTION;
             while (await reader.ReadAsync ())
                 {
                 project.ProjectId = reader.GetInt32 (0);
+                project.UserId = reader.GetInt32 (1);
                 project.ProjectName = reader.GetString (2);
-                project.ProjectNotes = reader.GetString (3);
-                project.ProjectActive = reader.GetBoolean (4);
-                project.ProjectUserId = reader.GetInt32 (5);
+                project.ProjectTags = reader.GetInt32 (3);
                 project.Subprojects = new List<Subproject> ();
                 }
             await cnn.CloseAsync ();
@@ -3525,15 +3521,14 @@ COMMIT TRANSACTION;
         #region SP:Subprojects
         public async Task<int> Create_SubprojectAsync (Subproject subProject)
             {
-            string sql = "INSERT INTO SubProjects (SubProjectName, Notes, Project_ID) VALUES (@subprojectname, @notes, @projectid)";
+            string sql = "INSERT INTO SubProjects (ProjectId, SubProjectName, SubProjectTags) VALUES (@projectid, @subprojectname, 1)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             //Create
             await cnn.OpenAsync ();
             SqlCommand cmd2 = new SqlCommand (sql, cnn);
-            cmd2.Parameters.AddWithValue ("@subprojectname", subProject.SubprojectName);
-            cmd2.Parameters.AddWithValue ("@note", subProject.SubprojectNotes);
             cmd2.Parameters.AddWithValue ("@projectid", subProject.ProjectId);
+            cmd2.Parameters.AddWithValue ("@subprojectname", subProject.SubprojectName);
             await cmd2.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
             return 1;
@@ -3541,7 +3536,7 @@ COMMIT TRANSACTION;
         public async Task<List<Subproject>> Read_SubprojectsAsync (int projectId, bool readNotes)
             {
             List<Subproject> lstSubprojects = new List<Subproject> ();
-            string sql = "SELECT ID, SubProjectName, Notes, Project_ID FROM SubProjects WHERE Project_ID=@projectid ORDER BY SubProjectName";
+            string sql = "SELECT SubprojectId, ProjectId, SubProjectName, SubprojectTags FROM SubProjects WHERE ProjectId=@projectid ORDER BY SubProjectName";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
@@ -3554,9 +3549,8 @@ COMMIT TRANSACTION;
                 lstSubprojects.Add (new Subproject
                     {
                     SubprojectId = reader.GetInt32 (0),
-                    SubprojectName = reader.GetString (1),
-                    SubprojectNotes = reader.GetString (2),
-                    ProjectId = reader.GetInt32 (3),
+                    ProjectId = reader.GetInt32 (1),
+                    SubprojectName = reader.GetString (2),
                     Notes = new List<Note> ()
                     });
                 }
@@ -3572,7 +3566,7 @@ COMMIT TRANSACTION;
             }
         public async Task<Subproject> Read_SubprojectAsync (int subProjectId, bool readNotes)
             {
-            string sql = "SELECT ID, SubProjectName, Notes, Project_ID FROM SubProjects WHERE ID=@subprojectid";
+            string sql = "SELECT SubprojectId, ProjectId, SubProjectName FROM SubProjects WHERE SubprojectId=@subprojectid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
@@ -3583,9 +3577,8 @@ COMMIT TRANSACTION;
             while (await reader.ReadAsync ())
                 {
                 subProject.SubprojectId = reader.GetInt32 (0);
+                subProject.ProjectId = reader.GetInt32 (1);
                 subProject.SubprojectName = reader.GetString (2);
-                subProject.SubprojectNotes = reader.GetString (3);
-                subProject.ProjectId = reader.GetInt32 (5);
                 subProject.Notes = new List<Note> ();
                 }
             await cnn.CloseAsync ();
@@ -3636,7 +3629,7 @@ COMMIT TRANSACTION;
         public async Task<List<Note>> Read_NotesAsync (int parentId)
             {
             List<Note> lstNotes = new List<Note> ();
-            string sql = "SELECT ID, NoteDatum, Note, Parent_ID, ParentType, Rtl, Done, User_ID, Shared, ReadOnly FROM Notes WHERE Parent_ID=@parentid ORDER BY NoteDatum ";
+            string sql = "SELECT NoteId, ParentId, ParentType, NoteDatum, NoteText, NoteTags FROM Notes WHERE ParentId=@parentid ORDER BY NoteDatum ";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
@@ -3648,16 +3641,11 @@ COMMIT TRANSACTION;
                 {
                 Note note = new Note ();
                 note.NoteId = reader.GetInt32 (0);
-                note.NoteDatum = reader.GetString (1);
-                note.NoteText = reader.GetString (2);
-                note.ParentId = reader.GetInt32 (3);
-                note.ParentType = reader.GetByte (4);
-                note.NoteTags = 0;
-                note.NoteTags = reader.GetBoolean (5) ? note.NoteTags + 1 : note.NoteTags;
-                note.NoteTags = reader.GetBoolean (6) ? note.NoteTags + 2 : note.NoteTags;
-                note.UserId = reader.GetInt32 (7);
-                note.NoteTags = reader.GetBoolean (8) ? note.NoteTags + 4 : note.NoteTags;
-                note.NoteTags = reader.GetBoolean (9) ? note.NoteTags + 8 : note.NoteTags;
+                note.ParentId = reader.GetInt32 (1);
+                note.ParentType = reader.GetInt32 (2);
+                note.NoteDatum = reader.GetString (3);
+                note.NoteText = reader.GetString (4);
+                note.NoteTags = reader.GetInt32(5);
                 lstNotes.Add (note);
                 }
             await cnn.CloseAsync ();
@@ -3667,8 +3655,9 @@ COMMIT TRANSACTION;
             {
             searchKey = "%" + searchKey + "%";
             List<Note> lstNotes = new List<Note> ();
-            string sql = @"SELECT ID, NoteDatum, Note, Parent_ID, ParentType, Rtl, Done, User_ID, Shared, ReadOnly FROM Notes 
-                        WHERE Note LIKE @key
+            string sql = @"SELECT NoteId, ParentId, ParentType, NoteDatum, NoteText, NoteTags 
+                        FROM Notes 
+                        WHERE NoteText LIKE @key
                         ORDER BY NoteDatum 
                         OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY ";
             string? connString = _config.GetConnectionString ("cnni");
@@ -3682,16 +3671,11 @@ COMMIT TRANSACTION;
                 {
                 Note note = new Note ();
                 note.NoteId = reader.GetInt32 (0);
-                note.NoteDatum = reader.GetString (1);
-                note.NoteText = reader.GetString (2);
-                note.ParentId = reader.GetInt32 (3);
-                note.ParentType = reader.GetByte (4);
-                note.NoteTags = 0;
-                note.NoteTags = reader.GetBoolean (5) ? note.NoteTags + 1 : note.NoteTags;
-                note.NoteTags = reader.GetBoolean (6) ? note.NoteTags + 2 : note.NoteTags;
-                note.UserId = reader.GetInt32 (7);
-                note.NoteTags = reader.GetBoolean (8) ? note.NoteTags + 4 : note.NoteTags;
-                note.NoteTags = reader.GetBoolean (9) ? note.NoteTags + 8 : note.NoteTags;
+                note.ParentId = reader.GetInt32 (1);
+                note.ParentType = reader.GetByte (2);
+                note.NoteDatum = reader.GetString (3);
+                note.NoteText = reader.GetString (4);
+                note.NoteTags = reader.GetInt32(5);
                 lstNotes.Add (note);
                 }
             await cnn.CloseAsync ();
