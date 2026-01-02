@@ -296,7 +296,7 @@ namespace ExaminerB.Services2Backend
             {
             //read list of Students by {G/C/E/M}Id
             List<User> lstStudents = new List<User> ();
-            string sql = @"SELECT s.StudentId, s.TeacherId, s.StudentName, s.StudentPass, s.StudentNickname, s.StudentTags FROM Students s";
+            string sql = @"SELECT s.StudentId, s.TeacherId, s.StudentName, s.StudentPass, s.StudentNickname, s.StudentTags FROM Students s ";
             switch (mode)
                 {
                 case "G":
@@ -3201,7 +3201,6 @@ COMMIT TRANSACTION;
                         });
                     }
                 await cnn.CloseAsync ();
-                Console.WriteLine ($"be **************************************** message Count = {lstMessages.Count}");
                 if (getStudentMessages)
                     {
                     foreach(Message msg in lstMessages)
