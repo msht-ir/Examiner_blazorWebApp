@@ -3558,7 +3558,7 @@ COMMIT TRANSACTION;
                 {
                 foreach (Subproject subprj in lstSubprojects)
                     {
-                    subprj.Notes = await Read_NotesAsync (subprj.SubprojectId);
+                    subprj.Notes = await Read_NotesAsync (subprj.SubprojectId, 1); //1:read sp notes (parentTypes 1:subprojects 2:students 3:groups 4:courses 5:exams)
                     }
                 }
             return lstSubprojects;
@@ -3583,7 +3583,7 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             if (readNotes)
                 {
-                subProject.Notes = await Read_NotesAsync (subProject.SubprojectId);
+                subProject.Notes = await Read_NotesAsync (subProject.SubprojectId, 1); //1:read sp notes --parentTypes 1:subprojects 2:students 3:groups 4:courses 5:exams
                 }
             return subProject;
             }
@@ -3625,10 +3625,39 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             return 1;
             }
-        public async Task<List<Note>> Read_NotesAsync (int parentId)
+        public async Task<List<Note>> Read_NotesAsync (int parentId, int parentType)
             {
-            List<Note> lstNotes = new List<Note> ();
-            string sql = "SELECT NoteId, ParentId, ParentType, NoteDatum, NoteText, NoteTags FROM Notes WHERE ParentId=@parentid ORDER BY NoteDatum ";
+            //parentTypes 1:subprojects 2:students 3:groups 4:courses 5:exams
+            string sql = "";
+            List <Note> lstNotes = new List<Note> ();
+            switch (parentType)
+                {
+                case 1:
+                    {
+                    sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, sp.SubprojectName FROM Notes n INNER JOIN Subprojects sp ON n.ParentId = sp.SubprojectId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                    break;
+                    }
+                case 2:
+                    {
+                    sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                    break;
+                    }
+                case 3:
+                    {
+                    sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, g.GroupName FROM Notes n INNER JOIN Groups g ON n.ParentId = g.GroupId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                    break;
+                    }
+                case 4:
+                    {
+                    sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, c.CourseName FROM Notes n INNER JOIN Courses c ON n.ParentId = c.CourseId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                    break;
+                    }
+                case 5:
+                    {
+                    sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, e.ExamTitle FROM Notes n INNER JOIN Exams e ON n.ParentId = e.ExamId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                    break;
+                    }
+                }
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
@@ -3702,8 +3731,9 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             return note;
             }
-        public async Task<bool> Delete_NotesAsync (int parentId)
+        public async Task<bool> Delete_NotesAsync (int parentId, int parentType)
             {
+            //parentTypes 1:subprojects 2:students 3:groups 4:courses 5:exams
             string sql = "DELETE FROM Notes WHERE Parent_ID=@parentid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);

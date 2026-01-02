@@ -760,9 +760,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_Notes")]
-        public async Task<ActionResult<List<Note>>> Read_Notes ([FromBody] int parentId)
+        public async Task<ActionResult<List<Note>>> Read_Notes ([FromBody] int parentId, int parentType)
             {
-            var result = await _BeService.Read_NotesAsync (parentId);
+            var result = await _BeService.Read_NotesAsync (parentId, parentType);
             return Ok (result);
             }
         [HttpPost ("Read_NotesBySearchKey")]
@@ -778,9 +778,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Delete_Notes")]
-        public async Task<ActionResult<bool>> Delete_Notes ([FromBody] int parentId)
+        public async Task<ActionResult<bool>> Delete_Notes ([FromBody] int parentId, [FromQuery] int parentType)
             {
-            var result = await _BeService.Delete_NotesAsync (parentId);
+            var result = await _BeService.Delete_NotesAsync (parentId, parentType);
             return Ok (result);
             }
         [HttpPost ("Delete_Note")]

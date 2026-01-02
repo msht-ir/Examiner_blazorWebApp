@@ -291,6 +291,7 @@ namespace ExaminerS.Models
         public int NoteId { get; set; } = 0;
         public int ParentId { get; set; } = 0;
         public int ParentType { get; set; } = 0;
+        public int ParentName { get; set; } = 0;
         public string NoteDatum { get; set; } = "";
         public string NoteText { get; set; } = "";
         public int NoteTags { get; set; } = 0; //1:rtl 2:done 3:shared 4:readonly 
