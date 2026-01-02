@@ -3674,6 +3674,7 @@ COMMIT TRANSACTION;
                 note.NoteDatum = reader.GetString (3);
                 note.NoteText = reader.GetString (4);
                 note.NoteTags = reader.GetInt32(5);
+                note.ParentName = reader.GetString(6);
                 lstNotes.Add (note);
                 }
             await cnn.CloseAsync ();
@@ -3700,7 +3701,7 @@ COMMIT TRANSACTION;
                 Note note = new Note ();
                 note.NoteId = reader.GetInt32 (0);
                 note.ParentId = reader.GetInt32 (1);
-                note.ParentType = reader.GetByte (2);
+                note.ParentType = reader.GetInt32 (2);
                 note.NoteDatum = reader.GetString (3);
                 note.NoteText = reader.GetString (4);
                 note.NoteTags = reader.GetInt32(5);
