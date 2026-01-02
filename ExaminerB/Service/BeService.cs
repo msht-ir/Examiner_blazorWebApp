@@ -3176,6 +3176,48 @@ COMMIT TRANSACTION;
                 return new Message ();
                 }
             }
+        public async Task<List<Message>> Read_MessagesAsync (int userId, bool getStudentMessages)
+            {
+            List<Message> lstMessages = new List<Message> ();
+            string sql = "SELECT MessageId, UserId, DateTimeCreated, MessageTitle, MessageBody FROM Messages WHERE UserId=@userid";
+            Message message = new Message ();
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@userid", userId);
+                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+                while (await reader.ReadAsync ())
+                    {
+                    lstMessages.Add(new Message {
+                        MessageId = reader.GetInt32 (0),
+                        UserId = reader.GetInt32 (1),
+                        DateTimeCreated = reader.GetString (2),
+                        MessageTitle = reader.GetString (3),
+                        MessageBody = reader.GetString (4),
+                        Students = new List<StudentMessage>()
+                        });
+                    }
+                await cnn.CloseAsync ();
+                Console.WriteLine ($"be **************************************** message Count = {lstMessages.Count}");
+                if (getStudentMessages)
+                    {
+                    foreach(Message msg in lstMessages)
+                        {
+                        msg.Students = await Read_StudentMessagesAsync (msg.MessageId, "ByMessageId");
+                        }
+                    }
+                return lstMessages;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine ("Error: " + ex.ToString ());
+                await cnn.CloseAsync ();
+                return new List<Message> ();
+                }
+            }
         public async Task<bool> Update_MessageAsync (Message message)
             {
             string sql = "UPDATE Messages SET DateTimeCreated=@datetimecreated, MessageTitle=@messagetitle, MessageBody=@messagebody WHERE MessageId=@messageid";

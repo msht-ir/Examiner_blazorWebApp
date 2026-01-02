@@ -923,6 +923,19 @@ namespace ExaminerB.Service
                 return new Message ();
                 }
             }
+        public async Task<List<Message>> Read_Messages (int userId, bool getStudentMessages)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_Messages?getStudentMessages={getStudentMessages}", userId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Message>? lstMessages = await response.Content.ReadFromJsonAsync<List<Message>> ();
+                return lstMessages ?? new List<Message> ();
+                }
+            else
+                {
+                return new List<Message> ();
+                }
+            }
         public async Task<bool> Update_Message (Message message)
             {
             var response = await _http.PostAsJsonAsync ("api/Update_Message", message);

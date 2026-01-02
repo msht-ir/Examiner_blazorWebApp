@@ -144,6 +144,7 @@ namespace ExaminerB.Services2Backend
         #region M:Messages
         Task<int> Create_MessageAsync (Message message);
         Task<Message> Read_MessageAsync (int messageId, bool getStudentMessages);
+        Task<List<Message>> Read_MessagesAsync (int userId, bool getStudentMessages);
         Task<bool> Update_MessageAsync (Message message);
         Task<bool> Delete_MessagesAsync (string mode, int recipientId);
         #endregion

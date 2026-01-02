@@ -655,6 +655,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Read_MessageAsync (messageId, getStudentMessages);
             return Ok (result);
             }
+        [HttpPost ("Read_Messages")]
+        public async Task<ActionResult<List<Message>>> Read_Messages ([FromBody] int userId, [FromQuery] bool getStudentMessages)
+            {
+            var result = await _BeService.Read_MessagesAsync (userId, getStudentMessages);
+            return Ok (result);
+            }
         [HttpPost ("Update_Message")]
         public async Task<ActionResult<bool>> Update_Message ([FromBody] Message message)
             {

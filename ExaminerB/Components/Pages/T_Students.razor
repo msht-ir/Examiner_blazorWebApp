@@ -18,10 +18,8 @@
 else
     {
     <div style="text-align: center;">
-        @* <h2 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h2>
-            <hr style="color:red" /> *@
-            <h2 style="color:royalblue; font-style:italic">Students</h2>
-        </div>
+        <h2 style="color:royalblue; font-style:italic">Get Students from:</h2>
+    </div>
     <EditForm Model="lstGroups">
         <div class="accordion" id="accordionTStudents" style="max-width:600px; margin: 0 auto;">
             @* Search & COMBOs GCEM *@
@@ -32,7 +30,7 @@ else
                         data-bs-target="#Accordion_GCEM"
                         aria-expanded="false"
                         aria-controls="Accordion_GCEM" style="background-color:whitesmoke">
-                        <h6>Students</h6>
+                        <h6>sourse:</h6>
                     </button>
                 </h4>
                 <div id="Accordion_GCEM" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
@@ -42,17 +40,13 @@ else
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-auto">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                        <MudGrid>
-                                            <MudItem xs="6">
-                                                <MudTextField  @ref="refNewUser"  @bind-Value="user.UserName"  Label="Username يوزر"   Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield" />
-                                            </MudItem>
-                                            <MudItem xs="6">
-                                                <MudTextField  @ref="refNewPass"  @bind-Value="user.UserPass"  Label="Password پسورد"  Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield"  InputType="InputType.Password"/>
-                                            </MudItem>
-                                        </MudGrid>
-                                        <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnCancel">
-                                            <img src="/img/icoSave2.png" width="24" />
-                                        </button>
+                                        <div class="d-flex" style="gap:10px;">
+                                            <MudTextField  @ref="refNewUser"  @bind-Value="user.UserName"  Label="Username يوزر"   Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield" />
+                                            <MudTextField  @ref="refNewPass"  @bind-Value="user.UserPass"  Label="Password پسورد"  Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield"  InputType="InputType.Password"/>
+                                            <button class="btn btn-link" @onclick="BtnCancel">
+                                                <img src="/img/icoSave2.png" width="24" />
+                                            </button>
+                                        </div>
                                         <InputFile OnChange="HandleFileSelected" />                                    
                                     </MudCardContent>
                                 </MudCard>
@@ -61,32 +55,47 @@ else
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-auto">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                        <MudSelect T="int" @ref="refGroups" Label="Group گروه" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                            <MudSelectItem Value="0">Select a Group</MudSelectItem>
-                                            @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
-                                        </MudSelect>
-                                        <MudSelect T="int" @ref="refCourses" Label="Course درس" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                            <MudSelectItem Value="0">Select a Course</MudSelectItem>
-                                            @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
-                                        </MudSelect>
-                                        <MudSelect T="int" @ref="refExams" Label="Exam آزمون" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                            <MudSelectItem Value="0">Select an Exam</MudSelectItem>
-                                            @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
-                                        </MudSelect>
-                                        <MudSelect T="int" @ref="refMessages" Label="Message پيام" Value="MessageId" ValueChanged="OnMessageChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                            <MudSelectItem Value="0">Select a Message</MudSelectItem>
-                                            @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
-                                        </MudSelect>
-                                        <hr style="color:red" />
+                                        <div class="d-flex">
+                                            <MudSelect T="int" @ref="refGroups" Label="Group گروه" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                <MudSelectItem Value="0">Select a Group</MudSelectItem>
+                                                @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
+                                            </MudSelect>
+                                            <button class="btn btn-link" @onclick="BtnCancel">
+                                                <img src="/img/icoListS.png" width="32" />
+                                            </button>
+                                        </div>
+                                        <div class="d-flex">
+                                            <MudSelect T="int" @ref="refCourses" Label="Course درس" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                <MudSelectItem Value="0">Select a Course</MudSelectItem>
+                                                @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
+                                            </MudSelect>
+                                            <button class="btn btn-link" @onclick="BtnCancel">
+                                                <img src="/img/icoListS.png" width="32" />
+                                            </button>
+                                        </div>
+                                        <div class="d-flex">
+                                            <MudSelect T="int" @ref="refExams" Label="Exam آزمون" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                <MudSelectItem Value="0">Select an Exam</MudSelectItem>
+                                                @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
+                                            </MudSelect>
+                                            <button class="btn btn-link" @onclick="BtnCancel">
+                                                <img src="/img/icoListS.png" width="32" />
+                                            </button>
+                                        </div>
+                                        <div class="d-flex">
+                                            <MudSelect T="int" @ref="refMessages" Label="Message پيام" Value="MessageId" ValueChanged="OnMessageChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                <MudSelectItem Value="0">Select a Message</MudSelectItem>
+                                                @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
+                                            </MudSelect>
+                                            <button class="btn btn-link" @onclick="BtnCancel">
+                                                <img src="/img/icoListS.png" width="32" />
+                                            </button>
+                                        </div>
                                         @* SEARCH *@
-                                        <MudGrid Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                                            <MudItem xs="12">
-                                                <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="Search جستجو" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
-                                            </MudItem>
-                                        </MudGrid>
-                                        <div style="text-align:center">
+                                        <div class="d-flex">
+                                            <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="Search جستجو" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                             <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
-                                                <img src="/img/icoSearch.png" width="25" />
+                                                <img src="/img/icoSearch.png" width="24" />
                                             </button>
                                         </div>
                                     </MudCardContent>
@@ -96,9 +105,8 @@ else
                     </div>
                 </div>
             </div>
-        
             @* LIST STUDENTs *@
-            @if(lstStudents.Count >0)
+            @if(lstStudents.Count > 0)
                 {
                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                     <MudCard Class="mx-0">
@@ -120,6 +128,7 @@ else
                 </MudContainer>                
                 }        
             <hr style="color:red" />
+            <h2 style="text-align:center; color:royalblue; font-style:italic">Add students to ...</h2>
             @* SELECT A GROUP *@
             <div class="accordion-item mb-2" >
                 <h4 class="accordion-header">
@@ -128,21 +137,24 @@ else
                         data-bs-target="#Accordion_Group"
                         aria-expanded="false"
                         aria-controls="Accordion_Group" style="background-color:whitesmoke">
-                        <h6>Add to Group...</h6>
+                        <h6>Group</h6>
                     </button>
                 </h4>
                 <div id="Accordion_Group" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
                     <div class="accordion-body" style="background-color:white">
                         <div id="T1">
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
-                                <MudCard Class="mx-0">
+                                <MudCard>
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                        <MudSelect T="int" @ref="refGroups" Label="Group گروه" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                            <MudSelectItem Value="0">Select a Group</MudSelectItem>
-                                            @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
-                                        </MudSelect>
-                                        <div style="text-align:center">
+                                        <div class="d-flex">
                                             <button class="btn btn-link" @onclick="BtnReadStudentsByPage">
+                                                <img src="/img/icoAddItem.png" width="22" />
+                                            </button>
+                                            <MudSelect T="int" @ref="refGroups" Label="Group گروه" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                <MudSelectItem Value="0">Select a Group</MudSelectItem>
+                                                @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
+                                            </MudSelect>
+                                            <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
                                                 <img src="/img/icoListAddNew1.png" width="38" />
                                             </button>
                                         </div>
@@ -161,7 +173,7 @@ else
                         data-bs-target="#Accordion_Course"
                         aria-expanded="false"
                         aria-controls="Accordion_Course" style="background-color:whitesmoke">
-                        <h6>Add to Course...</h6>
+                        <h6>Course</h6>
                     </button>
                 </h4>
                 <div id="Accordion_Course" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
@@ -170,12 +182,15 @@ else
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                        <MudSelect T="int" @ref="refCourses" Label="Course درس" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                            <MudSelectItem Value="0">Select a Course</MudSelectItem>
-                                            @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
-                                        </MudSelect>
-                                        <div style="text-align:center">
+                                        <div class="d-flex">
                                             <button class="btn btn-link" @onclick="BtnReadStudentsByPage">
+                                                <img src="/img/icoAddItem.png" width="22" />
+                                            </button>
+                                            <MudSelect T="int" @ref="refCourses" Label="Course درس" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                <MudSelectItem Value="0">Select a Course</MudSelectItem>
+                                                @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
+                                            </MudSelect>
+                                            <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
                                                 <img src="/img/icoListAddNew1.png" width="38" />
                                             </button>
                                         </div>
@@ -194,7 +209,7 @@ else
                         data-bs-target="#Accordion_Exam"
                         aria-expanded="false"
                         aria-controls="Accordion_Exam" style="background-color:whitesmoke">
-                        <h6>Add to Exam...</h6>
+                        <h6>Exam</h6>
                     </button>
                 </h4>
                 <div id="Accordion_Exam" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
@@ -203,16 +218,24 @@ else
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                        <MudSelect T="int" @ref="refCourses" Label="Course درس" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                            <MudSelectItem Value="0">Select a Course</MudSelectItem>
-                                            @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
-                                        </MudSelect>
-                                        <MudSelect T="int" @ref="refExams" Label="Exam آزمون" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                            <MudSelectItem Value="0">Select an Exam</MudSelectItem>
-                                            @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
-                                        </MudSelect>
-                                        <div style="text-align:center">
+                                        <div class="d-flex">
+                                            <MudSelect T="int" @ref="refCourses" Label="Course درس" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                <MudSelectItem Value="0">Select a Course</MudSelectItem>
+                                                @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
+                                            </MudSelect>
+                                            <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
+                                                <img src="/img/icoSearch.png" width="22" />
+                                            </button>
+                                        </div>
+                                        <div class="d-flex">
                                             <button class="btn btn-link" @onclick="BtnReadStudentsByPage">
+                                                <img src="/img/icoAddItem.png" width="22" />
+                                            </button>
+                                            <MudSelect T="int" @ref="refExams" Label="Exam آزمون" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                <MudSelectItem Value="0">Select an Exam</MudSelectItem>
+                                                @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
+                                            </MudSelect>
+                                            <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
                                                 <img src="/img/icoListAddNew1.png" width="38" />
                                             </button>
                                         </div>
@@ -231,7 +254,7 @@ else
                         data-bs-target="#Accordion_Message"
                         aria-expanded="false"
                         aria-controls="Accordion_Message" style="background-color:whitesmoke">
-                        <h6>Send Message...</h6>
+                        <h6>Message</h6>
                     </button>
                 </h4>
                 <div id="Accordion_Message" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
@@ -240,12 +263,15 @@ else
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                        <MudSelect T="int" @ref="refMessages" Label="Message پيام" Value="MessageId" ValueChanged="OnMessageChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                            <MudSelectItem Value="0">Select a Message</MudSelectItem>
-                                            @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
-                                        </MudSelect>
-                                        <div style="text-align:center">
+                                        <div class="d-flex">
                                             <button class="btn btn-link" @onclick="BtnReadStudentsByPage">
+                                                <img src="/img/icoAddItem.png" width="22" />
+                                            </button>
+                                            <MudSelect T="int" @ref="refMessages" Label="Message پيام" Value="MessageId" ValueChanged="OnMessageChanged" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                <MudSelectItem Value="0">Select a Message</MudSelectItem>
+                                                @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
+                                            </MudSelect>
+                                            <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
                                                 <img src="/img/icoListAddNew1.png" width="38" />
                                             </button>
                                         </div>
@@ -292,7 +318,7 @@ else
 
     List<Group> lstGroups = new ();
     List<Course> lstCourses = new ();
-    List<Exam> lstExams = new ();
+    List<StudentExam> lstExams = new ();
     List<Message> lstMessages = new ();
     List<User> lstStudents = new ();
 
@@ -326,8 +352,11 @@ else
         if (user.UserId > 0)
             {
             //on second rener, user.UserId will get its value
-            //lstGroups = await feService.Read_Groups (user, false, false); 
-            //lstCourses = await feService.Read_Courses (user.UserId); 
+            lstGroups = await feService.Read_Groups (user, false);
+            lstCourses = await feService.Read_Courses (user.UserId);
+            lstMessages = await feService.Read_Messages (user.UserId, false);
+            //lstExams = await FeService.Read_Exams...
+            //lstStudents = await feService.Read_StudentsByGCEMId (user.UserId, "S", 1);            
             _hasFetched = true;
             }
         } 

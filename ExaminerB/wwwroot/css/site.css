@@ -31,3 +31,12 @@ table .btn-primary:hover {
     border-color: #0a58ca !important;
 }
 
+/* Apply Segoe UI to the select input text */
+.my-select .mud-input-slot {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+/* Apply Segoe UI to the dropdown items */
+.my-select .mud-select-item {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
