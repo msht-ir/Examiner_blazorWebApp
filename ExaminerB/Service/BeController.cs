@@ -130,6 +130,18 @@ namespace ExaminerB.Backend
             }
         #endregion
         #region SG:StudentGroups
+        [HttpPost ("Create_StudentGroups")]
+        public async Task<ActionResult<bool>> Create_StudentGroups ([FromBody] List<int> lstStudentIds, [FromQuery] int groupId)
+            {
+            var result = await _BeService.Create_StudentGroupsAsync (groupId, lstStudentIds);
+            return Ok (result);
+            }
+        [HttpPost ("Read_StudentGroups")]
+        public async Task<ActionResult<List<StudentGroup>>> Read_StudentGroups ([FromBody] int Id, [FromQuery] string mode)
+            {
+            var result = await _BeService.Read_StudentGroupsAsync (Id, mode);
+            return Ok (result);
+            }
         #endregion
         #region C:Courses
         [HttpPost ("Create_Course")]
@@ -675,6 +687,12 @@ namespace ExaminerB.Backend
             }
         #endregion
         #region SM:StudentMessages
+        [HttpPost ("Create_StudentMessages")]
+        public async Task<ActionResult<bool>> Create_StudentMessages ([FromBody] List<int> lstStudentIds, [FromQuery] int messageId)
+            {
+            var result = await _BeService.Create_StudentMessagesAsync (messageId, lstStudentIds);
+            return Ok (result);
+            }
         [HttpPost ("Create_StudentMessage")]
         public async Task<ActionResult<int>> Create_StudentMessage ([FromBody] Message message, [FromQuery] string mode, [FromQuery] int recipientId, [FromQuery] bool typeFeedback)
             {

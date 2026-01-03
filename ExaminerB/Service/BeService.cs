@@ -603,6 +603,24 @@ namespace ExaminerB.Services2Backend
             }
         #endregion
         #region SG:StudentGroups
+        public async Task<bool> Create_StudentGroupsAsync (int groupId, List<int> lstStudentIds)
+            {
+            string sql = "INSERT INTO StudentGroups (StudentId, GroupId, DateTimeJoined, StudentGroupTags) VALUES (@studentid, @groupid, @datetimejoined, @studentgrouptags)";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            foreach (int st in lstStudentIds)
+                {
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@studentid", st);
+                cmd.Parameters.AddWithValue ("@groupid", groupId);
+                cmd.Parameters.AddWithValue ("@datetimejoined", DateTime.Now.ToString ("yyyy-MM-dd . HH:mm"));
+                cmd.Parameters.AddWithValue ("@studentgrouptags", 1);
+                int i = (int) cmd.ExecuteNonQuery ();
+                }
+            await cnn.CloseAsync ();
+            return true;
+            }
         public async Task<List<StudentGroup>> Read_StudentGroupsAsync (int Id, string mode)
             {
             //read SG records
@@ -3281,6 +3299,24 @@ COMMIT TRANSACTION;
             }
         #endregion
         #region SM:StudentMessages
+        public async Task<bool> Create_StudentMessagesAsync (int messageId, List<int> lstStudentIds)
+            {
+            string sql = "INSERT INTO StudentMessages (StudentId, MessageId, DateTimeSent, StudentMessageTags) VALUES (@studentid, @messageid, @datetimesent, @studentmessagetags)";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            foreach (int st in lstStudentIds)
+                {
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@studentid", st);
+                cmd.Parameters.AddWithValue ("@messageid", messageId);
+                cmd.Parameters.AddWithValue ("@datetimesent", DateTime.Now.ToString ("yyyy-MM-dd . HH:mm"));
+                cmd.Parameters.AddWithValue ("@studentmessagetags", 0);
+                int i = (int) cmd.ExecuteNonQuery ();
+                }
+            await cnn.CloseAsync ();
+            return true;
+            }
         public async Task<int> Create_StudentMessageAsync (Message message, string mode, int recipientId, bool typeFeedback)
             {
             //create message body

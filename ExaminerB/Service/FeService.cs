@@ -69,9 +69,9 @@ namespace ExaminerB.Service
             }
         #endregion
         #region S:Students
-        public async Task<int> Create_Student (User user)
+        public async Task<int> Create_Student (User student)
             {
-            var response = await _http.PostAsJsonAsync ("api/Create_Student", user);
+            var response = await _http.PostAsJsonAsync ("api/Create_Student", student);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
         public async Task<List<User>> Read_StudentsByKeyword (int userId, string keyword, int getGCEM)
@@ -177,6 +177,24 @@ namespace ExaminerB.Service
             }
         #endregion        
         #region SG:StudentGroups
+        public async Task <bool> Create_StudentGroups(int groupId, List<int> lstStudentIds)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Create_StudentGroups?groupId={groupId}", lstStudentIds);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<List<StudentGroup>> ReadStudentGroups(int Id, string mode)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentGroups?mode={mode}", Id);
+            if (response.IsSuccessStatusCode)
+                {
+                List<StudentGroup> lstStudentGroups = await response.Content.ReadFromJsonAsync<List<StudentGroup>> ();
+                return lstStudentGroups ?? new List<StudentGroup> ();
+                }
+            else
+                { 
+                return new List<StudentGroup> ();
+                }
+            } 
         #endregion
         #region C:Courses
         public async Task<int> Create_Course (Course course)
@@ -949,6 +967,11 @@ namespace ExaminerB.Service
             }
         #endregion
         #region SM:StudentMessages
+        public async Task<bool> Create_StudentMessages (int messageId, List<int> lstStudentIds)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Create_StudentMessages?messageId={messageId}", lstStudentIds);
+            return response.IsSuccessStatusCode ? true : false;
+            }
         public async Task<int> Create_StudentMessage (Message message, string mode, int recipientId, bool typeFeedback)
             {
             var response = await _http.PostAsJsonAsync ($"api/Create_StudentMessage?mode={mode}&recipientId={recipientId}&typeFeedback={typeFeedback}", message);

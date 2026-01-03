@@ -32,6 +32,7 @@ namespace ExaminerB.Services2Backend
         Task<int> Delete_GroupAsync (int groupId);
         #endregion
         #region SG:StudentGroups
+        Task<bool> Create_StudentGroupsAsync (int groupId, List<int> lstStudentIds);
         Task<List<StudentGroup>> Read_StudentGroupsAsync (int Id, string mode);
         #endregion
         #region C:Courses
@@ -149,6 +150,7 @@ namespace ExaminerB.Services2Backend
         Task<bool> Delete_MessagesAsync (string mode, int recipientId);
         #endregion
         #region SM:StudentMessages
+        Task<bool> Create_StudentMessagesAsync (int messageId, List<int> lstStudentIds);
         Task<int> Create_StudentMessageAsync (Message message, string mode, int recipientId, bool typeFeedback);
         Task<List<StudentMessage>> Read_StudentMessagesAsync (int Id, string mode);
         Task<Message> Read_StudentMessageAsync (int studentMessageId);

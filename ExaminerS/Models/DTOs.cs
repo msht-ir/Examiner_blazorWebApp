@@ -15,6 +15,42 @@ namespace ExaminerS.Models
         public string UserRole { get; set; } = "";
         public string UserNickname { get; set; } = "";
         public int UserTags { get; set; } = 0;  //1:IsActive 2:CanChangePass 4:CanReviewExam 8:CanGetStudentExamTests 16:CanCorrectStudentExamTests 32:CanReviewStudentExamTests
+        //wrapper properties for each flag
+        public bool IsActive
+            {
+            get => (UserTags & 1) == 1;
+            set
+                {
+                if (value)
+                    UserTags |= 1;
+                else
+                    UserTags &= ~1;
+                }
+            }
+        public bool CanChangePass
+            {
+            get => (UserTags & 2) == 2;
+            set
+                {
+                if (value)
+                    UserTags |= 2;
+                else
+                    UserTags &= ~2;
+                }
+            }
+        public bool IsSelected
+            {
+            get => (UserTags & 64) == 64;
+            set
+                {
+                if (value)
+                    UserTags |= 64;
+                else
+                    UserTags &= ~64;
+                }
+            }
+
+
         public List<StudentGroup> StudentGroups { get; set; } = new List<StudentGroup> ();
         public List<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse> ();
         public List<StudentExam> StudentExams { get; set; } = new List<StudentExam> ();

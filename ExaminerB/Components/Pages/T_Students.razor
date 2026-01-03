@@ -18,11 +18,11 @@
 else
     {
     <div style="text-align: center;">
-        <h2 style="color:royalblue; font-style:italic">Get Students from:</h2>
+        <h2 style="color:royalblue; font-style:italic">List Students</h2>
     </div>
     <EditForm Model="lstGroups">
         <div class="accordion" id="accordionTStudents" style="max-width:600px; margin: 0 auto;">
-            @* Search & COMBOs GCEM *@
+            @* SECTION 1 ---- SOURSES *@
             <div class="accordion-item">
                 <h4 class="accordion-header">
                     <button class="accordion-button collapsed" type="button"
@@ -30,13 +30,13 @@ else
                         data-bs-target="#Accordion_GCEM"
                         aria-expanded="false"
                         aria-controls="Accordion_GCEM" style="background-color:whitesmoke">
-                        <h6>sourse:</h6>
+                        <h6>Source</h6>
                     </button>
                 </h4>
                 <div id="Accordion_GCEM" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
                     <div class="accordion-body" style="background-color:white">
                         <div id="T1">
-                            @* SOURSES GCEM *@
+                            @* COMBO1-4 GCEM *@
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-auto">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
@@ -54,6 +54,9 @@ else
                                                 <MudSelectItem Value="0">Select a Course</MudSelectItem>
                                                 @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
                                             </MudSelect>
+                                            <button class="btn btn-link" @onclick='()=>BtnReadExams(CourseId)'>
+                                                <img src="/img/icoListE.png" width="32" />
+                                            </button>
                                             <button class="btn btn-link" @onclick='()=>BtnReadStudents(CourseId,"C")'>
                                                 <img src="/img/icoListS.png" width="32" />
                                             </button>
@@ -79,19 +82,19 @@ else
                                     </MudCardContent>
                                 </MudCard>
                             </MudContainer>
-                            @* NEW STUDENT - IMPORT - SEARCH *@
+                            @* ADD NEW STUDENT-IMPORT-SEARCH *@
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-auto">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                        @* NEW STUDENT *@
+                                        @* ADD NEW STUDENT *@
                                         <div class="d-flex" style="gap:10px;">
                                             <MudTextField  @ref="refNewUser"  @bind-Value="user.UserName"  Label="Username يوزر"   Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield" />
                                             <MudTextField  @ref="refNewPass"  @bind-Value="user.UserPass"  Label="Password پسورد"  Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield"  InputType="InputType.Password"/>
-                                            <button class="btn btn-link" @onclick="BtnCancel">
+                                            <button class="btn btn-link" @onclick="()=>BtnCreateNewStudent(user.UserName, user.UserPass, user.UserName)">
                                                 <img src="/img/icoSave2.png" width="24" />
                                             </button>
                                         </div>
-                                        @* IMPORT *@
+                                        @* IMPORT EXCEL *@
                                         <InputFile OnChange="HandleFileSelected" />                                    
                                         @* SEARCH *@
                                         <div class="d-flex">
@@ -107,7 +110,7 @@ else
                     </div>
                 </div>
             </div>
-            @* RESULTS: LIST STUDENTS *@
+            @* SECTION 2 ---- RESULTS: LIST STUDENTS *@
             @if(lstStudents.Count > 0)
                 {
                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
@@ -115,8 +118,8 @@ else
                         <MudCardContent Style="background-color:rgba(249,249,249);">
                             @foreach(User student in lstStudents)
                                 {
-                                <div>
-                                    <input class="form-check-input" style="margin-left:2px;margin-right:5px;" type="checkbox" @bind="student.UserTags" />
+                                <div class="d-flex align-items-center mb-1">
+                                    <input class="form-check-input" style="margin-left:2px;margin-right:5px;" type="checkbox" @bind="student.IsSelected" />
                                     <button class="btn btn-link" @onclick="()=>BtnBack()">
                                         <img src="/img/icoEditPen.png" width="18" />
                                     </button>
@@ -130,10 +133,10 @@ else
                     </MudCard>
                 </MudContainer>                
                 }        
-            @* ADD STUDENTS TO... *@
+            @* SECTION 3 ---- ADD STUDENTS TO... *@
             <br />
-            <h2 style="text-align:center; color:royalblue; font-style:italic">Add students to ...</h2>
-            @* SELECT A GROUP *@
+            <h2 style="text-align:center; color:royalblue; font-style:italic">Add to</h2>
+            @* GROUP *@
             <div class="accordion-item mb-2" >
                 <h4 class="accordion-header">
                     <button class="accordion-button collapsed" type="button"
@@ -150,18 +153,33 @@ else
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard>
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                        <div class="d-flex">
-                                            <MudSelect T="int" @ref="refGroups" Label="Group گروه" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                                <MudSelectItem Value="0">Select a Group</MudSelectItem>
-                                                @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
-                                            </MudSelect>
-                                            <button class="btn btn-link" @onclick="BtnBack">
-                                                <img src="/img/icoAddItem.png" width="20" />
-                                            </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
-                                                <img src="/img/icoListAddNew1.png" width="38" />
-                                            </button>
-                                        </div>
+                                        @if (_cmd == "AddNewGroup")
+                                            {
+                                            <div class="d-flex">
+                                                <MudTextField @ref="reftxtNewGroup" @bind-Value="strNewGroupName" Label="New Group گروه جديد" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                                <button class="btn btn-link" @onclick="()=>BtnCreateNewGroup(strNewGroupName)">
+                                                    <img src="/img/icoSave2.png" width="24" />
+                                                </button>
+                                                <button class="btn btn-link" @onclick="BtnCancel">
+                                                    <img src="/img/icoCancel.png" width="24" />
+                                                </button>
+                                            </div>
+                                            }
+                                        else
+                                            {
+                                            <div class="d-flex">
+                                                <MudSelect T="int" @ref="refGroups" Label="Group گروه" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                    <MudSelectItem Value="0">Select a Group</MudSelectItem>
+                                                    @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
+                                                </MudSelect>
+                                                <button class="btn btn-link" @onclick="BtnAddNewGroup">
+                                                    <img src="/img/icoAddItem.png" width="20" />
+                                                </button>
+                                                <button class="btn btn-link" @onclick="()=>BtnAddStudentsToGroup()">
+                                                    <img src="/img/icoListAddNew1.png" width="38" />
+                                                </button>
+                                            </div>
+                                            }
                                     </MudCardContent>
                                 </MudCard>
                             </MudContainer>
@@ -169,7 +187,7 @@ else
                     </div>
                 </div>
             </div>
-            @* SELECT A COURSE - AN EXAM *@
+            @* COURSE-EXAM *@
             <div class="accordion-item mb-2">
                 <h4 class="accordion-header">
                     <button class="accordion-button collapsed" type="button"
@@ -191,8 +209,8 @@ else
                                                 <MudSelectItem Value="0">Select a Course</MudSelectItem>
                                                 @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
                                             </MudSelect>
-                                            <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
-                                                <img src="/img/icoSearch.png" width="24" />
+                                            <button class="btn btn-link" @onclick="()=>BtnReadExams(CourseId)">
+                                                <img src="/img/icoListE.png" width="38" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
                                                 <img src="/img/icoListAddNew1.png" width="38" />
@@ -203,9 +221,6 @@ else
                                                 <MudSelectItem Value="0">Select an Exam</MudSelectItem>
                                                 @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                                             </MudSelect>
-                                            <button class="btn btn-link" @onclick="BtnBack">
-                                                <img src="/img/icoFolderE.png" width="24" />
-                                            </button>
                                             <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
                                                 <img src="/img/icoListAddNew1.png" width="38" />
                                             </button>
@@ -217,7 +232,7 @@ else
                     </div>
                 </div>
             </div>
-            @* SELECT A MESSAGE *@
+            @* MESSAGE *@
             <div class="accordion-item mb-2">
                 <h4 class="accordion-header">
                     <button class="accordion-button collapsed" type="button"
@@ -234,18 +249,35 @@ else
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                        <div class="d-flex">
-                                            <MudSelect T="int" @ref="refMessages" Label="Message پيام" Value="MessageId" ValueChanged="OnMessageChanged" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                                <MudSelectItem Value="0">Select a Message</MudSelectItem>
-                                                @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
-                                            </MudSelect>
-                                            <button class="btn btn-link" @onclick="BtnBack">
-                                                <img src="/img/icoAddItem.png" width="20" />
-                                            </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
-                                                <img src="/img/icoListAddNew1.png" width="38" />
-                                            </button>
-                                        </div>
+                                        @if (_cmd == "AddNewMessage")
+                                            {
+                                            <h5>New Message</h5>
+                                            <MudTextField @ref="reftxtNewMessageTitle" @bind-Value="strNewMessageTitle" Label="Title عنوان " Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                            <MudTextField @ref="reftxtNewMessageBody" @bind-Value="strNewMessageBody" Label="Message پيام" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Lines="5" />
+                                            <div style="text-align:center">
+                                                <button class="btn btn-link" @onclick="()=>BtnCreateNewMessage(strNewMessageTitle, strNewMessageBody)">
+                                                    <img src="/img/icoSave2.png" width="24" />
+                                                </button>
+                                                <button class="btn btn-link" @onclick="BtnCancel">
+                                                    <img src="/img/icoCancel.png" width="24" />
+                                                </button>
+                                            </div>
+                                            }
+                                        else
+                                            {
+                                            <div class="d-flex">
+                                                <MudSelect T="int" @ref="refMessages" Label="Message پيام" Value="MessageId" ValueChanged="OnMessageChanged" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                    <MudSelectItem Value="0">Select a Message</MudSelectItem>
+                                                    @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
+                                                </MudSelect>
+                                                <button class="btn btn-link" @onclick="BtnAddNewMessage">
+                                                    <img src="/img/icoAddItem.png" width="20" />
+                                                </button>
+                                                <button class="btn btn-link" @onclick="()=>BtnAddStudentsToMessage()">
+                                                    <img src="/img/icoListAddNew1.png" width="38" />
+                                                </button>
+                                            </div>                                            
+                                            }
                                     </MudCardContent>
                                 </MudCard>
                             </MudContainer>
@@ -253,7 +285,7 @@ else
                     </div>
                 </div>
             </div>
-            @* Footer *@
+            @* BACK *@
             <br />
             <div style="text-align:center">
                 <button class="btn btn-link" @onclick= "()=> BtnBack()" title="Back to SwitchBoard بازگشت به صفحه اول">
@@ -269,10 +301,13 @@ else
 
 @code {
     User user = new User ();
+    User student = new User ();
     private MudTextField<string> refNewUser;
     private MudTextField<string> refNewPass;
     private MudTextField<string> reftxtSearch;
     private MudNumericField<int> txtPageNumber;
+    private MudTextField<string> reftxtNewMessageTitle;
+    private MudTextField<string> reftxtNewMessageBody;
     string txtNewStudentName = "";
     string strSearch = "";
     int intPageNumber = 0;
@@ -280,23 +315,25 @@ else
     private MudSelect<int> refCourses;
     private MudSelect<int> refExams;
     private MudSelect<int> refMessages;
+    private MudTextField<string> reftxtNewGroup;
+    string strNewGroupName = "";
+    string strNewMessageTitle = "";
+    string strNewMessageBody = "";
     int GroupId = 0;
     int CourseId = 0;
     int ExamId = 0;
     int MessageId = 0;
     List<Group> lstGroups = new ();
     List<Course> lstCourses = new ();
-    List<StudentExam> lstExams = new ();
+    List<Exam> lstExams = new ();
     List<Message> lstMessages = new ();
     List<User> lstStudents = new ();
     Group group = new Group();
     Course course = new Course();
     Exam exam = new Exam();
     Message message = new Message();
-    User student = new User ();
     int i = 0;
-    private bool shouldFocusNewGroup = false;
-    int selectedCourseId = 0; // Courses in combo box
+    string _cmd = "";
     public bool _hasFetched = false;
 
     //LifeCycleEvents
@@ -307,23 +344,16 @@ else
             {
             Navman.NavigateTo ("/Login");
             }
-        var user = new User
-            {
-            UserId = Convert.ToInt32(appState.UserId),
-            UserName = appState.UserName,
-            UserPass = appState.UserPass,
-            UserRole = appState.UserRole,
-            TeacherId = Convert.ToInt32(appState.GroupId)
-            };
-        if (user.UserId > 0)
-            {
-            //on second rener, user.UserId will get its value
-            lstGroups = await feService.Read_Groups (user, false);
-            lstCourses = await feService.Read_Courses (user.UserId);
-            lstMessages = await feService.Read_Messages (user.UserId, false);
-            //lstExams = await FeService.Read_Exams...
-            _hasFetched = true;
-            }
+        user.UserId = Convert.ToInt32(appState.UserId);
+        user.UserName = appState.UserName;
+        user.UserPass = appState.UserPass;
+        user.UserRole = appState.UserRole;
+        user.TeacherId = Convert.ToInt32 (appState.GroupId);
+        //on second rener, user.UserId will get its value
+        lstGroups = await feService.Read_Groups (user, false);
+        lstCourses = await feService.Read_Courses (user.UserId);
+        lstMessages = await feService.Read_Messages (user.UserId, false);
+        _hasFetched = true;
         } 
     protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -337,7 +367,26 @@ else
         {
         appState.OnChange -= TriggerRender;
         }
-    //btns
+    //student
+    private async Task BtnCreateNewStudent(string usr, string pwd, string nick)
+        {
+        user.UserId = Convert.ToInt32 (appState.UserId);
+        User student = new User () { TeacherId= user.UserId, UserName = usr, UserPass = pwd, UserRole= "student", UserNickname= nick, UserTags= 3};
+        int result = await feService.Create_Student(student);
+        if (result == 1)
+            {
+            Snackbar.Add($"{user.UserNickname} Created!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            _cmd="";
+            strSearch = user.UserName;
+            user.UserName = ""; //clear text-area
+            user.UserPass = ""; //clear text-area
+            StateHasChanged ();            
+            }
+        else
+            {
+            Snackbar.Add($"Failed to create student: {user.UserNickname} !", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        }
     public async Task BtnReadStudentsBySearch()
         {
         if(strSearch !="")
@@ -352,7 +401,7 @@ else
         lstStudents = await feService.Read_StudentsByGCEMId (Id, mode, 0);
         StateHasChanged ();
         }
-    //methods
+    //group
     private async Task OnGroupChanged(int newValue) 
         {
         //update GroupId from the event
@@ -362,6 +411,52 @@ else
         group.UserId = 0;
         StateHasChanged();
         } 
+    private void BtnAddNewGroup()
+        {
+        _cmd="AddNewGroup";
+        StateHasChanged ();
+        }
+    private async Task BtnCreateNewGroup(string groupName)
+        {
+        user.UserId = Convert.ToInt32 (appState.UserId);
+        Group group = new Group () { GroupName = groupName, UserId = user.UserId };
+        bool result = await feService.Create_Group(group);        
+        if (result)
+            {
+            lstGroups = await feService.Read_Groups (user, false);
+            Snackbar.Add($"Group {groupName} created!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            _cmd="";
+            StateHasChanged ();            
+            }
+        else
+            {
+            Snackbar.Add($"Failed to create {groupName} !", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        }
+    private async Task BtnAddStudentsToGroup()
+        {
+        List<int> lstStudentIds = new List<int>();
+        int _count = 0;
+        foreach (User student in lstStudents)
+            {
+            if (student.IsSelected)
+                {
+                lstStudentIds.Add(student.UserId);
+                _count++;
+                student.IsSelected = false;
+                }
+            }
+        bool result = await feService.Create_StudentGroups(GroupId, lstStudentIds);
+        if (result)
+            {
+            Snackbar.Add ($"{_count} students added to the group", Severity.Success);
+            }
+        else
+            {
+            Snackbar.Add ($"Failed!", Severity.Error);
+            }
+        }
+    //course-exam
     private async Task OnCourseChanged(int newValue) 
         {
         //update CourseId from the event
@@ -374,12 +469,63 @@ else
         ExamId = newValue;
         StateHasChanged();
         } 
+    private async Task BtnReadExams (int courseid)
+        {
+        lstExams = await feService.Read_Exams (courseid);
+        StateHasChanged ();
+        }
+    //message
     private async Task OnMessageChanged(int newValue) 
         {
         //update MessageId from the event
         MessageId = newValue;
         StateHasChanged();
         } 
+    private void BtnAddNewMessage()
+        {
+        _cmd="AddNewMessage";
+        StateHasChanged ();
+        }
+    private async Task BtnCreateNewMessage(string messageTitle, string messageBody)
+        {
+        user.UserId = Convert.ToInt32 (appState.UserId);
+        Message message = new Message () { UserId = user.UserId, DateTimeCreated = "", MessageTitle = messageTitle, MessageBody=messageBody};
+        int result = await feService.Create_Message(message);
+        if(result > 0)
+            {
+            lstMessages = await feService.Read_Messages (user.UserId, false);
+            Snackbar.Add($"Message {messageTitle} created!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            _cmd="";
+            StateHasChanged ();            
+            }
+        else
+            {
+            Snackbar.Add($"Failed to create Message {messageTitle} !", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        }
+    private async Task BtnAddStudentsToMessage()
+        {
+        List<int> lstStudentIds = new List<int>();
+        int _count = 0;
+        foreach (User student in lstStudents)
+            {
+            if (student.IsSelected)
+                {
+                lstStudentIds.Add(student.UserId);
+                _count++;
+                student.IsSelected = false;
+                }
+            }
+        bool result = await feService.Create_StudentMessages(MessageId, lstStudentIds);
+        if (result)
+            {
+            Snackbar.Add ($"Message sent to {_count} students", Severity.Success);
+            }
+        else
+            {
+            Snackbar.Add ($"Failed!", Severity.Error);
+            }
+        }
     //excel import
     public void BtnImportStudentsFromExcelFile()
         {
@@ -433,7 +579,8 @@ else
     //cancel-back
     public void BtnCancel()
         {    
-        appState.SetCmd("");
+        _cmd = "";
+        StateHasChanged ();
         }
     public void BtnBack()
         {    
