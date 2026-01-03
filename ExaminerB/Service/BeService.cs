@@ -3265,8 +3265,9 @@ COMMIT TRANSACTION;
             }
         #endregion
         #region SM:StudentMessages
-        public async Task<bool> Create_StudentMessagesAsync (int messageId, List<int> lstStudentIds)
+        public async Task<bool> Create_StudentMessagesAsync (int messageId, List<int> lstStudentIds, bool requestFeedback)
             {
+            int _tags = requestFeedback ? 8 : 0;
             string sql = "INSERT INTO StudentMessages (StudentId, MessageId, DateTimeSent, StudentMessageTags) VALUES (@studentid, @messageid, @datetimesent, @studentmessagetags)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
@@ -3277,7 +3278,7 @@ COMMIT TRANSACTION;
                 cmd.Parameters.AddWithValue ("@studentid", st);
                 cmd.Parameters.AddWithValue ("@messageid", messageId);
                 cmd.Parameters.AddWithValue ("@datetimesent", DateTime.Now.ToString ("yyyy-MM-dd . HH:mm"));
-                cmd.Parameters.AddWithValue ("@studentmessagetags", 0);
+                cmd.Parameters.AddWithValue ("@studentmessagetags", _tags);
                 int i = (int) cmd.ExecuteNonQuery ();
                 }
             await cnn.CloseAsync ();

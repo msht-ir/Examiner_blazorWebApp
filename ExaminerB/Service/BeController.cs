@@ -682,9 +682,9 @@ namespace ExaminerB.Backend
         #endregion
         #region SM:StudentMessages
         [HttpPost ("Create_StudentMessages")]
-        public async Task<ActionResult<bool>> Create_StudentMessages ([FromBody] List<int> lstStudentIds, [FromQuery] int messageId)
+        public async Task<ActionResult<bool>> Create_StudentMessages ([FromBody] List<int> lstStudentIds, [FromQuery] int messageId, [FromQuery] bool requestFeedback)
             {
-            var result = await _BeService.Create_StudentMessagesAsync (messageId, lstStudentIds);
+            var result = await _BeService.Create_StudentMessagesAsync (messageId, lstStudentIds, requestFeedback);
             return Ok (result);
             }
         [HttpPost ("Create_StudentMessage")]

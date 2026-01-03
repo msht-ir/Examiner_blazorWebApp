@@ -69,26 +69,31 @@
                                                         <MudItem xs="6">
                                                             <div>Tests: @stdexam.ExamNTests</div>
                                                             <div>Time: @stdexam.ExamDuration min</div>
-                                                            @if (stdexam.StudentExamTags == 0)
+                                                            @if ((stdexam.StudentExamTags & 1) == 1)
                                                                 {
-                                                                <MudIconButton Icon="@Icons.Material.Filled.PlayArrow" Size="Size.Small" OnClick="async () => await BtnStartExam(stdexam)" />
+                                                                @if ((stdexam.StudentExamTags & 4) == 4)
+                                                                    {
+                                                                    @if ((stdexam.StudentExamTags & 8) == 8)
+                                                                        {
+                                                                        <MudIconButton Icon="@Icons.Material.Filled.Assignment" Size="Size.Small" OnClick="() => BtnReportExam(stdexam.StudentExamId)" />
+                                                                        }
+                                                                    }
+                                                                else if ((stdexam.StudentExamTags & 2) == 2)
+                                                                    {
+                                                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="async () => await BtnStartExam(stdexam)" />
+                                                                    }
+                                                                else
+                                                                    {
+                                                                    <MudIconButton Icon="@Icons.Material.Filled.PlayArrow" Size="Size.Small" OnClick="async () => await BtnStartExam(stdexam)" />                                                            
+                                                                    }
                                                                 }
-                                                            else if (stdexam.StudentExamTags == 1)
-                                                                {
-                                                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="async () => await BtnStartExam(stdexam)" />
-                                                                }
-                                                            else if ((stdexam.StudentExamTags & 2) == 2)
+                                                            @if ((stdexam.StudentExamTags & 4) == 4)
                                                                 {
                                                                 <div>
                                                                     <span style="color:indianred;font-size:small;font-weight:bold;">
                                                                         Pnt @stdexam.StudentExamPoint.ToString("F2")/20
                                                                     </span>
                                                                 </div>
-
-                                                                @if ((student.UserTags & 4) == 4)
-                                                                    {
-                                                                    <MudIconButton Icon="@Icons.Material.Filled.Assignment" Size="Size.Small" OnClick="() => BtnReportExam(stdexam.StudentExamId)" />
-                                                                    }
                                                                 }
                                                         </MudItem>
                                                     </MudGrid>

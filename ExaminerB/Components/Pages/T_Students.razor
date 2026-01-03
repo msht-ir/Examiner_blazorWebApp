@@ -129,6 +129,8 @@ else
                                     @student.UserName - @student.UserNickname
                                 </div>
                                 }
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="BtnSelectAllStudents">All</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Tertiary" OnClick="BtnInvertSelection">Invert</MudButton>
                         </MudCardContent>
                     </MudCard>
                 </MudContainer>                
@@ -273,10 +275,13 @@ else
                                                 <button class="btn btn-link" @onclick="BtnAddNewMessage">
                                                     <img src="/img/icoAddItem.png" width="20" />
                                                 </button>
+                                            </div>                                            
+                                            <div class="d-flex">
+                                                <MudCheckBox @bind-Value="requestFeedback" Label="Request feedback" Color="Color.Primary"></MudCheckBox>
                                                 <button class="btn btn-link" @onclick="()=>BtnAddStudentsToMessage()">
                                                     <img src="/img/icoListAddNew1.png" width="38" />
                                                 </button>
-                                            </div>                                            
+                                            </div>
                                             }
                                     </MudCardContent>
                                 </MudCard>
@@ -335,6 +340,7 @@ else
     int i = 0;
     string _cmd = "";
     public bool _hasFetched = false;
+    public bool requestFeedback { get; set; } = false;
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
@@ -401,6 +407,21 @@ else
         lstStudents = await feService.Read_StudentsByGCEMId (Id, mode, 0);
         StateHasChanged ();
         }
+    public async Task BtnSelectAllStudents()
+        {
+        foreach(User student in lstStudents){
+            student.IsSelected = true;
+            }
+        StateHasChanged ();
+        }
+    public async Task BtnInvertSelection()
+        {
+        foreach(User student in lstStudents)
+            {
+            student.IsSelected = (student.IsSelected) ? false : true;
+            }
+        StateHasChanged ();
+        }   
     //group
     private async Task OnGroupChanged(int newValue) 
         {
@@ -499,6 +520,7 @@ else
         }
     private async Task BtnAddStudentsToExam()
         {
+        _hasFetched = false;
         List<int> lstStudentIds = new List<int>();
         int _count = 0;
         foreach (User student in lstStudents)
@@ -519,6 +541,7 @@ else
             {
             Snackbar.Add ($"Failed!", Severity.Error);
             }
+        _hasFetched = true;
         }
     //message
     private async Task OnMessageChanged(int newValue) 
@@ -562,7 +585,7 @@ else
                 student.IsSelected = false;
                 }
             }
-        bool result = await feService.Create_StudentMessages(MessageId, lstStudentIds);
+        bool result = await feService.Create_StudentMessages(MessageId, lstStudentIds, requestFeedback);
         if (result)
             {
             Snackbar.Add ($"Message sent to {_count} students", Severity.Success);

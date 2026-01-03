@@ -775,25 +775,25 @@ namespace ExaminerB.Service
                 {
                 case "startedOn":
                         {
-                        studentExam.StudentExamTags = (studentExam.StudentExamTags | 1);
+                        studentExam.StudentExamTags = (studentExam.StudentExamTags | 2);
                         studentExam.StartDateTime = currentDateTime;
                         break;
                         }
                 case "startedOff":
                         {
-                        studentExam.StudentExamTags = (studentExam.StudentExamTags & ~1);
+                        studentExam.StudentExamTags = (studentExam.StudentExamTags & ~2);
                         studentExam.StartDateTime = "";
                         break;
                         }
                 case "finishedOn":
                         {
-                        studentExam.StudentExamTags = (studentExam.StudentExamTags | 2);
+                        studentExam.StudentExamTags = (studentExam.StudentExamTags | 4);
                         studentExam.FinishDateTime = currentDateTime;
                         break;
                         }
                 case "finishedOff":
                         {
-                        studentExam.StudentExamTags = (studentExam.StudentExamTags & ~2);
+                        studentExam.StudentExamTags = (studentExam.StudentExamTags & ~4);
                         studentExam.StartDateTime = "";
                         break;
                         }
@@ -962,9 +962,9 @@ namespace ExaminerB.Service
             }
         #endregion
         #region SM:StudentMessages
-        public async Task<bool> Create_StudentMessages (int messageId, List<int> lstStudentIds)
+        public async Task<bool> Create_StudentMessages (int messageId, List<int> lstStudentIds, bool requestFeedback)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Create_StudentMessages?messageId={messageId}", lstStudentIds);
+            var response = await _http.PostAsJsonAsync ($"api/Create_StudentMessages?messageId={messageId}&requestFeedback={requestFeedback}", lstStudentIds);
             return response.IsSuccessStatusCode ? true : false;
             }
         public async Task<int> Create_StudentMessage (Message message, string mode, int recipientId, bool typeFeedback)

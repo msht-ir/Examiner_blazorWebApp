@@ -149,7 +149,7 @@ namespace ExaminerB.Services2Backend
         Task<bool> Delete_MessagesAsync (string mode, int recipientId);
         #endregion
         #region SM:StudentMessages
-        Task<bool> Create_StudentMessagesAsync (int messageId, List<int> lstStudentIds);
+        Task<bool> Create_StudentMessagesAsync (int messageId, List<int> lstStudentIds, bool requestFeedback);
         Task<int> Create_StudentMessageAsync (Message message, string mode, int recipientId, bool typeFeedback);
         Task<List<StudentMessage>> Read_StudentMessagesAsync (int Id, string mode);
         Task<Message> Read_StudentMessageAsync (int studentMessageId);
