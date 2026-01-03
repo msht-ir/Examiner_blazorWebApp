@@ -531,12 +531,6 @@ namespace ExaminerB.Backend
             var result = await _BeService.Create_StudentExamsAsync (examId, lstStudentIds);
             return Ok (result);
             }
-        [HttpPost ("Create_StudentExam")]
-        public async Task<ActionResult<int>> Create_StudentExam ([FromBody] StudentExam studentExam)
-            {
-            var result = await _BeService.Create_StudentExamAsync (studentExam);
-            return Ok (result);
-            }
         [HttpPost ("Read_StudentExams")]
         public async Task<ActionResult<List<StudentExam>>> Read_StudentExams ([FromBody] int Id, [FromQuery] string mode)
             {

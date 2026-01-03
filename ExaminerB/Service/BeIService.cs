@@ -117,7 +117,6 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region SE:StudentExams
         Task<bool> Create_StudentExamsAsync (int examId, List<int> lstStudentIds);
-        Task<int> Create_StudentExamAsync (StudentExam studentExam);
         Task<List<StudentExam>> Read_StudentExamsAsync (int Id, string mode);
         Task<StudentExam> Read_StudentExamAsync (int studentExamId, bool readInactiveExams);
         Task<bool> Update_StudentExamAsync (StudentExam studentExam);

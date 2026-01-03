@@ -712,17 +712,6 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ($"api/Create_StudentExams?examId={examId}", lstStudentIds);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<int> Create_StudentExams_OLD_DelMe (int Id, string mode, int examId)
-            {
-            StudentExam studentExam = new StudentExam () { StudentId = 0, ExamId = examId, StartDateTime = "-", FinishDateTime = "-", StudentExamTags = 0, StudentExamPoint = 0 };
-            var response = await _http.PostAsJsonAsync ($"api/Create_StudentExams?mode={mode}&examId={examId}", Id);
-            return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<int> Create_StudentExam (StudentExam studentExam)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_StudentExam", studentExam);
-            return response.IsSuccessStatusCode ? 1 : 0;
-            }
         public async Task<List<StudentExam>> Read_StudentExams (int Id, string mode)
             {
             try

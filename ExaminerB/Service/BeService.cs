@@ -2285,90 +2285,78 @@ COMMIT TRANSACTION;
         #region SE:StudentExams
         public async Task<bool> Create_StudentExamsAsync (int examId, List<int> lstStudentIds)
             {
-            string sql = "INSERT INTO StudentExams (StudentId, ExamId, StudentExamTags) VALUES (@studentid, @examid, @studentexamtags)";
+            Random random = new Random ();
+            string sql = "";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
-            foreach (int st in lstStudentIds)
+            foreach (int studentId in lstStudentIds)
                 {
+                //1 Add record to: StudentExams
+                sql = "INSERT INTO StudentExams (StudentId, ExamId, StartDateTime, FinishDateTime, StudentExamTags, StudentExamPoint) VALUES (@studentid, @examid, @startdatetime, @finishdatetime, @studentexamtags, @studentexampoint); SELECT CAST (scope_identity() AS int)";
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@studentid", st);
+                cmd.Parameters.AddWithValue ("@studentid", studentId);
                 cmd.Parameters.AddWithValue ("@examid", examId);
+                cmd.Parameters.AddWithValue ("@startdatetime", "");
+                cmd.Parameters.AddWithValue ("@finishdatetime", "");
                 cmd.Parameters.AddWithValue ("@studentexamtags", 1);
-                int i = (int) cmd.ExecuteNonQuery ();
+                cmd.Parameters.AddWithValue ("@studentexampoint", 0);
+                int newStudentExamId = (int) await cmd.ExecuteScalarAsync ();
+                //2 read exam tests
+                List<Test> lstExamTests = new List<Test> ();
+                lstExamTests = await Read_TestsByExamIdAsync (examId, true);
+                //3 shuffle tests into: lstExamTests
+                int rnd = 0;
+                for (int k = 0; k < lstExamTests.Count; k++)
+                    {
+                    rnd = random.Next (k, (lstExamTests.Count));
+                    Test tmpTest = lstExamTests[rnd];
+                    lstExamTests[rnd] = lstExamTests[k];
+                    lstExamTests[k] = tmpTest;
+                    }
+                //4 options
+                foreach (Test tst in lstExamTests)
+                    {
+                    StudentExamTest est = new StudentExamTest ();
+                    /*NOTICE:
+                      If Read_TestOptions is called multiple times in rapid succession (as it is inside the loop over lstExamTests),
+                      the Random constructor will use the same seed (based on system time), resulting in identical shuffles of lstTestOptions.
+                      So even though you're calling Read_TestOptions(testId) for different tests, the shuffled list ends up in the same order,
+                      and the key option (tag 2) is always in the same position, likely the first one found.
+                      to fix, use a shared Random instance: pass a single Random object to Read_TestOptions */
+                    await Read_TestOptionsAsync (tst.TestId, cnn);
+                    est.StudentId = studentId;
+                    est.StudentExamId = newStudentExamId;
+                    est.TestId = tst.TestId;
+                    est.Opt1Id = (tst.TestOptions.Count > 0) ? (tst.TestOptions[0].TestOptionId) : 0;
+                    est.Opt2Id = (tst.TestOptions.Count > 1) ? (tst.TestOptions[1].TestOptionId) : 0;
+                    est.Opt3Id = (tst.TestOptions.Count > 2) ? (tst.TestOptions[2].TestOptionId) : 0;
+                    est.Opt4Id = (tst.TestOptions.Count > 3) ? (tst.TestOptions[3].TestOptionId) : 0;
+                    est.Opt5Id = (tst.TestOptions.Count > 4) ? (tst.TestOptions[4].TestOptionId) : 0;
+                    foreach (TestOption opt in tst.TestOptions)
+                        {
+                        if ((opt.TestOptionTags & 2) == 2)
+                            {
+                            est.StudentExamTestKey = opt.TestOptionId;
+                            }
+                        }
+                    //insert into ExamSheets
+                    string sql2 = "INSERT INTO StudentExamTests (StudentExamId, TestId, Opt1Id, Opt2Id, Opt3Id, Opt4Id, Opt5Id, StudentExamTestKey, StudentExamTestAns, StudentExamTestTags) VALUES (@studentexamid, @testid, @opt1id, @opt2id, @opt3id, @opt4id, @opt5id, @key, 0, 0)";
+                    var cmd2 = new Microsoft.Data.SqlClient.SqlCommand (sql2, cnn);
+                    cmd2.CommandType = CommandType.Text;
+                    cmd2.Parameters.AddWithValue ("@studentexamid", newStudentExamId);
+                    cmd2.Parameters.AddWithValue ("@testid", est.TestId);
+                    cmd2.Parameters.AddWithValue ("@opt1id", est.Opt1Id);
+                    cmd2.Parameters.AddWithValue ("@opt2id", est.Opt2Id);
+                    cmd2.Parameters.AddWithValue ("@opt3id", est.Opt3Id);
+                    cmd2.Parameters.AddWithValue ("@opt4id", est.Opt4Id);
+                    cmd2.Parameters.AddWithValue ("@opt5id", est.Opt5Id);
+                    cmd2.Parameters.AddWithValue ("@key", est.StudentExamTestKey);
+                    await cmd2.ExecuteNonQueryAsync ();
+                    }
                 }
             await cnn.CloseAsync ();
             return true;
-            }
-        public async Task<int> Create_StudentExamAsync (StudentExam studentExam)
-            {
-            Random random = new Random ();
-            //1 Add record to: StudentExams
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            string sql = "INSERT INTO StudentExams (StudentId, ExamId, StartDateTime, FinishDateTime, StudentExamTags, StudentExamPoint) VALUES (@studentid, @examid, @startdatetime, @finishdatetime, @studentexamtags, @studentexampoint); SELECT CAST (scope_identity() AS int)";
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@studentid", studentExam.StudentId);
-            cmd.Parameters.AddWithValue ("@examid", studentExam.ExamId);
-            cmd.Parameters.AddWithValue ("@startdatetime", "");
-            cmd.Parameters.AddWithValue ("@finishdatetime", "");
-            cmd.Parameters.AddWithValue ("@studentexamtags", 0);
-            cmd.Parameters.AddWithValue ("@studentexampoint", 0);
-            int newStudentExamId = (int) await cmd.ExecuteScalarAsync ();
-            //2 read exam tests
-            List<Test> lstExamTests = new List<Test> ();
-            lstExamTests = await Read_TestsByExamIdAsync (studentExam.ExamId, true);
-            //3 shuffle tests into: lstExamTests
-            int rnd = 0;
-            for (int k = 0; k < lstExamTests.Count; k++)
-                {
-                rnd = random.Next (k, (lstExamTests.Count));
-                Test tmpTest = lstExamTests[rnd];
-                lstExamTests[rnd] = lstExamTests[k];
-                lstExamTests[k] = tmpTest;
-                }
-            //4 options
-            foreach (Test tst in lstExamTests)
-                {
-                StudentExamTest est = new StudentExamTest ();
-                /*NOTICE:
-                  If Read_TestOptions is called multiple times in rapid succession (as it is inside the loop over lstExamTests),
-                  the Random constructor will use the same seed (based on system time), resulting in identical shuffles of lstTestOptions.
-                  So even though you're calling Read_TestOptions(testId) for different tests, the shuffled list ends up in the same order,
-                  and the key option (tag 2) is always in the same position, likely the first one found.
-                  to fix, use a shared Random instance: pass a single Random object to Read_TestOptions */
-                await Read_TestOptionsAsync (tst.TestId, cnn);
-                est.StudentId = studentExam.StudentId;
-                est.StudentExamId = newStudentExamId;
-                est.TestId = tst.TestId;
-                est.Opt1Id = (tst.TestOptions.Count > 0) ? (tst.TestOptions[0].TestOptionId) : 0;
-                est.Opt2Id = (tst.TestOptions.Count > 1) ? (tst.TestOptions[1].TestOptionId) : 0;
-                est.Opt3Id = (tst.TestOptions.Count > 2) ? (tst.TestOptions[2].TestOptionId) : 0;
-                est.Opt4Id = (tst.TestOptions.Count > 3) ? (tst.TestOptions[3].TestOptionId) : 0;
-                est.Opt5Id = (tst.TestOptions.Count > 4) ? (tst.TestOptions[4].TestOptionId) : 0;
-                foreach (TestOption opt in tst.TestOptions)
-                    {
-                    if ((opt.TestOptionTags & 2) == 2)
-                        {
-                        est.StudentExamTestKey = opt.TestOptionId;
-                        }
-                    }
-                //insert into ExamSheets
-                string sql2 = "INSERT INTO StudentExamTests (StudentExamId, TestId, Opt1Id, Opt2Id, Opt3Id, Opt4Id, Opt5Id, StudentExamTestKey, StudentExamTestAns, StudentExamTestTags) VALUES (@studentexamid, @testid, @opt1id, @opt2id, @opt3id, @opt4id, @opt5id, @key, 0, 0)";
-                var cmd2 = new Microsoft.Data.SqlClient.SqlCommand (sql2, cnn);
-                cmd2.CommandType = CommandType.Text;
-                cmd2.Parameters.AddWithValue ("@studentexamid", newStudentExamId);
-                cmd2.Parameters.AddWithValue ("@testid", est.TestId);
-                cmd2.Parameters.AddWithValue ("@opt1id", est.Opt1Id);
-                cmd2.Parameters.AddWithValue ("@opt2id", est.Opt2Id);
-                cmd2.Parameters.AddWithValue ("@opt3id", est.Opt3Id);
-                cmd2.Parameters.AddWithValue ("@opt4id", est.Opt4Id);
-                cmd2.Parameters.AddWithValue ("@opt5id", est.Opt5Id);
-                cmd2.Parameters.AddWithValue ("@key", est.StudentExamTestKey);
-                await cmd2.ExecuteNonQueryAsync ();
-                }
-            return newStudentExamId;
             }
         public async Task<List<StudentExam>> Read_StudentExamsAsync (int Id, string mode)
             {
