@@ -310,9 +310,9 @@ namespace ExaminerB.Service
             }
         #endregion
         #region SC:StudentCourses
-        public async Task<bool> Create_StudentCourses (int groupId, int courseId)
+        public async Task<bool> Create_StudentCourses (int courseId, List<int> lstStudentIds)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Create_StudentCourses?courseId={courseId}", groupId);
+            var response = await _http.PostAsJsonAsync ($"api/Create_StudentCourses?courseId={courseId}", lstStudentIds);
             return response.IsSuccessStatusCode ? true : false;
             }
         public async Task<bool> Create_StudentCourse (int studentId, int courseId)
@@ -706,7 +706,13 @@ namespace ExaminerB.Service
             }
         #endregion
         #region SE:StudentExams
-        public async Task<int> Create_StudentExams (int Id, string mode, int examId)
+        public async Task<int> Create_StudentExams (int examId, List<int> lstStudentIds)
+            {
+            StudentExam studentExam = new StudentExam () { StudentId = 0, ExamId = examId, StartDateTime = "-", FinishDateTime = "-", StudentExamTags = 0, StudentExamPoint = 0 };
+            var response = await _http.PostAsJsonAsync ($"api/Create_StudentExams?examId={examId}", lstStudentIds);
+            return response.IsSuccessStatusCode ? 1 : 0;
+            }
+        public async Task<int> Create_StudentExams_OLD_DelMe (int Id, string mode, int examId)
             {
             StudentExam studentExam = new StudentExam () { StudentId = 0, ExamId = examId, StartDateTime = "-", FinishDateTime = "-", StudentExamTags = 0, StudentExamPoint = 0 };
             var response = await _http.PostAsJsonAsync ($"api/Create_StudentExams?mode={mode}&examId={examId}", Id);

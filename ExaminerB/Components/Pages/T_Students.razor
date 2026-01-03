@@ -212,7 +212,7 @@ else
                                             <button class="btn btn-link" @onclick="()=>BtnReadExams(CourseId)">
                                                 <img src="/img/icoListE.png" width="38" />
                                             </button>
-                                            <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
+                                            <button class="btn btn-link" @onclick="()=>BtnAddStudentsToCourse()">
                                                 <img src="/img/icoListAddNew1.png" width="38" />
                                             </button>
                                         </div>
@@ -221,7 +221,7 @@ else
                                                 <MudSelectItem Value="0">Select an Exam</MudSelectItem>
                                                 @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                                             </MudSelect>
-                                            <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
+                                            <button class="btn btn-link" @onclick="()=>BtnAddStudentsToExam()">
                                                 <img src="/img/icoListAddNew1.png" width="38" />
                                             </button>
                                         </div>
@@ -473,6 +473,52 @@ else
         {
         lstExams = await feService.Read_Exams (courseid);
         StateHasChanged ();
+        }
+    private async Task BtnAddStudentsToCourse()
+        {
+        List<int> lstStudentIds = new List<int>();
+        int _count = 0;
+        foreach (User student in lstStudents)
+            {
+            if (student.IsSelected)
+                {
+                lstStudentIds.Add(student.UserId);
+                _count++;
+                student.IsSelected = false;
+                }
+            }
+        bool result = await feService.Create_StudentCourses(CourseId, lstStudentIds);
+        if (result)
+            {
+            Snackbar.Add ($"{_count} students added to the course", Severity.Success);
+            }
+        else
+            {
+            Snackbar.Add ($"Failed!", Severity.Error);
+            }
+        }
+    private async Task BtnAddStudentsToExam()
+        {
+        List<int> lstStudentIds = new List<int>();
+        int _count = 0;
+        foreach (User student in lstStudents)
+            {
+            if (student.IsSelected)
+                {
+                lstStudentIds.Add(student.UserId);
+                _count++;
+                student.IsSelected = false;
+                }
+            }
+        int result = await feService.Create_StudentExams(ExamId, lstStudentIds);
+        if (result > 0)
+            {
+            Snackbar.Add ($"{_count} students added to the exam", Severity.Success);
+            }
+        else
+            {
+            Snackbar.Add ($"Failed!", Severity.Error);
+            }
         }
     //message
     private async Task OnMessageChanged(int newValue) 

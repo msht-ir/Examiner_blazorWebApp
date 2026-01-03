@@ -229,9 +229,9 @@ namespace ExaminerB.Backend
         #endregion
         #region SC:StudentCourses
         [HttpPost ("Create_StudentCourses")]
-        public async Task<ActionResult<bool>> Create_StudentCourses ([FromBody] int groupId, [FromQuery] int courseId)
+        public async Task<ActionResult<bool>> Create_StudentCourses ([FromBody] List<int> lstStudentIds, [FromQuery] int courseId)
             {
-            var result = await _BeService.Create_StudentCoursesAsync (groupId, courseId);
+            var result = await _BeService.Create_StudentCoursesAsync (courseId, lstStudentIds);
             return Ok (result);
             }
         [HttpPost ("Create_StudentCourse")]
@@ -526,9 +526,9 @@ namespace ExaminerB.Backend
         #endregion
         #region SE:StudentExams
         [HttpPost ("Create_StudentExams")]
-        public async Task<ActionResult<int>> Create_StudentExams ([FromBody] int Id, [FromQuery] string mode, [FromQuery] int examId)
+        public async Task<ActionResult<int>> Create_StudentExams ([FromBody] List<int> lstStudentIds, [FromQuery] int examId)
             {
-            var result = await _BeService.Create_StudentExamsAsync (Id, mode, examId);
+            var result = await _BeService.Create_StudentExamsAsync (examId, lstStudentIds);
             return Ok (result);
             }
         [HttpPost ("Create_StudentExam")]

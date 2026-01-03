@@ -318,7 +318,6 @@
             student.UserName = appState.UserName ?? "";
             student.UserNickname = appState.UserNickname ?? "";
             lstStudentCourses = await feService.Read_StudentCourses (student.UserId, "ByStudentId");
-            Console.WriteLine($"page: .......................Id= {student.UserId}  ......... StudentCourses Count = {lstStudentCourses.Count}");
             await ReadMessageList ();
             _hasFetched = true;
             }

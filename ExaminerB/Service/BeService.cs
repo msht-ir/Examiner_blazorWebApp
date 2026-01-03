@@ -971,18 +971,21 @@ namespace ExaminerB.Services2Backend
             }
         #endregion
         #region SC:StudentCourses
-        public async Task<bool> Create_StudentCoursesAsync (int groupId, int courseId)
+        public async Task<bool> Create_StudentCoursesAsync (int courseId, List<int> lstStudentIds)
             {
-            string sql = @"INSERT INTO StudentCourses (StudentId, CourseId) SELECT s.StudentId, @courseid FROM Students s
-                        WHERE s.GroupId=@groupid
-                        AND NOT EXISTS (SELECT 1 FROM StudentCourses sc WHERE sc.StudentId=s.StudentId AND Sc.CourseId=@courseid);";
+            string sql = "INSERT INTO StudentCourses (StudentId, CourseId, StudentCourseTags) VALUES (@studentid, @courseid, @studentcoursetags)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@courseid", courseId);
-            cmd.Parameters.AddWithValue ("@groupid", groupId);
-            await cmd.ExecuteNonQueryAsync ();
+            foreach (int st in lstStudentIds)
+                {
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@studentid", st);
+                cmd.Parameters.AddWithValue ("@courseid", courseId);
+                cmd.Parameters.AddWithValue ("@studentcoursetags", 3);
+                int i = (int) cmd.ExecuteNonQuery ();
+                }
+            await cnn.CloseAsync ();
             return true;
             }
         public async Task<bool> Create_StudentCourseAsync (int studentId, int courseId)
@@ -1298,7 +1301,6 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Update_StudentCourseTestAsync (StudentCourseTest studentCourseTest, string mode)
             {
-            Console.WriteLine ($"be ........................ mode= {mode}");
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             string sql = "";
@@ -2281,49 +2283,22 @@ COMMIT TRANSACTION;
             }
         #endregion
         #region SE:StudentExams
-        public async Task<int> Create_StudentExamsAsync (int Id, string mode, int examId)
+        public async Task<bool> Create_StudentExamsAsync (int examId, List<int> lstStudentIds)
             {
-            List<int> lstStudentIds = new List<int> ();
-            string sql = "";
-            switch (mode)
-                {
-                case "G":
-                        {
-                        sql = "SELECT StudentId From StudentGroups sg WHERE sg.GroupId=@id";
-                        break;
-                        }
-                case "C":
-                        {
-                        sql = "SELECT StudentId From StudentCourses sc WHERE sc.CourseId=@id";
-                        break;
-                        }
-                case "E":
-                        {
-                        sql = "SELECT StudentId From StudentExams se WHERE se.ExamId=@id";
-                        break;
-                        }
-                case "M":
-                        {
-                        sql = "SELECT StudentId From StudentMessages sm WHERE sm.MessageId=@id";
-                        break;
-                        }
-                }
+            string sql = "INSERT INTO StudentExams (StudentId, ExamId, StudentExamTags) VALUES (@studentid, @examid, @studentexamtags)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@id", Id);
-            var reader = await cmd.ExecuteReaderAsync ();
-            while (await reader.ReadAsync ())
+            foreach (int st in lstStudentIds)
                 {
-                lstStudentIds.Add (reader.GetInt32 (0));
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@studentid", st);
+                cmd.Parameters.AddWithValue ("@examid", examId);
+                cmd.Parameters.AddWithValue ("@studentexamtags", 1);
+                int i = (int) cmd.ExecuteNonQuery ();
                 }
-            foreach (int studentId in lstStudentIds)
-                {
-                StudentExam studentExam = new StudentExam () { StudentId = studentId, ExamId = examId, StudentExamTags = 1 };
-                await Create_StudentExamAsync (studentExam);
-                }
-            return 1;
+            await cnn.CloseAsync ();
+            return true;
             }
         public async Task<int> Create_StudentExamAsync (StudentExam studentExam)
             {
@@ -2357,9 +2332,12 @@ COMMIT TRANSACTION;
             foreach (Test tst in lstExamTests)
                 {
                 StudentExamTest est = new StudentExamTest ();
-                //NOTICE: If Read_TestOptions is called multiple times in rapid succession (as it is inside the loop over lstExamTests), the Random constructor will use the same seed (based on system time), resulting in identical shuffles of lstTestOptions.
-                //So even though you're calling Read_TestOptions(testId) for different tests, the shuffled list ends up in the same order, and the key option (tag 2) is always in the same position, likely the first one found.
-                //to fix, use a shared Random instance: pass a single Random object to Read_TestOptions
+                /*NOTICE:
+                  If Read_TestOptions is called multiple times in rapid succession (as it is inside the loop over lstExamTests),
+                  the Random constructor will use the same seed (based on system time), resulting in identical shuffles of lstTestOptions.
+                  So even though you're calling Read_TestOptions(testId) for different tests, the shuffled list ends up in the same order,
+                  and the key option (tag 2) is always in the same position, likely the first one found.
+                  to fix, use a shared Random instance: pass a single Random object to Read_TestOptions */
                 await Read_TestOptionsAsync (tst.TestId, cnn);
                 est.StudentId = studentExam.StudentId;
                 est.StudentExamId = newStudentExamId;

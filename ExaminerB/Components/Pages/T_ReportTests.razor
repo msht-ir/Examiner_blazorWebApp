@@ -166,17 +166,19 @@ else
                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                     <MudCard Class="mx-0">
                         <MudCardContent Style="background-color:whitesmoke;">
-                            <div style="font-weight:bold;color:royalblue;padding-bottom:5px;">Add selected tests to Exam:</div>
-                            <MudSelect T="int" Label="Exam آزمون" @bind-Value="intExamId" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
-                                @foreach (Exam exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
-                            </MudSelect>
-                            <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
-                                <img src="/img/icoSave2.png" width="26" />
-                            </button>
-                            <button class="btn btn-link" type="submit" @onclick="BtnEditExam">
-                                <img src="/img/icoFolderE.png" width="32" />
-                            </button>
+                            <div style="font-weight:bold;color:royalblue;padding-bottom:5px;">Add tests to:</div>
+                            <div class="d-flex">
+                                <MudSelect T="int" Label="Exam آزمون" @bind-Value="intExamId" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                    <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
+                                    @foreach (Exam exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
+                                </MudSelect>
+                                <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
+                                    <img src="/img/icoSave2.png" width="24" />
+                                </button>
+                                <button class="btn btn-link" type="submit" @onclick="BtnEditExam">
+                                    <img src="/img/icoFolderE.png" width="30" />
+                                </button>
+                            </div>
                         </MudCardContent>
                     </MudCard>
                 </MudContainer>

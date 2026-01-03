@@ -55,7 +55,7 @@ namespace ExaminerB.Services2Backend
         Task<bool> Delete_CourseTopicAsync (int courseTopicId);
         #endregion
         #region SC:StudentCourses
-        Task<bool> Create_StudentCoursesAsync (int groupId, int courseId);
+        Task<bool> Create_StudentCoursesAsync (int courseId, List<int> lstStudentIds);
         Task<bool> Create_StudentCourseAsync (int studentId, int courseId);
         Task<List<StudentCourse>> Read_StudentCoursesAsync (int Id, string mode);
         Task<StudentCourse> Read_StudentCourseAsync (int studentCourseId);
@@ -116,7 +116,7 @@ namespace ExaminerB.Services2Backend
         Task<bool> Delete_ExamTestAsync (ExamTest examTest);
         #endregion
         #region SE:StudentExams
-        Task<int> Create_StudentExamsAsync (int Id, string mode, int examId);
+        Task<bool> Create_StudentExamsAsync (int examId, List<int> lstStudentIds);
         Task<int> Create_StudentExamAsync (StudentExam studentExam);
         Task<List<StudentExam>> Read_StudentExamsAsync (int Id, string mode);
         Task<StudentExam> Read_StudentExamAsync (int studentExamId, bool readInactiveExams);
