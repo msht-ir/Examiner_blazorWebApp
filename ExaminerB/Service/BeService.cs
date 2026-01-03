@@ -234,15 +234,16 @@ namespace ExaminerB.Services2Backend
             {
             //read list of Students by search
             List<User> lstStudents = new List<User> ();
-            keyword = "'%" + keyword + "%'";
+            keyword = "%" + keyword + "%";
             string sql = @"SELECT s.StudentId, s.TeacherId, s.StudentName, s.StudentPass, s.StudentNickname, s.StudentTags 
-                        FROM Students s 
-                        WHERE s.TeacherId=@userid AND ((s.StudentName LIKE @keyword) OR (s.Nickname LIKE @keyword))";
+                    FROM Students s 
+                    WHERE s.TeacherId=@userid AND ((s.StudentName LIKE @keyword) OR (s.StudentNickname LIKE @keyword))";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
             cmd.Parameters.AddWithValue ("@userid", userId);
-            cmd.Parameters.AddWithValue ("@keyword", keyword);
+            cmd.Parameters.Add ("@keyword", SqlDbType.NVarChar, 200).Value = keyword;
+
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             while (await reader.ReadAsync ())
@@ -253,13 +254,14 @@ namespace ExaminerB.Services2Backend
                     TeacherId = reader.GetInt32 (1),
                     UserName = reader.GetString (2),
                     UserPass = reader.GetString (3),
-                    UserTags = reader.GetInt32 (4),
-                    UserNickname = reader.GetString (5),
+                    UserNickname = reader.GetString (4),
+                    UserTags = reader.GetInt32 (5),
                     UserRole = "-",
                     StudentGroups = new List<StudentGroup> (),
                     StudentCourses = new List<StudentCourse> (),
                     StudentExams = new List<StudentExam> (),
                     StudentMessages = new List<StudentMessage> (),
+                    StudentNotes = new List<Note> ()
                     });
                 }
             if ((readStudentGCEM & 1) == 1)

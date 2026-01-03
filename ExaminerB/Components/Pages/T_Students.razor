@@ -36,22 +36,7 @@ else
                 <div id="Accordion_GCEM" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
                     <div class="accordion-body" style="background-color:white">
                         <div id="T1">
-                            @* NEW STUDENT *@
-                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
-                                <MudCard Class="mx-auto">
-                                    <MudCardContent Style="background-color:rgba(249,249,249);">
-                                        <div class="d-flex" style="gap:10px;">
-                                            <MudTextField  @ref="refNewUser"  @bind-Value="user.UserName"  Label="Username يوزر"   Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield" />
-                                            <MudTextField  @ref="refNewPass"  @bind-Value="user.UserPass"  Label="Password پسورد"  Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield"  InputType="InputType.Password"/>
-                                            <button class="btn btn-link" @onclick="BtnCancel">
-                                                <img src="/img/icoSave2.png" width="24" />
-                                            </button>
-                                        </div>
-                                        <InputFile OnChange="HandleFileSelected" />                                    
-                                    </MudCardContent>
-                                </MudCard>
-                            </MudContainer>
-                            @* Combos GCEM *@
+                            @* SOURSES GCEM *@
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-auto">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
@@ -91,6 +76,23 @@ else
                                                 <img src="/img/icoListS.png" width="32" />
                                             </button>
                                         </div>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
+                            @* NEW STUDENT - IMPORT - SEARCH *@
+                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                <MudCard Class="mx-auto">
+                                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                                        @* NEW STUDENT *@
+                                        <div class="d-flex" style="gap:10px;">
+                                            <MudTextField  @ref="refNewUser"  @bind-Value="user.UserName"  Label="Username يوزر"   Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield" />
+                                            <MudTextField  @ref="refNewPass"  @bind-Value="user.UserPass"  Label="Password پسورد"  Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield"  InputType="InputType.Password"/>
+                                            <button class="btn btn-link" @onclick="BtnCancel">
+                                                <img src="/img/icoSave2.png" width="24" />
+                                            </button>
+                                        </div>
+                                        @* IMPORT *@
+                                        <InputFile OnChange="HandleFileSelected" />                                    
                                         @* SEARCH *@
                                         <div class="d-flex">
                                             <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="Search جستجو" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
@@ -105,7 +107,7 @@ else
                     </div>
                 </div>
             </div>
-            @* LIST STUDENTs *@
+            @* RESULTS: LIST STUDENTS *@
             @if(lstStudents.Count > 0)
                 {
                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
@@ -128,7 +130,8 @@ else
                     </MudCard>
                 </MudContainer>                
                 }        
-            <hr style="color:red" />
+            @* ADD STUDENTS TO... *@
+            <br />
             <h2 style="text-align:center; color:royalblue; font-style:italic">Add students to ...</h2>
             @* SELECT A GROUP *@
             <div class="accordion-item mb-2" >
@@ -153,7 +156,7 @@ else
                                                 @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
                                             </MudSelect>
                                             <button class="btn btn-link" @onclick="BtnBack">
-                                                <img src="/img/icoAddItem.png" width="22" />
+                                                <img src="/img/icoAddItem.png" width="20" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
                                                 <img src="/img/icoListAddNew1.png" width="38" />
@@ -237,7 +240,7 @@ else
                                                 @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
                                             </MudSelect>
                                             <button class="btn btn-link" @onclick="BtnBack">
-                                                <img src="/img/icoAddItem.png" width="22" />
+                                                <img src="/img/icoAddItem.png" width="20" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnReadStudentsBySearch()">
                                                 <img src="/img/icoListAddNew1.png" width="38" />
@@ -273,7 +276,6 @@ else
     string txtNewStudentName = "";
     string strSearch = "";
     int intPageNumber = 0;
-
     private MudSelect<int> refGroups;
     private MudSelect<int> refCourses;
     private MudSelect<int> refExams;
@@ -282,19 +284,16 @@ else
     int CourseId = 0;
     int ExamId = 0;
     int MessageId = 0;
-
     List<Group> lstGroups = new ();
     List<Course> lstCourses = new ();
     List<StudentExam> lstExams = new ();
     List<Message> lstMessages = new ();
     List<User> lstStudents = new ();
-
     Group group = new Group();
     Course course = new Course();
     Exam exam = new Exam();
     Message message = new Message();
     User student = new User ();
-
     int i = 0;
     private bool shouldFocusNewGroup = false;
     int selectedCourseId = 0; // Courses in combo box
@@ -338,358 +337,22 @@ else
         {
         appState.OnChange -= TriggerRender;
         }
-    //groups
-    public void BtnAddNewGroup()
-        {
-        if(appState.Cmd != "AddNewGroup")
-            {
-            appState.SetCmd ("AddNewGroup");
-            shouldFocusNewGroup = true; //flag to tell OnAfterRenderAsync focus on 'txtNewGroup'
-            }
-        else
-            {
-            appState.SetCmd ("");
-            shouldFocusNewGroup = false;
-            }
-        }
-    public async Task BtnSaveNewGroup()
-        {
-        //group.GroupName is bind
-        group.UserId = Convert.ToInt32(appState.UserId);
-        bool result = await feService.Create_Group (group);
-        if (result)
-            {
-            Console.WriteLine("Group added: " + group.GroupName);
-            appState.SetCmd("");
-            // Refresh the list
-            var user = new User
-            {
-                UserId = Convert.ToInt32(appState.UserId),
-                UserName = appState.UserName,
-                UserPass = appState.UserPass,
-                UserRole = appState.UserRole,
-                TeacherId = Convert.ToInt32(appState.GroupId)
-            };
-            lstGroups = await feService.Read_Groups (user, false);
-            group.GroupName = ""; //reset input text
-            StateHasChanged ();            
-            }
-        }
-    public async Task BtnUpdateGroup(Group grp)
-        {
-        //GroupName is bind
-        grp.UserId = Convert.ToInt32(appState.UserId);
-        bool result = await feService.Update_Group (grp);
-        if (result)
-            {
-            appState.SetCmd("");
-            // Refresh the list
-            var user = new User
-            {
-                UserId = Convert.ToInt32(appState.UserId),
-                UserName = appState.UserName,
-                UserPass = appState.UserPass,
-                UserRole = appState.UserRole,
-                TeacherId = Convert.ToInt32(appState.GroupId)
-            };
-            lstGroups = await feService.Read_Groups(user, false);
-            group.GroupName = ""; //reset input text
-            StateHasChanged ();            
-            }
-        }
-    private async Task BtnDeleteGroup(Group group)
-        {
-        var message = new MarkupString($"<hr style=color:blue>Delete <strong>({group.GroupName})</strong>?<br>Sure?<hr style=color:blue>");
-        bool? confirmResult = await DialogService.ShowMessageBox(
-            title: "Confirm Delete Group",
-            markupMessage: message,
-            yesText: "Yes",
-            cancelText: "No");
-
-        if (confirmResult == true)
-            {
-            int result = await feService.Delete_Group (group.GroupId);
-            if (result == 0)
-                {
-                //0: no students in the group and the group must be deleted! OK
-                appState.SetCmd("");
-                // Refresh the list
-                var user = new User
-                {
-                    UserId = Convert.ToInt32(appState.UserId),
-                    UserName = appState.UserName,
-                    UserPass = appState.UserPass,
-                    UserRole = appState.UserRole,
-                    TeacherId = Convert.ToInt32(appState.GroupId)
-                };
-                lstGroups = await feService.Read_Groups(user, false);
-                //group.GroupName = ""; //reset input text
-                StateHasChanged ();            
-                }
-            else
-                {
-                await JS.InvokeVoidAsync("alert", "\n\nThere are students in this group.\n\nThis group cannot be deleted.");
-                }            
-            }
-        }
-    public void BtnEditStudentsTags(int groupId)
-        {
-        if(appState.Cmd != "EditStudentsTags")
-            {
-            appState.SetCmd ("EditStudentsTags");
-            appState.SetGroupId (groupId);
-            }
-        else
-            {
-            appState.SetCmd ("");
-            }
-        StateHasChanged ();
-        }
-    public void BtnUpdateStudentTagsInPlace (User stdnt, int flag , bool isChecked)
-        {
-        if (isChecked)
-            {
-            stdnt.UserTags |= flag;
-            }
-        else
-            {
-            stdnt.UserTags &= ~flag;
-            }
-        }
-    public void BtnAddCourse2Students(int groupId)
-        {
-        if(appState.Cmd != "AddCourse2Students")
-            {
-            appState.SetCmd ("AddCourse2Students");
-            appState.SetGroupId (groupId);
-            }
-        else
-            {
-            appState.SetCmd ("");
-            }
-        StateHasChanged ();
-        }
-    public async Task BtnSaveAddCourse2Students(int groupId)
-        {
-        if(selectedCourseId == 0)
-            {
-            await JS.InvokeVoidAsync ("alert", "Select a Course from List");
-            return;
-            }
-        else
-            {
-            bool result = await feService.Create_StudentCourses (groupId, selectedCourseId);
-            if(result)
-                {
-                await JS.InvokeVoidAsync("alert", "\nGroup successfully added to course.");
-                appState.SetCmd("");
-                StateHasChanged();
-                }
-            else
-                {
-                await JS.InvokeVoidAsync("alert", "\nGroup did not added to the course!");
-                }
-            }
-        }
-    public void BtnReportStudentsExamsAndCourses(int groupId)
-        {      
-        string mode = "groupStudents";
-        Navman.NavigateTo ($"/T_ReportStudents/{mode}/{groupId}");
-        }
-    //students
-    public void BtnAddNewStudent(int groupId)
-        {
-        if(appState.Cmd != "AddNewStudent")
-            {
-            appState.SetCmd ("AddNewStudent");
-            appState.SetGroupId (groupId);
-            }
-        else
-            {
-            appState.SetCmd ("");
-            }
-        StateHasChanged ();
-        }
-    public async Task BtnSaveNewStudent(int groupId)
-        {
-        User student = new User () { UserName = txtNewStudentName, UserPass=txtNewStudentName, UserRole="student", UserTags= 1, UserNickname= "new student", TeacherId=groupId };
-        int result = await feService.Create_Student (student);
-        if (result > 0)
-            {
-            await JS.InvokeVoidAsync ("alert", $"New Student :\n\n user: {student.UserName} \n pass: {student.UserPass} \n created!");
-            // Refresh the list
-            var user = new User
-            {
-                UserId = Convert.ToInt32(appState.UserId),
-                UserName = appState.UserName,
-                UserPass = appState.UserPass,
-                UserRole = appState.UserRole,
-                TeacherId = Convert.ToInt32(appState.GroupId)
-            };
-            lstGroups = await feService.Read_Groups(user, false);
-            appState.SetCmd ("");
-            StateHasChanged ();
-            }
-        else
-            {
-            await JS.InvokeVoidAsync ("alert", "Cannot create the new student -- operation Failed");            
-            }
-        }
-    public async Task BtnUpdateStudent(User student)
-        {
-        appState.SetGroupId (student.TeacherId);
-        bool result = await feService.Update_Student (student);
-        if (result)
-            {
-            appState.SetCmd("");
-            // Refresh the list
-            var user = new User
-            {
-                UserId = Convert.ToInt32(appState.UserId),
-                UserName = appState.UserName,
-                UserPass = appState.UserPass,
-                UserRole = appState.UserRole,
-                TeacherId = Convert.ToInt32(appState.GroupId)
-            };
-            lstGroups = await feService.Read_Groups(user, false);
-            group.GroupName = ""; //reset input text
-            StateHasChanged ();            
-            }
-        }
-    private async Task BtnDeleteStudent(int studentId)
-        {
-        if (await JS.InvokeAsync<bool>("confirm", "\n\nDelete Sudent?"))
-            {
-            bool result = await feService.Delete_Student (studentId);
-            if (result)
-                {
-                //await JS.InvokeVoidAsync("alert", "\nStudent successfully removed from the group");
-                appState.SetCmd("");
-                // Refresh the list
-                var user = new User
-                    {
-                    UserId = Convert.ToInt32(appState.UserId),
-                    UserName = appState.UserName,
-                    UserPass = appState.UserPass,
-                    UserRole = appState.UserRole,
-                    TeacherId = Convert.ToInt32(appState.GroupId)
-                    };
-                lstGroups = await feService.Read_Groups(user, false);
-                group.GroupName = ""; //reset input text
-                StateHasChanged ();            
-                }
-            }
-        else
-            {
-            await JS.InvokeVoidAsync("alert", "\nStudent did note removed ---- operation failed!");
-            }
-        }
-    public void BtnReportStudentExamsAndCourses(User stdnt)
-        {
-        string mode = "oneStudent";
-        Navman.NavigateTo ($"/T_ReportStudents/{mode}/{stdnt.UserId}");
-        }
-    public void BtnReportStudentMessages(User stdnt)
-        {
-        appState.SetStudentName (stdnt.UserName);
-        appState.SetStudentNickname (stdnt.UserNickname);
-        string mode = "StudentWithDels";
-        Navman.NavigateTo ($"/T_ReportMessages/{mode}/{stdnt.UserId}");
-        }
-    //student course
-    public void BtnAddStudentCourse(int userId)
-        {
-        appState.SetCmd ("AddNewStudentCourse");
-        appState.SetStudentId (userId);
-        StateHasChanged ();
-        }
-    public async Task BtnSaveStudentCourse(int studentId)
-        {      
-        if(selectedCourseId == 0)
-            {
-            await JS.InvokeVoidAsync ("alert", "Select a Course from List");
-            return;
-            }
-        else
-            {
-            bool result = await feService.Create_StudentCourse (studentId, selectedCourseId);
-            if(result)
-                {
-                await JS.InvokeVoidAsync("alert", "\nStudent successfully added to course.");
-                appState.SetCmd("");
-                StateHasChanged();
-                }
-            else
-                {
-                await JS.InvokeVoidAsync("alert", "\nStudent did not added to the course!");
-                }
-            }
-        }
-    public async Task BtnDeleteStudentCourse(int studentId)
-        {      
-        if(selectedCourseId == 0)
-            {
-            await JS.InvokeVoidAsync ("alert", "Select a Course from List");
-            return;
-            }
-        else
-            {
-            bool result = await feService.Delete_StudentCourse (selectedCourseId);
-            if(result)
-                {
-                await JS.InvokeVoidAsync("alert", "\nStudent removed from the course.");
-                appState.SetCmd("");
-                StateHasChanged();
-                }
-            else
-                {
-                await JS.InvokeVoidAsync("alert", "\nStudent did not removed from the course!");
-                }
-            }
-        }
-    public async Task BtnDeleteStudentCourses(int groupId)
-        {
-        //delete all students of a group from a course
-        if(selectedCourseId == 0)
-            {
-            await JS.InvokeVoidAsync ("alert", "Select a Course from List");
-            return;
-            }
-        else
-            {
-            bool result = await feService.Delete_StudentCourses (selectedCourseId, "ByCourseId");
-            if(result)
-                {
-                await JS.InvokeVoidAsync("alert", "\nAll students in this group are removed from the course.");
-                appState.SetCmd("");
-                StateHasChanged();
-                }
-            else
-                {
-                await JS.InvokeVoidAsync("alert", "\nStudents did not removed from the course --- operation failed");
-                }
-            }
-        }           
-    //back
-    public void BtnCancel()
-        {    
-        appState.SetCmd("");
-        }
-    public void BtnBack()
-        {    
-        Navman.NavigateTo ("/T_SwitchBoard");
-        }
-    //new methods
+    //btns
     public async Task BtnReadStudentsBySearch()
         {
-
+        if(strSearch !="")
+            {
+            user.UserId = Convert.ToInt32 (appState.UserId);
+            lstStudents = await feService.Read_StudentsByKeyword (user.UserId, strSearch, 0);
+            StateHasChanged ();
+            }
         }
     public async Task BtnReadStudents(int Id, string mode)
         {
         lstStudents = await feService.Read_StudentsByGCEMId (Id, mode, 0);
         StateHasChanged ();
         }
-
+    //methods
     private async Task OnGroupChanged(int newValue) 
         {
         //update GroupId from the event
@@ -717,7 +380,7 @@ else
         MessageId = newValue;
         StateHasChanged();
         } 
-    //methods for excel import
+    //excel import
     public void BtnImportStudentsFromExcelFile()
         {
         appState.SetCmd ("importstudentsfromexcelfile");
@@ -735,34 +398,29 @@ else
         {
         try
             {
+            user.UserId = Convert.ToInt32 (appState.UserId);
+            lstStudents.Clear ();
             using var workbook = new XLWorkbook(stream);
             var worksheet = workbook.Worksheet(1); //1:first sheet
             i = 0;
-            group.GroupId = Convert.ToInt32 (appState.GroupId);
+            // group.GroupId = Convert.ToInt32 (appState.GroupId);
             foreach (var row in worksheet.RowsUsed().Skip(1)) //skip header
                 {
                 i++;
                 User student = new User () {
+                    TeacherId = user.UserId,
                     UserName = row.Cell (1).GetString (),
                     UserPass = row.Cell (2).GetString (),
-                    UserRole = "student",
-                    UserTags = 1,
                     UserNickname = row.Cell (3).GetString (),
-                    TeacherId = group.GroupId
+                    UserRole = "student",
+                    UserTags = 1
                 };
                 int result = await feService.Create_Student (student);
+                if(result > 0 )
+                    {
+                    lstStudents.Add (student);
+                    }                
                 }
-            //Refresh the list
-            var userx = new User
-                {
-                    UserId = Convert.ToInt32(appState.UserId),
-                    UserName = appState.UserName,
-                    UserPass = appState.UserPass,
-                    UserRole = appState.UserRole,
-                    TeacherId = Convert.ToInt32(appState.GroupId)
-                };
-            lstGroups = await feService.Read_Groups (userx, false);
-            group.GroupName = "";
             StateHasChanged ();            
             }
         catch (Exception ex)
@@ -771,5 +429,14 @@ else
             }
         _hasFetched = true;
         appState.SetCmd ("");
+        }
+    //cancel-back
+    public void BtnCancel()
+        {    
+        appState.SetCmd("");
+        }
+    public void BtnBack()
+        {    
+        Navman.NavigateTo ("/T_SwitchBoard");
         }
 }

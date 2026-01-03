@@ -76,7 +76,7 @@ namespace ExaminerB.Service
             }
         public async Task<List<User>> Read_StudentsByKeyword (int userId, string keyword, int getGCEM)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Students?getStudentExams={getGCEM}&", userId);
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByKeyword?keyword={keyword}&getGCEM={getGCEM}", userId);
             if (response.IsSuccessStatusCode)
                 {
                 List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
