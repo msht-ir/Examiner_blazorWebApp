@@ -323,7 +323,7 @@ namespace ExaminerB.Services2Backend
                         }
                 case "S":
                         {
-                        sql += @"WHERE s.StudentId=@id";
+                        sql += @"WHERE s.StudentId=@id ORDER BY s.StudentName";
                         break;
                         }
                 }

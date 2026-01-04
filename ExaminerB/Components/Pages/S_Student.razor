@@ -32,7 +32,7 @@
                         <div class="accordion-body" style="background-color:white">
                             <div id="T1">
                                 <table class="table table-borderless">
-                                    @foreach (var stdexam in lstStudentExams)
+                                    @foreach (StudentExam studentExam in lstStudentExams)
                                     {
                                         <MudContainer Class="mt-2 px-0">
                                             <MudCard Class="mx-0">
@@ -40,66 +40,54 @@
                                                     <MudGrid>
                                                         <!-- Left column -->
                                                         <MudItem xs="6">
-                                                            @if (stdexam.StudentExamTags == 0)
+                                                            @* SE_Tags 1:active 2:started 4:finished 8:review? *@
+                                                            @if ((studentExam.StudentExamTags & 7) > 1)
                                                                 {
                                                                 <div style="color:indianred; font-weight:bold;">
-                                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
-                                                                    <div>@stdexam.ExamTitle</div>
-                                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
+                                                                    <div><span style="color:gray; font-weight:normal;">@studentExam.CourseName</span></div>
+                                                                    <div>@studentExam.ExamTitle</div>
+                                                                    <div><span style="color:black; font-weight:normal;">@studentExam.ExamDateTime</span></div>
                                                                 </div>
                                                                 }
-                                                            else if (stdexam.StudentExamTags == 1)
-                                                                {
-                                                                <div style="color:indianred; font-weight:bold;">
-                                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
-                                                                    <div>@stdexam.ExamTitle</div>
-                                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
-                                                                </div>
-                                                                }
-                                                            else if ((stdexam.StudentExamTags & 2) == 2)
+                                                            @if ((studentExam.StudentExamTags & 7) == 1)
                                                                 {
                                                                 <div style="color:darkslategrey; font-weight:bold;">
-                                                                    <div><span style="color:gray; font-weight:normal;">@stdexam.CourseName</span></div>
-                                                                    <div>@stdexam.ExamTitle</div>
-                                                                    <div><span style="color:black; font-weight:normal;">@stdexam.ExamDateTime</span></div>
+                                                                    <div><span style="color:gray; font-weight:normal;">@studentExam.CourseName</span></div>
+                                                                    <div>@studentExam.ExamTitle</div>
+                                                                    <div><span style="color:black; font-weight:normal;">@studentExam.ExamDateTime</span></div>
                                                                 </div>
                                                                 }
                                                         </MudItem>
                                                         <!-- Right column -->
                                                         <MudItem xs="6">
-                                                            <div>Tests: @stdexam.ExamNTests</div>
-                                                            <div>Time: @stdexam.ExamDuration min</div>
-                                                            @if ((stdexam.StudentExamTags & 1) == 1)
+                                                            <div>Tests: @studentExam.ExamNTests</div>
+                                                            <div>Time: @studentExam.ExamDuration min</div>
+                                                            @if ((studentExam.StudentExamTags & 7) == 1)
                                                                 {
-                                                                @if ((stdexam.StudentExamTags & 4) == 4)
-                                                                    {
-                                                                    @if ((stdexam.StudentExamTags & 8) == 8)
-                                                                        {
-                                                                        <MudIconButton Icon="@Icons.Material.Filled.Assignment" Size="Size.Small" OnClick="() => BtnReportExam(stdexam.StudentExamId)" />
-                                                                        }
-                                                                    }
-                                                                else if ((stdexam.StudentExamTags & 2) == 2)
-                                                                    {
-                                                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="async () => await BtnStartExam(stdexam)" />
-                                                                    }
-                                                                else
-                                                                    {
-                                                                    <MudIconButton Icon="@Icons.Material.Filled.PlayArrow" Size="Size.Small" OnClick="async () => await BtnStartExam(stdexam)" />                                                            
-                                                                    }
+                                                                <MudIconButton Icon="@Icons.Material.Filled.PlayArrow" Size="Size.Small" OnClick="async () => await BtnStartExam(studentExam)" />                                                            
                                                                 }
-                                                            @if ((stdexam.StudentExamTags & 4) == 4)
+                                                            else if ((studentExam.StudentExamTags & 7) == 3)
+                                                                {
+                                                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="async () => await BtnStartExam(studentExam)" />
+                                                                }
+                                                            else if ((studentExam.StudentExamTags & 7) == 7)
                                                                 {
                                                                 <div>
                                                                     <span style="color:indianred;font-size:small;font-weight:bold;">
-                                                                        Pnt @stdexam.StudentExamPoint.ToString("F2")/20
+                                                                        Pnt @studentExam.StudentExamPoint.ToString("F2")/20
                                                                     </span>
                                                                 </div>
                                                                 }
-                                                        </MudItem>
-                                                    </MudGrid>
-                                                </MudCardContent>
-                                            </MudCard>
-                                        </MudContainer>
+                                                            @if ((studentExam.StudentExamTags & 9) == 9)
+                                                                {
+                                                                <MudIconButton Icon="@Icons.Material.Filled.Assignment" Size="Size.Small" OnClick="() => BtnReportExam(studentExam.StudentExamId)" />                                                            
+                                                                }
+                                                        }
+                                                    </MudItem>
+                                                </MudGrid>
+                                            </MudCardContent>
+                                        </MudCard>
+                                    </MudContainer>
                                     }
                                 </table>
                             </div>
@@ -133,19 +121,19 @@
                                                 <button class="btn btn-link" @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
                                                     <img src="/img/gifChart2.gif" width="30" />
                                                 </button>
-                                                @if ((student.UserTags & 32) == 32)
+                                                @if ((studentCourse.StudentCourseTags & 5) == 5)
                                                     {
                                                     <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
                                                         <img src="/img/icoReport1.png" width="20" />
                                                     </button>
                                                     }
-                                                @if ((student.UserTags & 16) == 16)
+                                                @if ((studentCourse.StudentCourseTags & 3) == 3)
                                                     {
                                                     <button class="btn btn-link" @onclick="()=>BtnTryToCorrect(studentCourse.StudentCourseId)">
                                                         <img src="/img/icoRedo.png" width="22" />
                                                     </button>
                                                     }
-                                                @if ((student.UserTags & 16) == 16)
+                                                @if ((studentCourse.StudentCourseTags & 3) == 3)
                                                     {
                                                     <button class="btn btn-link" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
                                                         <img src="/img/icoFilter.png" width="22" />
