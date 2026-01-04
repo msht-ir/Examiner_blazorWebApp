@@ -237,7 +237,8 @@ namespace ExaminerB.Services2Backend
             keyword = "%" + keyword + "%";
             string sql = @"SELECT s.StudentId, s.TeacherId, s.StudentName, s.StudentPass, s.StudentNickname, s.StudentTags 
                     FROM Students s 
-                    WHERE s.TeacherId=@userid AND ((s.StudentName LIKE @keyword) OR (s.StudentNickname LIKE @keyword))";
+                    WHERE s.TeacherId=@userid AND ((s.StudentName LIKE @keyword) OR (s.StudentNickname LIKE @keyword))
+                    ORDER BY s.StudentName";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
