@@ -2266,7 +2266,7 @@ COMMIT TRANSACTION;
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
-            cmd.Parameters.AddWithValue ("@exaid", examId);
+            cmd.Parameters.AddWithValue ("@examid", examId);
             await cnn.OpenAsync ();
             await cmd.ExecuteReaderAsync ();
             return true;
@@ -3376,6 +3376,11 @@ COMMIT TRANSACTION;
                         INNER JOIN Students s ON sm.StudentId = s.StudentId";
             switch (mode)
                 {
+                case "ByStudentIdIgnoreDeletedMessages":
+                        {
+                        sql += " WHERE sm.StudentId=@id AND (smStudentMessageTags & 4) = 0";
+                        break;
+                        }
                 case "ByStudentId":
                         {
                         sql += " WHERE sm.StudentId=@id";
@@ -3512,10 +3517,28 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             return 1;
             }
-        public async Task<List<Project>> Read_ProjectsAsync (int userId)
+        public async Task<List<Project>> Read_ProjectsAsync (int userId, string mode)
             {
             List<Project> lstProjects = new List<Project> ();
-            string sql = "SELECT ProjectId, UserId, ProjectName, ProjectTags FROM Projects WHERE UserId=@userid AND (ProjectTags & 1)=1 ORDER BY ProjectName";
+            string sql = @"SELECT ProjectId, UserId, ProjectName, ProjectTags FROM Projects ";
+            switch (mode)
+                {
+                case "all":
+                        {
+                        sql += " WHERE UserId=@userid ORDER BY ProjectName";
+                        break;
+                        }
+                case "active":
+                        {
+                        sql += " WHERE UserId=@userid AND (ProjectTags & 1)=1 ORDER BY ProjectName";
+                        break;
+                        }
+                case "inactive":
+                        {
+                        sql += " WHERE UserId=@userid AND (ProjectTags & 1)=0 ORDER BY ProjectName";
+                        break;
+                        }
+                }
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
@@ -3658,16 +3681,16 @@ COMMIT TRANSACTION;
         #region N:Notes
         public async Task<int> Create_NoteAsync (Note note)
             {
-            string sql = "INSERT INTO SubProjects (NoteDatum, Note, Parent_ID, ParentType, Rtl, Done, User_ID, Shared, ReadOnly) VALUES (@notedatum, @note, @parentid, @parenttype, @rtl, @done, @userid, @shared, @readonly)";
+            string sql = "INSERT INTO Notes (ParentId, ParentType, NoteDatum, NoteText, NoteTags) VALUES (@parentid, @parenttype, @notedatum, @notetext, @notetags)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd2 = new SqlCommand (sql, cnn);
+            cmd2.Parameters.AddWithValue ("@parentid", note.ParentId);
+            cmd2.Parameters.AddWithValue ("@parenttype", note.ParentType);
             cmd2.Parameters.AddWithValue ("@notedatum", note.NoteDatum);
-            cmd2.Parameters.AddWithValue ("@note", note.NoteText);
-            cmd2.Parameters.AddWithValue ("@", note.ParentId);
-            cmd2.Parameters.AddWithValue ("@", note.ParentType);
-            cmd2.Parameters.AddWithValue ("@", note.NoteTags);//@rtl, @done, @userid, @shared, @readonly
+            cmd2.Parameters.AddWithValue ("@notetext", note.NoteText);
+            cmd2.Parameters.AddWithValue ("@notetags", note.NoteTags); //1:rtl 2:done 4:shared 8:readonly
             await cmd2.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
             return 1;
@@ -3794,7 +3817,7 @@ COMMIT TRANSACTION;
             }
         public async Task<bool> Delete_NoteAsync (int noteId)
             {
-            string sql = "DELETE FROM Notes WHERE ID=@noteid";
+            string sql = "DELETE FROM Notes WHERE NoteId=@noteid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();

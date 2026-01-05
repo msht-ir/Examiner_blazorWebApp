@@ -159,7 +159,7 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region P:Projects
         Task<int> Create_ProjectAsync (Project project);
-        Task<List<Project>> Read_ProjectsAsync (int userId);
+        Task<List<Project>> Read_ProjectsAsync (int userI, string mode);
         Task<Project> Read_ProjectAsync (int projectId);
         #endregion
         #region SP:Subprojects

@@ -1020,9 +1020,9 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ($"api/Create_Project", project);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<List<Project>> Read_Projects (int userId)
+        public async Task<List<Project>> Read_Projects (int userId,string mode)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Projects", userId);
+            var response = await _http.PostAsJsonAsync ($"api/Read_Projects?mode={mode}", userId);
             if (response.IsSuccessStatusCode)
                 {
                 List<Project>? lstProjects = await response.Content.ReadFromJsonAsync<List<Project>> ();
@@ -1115,7 +1115,7 @@ namespace ExaminerB.Service
         #region N:Note
         public async Task<int> Create_Note (Note note)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Create_subproject", note);
+            var response = await _http.PostAsJsonAsync ($"api/Create_Note", note);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
         public async Task<List<Note>> Read_Notes (int parentId, int parentType)

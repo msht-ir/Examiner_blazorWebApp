@@ -36,6 +36,38 @@ else
             </h4>
             <div id="@collapseId" class="accardion-collapse collapse" data-bs-parent="#accordionReport">
                 <div class="accardion-body" >
+                    @* Student_Courses *@
+                    <MudContainer Class="mt-2 px-0">
+                        <MudCard Class="mx-0">
+                            <MudCardContent Style="background-color:whitesmoke;">
+                                <table class="table table-borderless">
+                                    <thead>
+                                        <tr style="font-weight:bold">
+                                            <td>Course</td>
+                                            <td>Result</td>
+                                        </tr>
+                                    </thead>
+                                    @foreach (StudentCourse stCrs in student.StudentCourses)
+                                        {
+                                        <tr style="align-content:center">
+                                            <td style="color:indianred; font-weight:bold;">
+                                                <button class="btn btn-link" style="border:none" title="Report Tests ( + answeres )" @onclick='()=>BtnReviewStudentTestsSheet(stCrs.StudentCourseId, "studentcoursetests")'>
+                                                    <img src="/img/icoReport1.png" width="25" />
+                                                </button>
+                                                <button class="btn btn-link" style="border:none" title="Delete Course !" @onclick="()=>BtnDeleteStudentCourse(stCrs.StudentCourseId)">
+                                                    <img src="/img/icoDelete1.png" width="25" />
+                                                </button>
+                                                @stCrs.CourseName
+                                            </td>
+                                            <td>
+                                                <span style="color:black; font-weight:normal;">@stCrs.CorrectAnswers / @stCrs.NumberOfTests </span>
+                                            </td>
+                                        </tr>
+                                        }
+                                </table>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudContainer>
                     @* Student_Exams *@
                     <MudContainer Class="mt-2 px-0">
                         <MudCard Class="mx-0">
@@ -107,38 +139,6 @@ else
                             </MudCardContent>
                         </MudCard>
                     </MudContainer>
-                    @* Student_Courses *@
-                    <MudContainer Class="mt-2 px-0">
-                        <MudCard Class="mx-0">
-                            <MudCardContent Style="background-color:whitesmoke;">
-                                <table class="table table-borderless">
-                                    <thead>
-                                        <tr style="font-weight:bold">
-                                            <td>Course</td>
-                                            <td>Result</td>
-                                        </tr>
-                                    </thead>
-                                    @foreach (StudentCourse stCrs in student.StudentCourses)
-                                        {
-                                        <tr style="align-content:center">
-                                            <td style="color:indianred; font-weight:bold;">
-                                                <button class="btn btn-link" style="border:none" title="Report Tests ( + answeres )" @onclick='()=>BtnReviewStudentTestsSheet(stCrs.StudentCourseId, "studentcoursetests")'>
-                                                    <img src="/img/icoReport1.png" width="25" />
-                                                </button>
-                                                <button class="btn btn-link" style="border:none" title="Delete Course !" @onclick="()=>BtnDeleteStudentCourse(stCrs.StudentCourseId)">
-                                                    <img src="/img/icoDelete1.png" width="25" />
-                                                </button>
-                                                @stCrs.CourseName
-                                            </td>
-                                            <td>
-                                                <span style="color:black; font-weight:normal;">@stCrs.CorrectAnswers / @stCrs.NumberOfTests </span>
-                                            </td>
-                                        </tr>
-                                        }
-                                </table>
-                            </MudCardContent>
-                        </MudCard>
-                    </MudContainer>
                 </div>
                 <hr style="color:royalblue"/>
             </div>
@@ -171,7 +171,6 @@ else
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-
             Navman.NavigateTo ("/Login");
             }
         await ReadPageDataLists ();
@@ -312,30 +311,35 @@ else
         int id = Convert.ToInt32 (Id);        
         switch (mode)
             {
-            case "groupStudents":
+            case "G":
                     {
                     appState.SetReturnPage ($"/T_Students");
-                    var result = await feService.Read_StudentsByGCEMId (id, "ByGroupId", 15);
+                    var result = await feService.Read_StudentsByGCEMId (id, "G", 15);
                     lstStudents = result;
                     break;
                     }
-            case "oneStudent":
-                    {
-                    appState.SetReturnPage ($"/T_Students");
-                    List<User> students = await feService.Read_StudentsByGCEMId (id, "ByStudentId", 15);
-                    lstStudents.Add (students[0]);
-                    break;
-                    }
-            case "examStudents":
-                    {
-                    appState.SetReturnPage ($"/T_Exams");
-                    lstStudents = await feService.Read_StudentsByGCEMId (id, "ByExamId", 15);
-                    break;
-                    }
-            case "courseStudents":
+            case "C":
                     {
                     appState.SetReturnPage ($"/T_Courses");
-                    lstStudents = await feService.Read_StudentsByGCEMId (id, "ByCourseId", 15);
+                    lstStudents = await feService.Read_StudentsByGCEMId (id, "C", 15);
+                    break;
+                    }
+            case "E":
+                    {
+                    appState.SetReturnPage ($"/T_Exams");
+                    lstStudents = await feService.Read_StudentsByGCEMId (id, "E", 15);
+                    break;
+                    }
+            case "M":
+                    {
+                    appState.SetReturnPage ($"/T_Exams");
+                    lstStudents = await feService.Read_StudentsByGCEMId (id, "M", 15);
+                    break;
+                    }
+            case "S":
+                    {
+                    appState.SetReturnPage ($"/T_Students");
+                    lstStudents = await feService.Read_StudentsByGCEMId (id, "S", 15);
                     break;
                     }
             }

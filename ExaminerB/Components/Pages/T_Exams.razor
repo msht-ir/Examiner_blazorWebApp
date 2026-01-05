@@ -33,30 +33,31 @@
                                 <span style="color:indianred; font-weight:bold;">@exam.ExamTitle</span> <br />
                                 <span style="color:royalblue; font-weight:bold;font-size:smaller">@exam.ExamDateTime</span><br />
                                 <span>@exam.ExamNTests Tests</span> / <span>@exam.ExamDuration m</span><br />
+                                <hr style="color:indianred"/>
                                 <button style="border:none" class="btn btn-link" @onclick="()=>BtnEditExam(exam)" >
                                     <img src="/img/icoRename.png" width="26" />
-                                </button>
-                                <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportExamTests(exam.ExamId)">
-                                    <img src="/img/icoListT.png" width="30" />
-                                </button>
-                                <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportStudents(exam.ExamId)" >
-                                    <img src="/img/icoFolderUser.png" width="26" />
                                 </button>
                                 <button style="border:none" class="btn btn-link" @onclick="()=>BtnStratStopExam(exam)" >
                                     @if (exam.IsActive)
                                         {
-                                        <img src="/img/icoOn.png" width="22" />                                        
+                                        <img src="/img/icoOn.png" width="24" />                                        
                                         }
                                     else
                                         {
-                                        <img src="/img/icoOff.png" width="22" />                                        
+                                        <img src="/img/icoOff.png" width="24" />                                        
                                         }
                                 </button>
                                 <button style="border:none" class="btn btn-link" @onclick="()=>BtnSetExamAsFinishedForAllStudents(exam.ExamId)" >
                                     <img src="/img/icoClock2.png" width="22" />
                                 </button>
+                                <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportExamTests(exam.ExamId)">
+                                    <img src="/img/icoListT.png" width="32" />
+                                </button>
+                                <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportStudents(exam.ExamId)" >
+                                    <img src="/img/icoFolderS.png" width="26" />
+                                </button>
                                 <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportExamPoints(exam.ExamId)" >
-                                    <img src="/img/icoFolderSearch.png" width="26" />
+                                    <img src="/img/icoFolderE.png" width="26" />
                                 </button>
                                 <button style="border:none" class="btn btn-link" @onclick="()=>BtnDeleteExam(exam.ExamId)" >
                                     <img src="/img/icoDelete1.png" width="20" />
@@ -87,10 +88,10 @@
                 <hr />
                 <div style="text-align: center;">
                     <button class="btn btn-link" @onclick="BtnAddNewExam">
-                        <img src="/img/icoAddItem.png" width="24" />
+                        <img src="/img/icoAdd0.png" width="24" />
                     </button>
                     <button class="btn btn-link" @onclick="BtnBack">
-                        <img src="/img/icoBack2.png" width="25" />
+                        <img src="/img/icoBack3.png" width="40" />
                     </button>
                 </div>
                 }
@@ -180,7 +181,7 @@
     public void BtnReportStudents (int examId)
         {
         appState.SetReturnPage ("T_Exams");
-        Navman.NavigateTo ($"/T_ReportStudents/examStudents/{examId}");
+        Navman.NavigateTo ($"/T_ReportStudents/E/{examId}");
         }
     public void BtnReportExamTests (int examId)
         {

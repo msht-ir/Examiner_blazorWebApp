@@ -18,7 +18,7 @@
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <MudContainer Class="mt-2 px-0">
             <MudCard Class="mx-0">
-                <MudCardContent Style="background-color:rgba(248,248,248, 1);">
+                <MudCardContent Style="background-color:rgba(248,248,248, 1);max-width:500px;min-width:400px">
                     <div class="mb-3 d-flex gap-1">
                         <MudSelect T="string" @ref="refRole" Label="Role نقش" Value="user.UserRole" ValueChanged="@((string role) => OnRoleChanged(role))" Class="w-auto" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="font-size:small;">
                             <MudSelectItem Value=@("student")>Student</MudSelectItem>
@@ -33,7 +33,7 @@
                             }
                     </div>
                     <MudTextField @ref="refUser" @bind-Value="user.UserName" Label="Username يوزر" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
-                    <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password پسورد" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" InputType="InputType.Password"/>
+                    <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password پسورد" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" InputType="InputType.Password" />
                 </MudCardContent>
             </MudCard>
         </MudContainer>    

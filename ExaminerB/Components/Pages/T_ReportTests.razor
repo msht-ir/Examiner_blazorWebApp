@@ -35,31 +35,36 @@ else
         }
     else if (appState.Cmd.ToLower() == "studentcoursetests")
         {
+        <h4 style="text-align:center">@appState.Cmd</h4>                
+        }
+    else
+        {
         <h4 style="text-align:center">Student Course Tests</h4>                
         }
     <EditForm Model = "lstxTests" style="max-width:600px; margin: 0 auto;">
         <hr />
-        <div style="text-align: center;">
-             <!-- Heading Icons -->
+        <div class="d-flex align-items-center" style="text-align: center; text-align:center">
+            @* Back *@
             <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/img/icoBack2.png" title="Back بازگشت" alt="Edit" width="30px"/>
-                @* Back *@
+                <img src="/img/icoBack3.png" title="Back بازگشت" alt="Edit" width="40px"/>
             </button>
+            @* Font *@
             <button class="btn btn-link" @onclick="BtnChangeFontSize">
                 <img src="/img/icoFontSize.png" title="Use Larger/Smaller  تغيير انداز فونت" alt="Edit" width="35px"/>
-                @* Font *@
             </button>
+            @* Keys *@
             <button class="btn btn-link" @onclick="BtnShowAnswers" title="Show Tests ليست تست ها">
                 <img src="/img/icoKeys.png" title="Show Test Answers گزينه صحيح را نمايش بده" alt="Edit" width="30px"/>
-                @* Keys *@
             </button>
+            @* Paginate *@
             @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
                 {
-                @* Paginate *@
-                <input class="form-control d-inline" type="number" @ref="txtPageNumber" @bind="intPendingPageNumber" min="1" placeholder="1" style="width: 70px; display: inline-block; padding-left:10px"/>
-                <button class="btn btn-link" @onclick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)">
-                    <img src="/img/icoListT.png" width="34" />
-                </button>
+                <div class="d-flex align-items-center ms-5">
+                    <MudNumericField @ref="refPageNumber" @bind-Value="intPendingPageNumber" Label="Page صفحه" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" style="width: 100px;padding-left:10px" />
+                    <button class="btn btn-link  ms-2" @onclick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)">
+                        <img src="/img/icoListT.png" width="38" />
+                    </button>
+              </div>  
                 }
             <hr />
         </div>
@@ -76,39 +81,39 @@ else
                         string optRtlStatus = ((tst.TestTags & 2) == 2) ? "direction:rtl;text-align:right;" : "";
                         i++;
                         }
+                        <div style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle</div>
                         <div style="@testRtlStatus display:flex; align-items:center; gap:2px;" >
-                        @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
-                            {
-                            <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected" />
-                            <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
-                                <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="18px"/>
-                            </button>
-                            }
-                        else if (appState.Cmd.ToLower() == "examtests")
-                            {                
-                            <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
-                                <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px"/>
-                            </button>
-                            <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnDeleteTestFromExamRawSheet(tst)">
-                                <img src="/img/icoDelete1.png" title="Delete Test حذف تست" alt="Edit" width="20px"/>
-                            </button>
-                            }
-                        else if (appState.Cmd.ToLower() == "studentexamtests")
-                            {                
-                            <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
-                                <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px"/>
-                            </button>
-                            <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnShowCourseTestStats(tst)">
-                                <img src="/img/icoChartPie.png" title="Show stats نمايش آمار" alt="Edit" width="25px"/>
-                            </button>
-                            }
-                        else if (appState.Cmd.ToLower() == "studentcoursetests")
-                            {
-                            <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
-                                <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px"/>
-                            </button>
-                            }
-                        <span style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle</span>
+                            @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
+                                {
+                                <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected" />
+                                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
+                                    <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="18px"/>
+                                </button>
+                                }
+                            else if (appState.Cmd.ToLower() == "examtests")
+                                {                
+                                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
+                                    <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px"/>
+                                </button>
+                                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnDeleteTestFromExamRawSheet(tst)">
+                                    <img src="/img/icoDelete1.png" title="Delete Test حذف تست" alt="Edit" width="20px"/>
+                                </button>
+                                }
+                            else if (appState.Cmd.ToLower() == "studentexamtests")
+                                {                
+                                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
+                                    <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px"/>
+                                </button>
+                                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnShowCourseTestStats(tst)">
+                                    <img src="/img/icoChartPie.png" title="Show stats نمايش آمار" alt="Edit" width="25px"/>
+                                </button>
+                                }
+                            else if (appState.Cmd.ToLower() == "studentcoursetests")
+                                {
+                                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
+                                    <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px"/>
+                                </button>
+                                }
                         </div>
                         @* Show-TestOptions *@
                         @foreach (var opt in tst.TestOptions)
@@ -139,12 +144,14 @@ else
                             }
                             @if ((appState.Cmd == "studentexamtests") & (appState.TestId == tst.TestId))
                                 {
-                                <div style="font-weight:bold;">Students:</div>
+                                <div style="font-weight:bold;">stats:</div>
                                 <div style="padding-left:30px;">
                                     <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
-                                    <div style="font-weight:bold">@nStudentsAnswered Answers</div> 
-                                    <div style="padding-left:15px;">@nStudentsAnsweredCorrectly Correct</div> 
-                                    <div style="padding-left:15px;">@nStudentsAnsweredIncorrectly Incorrect</div>
+                                    <div style="font-weight:bold">
+                                        @nStudentsAnswered Answers
+                                        <span style="font-weight:normal; padding-left:15px;">( @nStudentsAnsweredCorrectly correct</span> 
+                                        <span style="font-weight:normal; padding-left:15px;">@nStudentsAnsweredIncorrectly incorrect )</span>
+                                    </div> 
                                     <div style="font-weight:bold;">@nStudentsNotAnswered noAnswer</div>                
                                 </div>
                                 <br /> 
@@ -184,9 +191,10 @@ else
                 </MudContainer>
                 <hr style="color:red" />
                 }
+            <br />
             <div style="text-align: center;">
                 <button class="btn btn-link" type="submit" @onclick="BtnBack">
-                    <img src="/img/icoBack2.png" width="30" />
+                    <img src="/img/icoBack3.png" width="40" />
                 </button>
             </div>
     </EditForm>
@@ -197,7 +205,7 @@ else
 
 @code {
     public bool _hasFetched = false;
-    private ElementReference txtPageNumber;
+    private MudNumericField <int> refPageNumber;
     private int intPageNumber = 1;        //actual page used for numbering
     private int intPendingPageNumber = 1; //value typed in the input (prevent changing i (index number) of tests in list)
     User user = new User ();

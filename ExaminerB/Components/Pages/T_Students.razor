@@ -36,7 +36,7 @@ else
                 <div id="Accordion_GCEM" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
                     <div class="accordion-body" style="background-color:white">
                         <div id="T1">
-                            @* COMBO1-4 GCEM *@
+                            @* COMBOs GCEM *@
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-auto">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
@@ -47,6 +47,9 @@ else
                                             </MudSelect>
                                             <button class="btn btn-link" @onclick='()=>BtnReadStudents(GroupId,"G")'>
                                                 <img src="/img/icoListS.png" width="32" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick='()=>BtnReportStudent(GroupId, "G")'>
+                                                <img src="/img/icoFolderS.png" width="22" />
                                             </button>
                                         </div>
                                         <div class="d-flex">
@@ -60,6 +63,9 @@ else
                                             <button class="btn btn-link" @onclick='()=>BtnReadStudents(CourseId,"C")'>
                                                 <img src="/img/icoListS.png" width="32" />
                                             </button>
+                                            <button class="btn btn-link" @onclick='()=>BtnReportStudent(CourseId, "C")'>
+                                                <img src="/img/icoFolderS.png" width="22" />
+                                            </button>
                                         </div>
                                         <div class="d-flex">
                                             <MudSelect T="int" @ref="refExams" Label="Exam آزمون" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
@@ -69,6 +75,9 @@ else
                                             <button class="btn btn-link"  @onclick='()=>BtnReadStudents(ExamId,"E")'>
                                                 <img src="/img/icoListS.png" width="32" />
                                             </button>
+                                            <button class="btn btn-link" @onclick='()=>BtnReportStudent(ExamId, "E")'>
+                                                <img src="/img/icoFolderS.png" width="22" />
+                                            </button>
                                         </div>
                                         <div class="d-flex">
                                             <MudSelect T="int" @ref="refMessages" Label="Message پيام" Value="MessageId" ValueChanged="OnMessageChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
@@ -77,6 +86,9 @@ else
                                             </MudSelect>
                                             <button class="btn btn-link"  @onclick='()=>BtnReadStudents(MessageId,"M")'>
                                                 <img src="/img/icoListS.png" width="32" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick='()=>BtnReportStudent(MessageId, "M")'>
+                                                <img src="/img/icoFolderS.png" width="22" />
                                             </button>
                                         </div>
                                     </MudCardContent>
@@ -123,7 +135,7 @@ else
                                     <button class="btn btn-link" @onclick="()=>BtnBack()">
                                         <img src="/img/icoEditPen.png" width="18" />
                                     </button>
-                                    <button class="btn btn-link" @onclick="()=>BtnBack()">
+                                            <button class="btn btn-link" @onclick='()=>BtnReportStudent(student.UserId, "S")'>
                                         <img src="/img/icoFolderS.png" width="22" />
                                     </button>
                                     @student.UserName - @student.UserNickname
@@ -138,7 +150,7 @@ else
             @* SECTION 3 ---- ADD STUDENTS TO... *@
             <br />
             <h2 style="text-align:center; color:royalblue; font-style:italic">Add to</h2>
-            @* GROUP *@
+            @* TO GROUP *@
             <div class="accordion-item mb-2" >
                 <h4 class="accordion-header">
                     <button class="accordion-button collapsed" type="button"
@@ -175,7 +187,7 @@ else
                                                     @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
                                                 </MudSelect>
                                                 <button class="btn btn-link" @onclick="BtnAddNewGroup">
-                                                    <img src="/img/icoAddItem.png" width="20" />
+                                                    <img src="/img/icoAdd0.png" width="20" />
                                                 </button>
                                                 <button class="btn btn-link" @onclick="()=>BtnAddStudentsToGroup()">
                                                     <img src="/img/icoListAddNew1.png" width="38" />
@@ -189,7 +201,7 @@ else
                     </div>
                 </div>
             </div>
-            @* COURSE-EXAM *@
+            @* TO COURSE-EXAM *@
             <div class="accordion-item mb-2">
                 <h4 class="accordion-header">
                     <button class="accordion-button collapsed" type="button"
@@ -234,7 +246,7 @@ else
                     </div>
                 </div>
             </div>
-            @* MESSAGE *@
+            @* TO MESSAGE *@
             <div class="accordion-item mb-2">
                 <h4 class="accordion-header">
                     <button class="accordion-button collapsed" type="button"
@@ -273,7 +285,7 @@ else
                                                     @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
                                                 </MudSelect>
                                                 <button class="btn btn-link" @onclick="BtnAddNewMessage">
-                                                    <img src="/img/icoAddItem.png" width="20" />
+                                                    <img src="/img/icoAdd0.png" width="20" />
                                                 </button>
                                             </div>                                            
                                             <div class="d-flex">
@@ -294,7 +306,7 @@ else
             <br />
             <div style="text-align:center">
                 <button class="btn btn-link" @onclick= "()=> BtnBack()" title="Back to SwitchBoard بازگشت به صفحه اول">
-                    <img src="/img/icoBack2.png" style="width:30px" />
+                    <img src="/img/icoBack3.png" style="width:40px" />
                 </button>
             </div>        
         </div>
@@ -422,6 +434,11 @@ else
             }
         StateHasChanged ();
         }   
+    public async Task BtnReportStudent(int studentId, string mode)
+        {
+        appState.SetReturnPage ("T_Students");
+        Navman.NavigateTo ($"/T_ReportStudents/{mode}/{studentId}");
+        }
     //group
     private async Task OnGroupChanged(int newValue) 
         {

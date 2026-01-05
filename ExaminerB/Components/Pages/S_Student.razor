@@ -17,6 +17,77 @@
     else
         {
         <div class="accordion" id="accordionStudent" style="max-width:500px; margin: 0 auto;">
+            @* StudentCourses *@
+            <div class="accordion-item">
+                    <h4 class="accordion-header">
+                        <button class="accordion-button @(appState.Cmd=="ShowCourseFolders" ? "" : "collapsed")"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#CollapseId2"
+                            aria-expanded="@(appState.Cmd=="ShowCourseFolders" ? "true" : "false")"
+                            aria-controls="CollapseId2" style="background-color:WhiteSmoke">
+                            <h4>Courses <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentCourses.Count )</span></h4>
+                        </button>
+                    </h4>
+                    <div id="CollapseId2" class="accordion-collapse collapse @(appState.Cmd=="ShowCourseFolders" ? "show" : "")" data-bs-parent="#accordionStudent">
+                        <div class="accordion-body" style="background-color:white">
+                            <div id="T2">
+                                @foreach (StudentCourse studentCourse in lstStudentCourses)
+                                    {
+                                    <MudContainer Class="mt-2 px-0">
+                                        <MudCard Class="mx-0">
+                                            <MudCardContent Style="background-color: rgba(250,250,2250);">
+                                                @* use (double) to make result decimal not integer *@
+                                                @{strRunningPoint = studentCourse.NumberOfTests == 0 ?"---": $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double)studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F2}";}
+                                                <div style="color:black;font-weight:bold;">@studentCourse.CourseName : <span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
+                                                <button class="btn btn-link" @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
+                                                    <img src="/img/gifChart2.gif" width="30" />
+                                                </button>
+                                                @if ((studentCourse.StudentCourseTags & 5) == 5)
+                                                    {
+                                                    <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
+                                                        <img src="/img/icoReport1.png" width="20" />
+                                                    </button>
+                                                    }
+                                                @if ((studentCourse.StudentCourseTags & 3) == 3)
+                                                    {
+                                                    <button class="btn btn-link" @onclick="()=>BtnTryToCorrect(studentCourse.StudentCourseId)">
+                                                        <img src="/img/icoRedo.png" width="22" />
+                                                    </button>
+                                                    }
+                                                @if ((studentCourse.StudentCourseTags & 3) == 3)
+                                                    {
+                                                    <button class="btn btn-link" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
+                                                        <img src="/img/icoFilter.png" width="22" />
+                                                    </button>
+                                                    <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse, "wipeout")'>
+                                                        <img src="/img/icoEraser.png" width="22" />
+                                                    </button>
+                                                    }
+                                                @* CourseFolders *@
+                                                @if((appState.Cmd=="ShowCourseFolders") & (studentCourse.CourseId == appState.CourseId))
+                                                    {
+                                                    <h6 style="padding-left:10px;">folders: </h6>
+                                                    foreach(CourseFolder cf in lstCourseFolders)
+                                                        {
+                                                        <h6 style="padding-left:10px;"><a href="@cf.CourseFolderUrl" target="_blank">@cf.CourseFolderTitle</a></h6>
+                                                        }
+                                                    }
+                                                else
+                                                    {
+                                                    <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
+                                                        <img src="/img/icoFolderCF.png" width="25" />
+                                                    </button>
+                                                    }
+                                            </MudCardContent>
+                                        </MudCard>
+                                    </MudContainer>
+                                    }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <br />
             @* StudentExams *@
             <div class="accordion-item">
                     <h4 class="accordion-header">
@@ -25,7 +96,7 @@
                             data-bs-target="#CollapseId1"
                             aria-expanded="false"
                             aria-controls="CollapseId1" style="background-color:whitesmoke">
-                            <h4>Exams</h4>
+                            <h4>Exams <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentExams.Count )</span></h4>
                         </button>
                     </h4>
                     <div id="CollapseId1" class="accordion-collapse collapse" data-bs-parent="#accordionStudent">
@@ -90,77 +161,6 @@
                                     </MudContainer>
                                     }
                                 </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <br />
-            @* StudentCourses *@
-            <div class="accordion-item">
-                    <h4 class="accordion-header">
-                        <button class="accordion-button @(appState.Cmd=="ShowCourseFolders" ? "" : "collapsed")"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#CollapseId2"
-                            aria-expanded="@(appState.Cmd=="ShowCourseFolders" ? "true" : "false")"
-                            aria-controls="CollapseId2" style="background-color:WhiteSmoke">
-                            <h4>Courses</h4>
-                        </button>
-                    </h4>
-                    <div id="CollapseId2" class="accordion-collapse collapse @(appState.Cmd=="ShowCourseFolders" ? "show" : "")" data-bs-parent="#accordionStudent">
-                        <div class="accordion-body" style="background-color:white">
-                            <div id="T2">
-                                @foreach (StudentCourse studentCourse in lstStudentCourses)
-                                    {
-                                    <MudContainer Class="mt-2 px-0">
-                                        <MudCard Class="mx-0">
-                                            <MudCardContent Style="background-color: rgba(250,250,2250);">
-                                                @* use (double) to make result decimal not integer *@
-                                                @{strRunningPoint = studentCourse.NumberOfTests == 0 ?"---": $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double)studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F2}";}
-                                                <div style="color:black;font-weight:bold;">@studentCourse.CourseName : <span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
-                                                <button class="btn btn-link" @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
-                                                    <img src="/img/gifChart2.gif" width="30" />
-                                                </button>
-                                                @if ((studentCourse.StudentCourseTags & 5) == 5)
-                                                    {
-                                                    <button class="btn btn-link" @onclick="()=>BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
-                                                        <img src="/img/icoReport1.png" width="20" />
-                                                    </button>
-                                                    }
-                                                @if ((studentCourse.StudentCourseTags & 3) == 3)
-                                                    {
-                                                    <button class="btn btn-link" @onclick="()=>BtnTryToCorrect(studentCourse.StudentCourseId)">
-                                                        <img src="/img/icoRedo.png" width="22" />
-                                                    </button>
-                                                    }
-                                                @if ((studentCourse.StudentCourseTags & 3) == 3)
-                                                    {
-                                                    <button class="btn btn-link" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
-                                                        <img src="/img/icoFilter.png" width="22" />
-                                                    </button>
-                                                    <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse, "wipeout")'>
-                                                        <img src="/img/icoEraser.png" width="22" />
-                                                    </button>
-                                                    }
-                                                @* CourseFolders *@
-                                                @if((appState.Cmd=="ShowCourseFolders") & (studentCourse.CourseId == appState.CourseId))
-                                                    {
-                                                    <h6 style="padding-left:10px;">folders: </h6>
-                                                    foreach(CourseFolder cf in lstCourseFolders)
-                                                        {
-                                                        <h6 style="padding-left:10px;"><a href="@cf.CourseFolderUrl" target="_blank">@cf.CourseFolderTitle</a></h6>
-                                                        }
-                                                    }
-                                                else
-                                                    {
-                                                    <button class="btn btn-link" style="border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
-                                                        <img src="/img/gifBooks.gif" width="28" />
-                                                    </button>
-                                                    }
-                                            </MudCardContent>
-                                        </MudCard>
-                                    </MudContainer>
-                                    }
                             </div>
                         </div>
                     </div>
@@ -269,7 +269,6 @@
                     </div>
                 </div>
         </div>
-        <hr style="color:red"/>
         <br />
         <div style="text-align:center">
             <button class="btn btn-link" @onclick= "()=> BtnExit()">
@@ -481,7 +480,7 @@
     //methods
     private async Task ReadMessageList()
         {
-        lstStudentMessages = await feService.Read_StudentMessages (student.UserId, "ByStudentId");        
+        lstStudentMessages = await feService.Read_StudentMessages (student.UserId, "ByStudentIdIgnoreDeletedMessages");        
         //first bit: 0 = unread, 1 = read
         unreadCount = lstStudentMessages.Count(m => (m.StudentMessageTags & (1 << 1)) == 0);
         }

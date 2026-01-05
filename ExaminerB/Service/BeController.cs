@@ -732,9 +732,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_Projects")]
-        public async Task<ActionResult<List<Project>>> Read_Projects ([FromBody] int userId)
+        public async Task<ActionResult<List<Project>>> Read_Projects ([FromBody] int userId, [FromQuery] string mode)
             {
-            var result = await _BeService.Read_ProjectsAsync (userId);
+            var result = await _BeService.Read_ProjectsAsync (userId, mode);
             return Ok (result);
             }
         [HttpPost ("Read_Project")]

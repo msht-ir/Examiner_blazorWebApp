@@ -49,8 +49,6 @@ namespace ExaminerS.Models
                     UserTags &= ~64;
                 }
             }
-
-
         public List<StudentGroup> StudentGroups { get; set; } = new List<StudentGroup> ();
         public List<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse> ();
         public List<StudentExam> StudentExams { get; set; } = new List<StudentExam> ();

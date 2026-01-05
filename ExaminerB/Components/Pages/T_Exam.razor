@@ -8,6 +8,8 @@
 @inject AppState appState
 @implements IDisposable
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
 
 @if (!_hasFetched)
     {
@@ -31,19 +33,16 @@ else
             <MudCard Class="mx-0">
                 <MudCardContent Style="background-color:whitesmoke;">                                         
                     <div style="font-size:130%;font-weight:bold;color:royalblue">Exam <span style="font-size:small;font-weight:normal;color:gray">Title - DateTime - Duration</span></div>
-                    <div class="mb-3">
-                        <input class="form-control d-inline" @bind="exam.ExamTitle" placeholder="Exam Title" style="font-weight:bold;color:indianred;width:50%;"/>
-                        <input class="form-control d-inline" @bind="exam.ExamDuration" placeholder="Duration min" type="number" style="width:55px;text-align:center;"/>
-                        <span style="padding-right:10px;">min</span>
+                    <div class="d-flex mb-2" style="gap:10px;">
+                        <MudTextField @ref="refExamTitle" @bind-Value="exam.ExamTitle" Label="Exam Title" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                        <MudNumericField @ref="refExamDuration" @bind-Value="exam.ExamDuration" Label="Duration min" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" style="width:100px;text-align:center;" />
                     </div>
-                    <div class="mb-3">
-                        <div class="mb-3">
-                            <input class="form-control d-inline" @bind="exam.ExamDateTime" placeholder="____-__-__ __:__" style="width:140px;text-align:center"/>
-                            <label style="padding-left:5px;padding-right:5px;">Active</label>
-                            <input class="form-inline border" @bind="exam.IsActive" type="checkbox"/>
-                            <label style="padding-left:5px;padding-right:5px;">Training</label>
-                            <input class="form-inline border" @bind="exam.IsTrainingMode" type="checkbox"/>
-                        </div>
+                    <div class="d-flex justify-content-start mb-2" >
+                        <MudTextField @ref="refExamDateTime" @bind-Value="exam.ExamDateTime" Label="Date-Time" placeholder="____-__-__ __:__" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" style="width:200px;" />
+                    </div>
+                    <div class="d-flex justify-content-start mb-2" >
+                        <MudCheckBox @bind-Value="exam.IsActive" Label="Active" Dense="true" Color="Color.Success"/>
+                        <MudCheckBox @bind-Value="exam.IsTrainingMode" Label="Training" Dense="true" Color="Color.Primary" />
                     </div>
                 </MudCardContent>
             </MudCard>
@@ -71,66 +70,81 @@ else
                     <div class="accordion-body">
                         @foreach (ExamComposition comp in lstExamCompositions)
                             {
-                            <select class="form-select" @bind="comp.TopicId" style="width:60%; ">
-                                @foreach (CourseTopic topic in lstCourseTopics)
-                                    {
-                                    <option value="@topic.CourseTopicId"> @topic.CourseTopicTitle </option>
-                                    }
-                            </select>
-                            <input type="range" min="1" max="20" @bind="comp.TopicNTests" />
-                            <span>@comp.TopicNTests</span>
-                            <label style="font-size:small;font-weight:bold">(Tests)</label>
-                            <br />
-                            <input type="range" min="1" max="5" @bind="@comp.TestsLevel" />
-                            <span>@comp.TestsLevel</span>
-                            <label style="font-size:small;font-weight:bold">(Level)</label>
-                            <br />
-                            <button class="btn btn-link" @onclick="()=>BtnUpdateExamComposition (comp)" >
-                                <img src="/img/icoSave2.png" width="25" />
-                            </button>
-                            <button class="btn btn-link" @onclick="()=>BtnDeleteExamComposition(comp.ExamCompositionId)">
-                                <img src="/img/icoDelete1.png" width="25" />
-                            </button>
-                            <hr />
+                            <MudContainer Class="mt-2 px-0">
+                                <MudCard Class="mx-0">
+                                    <MudCardContent Style="background-color:whitesmoke;">                                         
+                                        <div class="d-flex">
+                                            <MudSelect T="int" Label="Course topic موضوع" @bind-Value="@comp.TopicId" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:120px;font-size:small;">
+                                                <MudSelectItem Value="@comp.TopicId">Select an Exam...</MudSelectItem>
+                                                @foreach (CourseTopic topic in lstCourseTopics) { <MudSelectItem Value="@topic.CourseTopicId">@topic.CourseTopicTitle</MudSelectItem> }
+                                            </MudSelect>
+                                            <button class="btn btn-link" @onclick="()=>BtnUpdateExamComposition (comp)" >
+                                                <img src="/img/icoSave2.png" width="25" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnDeleteExamComposition(comp.ExamCompositionId)">
+                                                <img src="/img/icoDelete1.png" width="25" />
+                                            </button>
+                                        </div>
+                                        @* Slider NTests *@
+                                        <div class="d-flex align-items-center">
+                                            <MudSlider @bind-Value="comp.TopicNTests" Variant="Variant.Filled" min="1" max="20">Tests</MudSlider>
+                                            <span style="color:indianred; font-weight:bold;">
+                                                @comp.TopicNTests
+                                            </span>
+                                        </div>
+                                        @* Slider Level *@
+                                        <div class="d-flex align-items-center">
+                                            <MudSlider @bind-Value="@comp.TestsLevel" Variant="Variant.Filled" min="1" max="5">Level</MudSlider>
+                                            <span style="color:indianred; font-weight:bold;">
+                                                @comp.TestsLevel
+                                            </span>
+                                        </div>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
                             }
                         @if (appState.Cmd == "AddNewExamComposition")
                             {
-                            <div style=background-color:WhiteSmoke>
-                                <div style="text-align: left;margin-left:20px;margin-rightt:10px">
-                                    <br>
-                                    <h5 style="color:indianred;font-weight:bold;"> New Exam Composition</h5>
-                                    <select class="form-select d-inline" @ref="cboCourseTopics" @bind="cboCourseTopicId" style="width:60%">
-                                        <option value="0"> Select a Topic... </option>
-                                        @foreach (CourseTopic topic in lstCourseTopics)
-                                            {
-                                            <option value="@topic.CourseTopicId"> @topic.CourseTopicTitle </option>
-                                            }
-                                    </select>
-                                    <button class="btn btn-link" @onclick="BtnCreateExamComposition">
-                                        <img src="/img/icoSave2.png" width="25" />
-                                    </button>
-                                    <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                        <img src="/img/icoCancel.png" width="24" />
-                                    </button>
-                                    @* Slider NTests *@
-                                    <br />
-                                    <input type="range" @bind="sliderTopicNTests" min="1" max="20" />
-                                    <span id="testsValue">@sliderTopicNTests</span>
-                                    <label for="sliderTests" style="font-size:small;font-weight:bold">Tests </label>
-                                    <br />
-                                    @* Slider Level *@
-                                    <input type="range" @bind="sliderTestsLevel" min="1" max="5" />
-                                    <span id="levelValue">@sliderTestsLevel</span>
-                                    <label for="sliderLevel" style="font-size:small;font-weight:bold">Level</label>
-                                    <br>
-                                    <br>
-                                </div>
-                            </div>
+                            <MudContainer Class="mt-2 px-0">
+                                <MudCard Class="mx-0">
+                                    <MudCardContent Style="background-color:whitesmoke;">                                         
+                                        <div style="text-align: left;margin-left:20px;margin-right:10px">
+                                            <h5 style="color:indianred;font-weight:bold;"> New Exam Composition</h5>
+                                            <div class="d-flex">
+                                                <MudSelect T="int" Label="Course topic موضوع" @bind-Value="cboCourseTopicId" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:120px;font-size:small;">
+                                                   <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
+                                                   @foreach (CourseTopic topic in lstCourseTopics) { <MudSelectItem Value="@topic.CourseTopicId">@topic.CourseTopicTitle</MudSelectItem> }
+                                                </MudSelect>
+                                                <button class="btn btn-link" @onclick="BtnCreateExamComposition">
+                                                    <img src="/img/icoSave2.png" width="25" />
+                                                </button>
+                                                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                                    <img src="/img/icoCancel.png" width="24" />
+                                                </button>
+                                            </div>
+                                            @* Slider NTests *@
+                                            <div class="d-flex align-items-center">
+                                                <MudSlider @bind-Value="@sliderTopicNTests" Variant="Variant.Filled" min="1" max="20">Tests</MudSlider>
+                                                <span style="color:indianred; font-weight:bold;">
+                                                    @sliderTopicNTests
+                                                </span>
+                                            </div>
+                                            @* Slider Level *@
+                                            <div class="d-flex align-items-center">
+                                                <MudSlider @bind-Value="@sliderTestsLevel" Variant="Variant.Filled" min="1" max="5">Level</MudSlider>
+                                                <span style="color:indianred; font-weight:bold;">
+                                                    @sliderTestsLevel
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
                             }
                         else
                             {
                             <button class="btn btn-link" @onclick="BtnAddNewExamComposition">
-                                <img src="/img/icoAddItem.png" width="30" />
+                                <img src="/img/icoAdd0.png" width="25" />
                             </button>
                             <button class="btn btn-link" @onclick="BtnDrawRandomTestsByExamComposition">
                                 <img src="/img/icoShuffle.png" width="30" />
@@ -161,24 +175,24 @@ else
                     <div class="accordion-body" style="background-color:whitesmoke">
                         @* SEARCH *@ 
                         <div class="mb-3" style="background-color:WhiteSmoke">
-                            <button class="btn btn-link" @onclick="()=>BtnGotoReportCourseTests(exam.CourseId)">
-                                <img src="/img/icoFolderT.png" width="30" />
-                            </button>
                             <span style="font-size:larger; font-weight:bold;color:royalblue;">Add Tests to Exam</span>
                             <div class="d-flex align-items-center mb-3">
+                                <MudTextField @ref="txtSearchTest" @bind-Value="strSearch" Label="Search..." Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';" />
                                 <button class="btn btn-link" @onclick="BtnReadTestsBySearch">
                                     <img src="/img/icoSearch.png" width="30" />
                                 </button>
-                                <MudTextField @ref="txtSearchTest" @bind-Value="strSearch" Label="Search..." Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';" />
                             </div>
                             <div class="d-flex align-atems-center mb-3">
-                                <button class="btn btn-link" @onclick="BtnCreateExamTest">
-                                    <img src="/img/icoAddItem.png" width="25" />
-                                </button>
                                 <MudSelect T="int" Label="Result نتيجه" @bind-Value="cboCourseTestId" Class="w-auto my-select d-inline" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:80%;font-size:small; font-family:'Segoe UI';text-overflow: ellipsis;">
                                     <MudSelectItem Value="0">select from results</MudSelectItem>
                                     @foreach (var ct in lstCourseTests) { <MudSelectItem Value="@ct.TestId" Style="font-family:'Segoe UI';text-overflow: ellipsis;"> @ct.TestId - @(ct.TestTitle.Length > 50 ? ct.TestTitle.Substring(0, 50) : ct.TestTitle)</MudSelectItem> }
                                 </MudSelect>
+                                <button class="btn btn-link" @onclick="BtnCreateExamTest">
+                                    <img src="/img/icoAdd0.png" width="25" />
+                                </button>
+                                <button class="btn btn-link" @onclick="()=>BtnGotoReportCourseTests(exam.CourseId)">
+                                    <img src="/img/icoFolderT.png" width="30" />
+                                </button>
                             </div>
                         </div>
                         @* END SEARCH *@
@@ -223,7 +237,7 @@ else
         <br>
         <div style="text-align: center;">
             <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/img/icoBack2.png" width="30" />
+                <img src="/img/icoBack3.png" width="40" />
             </button>
         </div>
     </EditForm>
@@ -235,6 +249,9 @@ else
 
 @code {
     [Parameter] public int examId { get; set; }
+    private MudTextField<string> refExamTitle;
+    private MudNumericField<int> refExamDuration;
+    private MudTextField<string> refExamDateTime;
     private MudTextField<string> txtSearchTest;
     private ElementReference cboCourseTopics;
     private ElementReference cboCourseTests;
@@ -301,7 +318,7 @@ else
         {
         if (cboCourseTopicId == 0)
             {
-            await JS.InvokeVoidAsync ("alert", "\nSelect a Topic");
+            Snackbar.Add("Select a Topic!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         else
             {
@@ -311,6 +328,7 @@ else
                 {
                 lstExamCompositions.Clear ();
                 lstExamCompositions = await feService.Read_ExamCompositions (examId);
+                Snackbar.Add("Exam composition added successfully!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 appState.SetCmd ("");
                 StateHasChanged ();
                 }
@@ -320,7 +338,7 @@ else
         {
         if (comp.TopicId == 0)
             {
-            await JS.InvokeVoidAsync ("alert", "\nSelect a Topic");
+            Snackbar.Add("Select a Topic!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         else
             {
@@ -329,6 +347,7 @@ else
                 {
                 lstExamCompositions.Clear ();
                 lstExamCompositions = await feService.Read_ExamCompositions (examId);
+                Snackbar.Add("Exam composition Updated!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 appState.SetCmd ("");
                 StateHasChanged ();
                 }
@@ -337,12 +356,14 @@ else
         }
     public async Task BtnDeleteExamComposition(int examCompositionId)
         {
-        if(await JS.InvokeAsync<bool>("confirm","Delete Exam Composition?\n\n\nDelete?"))
+        var message = new MarkupString($"Delete Exam Composition?");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             bool result = await feService.Delete_ExamComposition (examCompositionId);
             if (result)
                 {
-                await JS.InvokeVoidAsync ("alert", "Deleted!");
+                Snackbar.Add("Exam composition Removed!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 lstExamCompositions.Clear ();
                 lstExamCompositions = await feService.Read_ExamCompositions (examId);
                 appState.SetCmd ("");
@@ -350,7 +371,7 @@ else
                 }
             else
                 {
-                await JS.InvokeVoidAsync ("alert", "Exam Composition was not Deleted! --- operation Canceled");
+                Snackbar.Add("Exam Composition was not Deleted! --- operation Canceled", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             }
         }
@@ -371,6 +392,7 @@ else
                 }
             }
         lstExamTests = await feService.Read_TestsByExamId (examId, true);
+        Snackbar.Add("Random tests added to the exam list.", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         _hasFetched = true;
         StateHasChanged ();
         }
@@ -402,6 +424,7 @@ else
             int result = await feService.Create_ExamTest (examTest);
             lstExamTests.Clear ();
             lstExamTests = await feService.Read_TestsByExamId (examId, true);
+            Snackbar.Add("Test added to the exam list", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             appState.SetCmd ("");
             StateHasChanged ();
             }
@@ -421,6 +444,7 @@ else
             bool result = await feService.Delete_ExamTest (examTest);
             if (result)
                 {
+                Snackbar.Add("Test removed from the exam list", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 lstExamTests.Clear ();
                 lstExamTests = await feService.Read_TestsByExamId (examId, true);
                 appState.SetCmd ("");

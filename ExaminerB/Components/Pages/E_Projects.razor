@@ -8,6 +8,11 @@
 @inject FeService feService
 @inject IJSRuntime JS
 @implements IDisposable
+@using System.Globalization
+@using System.Reflection
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
 @if (!_hasFetched)
     {
     <_LoadingTimer />
@@ -22,17 +27,29 @@ else
             <div class="d-flex align-items-center mb-3">
                 <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search... جستجو" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';width:90%" />
                 <button class="btn btn-link" @onclick="BtnReadNotesBySearch">
-                    <img src="/img/icoSearch.png" width="30" />
+                    <img src="/img/icoSearch.png" width="26" />
                 </button>
-            @if(lstNotes.Count > 0)
-                {
-                <button class="btn btn-link" @onclick="BtnCancelSearch">
-                    <img src="/img/icoCancel.png" width="22" />
-                </button>                            
-                }
+                @if(lstNotes.Count > 0)
+                    {
+                    <button class="btn btn-link" @onclick="BtnCancelSearch">
+                        <img src="/img/icoCancel.png" width="22" />
+                    </button>                            
+                    }
+                <button class="btn btn-link" @onclick="BtnToggleShowProjectsMode">
+                    <img src="/img/icoListP.png" width="34" />
+                </button>
             </div>
         </div>
-        @* END SEARCH *@
+        <hr style="color:indianred" />
+        <h5 style="text-align:center;color:royalBlue">
+            @(_ShowProjectsMode switch
+                {
+                "all"      => "All Projects",
+                "active"   => "Active Projects",
+                "inactive" => "Inactive Projects",
+                _          => ""
+                })
+        </h5>
         @* SHOW SEARCH RESULTS *@ 
         @if(lstNotes.Count > 0)
             {
@@ -115,7 +132,6 @@ else
                 </div>
             }
         }
-        @* END SEARCH RESULT *@
         <br/>
         @* PROJECTS/SUBPROJECTS *@
         <div class="accordion" id="accordionProjects" style="max-width:500px; margin: 0 auto;">
@@ -159,10 +175,10 @@ else
                                     {
                                     <div style="text-align: center;">
                                         <button class="btn btn-link" type="button" @onclick="()=>BtnEditProject(project.ProjectId)">
-                                            <img src="/img/icoRename.png" width="32" />
+                                            <img src="/img/icoRename.png" width="34" />
                                         </button>
                                         <button class="btn btn-link" @onclick="()=>BtnAddNewSubproject(project.ProjectId)">
-                                            <img src="/img/icoAddItem2.png" width="30" />
+                                             <img src="/img/icoAdd1.png" width="24" />
                                         </button>
                                         <hr style="color:red" />
                                     </div>
@@ -182,9 +198,6 @@ else
                                         }
                                     else
                                         {
-                                        @* <div style="text-align: left;">
-                                            <h6 style="color:indianred">Subprojects</h6> 
-                                        </div> *@
                                         <div class="accordion" id="accordionSubprojects-@project.ProjectId">
                                         @foreach (Subproject subProject in project.Subprojects)
                                             {
@@ -212,9 +225,36 @@ else
                                                             <button class="btn btn-link" @onclick="()=>BtnDeleteSubproject(subProject.SubprojectId)">
                                                                 <img src="/img/icoDelete1.png" width="22" />
                                                             </button>
+                                                            <button class="btn btn-link" @onclick="()=>BtnAddSubprojectNote(subProject.SubprojectId)">
+                                                                <img src="/img/icoAdd0.png" width="22" />
+                                                            </button>
                                                         </div>
                                                         <div style="text-align: center;">
-                                                            @foreach (Note notex in subProject.Notes)
+                                                            @if((appState.Cmd == "AddNewSubprojectNote") & (subProject.SubprojectId ==appState.SubprojectId))
+                                                                {
+                                                                @* Create a new note here *@
+                                                                <hr style="color:indianred"/>
+                                                                <h5>New Note</h5>
+                                                                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                                                    <MudCard Class="mx-0">
+                                                                        <MudCardContent Style="background-color:whitesmoke;">
+                                                                            <div class="d-flex gap-3">
+                                                                                <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Dense="true" />
+                                                                                <MudTimePicker Label="Time ساعت" @bind-Time="_time" TimeFormat="HH:mm" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Dense="true"/>
+                                                                            </div>
+                                                                            <MudTextField T="string" Label="New Note" @bind-Value="note.NoteText" Variant="Variant.Filled" Lines="10" AutoResize="true" Style="width:100%;" />
+                                                                            <div>
+                                                                                <br />
+                                                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="()=>BtnCreateSubprojectNote(subProject.SubprojectId)">Save</MudButton>
+                                                                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="BtnCancel">Cancel</MudButton>
+                                                                            </div>
+                                                                        </MudCardContent>
+                                                                    </MudCard>
+                                                                </MudContainer>
+                                                                }
+                                                            else
+                                                                {
+                                                                @foreach (Note notex in subProject.Notes)
                                                                 {
                                                                 if((appState.SelectedNoteId == Convert.ToInt32(notex.NoteId)) & (_cmd == "ShowNoteInDialog"))
                                                                     {
@@ -243,7 +283,7 @@ else
                                                                                     <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
                                                                                         <img src="/img/icoNote1.png" width="24" />
                                                                                     </button>
-                                                                                    <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
+                                                                                    <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
                                                                                         <img src="/img/icoDelete1.png" width="24" />
                                                                                     </button>
                                                                                 </MudCardContent>
@@ -274,7 +314,7 @@ else
                                                                                     <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
                                                                                         <img src="/img/icoNote1.png" width="24" />
                                                                                     </button>
-                                                                                    <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
+                                                                                    <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
                                                                                         <img src="/img/icoDelete1.png" width="24" />
                                                                                     </button>
                                                                                 </MudCardContent>
@@ -282,6 +322,7 @@ else
                                                                         </MudContainer>
                                                                     </div>
                                                                     }
+                                                                }                                                                    
                                                                 }
                                                         </div>
                                                     </div>
@@ -313,9 +354,9 @@ else
                 }
             else
                 {
-                    <div style="background-color:rgba(252,252,252);max-width:500px; margin: 0 auto;">
+                    <div style="max-width:500px; margin: 0 auto;">
                         <button class="btn btn-link" @onclick="BtnAddNewProject">
-                            <img src="/img/gifAddItem.gif" width="50" />
+                            <img src="/img/icoAdd0.png" width="24" />
                         </button>
                     </div>
                 }
@@ -324,7 +365,7 @@ else
     </EditForm>
     <div style="text-align:center; max-width:500px; margin: 0 auto;">
         <button class="btn btn-link" @onclick= "()=> BtnBack()">
-            <img src="/img/icoBack2.png" style="width:30px" />
+            <img src="/img/icoBack3.png" style="width:40px" />
         </button>
     </div>
     }
@@ -363,6 +404,9 @@ else
     string txtNewSubprojectTitle = "";
     int i = 0;
     string _cmd = "";
+    string _ShowProjectsMode = "active";
+    private DateTime? _date = DateTime.Now;
+    private TimeSpan? _time = DateTime.Now.TimeOfDay;
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
@@ -382,7 +426,7 @@ else
         if (user.UserId > 0)
             {
             //on second rener, user.UserId will get its value
-            lstProjects = await feService.Read_Projects (user.UserId); 
+            await GetListOfProjects (user.UserId, _ShowProjectsMode); 
             _hasFetched = true;
             }
         } 
@@ -434,7 +478,8 @@ else
                 UserRole = appState.UserRole,
                 TeacherId = 0
             };
-            lstProjects = await feService.Read_Projects (user.UserId);
+            user.UserId = Convert.ToInt32 (appState.UserId);
+            await GetListOfProjects (user.UserId, _ShowProjectsMode); 
             project.ProjectName = ""; //reset input text
             StateHasChanged ();
             }
@@ -464,7 +509,8 @@ else
                 UserRole = appState.UserRole,
                 TeacherId = 0
             };
-            lstProjects = await feService.Read_Projects(user.UserId);
+            user.UserId = Convert.ToInt32 (appState.UserId);
+            await GetListOfProjects (user.UserId, _ShowProjectsMode); 
             project.ProjectName = ""; //reset input text
             StateHasChanged ();            
             }
@@ -487,7 +533,8 @@ else
                     UserRole = appState.UserRole,
                     TeacherId = 0
                 };
-                lstProjects = await feService.Read_Projects(user.UserId);
+                user.UserId = Convert.ToInt32 (appState.UserId);
+                await GetListOfProjects (user.UserId, _ShowProjectsMode); 
                 //project.ProjectName = ""; //reset input text
                 StateHasChanged ();            
                 }
@@ -508,10 +555,35 @@ else
             stdnt.UserTags &= ~flag;
             }
         }
-    public void BtnReportSubprojects(int groupId)
-        {      
-        string mode = "groupStudents";
-        Navman.NavigateTo ($"/T_ReportStudents/{mode}/{groupId}");
+    public async Task BtnToggleShowProjectsMode()
+        {
+        switch (_ShowProjectsMode)
+            {
+            case "all":
+                    {
+                    _ShowProjectsMode = "active";
+                    break;
+                    }
+            case "active":
+                    {
+                    _ShowProjectsMode = "inactive";
+                    break;
+                    }
+            case "inactive":
+                    {
+                    _ShowProjectsMode = "all";
+                    break;
+                    }
+            }
+        user.UserId = Convert.ToInt32 (appState.UserId);
+        await GetListOfProjects (user.UserId, _ShowProjectsMode); 
+        StateHasChanged ();
+        }
+    public async Task GetListOfProjects(int userId, string mode)
+        {
+        _hasFetched = false;
+        lstProjects = await feService.Read_Projects (userId, mode);
+        _hasFetched = true;
         }
     //Subprojects
     public async Task BtnAddNewSubproject(int projectId)
@@ -535,7 +607,7 @@ else
         int result = await feService.Create_Subproject (subProject);
         if (result > 0)
             {
-            await JS.InvokeVoidAsync ("alert", $"New subProject :\n\n user: {subProject.SubprojectName} \n created!");
+            Snackbar.Add($"New subProject : {subProject.SubprojectName} created!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             // Refresh the list
             var user = new User
             {
@@ -545,13 +617,13 @@ else
                 UserRole = appState.UserRole,
                 TeacherId = 0
             };
-            lstProjects = await feService.Read_Projects(user.UserId);
+            await GetListOfProjects (user.UserId, _ShowProjectsMode); 
             appState.SetCmd ("");
             StateHasChanged ();
             }
         else
             {
-            await JS.InvokeVoidAsync ("alert", "Cannot create the new student -- operation Failed");            
+            Snackbar.Add($"Failed to create new subProject!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     public async Task BtnUpdateSubproject(Subproject subProject)
@@ -570,7 +642,8 @@ else
                 UserRole = appState.UserRole,
                 TeacherId = 0
             };
-            lstProjects = await feService.Read_Projects(user.UserId);
+            user.UserId = Convert.ToInt32 (appState.UserId);
+            await GetListOfProjects (user.UserId, _ShowProjectsMode); 
             project.ProjectName = ""; //reset input text
             StateHasChanged ();            
             }
@@ -592,7 +665,7 @@ else
                     UserRole = appState.UserRole,
                     TeacherId = 0
                     };
-                lstProjects = await feService.Read_Projects(user.UserId);
+                await GetListOfProjects (user.UserId, _ShowProjectsMode); 
                 project.ProjectName = ""; //reset input text
                 StateHasChanged ();            
                 }
@@ -619,51 +692,81 @@ else
         appState.SetSubprojectId (subProjectId);
         StateHasChanged ();
         }
-    public async Task BtnSaveSubprojectNote(int subProjectId)
-        {      
-        if(0 == 0)
+    public async Task BtnCreateSubprojectNote(int subProjectId)
+        {
+        if (note.NoteText.Trim() == "")
             {
-            await JS.InvokeVoidAsync ("alert", "Select a Course from List");
+            Snackbar.Add("Note is empty!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             return;
             }
         else
             {
-            //bool result = await feService.Create_SubprojectNote (subProjectId, 1);
-            if(0==0)
+            //parentTypes 1:subprojects 2:students 3:groups 4:courses 5:exams
+            note.ParentId = subProjectId;
+            note.ParentType = 1;
+            DateTime _dt = _date.Value.Date + _time.Value;
+            note.NoteDatum = _dt.ToString ("yyyy-MM-dd HH:mm");
+            note.NoteTags = 0; //1:rtl 2:done 4:shared 8:readonly
+            _hasFetched = false;
+            int result = await feService.Create_Note (note);
+            if(result > 0)
                 {
-                await JS.InvokeVoidAsync("alert", "\nStudent successfully added to course.");
+                Snackbar.Add("Note saved successfully!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                user.UserId = Convert.ToInt32(appState.UserId);
+                await GetListOfProjects (user.UserId, _ShowProjectsMode);
                 appState.SetCmd("");
                 StateHasChanged();
                 }
             else
                 {
-                await JS.InvokeVoidAsync("alert", "\nStudent did not added to the course!");
+                Snackbar.Add("Failed to save note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
+            _hasFetched = true;
             }
         }
-    public async Task BtnDeleteSubprojectNote(int noteId)
-        {      
-        if(0 == 0)
+    public async Task BtnShowNoteInDialog(Note note)
+        {
+        _cmd = "ShowNoteInDialog";
+        appState.SetSelectedNoteId (note.NoteId);
+        appState.SetNoteDatum (note.NoteDatum);
+        appState.SetNoteText (note.NoteText);
+        appState.SetNoteParentName (note.ParentName);
+        StateHasChanged ();
+        }
+    public async Task BtnReadNotesBySearch()
+        {
+        lstNotes = await feService.Read_NotesBySearchKey (strSearchKey);
+        StateHasChanged ();
+        }
+    public async Task BtnCancelSearch()
+        {
+        lstNotes.Clear ();
+        StateHasChanged ();
+        }  
+    public async Task BtnDeleteNote(int noteId)
+        {
+        var message = new MarkupString($"Delete note?");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
-            await JS.InvokeVoidAsync ("alert", "Select a Course from List");
-            return;
-            }
-        else
-            {
-            bool result = await feService.Delete_StudentCourse (0);
+            bool result = await feService.Delete_Note (noteId);
             if(result)
                 {
-                await JS.InvokeVoidAsync("alert", "\nStudent removed from the course.");
+                Snackbar.Add($"Note deleted!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                user.UserId = Convert.ToInt32(appState.UserId);
+                _hasFetched = false;
+                await GetListOfProjects (user.UserId, _ShowProjectsMode); 
+                _hasFetched = true;
                 appState.SetCmd("");
                 StateHasChanged();
                 }
             else
                 {
-                await JS.InvokeVoidAsync("alert", "\nStudent did not removed from the course!");
+                Snackbar.Add($"Failed to delete note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             }
         }
-    public async Task BtnDeleteSubprojectNotes(int subProjectId)
+    public async Task BtnDeleteNotes_______(int subProjectId)
         {
         //delete all subprojects of a Project
         if(0 == 0)
@@ -686,24 +789,34 @@ else
                 }
             }
         }
-    public async Task BtnShowNoteInDialog(Note note)
+    //Calendar
+    public CultureInfo GetPersianCulture()
         {
-        _cmd = "ShowNoteInDialog";
-        appState.SetSelectedNoteId (note.NoteId);
-        appState.SetNoteDatum (note.NoteDatum);
-        appState.SetNoteText (note.NoteText);
-        appState.SetNoteParentName (note.ParentName);
-        StateHasChanged ();
-        }
-    public async Task BtnReadNotesBySearch()
-        {
-        lstNotes = await feService.Read_NotesBySearchKey (strSearchKey);
-        StateHasChanged ();
-        }
-    public async Task BtnCancelSearch()
-        {
-        lstNotes.Clear ();
-        StateHasChanged ();
+            var culture = new CultureInfo("fa-IR");
+            DateTimeFormatInfo formatInfo = culture.DateTimeFormat;
+            formatInfo.AbbreviatedDayNames = new[] { "ی", "د", "س", "چ", "پ", "ج", "ش" };
+            formatInfo.DayNames = new[] { "یکشنبه", "دوشنبه", "سه شنبه", "چهار شنبه", "پنجشنبه", "جمعه", "شنبه" };
+            var monthNames = new[]
+            { "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند", "", };
+            formatInfo.AbbreviatedMonthNames =
+                formatInfo.MonthNames =
+                    formatInfo.MonthGenitiveNames = formatInfo.AbbreviatedMonthGenitiveNames = monthNames;
+            formatInfo.AMDesignator = "ق.ظ";
+            formatInfo.PMDesignator = "ب.ظ";
+            formatInfo.ShortDatePattern = "yyyy-MM-dd";
+            formatInfo.LongDatePattern = "yyyy-MM-dd dddd";
+            formatInfo.FirstDayOfWeek = DayOfWeek.Saturday;
+            Calendar cal = new PersianCalendar();
+            FieldInfo fieldInfo = culture.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (fieldInfo != null)
+                fieldInfo.SetValue(culture, cal);
+            FieldInfo info = formatInfo.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (info != null)
+                info.SetValue(formatInfo, cal);
+            culture.NumberFormat.NumberDecimalSeparator = ".";
+            culture.NumberFormat.DigitSubstitution = DigitShapes.NativeNational;
+            culture.NumberFormat.NumberNegativePattern = 0;
+            return culture;
         }
     //back
     public void BtnCancel()
