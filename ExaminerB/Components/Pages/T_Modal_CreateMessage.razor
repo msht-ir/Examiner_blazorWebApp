@@ -1,0 +1,179 @@
+﻿@using System.Globalization
+@using System.Reflection
+@using ExaminerB.Services2Backend
+@inject AppState appState;
+@inject NavigationManager Navman
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+@if (IsOpen)
+{
+    Title = "New note";
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal show d-block">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Title</h5>
+                    @* <button class="btn-close" @onclick="Close"></button> *@
+                </div>
+                <div class="modal-body">
+                    @ChildContent
+                    <div class="mt-3">
+                        <span style="color:royalblue; font-weight:bold;">
+                            @appState.NoteParentName
+                        </span>
+                        <br />
+                        <span style="color:indianred; font-weight:bold;">
+                            text here
+                        </span>
+                        @* Create a new note here *@
+                        <hr style="color:indianred"/>
+                        <h5>New Note</h5>
+                        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                            <MudCard Class="mx-0">
+                                <MudCardContent Style="background-color:whitesmoke;">
+                                    <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Dense="true" />
+                                    <MudTimePicker Label="Time ساعت" @bind-Time="_time" TimeFormat="HH:mm" Variant="Variant.Outlined" Dense="true"/>
+                                    <MudTextField T="string" Label="New Note" @bind-Value="note.NoteText" Variant="Variant.Filled" Lines="10" AutoResize="true" Style="width:100%;" />
+                                    <div>
+                                        <br />
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="()=>BtnCreateNote(Id)">Save</MudButton>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="BtnCancel">Cancel</MudButton>
+                                    </div>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudContainer>
+                    </div>
+                        <br />
+                    <div style="text-align:center">
+                        <button class="btn btn-link" @onclick="BtnClose">
+                            <img src="/img/icoCancel.png" width="26" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string Title { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    public bool IsOpen { get; set; } = true;
+
+    private MudTextField<string> refNewProject;
+    private MudTextField<string> refProjectName;
+
+    private MudTextField<string> refNewSubproject;
+    private MudTextField<string> refSubprojectName;
+    private MudTextField<string> refSubprojectNote;
+
+    private MudTextField<string> refNoteText;
+    private MudTextField<string> refSearchNote;
+
+    private readonly HttpClient _http;
+    User user = new User ();
+    List<Project> lstProjects = new ();
+    Project project = new Project();
+    Note note = new Note();
+    List<Note> lstNotes = new List<Note> ();
+    public string strSearchKey = "";
+    public string dirx = "";
+    public bool _hasFetched = false;
+    private bool shouldFocusNewProject = false;
+    bool _IsMessageTypeFeedback = true;
+    bool _tag01 = true;
+    bool _tag02 = false;
+    bool _tag04 = false;
+    bool _tag08 = false;
+    bool _tag16 = false;
+    bool _tag32 = false;
+    string txtNewSubprojectTitle = "";
+    int i = 0;
+    string _cmd = "";
+    string _ShowProjectsMode = "active";
+    private DateTime? _date = DateTime.Now;
+    private TimeSpan? _time = DateTime.Now.TimeOfDay;
+
+
+    public void Open() => IsOpen = true;
+    public void Close() => IsOpen = false;
+    public void BtnClose()
+        {
+        IsOpen = false;
+        }
+
+    public async Task BtnCreateNote(int subProjectId)
+        {
+        if (note.NoteText.Trim() == "")
+            {
+            Snackbar.Add("Note is empty!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            return;
+            }
+        else
+            {
+            //parentTypes 1:subprojects 2:students 3:groups 4:courses 5:exams
+            note.ParentId = subProjectId;
+            note.ParentType = 1;
+            DateTime _dt = _date.Value.Date + _time.Value;
+            note.NoteDatum = _dt.ToString ("yyyy-MM-dd HH:mm");
+            note.NoteTags = 0; //1:rtl 2:done 4:shared 8:readonly
+            _hasFetched = false;
+            int result = await BeService.Create_Note (note);
+            if(result > 0)
+                {
+                Snackbar.Add("Saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                user.UserId = Convert.ToInt32(appState.UserId);
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                Snackbar.Add("Failed to save note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
+            _hasFetched = true;
+            }
+        }
+
+    //Calendar
+    public CultureInfo GetPersianCulture()
+        {
+            var culture = new CultureInfo("fa-IR");
+            DateTimeFormatInfo formatInfo = culture.DateTimeFormat;
+            formatInfo.AbbreviatedDayNames = new[] { "ی", "د", "س", "چ", "پ", "ج", "ش" };
+            formatInfo.DayNames = new[] { "یکشنبه", "دوشنبه", "سه شنبه", "چهار شنبه", "پنجشنبه", "جمعه", "شنبه" };
+            var monthNames = new[]
+            { "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند", "", };
+            formatInfo.AbbreviatedMonthNames =
+                formatInfo.MonthNames =
+                    formatInfo.MonthGenitiveNames = formatInfo.AbbreviatedMonthGenitiveNames = monthNames;
+            formatInfo.AMDesignator = "ق.ظ";
+            formatInfo.PMDesignator = "ب.ظ";
+            formatInfo.ShortDatePattern = "yyyy-MM-dd";
+            formatInfo.LongDatePattern = "yyyy-MM-dd dddd";
+            formatInfo.FirstDayOfWeek = DayOfWeek.Saturday;
+            Calendar cal = new PersianCalendar();
+            FieldInfo fieldInfo = culture.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (fieldInfo != null)
+                fieldInfo.SetValue(culture, cal);
+            FieldInfo info = formatInfo.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (info != null)
+                info.SetValue(formatInfo, cal);
+            culture.NumberFormat.NumberDecimalSeparator = ".";
+            culture.NumberFormat.DigitSubstitution = DigitShapes.NativeNational;
+            culture.NumberFormat.NumberNegativePattern = 0;
+            return culture;
+        }
+    //back
+    public void BtnCancel()
+        {    
+        appState.SetCmd("");
+        }
+    public void BtnBack()
+        {    
+        Navman.NavigateTo ("/T_SwitchBoard");
+        }
+
+
+}

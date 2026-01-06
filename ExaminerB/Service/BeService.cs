@@ -3161,7 +3161,7 @@ COMMIT TRANSACTION;
         public async Task<List<Message>> Read_MessagesAsync (int userId, bool getStudentMessages)
             {
             List<Message> lstMessages = new List<Message> ();
-            string sql = "SELECT MessageId, UserId, DateTimeCreated, MessageTitle, MessageBody FROM Messages WHERE UserId=@userid";
+            string sql = "SELECT MessageId, UserId, DateTimeCreated, MessageTitle, MessageBody FROM Messages WHERE UserId=@userid ORDER BY DateTimeCreated";
             Message message = new Message ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
@@ -3374,17 +3374,17 @@ COMMIT TRANSACTION;
                 {
                 case "ByStudentIdIgnoreDeletedMessages":
                         {
-                        sql += " WHERE (sm.StudentId=@id) AND (sm.StudentMessageTags & 4) = 0";
+                        sql += " WHERE (sm.StudentId=@id) AND (sm.StudentMessageTags & 4) = 0 ORDER BY m.DateTimeCreated, sm.DateTimeSent ";
                         break;
                         }
                 case "ByStudentId":
                         {
-                        sql += " WHERE sm.StudentId=@id";
+                        sql += " WHERE sm.StudentId=@id ORDER BY m.DateTimeCreated, sm.DateTimeSent ";
                         break;
                         }
                 case "ByMessageId":
                         {
-                        sql += " WHERE sm.MessageId=@id";
+                        sql += " WHERE sm.MessageId=@id ORDER BY m.DateTimeCreated, sm.DateTimeSent ";
                         break;
                         }
                 }

@@ -35,11 +35,24 @@
                         </button>
                     </td>
                     <td>
+                        <button type="submit" class="btn btn-link" @onclick="GotoNewUserNote">
+                            <img src="/img/icoNewNote2.png" width="60" />
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="submit" class="btn btn-link" @onclick="GotoCreateNewUser">
+                            <img src="/img/icoFolderUser.png" width="65" />
+                        </button>
+                    </td>
+                    <td>
                         <button type="submit" class="btn btn-link" @onclick="GotoLogin">
                             <img src="/img/gifUserLogout.gif" style="height:100px; width:165px" />
                         </button>
                     </td>
                 </tr>
+
             </table>
             <br />
             <hr style="color:red" />
@@ -113,5 +126,13 @@
     public void GotoProjects ()
         {
         Navman.NavigateTo ("/E_Projects");
+        }
+    public void GotoNewUserNote ()
+        {
+        //Navman.NavigateTo ("/E_Projects");
+        }
+    public void GotoCreateNewUser ()
+        {
+        //Navman.NavigateTo ("/E_Projects");
         }
 }

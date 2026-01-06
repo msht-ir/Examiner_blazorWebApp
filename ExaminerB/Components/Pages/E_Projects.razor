@@ -750,7 +750,7 @@ else
             bool result = await feService.Delete_Note (noteId);
             if(result)
                 {
-                Snackbar.Add($"Note deleted!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 user.UserId = Convert.ToInt32(appState.UserId);
                 _hasFetched = false;
                 await GetListOfProjects (user.UserId, _ShowProjectsMode); 
