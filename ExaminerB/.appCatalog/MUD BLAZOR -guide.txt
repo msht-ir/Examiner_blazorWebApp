@@ -1,4 +1,4 @@
-MUD BLAZOR - code snippets
+MUD BLAZOR
 
 
 

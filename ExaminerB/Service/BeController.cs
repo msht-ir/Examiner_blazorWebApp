@@ -1,7 +1,6 @@
 ﻿using ExaminerB.Services2Backend;
 using ExaminerS.Models;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 using Group = ExaminerS.Models.Group;
 
 namespace ExaminerB.Backend
@@ -536,7 +535,7 @@ namespace ExaminerB.Backend
             {
             var result = await _BeService.Read_StudentExamsAsync (Id, mode);
             return Ok (result);
-            }   
+            }
         [HttpPost ("Read_StudentExam")]
         public async Task<ActionResult<StudentExam>> Read_StudentExam ([FromBody] int studentExamId, [FromQuery] bool readInactiveExams)
             {

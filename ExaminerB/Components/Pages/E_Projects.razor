@@ -238,10 +238,8 @@ else
                                                                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                                                     <MudCard Class="mx-0">
                                                                         <MudCardContent Style="background-color:whitesmoke;">
-                                                                            <div class="d-flex gap-3">
-                                                                                <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Dense="true" />
-                                                                                <MudTimePicker Label="Time ساعت" @bind-Time="_time" TimeFormat="HH:mm" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Dense="true"/>
-                                                                            </div>
+                                                                            <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Dense="true" />
+                                                                            <MudTimePicker Label="Time ساعت" @bind-Time="_time" TimeFormat="HH:mm" Variant="Variant.Outlined" Dense="true"/>
                                                                             <MudTextField T="string" Label="New Note" @bind-Value="note.NoteText" Variant="Variant.Filled" Lines="10" AutoResize="true" Style="width:100%;" />
                                                                             <div>
                                                                                 <br />

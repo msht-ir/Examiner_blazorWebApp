@@ -7,6 +7,8 @@
 @inject IJSRuntime JS
 @implements IDisposable
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
 <div class="container mt-5 align-items-center">
     <p style="font-size:larger; text-align:center;color:black">e<span style="color:indianred">x</span>aminer <span style="font-size:small;color:royalblue"> @appState.UserNickname</span></p>
     <hr style="color:red"/>
@@ -402,16 +404,6 @@
             }
         }
     //btns for StudentMessages
-    private async Task BtnDeleteStudentMessage(StudentMessage studentMessage)
-        {
-        if(await JS.InvokeAsync<bool>("confirm","Delete Message?"))
-            {
-            studentMessage.StudentMessageTags |= 4;
-            bool result = await feService.Update_StudentMessageTags (studentMessage);
-            await ReadMessageList ();
-            }
-        StateHasChanged ();                
-        }
     private async Task BtnSetStudentMessageAsRead(StudentMessage studentMessage)
         {
         //modes: setOn, setOff
@@ -442,12 +434,6 @@
         appState.SetCmd ("");
         StateHasChanged ();
         }
-    private async Task BtnGetStudentAnswer(int messageId)
-        {
-        appState.SetCmd ("GetStudentAnswer");
-        appState.SetMessageId (messageId);
-        StateHasChanged ();
-        }
     private async Task BtnSetMyAnswer(StudentMessage studentMessage, int ans)
         {
         //ans: 0:No, 1:Yes
@@ -476,6 +462,26 @@
         bool result = await feService.Update_StudentMessageTags (studentMessage);
         await ReadMessageList ();
         StateHasChanged ();
+        }
+    private async Task BtnGetStudentAnswer(int messageId)
+        {
+        //Lets GetStudentAnswer...
+        appState.SetCmd ("GetStudentAnswer");
+        appState.SetMessageId (messageId);
+        StateHasChanged ();
+        }
+    private async Task BtnDeleteStudentMessage(StudentMessage studentMessage)
+        {
+        var message = new MarkupString($"Delete Message?");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
+            {
+            studentMessage.StudentMessageTags |= 4;
+            bool result = await feService.Update_StudentMessageTags (studentMessage);
+            Snackbar.Add("Deleted", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            await ReadMessageList ();
+            }
+        StateHasChanged ();                
         }
     //methods
     private async Task ReadMessageList()

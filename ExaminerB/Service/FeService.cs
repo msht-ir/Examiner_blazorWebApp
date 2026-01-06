@@ -177,12 +177,12 @@ namespace ExaminerB.Service
             }
         #endregion        
         #region SG:StudentGroups
-        public async Task <bool> Create_StudentGroups(int groupId, List<int> lstStudentIds)
+        public async Task<bool> Create_StudentGroups (int groupId, List<int> lstStudentIds)
             {
             var response = await _http.PostAsJsonAsync ($"api/Create_StudentGroups?groupId={groupId}", lstStudentIds);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<List<StudentGroup>> ReadStudentGroups(int Id, string mode)
+        public async Task<List<StudentGroup>> ReadStudentGroups (int Id, string mode)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_StudentGroups?mode={mode}", Id);
             if (response.IsSuccessStatusCode)
@@ -191,10 +191,10 @@ namespace ExaminerB.Service
                 return lstStudentGroups ?? new List<StudentGroup> ();
                 }
             else
-                { 
+                {
                 return new List<StudentGroup> ();
                 }
-            } 
+            }
         #endregion
         #region C:Courses
         public async Task<int> Create_Course (Course course)
@@ -504,7 +504,7 @@ namespace ExaminerB.Service
                 {
                 return new List<StudentExamTest> ();
                 }
-            }      
+            }
         public async Task<List<Test>> Read_TestsByStudentCourseId (int studentCourseId, bool readOptions)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_TestsByStudentCourseId?readOptions={readOptions}", studentCourseId);
@@ -1020,7 +1020,7 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ($"api/Create_Project", project);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<List<Project>> Read_Projects (int userId,string mode)
+        public async Task<List<Project>> Read_Projects (int userId, string mode)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_Projects?mode={mode}", userId);
             if (response.IsSuccessStatusCode)

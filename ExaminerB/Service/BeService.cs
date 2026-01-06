@@ -1,10 +1,6 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Drawing.Charts;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using DocumentFormat.OpenXml.Spreadsheet;
 using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 using System.Data;
 using Group = ExaminerS.Models.Group;
@@ -283,7 +279,7 @@ namespace ExaminerB.Services2Backend
                 {
                 foreach (User student in lstStudents)
                     {
-                    student.StudentExams = await Read_StudentExamsAsync (Id:student.UserId, mode:"ByStudentExam"); //3: get {1:inactives + 2:testOptions} 
+                    student.StudentExams = await Read_StudentExamsAsync (Id: student.UserId, mode: "ByStudentExam"); //3: get {1:inactives + 2:testOptions} 
                     }
                 }
             if ((readStudentGCEM & 8) == 8)
@@ -355,34 +351,34 @@ namespace ExaminerB.Services2Backend
                         };
                     lstStudents.Add (student);
                     }
-                if((readStudentGCEM & 1) == 1)
+                if ((readStudentGCEM & 1) == 1)
                     {
                     //read studentGroups records
-                    foreach(User student in lstStudents)
+                    foreach (User student in lstStudents)
                         {
                         student.StudentGroups = await Read_StudentGroupsAsync (student.UserId, "ByStudentId");
                         }
                     }
-                if((readStudentGCEM & 2) == 2)
+                if ((readStudentGCEM & 2) == 2)
                     {
                     //read studentCourses records
-                    foreach(User student in lstStudents)
+                    foreach (User student in lstStudents)
                         {
                         student.StudentCourses = await Read_StudentCoursesAsync (student.UserId, "ByStudentId");
                         }
                     }
-                if((readStudentGCEM & 4) == 4)
+                if ((readStudentGCEM & 4) == 4)
                     {
                     //read studentExams records
-                    foreach(User student in lstStudents)
+                    foreach (User student in lstStudents)
                         {
                         student.StudentExams = await Read_StudentExamsAsync (student.UserId, "ByStudentId"); //1:getActives
                         }
                     }
-                if((readStudentGCEM & 8) == 8)
+                if ((readStudentGCEM & 8) == 8)
                     {
                     //read studentMessages records
-                    foreach(User student in lstStudents)
+                    foreach (User student in lstStudents)
                         {
                         student.StudentMessages = await Read_StudentMessagesAsync (student.UserId, "ByStudentId");
                         }
@@ -449,7 +445,7 @@ namespace ExaminerB.Services2Backend
                         sql = "DELETE FROM StudentMessages WHERE StudentId=@studentid";
                         break;
                         }
-                }                
+                }
             var cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@studentid", studentId);
             await cmd.ExecuteNonQueryAsync ();
@@ -524,13 +520,13 @@ namespace ExaminerB.Services2Backend
                         lstGroups.Add (group);
                         }
                     }
-                    if (getGroupStudents)
+                if (getGroupStudents)
+                    {
+                    foreach (Group grp in lstGroups)
                         {
-                        foreach(Group grp in lstGroups)
-                            { 
-                            grp.Students = await Read_StudentGroupsAsync (grp.GroupId, "ByGroupid");
-                            }
+                        grp.Students = await Read_StudentGroupsAsync (grp.GroupId, "ByGroupid");
                         }
+                    }
                 return lstGroups;
                 }
             catch (Exception ex)
@@ -1001,7 +997,7 @@ namespace ExaminerB.Services2Backend
             int i = await cmd.ExecuteNonQueryAsync ();
             return true;
             }
-    public async Task<List<StudentCourse>> Read_StudentCoursesAsync (int Id, string mode)
+        public async Task<List<StudentCourse>> Read_StudentCoursesAsync (int Id, string mode)
             {
             //read SC records for one Student
             List<StudentCourse> lstStudentCourses = new List<StudentCourse> ();
@@ -1092,15 +1088,15 @@ namespace ExaminerB.Services2Backend
             switch (mode)
                 {
                 case "ByStudentId":
-                    {
-                    sql = @"DELETE FROM StudentCourses WHERE StudentId=@id"; //delete all courses of a student
-                    break;
-                    }
-                case "ByCourseId":
-                    {
-                    sql = @"DELETE FROM StudentCourses WHERE CourseId=@id"; //delete all students of a course
+                        {
+                        sql = @"DELETE FROM StudentCourses WHERE StudentId=@id"; //delete all courses of a student
                         break;
-                    }
+                        }
+                case "ByCourseId":
+                        {
+                        sql = @"DELETE FROM StudentCourses WHERE CourseId=@id"; //delete all students of a course
+                        break;
+                        }
                 }
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
@@ -1209,24 +1205,24 @@ namespace ExaminerB.Services2Backend
             cmd.Parameters.AddWithValue ("@studentcourseid", studentCourse.StudentCourseId);
             try
                 {
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
-                {
-                    int index = 0;
-                    while (await reader.ReadAsync())
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
                     {
-                        var sct = new StudentCourseTest
+                    int index = 0;
+                    while (await reader.ReadAsync ())
                         {
-                            StudentCourseId = reader.GetInt32(0),
-                            TestId = reader.GetInt32(1),
-                            TestTitle = reader.GetString(2),
-                            TestType = reader.GetInt32(3),
-                            CourseTopicId = reader.GetInt32(4),
-                            CourseTopicTitle = reader.GetString(5),
-                            TestTags = reader.GetInt32(6),
-                            TestLevel = reader.GetInt32(7),
-                            TestKey = reader.GetInt32(8),
-                            UserAns = reader.GetInt32(9),
-                            DateTime = reader.GetString(10),
+                        var sct = new StudentCourseTest
+                            {
+                            StudentCourseId = reader.GetInt32 (0),
+                            TestId = reader.GetInt32 (1),
+                            TestTitle = reader.GetString (2),
+                            TestType = reader.GetInt32 (3),
+                            CourseTopicId = reader.GetInt32 (4),
+                            CourseTopicTitle = reader.GetString (5),
+                            TestTags = reader.GetInt32 (6),
+                            TestLevel = reader.GetInt32 (7),
+                            TestKey = reader.GetInt32 (8),
+                            UserAns = reader.GetInt32 (9),
+                            DateTime = reader.GetString (10),
                             TestIndex = ++index,
                             TestOptions = new List<TestOption> ()
                             };
@@ -1334,7 +1330,6 @@ namespace ExaminerB.Services2Backend
                 cmd.Parameters.AddWithValue ("@testid", studentCourseTest.TestId);
                 await cmd.ExecuteNonQueryAsync ();
                 sql = (studentCourseTest.UserAns == studentCourseTest.TestKey) ? "UPDATE StudentCourses SET CorrectAnswers=(CorrectAnswers + 1) WHERE StudentCourseId=@studentcourseid" : "";
-                Console.WriteLine ($"be..............  \n TestId={studentCourseTest.TestId} \n studentCourseId={studentCourseTest.StudentCourseId} \n Key={studentCourseTest.TestKey} \n Ans={studentCourseTest.UserAns} \n sql={sql}");
                 if (sql != "")
                     {
                     var cmd2 = new SqlCommand (sql, cnn);
@@ -2375,15 +2370,15 @@ COMMIT TRANSACTION;
             switch (mode)
                 {
                 case "ByStudentId":
-                    {
-                    sql+= " WHERE se.StudentId=@id ORDER BY e.ExamDateTime";   
-                    break;
-                    }
+                        {
+                        sql += " WHERE se.StudentId=@id ORDER BY e.ExamDateTime";
+                        break;
+                        }
                 case "ByExamId":
-                    {
-                    sql+= " WHERE se.ExamId=@id ORDER BY e.ExamDateTime";   
-                    break;
-                    }
+                        {
+                        sql += " WHERE se.ExamId=@id ORDER BY e.ExamDateTime";
+                        break;
+                        }
                 }
             try
                 {
@@ -3178,19 +3173,20 @@ COMMIT TRANSACTION;
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
-                    lstMessages.Add(new Message {
+                    lstMessages.Add (new Message
+                        {
                         MessageId = reader.GetInt32 (0),
                         UserId = reader.GetInt32 (1),
                         DateTimeCreated = reader.GetString (2),
                         MessageTitle = reader.GetString (3),
                         MessageBody = reader.GetString (4),
-                        Students = new List<StudentMessage>()
+                        Students = new List<StudentMessage> ()
                         });
                     }
                 await cnn.CloseAsync ();
                 if (getStudentMessages)
                     {
-                    foreach(Message msg in lstMessages)
+                    foreach (Message msg in lstMessages)
                         {
                         msg.Students = await Read_StudentMessagesAsync (msg.MessageId, "ByMessageId");
                         }
@@ -3378,7 +3374,7 @@ COMMIT TRANSACTION;
                 {
                 case "ByStudentIdIgnoreDeletedMessages":
                         {
-                        sql += " WHERE sm.StudentId=@id AND (smStudentMessageTags & 4) = 0";
+                        sql += " WHERE (sm.StudentId=@id) AND (sm.StudentMessageTags & 4) = 0";
                         break;
                         }
                 case "ByStudentId":
@@ -3410,8 +3406,8 @@ COMMIT TRANSACTION;
                         StudentId = reader.GetInt32 (2),
                         StudentName = reader.GetString (3),
                         StudentNickname = reader.GetString (4),
-                        MessageTitle = reader.GetString(5),
-                        MessageBody = reader.GetString(6),
+                        MessageTitle = reader.GetString (5),
+                        MessageBody = reader.GetString (6),
                         DateTimeCreated = reader.GetString (7),
                         DateTimeSent = reader.GetString (8),
                         DateTimeRead = reader.GetString (9),
@@ -3699,34 +3695,34 @@ COMMIT TRANSACTION;
             {
             //parentTypes 1:subprojects 2:students 3:groups 4:courses 5:exams
             string sql = "";
-            List <Note> lstNotes = new List<Note> ();
+            List<Note> lstNotes = new List<Note> ();
             switch (parentType)
                 {
                 case 1:
-                    {
-                    sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, sp.SubprojectName FROM Notes n INNER JOIN Subprojects sp ON n.ParentId = sp.SubprojectId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
-                    break;
-                    }
+                        {
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, sp.SubprojectName FROM Notes n INNER JOIN Subprojects sp ON n.ParentId = sp.SubprojectId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        break;
+                        }
                 case 2:
-                    {
-                    sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
-                    break;
-                    }
+                        {
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        break;
+                        }
                 case 3:
-                    {
-                    sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, g.GroupName FROM Notes n INNER JOIN Groups g ON n.ParentId = g.GroupId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
-                    break;
-                    }
+                        {
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, g.GroupName FROM Notes n INNER JOIN Groups g ON n.ParentId = g.GroupId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        break;
+                        }
                 case 4:
-                    {
-                    sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, c.CourseName FROM Notes n INNER JOIN Courses c ON n.ParentId = c.CourseId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
-                    break;
-                    }
+                        {
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, c.CourseName FROM Notes n INNER JOIN Courses c ON n.ParentId = c.CourseId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        break;
+                        }
                 case 5:
-                    {
-                    sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, e.ExamTitle FROM Notes n INNER JOIN Exams e ON n.ParentId = e.ExamId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
-                    break;
-                    }
+                        {
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, e.ExamTitle FROM Notes n INNER JOIN Exams e ON n.ParentId = e.ExamId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        break;
+                        }
                 }
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
@@ -3743,8 +3739,8 @@ COMMIT TRANSACTION;
                 note.ParentType = reader.GetInt32 (2);
                 note.NoteDatum = reader.GetString (3);
                 note.NoteText = reader.GetString (4);
-                note.NoteTags = reader.GetInt32(5);
-                note.ParentName = reader.GetString(6);
+                note.NoteTags = reader.GetInt32 (5);
+                note.ParentName = reader.GetString (6);
                 lstNotes.Add (note);
                 }
             await cnn.CloseAsync ();
@@ -3774,7 +3770,7 @@ COMMIT TRANSACTION;
                 note.ParentType = reader.GetInt32 (2);
                 note.NoteDatum = reader.GetString (3);
                 note.NoteText = reader.GetString (4);
-                note.NoteTags = reader.GetInt32(5);
+                note.NoteTags = reader.GetInt32 (5);
                 lstNotes.Add (note);
                 }
             await cnn.CloseAsync ();

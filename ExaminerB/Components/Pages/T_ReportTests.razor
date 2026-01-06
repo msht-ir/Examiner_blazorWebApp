@@ -192,7 +192,7 @@ else
                 <hr style="color:red" />
                 }
             <br />
-            <div style="text-align: center;">
+            <div style="text-align: left;">
                 <button class="btn btn-link" type="submit" @onclick="BtnBack">
                     <img src="/img/icoBack3.png" width="40" />
                 </button>
@@ -518,7 +518,10 @@ else
             case "studentcoursetests":
                     {
                     lstxTests.Clear ();
-                    StudentCourse studentCourse = new StudentCourse (); //{ CourseId = Convert.ToInt32 (appState.CourseId) };
+                    StudentCourse studentCourse = new StudentCourse ()
+                    {
+                        StudentCourseId = Convert.ToInt32 (appState.StudentCourseId)
+                    };
                     List<StudentCourseTest> lstStudentCourseTests = await feService.Read_StudentCourseTests (studentCourse, true);
                     //copy data to a shared satandard list so that html code uses it
                     foreach(StudentCourseTest sctest in lstStudentCourseTests)
