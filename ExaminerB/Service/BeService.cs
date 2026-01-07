@@ -3700,25 +3700,30 @@ COMMIT TRANSACTION;
                 {
                 case 1:
                         {
-                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, sp.SubprojectName FROM Notes n INNER JOIN Subprojects sp ON n.ParentId = sp.SubprojectId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, u.UsrName FROM Notes n INNER JOIN Usrs u ON n.ParentId = u.UsrId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
                         break;
                         }
                 case 2:
                         {
-                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, sp.SubprojectName FROM Notes n INNER JOIN Subprojects sp ON n.ParentId = sp.SubprojectId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
                         break;
                         }
                 case 3:
                         {
-                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, g.GroupName FROM Notes n INNER JOIN Groups g ON n.ParentId = g.GroupId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
                         break;
                         }
                 case 4:
                         {
-                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, c.CourseName FROM Notes n INNER JOIN Courses c ON n.ParentId = c.CourseId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, g.GroupName FROM Notes n INNER JOIN Groups g ON n.ParentId = g.GroupId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
                         break;
                         }
                 case 5:
+                        {
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, c.CourseName FROM Notes n INNER JOIN Courses c ON n.ParentId = c.CourseId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        break;
+                        }
+                case 6:
                         {
                         sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, e.ExamTitle FROM Notes n INNER JOIN Exams e ON n.ParentId = e.ExamId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
                         break;

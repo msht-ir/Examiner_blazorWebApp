@@ -1,0 +1,180 @@
+﻿@page "/T_ReportNotes/{mode:int}/{Id:int}"
+@using ExaminerB.Service
+@inject FeService feService
+@inject NavigationManager Navman
+@inject AppState appState
+@inject IJSRuntime JS
+@implements IDisposable
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+    <h1 style="text-align:center;color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h1>
+    <hr style="color:red"/>
+
+    @if (!_hasFetched)
+        {
+        <_ScanSheets />
+        }
+    else
+        {
+        <h6 style="text-align:center;">Messages of: <span style="color:indianred">@appState.StudentName</span></h6>
+        <h6 style="text-align:center;color:indianred">@appState.StudentNickname</h6>
+        @if (lstNotes.Count > 0)
+            {
+            <div style="text-align:center">
+                <button class="btn btn-link" @onclick="BtnBack">
+                    <img src="/img/icoBack3.png" width="40" />
+                </button>                
+            </div>        
+            }
+        }
+        <hr />
+        <EditForm Model="lstNotes">
+            @foreach(Note notex in lstNotes)
+                {
+                @if((appState.SelectedNoteId == Convert.ToInt32(notex.NoteId)) & (_cmd == "ShowNoteInDialog"))
+                    {
+                    <Modal_ShowNote />
+                    }
+                @if ((notex.NoteTags & 1) == 1)
+                    {
+                    <div class="mt-3 text-end">
+                        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                            <MudCard Class="mx-0">
+                                <MudCardContent>
+                                    <span style="color:indianred; font-weight:bold;">
+                                        @notex.NoteDatum
+                                    </span>
+                                    <hr />
+                                    <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
+                                        @if(notex.NoteText.Length > 60)
+                                            {
+                                            <div> @notex.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span></div>
+                                            }
+                                        else
+                                            {
+                                            <div> @notex.NoteText</div>
+                                            }
+                                    </div>
+                                    <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
+                                        <img src="/img/icoNote2.png" width="24" />
+                                    </button>
+                                    <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
+                                        <img src="/img/icoDelete1.png" width="24" />
+                                    </button>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudContainer>
+                    </div>
+                    }
+                else
+                    {
+                    <div class="mt-3 text-start">
+                        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                            <MudCard Class="mx-0">
+                                <MudCardContent Style="background-color:whitesmoke;">
+                                    <span style="color:indianred; font-weight:bold;">
+                                        @notex.NoteDatum
+                                    </span>
+                                    <hr />
+                                    <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
+                                        @if(notex.NoteText.Length > 60)
+                                            {
+                                            <div> @notex.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span></div>
+                                            }
+                                        else
+                                            {
+                                            <div> @notex.NoteText</div>
+                                            }
+                                    </div>
+                                    <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
+                                        <img src="/img/icoNote2.png" width="24" />
+                                    </button>
+                                    <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
+                                        <img src="/img/icoDelete1.png" width="24" />
+                                    </button>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudContainer>
+                    </div>
+                    }
+                }
+        </EditForm>
+        <div style="text-align:center">
+            <br />
+            <button class="btn btn-link" @onclick="BtnBack">
+                <img src="/img/icoBack3.png" width="40" />
+            </button>
+        </div>
+    <script>
+        window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+    </script>
+
+@code {
+    [Parameter] public int mode { get; set; }
+    [Parameter] public int Id { get; set; }
+    User user = new User ();
+    List<Note> lstNotes = new List<Note> ();
+    public bool _hasFetched = false;
+    string _cmd = "";
+
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            Navman.NavigateTo ("/Login");
+            }
+        appState.SetCmd ("");
+        lstNotes = await feService.Read_Notes (Id, mode);
+        _hasFetched = true;
+        } 
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //btns-Students
+    //btns-Messages
+    public void BtnBack()
+        {Navman.NavigateTo (appState.ReturnPage?? "/T_SwitchBoard");
+        }
+    //methods
+        public async Task BtnShowNoteInDialog(Note note)
+        {
+        _cmd = "ShowNoteInDialog";
+        appState.SetSelectedNoteId (note.NoteId);
+        appState.SetNoteDatum (note.NoteDatum);
+        appState.SetNoteText (note.NoteText);
+        appState.SetNoteParentName (note.ParentName);
+        StateHasChanged ();
+        }
+    public async Task BtnDeleteNote(int noteId)
+        {
+        var message = new MarkupString($"Delete note?");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
+            {
+            bool result = await feService.Delete_Note (noteId);
+            if(result)
+                {
+                Snackbar.Add($"deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                user.UserId = Convert.ToInt32(appState.UserId);
+                _hasFetched = false;
+                //await GetListOfProjects (user.UserId, _ShowProjectsMode); 
+                _hasFetched = true;
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                Snackbar.Add($"Failed to delete note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
+            }
+        }
+
+}

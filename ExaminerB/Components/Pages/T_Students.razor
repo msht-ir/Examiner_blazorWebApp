@@ -17,7 +17,7 @@
     }
 else if (appState.Cmd == "CreateNewNote")
     {
-    <T_Modal_CreateMessage />
+    <Modal_CreateMessage />
     }
 else
     {
@@ -51,14 +51,17 @@ else
                                             </MudSelect>
                                         </div>
                                         <div>
-                                            <button class="btn btn-link" @onclick='()=>BtnCreateNote(GroupId, "G")'>
-                                                <img src="/img/icoNewNote1.png" width="24" />
-                                            </button>
                                             <button class="btn btn-link" @onclick='()=>BtnReadStudents(GroupId,"G")'>
                                                 <img src="/img/icoListS.png" width="36" />
                                             </button>
                                             <button class="btn btn-link" @onclick='()=>BtnReportStudent(GroupId, "G")'>
                                                 <img src="/img/icoFolderS.png" width="26" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick='()=>BtnCreateNote(GroupId, "G")'>
+                                                <img src="/img/icoNewNote1.png" width="24" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick='()=>BtnCreateNote(GroupId, "G")'>
+                                                <img src="/img/icoNote2.png" width="24" />
                                             </button>
                                         </div>
                                     </MudCardContent>
@@ -74,14 +77,17 @@ else
                                             </MudSelect>
                                         </div>
                                         <div>
-                                            <button class="btn btn-link" @onclick='()=>BtnCreateNote(CourseId, "C")'>
-                                                <img src="/img/icoNewNote1.png" width="24" />
-                                            </button>
                                             <button class="btn btn-link" @onclick='()=>BtnReadStudents(CourseId,"C")'>
                                                 <img src="/img/icoListS.png" width="36" />
                                             </button>
                                             <button class="btn btn-link" @onclick='()=>BtnReportStudent(CourseId, "C")'>
                                                 <img src="/img/icoFolderS.png" width="26" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick='()=>BtnCreateNote(CourseId, "C")'>
+                                                <img src="/img/icoNewNote1.png" width="24" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick='()=>BtnCreateNote(CourseId, "C")'>
+                                                <img src="/img/icoNote2.png" width="24" />
                                             </button>
                                         </div>
                                         <div class="d-flex">
@@ -91,17 +97,20 @@ else
                                             </MudSelect>
                                         </div>
                                         <div>
-                                            <button class="btn btn-link" @onclick='()=>BtnCreateNote(ExamId, "E")'>
-                                                <img src="/img/icoNewNote1.png" width="24" />
-                                            </button>
                                             <button class="btn btn-link"  @onclick='()=>BtnReadStudents(ExamId,"E")'>
                                                 <img src="/img/icoListS.png" width="36" />
                                             </button>
                                             <button class="btn btn-link" @onclick='()=>BtnReportStudent(ExamId, "E")'>
                                                 <img src="/img/icoFolderS.png" width="26" />
                                             </button>
+                                            <button class="btn btn-link" @onclick='()=>BtnCreateNote(ExamId, "E")'>
+                                                <img src="/img/icoNewNote1.png" width="24" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick='()=>BtnCreateNote(ExamId, "E")'>
+                                                <img src="/img/icoNote2.png" width="24" />
+                                            </button>
                                             <button class="btn btn-link" @onclick='()=>BtnGotoPageExamPoints(ExamId)'>
-                                                <img src="/img/icoFolderE.png" width="26" />
+                                                <img src="/img/icoChartPie.png" width="26" />
                                             </button>
                                         </div>
                                     </MudCardContent>
@@ -117,14 +126,14 @@ else
                                             </MudSelect>
                                         </div>
                                         <div>
-                                            <button class="btn btn-link" @onclick='()=>BtnReportStudent(MessageId, "M")'>
-                                                <img src="/img/icoChartPie.png" width="26" />
-                                            </button>
                                             <button class="btn btn-link"  @onclick='()=>BtnReadStudents(MessageId,"M")'>
                                                 <img src="/img/icoListS.png" width="36" />
                                             </button>
                                             <button class="btn btn-link" @onclick='()=>BtnReportStudent(MessageId, "M")'>
                                                 <img src="/img/icoFolderS.png" width="26" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick='()=>BtnReportStudent(MessageId, "M")'>
+                                                <img src="/img/icoChartPie.png" width="26" />
                                             </button>
                                         </div>
                                     </MudCardContent>
@@ -632,6 +641,7 @@ else
     private async Task BtnCreateNewMessage(string messageTitle, string messageBody)
         {
         user.UserId = Convert.ToInt32 (appState.UserId);
+        
         Message message = new Message () { UserId = user.UserId, DateTimeCreated = "", MessageTitle = messageTitle, MessageBody=messageBody};
         int result = await feService.Create_Message(message);
         if(result > 0)
@@ -683,6 +693,7 @@ else
                 "e" => 6,
                 _ => null
                 };
+                Console.WriteLine($"page T_Students ********************************************** parentType= {parentType} , parentType.Value={parentType.Value} , Id = {Id},  mode={mode}");
         if (parentType.HasValue)
             {
             appState.SetNoteParentId (Id);

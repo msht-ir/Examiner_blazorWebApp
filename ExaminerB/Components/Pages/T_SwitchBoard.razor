@@ -19,19 +19,12 @@
             <tr>
                 <td>
                     <button class="btn btn-link" @onclick="GotoCreateNewUser">
-                        <img src="/img/icoFolderUser.png" width="65" />
+                        <img src="/img/icoUserTeacher.png" width="70" />
                     </button>
                 </td>
                 <td>
                     <button class="btn btn-link" @onclick="GotoGroupsStudents">
                         <img src="/img/gifGroup1.gif" width="80" />
-                    </button>
-                </td>
-            </tr>
-            <tr style="text-align:center;">
-                <td>
-                    <button class="btn btn-link" @onclick="CreateNewUserNote">
-                        <img src="/img/icoNewNote2.png" width="60" />
                     </button>
                 </td>
                 <td>
@@ -40,24 +33,39 @@
                     </button>
                 </td>
             </tr>
-            <tr>
+            <tr style="text-align:center;">
+                <td>
+                    <button class="btn btn-link" @onclick="CreateNewUserNote">
+                        <img src="/img/icoNewNote1.png" width="60" />
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-link" @onclick="ReportUserNotes">
+                        <img src="/img/icoNoteReport.png" style="width:60px" />
+                    </button>
+                </td>
                 <td>
                     <button class="btn btn-link" @onclick="GotoProjects">
                         <img src="/img/gifNotebook.gif" width="80" />
                     </button>
                 </td>
+            </tr>
+
+            <tr>
+                <td></td>
                 <td>
                     <button class="btn btn-link" @onclick="GotoLogin">
                         <img src="/img/gifExit.gif" style="width:80px" />
                     </button>
                 </td>
+                <td></td>
             </tr>
         </table>
         <br />
         <hr style="color:red" />
         @if (appState.Cmd == "CreateNewUserNote")
             {
-            <T_Modal_CreateMessage />
+            <Modal_CreateMessage />
             }
     </div>
 </div>
@@ -140,5 +148,11 @@
     public void GotoCreateNewUser ()
         {
         //Navman.NavigateTo ("/E_Projects");
+        }
+    public void ReportUserNotes ()
+        {
+        user.UserId = Convert.ToInt32 (appState.UserId);
+        appState.SetReturnPage ("T_SwitchBoard");
+        Navman.NavigateTo ($"/T_ReportNotes/1/{user.UserId}");
         }
 }

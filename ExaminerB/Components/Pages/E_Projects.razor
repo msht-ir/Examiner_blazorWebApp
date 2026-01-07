@@ -19,7 +19,7 @@
     }
 else if (appState.Cmd == "CreateNewSubprojectNote")
     {
-    <T_Modal_CreateMessage />
+    <Modal_CreateMessage />
     }
 else
     {
@@ -54,7 +54,7 @@ else
                 <div>
                     @if((appState.SelectedNoteId == Convert.ToInt32(note.NoteId)) & (_cmd == "ShowNoteInDialog"))
                         {
-                        <E_Modal_ShowNote />
+                        <Modal_ShowNote />
                         }
                     @if ((note.NoteTags & 1) == 1)
                         {
@@ -79,7 +79,7 @@ else
                                             </div>
                                             }
                                         <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
-                                            <img src="/img/icoNote1.png" width="24" />
+                                            <img src="/img/icoNote2.png" width="24" />
                                         </button>
                                         <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
                                             <img src="/img/icoDelete1.png" width="24" />
@@ -112,7 +112,7 @@ else
                                             </div>
                                             }
                                         <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
-                                            <img src="/img/icoNote1.png" width="24" />
+                                            <img src="/img/icoNote2.png" width="24" />
                                         </button>
                                         <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
                                             <img src="/img/icoDelete1.png" width="24" />
@@ -259,7 +259,7 @@ else
                                                                     {
                                                                     if((appState.SelectedNoteId == Convert.ToInt32(notex.NoteId)) & (_cmd == "ShowNoteInDialog"))
                                                                         {
-                                                                        <E_Modal_ShowNote />
+                                                                        <Modal_ShowNote />
                                                                         }
                                                                     if ((notex.NoteTags & 1) == 1)
                                                                         {
@@ -282,7 +282,7 @@ else
                                                                                                 }
                                                                                         </div>
                                                                                         <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                                                            <img src="/img/icoNote1.png" width="24" />
+                                                                                            <img src="/img/icoNote2.png" width="24" />
                                                                                         </button>
                                                                                         <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
                                                                                             <img src="/img/icoDelete1.png" width="24" />
@@ -313,7 +313,7 @@ else
                                                                                                 }
                                                                                         </div>
                                                                                         <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                                                            <img src="/img/icoNote1.png" width="24" />
+                                                                                            <img src="/img/icoNote2.png" width="24" />
                                                                                         </button>
                                                                                         <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
                                                                                             <img src="/img/icoDelete1.png" width="24" />
