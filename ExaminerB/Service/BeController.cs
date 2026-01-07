@@ -783,9 +783,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_NotesBySearchKey")]
-        public async Task<ActionResult<List<Note>>> Read_NotesBySearchKey ([FromBody] string searchKey)
+        public async Task<ActionResult<List<Note>>> Read_NotesBySearchKey ([FromBody] int parentId, [FromQuery] string searchKey, [FromQuery] string mode)
             {
-            var result = await _BeService.Read_NotesBySearchKeyAsync (searchKey);
+            var result = await _BeService.Read_NotesBySearchKeyAsync (searchKey, parentId, mode);
             return Ok (result);
             }
         [HttpPost ("Read_Note")]

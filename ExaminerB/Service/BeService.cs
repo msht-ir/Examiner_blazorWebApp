@@ -3693,7 +3693,7 @@ COMMIT TRANSACTION;
             }
         public async Task<List<Note>> Read_NotesAsync (int parentId, int parentType)
             {
-            //parentTypes 1:subprojects 2:students 3:groups 4:courses 5:exams
+            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
             string sql = "";
             List<Note> lstNotes = new List<Note> ();
             switch (parentType)
@@ -3746,20 +3746,53 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             return lstNotes;
             }
-        public async Task<List<Note>> Read_NotesBySearchKeyAsync (string searchKey)
+        public async Task<List<Note>> Read_NotesBySearchKeyAsync (string searchKey, int parentId, string mode)
             {
             searchKey = "%" + searchKey + "%";
             List<Note> lstNotes = new List<Note> ();
-            string sql = @"SELECT NoteId, ParentId, ParentType, NoteDatum, NoteText, NoteTags 
-                        FROM Notes 
-                        WHERE NoteText LIKE @key
-                        ORDER BY NoteDatum 
-                        OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY ";
+            string sql = @"SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags FROM Notes n";
+            switch (mode)
+                {
+                case "U":
+                        {
+                        sql += " INNER JOIN usrs u ON n.ParentId = u.UsrId WHERE u.UserId=@id ";
+                        break;
+                        }
+                case "SP":
+                        {
+                        sql += " INNER JOIN Subprojects sp ON n.ParentId = sp.SubprojectId WHERE sp.ProjectId IN (SELECT ProjectId FROM Projects WHERE UserId=@id) ";
+                        break;
+                        }
+                case "S":
+                        {
+                        sql += " INNER JOIN Students s ON n.ParentId = s.StudentId WHERE s.StudentId=@id ";
+                        break;
+                        }
+                case "G":
+                        {
+                        sql += " INNER JOIN Groups g ON n.ParentId = g.GroupId WHERE g.GroupId=@id ";
+                        break;
+                        }
+                case "C":
+                        {
+                        sql += " INNER JOIN Courses c ON n.ParentId = c.CourseId WHERE c.CourseId=@id ";
+                        break;
+                        }
+                case "E":
+                        {
+                        sql += " INNER JOIN Exams e ON n.ParentId = e.ExamId WHERE e.ExamId=@id ";
+                        break;
+                        }
+                }
+            sql += @" AND NoteText LIKE @key
+                    ORDER BY NoteDatum 
+                    OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY ";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@key", searchKey);
+            cmd.Parameters.AddWithValue ("@id", parentId);
             SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             lstNotes.Clear ();
             while (await reader.ReadAsync ())
@@ -3800,7 +3833,7 @@ COMMIT TRANSACTION;
             }
         public async Task<bool> Delete_NotesAsync (int parentId, int parentType)
             {
-            //parentTypes 1:subprojects 2:students 3:groups 4:courses 5:exams
+            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
             string sql = "DELETE FROM Notes WHERE Parent_ID=@parentid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);

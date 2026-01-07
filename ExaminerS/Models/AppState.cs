@@ -4,7 +4,7 @@
         {
         public AppState ()
             {
-            Console.WriteLine ("ExaminerS.AppState Class ************** AppState instance created!");
+            Console.WriteLine ("ExaminerS.AppState Class ***** AppState instance created!");
             }
         public event Action? OnChange;
 
@@ -124,6 +124,10 @@
         public void SetNoteId (int _NoteId) { NoteId = _NoteId; OnChange?.Invoke (); }
         public string? NoteText { get; private set; }
         public void SetNoteText (string _NoteText) { NoteText = _NoteText; OnChange?.Invoke (); }
+        public int? NoteParentType { get; private set; }
+        public void SetNoteParentType (int _NoteParentType) { NoteParentType = _NoteParentType; OnChange?.Invoke (); }
+        public int? NoteParentId { get; private set; }
+        public void SetNoteParentId (int _NoteParentId) { NoteParentId = _NoteParentId; OnChange?.Invoke (); }
         public string? NoteParentName { get; private set; }
         public void SetNoteParentName (string _NoteParentName) { NoteParentName = _NoteParentName; OnChange?.Invoke (); }
         public string? NoteDatum { get; private set; }

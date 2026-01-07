@@ -1131,9 +1131,9 @@ namespace ExaminerB.Service
                 return new List<Note> ();
                 }
             }
-        public async Task<List<Note>> Read_NotesBySearchKey (string searchKey)
+        public async Task<List<Note>> Read_NotesBySearchKey (string searchKey, int parentId, string mode)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_NotesBySearchKey", searchKey);
+            var response = await _http.PostAsJsonAsync ($"api/Read_NotesBySearchKey?mode={mode}&searchKey={searchKey}", parentId);
             if (response.IsSuccessStatusCode)
                 {
                 List<Note>? lstNotes = await response.Content.ReadFromJsonAsync<List<Note>> ();

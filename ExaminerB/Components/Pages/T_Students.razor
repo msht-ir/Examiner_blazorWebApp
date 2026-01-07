@@ -15,7 +15,7 @@
     {
     <_Loading />
     }
-else if (_cmd== "CreateNewNote")
+else if (appState.Cmd == "CreateNewNote")
     {
     <T_Modal_CreateMessage />
     }
@@ -174,16 +174,13 @@ else
                                 {
                                 <div class="d-flex align-items-center mb-1">
                                     <input class="form-check-input" style="margin-left:2px;margin-right:5px;" type="checkbox" @bind="student.IsSelected" />
-                                    <button class="btn btn-link" @onclick="()=>BtnBack()">
-                                        <img src="/img/icoEditPen.png" width="18" />
+                                    <button class="btn btn-link" @onclick='()=>BtnCreateNote(student.UserId, "S")'>
+                                        <img src="/img/icoNewNote1.png" width="20" />
                                     </button>
                                     <button class="btn btn-link" @onclick='()=>BtnReportStudent(student.UserId, "S")'>
                                         <img src="/img/icoFolderS.png" width="22" />
                                     </button>
-                                    <button class="btn btn-link" @onclick='()=>BtnReportStudent(student.UserId, "S")'>
-                                        <img src="/img/icoNewNote1.png" width="20" />
-                                    </button>
-                                    <button class="btn btn-link" @onclick='()=>BtnCreateNote(student.UserId, "S")'>
+                                    <button class="btn btn-link" @onclick='()=>BtnGotoPageReportMessages(student)'>
                                         <img src="/img/icoEnvelop2.png" width="20" />
                                     </button>
                                     @student.UserName - @student.UserNickname
@@ -491,6 +488,13 @@ else
         appState.SetReturnPage ("T_Students");
         Navman.NavigateTo ($"/T_ReportStudents/{mode}/{studentId}");
         }
+    public void BtnGotoPageReportMessages(User student)
+        {
+        appState.SetReturnPage ("T_Students");
+        appState.SetStudentId (student.UserId);
+        appState.SetStudentName (student.UserName);
+        Navman.NavigateTo ($"/T_ReportMessages/S/{student.UserId}");
+        }
     //group
     private async Task OnGroupChanged(int newValue) 
         {
@@ -666,11 +670,26 @@ else
             }
         }
     //Create_Note
-    //BtnCreateNote
     private async Task BtnCreateNote(int Id, string mode)
         {
-        _cmd = "CreateNewNote";
-        StateHasChanged ();
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
+        int? parentType = mode.ToLower() switch
+            {
+                "u" =>1,
+                "sp" =>2,
+                "s" => 3,
+                "g" => 4,
+                "c" => 5,
+                "e" => 6,
+                _ => null
+                };
+        if (parentType.HasValue)
+            {
+            appState.SetNoteParentId (Id);
+            appState.SetNoteParentType (parentType.Value);
+            appState.SetCmd ("CreateNewNote");
+            StateHasChanged ();
+            }
         }  
     //excel import
     public async Task BtnAddNewStudent()
@@ -752,13 +771,6 @@ else
         appState.SetCourseId (CourseId);
         appState.SetCourseName (course.CourseName);
         Navman.NavigateTo ("/T_Exams");
-        }
-    public void BtnGotoPageReportMessages(User student)
-        {
-        appState.SetReturnPage ("T_Students");
-        appState.SetStudentId (student.UserId);
-        appState.SetStudentName (student.UserName);
-        Navman.NavigateTo ($"/T_ReportMessages/S/{student.UserId}");
         }
     public void BtnCancel()
         {    

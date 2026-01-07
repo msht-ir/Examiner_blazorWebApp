@@ -190,14 +190,14 @@
                                             <MudCardContent Style="background-color:whitesmoke;">
                                                 @if((studentMessage.StudentMessageTags & 1) == 1)
                                                     {
-                                                    <div style="color:black;font-weight:normal;padding-left:10px; text-align:center">
+                                                    <div style="color:black;font-weight:normal;padding-left:10px; text-align:center;">
                                                         @studentMessage.MessageTitle
                                                         <div style="font-size:smaller; font-weight:bold;color:indianred">
                                                             @studentMessage.DateTimeSent
                                                         </div>
                                                     </div>
                                                     <hr style="color:gray" />
-                                                    <div style="color:black;font-weight:normal;padding-left:10px;">@studentMessage.MessageBody</div>
+                                                    <div style="color:black;font-weight:normal;padding-left:10px; white-space: pre-wrap">@studentMessage.MessageBody</div>
                                                         <hr style="color:gray" />
                                                         <div style="text-align:center">
                                                             <button class="btn btn-link" @onclick="()=>BtnDeleteStudentMessage(studentMessage)">

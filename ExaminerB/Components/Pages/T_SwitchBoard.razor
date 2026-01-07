@@ -3,6 +3,7 @@
 @inject NavigationManager Navman
 @inject AppState appState
 @implements IDisposable
+@inject IDialogService DialogService
 
 <div class="container" style="max-width:500px; margin: 0 auto;">
     <div style="text-align: center;">
@@ -14,51 +15,54 @@
         <br/>
         <hr style="color:red" />
         <br />
-        <EditForm FormName="f" Model="user">
-            <table class="table table-borderless">
-                <tr style="text-align:center;">
-                    <td>
-                        <button type="submit" class="btn btn-link" @onclick="GotoGroupsStudents">
-                            <img src="/img/gifGroup1.gif" width="80" />
-                        </button>
-                    </td>
-                    <td>
-                        <button type="submit" class="btn btn-link" @onclick="GotoCourses">
-                            <img src="/img/gifBooks.gif" width="75" />
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button type="submit" class="btn btn-link" @onclick="GotoProjects">
-                            <img src="/img/gifNotebook.gif" width="80" />
-                        </button>
-                    </td>
-                    <td>
-                        <button type="submit" class="btn btn-link" @onclick="GotoNewUserNote">
-                            <img src="/img/icoNewNote2.png" width="60" />
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button type="submit" class="btn btn-link" @onclick="GotoCreateNewUser">
-                            <img src="/img/icoFolderUser.png" width="65" />
-                        </button>
-                    </td>
-                    <td>
-                        <button type="submit" class="btn btn-link" @onclick="GotoLogin">
-                            <img src="/img/gifUserLogout.gif" style="height:100px; width:165px" />
-                        </button>
-                    </td>
-                </tr>
+        <table class="table table-borderless">
+            <tr style="text-align:center;">
+                <td>
+                    <button class="btn btn-link" @onclick="GotoGroupsStudents">
+                        <img src="/img/gifGroup1.gif" width="80" />
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-link" @onclick="GotoCourses">
+                        <img src="/img/gifBooks.gif" width="75" />
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button class="btn btn-link" @onclick="GotoProjects">
+                        <img src="/img/gifNotebook.gif" width="80" />
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-link" @onclick="CreateNewUserNote">
+                        <img src="/img/icoNewNote2.png" width="60" />
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button class="btn btn-link" @onclick="GotoCreateNewUser">
+                        <img src="/img/icoFolderUser.png" width="65" />
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-link" @onclick="GotoLogin">
+                        <img src="/img/gifUserLogout.gif" style="height:100px; width:165px" />
+                    </button>
+                </td>
+            </tr>
 
-            </table>
-            <br />
-            <hr style="color:red" />
-        </EditForm>
+        </table>
+        <br />
+        <hr style="color:red" />
+        @if (appState.Cmd == "CreateNewUserNote")
+            {
+            <T_Modal_CreateMessage />
+            }
     </div>
 </div>
+
 
 @code 
 {
@@ -70,10 +74,9 @@
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            
+
             Navman.NavigateTo ("/Login");
             }
-        appState.SetCmd ("");
         } 
     protected async Task OnAfterRenderAsync()
         {
@@ -127,9 +130,13 @@
         {
         Navman.NavigateTo ("/E_Projects");
         }
-    public void GotoNewUserNote ()
+    public async Task CreateNewUserNote ()
         {
-        //Navman.NavigateTo ("/E_Projects");
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
+        appState.SetNoteParentType (1);
+        appState.SetNoteParentId (Convert.ToInt32(appState.UserId));
+        appState.SetCmd ("CreateNewUserNote");
+        StateHasChanged();
         }
     public void GotoCreateNewUser ()
         {

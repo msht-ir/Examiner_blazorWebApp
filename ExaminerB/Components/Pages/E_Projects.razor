@@ -17,6 +17,10 @@
     {
     <_LoadingTimer />
     }
+else if (_cmd == "CreateNewSubprojectNote")
+    {
+    <T_Modal_CreateMessage />
+    }
 else
     {
     @* <_eLibWecome /> *@
@@ -41,21 +45,10 @@ else
             </div>
         </div>
         <hr style="color:indianred" />
-        <h5 style="text-align:center;color:royalBlue">
-            @(_ShowProjectsMode switch
-                {
-                "all"      => "All Projects",
-                "active"   => "Active Projects",
-                "inactive" => "Inactive Projects",
-                _          => ""
-                })
-        </h5>
-        @* SHOW SEARCH RESULTS *@ 
         @if(lstNotes.Count > 0)
             {
-            <div>
-                <h6 style="text-align:center">TOP 10 Results:</h6>
-            </div>
+            @* SHOW SEARCH RESULTS *@ 
+            <h5 style="text-align:center">TOP 10 Results:</h5>
             foreach (Note note in lstNotes)
                 {
                 <div>
@@ -131,7 +124,19 @@ else
                         }
                 </div>
             }
-        }
+            }
+        else
+            {
+            <h5 style="text-align:center;color:royalBlue">
+                @(_ShowProjectsMode switch
+                    {
+                    "all"      => "All Projects",
+                    "active"   => "Active Projects",
+                    "inactive" => "Inactive Projects",
+                    _          => ""
+                    })
+            </h5>            
+            }
         <br/>
         @* PROJECTS/SUBPROJECTS *@
         <div class="accordion" id="accordionProjects" style="max-width:500px; margin: 0 auto;">
@@ -225,12 +230,12 @@ else
                                                             <button class="btn btn-link" @onclick="()=>BtnDeleteSubproject(subProject.SubprojectId)">
                                                                 <img src="/img/icoDelete1.png" width="22" />
                                                             </button>
-                                                            <button class="btn btn-link" @onclick="()=>BtnAddSubprojectNote(subProject.SubprojectId)">
+                                                            <button class="btn btn-link" @onclick="()=>BtnCreateNewSubprojectNote(subProject.SubprojectId)">
                                                                 <img src="/img/icoAdd0.png" width="22" />
                                                             </button>
                                                         </div>
                                                         <div style="text-align: center;">
-                                                            @if((appState.Cmd == "AddNewSubprojectNote") & (subProject.SubprojectId ==appState.SubprojectId))
+                                                            @if((appState.Cmd == "EditSubprojectNote") & (subProject.SubprojectId ==appState.SubprojectId))
                                                                 {
                                                                 @* Create a new note here *@
                                                                 <hr style="color:indianred"/>
@@ -243,7 +248,7 @@ else
                                                                             <MudTextField T="string" Label="New Note" @bind-Value="note.NoteText" Variant="Variant.Filled" Lines="10" AutoResize="true" Style="width:100%;" />
                                                                             <div>
                                                                                 <br />
-                                                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="()=>BtnCreateSubprojectNote(subProject.SubprojectId)">Save</MudButton>
+                                                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="()=>BtnUpdateSubprojectNote(subProject.SubprojectId)">Update</MudButton>
                                                                                 <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="BtnCancel">Cancel</MudButton>
                                                                             </div>
                                                                         </MudCardContent>
@@ -684,13 +689,21 @@ else
         //Navman.NavigateTo ($"/T_ReportMessages/{mode}/{stdnt.UserId}");
         }
     //subproject notes
-    public async Task BtnAddSubprojectNote(int subProjectId)
+    public async Task BtnCreateNewSubprojectNote(int subProjectId)
         {
-        appState.SetCmd ("AddNewSubprojectNote");
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
+        appState.SetNoteParentType (2);
+        appState.SetNoteParentId (subProjectId);
+        _cmd = "CreateNewSubprojectNote";
+        StateHasChanged ();
+        }
+    public async Task BtnEditSubprojectNote(int subProjectId)
+        {
+        appState.SetCmd ("EditSubprojectNote");
         appState.SetSubprojectId (subProjectId);
         StateHasChanged ();
         }
-    public async Task BtnCreateSubprojectNote(int subProjectId)
+    public async Task BtnUpdateSubprojectNote(int subProjectId)
         {
         if (note.NoteText.Trim() == "")
             {
@@ -699,17 +712,16 @@ else
             }
         else
             {
-            //parentTypes 1:subprojects 2:students 3:groups 4:courses 5:exams
-            note.ParentId = subProjectId;
+            note.ParentId = Convert.ToInt32(appState.NoteParentId);
             note.ParentType = 1;
             DateTime _dt = _date.Value.Date + _time.Value;
             note.NoteDatum = _dt.ToString ("yyyy-MM-dd HH:mm");
             note.NoteTags = 0; //1:rtl 2:done 4:shared 8:readonly
             _hasFetched = false;
-            int result = await feService.Create_Note (note);
-            if(result > 0)
+            bool result = await feService.Update_Note (note);
+            if(result)
                 {
-                Snackbar.Add("Note saved successfully!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("Updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 user.UserId = Convert.ToInt32(appState.UserId);
                 await GetListOfProjects (user.UserId, _ShowProjectsMode);
                 appState.SetCmd("");
@@ -717,7 +729,7 @@ else
                 }
             else
                 {
-                Snackbar.Add("Failed to save note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("Failed to update note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             _hasFetched = true;
             }
@@ -733,7 +745,8 @@ else
         }
     public async Task BtnReadNotesBySearch()
         {
-        lstNotes = await feService.Read_NotesBySearchKey (strSearchKey);
+        user.UserId = Convert.ToInt32 (appState.UserId);
+        lstNotes = await feService.Read_NotesBySearchKey (strSearchKey, user.UserId, "SP");
         StateHasChanged ();
         }
     public async Task BtnCancelSearch()
