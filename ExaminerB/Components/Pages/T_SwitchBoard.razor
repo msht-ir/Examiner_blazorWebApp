@@ -16,10 +16,22 @@
         <hr style="color:red" />
         <br />
         <table class="table table-borderless">
-            <tr style="text-align:center;">
+            <tr>
+                <td>
+                    <button class="btn btn-link" @onclick="GotoCreateNewUser">
+                        <img src="/img/icoFolderUser.png" width="65" />
+                    </button>
+                </td>
                 <td>
                     <button class="btn btn-link" @onclick="GotoGroupsStudents">
                         <img src="/img/gifGroup1.gif" width="80" />
+                    </button>
+                </td>
+            </tr>
+            <tr style="text-align:center;">
+                <td>
+                    <button class="btn btn-link" @onclick="CreateNewUserNote">
+                        <img src="/img/icoNewNote2.png" width="60" />
                     </button>
                 </td>
                 <td>
@@ -35,24 +47,11 @@
                     </button>
                 </td>
                 <td>
-                    <button class="btn btn-link" @onclick="CreateNewUserNote">
-                        <img src="/img/icoNewNote2.png" width="60" />
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button class="btn btn-link" @onclick="GotoCreateNewUser">
-                        <img src="/img/icoFolderUser.png" width="65" />
-                    </button>
-                </td>
-                <td>
                     <button class="btn btn-link" @onclick="GotoLogin">
-                        <img src="/img/gifUserLogout.gif" style="height:100px; width:165px" />
+                        <img src="/img/gifExit.gif" style="width:80px" />
                     </button>
                 </td>
             </tr>
-
         </table>
         <br />
         <hr style="color:red" />

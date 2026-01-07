@@ -3786,7 +3786,7 @@ COMMIT TRANSACTION;
                 }
             sql += @" AND NoteText LIKE @key
                     ORDER BY NoteDatum 
-                    OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY ";
+                    OFFSET 0 ROWS FETCH NEXT 20 ROWS ONLY ";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
