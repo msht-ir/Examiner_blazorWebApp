@@ -7,7 +7,11 @@
 @inject IDialogService DialogService
 
 @if (IsOpen)
-{
+    {
+    @if((appState.Cmd !="Update") & (appState.Cmd != "Create"))
+        {
+        Close ();
+        }
     Title = "New note";
     <div class="modal-backdrop fade show"></div>
     <div class="modal show d-block">
@@ -28,12 +32,23 @@
                                 <MudCardContent Style="background-color:whitesmoke;">
                                     <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Dense="true" />
                                     <MudTimePicker Label="Time ساعت" @bind-Time="_time" TimeFormat="HH:mm" Variant="Variant.Outlined" Dense="true"/>
-                                    <MudTextField T="string" Label="New Note" @bind-Value="note.NoteText" Variant="Variant.Filled" Lines="10" AutoResize="true" Style="width:100%;" />
-                                    <div style="text-align:center">
+                                    <MudTextField T="string" Label="New Note" @bind-Value="note.NoteText" Variant="Variant.Filled" Lines="10" AutoResize="true" Style=@($"width:100%;direction:{(note.IsRtl ? "rtl" : "ltr")};") />
+                                        <MudCheckBox @bind-Value="note.IsRtl" Label="RTL" Color="Color.Primary"></MudCheckBox>
                                         <br />
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="BtnCreateNote">Save note</MudButton>
-                                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="BtnCancel">Cancel</MudButton>
-                                    </div>
+                                        @if (appState.Cmd == "CreateNote")
+                                            {
+                                            <div style="text-align:center">
+                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="BtnCreateNote">Save note</MudButton>
+                                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="BtnCancel">Cancel</MudButton>
+                                            </div>
+                                            }
+                                        else if (appState.Cmd == "UpdateNote")
+                                            {
+                                            <div style="text-align:center">
+                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="BtnUpdateNote">Update note</MudButton>
+                                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="BtnCancel">Cancel</MudButton>
+                                            </div>
+                                            }
                                 </MudCardContent>
                             </MudCard>
                         </MudContainer>
@@ -42,7 +57,7 @@
             </div>
         </div>
     </div>
-}
+    }
 
 @code {
     [Parameter] public string Title { get; set; }
@@ -55,19 +70,44 @@
     User user = new User ();
     Note note = new Note();
     bool _hasFetched;
-
+    string textDirection = "ltr";
     private DateTime? _date = DateTime.Now;
     private TimeSpan? _time = DateTime.Now.TimeOfDay;
+
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            Navman.NavigateTo ("/Login");
+            }
+        if(appState.Cmd == "UpdateNote")
+            {
+            note.NoteText = appState.NoteText;
+            note.IsRtl = Convert.ToBoolean (appState.NoteIsRtl);
+            note.ParentId = Convert.ToInt32 (appState.NoteParentId);
+            note.ParentType = Convert.ToInt32 (appState.NoteParentType);
+            note.ParentType = Convert.ToInt32 (appState.NoteParentType);
+            }
+        _hasFetched = true;
+        } 
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
 
     public void Open() => IsOpen = true;
     public void Close() => IsOpen = false;
     public void BtnClose()
         {
-        //at top of page
-        IsOpen = false;
+        IsOpen = false; //at top of page
         }
     public async Task BtnCreateNote()
-
         {
         if (note.NoteText.Trim() == "")
             {
@@ -81,7 +121,6 @@
             note.ParentType = Convert.ToInt32(appState.NoteParentType);
             DateTime _dt = _date.Value.Date + _time.Value;
             note.NoteDatum = _dt.ToString ("yyyy-MM-dd HH:mm");
-            note.NoteTags = 0; //1:rtl 2:done 4:shared 8:readonly
             _hasFetched = false;
             int result = await feService.Create_Note (note);
             if(result > 0)
@@ -94,6 +133,36 @@
             else
                 {
                 Snackbar.Add("Failed to save note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
+            _hasFetched = true;
+            }
+        }
+    public async Task BtnUpdateNote()
+        {
+        if (note.NoteText.Trim() == "")
+            {
+            Snackbar.Add("Note is empty!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            return;
+            }
+        else
+            {
+            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
+            note.ParentId = Convert.ToInt32(appState.NoteParentId);
+            note.ParentType = Convert.ToInt32(appState.NoteParentType);
+            DateTime _dt = _date.Value.Date + _time.Value;
+            note.NoteDatum = _dt.ToString ("yyyy-MM-dd HH:mm");
+            _hasFetched = false;
+            bool result = await feService.Update_Note (note);
+            if(result)
+                {
+                Snackbar.Add("Updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                user.UserId = Convert.ToInt32(appState.UserId);
+                appState.SetCmd("");
+                Close ();
+                }
+            else
+                {
+                Snackbar.Add("Failed to Update note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             _hasFetched = true;
             }

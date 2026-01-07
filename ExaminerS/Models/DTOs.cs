@@ -329,6 +329,18 @@ namespace ExaminerS.Models
         public string NoteDatum { get; set; } = "";
         public string NoteText { get; set; } = "";
         public int NoteTags { get; set; } = 0; //1:rtl 2:done 3:shared 4:readonly 
+        public bool IsRtl
+            {
+            get => (NoteTags & 1) == 1;
+            set
+                {
+                if (value)
+                    NoteTags |= 1;
+                else
+                    NoteTags &= ~1;
+                }
+            }
+
         }
     //NN
     public class NoteNet

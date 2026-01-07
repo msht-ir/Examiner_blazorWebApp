@@ -122,6 +122,8 @@
         //Note
         public int? NoteId { get; private set; }
         public void SetNoteId (int _NoteId) { NoteId = _NoteId; OnChange?.Invoke (); }
+        public bool NoteIsRtl { get; private set; }
+        public void SetNoteIsRtl (bool _NoteIsRtl) { NoteIsRtl = _NoteIsRtl; OnChange?.Invoke (); }
         public string? NoteText { get; private set; }
         public void SetNoteText (string _NoteText) { NoteText = _NoteText; OnChange?.Invoke (); }
         public int? NoteParentType { get; private set; }

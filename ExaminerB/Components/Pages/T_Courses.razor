@@ -9,7 +9,7 @@
 @inject IDialogService DialogService
 
     <div style="text-align: center;">
-        <h2 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h2>
+        <h4 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h4>
         <hr style="color:red"/>
         <h2 style="color:royalblue">Courses</h2>
     </div>
@@ -70,17 +70,17 @@
                                     else
                                         {
                                          <div style="text-align: center;">
+                                            <button class="btn btn-link" title="Rename this Course" @onclick="()=>BtnEditCourse(crs.CourseId)">
+                                                <img src="/img/icoRename.png" width="30" />
+                                            </button>
                                             <button class="btn btn-link" title="List Tests" @onclick="()=>BtnListCourseTests(crs.CourseId, crs.CourseName)" >
                                                 <img src="/img/icoFolderT.png" width="26" />
                                             </button>
                                             <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTests(crs.CourseId)" >
-                                                <img src="/img/icoListT.png" width="34" />
+                                                <img src="/img/icoListT.png" width="36" />
                                             </button>
                                             <button class="btn btn-link" title="List Exams" @onclick="()=>BtnExams(crs)" >
-                                                <img src="/img/icoListE.png" width="34" />
-                                            </button>
-                                            <button class="btn btn-link" title="Rename this Course" @onclick="()=>BtnEditCourse(crs.CourseId)">
-                                                <img src="/img/icoRename.png" width="30" />
+                                                <img src="/img/icoListE.png" width="36" />
                                             </button>
                                             <button class="btn btn-link" title="Delete this Course!" @onclick="()=>BtnDeleteCourse(crs)" >
                                                 <img src="/img/icoDelete1.png" width="26" />
@@ -344,7 +344,7 @@
             }
         else
             {
-            await JS.InvokeVoidAsync ("alert", "Course did not created --- !");
+            Snackbar.Add($"Course did not created", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     public void BtnEditCourse(int courseId)
@@ -432,7 +432,7 @@
             }
         else
             {
-            await JS.InvokeVoidAsync ("alert", "Course Topic did not changed --- process failed");
+            Snackbar.Add($"Course Topic did not changed", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }        
         }
     public async Task BtnUpdateCourseTopic(CourseTopic courseTopic)
@@ -488,7 +488,7 @@
             }
         else
             {
-            await JS.InvokeVoidAsync ("alert", "CourseFolder did not saved --- process failed");
+            Snackbar.Add($"CourseFolder did not saved", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }        
         appState.SetCourseId (courseId);
         _hasFetched = true;
@@ -507,10 +507,9 @@
         _hasFetched = true;
         }
     public async Task BtnDeleteCourseFolder(int courseFolderId)
-        {
-        var message = new MarkupString($"<hr style=color:blue>Delete <strong>(Course Folder Id: {courseFolderId})</strong>? <br><br> Continue? <hr style=color:blue>");
+        {var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> <strong>(Course Folder Link: {courseFolderId})</strong>?<br>Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(
-            title: "Confirm Delete Course Folder Link",
+            title: "Delete Course-Folder Link",
             markupMessage: message,
             yesText: "Yes",
             cancelText: "No");

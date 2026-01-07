@@ -1159,9 +1159,8 @@ namespace ExaminerB.Service
             }
         public async Task<bool> Update_Note (Note note)
             {
-            //var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
-            //return response.IsSuccessStatusCode ? true : false;
-            return false;
+            var response = await _http.PostAsJsonAsync ("api/Update_Note", note);
+            return response.IsSuccessStatusCode ? true : false;
             }
         public async Task<bool> Delete_Notes (int parentId, int parentType)
             {

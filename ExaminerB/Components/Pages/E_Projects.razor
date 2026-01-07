@@ -19,7 +19,7 @@
     }
 else if (appState.Cmd == "CreateNewSubprojectNote")
     {
-    <Modal_CreateMessage />
+    <Modal_CreateNote />
     }
 else
     {
@@ -543,7 +543,7 @@ else
                 }
             else
                 {
-                await JS.InvokeVoidAsync("alert", "\n\nThere are subProjects in this Project.\n\nThis Project cannot be deleted.");
+                Snackbar.Add($"There are subProjects in this Project!!!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             }
         }
@@ -675,18 +675,12 @@ else
             }
         else
             {
-            await JS.InvokeVoidAsync("alert", "\nStudent did note removed ---- operation failed!");
+            Snackbar.Add($"Failed to remove Student", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     public void BtnReportSubproject(Subproject subProject)
         {
         //Navman.NavigateTo ($"/T_ReportStudents/{mode}/{stdnt.UserId}");
-        }
-    public void BtnReportSubprojectNotes(Subproject subProject)
-        {
-        appState.SetSubprojectName (subProject.SubprojectName);
-        string mode = "StudentWithDels";
-        //Navman.NavigateTo ($"/T_ReportMessages/{mode}/{stdnt.UserId}");
         }
     //subproject notes
     public async Task BtnCreateNewSubprojectNote(int subProjectId)
@@ -740,6 +734,7 @@ else
         appState.SetSelectedNoteId (note.NoteId);
         appState.SetNoteDatum (note.NoteDatum);
         appState.SetNoteText (note.NoteText);
+        appState.SetNoteIsRtl (note.IsRtl);
         appState.SetNoteParentName (note.ParentName);
         StateHasChanged ();
         }
@@ -782,7 +777,7 @@ else
         //delete all subprojects of a Project
         if(0 == 0)
             {
-            await JS.InvokeVoidAsync ("alert", "Select a Course from List");
+            Snackbar.Add($"Select a Course from List", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             return;
             }
         else
@@ -790,13 +785,13 @@ else
             //bool result = await feService.Delete_SubprojectNote (0, groupId);
             if(0==0)
                 {
-                await JS.InvokeVoidAsync("alert", "\nAll Subprojects in this Project are removed from the course.");
+                Snackbar.Add($"All Subprojects in this Project are removed from the course.", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 appState.SetCmd("");
                 StateHasChanged();
                 }
             else
                 {
-                await JS.InvokeVoidAsync("alert", "\nStudents did not removed from the course --- operation failed");
+                Snackbar.Add($"Students did not removed from the course", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             }
         }

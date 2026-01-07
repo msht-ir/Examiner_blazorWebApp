@@ -356,7 +356,7 @@ else
         }
     public async Task BtnDeleteExamComposition(int examCompositionId)
         {
-        var message = new MarkupString($"Delete Exam Composition?");
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Exam Composition? <br>Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
@@ -436,7 +436,7 @@ else
         }
     public async Task BtnDeleteExamTest(int testId)
         {
-        var message = new MarkupString($"This Test will be removed from Exam test list<br/><br/>Remove?");
+        var message = new MarkupString($"<hr><span style='color:indianred'>Remove</span> this test from <span style='color:royalblue'>Exam</span> test list? <br> Remove??<br><br> <div style='text-align:center'><img src='/img/icoEraser.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
@@ -458,7 +458,7 @@ else
         }
     public async Task BtnBack()
         {
-        var message = new MarkupString($"Save Exam Changes?");
+        var message = new MarkupString($"<hr><span style='color:indianred'>Save</span> Exam Changes? <br><span style='font-weight:bold;'>Notice:</span><br>Number of tests in this exam will be <span style='color:royalblue'>Updated</span> automatically<br><br> <div style='text-align:center'><img src='/img/icoSave1.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(
             title: "Confirm Exam Changes",
             markupMessage: message,

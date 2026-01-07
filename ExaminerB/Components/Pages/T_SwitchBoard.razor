@@ -35,7 +35,7 @@
             </tr>
             <tr style="text-align:center;">
                 <td>
-                    <button class="btn btn-link" @onclick="CreateNewUserNote">
+                    <button class="btn btn-link" @onclick="CreateNote">
                         <img src="/img/icoNewNote1.png" width="60" />
                     </button>
                 </td>
@@ -63,9 +63,9 @@
         </table>
         <br />
         <hr style="color:red" />
-        @if (appState.Cmd == "CreateNewUserNote")
+        @if (appState.Cmd == "CreateNote")
             {
-            <Modal_CreateMessage />
+            <Modal_CreateNote />
             }
     </div>
 </div>
@@ -137,22 +137,22 @@
         {
         Navman.NavigateTo ("/E_Projects");
         }
-    public async Task CreateNewUserNote ()
+    public async Task CreateNote ()
         {
         //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
         appState.SetNoteParentType (1);
         appState.SetNoteParentId (Convert.ToInt32(appState.UserId));
-        appState.SetCmd ("CreateNewUserNote");
+        appState.SetCmd ("CreateNote");
         StateHasChanged();
-        }
-    public void GotoCreateNewUser ()
-        {
-        //Navman.NavigateTo ("/E_Projects");
         }
     public void ReportUserNotes ()
         {
         user.UserId = Convert.ToInt32 (appState.UserId);
         appState.SetReturnPage ("T_SwitchBoard");
         Navman.NavigateTo ($"/T_ReportNotes/1/{user.UserId}");
+        }
+    public void GotoCreateNewUser ()
+        {
+        //Navman.NavigateTo ("/E_Projects");
         }
 }

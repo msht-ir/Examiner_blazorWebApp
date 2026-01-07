@@ -9,8 +9,8 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
-<div class="container mt-5 align-items-center">
-    <p style="font-size:larger; text-align:center;color:black">e<span style="color:indianred">x</span>aminer <span style="font-size:small;color:royalblue"> @appState.UserNickname</span></p>
+<div class="container mt-2 align-items-center">
+    <div style="font-size:larger; text-align:center;color:black">e<span style="color:indianred">x</span>aminer <span style="font-size:small;color:royalblue"> @appState.UserNickname</span></div>
     <hr style="color:red"/>
     @if (!_hasFetched)
         {
@@ -332,29 +332,6 @@
         {
         appState.OnChange -= TriggerRender;
         }    
-    //btns for StudentExams
-    public async Task BtnStartExam(StudentExam studentExam)
-        {
-        //read ExamTags : is exam training? Yes:allow Help
-        Exam exam = await feService.Read_Exam (studentExam.ExamId, false);
-        //keep ExamTags in appState (use in S-StudentExamTest page)
-        appState.SetExamTags (exam.ExamTags);
-        bool result = await feService.Update_StudentExamTags(studentExam, "startedOn");
-        if (result)
-            {
-            appState.SetStudentExamId (studentExam.StudentExamId);
-            Navman.NavigateTo ($"/S_StudentExamTests");
-            }
-        }
-    private void BtnReportExam(int studentExamId)
-        {
-        Navman.NavigateTo ($"/S_ReportStudentExam/{studentExamId}/Review");
-        }    
-    //btns under the table
-    private void BtnExit()
-        {
-        Navman.NavigateTo("/Login", true);
-        }
     //btns for StudentCourses
     private void BtnTakeATest (int studentCourseId)
         {
@@ -385,11 +362,10 @@
         //---lambda:
         string msg = mode switch
             {
-                "filter" => $"Filter out your correct answers in ( {studentCourse.CourseName} ) ?",
-                "wipeout" => $"Clear all your sample tests in ( {studentCourse.CourseName} ) ?",
+                "filter" => $"<hr><span style='color:indianred'>Filter out </span>your correct answers in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoFilter.png' width='40'/></div><br><hr>",
+                "wipeout" => $"<hr><span style='color:indianred'>Clear</span> all your sample tests in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>",
                 _ => throw new ArgumentException($"Invalid mode: {mode}")
-                };
-        
+                };        
         var message = new MarkupString($"{msg}");
         bool? confirmResult = await DialogService.ShowMessageBox(
             title: "Confirm Clear your data",
@@ -402,6 +378,29 @@
             //refresh
             lstStudentCourses = await feService.Read_StudentCourses (student.UserId, "ByStudentId");        
             }
+        }
+    //btns for StudentExams
+    public async Task BtnStartExam(StudentExam studentExam)
+        {
+        //read ExamTags : is exam training? Yes:allow Help
+        Exam exam = await feService.Read_Exam (studentExam.ExamId, false);
+        //keep ExamTags in appState (use in S-StudentExamTest page)
+        appState.SetExamTags (exam.ExamTags);
+        bool result = await feService.Update_StudentExamTags(studentExam, "startedOn");
+        if (result)
+            {
+            appState.SetStudentExamId (studentExam.StudentExamId);
+            Navman.NavigateTo ($"/S_StudentExamTests");
+            }
+        }
+    private void BtnReportExam(int studentExamId)
+        {
+        Navman.NavigateTo ($"/S_ReportStudentExam/{studentExamId}/Review");
+        }    
+    //btns under the table
+    private void BtnExit()
+        {
+        Navman.NavigateTo("/Login", true);
         }
     //btns for StudentMessages
     private async Task BtnSetStudentMessageAsRead(StudentMessage studentMessage)
@@ -472,7 +471,7 @@
         }
     private async Task BtnDeleteStudentMessage(StudentMessage studentMessage)
         {
-        var message = new MarkupString($"Delete Message?");
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Message? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {

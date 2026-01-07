@@ -31,8 +31,8 @@
                         <MudCardContent Style="background-color:whitesmoke;">
                             <div style="text-align:center">
                                 <span style="color:indianred; font-weight:bold;">@exam.ExamTitle</span> <br />
-                                <span style="color:royalblue; font-weight:bold;font-size:smaller">@exam.ExamDateTime</span><br />
-                                <span>@exam.ExamNTests Tests</span> / <span>@exam.ExamDuration m</span><br />
+                                <span style="color:royalblue; font-weight:bold;font-size:smaller">@exam.ExamDateTime</span>
+                                <span style="font-weight:bold;font-size:smaller;"> -- @exam.ExamNTests Tests, @exam.ExamDuration min</span><br />
                                 <hr style="color:indianred"/>
                                 <button style="border:none" class="btn btn-link" @onclick="()=>BtnEditExam(exam)" >
                                     <img src="/img/icoRename.png" width="26" />
@@ -50,6 +50,11 @@
                                 <button style="border:none" class="btn btn-link" @onclick="()=>BtnSetExamAsFinishedForAllStudents(exam.ExamId)" >
                                     <img src="/img/icoClock2.png" width="22" />
                                 </button>
+                                <button style="border:none" class="btn btn-link" @onclick="()=>BtnDeleteExam(exam.ExamId)" >
+                                    <img src="/img/icoDelete1.png" width="20" />
+                                </button>
+                            </div>
+                            <div style="text-align:center">
                                 <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportExamTests(exam.ExamId)">
                                     <img src="/img/icoListT.png" width="32" />
                                 </button>
@@ -58,9 +63,6 @@
                                 </button>
                                 <button style="border:none" class="btn btn-link" @onclick="()=>BtnReportExamPoints(exam.ExamId)" >
                                     <img src="/img/icoFolderE.png" width="26" />
-                                </button>
-                                <button style="border:none" class="btn btn-link" @onclick="()=>BtnDeleteExam(exam.ExamId)" >
-                                    <img src="/img/icoDelete1.png" width="20" />
                                 </button>
                             </div>
                         </MudCardContent>

@@ -14,25 +14,43 @@
                     @* <button class="btn-close" @onclick="Close"></button> *@
                 </div>
                 <div class="modal-body">
-                    @ChildContent
                     <div class="mt-3">
                         <span style="color:royalblue; font-weight:bold;">
                             @appState.NoteParentName
                         </span>
                         <br />
-                        <span style="color:indianred; font-weight:bold;">
+                        <div style="text-align:center; color:indianred; font-weight:bold;">
                             @noteDatum
-                        </span>
-                        <MudContainer Class="mt-2 px-0">
-                            <MudCard Class="mx-0">
-                                <MudCardContent Style="background-color:whitesmoke;">
-                                    <div style="text-align:left; font-weight:bold; font-size:smaller; white-space: pre-wrap; font-family:Courier New, Courier, monospace;">
-                                        @noteText
-                                    </div>
-                                </MudCardContent>
-                            </MudCard>
-                        </MudContainer>
+                        </div>
                     </div>
+                        @if(Convert.ToBoolean(appState.NoteIsRtl))
+                        {
+                        <div class="mt-3 text-end">
+                            <MudContainer Class="mt-2 px-0">
+                                <MudCard Class="mx-0">
+                                    <MudCardContent Style="background-color:whitesmoke;">
+                                        <div style="font-weight:normal; font-size:small; white-space: pre-wrap; font-family:'Segoe UI';">
+                                            @noteText
+                                        </div>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
+                        </div>
+                        }
+                    else
+                        {
+                        <div class="mt-3">
+                                <MudContainer Class="mt-2 px-0">
+                                    <MudCard Class="mx-0">
+                                        <MudCardContent Style="background-color:whitesmoke;">
+                                            <div style='font-weight:bold; font-size:smaller; white-space: pre-wrap; font-family:Courier New, Courier, monospace;'>
+                                                @noteText
+                                            </div>
+                                        </MudCardContent>
+                                    </MudCard>
+                                </MudContainer>
+                        </div>                        
+                        }
                         <br />
                     <div style="text-align:center">
                         <button class="btn btn-link" @onclick="BtnClose">
