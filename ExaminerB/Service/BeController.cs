@@ -686,12 +686,6 @@ namespace ExaminerB.Backend
             var result = await _BeService.Create_StudentMessagesAsync (messageId, lstStudentIds, requestFeedback);
             return Ok (result);
             }
-        [HttpPost ("Create_StudentMessage")]
-        public async Task<ActionResult<int>> Create_StudentMessage ([FromBody] Message message, [FromQuery] string mode, [FromQuery] int recipientId, [FromQuery] bool typeFeedback)
-            {
-            var result = await _BeService.Create_StudentMessageAsync (message, mode, recipientId, typeFeedback);
-            return Ok (result);
-            }
         [HttpPost ("Read_StudentMessages")]
         public async Task<ActionResult<List<StudentMessage>>> Read_StudentMessages ([FromBody] int Id, [FromQuery] string mode)
             {

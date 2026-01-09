@@ -347,7 +347,7 @@ else
                 {
                 lstExamCompositions.Clear ();
                 lstExamCompositions = await feService.Read_ExamCompositions (examId);
-                Snackbar.Add("Exam composition Updated!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("Exam composition Updated!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 appState.SetCmd ("");
                 StateHasChanged ();
                 }
@@ -425,7 +425,7 @@ else
             int result = await feService.Create_ExamTest (examTest);
             lstExamTests.Clear ();
             lstExamTests = await feService.Read_TestsByExamId (examId, true);
-            Snackbar.Add("Test added to the exam list", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("Test added to the exam list", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             appState.SetCmd ("");
             StateHasChanged ();
             }

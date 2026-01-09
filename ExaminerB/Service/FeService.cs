@@ -956,7 +956,7 @@ namespace ExaminerB.Service
             }
         public async Task<bool> Delete_Messages (string mode, int recipientId)
             {
-            //modes: onemessage, togroupmembers, tocoursemembers, toexammembers, toonestudent
+            //modes: ByStudentId, ByMessageId, ByStudentMessageId
             var response = await _http.PostAsJsonAsync ($"api/Delete_Messages?mode={mode}", recipientId);
             return response.IsSuccessStatusCode ? true : false;
             }
@@ -966,11 +966,6 @@ namespace ExaminerB.Service
             {
             var response = await _http.PostAsJsonAsync ($"api/Create_StudentMessages?messageId={messageId}&requestFeedback={requestFeedback}", lstStudentIds);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<int> Create_StudentMessage (Message message, string mode, int recipientId, bool typeFeedback)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Create_StudentMessage?mode={mode}&recipientId={recipientId}&typeFeedback={typeFeedback}", message);
-            return response.IsSuccessStatusCode ? 1 : 0;
             }
         public async Task<List<StudentMessage>> Read_StudentMessages (int Id, string mode)
             {

@@ -5,6 +5,9 @@
 @inject AppState appState
 @inject IJSRuntime JS
 @implements IDisposable
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
 <h1 style="text-align:center;color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h1>
 <hr style="color:red"/>
 
@@ -131,10 +134,10 @@ else
                             <button class="btn btn-link" @onclick="()=>BtnCalcPercentsForMessage(message)">
                                 <img src="/img/icoChartPie.png" width="26" />
                             </button>
-                            <button class="btn btn-link" @onclick="()=>BtnDelete_Messages(message)">
+                            <button class="btn btn-link" @onclick="()=>BtnDelete_Messages(message.MessageId)">
                                 <img src="/img/icoDelete2.png" width="30" />
                             </button>
-                            <button class="btn btn-link" @onclick="()=>BtnDelete_Message(message.MessageId)">
+                            <button class="btn btn-link" @onclick="()=>BtnDelete_Message(message.StudentMessageId)">
                                 <img src="/img/icoDelete1.png" width="22" />
                             </button>                
                         </div>
@@ -258,47 +261,49 @@ else
         nMessagesNotAnswered = 0;
         foreach (StudentMessage stmsg in lstStudentMessages)
             {
-                nMessagesAll++;
-                if((stmsg.StudentMessageTags & 1) == 1)
+            nMessagesAll++;
+            if((stmsg.StudentMessageTags & 1) == 1)
+                {
+                nMessagesRead++;                
+                }
+            if((stmsg.StudentMessageTags & 2) == 2)
+                {
+                nMessagesBookmarked++;
+                }
+            if((stmsg.StudentMessageTags & 4) == 4)
+                {
+                nMessagesDeleted++;
+                }
+            if((stmsg.StudentMessageTags & 8) == 8)
+                {
+                nMessagesTypeIsFeedback++;
+                if((stmsg.StudentMessageTags & 16) == 16)
                     {
-                    nMessagesRead++;                
+                    nMessagesAnsweredYes++;
                     }
-                if((stmsg.StudentMessageTags & 2) == 2)
+                else if((stmsg.StudentMessageTags & 32) == 32)
                     {
-                    nMessagesBookmarked++;
+                    nMessagesAnsweredNo++;
                     }
-                if((stmsg.StudentMessageTags & 4) == 4)
+                else
                     {
-                    nMessagesDeleted++;
+                    nMessagesNotAnswered++;
                     }
-                if((stmsg.StudentMessageTags & 8) == 8)
-                    {
-                    nMessagesTypeIsFeedback++;
-                    if((stmsg.StudentMessageTags & 16) == 16)
-                        {
-                        nMessagesAnsweredYes++;
-                        }
-                    else if((stmsg.StudentMessageTags & 32) == 32)
-                        {
-                        nMessagesAnsweredNo++;
-                        }
-                    else
-                        {
-                        nMessagesNotAnswered++;
-                        }
-                    }                
+                }                
             }
         appState.SetCmd ("ShowStudentMessageStats");
         }
     public async Task BtnDelete_MessagesOfstudent(int studentId)
         {
-        if(await JS.InvokeAsync<bool>("confirm", "Delete All Messages Permanently?"))
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> all messages of this student?<div style='text-align:center'><br><br><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
-            // int userId = Convert.ToInt32 (appState.UserId);
-            bool result = await feService.Delete_Messages ("toonestudent", studentId);
+            bool result = await feService.Delete_Messages ("ByStudentId", studentId);
             if(result)
                 {
                 int id = Convert.ToInt32 (Id);
+                Snackbar.Add("Deleted.", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 lstStudentMessages.Clear();
                 lstStudentMessages = await feService.Read_StudentMessages (Id, "ByStudentId");
                 appState.SetCmd("");
@@ -306,14 +311,14 @@ else
                 }
             else
                 {
-                await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
+                Snackbar.Add("Message was not Deleted.", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }            
             }
         }
     //btns-Messages
     public async Task BtnCalcPercentsForMessage(StudentMessage message)
         {
-       _hasFetched = false;
+        _hasFetched = false;
         lstStudentMessageInstances = await feService.Read_StudentMessages (message.MessageId, "ByMessageId");
         if (lstStudentMessageInstances.Count > 0)
             {
@@ -366,14 +371,17 @@ else
         appState.SetMessageId (message.MessageId);
         _hasFetched = true;
         }
-    public async Task BtnDelete_Message(int messageId)
+    public async Task BtnDelete_Message(int studentMessageId)
         {
-        if(await JS.InvokeAsync<bool>("confirm", "Delete Message Permanently?"))
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> message permanently?<br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             int userId = Convert.ToInt32 (appState.UserId);
-            bool result = await feService.Delete_Messages ("onemessage", messageId);
+            bool result = await feService.Delete_Messages ("ByStudentMesssageId", studentMessageId);
             if(result)
                 {
+                Snackbar.Add("Deleted", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 int id = Convert.ToInt32 (Id);
                 lstStudentMessages.Clear();
                 lstStudentMessages = await feService.Read_StudentMessages (Id, "ByStudentId");
@@ -382,19 +390,22 @@ else
                 }
             else
                 {
-                await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
-                }            
+                Snackbar.Add("Message was not Deleted.", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
             }
         }
-    public async Task BtnDelete_Messages(StudentMessage message)
+    public async Task BtnDelete_Messages(int messageId)
         {
-        if(await JS.InvokeAsync<bool>("confirm", "Delete all Message Instanses Sent to Group Permanently?"))
+        var strmessage = new MarkupString($"<hr><span style='color:indianred'>Delete</span> messages permanently?<br><span style='font-weight:bold;color:royalblue'>All</span> instances of this message sent to students<br>will also be <span style='color:indianred'>deleted</span><br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: strmessage, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             int groupId = Convert.ToInt32 (appState.GroupId);
-            bool result = await feService.Delete_Messages ("togroupmembers", groupId);
+            bool result = await feService.Delete_Messages ("ByMessageid", messageId);
             if(result)
                 {
                 int id = Convert.ToInt32 (Id);
+                Snackbar.Add("Deleted.", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 lstStudentMessages.Clear();
                 lstStudentMessages = await feService.Read_StudentMessages (Id, "ByStudentId");
                 appState.SetCmd("");
@@ -402,7 +413,7 @@ else
                 }
             else
                 {
-                await JS.InvokeVoidAsync("alert", "\nMessage was not Deleted.");
+                Snackbar.Add("Message was not Deleted.", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }            
             }
         }    

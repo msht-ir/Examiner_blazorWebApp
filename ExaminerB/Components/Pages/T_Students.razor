@@ -210,7 +210,7 @@ else
                 }        
             @* SECTION 3 ---- ADD TO... *@
             <br />
-            <h4 style="text-align:center; color:Indianred; font-style:italic">Add to</h4>
+            <h4 style="text-align:center; color:Indianred; font-style:italic">Action</h4>
             @* TO GROUP *@
             <div class="accordion-item mb-2" >
                 <h4 class="accordion-header">
@@ -285,10 +285,13 @@ else
                                                 @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
                                             </MudSelect>
                                             <button class="btn btn-link" @onclick="()=>BtnAddStudentsToCourse()">
-                                                <img src="/img/icoListAddNew1.png" width="38" />
+                                                <img src="/img/icoListAddNew1.png" width="36" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnGotoPageCourses()">
-                                                <img src="/img/icoFolderC.png" width="30" />
+                                                <img src="/img/icoFolderC.png" width="26" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnGotoPageCourses()">
+                                                <img src="/img/icoLock2.png" width="18" />
                                             </button>
                                         </div>
                                         <div class="d-flex">
@@ -297,10 +300,13 @@ else
                                                 @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                                             </MudSelect>
                                             <button class="btn btn-link" @onclick="()=>BtnAddStudentsToExam()">
-                                                <img src="/img/icoListAddNew1.png" width="38" />
+                                                <img src="/img/icoListAddNew1.png" width="36" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnGotoPageExams()">
-                                                <img src="/img/icoFolderE.png" width="30" />
+                                                <img src="/img/icoFolderE.png" width="26" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnGotoPageExams()">
+                                                <img src="/img/icoLock2.png" width="18" />
                                             </button>
                                         </div>
                                 </MudCardContent>
@@ -755,7 +761,7 @@ else
                 bool result = await feService.Delete_Messages ("onemessage", messageId);
                 if (result)
                     {
-                    Snackbar.Add ("Message deleted", Severity.Info);
+                    Snackbar.Add ("Message deleted", Severity.Success);
                     MessageId = 0;
                     lstMessages = await feService.Read_Messages (user.UserId, false);
                     StateHasChanged ();
@@ -795,16 +801,16 @@ else
                 StateHasChanged ();
                 }
             }
-            else
+        else
             {
             string? itemx = mode.ToLower() switch
                 {
-                "s" =>  "Select a Student from List",
-                "g" =>  "Select a Group from List",
-                "c" =>  "Select a Course from List",
-                "e" =>  "Select a Course, then select an Exam",
-                _ => null
-                };
+                    "s" =>  "Select a Student from List",
+                    "g" =>  "Select a Group from List",
+                    "c" =>  "Select a Course from List",
+                    "e" =>  "Select a Course, then select an Exam",
+                    _ => null
+                    };
             Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
 
@@ -829,12 +835,12 @@ else
             {
             string? itemx = mode.ToLower() switch
                 {
-                "s" =>  "Select a Student from List",
-                "g" =>  "Select a Group from List",
-                "c" =>  "Select a Course from List",
-                "e" =>  "Select a Course, then select an Exam",
-                _ => null
-                };
+                    "s" =>  "Select a Student from List",
+                    "g" =>  "Select a Group from List",
+                    "c" =>  "Select a Course from List",
+                    "e" =>  "Select a Course, then select an Exam",
+                    _ => null
+                    };
             Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
@@ -910,14 +916,28 @@ else
         }
     public void BtnGotoPageCourses()
         {
-        Navman.NavigateTo ("/T_Courses");
+        if (CourseId > 0)
+            {
+            Navman.NavigateTo ("/T_Courses");        
+            }
+        else
+            {
+            Snackbar.Add($"Select a course", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
         }
     public void BtnGotoPageExams()
         {
-        appState.SetReturnPage ("T_Students");
-        appState.SetCourseId (CourseId);
-        appState.SetCourseName (course.CourseName);
-        Navman.NavigateTo ("/T_Exams");
+        if ((CourseId) > 0 & (ExamId > 0))
+            {
+            appState.SetReturnPage ("T_Students");
+            appState.SetCourseId (CourseId);
+            appState.SetCourseName (course.CourseName);
+            Navman.NavigateTo ("/T_Exams");            
+            }
+        else
+            {
+            Snackbar.Add($"Select an exam", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
         }
     public void BtnCancel()
         {    

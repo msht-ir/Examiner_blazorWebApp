@@ -117,6 +117,39 @@ namespace ExaminerS.Models
         public int NumberOfTests { get; set; } = 0;
         public int CorrectAnswers { get; set; } = 0;
         public int StudentCourseTags { get; set;  } = 0;
+        public bool IsActive
+            {
+            get => (StudentCourseTags & 1) == 1;
+            set
+                {
+                if (value)
+                    StudentCourseTags |= 1;
+                else
+                    StudentCourseTags &= ~1;
+                }
+            }
+        public bool Retry
+            {
+            get => (StudentCourseTags & 2) == 2;
+            set
+                {
+                if (value)
+                    StudentCourseTags |= 2;
+                else
+                    StudentCourseTags &= ~2;
+                }
+            }
+        public bool Review
+            {
+            get => (StudentCourseTags & 4) == 4;
+            set
+                {
+                if (value)
+                    StudentCourseTags |= 4;
+                else
+                    StudentCourseTags &= ~4;
+                }
+            }
         }
     //SCT
     public class StudentCourseTest

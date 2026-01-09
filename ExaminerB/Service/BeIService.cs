@@ -150,7 +150,6 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region SM:StudentMessages
         Task<bool> Create_StudentMessagesAsync (int messageId, List<int> lstStudentIds, bool requestFeedback);
-        Task<int> Create_StudentMessageAsync (Message message, string mode, int recipientId, bool typeFeedback);
         Task<List<StudentMessage>> Read_StudentMessagesAsync (int Id, string mode);
         Task<Message> Read_StudentMessageAsync (int studentMessageId);
         Task<bool> Update_StudentMessageTagsAsync (StudentMessage studentMessage);

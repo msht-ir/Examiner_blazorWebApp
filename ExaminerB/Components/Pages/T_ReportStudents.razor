@@ -36,6 +36,18 @@ else
             </h4>
             <div id="@collapseId" class="accardion-collapse collapse" data-bs-parent="#accordionReport">
                 <div class="accardion-body" >
+                    @* Accs *@
+                    <MudContainer Class="mt-2 px-0">
+                        <MudCard Class="mx-0">
+                            <MudCardContent class= "d-flex" Style="background-color:whitesmoke;margin-right:20px; ">
+                                <MudCheckBox @bind-Value="student.IsActive" Label="Active" Dense="true" Color="Color.Success"/>
+                                <MudCheckBox @bind-Value="student.CanChangePass" Label="Change Pass" Dense="true" Color="Color.Success"/>
+                                <button class="btn btn-link" style="border:none" title="Save Accs" @onclick="()=>BtnSaveStudentAccs(student.UserId)">
+                                    <img src="/img/icoSave2.png" width="20" />
+                                </button>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudContainer>
                     @* Student_Courses *@
                     <MudContainer Class="mt-2 px-0">
                         <MudCard Class="mx-0">
@@ -52,16 +64,31 @@ else
                                         <tr style="align-content:center">
                                             <td style="color:indianred; font-weight:bold;">
                                                 <button class="btn btn-link" style="border:none" title="Report Tests ( + answeres )" @onclick='()=>BtnReviewStudentTestsSheet(stCrs.StudentCourseId, "studentcoursetests")'>
-                                                    <img src="/img/icoReport1.png" width="25" />
+                                                    <img src="/img/icoReport1.png" width="22" />
                                                 </button>
                                                 <button class="btn btn-link" style="border:none" title="Delete Course !" @onclick="()=>BtnDeleteStudentCourse(stCrs.StudentCourseId)">
-                                                    <img src="/img/icoDelete1.png" width="25" />
+                                                    <img src="/img/icoDelete1.png" width="22" />
                                                 </button>
                                                 @stCrs.CourseName
                                             </td>
                                             <td>
                                                 <span style="color:black; font-weight:normal;">@stCrs.CorrectAnswers / @stCrs.NumberOfTests </span>
                                             </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <MudCheckBox @bind-Value="stCrs.IsActive" Label="Active" Dense="true" Color="Color.Success"/>
+                                                    <MudCheckBox @bind-Value="stCrs.Retry" Label="Retry" Dense="true" Color="Color.Success"/>
+                                                    <MudCheckBox @bind-Value="stCrs.Review" Label="Review" Dense="true" Color="Color.Success"/>
+                                                    <button class="btn btn-link" style="border:none" title="Save Accs" @onclick="()=>BtnSaveStudentAccs(student.UserId)">
+                                                        <img src="/img/icoSave2.png" width="20" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><hr /></td>
                                         </tr>
                                         }
                                 </table>
@@ -344,5 +371,8 @@ else
                     }
             }
         }
-
+    private async Task BtnSaveStudentAccs(int studentId)
+        {
+        
+        }
 }
