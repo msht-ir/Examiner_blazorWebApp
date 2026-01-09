@@ -795,8 +795,19 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Update_Note")]
-        public async Task<ActionResult<int>> Apdate_Note ([FromBody] Note note)
+        public async Task<ActionResult<bool>> Apdate_Note ([FromBody] Note note)
             {
+            Console.WriteLine (@$"
+                                api--------------------------- 
+                                {note.NoteId}
+                                {note.ParentId}
+                                {note.ParentType}
+                                {note.NoteDatum}
+                                {note.NoteText}
+                                {note.NoteTags}
+                                -----------------------------
+                                ");
+
             var result = await _BeService.Update_NoteAsync (note);
             return Ok (result);
             }

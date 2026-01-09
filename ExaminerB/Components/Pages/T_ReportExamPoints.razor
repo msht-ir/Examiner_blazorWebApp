@@ -36,14 +36,14 @@ else
                                 <hr />
                             </div>
                             <div style="font-weight:normal;">
-                                <img src="/img/icoReport0.png" width="20" />
+                                @* <img src="/img/icoReport0.png" width="20" /> *@
                                 <span style="color:green">Start : </span> @studentExam.StartDateTime <br />
-                                <img src="/img/icoClock2.png" width="18" />
+                                @* <img src="/img/icoClock2.png" width="18" /> *@
                                 <span style="color:royalblue">Finish: </span> @studentExam.FinishDateTime
                             </div>
                             <div style="display:flex; align-items:center;font-weight:bold;">
                                 <button class="btn btn-link" @onclick="async ()=> await BtnShowStudentExamTests(studentExam)">
-                                    <img src="/img/icoListT.png" width="24" />
+                                    <img src="/img/icoListT.png" width="28" />
                                 </button>
                                 @if(studentExam.StudentExamPoint < 10)
                                     {

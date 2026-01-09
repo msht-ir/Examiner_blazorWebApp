@@ -21,6 +21,14 @@ else if (appState.Cmd == "CreateNewSubprojectNote")
     {
     <Modal_CreateNote />
     }
+else if(appState.Cmd == "ShowNoteInDialog")
+    {
+    <Modal_ShowNote OnClose="HandleModalClose" />
+    }
+else if(appState.Cmd == "UpdateNote")
+    {
+    <Modal_CreateNote OnClose="HandleModalClose" />
+    }
 else
     {
     @* <_eLibWecome /> *@
@@ -52,10 +60,6 @@ else
             foreach (Note note in lstNotes)
                 {
                 <div>
-                    @if((appState.SelectedNoteId == Convert.ToInt32(note.NoteId)) & (_cmd == "ShowNoteInDialog"))
-                        {
-                        <Modal_ShowNote />
-                        }
                     @if ((note.NoteTags & 1) == 1)
                         {
                         <div class="mt-3 text-end">
@@ -69,7 +73,7 @@ else
                                         @if(note.NoteText.Length >60)
                                             {
                                             <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
-                                                @note.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span>
+                                                @note.NoteText.Substring(0,100) <span style="font-weight:bold;color:indianred">[...]</span>
                                             </div>
                                             }
                                         else
@@ -81,6 +85,10 @@ else
                                         <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
                                             <img src="/img/icoNote2.png" width="24" />
                                         </button>
+                                        <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(note)">
+                                            <img src="/img/icoRename.png" width="34" />
+                                        </button>
+
                                         <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
                                             <img src="/img/icoDelete1.png" width="24" />
                                         </button>
@@ -102,7 +110,7 @@ else
                                         @if(note.NoteText.Length >60)
                                             {
                                             <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
-                                                @note.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span>
+                                                @note.NoteText.Substring(0,100) <span style="font-weight:bold;color:indianred">[...]</span>
                                             </div>
                                             }
                                         else
@@ -113,6 +121,9 @@ else
                                             }
                                         <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
                                             <img src="/img/icoNote2.png" width="24" />
+                                        </button>
+                                        <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(note)">
+                                            <img src="/img/icoRename.png" width="34" />
                                         </button>
                                         <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
                                             <img src="/img/icoDelete1.png" width="24" />
@@ -257,10 +268,6 @@ else
                                                                     {
                                                                     @foreach (Note notex in subProject.Notes)
                                                                     {
-                                                                    if((appState.SelectedNoteId == Convert.ToInt32(notex.NoteId)) & (_cmd == "ShowNoteInDialog"))
-                                                                        {
-                                                                        <Modal_ShowNote />
-                                                                        }
                                                                     if ((notex.NoteTags & 1) == 1)
                                                                         {
                                                                         <div class="mt-3 text-end">
@@ -379,14 +386,11 @@ else
 @code {
     private MudTextField<string> refNewProject;
     private MudTextField<string> refProjectName;
-
     private MudTextField<string> refNewSubproject;
     private MudTextField<string> refSubprojectName;
     private MudTextField<string> refSubprojectNote;
-
     private MudTextField<string> refNoteText;
     private MudTextField<string> refSearchNote;
-
     private readonly HttpClient _http;
     User user = new User ();
     List<Project> lstProjects = new ();
@@ -585,6 +589,7 @@ else
     public async Task GetListOfProjects(int userId, string mode)
         {
         _hasFetched = false;
+        lstProjects.Clear();
         lstProjects = await feService.Read_Projects (userId, mode);
         _hasFetched = true;
         }
@@ -691,11 +696,18 @@ else
         appState.SetCmd ("CreateNewSubprojectNote");
         StateHasChanged ();
         }
-    public async Task BtnEditSubprojectNote(int subProjectId)
+    public async Task BtnEditNoteInDialog(Note note)
         {
-        appState.SetCmd ("EditSubprojectNote");
-        appState.SetSubprojectId (subProjectId);
+        appState.SetSelectedNoteId (note.NoteId);
+        appState.SetNoteParentId (note.ParentId);
+        appState.SetNoteParentType (note.ParentType);
+        appState.SetNoteDatum (note.NoteDatum);
+        appState.SetNoteText (note.NoteText);
+        appState.SetNoteIsRtl (note.IsRtl);
+        appState.SetCmd ("UpdateNote");
         StateHasChanged ();
+        //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
+        //to handel close event, I added in the Modal_CreateNote: [Parameter] public EventCallback OnClose 
         }
     public async Task BtnUpdateSubprojectNote(int subProjectId)
         {
@@ -730,7 +742,7 @@ else
         }
     public async Task BtnShowNoteInDialog(Note note)
         {
-        _cmd = "ShowNoteInDialog";
+        appState.SetCmd("ShowNoteInDialog");
         appState.SetSelectedNoteId (note.NoteId);
         appState.SetNoteDatum (note.NoteDatum);
         appState.SetNoteText (note.NoteText);
@@ -798,33 +810,39 @@ else
     //Calendar
     public CultureInfo GetPersianCulture()
         {
-            var culture = new CultureInfo("fa-IR");
-            DateTimeFormatInfo formatInfo = culture.DateTimeFormat;
-            formatInfo.AbbreviatedDayNames = new[] { "ی", "د", "س", "چ", "پ", "ج", "ش" };
-            formatInfo.DayNames = new[] { "یکشنبه", "دوشنبه", "سه شنبه", "چهار شنبه", "پنجشنبه", "جمعه", "شنبه" };
-            var monthNames = new[]
-            { "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند", "", };
-            formatInfo.AbbreviatedMonthNames =
-                formatInfo.MonthNames =
-                    formatInfo.MonthGenitiveNames = formatInfo.AbbreviatedMonthGenitiveNames = monthNames;
-            formatInfo.AMDesignator = "ق.ظ";
-            formatInfo.PMDesignator = "ب.ظ";
-            formatInfo.ShortDatePattern = "yyyy-MM-dd";
-            formatInfo.LongDatePattern = "yyyy-MM-dd dddd";
-            formatInfo.FirstDayOfWeek = DayOfWeek.Saturday;
-            Calendar cal = new PersianCalendar();
-            FieldInfo fieldInfo = culture.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (fieldInfo != null)
-                fieldInfo.SetValue(culture, cal);
-            FieldInfo info = formatInfo.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (info != null)
-                info.SetValue(formatInfo, cal);
-            culture.NumberFormat.NumberDecimalSeparator = ".";
-            culture.NumberFormat.DigitSubstitution = DigitShapes.NativeNational;
-            culture.NumberFormat.NumberNegativePattern = 0;
-            return culture;
+        var culture = new CultureInfo("fa-IR");
+        DateTimeFormatInfo formatInfo = culture.DateTimeFormat;
+        formatInfo.AbbreviatedDayNames = new[] { "ی", "د", "س", "چ", "پ", "ج", "ش" };
+        formatInfo.DayNames = new[] { "یکشنبه", "دوشنبه", "سه شنبه", "چهار شنبه", "پنجشنبه", "جمعه", "شنبه" };
+        var monthNames = new[]
+        { "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند", "", };
+        formatInfo.AbbreviatedMonthNames =
+            formatInfo.MonthNames =
+                formatInfo.MonthGenitiveNames = formatInfo.AbbreviatedMonthGenitiveNames = monthNames;
+        formatInfo.AMDesignator = "ق.ظ";
+        formatInfo.PMDesignator = "ب.ظ";
+        formatInfo.ShortDatePattern = "yyyy-MM-dd";
+        formatInfo.LongDatePattern = "yyyy-MM-dd dddd";
+        formatInfo.FirstDayOfWeek = DayOfWeek.Saturday;
+        Calendar cal = new PersianCalendar();
+        FieldInfo fieldInfo = culture.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (fieldInfo != null)
+            fieldInfo.SetValue(culture, cal);
+        FieldInfo info = formatInfo.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (info != null)
+            info.SetValue(formatInfo, cal);
+        culture.NumberFormat.NumberDecimalSeparator = ".";
+        culture.NumberFormat.DigitSubstitution = DigitShapes.NativeNational;
+        culture.NumberFormat.NumberNegativePattern = 0;
+        return culture;
         }
     //back
+    private async Task HandleModalClose() 
+        {
+        int userId = Convert.ToInt32 (appState.UserId);
+        await GetListOfProjects (userId, _ShowProjectsMode); 
+        //StateHasChanged(); 
+        }
     public void BtnCancel()
         {    
         appState.SetCmd("");

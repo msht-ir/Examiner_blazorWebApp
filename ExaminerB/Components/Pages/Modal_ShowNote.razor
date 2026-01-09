@@ -1,4 +1,7 @@
 ﻿@inject AppState appState;
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject FeService feService
 
 @if (IsOpen)
 {
@@ -29,7 +32,7 @@
                             <MudContainer Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:whitesmoke;">
-                                        <div style="font-weight:normal; font-size:small; white-space: pre-wrap; font-family:'Segoe UI';">
+                                        <div style='font-weight:normal; font-size:small; white-space: pre-wrap; font-family:"Segoe UI"; font-size:@(_cmd == "UseLargeFontSize" ? "large" : "small")'>
                                             @noteText
                                         </div>
                                     </MudCardContent>
@@ -37,13 +40,14 @@
                             </MudContainer>
                         </div>
                         }
+
                     else
                         {
                         <div class="mt-3">
                                 <MudContainer Class="mt-2 px-0">
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
-                                            <div style='font-weight:bold; font-size:smaller; white-space: pre-wrap; font-family:Courier New, Courier, monospace;'>
+                                            <div style='font-weight:bold; white-space: pre-wrap; font-family:"Courier New", Courier, monospace;font-size:@(_cmd == "UseLargeFontSize" ? "regular" : "smaller")'>
                                                 @noteText
                                             </div>
                                         </MudCardContent>
@@ -51,10 +55,16 @@
                                 </MudContainer>
                         </div>                        
                         }
-                        <br />
+                    <br />
                     <div style="text-align:center">
-                        <button class="btn btn-link" @onclick="BtnClose">
+                        <button class="btn btn-link" @onclick="Close">
                             <img src="/img/icoCancel.png" width="26" />
+                        </button>
+                        <button class="btn btn-link" @onclick="BtnChangeFontSize">
+                            <img src="/img/icoFontSize.png" title="Font Size  تغيير انداز فونت" alt="FontSize" width="35"/>
+                        </button>
+                        <button class="btn btn-link" @onclick="BtnDeleteNote">
+                            <img src="/img/icoDelete1.png" width="24" />
                         </button>
                     </div>
                 </div>
@@ -66,13 +76,44 @@
 @code {
     [Parameter] public string Title { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    string _cmd = "";
     public bool IsOpen { get; set; } = true;
     string noteDatum = "";
     string noteText = "";
     public void Open() => IsOpen = true;
-    public void Close() => IsOpen = false;
-    public void BtnClose()
+    private async Task Close()
         {
-        IsOpen = false;
+        if (OnClose.HasDelegate)
+            {
+            appState.SetCmd("");
+            await OnClose.InvokeAsync();
+            }
+            IsOpen = false;
         }
+    private async Task BtnChangeFontSize()
+        {
+        _cmd = (_cmd == "UseLargeFontSize") ? "": "UseLargeFontSize";
+        StateHasChanged ();
+        }
+    public async Task BtnDeleteNote()
+        {
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> note? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
+            {
+            int noteId = Convert.ToInt32(appState.SelectedNoteId);
+            bool result = await feService.Delete_Note (noteId);
+            if(result)
+                {
+                Snackbar.Add($"deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Close ();
+                }
+            else
+                {
+                Snackbar.Add($"Failed to delete note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
+            }
+        }
+
 }

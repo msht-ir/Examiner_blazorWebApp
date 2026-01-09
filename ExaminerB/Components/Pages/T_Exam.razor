@@ -416,7 +416,8 @@ else
         {
         if (cboCourseTestId == 0)
             {
-            await JS.InvokeVoidAsync ("alert", "\nSelect a Test");
+            Snackbar.Add("Select a Test", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            //await JS.InvokeVoidAsync ("alert", "\n");
             }
         else
             {

@@ -401,7 +401,8 @@ else
         {
         if (intExamId <= 0)
             {
-            await JS.InvokeVoidAsync ("alert", "Select an exam!");            
+            Snackbar.Add("Select an exam!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            //await JS.InvokeVoidAsync ("alert", "");            
             }
         else
             {
@@ -434,7 +435,8 @@ else
             }
         else
             {
-            await JS.InvokeVoidAsync ("alert", "Select an exam!");            
+            Snackbar.Add("Select an exam!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            //await JS.InvokeVoidAsync ("alert", "");            
             }
         }
     public void BtnBack()

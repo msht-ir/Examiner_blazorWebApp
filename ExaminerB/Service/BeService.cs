@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Packaging;
 using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
@@ -3624,7 +3625,7 @@ COMMIT TRANSACTION;
                 {
                 foreach (Subproject subprj in lstSubprojects)
                     {
-                    subprj.Notes = await Read_NotesAsync (subprj.SubprojectId, 1); //1:read sp notes (parentTypes 1:subprojects 2:students 3:groups 4:courses 5:exams)
+                    subprj.Notes = await Read_NotesAsync (subprj.SubprojectId, 2); //2:read SP notes (parentTypes> 1:U 2:SP 3:S 4:G 5:C 6:E)
                     }
                 }
             return lstSubprojects;
@@ -3700,32 +3701,32 @@ COMMIT TRANSACTION;
                 {
                 case 1:
                         {
-                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, u.UsrName FROM Notes n INNER JOIN Usrs u ON n.ParentId = u.UsrId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, u.UsrName FROM Notes n INNER JOIN Usrs u ON n.ParentId = u.UsrId WHERE n.ParentId=@parentid ORDER BY NoteDatum DESC, NoteId DESC ";
                         break;
                         }
                 case 2:
                         {
-                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, sp.SubprojectName FROM Notes n INNER JOIN Subprojects sp ON n.ParentId = sp.SubprojectId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, sp.SubprojectName FROM Notes n INNER JOIN Subprojects sp ON n.ParentId = sp.SubprojectId WHERE n.ParentId=@parentid ORDER BY NoteDatum DESC, NoteId DESC ";
                         break;
                         }
                 case 3:
                         {
-                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE n.ParentId=@parentid ORDER BY NoteDatum DESC, NoteId DESC ";
                         break;
                         }
                 case 4:
                         {
-                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, g.GroupName FROM Notes n INNER JOIN Groups g ON n.ParentId = g.GroupId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, g.GroupName FROM Notes n INNER JOIN Groups g ON n.ParentId = g.GroupId WHERE n.ParentId=@parentid ORDER BY NoteDatum DESC, NoteId DESC ";
                         break;
                         }
                 case 5:
                         {
-                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, c.CourseName FROM Notes n INNER JOIN Courses c ON n.ParentId = c.CourseId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, c.CourseName FROM Notes n INNER JOIN Courses c ON n.ParentId = c.CourseId WHERE n.ParentId=@parentid ORDER BY NoteDatum DESC, NoteId DESC ";
                         break;
                         }
                 case 6:
                         {
-                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, e.ExamTitle FROM Notes n INNER JOIN Exams e ON n.ParentId = e.ExamId WHERE n.ParentId=@parentid ORDER BY NoteDatum ";
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, e.ExamTitle FROM Notes n INNER JOIN Exams e ON n.ParentId = e.ExamId WHERE n.ParentId=@parentid ORDER BY NoteDatum DESC, NoteId DESC ";
                         break;
                         }
                 }
@@ -3790,7 +3791,7 @@ COMMIT TRANSACTION;
                         }
                 }
             sql += @" AND NoteText LIKE @key
-                    ORDER BY NoteDatum 
+                    ORDER BY NoteDatum DESC 
                     OFFSET 0 ROWS FETCH NEXT 20 ROWS ONLY ";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
@@ -3836,9 +3837,9 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             return note;
             }
-        public async Task<int> Update_NoteAsync (Note note)
+        public async Task<bool> Update_NoteAsync (Note note)
             {
-            string sql = "UPDATE Notes SET ParentId=@parentid, ParentType=@parenttype, NoteDatum=@notedatum, NoteText=@notetext, NoteTags=@notetags";
+            string sql = "UPDATE Notes SET ParentId=@parentid, ParentType=@parenttype, NoteDatum=@notedatum, NoteText=@notetext, NoteTags=@notetags WHERE NoteId=@noteid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
@@ -3848,9 +3849,10 @@ COMMIT TRANSACTION;
             cmd2.Parameters.AddWithValue ("@notedatum", note.NoteDatum);
             cmd2.Parameters.AddWithValue ("@notetext", note.NoteText);
             cmd2.Parameters.AddWithValue ("@notetags", note.NoteTags); //1:rtl 2:done 4:shared 8:readonly
+            cmd2.Parameters.AddWithValue ("@noteid", note.NoteId); 
             await cmd2.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
-            return 1;
+            return true;
             }
         public async Task<bool> Delete_NotesAsync (int parentId, int parentType)
             {

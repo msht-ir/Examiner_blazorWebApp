@@ -15,7 +15,7 @@
     {
     <_Loading />
     }
-else if (appState.Cmd == "CreateNewNote")
+else if (appState.Cmd == "CreateNote")
     {
     <Modal_CreateNote />
     }
@@ -89,6 +89,9 @@ else
                                             <button class="btn btn-link" @onclick='()=>BtnReportNotes(CourseId, "C")'>
                                                 <img src="/img/icoNote2.png" width="24" />
                                             </button>
+                                            <button class="btn btn-link" @onclick='()=>BtnGotoCoursesPage(CourseId)'>
+                                                <img src="/img/icoFolderC.png" width="26" />
+                                            </button>
                                         </div>
                                         <div class="d-flex">
                                             <MudSelect T="int" @ref="refExams" Label="Exam آزمون" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
@@ -108,6 +111,9 @@ else
                                             </button>
                                             <button class="btn btn-link" @onclick='()=>BtnReportNotes(ExamId, "E")'>
                                                 <img src="/img/icoNote2.png" width="24" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick='()=>BtnGotoExamsPage(ExamId, refCourses.Text.ToString() ?? "")'>
+                                                <img src="/img/icoFolderE.png" width="26" />
                                             </button>
                                             <button class="btn btn-link" @onclick='()=>BtnGotoPageExamPoints(ExamId)'>
                                                 <img src="/img/icoChartPie.png" width="26" />
@@ -186,11 +192,11 @@ else
                                     <button class="btn btn-link" @onclick='()=>BtnCreateNote(student.UserId, "S")'>
                                         <img src="/img/icoNewNote1.png" width="20" />
                                     </button>
-                                    <button class="btn btn-link" @onclick='()=>BtnReportStudent(student.UserId, "S")'>
-                                        <img src="/img/icoFolderS.png" width="22" />
-                                    </button>
                                     <button class="btn btn-link" @onclick='()=>BtnGotoPageReportMessages(student)'>
                                         <img src="/img/icoEnvelop2.png" width="20" />
+                                    </button>
+                                    <button class="btn btn-link" @onclick='()=>BtnReportStudent(student.UserId, "S")'>
+                                        <img src="/img/icoFolderS.png" width="22" />
                                     </button>
                                     @student.UserName - @student.UserNickname
                                 </div>
@@ -345,11 +351,14 @@ else
                                                 <button class="btn btn-link" @onclick="BtnAddNewMessage">
                                                     <img src="/img/icoAdd0.png" width="20" />
                                                 </button>
+                                                <button class="btn btn-link" @onclick="()=>BtnDeleteMessage(MessageId)">
+                                                    <img src="/img/icoDelete1.png" width="20" />
+                                                </button>
                                             </div>                                            
                                             <div class="d-flex">
                                                 <MudCheckBox @bind-Value="requestFeedback" Label="feedback" Color="Color.Primary"></MudCheckBox>
-                                                <button class="btn btn-link" @onclick="()=>BtnAddStudentsToMessage()">
-                                                    <img src="/img/icoListAddNew1.png" width="38" />
+                                                <button class="btn btn-link ml-5" @onclick="()=>BtnAddStudentsToMessage()">
+                                                    <img src="/img/icoEnvelop1.png" width="28" />
                                                 </button>
                                             </div>
                                             }
@@ -483,13 +492,13 @@ else
             {
             string? itemx = mode.ToLower() switch
                 {
-                "s" =>  "Select a Student from list",
-                "g" =>  "Select a Group from list",
-                "c" =>  "Select a Course from list",
-                "e" =>  "Select a Course, then select an Exam",
-                "m" =>  "Select a Mesage from list",
-                _ => null
-                };
+                    "s" =>  "Select a Student from list",
+                    "g" =>  "Select a Group from list",
+                    "c" =>  "Select a Course from list",
+                    "e" =>  "Select a Course, then select an Exam",
+                    "m" =>  "Select a Mesage from list",
+                    _ => null
+                    };
             Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
@@ -519,13 +528,13 @@ else
             {
             string? itemx = mode.ToLower() switch
                 {
-                "s" =>  "Select a Student from list",
-                "g" =>  "Select a Group from list",
-                "c" =>  "Select a Course from list",
-                "e" =>  "Select a Course, then select an Exam",
-                "m" =>  "Select a Mesage from list",
-                _ => null
-                };
+                    "s" =>  "Select a Student from list",
+                    "g" =>  "Select a Group from list",
+                    "c" =>  "Select a Course from list",
+                    "e" =>  "Select a Course, then select an Exam",
+                    "m" =>  "Select a Mesage from list",
+                    _ => null
+                    };
             Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
@@ -658,6 +667,30 @@ else
             }
         _hasFetched = true;
         }
+    private void BtnGotoCoursesPage(int courseId)
+        {
+        if(courseId >0)
+            {
+            appState.SetCourseId (courseId);
+            Navman.NavigateTo("/T_Courses");
+            }
+        else{
+            Snackbar.Add($"Select a course", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        }
+    private void BtnGotoExamsPage(int examId, string CourseName)
+        {
+
+        if((examId > 0) & (CourseName != ""))
+            {
+            appState.SetCourseId (CourseId);
+            appState.SetCourseName (course.CourseName);
+            Navman.NavigateTo ("/T_Exams");
+            }
+        else{
+            Snackbar.Add($"Select a course", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        }
     //message
     private async Task OnMessageChanged(int newValue) 
         {
@@ -673,7 +706,6 @@ else
     private async Task BtnCreateNewMessage(string messageTitle, string messageBody)
         {
         user.UserId = Convert.ToInt32 (appState.UserId);
-
         Message message = new Message () { UserId = user.UserId, DateTimeCreated = "", MessageTitle = messageTitle, MessageBody=messageBody};
         int result = await feService.Create_Message(message);
         if(result > 0)
@@ -711,6 +743,31 @@ else
             Snackbar.Add ($"Failed!", Severity.Error);
             }
         }
+    private async Task BtnDeleteMessage (int messageId)
+        {
+        //deletes a Message and all its StudentMessages sent to Students
+        if(messageId>0)
+            {
+            var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> the message and <span style='color:indianred; font-weight:bold'>all</span> instances already sent to Students?<br><br>Are you <span style='color:royalblue'>Sure</span>? <div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
+            bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+            if (confirmResult == true)
+                {
+                bool result = await feService.Delete_Messages ("Delete_Messages", messageId);
+                if (result)
+                    {
+                    Snackbar.Add ("Message deleted", Severity.Info);
+                    }
+                else
+                    {
+                    Snackbar.Add ("Failed to delete message", Severity.Error);
+                    }                
+                }
+            }
+        else
+            {
+            Snackbar.Add ("Select a message", Severity.Warning);
+            }
+        }
     //Notes
     private async Task BtnCreateNote(int Id, string mode)
         {
@@ -731,7 +788,7 @@ else
                 {
                 appState.SetNoteParentId (Id);
                 appState.SetNoteParentType (parentType.Value);
-                appState.SetCmd ("CreateNewNote");
+                appState.SetCmd ("CreateNote");
                 StateHasChanged ();
                 }
             }

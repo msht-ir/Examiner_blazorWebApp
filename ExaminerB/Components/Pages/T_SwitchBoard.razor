@@ -23,13 +23,13 @@
                     </button>
                 </td>
                 <td>
-                    <button class="btn btn-link" @onclick="GotoGroupsStudents">
-                        <img src="/img/gifGroup1.gif" width="80" />
+                    <button class="btn btn-link" @onclick="GotoProjects">
+                        <img src="/img/gifNotebook.gif" width="80" />
                     </button>
                 </td>
                 <td>
-                    <button class="btn btn-link" @onclick="GotoCourses">
-                        <img src="/img/gifBooks.gif" width="75" />
+                    <button class="btn btn-link" @onclick="GotoGroupsStudents">
+                        <img src="/img/gifGroup1.gif" width="80" />
                     </button>
                 </td>
             </tr>
@@ -45,12 +45,11 @@
                     </button>
                 </td>
                 <td>
-                    <button class="btn btn-link" @onclick="GotoProjects">
-                        <img src="/img/gifNotebook.gif" width="80" />
+                    <button class="btn btn-link" @onclick="GotoCourses">
+                        <img src="/img/gifBooks.gif" width="75" />
                     </button>
                 </td>
             </tr>
-
             <tr>
                 <td></td>
                 <td>
@@ -140,8 +139,8 @@
     public async Task CreateNote ()
         {
         //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
-        appState.SetNoteParentType (1);
         appState.SetNoteParentId (Convert.ToInt32(appState.UserId));
+        appState.SetNoteParentType (1);
         appState.SetCmd ("CreateNote");
         StateHasChanged();
         }

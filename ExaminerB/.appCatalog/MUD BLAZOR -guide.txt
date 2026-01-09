@@ -1,19 +1,17 @@
 MUD BLAZOR
 
-
-
--------------------- DIALOG ----------------------
+-------------- Dialog -------------
 @inject IDialogService DialogService
-var message = new MarkupString($"Clear your answer for this Test?");
+var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> message?<div style='text-align:center'><img src='/img/icoxx.png' width='40'/></div><br><hr>");
 bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
 if (confirmResult == true)
  {  }
 
------------ MESSAGE BOX -------------
+------------- Snackbar -------------
 @inject ISnackbar Snackbar
 Snackbar.Add("message", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
 
--------- CARD ---------
+-------------- card ----------------
 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
     <MudCard Class="mx-0">
         <MudCardContent Style="background-color:whitesmoke;">
@@ -22,7 +20,7 @@ Snackbar.Add("message", Severity.Success); //Severity.Warning .Error | .Info | .
     </MudCard>
 </MudContainer>
 
---------- GRID ---------
+------------ Grid ------------------
 <MudGrid Style="@style">
     <!-- Left column -->
     <MudItem xs="10">
@@ -33,23 +31,19 @@ Snackbar.Add("message", Severity.Success); //Severity.Warning .Error | .Info | .
 </MudGrid>
 
 
---------- PAGE WIDTH ---------
+----------- Page Width ------------
 style="max-width:500px; margin: 0 auto;"
 
 
-
---------- TEXT INPUT ---------
+----------- Text Input ------------
 <MudTextField @ref="" @bind-Value="" Label="" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
 @code:
 private MudTextField<string> refUser;
 
 
---------- SELECT ---------
+-------------- Select -------------
 <MudSelect T="int" Label="Exam آزمون" @bind-Value="intExamId" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
    <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
    @foreach (Exam exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
 </MudSelect>
-
-
-
 

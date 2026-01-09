@@ -4,6 +4,8 @@
 @inject NavigationManager Navman
 @inject IJSRuntime JS
 @implements IDisposable
+@inject ISnackbar Snackbar
+
 @if (!_hasFetched)
         {
     <_ScanSheets />
@@ -376,7 +378,8 @@ else
             int result = await feService.Create_ExamTest (examTest);
             if (result > 0)
                 {
-                await JS.InvokeVoidAsync ("alert", "TEST added to the exam Successfully!");
+                Snackbar.Add("TEST added to the exam Successfully!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                //await JS.InvokeVoidAsync ("alert", "");
                 test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
                 appState.SetCmd ("");
                 StateHasChanged ();
@@ -384,7 +387,8 @@ else
             }
         else
             {
-            await JS.InvokeVoidAsync ("alert", "Select an exam!");            
+            Snackbar.Add("Select an exam!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            //await JS.InvokeVoidAsync ("alert", "");            
             }
         }
     //Exit

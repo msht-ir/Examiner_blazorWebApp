@@ -284,7 +284,7 @@
 </script>
 
 @code {
-    User student = new User ();
+        User student = new User ();
     public List<StudentCourse> lstStudentCourses = new List<StudentCourse>();
     public List<CourseFolder> lstCourseFolders = new List<CourseFolder> ();
     public List<StudentExam> lstStudentExams = new List<StudentExam>();
@@ -296,15 +296,15 @@
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
-    {
+        {
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
-        {
+            {
             Navman.NavigateTo ("/Login");
-        }
+            }
         student.UserId = appState.UserId ?? 0;
         if(student.UserId > 0)
-        {
+            {
             //on first run, student.UserId is 0
             //student.UserId = appState.UserId ?? 0;
             lstStudentExams = await feService.Read_StudentExams(student.UserId, "ByStudentId")?? new List<StudentExam>();
@@ -430,6 +430,20 @@
             }
         bool result = await feService.Update_StudentMessageTags (studentMessage);
         await ReadMessageList ();
+
+        switch (mode)
+            {
+            case 0:
+                    {
+                    Snackbar.Add("Bookmark removed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+                    break;
+                    }
+            case 1:
+                    {
+                    Snackbar.Add("Message Bookmarked", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+                    break;
+                    }
+            }
         appState.SetCmd ("");
         StateHasChanged ();
         }

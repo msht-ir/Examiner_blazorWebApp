@@ -8,10 +8,6 @@
 
 @if (IsOpen)
     {
-    @if((appState.Cmd !="Update") & (appState.Cmd != "Create"))
-        {
-        Close ();
-        }
     Title = "New note";
     <div class="modal-backdrop fade show"></div>
     <div class="modal show d-block">
@@ -32,7 +28,7 @@
                                 <MudCardContent Style="background-color:whitesmoke;">
                                     <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Dense="true" />
                                     <MudTimePicker Label="Time ساعت" @bind-Time="_time" TimeFormat="HH:mm" Variant="Variant.Outlined" Dense="true"/>
-                                    <MudTextField T="string" Label="New Note" @bind-Value="note.NoteText" Variant="Variant.Filled" Lines="10" AutoResize="true" Style=@($"width:100%;direction:{(note.IsRtl ? "rtl" : "ltr")};") />
+                                    <MudTextField T="string" Label="New Note" @bind-Value="note.NoteText" Variant="Variant.Filled" Lines="10" AutoResize="true" Style=@($"width:100%;direction:{(note.IsRtl ? "rtl" : "ltr")};font-family:{(note.IsRtl ? "'Segoe UI'" : "'Courier New', Courier, monospace")};") />
                                         <MudCheckBox @bind-Value="note.IsRtl" Label="RTL" Color="Color.Primary"></MudCheckBox>
                                         <br />
                                         @if (appState.Cmd == "CreateNote")
@@ -62,6 +58,7 @@
 @code {
     [Parameter] public string Title { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
     public bool IsOpen { get; set; } = true;
 
     private MudTextField<string> refNoteText;
@@ -102,9 +99,17 @@
         }
 
     public void Open() => IsOpen = true;
-    public void Close() => IsOpen = false;
+    private async Task Close()
+        {
+        if (OnClose.HasDelegate)
+            {
+            await OnClose.InvokeAsync();
+            IsOpen = false;
+            }
+        }
     public void BtnClose()
         {
+        appState.SetCmd("");
         IsOpen = false; //at top of page
         }
     public async Task BtnCreateNote()
@@ -147,6 +152,7 @@
         else
             {
             //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
+            note.NoteId = Convert.ToInt32(appState.SelectedNoteId);
             note.ParentId = Convert.ToInt32(appState.NoteParentId);
             note.ParentType = Convert.ToInt32(appState.NoteParentType);
             DateTime _dt = _date.Value.Date + _time.Value;

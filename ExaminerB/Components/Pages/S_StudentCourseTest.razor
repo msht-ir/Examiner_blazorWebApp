@@ -92,14 +92,16 @@
         }
 
 </div>
-<div style="text-align:center">
+@* <div style="text-align:center">
     <button class="btn btn-link" @onclick= "()=> BtnBack()">
         <img src="/img/gifChart2.gif" style="width:50px" />
     </button>   
-</div>
+</div> *@
+
 <script>
     window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
 </script>
+
 @code {
     [Parameter] public int studentCourseId { set; get; }
     [Parameter] public int userId { set; get; }

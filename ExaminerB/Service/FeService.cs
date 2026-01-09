@@ -1159,6 +1159,17 @@ namespace ExaminerB.Service
             }
         public async Task<bool> Update_Note (Note note)
             {
+            Console.WriteLine (@$"
+                                fe--------------------------- 
+                                {note.NoteId}
+                                {note.ParentId}
+                                {note.ParentType}
+                                {note.NoteDatum}
+                                {note.NoteText}
+                                {note.NoteTags}
+                                -----------------------------
+                                ");
+
             var response = await _http.PostAsJsonAsync ("api/Update_Note", note);
             return response.IsSuccessStatusCode ? true : false;
             }
