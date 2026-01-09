@@ -358,7 +358,7 @@ else
                                             <div class="d-flex">
                                                 <MudCheckBox @bind-Value="requestFeedback" Label="feedback" Color="Color.Primary"></MudCheckBox>
                                                 <button class="btn btn-link ml-5" @onclick="()=>BtnAddStudentsToMessage()">
-                                                    <img src="/img/icoEnvelop1.png" width="28" />
+                                                    <img src="/img/icoEnvelopSend.png" width="28" />
                                                 </button>
                                             </div>
                                             }
@@ -752,10 +752,13 @@ else
             bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
                 {
-                bool result = await feService.Delete_Messages ("Delete_Messages", messageId);
+                bool result = await feService.Delete_Messages ("onemessage", messageId);
                 if (result)
                     {
                     Snackbar.Add ("Message deleted", Severity.Info);
+                    MessageId = 0;
+                    lstMessages = await feService.Read_Messages (user.UserId, false);
+                    StateHasChanged ();
                     }
                 else
                     {
