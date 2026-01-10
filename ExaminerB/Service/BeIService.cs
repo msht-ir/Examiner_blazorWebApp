@@ -21,6 +21,7 @@ namespace ExaminerB.Services2Backend
         Task<List<User>> Read_StudentsByKeywordAsync (int userId, string keyword, int readStudentGCEM);
         Task<List<User>> Read_StudentsByGCEMSIdAsync (int Id, string mode, int readStudentGCEM);
         Task<bool> Update_StudentAsync (User student);
+        Task<bool> Update_StudentTagsAsync (User student);
         Task<bool> Remove_StudentFromListAsync (int studentId, string mode);
         Task<bool> Delete_StudentAsync (int studentId);
         #endregion
@@ -59,6 +60,7 @@ namespace ExaminerB.Services2Backend
         Task<bool> Create_StudentCourseAsync (int studentId, int courseId);
         Task<List<StudentCourse>> Read_StudentCoursesAsync (int Id, string mode);
         Task<StudentCourse> Read_StudentCourseAsync (int studentCourseId);
+        Task<bool> Update_StudentCourseAsync (StudentCourse studentCourse);
         Task<bool> Delete_StudentCoursesAsync (int Id, string mode);
         Task<bool> Delete_StudentCourseAsync (int studentCourseId);
         Task<bool> CalculatePoints_StudentCourseAsync (StudentCourse studentCourse);

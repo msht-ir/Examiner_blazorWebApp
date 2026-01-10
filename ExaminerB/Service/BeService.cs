@@ -388,28 +388,43 @@ namespace ExaminerB.Services2Backend
                 }
             catch (Exception ex)
                 {
-                Console.WriteLine ("********************************************************C10 : \n" + ex.ToString ());
+                Console.WriteLine ("****C10 : \n" + ex.ToString ());
                 return new List<User> ();
                 }
             }
         public async Task<bool> Update_StudentAsync (User student)
             {
             //tags: 1:Active 2:ChangePass            
-            List<User> lstStudents = new List<User> ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             string sql = "";
             sql = @"Update Students SET 
                 StudentName=@studentname, 
                 StudentPass=@studentpass, 
-                StudentNickname=@studentnickname 
-                StudentTags=@studenttags, 
+                StudentNickname=@studentnickname, 
+                StudentTags=@studenttags 
                 WHERE StudentId=@studentid";
             await cnn.OpenAsync ();
             var cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@studentname", student.UserName);
             cmd.Parameters.AddWithValue ("@studentpass", student.UserPass);
             cmd.Parameters.AddWithValue ("@studentnickname", student.UserNickname);
+            cmd.Parameters.AddWithValue ("@studenttags", student.UserTags);
+            cmd.Parameters.AddWithValue ("@studentid", student.UserId);
+            await cmd.ExecuteNonQueryAsync ();
+            return true;
+            }
+        public async Task<bool> Update_StudentTagsAsync (User student)
+            {
+            //tags: 1:Active 2:ChangePass            
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            string sql = "";
+            sql = @"Update Students SET 
+                StudentTags=@studenttags 
+                WHERE StudentId=@studentid";
+            await cnn.OpenAsync ();
+            var cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@studenttags", student.UserTags);
             cmd.Parameters.AddWithValue ("@studentid", student.UserId);
             await cmd.ExecuteNonQueryAsync ();
@@ -1081,6 +1096,20 @@ namespace ExaminerB.Services2Backend
                 await cnn.CloseAsync ();
                 }
             return studentCourse;
+            }
+        public async Task<bool> Update_StudentCourseAsync (StudentCourse studentCourse)
+            {
+            string sql = "UPDATE StudentCourses SET NumberOfTests=@numberoftests, CorrectAnswers=@correctanswers, StudentCourseTags=@studentcoursetags WHERE StudentCourseId=@studentcourseid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new SqlConnection (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@numberoftests", studentCourse.NumberOfTests);
+            cmd.Parameters.AddWithValue ("@correctanswers", studentCourse.CorrectAnswers);
+            cmd.Parameters.AddWithValue ("@studentcoursetags", studentCourse.StudentCourseTags);
+            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourse.StudentCourseId);
+            int i = await cmd.ExecuteNonQueryAsync ();
+            return (i > 0) ? true : false;
             }
         public async Task<bool> Delete_StudentCoursesAsync (int Id, string mode)
             {
@@ -2478,15 +2507,16 @@ COMMIT TRANSACTION;
             {
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            string sql = "UPDATE StudentExams SET StudentId=@studentid, ExamId=@examid, StartDateTime=@startdatetime, FinishDateTime=@finishdatetime, StudentExamTags=@studentexamtags, StudentExamPoint=@studentexampoint";
+            string sql = "UPDATE StudentExams SET StudentId=@studentid, ExamId=@examid, StartDateTime=@startdatetime, FinishDateTime=@finishdatetime, StudentExamTags=@studentexamtags, StudentExamPoint=@studentexampoint WHERE StudentExamId=@studentexamid ";
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@studentid", studentExam.StudentId);
             cmd.Parameters.AddWithValue ("@examid", studentExam.ExamId);
             cmd.Parameters.AddWithValue ("@startdatetime", studentExam.StartDateTime);
             cmd.Parameters.AddWithValue ("@finishdatetime", studentExam.FinishDateTime);
-            cmd.Parameters.AddWithValue ("@studentexamtags", studentExam.ExamTags);
+            cmd.Parameters.AddWithValue ("@studentexamtags", studentExam.StudentExamTags);
             cmd.Parameters.AddWithValue ("@studentexampoint", studentExam.StudentExamPoint);
+            cmd.Parameters.AddWithValue ("@studentexamid", studentExam.StudentExamId);
             cmd.ExecuteNonQuery ();
             return true;
             }

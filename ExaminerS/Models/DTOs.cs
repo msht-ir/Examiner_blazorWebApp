@@ -263,6 +263,17 @@ namespace ExaminerS.Models
         public int ExamDuration { get; set; } = 0;
         public int ExamNTests { get; set; } = 0;
         public int ExamTags { get; set; } = 0;
+        public bool Active
+            {
+            get => (StudentExamTags & 1) == 1;
+            set
+                {
+                if (value)
+                    StudentExamTags |= 1;
+                else
+                    StudentExamTags &= ~1;
+                }
+            }
         public bool Review
             {
             get => (StudentExamTags & 8) == 8;

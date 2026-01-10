@@ -83,6 +83,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Update_StudentAsync (student);
             return Ok (result);
             }
+        [HttpPost ("Update_StudentTags")]
+        public async Task<ActionResult<bool>> Update_StudentTags ([FromBody] User student)
+            {
+            var result = await _BeService.Update_StudentTagsAsync (student);
+            return Ok (result);
+            }
         [HttpPost ("Remove_StudentFromList")]
         public async Task<ActionResult<bool>> Remove_StudentFromList ([FromBody] int studentId, [FromQuery] string mode)
             {
@@ -249,6 +255,12 @@ namespace ExaminerB.Backend
         public async Task<ActionResult<List<StudentCourse>>> Read_StudentCourse ([FromBody] int studentCourseId)
             {
             var result = await _BeService.Read_StudentCourseAsync (studentCourseId);
+            return Ok (result);
+            }
+        [HttpPost ("Update_StudentCourse")]
+        public async Task<ActionResult<bool>> Update_StudentCourse ([FromBody] StudentCourse studentCourse)
+            {
+            var result = await _BeService.Update_StudentCourseAsync (studentCourse);
             return Ok (result);
             }
         [HttpPost ("Delete_StudentCourses")]

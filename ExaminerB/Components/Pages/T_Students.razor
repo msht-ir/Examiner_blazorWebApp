@@ -444,6 +444,14 @@ else
         lstGroups = await feService.Read_Groups (user, false);
         lstCourses = await feService.Read_Courses (user.UserId);
         lstMessages = await feService.Read_Messages (user.UserId, false);
+        GroupId = appState.GroupId ?? 0;
+        CourseId = appState.CourseId ?? 0;
+        if(CourseId > 0)
+            {
+            await BtnReadExams (CourseId);        
+            ExamId = appState.ExamId ?? 0;
+            }
+        MessageId = appState.MessageId ?? 0;
         _hasFetched = true;
         } 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -559,6 +567,7 @@ else
         group.GroupId = GroupId;
         group.GroupName = "-"; //just because this field is required 
         group.UserId = 0;
+        appState.SetGroupId (GroupId);
         StateHasChanged();
         } 
     private void BtnAddNewGroup()
@@ -611,13 +620,16 @@ else
         {
         //update CourseId from the event
         CourseId = newValue;
-        await BtnReadExams (CourseId);
+        appState.SetCourseId (CourseId);
+        ExamId = 0;
+        await BtnReadExams (CourseId);        
         StateHasChanged();
         } 
     private async Task OnExamChanged(int newValue) 
         {
         //update ExamId from the event
         ExamId = newValue;
+        appState.SetExamId (ExamId);
         StateHasChanged();
         } 
     private async Task BtnReadExams (int courseid)
@@ -702,6 +714,7 @@ else
         {
         //update MessageId from the event
         MessageId = newValue;
+        appState.SetMessageId (MessageId);
         StateHasChanged();
         } 
     private void BtnAddNewMessage()

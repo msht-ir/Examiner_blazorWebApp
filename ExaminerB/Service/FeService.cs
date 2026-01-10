@@ -1,4 +1,5 @@
-﻿using ExaminerS.Models;
+﻿using Azure;
+using ExaminerS.Models;
 using Group = ExaminerS.Models.Group;
 
 namespace ExaminerB.Service
@@ -103,6 +104,11 @@ namespace ExaminerB.Service
         public async Task<bool> Update_Student (User student)
             {
             var response = await _http.PostAsJsonAsync ("api/Update_Student", student);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool> Update_StudentTags (User student)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Update_StudentTags", student);
             return response.IsSuccessStatusCode ? true : false;
             }
         public async Task<bool> Remove_StudentFromList (int studentId, string mode)
@@ -339,6 +345,19 @@ namespace ExaminerB.Service
                 return studentCourse ?? new StudentCourse ();
                 }
             return new StudentCourse ();
+            }
+        //Update
+        public async Task<bool> Update_StudentCourse (StudentCourse studentCourse)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Update_StudentCourse", studentCourse);
+            if (response.IsSuccessStatusCode)
+                {
+                return true;
+                }
+            else
+                {
+                return false;
+                }
             }
         public async Task<bool> Delete_StudentCourses (int Id, string mode)
             {
