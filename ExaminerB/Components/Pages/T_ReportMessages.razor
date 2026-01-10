@@ -8,12 +8,24 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
-<h1 style="text-align:center;color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h1>
+<h5 style="text-align:center;color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h5>
 <hr style="color:red"/>
 
 @if (!_hasFetched)
     {
-    <_ScanSheets />
+    <_LoadingTimer />
+    }
+else if (appState.Cmd == "CreateNewSubprojectNote")
+    {
+    <Modal_CreateNote />
+    }
+else if(appState.Cmd == "ShowNoteInDialog")
+    {
+    <Modal_ShowNote OnClose="HandleModalClose" />
+    }
+else if(appState.Cmd == "UpdateNote")
+    {
+    <Modal_CreateNote OnClose="HandleModalClose" />
     }
 else
     {
@@ -68,80 +80,80 @@ else
         }
     }
     <hr />
-    <EditForm Model="lstStudentMessages">
+    <EditForm Model="lstStudentMessages" style="max-width:600px; margin: 0 auto;">
         @foreach(StudentMessage message in lstStudentMessages)
-        {
-        <MudContainer Class="mt-2 px-0">
-            <MudCard Class="mx-0">
-                <MudCardContent Style="background-color:whitesmoke;">
-                    <div style="font-weight:bold; text-align:center; white-space: pre-wrap;">
-                        @message.MessageTitle
-                    </div>
-                    <div style="text-align:center;">
-                        <hr style="color:royalblue" />
-                        <div style="text-align:center; white-space: pre-wrap">
-                            @message.MessageBody
+            {
+            <MudContainer Class="mt-2 px-0 width-max:500">
+                <MudCard Class="mx-0">
+                    <MudCardContent Style="background-color:whitesmoke;">
+                        <div style="font-weight:bold; text-align:center; white-space: pre-wrap;">
+                            @message.MessageTitle
                         </div>
-                        <hr style="color:royalblue" />
-                        <div>Sent: @message.DateTimeSent</div>
-                        @if((message.StudentMessageTags & 1) == 1)
-                            {
-                            <div>Read: @message.DateTimeRead</div>                    
-                            }
-                        @if((message.StudentMessageTags & 16) == 16)
-                            {
-                            <span style="color:royalblue;font-weight:bold"># YES </span>
-                            }
-                        @if((message.StudentMessageTags & 32) == 32)
-                            {
-                            <span style="color:indianred;font-weight:bold"># NO </span>
-                            }
-                        @if((message.StudentMessageTags & 2) == 2)
-                            {
-                            <span style="color:gray;font-style:italic">Bookmarked </span>
-                            }
-                        @if((message.StudentMessageTags & 4) == 4)
-                            {
-                            <span style="color:gray;font-style:italic">Deleted </span>
-                            }
-                    </div>
-                    @if ((appState.Cmd == "ShowMessageStats") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
-                        {
-                        <div style="text-align:left; padding-left:25px;">
-                            <div style="font-weight:bold">Terget Students <span style="font-weight:normal;"> ( @nStudents ) </span></div>
-                            <div style="padding-left:15px;">@nStudentsRead ( @(nStudentsRead * 100 / nStudents)% ) Read</div>
-                            <div style="padding-left:15px;">@nStudentsBookmarked Bookmarked</div>
-                            <div style="padding-left:15px;">@nStudentsDeleted Deleted</div>
-                            <button class="btn btn-link" @onclick="()=>BtnListAnswersToThisMessage(message)">
-                                <img src="/img/icoListM.png" width="26" />
-                            </button>
+                        <div style="text-align:center;">
+                            <hr style="color:royalblue" />
+                            <div style="text-align:center; white-space: pre-wrap">
+                                @message.MessageBody
+                            </div>
+                            <hr style="color:royalblue" />
+                            <div>Sent: @message.DateTimeSent</div>
+                            @if((message.StudentMessageTags & 1) == 1)
+                                {
+                                <div>Read: @message.DateTimeRead</div>                    
+                                }
+                            @if((message.StudentMessageTags & 16) == 16)
+                                {
+                                <span style="color:royalblue;font-weight:bold"># YES </span>
+                                }
+                            @if((message.StudentMessageTags & 32) == 32)
+                                {
+                                <span style="color:indianred;font-weight:bold"># NO </span>
+                                }
+                            @if((message.StudentMessageTags & 2) == 2)
+                                {
+                                <span style="color:gray;font-style:italic">Bookmarked </span>
+                                }
+                            @if((message.StudentMessageTags & 4) == 4)
+                                {
+                                <span style="color:gray;font-style:italic">Deleted </span>
+                                }
                         </div>
-                        @if((message.StudentMessageTags & 8) == 8)
+                        @if ((appState.Cmd == "ShowMessageStats") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
                             {
-                            <div style="text-align:left;font-weight:bold; padding-left:25px;">Feedbacks: <span style="font-weight:normal;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>                    
-                            <div class="d-flex justify-content-center">
-                                <MudChart ChartType="ChartType.Donut"
-                                    InputData="@(new double[] {nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered })"
-                                    InputLabels="@(new[] { "Yes: "+ @nStudentsAnsweredYes, "No: " + nStudentsAnsweredNo, "notSure: "+ nStudentsNotAnswered })"
-                                    Width="100px" Height="100px" />
-                                <br /> 
+                            <div style="text-align:left; padding-left:25px;">
+                                <div style="font-weight:bold">Terget Students <span style="font-weight:normal;"> ( @nStudents ) </span></div>
+                                <div style="padding-left:15px;">@nStudentsRead ( @(nStudentsRead * 100 / nStudents)% ) Read</div>
+                                <div style="padding-left:15px;">@nStudentsBookmarked Bookmarked</div>
+                                <div style="padding-left:15px;">@nStudentsDeleted Deleted</div>
+                                <button class="btn btn-link" @onclick="()=>BtnListAnswersToThisMessage(message)">
+                                    <img src="/img/icoListM.png" width="26" />
+                                </button>
+                            </div>
+                            @if((message.StudentMessageTags & 8) == 8)
+                                {
+                                <div style="text-align:left;font-weight:bold; padding-left:25px;">Feedbacks: <span style="font-weight:normal;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>                    
+                                <div class="d-flex justify-content-center">
+                                    <MudChart ChartType="ChartType.Donut"
+                                        InputData="@(new double[] {nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered })"
+                                        InputLabels="@(new[] { "Yes: "+ @nStudentsAnsweredYes, "No: " + nStudentsAnsweredNo, "notSure: "+ nStudentsNotAnswered })"
+                                        Width="100px" Height="100px" />
+                                    <br /> 
+                                </div>
+                                }
+                            }
+                        else
+                            {
+                            <div style="text-align:center">
+                                <button class="btn btn-link" @onclick="()=>BtnCalcPercentsForMessage(message)">
+                                    <img src="/img/icoChartPie.png" width="26" />
+                                </button>
+                                <button class="btn btn-link" @onclick="()=>BtnDelete_Messages(message.MessageId)">
+                                    <img src="/img/icoDelete2.png" width="30" />
+                                </button>
+                                <button class="btn btn-link" @onclick="()=>BtnDelete_Message(message.StudentMessageId)">
+                                    <img src="/img/icoDelete1.png" width="22" />
+                                </button>                
                             </div>
                             }
-                        }
-                    else
-                        {
-                        <div style="text-align:center">
-                            <button class="btn btn-link" @onclick="()=>BtnCalcPercentsForMessage(message)">
-                                <img src="/img/icoChartPie.png" width="26" />
-                            </button>
-                            <button class="btn btn-link" @onclick="()=>BtnDelete_Messages(message.MessageId)">
-                                <img src="/img/icoDelete2.png" width="30" />
-                            </button>
-                            <button class="btn btn-link" @onclick="()=>BtnDelete_Message(message.StudentMessageId)">
-                                <img src="/img/icoDelete1.png" width="22" />
-                            </button>                
-                        </div>
-                        }
                         @if((appState.Cmd == "ShowListOfAnswersToThisMessage") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
                             {
                             <MudContainer Class="mt-2 px-0">
@@ -170,18 +182,18 @@ else
                                                         </span>
                                                         <hr />
                                                     </td>
-                                                        @if((@studentMessage.StudentMessageTags & 16) == 16)
-                                                            {
-                                                            <span style="font-size:smaller;font-weight:bold; color:royalblue">YES</span>
-                                                            }
-                                                        else if((@studentMessage.StudentMessageTags & 32) == 32)
-                                                            {
-                                                            <span style="font-size:smaller;font-weight:bold; color:indianred">NO</span>
-                                                            }
-                                                        else
-                                                            {
-                                                            <span style="font-size:smaller;font-weight:bold; color:lightslategray">--</span>                            
-                                                            }
+                                                    @if((@studentMessage.StudentMessageTags & 16) == 16)
+                                                        {
+                                                        <span style="font-size:smaller;font-weight:bold; color:royalblue">YES</span>
+                                                        }
+                                                    else if((@studentMessage.StudentMessageTags & 32) == 32)
+                                                        {
+                                                        <span style="font-size:smaller;font-weight:bold; color:indianred">NO</span>
+                                                        }
+                                                    else
+                                                        {
+                                                        <span style="font-size:smaller;font-weight:bold; color:lightslategray">--</span>
+                                                        }
                                                 </tr>
                                                 }
                                         </table>
@@ -189,22 +201,97 @@ else
                                 </MudCard>
                             </MudContainer>
                             }
-                </MudCardContent>
-            </MudCard>
-        </MudContainer>
+                    </MudCardContent>
+                </MudCard>
+            </MudContainer>
+            }
+    @if(lstNotes.Count == 0)
+        {
+        <br />
+        <hr style="color:red" />
+        <h5 style="margin-top:10px">no notes!</h5>
+        }
+    else
+        {
+        <h2 style="margin-top:30px">Notes</h2>
+        @foreach (Note notex in lstNotes)
+            {
+            if ((notex.NoteTags & 1) == 1)
+                {
+                <div class="mt-3 text-end">
+                    <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                        <MudCard Class="mx-0">
+                            <MudCardContent Style="background-color:whitesmoke;">
+                                <span style="color:indianred; font-weight:bold;">
+                                    @notex.NoteDatum
+                                </span>
+                                <hr />
+                                <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
+                                    @if(notex.NoteText.Length > 60)
+                                        {
+                                        <div> @notex.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span></div>
+                                        }
+                                    else
+                                        {
+                                        <div> @notex.NoteText</div>
+                                        }
+                                </div>
+                                <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
+                                    <img src="/img/icoNote2.png" width="24" />
+                                </button>
+                                <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
+                                    <img src="/img/icoDelete1.png" width="24" />
+                                </button>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudContainer>
+                </div>
+                }
+            else
+                {
+                <div class="mt-3 text-start">
+                    <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                        <MudCard Class="mx-0">
+                            <MudCardContent Style="background-color:whitesmoke;">
+                                <span style="color:indianred; font-weight:bold;">
+                                    @notex.NoteDatum
+                                </span>
+                                <hr />
+                                <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
+                                    @if(notex.NoteText.Length > 60)
+                                        {
+                                        <div> @notex.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span></div>
+                                        }
+                                    else
+                                        {
+                                        <div> @notex.NoteText</div>
+                                        }
+                                </div>
+                                <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
+                                    <img src="/img/icoNote2.png" width="24" />
+                                </button>
+                                <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
+                                    <img src="/img/icoDelete1.png" width="24" />
+                                </button>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudContainer>
+                </div>
+                }
+        }
         }
     </EditForm>
-        <div style="text-align:center">
-            <br />
-            <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/img/icoBack3.png" width="40" />
-            </button>
-        </div>
+    <div style="text-align:center">
+        <br />
+        <button class="btn btn-link" @onclick="BtnBack">
+            <img src="/img/icoBack3.png" width="40" />
+        </button>
+    </div>
     <script>
         window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
     </script>
 
-@code {
+    @code {
     [Parameter] public string mode { get; set; }
     [Parameter] public int Id { get; set; }
     //messages
@@ -227,7 +314,9 @@ else
     User user = new User ();
     List<StudentMessage> lstStudentMessages = new List<StudentMessage> ();
     List<StudentMessage> lstStudentMessageInstances = new List<StudentMessage> ();
+    List<Note> lstNotes = new List<Note> ();
     public bool _hasFetched = false;
+
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
@@ -237,7 +326,7 @@ else
             Navman.NavigateTo ("/Login");
             }
         appState.SetCmd ("");
-        lstStudentMessages = await feService.Read_StudentMessages (Id, "ByStudentId");
+        await GetListOfNotes ();
         _hasFetched = true;
         } 
     private void TriggerRender()
@@ -423,5 +512,75 @@ else
         //Navman.NavigateTo (appState.ReturnPage?? "/Login");
         }
     //methods
+    public async Task GetListOfNotes()
+        {
+        lstStudentMessages = await feService.Read_StudentMessages (Id, "ByStudentId");
+        int parentType = mode switch
+            {
+            "U" => 1,
+            "SP" => 2,
+            "S" => 3,
+            "G" => 4,
+            "C" => 5,
+            "E" => 6,
+            _ => 0
+            };
+        if (parentType > 0)
+            {
+            lstNotes = await feService.Read_Notes (Id, parentType);
+            }
+        }
+    public async Task BtnShowNoteInDialog(Note note)
+        {
+        appState.SetCmd("ShowNoteInDialog");
+        appState.SetSelectedNoteId (note.NoteId);
+        appState.SetNoteDatum (note.NoteDatum);
+        appState.SetNoteText (note.NoteText);
+        appState.SetNoteIsRtl (note.IsRtl);
+        appState.SetNoteParentName (note.ParentName);
+        StateHasChanged ();
+        }
+    public async Task BtnEditNoteInDialog(Note note)
+        {
+        appState.SetSelectedNoteId (note.NoteId);
+        appState.SetNoteParentId (note.ParentId);
+        appState.SetNoteParentType (note.ParentType);
+        appState.SetNoteDatum (note.NoteDatum);
+        appState.SetNoteText (note.NoteText);
+        appState.SetNoteIsRtl (note.IsRtl);
+        appState.SetCmd ("UpdateNote");
+        StateHasChanged ();
+        //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
+        //to handel close event, I added in the Modal_CreateNote: [Parameter] public EventCallback OnClose 
+        }
+    public async Task BtnDeleteNote(int noteId)
+        {
+        var message = new MarkupString($"Delete note?");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
+            {
+            bool result = await feService.Delete_Note (noteId);
+            if(result)
+                {
+                Snackbar.Add($"deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                user.UserId = Convert.ToInt32(appState.UserId);
+                _hasFetched = false;
+                await GetListOfNotes ();
+                _hasFetched = true;
+                appState.SetCmd("");
+                StateHasChanged();
+                }
+            else
+                {
+                Snackbar.Add($"Failed to delete note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
+            }
+        }
+    private async Task HandleModalClose() 
+        {
+        int userId = Convert.ToInt32 (appState.UserId);
+        await GetListOfNotes (); 
+        //StateHasChanged(); 
+        }
 
 }

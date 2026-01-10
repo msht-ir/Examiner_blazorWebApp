@@ -193,7 +193,7 @@ else
                                         <img src="/img/icoNewNote1.png" width="20" />
                                     </button>
                                     <button class="btn btn-link" @onclick='()=>BtnGotoPageReportMessages(student)'>
-                                        <img src="/img/icoEnvelop2.png" width="20" />
+                                        <img src="/img/icoEnvelop0.png" width="20" />
                                     </button>
                                     <button class="btn btn-link" @onclick='()=>BtnReportStudent(student.UserId, "S")'>
                                         <img src="/img/icoFolderS.png" width="22" />
@@ -500,6 +500,7 @@ else
         if(Id > 0)
             {
             lstStudents = await feService.Read_StudentsByGCEMId (Id, mode, 0);
+            Snackbar.Add("Listed...", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             StateHasChanged ();
             }
         else

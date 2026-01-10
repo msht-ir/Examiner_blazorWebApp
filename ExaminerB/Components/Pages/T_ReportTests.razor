@@ -441,14 +441,7 @@ else
         }
     public void BtnBack()
         {
-        if (appState.ReturnPage != "/T_ReportTests")
-            {
-            Navman.NavigateTo (appState.ReturnPage?? "/Login");
-            }
-        else
-            {
-            Navman.NavigateTo ("/T_Courses");
-            }
+        Navman.NavigateTo (appState.ReturnPage);
         }
     //method
     public async Task RefreshPageData()
