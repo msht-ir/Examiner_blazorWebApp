@@ -39,12 +39,14 @@ else
                     @* Accs *@
                     <MudContainer Class="mt-2 px-0">
                         <MudCard Class="mx-0">
-                            <MudCardContent class= "d-flex" Style="background-color:whitesmoke;margin-right:20px; ">
-                                <MudCheckBox @bind-Value="student.IsActive" Label="Active" Dense="true" Color="Color.Success"/>
-                                <MudCheckBox @bind-Value="student.CanChangePass" Label="Change Pass" Dense="true" Color="Color.Success"/>
-                                <button class="btn btn-link" style="border:none" title="Save Accs" @onclick="()=>BtnSaveStudentAccs(student.UserId)">
-                                    <img src="/img/icoSave2.png" width="20" />
-                                </button>
+                            <MudCardContent Style="background-color:whitesmoke;">
+                                <div class= "d-flex gap-3">
+                                    <MudCheckBox @bind-Value="student.IsActive" Label="Active" Dense="true" Color="Color.Success"/>
+                                    <MudCheckBox @bind-Value="student.CanChangePass" Label="Change Pass" Dense="true" Color="Color.Success"/>
+                                    <button class="btn btn-link" style="border:none" title="Save Accs" @onclick="()=>BtnSaveStudentAccs(student.UserId)">
+                                        <img src="/img/icoSave2.png" width="22" />
+                                    </button>
+                                </div>
                             </MudCardContent>
                         </MudCard>
                     </MudContainer>
@@ -52,120 +54,103 @@ else
                     <MudContainer Class="mt-2 px-0">
                         <MudCard Class="mx-0">
                             <MudCardContent Style="background-color:whitesmoke;">
-                                <table class="table table-borderless">
-                                    <thead>
-                                        <tr style="font-weight:bold">
-                                            <td>Course</td>
-                                            <td>Result</td>
-                                        </tr>
-                                    </thead>
-                                    @foreach (StudentCourse stCrs in student.StudentCourses)
-                                        {
-                                        <tr style="align-content:center">
-                                            <td style="color:indianred; font-weight:bold;">
-                                                <button class="btn btn-link" style="border:none" title="Report Tests ( + answeres )" @onclick='()=>BtnReviewStudentTestsSheet(stCrs.StudentCourseId, "studentcoursetests")'>
-                                                    <img src="/img/icoReport1.png" width="22" />
-                                                </button>
-                                                <button class="btn btn-link" style="border:none" title="Delete Course !" @onclick="()=>BtnDeleteStudentCourse(stCrs.StudentCourseId)">
-                                                    <img src="/img/icoDelete1.png" width="22" />
-                                                </button>
-                                                @stCrs.CourseName
-                                            </td>
-                                            <td>
-                                                <span style="color:black; font-weight:normal;">@stCrs.CorrectAnswers / @stCrs.NumberOfTests </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex">
-                                                    <MudCheckBox @bind-Value="stCrs.IsActive" Label="Active" Dense="true" Color="Color.Success"/>
-                                                    <MudCheckBox @bind-Value="stCrs.Retry" Label="Retry" Dense="true" Color="Color.Success"/>
-                                                    <MudCheckBox @bind-Value="stCrs.Review" Label="Review" Dense="true" Color="Color.Success"/>
-                                                    <button class="btn btn-link" style="border:none" title="Save Accs" @onclick="()=>BtnSaveStudentAccs(student.UserId)">
-                                                        <img src="/img/icoSave2.png" width="20" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><hr /></td>
-                                        </tr>
-                                        }
-                                </table>
+                                <h4>Courses</h4>
+                                @foreach (StudentCourse stCrs in student.StudentCourses)
+                                    {
+                                    <hr />
+                                    <div class="d-flex gap-2" style="color:indianred; font-weight:bold;">
+                                        @stCrs.CourseName
+                                        <span style="color:Black; font-weight:bold; font-size:small">( @stCrs.CorrectAnswers / @stCrs.NumberOfTests )</span>
+                                    </div>
+                                    <div class="d-flex gap-2 juctity-content:center align-items:center">
+                                        <button class="btn btn-link" style="border:none" title="Report Tests ( + answeres )" @onclick='()=>BtnReviewStudentTestsSheet(stCrs.StudentCourseId, "studentcoursetests")'>
+                                            <img src="/img/icoReport1.png" width="20" />
+                                        </button>
+                                        <button class="btn btn-link" style="border:none" title="Delete Course !" @onclick="()=>BtnDeleteStudentCourse(stCrs.StudentCourseId)">
+                                            <img src="/img/icoDelete1.png" width="22" />
+                                        </button>
+                                        <button class="btn btn-link" style="border:none" title="Save Accs" @onclick="()=>BtnSaveStudentAccs(student.UserId)">
+                                            <img src="/img/icoSave2.png" width="22" />
+                                        </button>
+                                        <MudCheckBox @bind-Value="stCrs.IsActive" Label="Active"  Dense="true" Color="Color.Success"/>
+                                        <MudCheckBox @bind-Value="stCrs.Retry" Label="Retry" Dense="true" Color="Color.Success"/>
+                                        <MudCheckBox @bind-Value="stCrs.Review" Label="Review" Dense="true" Color="Color.Success"/>
+                                    </div>
+                                    }
                             </MudCardContent>
                         </MudCard>
                     </MudContainer>
                     @* Student_Exams *@
+                    <h3 style="margin-top:20px">Exams</h3>
+                    @foreach (StudentExam exm in student.StudentExams)
+                    {
                     <MudContainer Class="mt-2 px-0">
                         <MudCard Class="mx-0">
                             <MudCardContent Style="background-color:whitesmoke;">
                                 <table class="table table-borderless">
-                                    <thead>
-                                        <tr style="font-weight:bold">
-                                            <td>Exam</td>
-                                            <td>Result</td>
-                                        </tr>
-                                    </thead>
-                                    @foreach (StudentExam exm in student.StudentExams)
-                                        {
-                                        <tr style="align-content:center">
-                                            <td style="color:indianred;font-weight:bold;">
-                                                <span style="color:gray;font-weight:bold;padding:0px;">@exm.CourseName</span>
-                                                <br /> @exm.ExamTitle 
-                                                <br /> <span style="color:black;font-weight:normal;padding:0px;">@exm.ExamDateTime</span>
-                                                <br />
-                                                @if(exm.StudentExamTags>=2)
-                                                    {
-                                                    <button class="btn btn-link" style="border:none" @onclick="()=>BtnResetStudentExam(exm)" >
-                                                        <img src="/img/icoClock2.png" width="25" />
-                                                    </button>
-                                                    }
-                                                else if(exm.StudentExamTags==1)
-                                                    {
-                                                    <button class="btn btn-link" style="border:none" @onclick="()=>BtnSetStudentExamAsFinished(exm)" >
-                                                        <img src="/img/icoEditPen.png" width="25" />
-                                                    </button>
-                                                    } 
-                                                else
-                                                    {
-                                                    <button class="btn btn-link" style="border:none" @onclick="()=>BtnSetStudentExamAsFinished(exm)" >
-                                                        <img src="/img/icoGo1.png" width="25" />
-                                                    </button>
-                                                    }
-
-                                                <button class="btn btn-link" style="border:none" @onclick='()=>BtnReviewStudentTestsSheet(exm.StudentExamId, "studentexamtests")' >
-                                                    <img src="/img/icoReport1.png" width="25" />
-                                                </button>
-                                                <button class="btn btn-link" style="border:none" @onclick="()=>BtnDeleteStudentExam(exm.StudentExamId)" >
-                                                    <img src="/img/icoDelete1.png" width="25" />
-                                                </button>
-                                            </td>  
-                                            <td>
+                                    <tr style="align-content:center">
+                                        <td style="color:indianred;font-weight:bold;">
+                                            <span style="color:gray;font-weight:bold;padding:0px;">@exm.CourseName</span>
+                                            <br /> @exm.ExamTitle 
+                                            <br /> <span style="color:black;font-weight:normal;padding:0px;">@exm.ExamDateTime</span>
+                                            <br />
                                             @if(exm.StudentExamTags>=2)
                                                 {
-                                                <span style="text-align:left;padding:0px;">
-                                                    Tests: @exm.ExamNTests <br /> Time: @exm.ExamDuration min  <br /> <span style="color:indianred">Point: @exm.StudentExamPoint.ToString("F2") /20 </span>                                        
-                                                </span>
+                                                <button class="btn btn-link" style="border:none" @onclick="()=>BtnResetStudentExam(exm)" >
+                                                    <img src="/img/icoClock2.png" width="25" />
+                                                </button>
                                                 }
                                             else if(exm.StudentExamTags==1)
                                                 {
-                                                <span style="text-align:left;padding:0px;">
-                                                    Tests: @exm.ExamNTests <br /> Time: @exm.ExamDuration min <br /> <span style="color:Green">satrted </span>
-                                                </span>
+                                                <button class="btn btn-link" style="border:none" @onclick="()=>BtnSetStudentExamAsFinished(exm)" >
+                                                    <img src="/img/icoEditPen.png" width="25" />
+                                                </button>
                                                 } 
                                             else
                                                 {
-                                                <span style="text-align:left;padding:0px;">
-                                                    Tests: @exm.ExamNTests <br /> Time: @exm.ExamDuration min <br /><span style="color:royalblue">new </span>
-                                                </span>
+                                                <button class="btn btn-link" style="border:none" @onclick="()=>BtnSetStudentExamAsFinished(exm)" >
+                                                    <img src="/img/icoGo1.png" width="25" />
+                                                </button>
                                                 }
-                                            </td>
-                                        </tr>
-                                        }
-                                </table>
-                            </MudCardContent>
-                        </MudCard>
-                    </MudContainer>
+                                            <button class="btn btn-link" style="border:none" @onclick='()=>BtnReviewStudentTestsSheet(exm.StudentExamId, "studentexamtests")' >
+                                                <img src="/img/icoReport1.png" width="25" />
+                                            </button>
+                                            <button class="btn btn-link" style="border:none" @onclick="()=>BtnDeleteStudentExam(exm.StudentExamId)" >
+                                                <img src="/img/icoDelete1.png" width="25" />
+                                            </button>
+                                            <button class="btn btn-link" style="border:none" @onclick="BtnBack" >
+                                                <img src="/img/icoSave2.png" width="24" />
+                                            </button>
+                                        </td>  
+                                        <td style="width:180px">
+                                        @if(exm.StudentExamTags>=2)
+                                            {
+                                            <span style="text-align:left;padding:0px;">
+                                                Tests: @exm.ExamNTests <span style="font-weight:bold;font-size:smaller">(@exm.ExamDuration m)</span><br /> <span style="color:indianred">Point: @exm.StudentExamPoint.ToString("F2") /20 </span>                                        
+                                            </span>
+                                            }
+                                        else if(exm.StudentExamTags==1)
+                                            {
+                                            <span style="text-align:left;padding:0px;">
+                                                Tests: @exm.ExamNTests <br /> Time: @exm.ExamDuration min <br /> <span style="color:Green">satrted </span>
+                                            </span>
+                                            } 
+                                        else
+                                            {
+                                            <span style="text-align:left;padding:0px;">
+                                                Tests: @exm.ExamNTests <br /> Time: @exm.ExamDuration min <br /><span style="color:royalblue">new </span>
+                                            </span>
+                                            }
+                                            <div style="margin:0; padding:0;">
+                                                <MudCheckBox @bind-Value="exm.Review" Label="Review" Dense="true" Color="Color.Success"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                            </table>
+                        </MudCardContent>
+                    </MudCard>
+                </MudContainer>
+                }
                 </div>
                 <hr style="color:royalblue"/>
             </div>

@@ -263,6 +263,18 @@ namespace ExaminerS.Models
         public int ExamDuration { get; set; } = 0;
         public int ExamNTests { get; set; } = 0;
         public int ExamTags { get; set; } = 0;
+        public bool Review
+            {
+            get => (StudentExamTags & 8) == 8;
+            set
+                {
+                if (value)
+                    StudentExamTags |= 8;
+                else
+                    StudentExamTags &= ~8;
+                }
+            }
+
         public string StartDateTime { get; set; } = "";
         public string FinishDateTime { get; set; } = "";
         public int StudentExamTags { get; set; } = 0;   //1:started 2:finished
