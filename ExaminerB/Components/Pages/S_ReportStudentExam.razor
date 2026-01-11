@@ -18,11 +18,11 @@ else
             <h4>@studentExam.ExamTitle</h4>
             <span style="font-size:small;color:royalblue;">@student.UserName</span>
             <hr />
+            <button class="btn btn-link" @onclick="BtnBackToStudentExams">
+                <img src="/img/icoBack3.png" width="35" />
+            </button>
             <button class="btn btn-link" @onclick="BtnCalcPercents">
                 <img src="/img/gifChartPie.gif" width="30" />
-            </button>
-            <button class="btn btn-link" @onclick="BtnBackToStudentExams">
-                <img src="/img/icoBack2.png" width="30" />
             </button>
             @if (appState.Cmd== "ShowStudentExamStats")
                 {
@@ -141,7 +141,7 @@ else
     </EditForm>
     <div style="text-align:center">
         <button class="btn btn-link" @onclick= "()=> BtnBackToStudentExams()">
-            <img src="/img/icoBack2.png" style="width:30px" />
+            <img src="/img/icoBack3.png" style="width:40px" />
         </button>
     </div>
     }

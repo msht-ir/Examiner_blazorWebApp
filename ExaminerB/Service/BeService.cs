@@ -2527,24 +2527,24 @@ COMMIT TRANSACTION;
             string sql = "";
             switch (mode)
                 {
-                case "setStudentExamStartedOn":
+                case "startedOn":
                         {
-                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 1), StartDateTime=@currectdatetime ";
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 2), StartDateTime=@currectdatetime ";
                         break;
                         }
-                case "setStudentExamstartedOff":
+                case "startedOff":
                         {
-                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags & ~1), StartDateTime='' ";
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags & ~2), StartDateTime='' ";
                         break;
                         }
-                case "setStudentExamFinishedOn":
+                case "finishedOn":
                         {
-                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 2), FinishDateTime=@currectdatetime ";
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 4), FinishDateTime=@currectdatetime ";
                         break;
                         }
-                case "setStudentExamFinishedOff":
+                case "finishedOff":
                         {
-                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags & ~2) , FinishDateTime= ''";
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags & ~4) , FinishDateTime= ''";
                         break;
                         }
                 }
@@ -2648,7 +2648,7 @@ COMMIT TRANSACTION;
             }
         public async Task<bool> CalculatePoints_StudentExamsAsync (int studentexamid)
             {
-            Console.WriteLine ("Starting CALC...");
+            Console.WriteLine ("Be.... Starting CALC...");
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try

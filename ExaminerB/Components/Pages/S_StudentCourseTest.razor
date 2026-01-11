@@ -12,13 +12,19 @@
         {
         <hr />
         <br />
-        <img src="/img/pngStudyGirl.png" style="width:200px" />
+        <img src="/img/pngStudyGirl.png" style="width:180px" />
         <br />
         <br />
         <br />
         <span style="color:green">All tests answered correctly!</span>
         <br /><br />
         <hr />
+    <div style="text-align:center">
+        <button class="btn btn-link" @onclick= "()=> BtnBack()">
+            <img src="/img/gifChart2.gif" style="width:50px" />
+        </button>   
+    </div>
+
         }
     else
         {
@@ -92,11 +98,6 @@
         }
 
 </div>
-@* <div style="text-align:center">
-    <button class="btn btn-link" @onclick= "()=> BtnBack()">
-        <img src="/img/gifChart2.gif" style="width:50px" />
-    </button>   
-</div> *@
 
 <script>
     window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 

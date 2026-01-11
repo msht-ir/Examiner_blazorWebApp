@@ -2,14 +2,14 @@ MUD BLAZOR
 
 -------------- Dialog -------------
 @inject IDialogService DialogService
-var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> message?<div style='text-align:center'><img src='/img/icoxx.png' width='40'/></div><br><hr>");
+var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> message?<div style='text-align:center'><img src='/img/icoxx.png' width='70'/></div><br><hr>");
 bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
 if (confirmResult == true)
  {  }
 
 ------------- Snackbar -------------
 @inject ISnackbar Snackbar
-Snackbar.Add("message", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+Snackbar.Add("", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
 
 -------------- card ----------------
 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">

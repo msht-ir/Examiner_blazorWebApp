@@ -5,6 +5,8 @@
 @inject AppState appState
 @inject IJSRuntime JS
 @implements IDisposable
+@inject ISnackbar Snackbar
+
     <div style="text-align: center; max-width:600px; margin: 0 auto;">
         <h1 style="font-weight:bold;">@testIndex</h1>
         <hr />
@@ -81,7 +83,10 @@
             <table class="table table-borderless">
                 <tr>
                     <td style="text-align:center;">
-                        @if (((appState.UserTags & 16) == 16) & ((appState.ExamTags & 2) == 2))
+                        <button class="btn btn-link" @onclick="BtnBack">
+                            <img src="/img/icoBack3.png" width="40" />
+                        </button>
+                        @if ((appState.ExamTags & 2) == 2)
                             {
                             <button class="btn btn-link" @onclick="()=>BtnHelpShowAnswer(studentExamTest)">
                                 <img src="/img/icoInfo1.png" width="30" />
@@ -102,9 +107,6 @@
                         <button class="btn btn-link" @onclick= "()=> BtnClearAnswer(studentExamTest)">
                             <img src="/img/icoEraser.png" width="30" />
                         </button>
-                        <button class="btn btn-link" @onclick="BtnBack">
-                            <img src="/img/icoBack2.png" width="28" />
-                        </button>
                     </td>
                 </tr>
             </table>
@@ -116,9 +118,9 @@
     </script>
 
 @code {
-    [Parameter] public long studentExamTestId { get; set; }
-    [Parameter] public int testIndex { get; set; }
-    StudentExamTest studentExamTest = new StudentExamTest ();
+        [Parameter] public long studentExamTestId { get; set; }
+        [Parameter] public int testIndex { get; set; }
+        StudentExamTest studentExamTest = new StudentExamTest ();
     private bool _firstRender = true;
     private bool _hasFetched = false;
     private bool hasScrolled = false;
@@ -131,7 +133,7 @@
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            
+
             Navman.NavigateTo ("/Login");
             }
         if (_firstRender)
@@ -197,8 +199,10 @@
         if (result)
             {
             studentExamTest.StudentExamTestTags = status ? (studentExamTest.StudentExamTestTags | 2) : (studentExamTest.StudentExamTestTags & ~2);
+            string bookmarkState = status ? "Bookmarked" : "Bookmark removed";
+            Snackbar.Add(bookmarkState, Severity.Info); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             StateHasChanged();
-            } 
+            }
         }
     public async Task BtnClearAnswer (StudentExamTest stdntExamTest)
         {
