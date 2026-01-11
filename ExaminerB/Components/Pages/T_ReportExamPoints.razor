@@ -32,6 +32,9 @@ else
                     <div class="card">
                         <div class="card-body" style="background-color:whitesmoke">
                             <div style="font-weight:bold;">
+                                <button class="btn btn-link" Title="Report Students Coutses and Exams درس ها و آزمون هاي دانشجو" @onclick='()=>BtnReportStudent(studentExam.StudentId, "S")'>
+                                    <img src="/img/icoFolderS.png" width="22" />
+                                </button>
                                 @i: @studentExam.StudentName - @studentExam.StudentNickname
                                 <hr />
                             </div>
@@ -202,6 +205,27 @@ else
             }
         }
     //method
+    public async Task BtnReportStudent(int Id, string mode)
+        {
+        if(Id > 0)
+            {
+            appState.SetReturnPage ("T_Students");
+            Navman.NavigateTo ($"/T_ReportStudents/{mode}/{Id}");           
+            }
+        else
+            {
+            string? itemx = mode.ToLower() switch
+                {
+                    "s" =>  "Select a Student from list",
+                    "g" =>  "Select a Group from list",
+                    "c" =>  "Select a Course from list",
+                    "e" =>  "Select a Course, then select an Exam",
+                    "m" =>  "Select a Mesage from list",
+                    _ => null
+                    };
+            Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        }
     public async Task RefreshPageData()
         {
         exam.ExamId = Convert.ToInt32 (appState.ExamId);

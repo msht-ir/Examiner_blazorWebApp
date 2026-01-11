@@ -451,6 +451,7 @@ else
             ExamId = appState.ExamId ?? 0;
             }
         MessageId = appState.MessageId ?? 0;
+        _help = Convert.ToBoolean(appState.HelpOnHover);
         _hasFetched = true;
         } 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -959,7 +960,7 @@ else
         StateHasChanged ();
         }
     public void BtnBack()
-        {    
+        {
         Navman.NavigateTo ("/T_SwitchBoard");
         }
 }

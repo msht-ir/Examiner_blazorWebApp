@@ -16,6 +16,12 @@
         public void SetCmd (string _Cmd) { Cmd = _Cmd; OnChange?.Invoke (); }
         public string? ReturnPage { get; private set; }
         public void SetReturnPage (string _ReturnPage) { ReturnPage = _ReturnPage; OnChange?.Invoke (); }
+        public bool? HelpOnHover {get; private set;}
+        public void SetHelpOnHover (bool _HelpOnHover)
+            {
+            HelpOnHover = _HelpOnHover;
+            OnChange?.Invoke ();
+            }
 
         //user (teacher|student)
         public int? UserId { get; private set; }
