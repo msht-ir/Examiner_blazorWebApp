@@ -43,10 +43,13 @@ else
                     <MudContainer Class="mt-2 px-0">
                         <MudCard Class="mx-0">
                             <MudCardContent Style="background-color:whitesmoke;">
+                                <MudTextField @bind-Value="student.UserName" Label="Name نام کاربري" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                <MudTextField @bind-Value="student.UserPass" Label="Password پسورد" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                <MudTextField @bind-Value="student.UserNickname" Label=Nickname نام دانشجو" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI'" />
                                 <div class= "d-flex gap-3">
                                     <MudCheckBox @bind-Value="student.IsActive" Label="active" Dense="true" Color="Color.Primary"/>
                                     <MudCheckBox @bind-Value="student.CanChangePass" Label="password" Dense="true" Color="Color.Primary"/>
-                                    <button class="btn btn-link" style="border:none" title="Save Accs" @onclick="()=>BtnUpdateStudentTags(student)">
+                                    <button class="btn btn-link" style="border:none" title="Save Accs" @onclick="()=>BtnUpdateStudent(student)">
                                         <img src="/img/icoSave2.png" width="22" />
                                     </button>
                                 </div>
@@ -177,9 +180,9 @@ else
 @code {
     [Parameter] public string? mode { get; set; }
     [Parameter] public string? Id { get; set; }
-    public bool _hasFetched = false;
     User user = new User ();
     List<User> lstStudents = new List<User> ();
+    public bool _hasFetched = false;
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
@@ -253,10 +256,11 @@ else
         }
     public async Task BtnDeleteStudentExam(int studentExamId)
         {
-        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Exam (for this Student)?<div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Exam (for this Student)?<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
+            _hasFetched = false;
             bool result = await feService.Delete_StudentExam (studentExamId);
             if(result)
                 {
@@ -287,14 +291,15 @@ else
             else
                 {
                 Snackbar.Add("Failed1", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                }                                 
+                }  
+            _hasFetched = true;                               
             }
         }
     //updateTags
     public async Task BtnSetStudentExamAsFinished(StudentExam studentExam)
         {
         //if(await JS.InvokeAsync<bool>("confirm", "\n Set Exam  @exm.ExamTitle  as Finished for this Student?"))
-        var message = new MarkupString(@$"<hr>Set <span style='color:indianred'>{studentExam.ExamTitle}</span> as Finished?<div style='text-align:center'><img src='/img/icoClock2.png' width='70'/></div><br><hr>");
+        var message = new MarkupString(@$"<hr>Set <span style='color:indianred'>{studentExam.ExamTitle}</span> as Finished?<br><br><div style='text-align:center'><img src='/img/icoClock2.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
@@ -330,9 +335,9 @@ else
                 }                     
             }
         }
-    private async Task BtnUpdateStudentTags(User student)
+    private async Task BtnUpdateStudent(User student)
         {
-        bool result = await feService.Update_StudentTags (student);
+        bool result = await feService.Update_Student (student);
         if (result)
             {
             Snackbar.Add($"Saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar

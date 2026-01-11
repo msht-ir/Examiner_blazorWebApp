@@ -7,6 +7,8 @@
 @inject AppState appState
 @inject IJSRuntime JS
 @implements IDisposable
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
 
 <div style="text-align: center; "max-width:500px; margin: 0 auto;">
     <h4 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h4>
@@ -50,7 +52,7 @@
                                 <button style="border:none" class="btn btn-link" @onclick="()=>BtnSetExamAsFinishedForAllStudents(exam.ExamId)" >
                                     <img src="/img/icoClock2.png" width="22" />
                                 </button>
-                                <button style="border:none" class="btn btn-link" @onclick="()=>BtnDeleteExam(exam.ExamId)" >
+                                <button style="border:none" class="btn btn-link" @onclick="()=>BtnDeleteExam(exam)" >
                                     <img src="/img/icoDelete1.png" width="20" />
                                 </button>
                             </div>
@@ -176,9 +178,15 @@
         }
     public async Task BtnSetExamAsFinishedForAllStudents (int examId)
         {
-        if(await JS.InvokeAsync<bool>("confirm", "Terminate all Students's Exams?\n\nSure?"))
+        var message = new MarkupString($"<hr><span style='color:indianred'>Terminate</span> all Students's Exams?<br><br><div style='text-align:center'><img src='/img/icoClock2.png' width='70'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
-            bool result = await feService.Update_StudentsExamTags ("setStudentExamFinishedOn", examId);            
+            _hasFetched = false;
+            StateHasChanged ();
+            bool result = await feService.Update_StudentsExamTags ("finishedOn", examId);
+            Snackbar.Add("Terminated for all", Severity.Info); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            _hasFetched = true;
             StateHasChanged ();
             }
         }
@@ -205,15 +213,18 @@
         appState.SetExamId (examId);
         Navman.NavigateTo ($"/T_ReportExamPoints");
         }
-    public async Task BtnDeleteExam (int examId)
+    public async Task BtnDeleteExam (Exam exam)
         {
-        if (await JS.InvokeAsync<bool>("confirm","Delete Exam?"))
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> exam {exam.ExamTitle} ?<br>Sure?<br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
-            bool result = await feService.Delete_Exam (examId);
+            bool result = await feService.Delete_Exam (exam.ExamId);
             if (result)
                 {
                 appState.SetCmd ("");
                 lstCourseExams = await feService.Read_Exams(course.CourseId);
+                Snackbar.Add("Exam deleted!", Severity.Warning); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 StateHasChanged ();
                 }
             }

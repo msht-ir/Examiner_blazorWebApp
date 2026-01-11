@@ -2,7 +2,7 @@ MUD BLAZOR
 
 -------------- Dialog -------------
 @inject IDialogService DialogService
-var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> message?<div style='text-align:center'><img src='/img/icoxx.png' width='70'/></div><br><hr>");
+var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> message?<br><br><div style='text-align:center'><img src='/img/icoxx.png' width='70'/></div><br><hr>");
 bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
 if (confirmResult == true)
  {  }
