@@ -611,7 +611,7 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@groupid", groupId);
-            int i = (int) cmd.ExecuteScalar ();
+            int i = (int) cmd.ExecuteNonQuery ();
             return i;
             }
         #endregion

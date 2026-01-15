@@ -3,6 +3,7 @@
 @using Microsoft.Extensions.Hosting
 @using ClosedXML
 @using ExaminerB.Service
+@using System.Threading.Tasks
 @inject NavigationManager Navman
 @inject AppState appState
 @inject FeService feService
@@ -40,36 +41,58 @@ else
                 <div id="Accordion_GCEM" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
                     <div class="accordion-body" style="background-color:white">
                         <div id="T1">
-                            @* COMBOs GCEM *@
+                            @* COMBO G *@
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-auto">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                        <div class="d-flex">
-                                            <MudSelect T="int" @ref="refGroups" Label="Group گروه" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                                <MudSelectItem Value="0">Select a Group</MudSelectItem>
-                                                @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
-                                            </MudSelect>
-                                        </div>
-                                        <div>
-                                            <button class="btn btn-link" Title=@((_help)?"List Students in this Group":"") @onclick='()=>BtnReadStudents(GroupId,"G")'>
-                                                <img src="/img/icoListS.png" width="36" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Report Students Courses and Exams":"") @onclick='()=>BtnReportStudent(GroupId, "G")'>
-                                                <img src="/img/icoFolderS.png" width="26" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Add new note about this Group":"") @onclick='()=>BtnCreateNote(GroupId, "G")'>
-                                                <img src="/img/icoNewNote1.png" width="24" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Report notes about this Group":"") @onclick='()=>BtnReportNotes(GroupId, "G")'>
-                                                <img src="/img/icoNote2.png" width="24" />
-                                            </button>
-                                        </div>
+                                        @if (_cmd == "EditGroup")
+                                            {
+                                            <div class="d-flex">
+                                                <MudTextField @ref="reftxtNewGroup" @bind-Value="strGroupName" Label="Edit Group ويرايش " Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                                <button class="btn btn-link" Title=@((_help)?"Save Group":"") @onclick="()=>BtnUpdateGroup(strGroupName)">
+                                                    <img src="/img/icoSave2.png" width="24" />
+                                                </button>
+                                                <button class="btn btn-link" Title=@((_help)?"Cancel":"") @onclick="BtnCancel">
+                                                    <img src="/img/icoCancel.png" width="24" />
+                                                </button>
+                                            </div>
+                                            }
+                                        else
+                                            {
+                                            <div class="d-flex">
+                                                <MudSelect T="int" @ref="refGroups" Label="Group گروه" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                    <MudSelectItem Value="0">Select a Group</MudSelectItem>
+                                                    @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
+                                                </MudSelect>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-link" Title=@((_help)?"List Students in this Group":"") @onclick='()=>BtnReadStudents(GroupId,"G")'>
+                                                    <img src="/img/icoListS.png" width="36" />
+                                                </button>
+                                                <button class="btn btn-link" Title=@((_help)?"Report Students Courses and Exams":"") @onclick='()=>BtnReportStudent(GroupId, "G")'>
+                                                    <img src="/img/icoFolderS.png" width="26" />
+                                                </button>
+                                                <button class="btn btn-link" Title=@((_help)?"Add new note about this Group":"") @onclick='()=>BtnCreateNote(GroupId, "G")'>
+                                                    <img src="/img/icoNewNote1.png" width="24" />
+                                                </button>
+                                                <button class="btn btn-link" Title=@((_help)?"Report notes about this Group":"") @onclick='()=>BtnReportNotes(GroupId, "G")'>
+                                                    <img src="/img/icoNote2.png" width="24" />
+                                                </button>
+                                                <button class="btn btn-link" Title=@((_help)?"Edit group ويرايش نام گروه":"") @onclick='()=>BtnEditGroup(GroupId)'>
+                                                    <img src="/img/icoRename.png" width="32" />
+                                                </button>
+                                                <button class="btn btn-link" Title=@((_help)?"Delete group حذف گروه - اعضا در ليست دانشجويان باقي مي مانند":"") @onclick='()=>BtnDeleteGroup(GroupId)'>
+                                                    <img src="/img/icoDelete1.png" width="24" />
+                                                </button>
+                                            </div>    
+                                            }
                                     </MudCardContent>
                                 </MudCard>
                             </MudContainer>
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-auto">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
+                                        @* COMBO C *@
                                         <div class="d-flex">
                                             <MudSelect T="int" @ref="refCourses" Label="Course درس" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                 <MudSelectItem Value="0">Select a Course</MudSelectItem>
@@ -93,6 +116,7 @@ else
                                                 <img src="/img/icoFolderC.png" width="26" />
                                             </button>
                                         </div>
+                                        @* COMBO E *@
                                         <div class="d-flex">
                                             <MudSelect T="int" @ref="refExams" Label="Exam آزمون" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                 <MudSelectItem Value="0">Select an Exam</MudSelectItem>
@@ -125,6 +149,7 @@ else
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-auto">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
+                                        @* COMBO M *@
                                         <div class="d-flex">
                                             <MudSelect T="int" @ref="refMessages" Label="Message پيام" Value="MessageId" ValueChanged="OnMessageChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                 <MudSelectItem Value="0">Select Message</MudSelectItem>
@@ -405,6 +430,7 @@ else
     private MudSelect<int> refMessages;
     private MudTextField<string> reftxtNewGroup;
     string strNewGroupName = "";
+    string strGroupName = "";
     string strNewMessageTitle = "";
     string strNewMessageBody = "";
     int GroupId = 0;
@@ -456,8 +482,7 @@ else
         } 
     protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-
-        }    
+        }
     private void TriggerRender()
         {
         InvokeAsync(StateHasChanged);
@@ -616,6 +641,37 @@ else
             {
             Snackbar.Add ($"Failed!", Severity.Error);
             }
+        }
+    private async Task BtnEditGroup(int groupId)
+        {
+        if(groupId > 0)
+            {
+            Group thisGroup = await feService.Read_Group (groupId);
+            appState.SetGroupId(groupId);
+            appState.SetGroupName(thisGroup.GroupName);
+            strGroupName = appState.GroupName;
+            _cmd="EditGroup";
+            StateHasChanged ();
+            }
+        }
+    private async Task BtnUpdateGroup(string groupName)
+        {
+        if(groupName.Trim() != "")
+            {
+            group.GroupId = Convert.ToInt32 (appState.GroupId);
+            group.GroupName = strGroupName;
+            group.UserId = Convert.ToInt32 (appState.UserId);
+            bool Result = await feService.Update_Group(group);
+            Snackbar.Add($"Updated to: {group.GroupName}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            lstGroups.Clear ();
+            lstGroups = await feService.Read_Groups (user, false); //refresh list
+            _cmd = "";
+            StateHasChanged ();
+            }
+        }
+    private async Task BtnDeleteGroup(int groupId)
+        {
+        int Result = await feService.Delete_Group (groupId);
         }
     //course-exam
     private async Task OnCourseChanged(int newValue) 
