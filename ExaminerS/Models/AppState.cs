@@ -115,6 +115,10 @@
         //Message
         public int? MessageId { get; private set; }
         public void SetMessageId (int _MessageId) { MessageId = _MessageId; OnChange?.Invoke (); }
+        public string? MessageTitle { get; private set; }
+        public void SetMessageTitle (string _MessageTitle) { MessageTitle = _MessageTitle; OnChange?.Invoke (); }
+        public string? MessageBody { get; private set; }
+        public void SetMessageBody (string _MessageBody) { MessageBody = _MessageBody; OnChange?.Invoke (); }
         //Project
         public int? ProjectId { get; private set; }
         public void SetProjectId (int _ProjectId) { ProjectId = _ProjectId; OnChange?.Invoke (); }

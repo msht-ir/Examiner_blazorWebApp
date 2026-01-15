@@ -369,6 +369,20 @@ else
                                                 </button>
                                             </div>
                                             }
+                                        @if (_cmd == "EditMessage")
+                                            {
+                                            <h5>New Message</h5>
+                                            <MudTextField @ref="reftxtNewMessageTitle" @bind-Value="strNewMessageTitle" Label="Title عنوان " Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                            <MudTextField @ref="reftxtNewMessageBody" @bind-Value="strNewMessageBody" Label="Message پيام" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Lines="5" />
+                                            <div style="text-align:center">
+                                                <button class="btn btn-link" Title=@((_help)?"Save Message":"") @onclick="()=>BtnUpdateMessage()">
+                                                    <img src="/img/icoSave2.png" width="24" />
+                                                </button>
+                                                <button class="btn btn-link" Title=@((_help)?"Cancel":"") @onclick="BtnCancel">
+                                                    <img src="/img/icoCancel.png" width="24" />
+                                                </button>
+                                            </div>
+                                            }
                                         else
                                             {
                                             <div class="d-flex">
@@ -376,14 +390,17 @@ else
                                                     <MudSelectItem Value="0">Select a Message</MudSelectItem>
                                                     @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
                                                 </MudSelect>
+                                            </div>                                            
+                                            <div class="d-flex">
                                                 <button class="btn btn-link" Title=@((_help)?"Add new Message":"") @onclick="BtnAddNewMessage">
                                                     <img src="/img/icoAdd0.png" width="20" />
+                                                </button>
+                                                <button class="btn btn-link" Title=@((_help)?"Edit message ويرايش پيام":"") @onclick='()=>BtnEditMessage(MessageId)'>
+                                                    <img src="/img/icoRename.png" width="32" />
                                                 </button>
                                                 <button class="btn btn-link" Title=@((_help)?"Delete this Message":"") @onclick="()=>BtnDeleteMessage(MessageId)">
                                                     <img src="/img/icoDelete1.png" width="20" />
                                                 </button>
-                                            </div>                                            
-                                            <div class="d-flex">
                                                 <MudCheckBox @bind-Value="requestFeedback" Label="feedback" Color="Color.Primary"></MudCheckBox>
                                                 <button class="btn btn-link ml-5" Title=@((_help)?"Send this Message to: selected students (above)":"") @onclick="()=>BtnAddStudentsToMessage()">
                                                     <img src="/img/icoEnvelopSend.png" width="28" />
@@ -818,6 +835,41 @@ else
         else
             {
             Snackbar.Add ($"Failed!", Severity.Error);
+            }
+        }
+    private async Task BtnEditMessage(int messageId)
+        {
+        if(messageId > 0)
+            {
+            var message = new MarkupString($"<hr><span style='color:indianred'>Edit</span> message? There may be previous Messages send using existing Title/Body.<br>Continue?<br><br><div style='text-align:center'><img src='/img/icoRename.png' width='70'/></div><br><hr>");
+            bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+            if (confirmResult == true)
+                {
+                Message thisMessage = await feService.Read_Message (messageId, false);
+                appState.SetMessageId(messageId);
+                appState.SetMessageTitle(thisMessage.MessageTitle);
+                appState.SetMessageBody(thisMessage.MessageBody);
+                strNewMessageTitle = appState.MessageTitle;
+                strNewMessageBody = appState.MessageBody;
+                Snackbar.Add($"Updated to: {strNewMessageTitle}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                _cmd="EditMessage";
+                StateHasChanged ();
+                }
+            }
+        }
+    private async Task BtnUpdateMessage()
+        {
+        if((strNewMessageTitle.Trim() != "") & (strNewMessageBody.Trim() != ""))
+            {
+            message.MessageId = Convert.ToInt32 (appState.MessageId);
+            message.MessageTitle = strNewMessageTitle;
+            message.MessageBody = strNewMessageBody;
+            bool Result = await feService.Update_Message(message);
+            Snackbar.Add($"Updated to: {message.MessageTitle}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            lstMessages.Clear ();
+            lstMessages = await feService.Read_Messages (user.UserId, false); //refresh list
+            _cmd = "";
+            StateHasChanged ();
             }
         }
     private async Task BtnDeleteMessage (int messageId)
