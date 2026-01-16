@@ -33,8 +33,8 @@ ORDER BY DateTimeSent DESC
 OFFSET 0 ROWS FETCH NEXT 50 ROWS ONLY
 
 
+Select * from chats ORDER BY DateTimeSent Desc
 
-delete from chats where chatid>4
 
-select * from chats
+
 

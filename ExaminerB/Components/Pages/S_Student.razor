@@ -260,7 +260,7 @@
                                                     else
                                                         {
                                                         <span style="padding-left:5px; color:indianred"> @studentMessage.DateTimeSent </span>
-                                                        <button class="btn btn-link" Title=@((_help)?"-":"") @onclick="()=>BtnSetStudentMessageAsRead(studentMessage)">
+                                                        <button class="btn btn-link" Title=@((_help)?"Open/Show this message":"") @onclick="()=>BtnSetStudentMessageAsRead(studentMessage)">
                                                             <img src="/img/icoEnvelop2.png" width="20" />
                                                         </button>
                                                         <span style="color:black;font-weight:bold;padding-left:2px;">@studentMessage.MessageTitle.Substring(0,6) ...</span>
@@ -295,7 +295,7 @@
                                         <MudCard Class="mx-0">
                                             <MudCardContent Style="background-color:whitesmoke;">
                                                 <div class="d-flex align-items-center" style="font-size:smaller; font-weight:bold;color:indianred;">
-                                                    <button class="btn btn-link" Title=@((_help)?"-":"") @onclick="()=>BtnOpenThisChat(chat.FromId, chat.ToId)">
+                                                    <button class="btn btn-link" Title=@((_help)?"Show chat history with this friend":"") @onclick="()=>BtnOpenThisChat(chat.FromId, chat.ToId)">
                                                         <img src="/img/icoEnvelop2.png" width="18" />
                                                     </button>
                                                     @chat.DateTimeSent 
@@ -338,7 +338,7 @@
                                                 @foreach(User stdnt in lstStudents)
                                                     {
                                                     <div class="d-flex align-items-center mb-1" style="font-size:smaller">
-                                                        <button class="btn btn-link" Title=@((_help)?"-":"") @onclick="()=>BtnOpenThisChat(stdnt.UserId, 0)">
+                                                        <button class="btn btn-link" Title=@((_help)?"Open/Start chat with this friend":"") @onclick="()=>BtnOpenThisChat(stdnt.UserId, 0)">
                                                             <img src="/img/icoUser.png" width="20" />
                                                         </button>
                                                         @stdnt.UserName - @stdnt.UserNickname
@@ -357,7 +357,7 @@
         <MudSwitch @bind-Value="_help" Label="help on mouse hover" Color="Color.Primary" Dense="true"></MudSwitch>
         <hr />
         <div style="text-align:center">
-            <button class="btn btn-link" Title=@((_help)?"-":"") @onclick= "()=> BtnExit()">
+            <button class="btn btn-link" Title=@((_help)?"Exit":"") @onclick= "()=> BtnExit()">
                 <img src="/img/gifExit.gif" style="width:60px" />
             </button>
         </div>
