@@ -282,7 +282,7 @@
                             data-bs-target="#CollapseId4"
                             aria-expanded="false"
                             aria-controls="CollapseId4" style="background-color:WhiteSmoke">
-                            <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( @unreadChatCount <span style="color:blue">/@lstChats.Count</span> )</span></h4>
+                            <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:blue">@lstChats.Count</span> )</span></h4>
                         </button>
                     </h4>
                     <div id="CollapseId4" class="accordion-collapse collapse" data-bs-parent="#accordionStudent">
@@ -299,6 +299,8 @@
                                                         <img src="/img/icoEnvelop2.png" width="18" />
                                                     </button>
                                                     @chat.DateTimeSent 
+                                                </div>
+                                                <div>
                                                     @if(chat.FromId == student.UserId)
                                                         {
                                                         <span style="font-size:small; font-weight:normal;color:green;padding-left:10px;">>@chat.ToName</span>
@@ -643,7 +645,6 @@
         await ReadChatList();        
         StateHasChanged(); 
         }
-    //btns under the tables
     private void BtnExit()
         {
         Navman.NavigateTo("/Login", true);

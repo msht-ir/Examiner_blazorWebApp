@@ -3456,7 +3456,6 @@ COMMIT TRANSACTION;
             cmd.Parameters.AddWithValue ("@chattext", chat.ChatText);
             cmd.Parameters.AddWithValue ("@chattags", chat.ChatTags);
             int i = (int) await cmd.ExecuteScalarAsync ();
-            Console.WriteLine ($"be ----------------------------  i={i}");
             await cnn.CloseAsync ();
             return i;
             }
