@@ -102,6 +102,7 @@
         user.UserId = 0;
         user.UserTags = 0;
         user.TeacherId = TeacherId;
+        appState.SetTeacherId (TeacherId);
         user = await feService.Login(user) ?? new User { UserRole = "student" };        
         if (user.UserId != 0)
             {

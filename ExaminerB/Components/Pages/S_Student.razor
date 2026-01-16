@@ -16,6 +16,10 @@
         {
         <_Loading />
         }
+    else if (_cmd == "OpenThisChat")
+        {
+        <Modal_Chats OnClose="HandleModalClose" />
+        }
     else
         {
         <div class="accordion" id="accordionStudent" style="max-width:500px; margin: 0 auto;">
@@ -84,7 +88,7 @@
                                             </MudCardContent>
                                         </MudCard>
                                     </MudContainer>
-                                    }
+                                }
                             </div>
                         </div>
                     </div>
@@ -175,7 +179,7 @@
                             data-bs-target="#CollapseId3"
                             aria-expanded="false"
                             aria-controls="CollapseId3" style="background-color:WhiteSmoke">
-                            <h4>Messages <span style="font-weight:bold;font-size:x-small;color:indianred">( @unreadCount <span style="color:blue">/@lstStudentMessages.Count</span> )</span></h4>
+                            <h4>Messages <span style="font-weight:bold;font-size:x-small;color:indianred">( @unreadMessageCount <span style="color:blue">/@lstStudentMessages.Count</span> )</span></h4>
                         </button>
                     </h4>
                     <div id="CollapseId3" class="accordion-collapse collapse" data-bs-parent="#accordionStudent">
@@ -269,6 +273,85 @@
                         </div>
                     </div>
                 </div>
+                <br />
+                @* StudentChats *@
+                <div class="accordion-item">
+                    <h4 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#CollapseId4"
+                            aria-expanded="false"
+                            aria-controls="CollapseId4" style="background-color:WhiteSmoke">
+                            <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( @unreadChatCount <span style="color:blue">/@lstChats.Count</span> )</span></h4>
+                        </button>
+                    </h4>
+                    <div id="CollapseId4" class="accordion-collapse collapse" data-bs-parent="#accordionStudent">
+                        <div class="accordion-body" style="background-color:white">
+                            <div id="T3">
+                                @* List Chats *@
+                                @foreach (Chat chat in lstChats)
+                                    {
+                                    <MudContainer Class="mt-2 px-0">
+                                        <MudCard Class="mx-0">
+                                            <MudCardContent Style="background-color:whitesmoke;">
+                                                <div class="d-flex align-items-center" style="font-size:smaller; font-weight:bold;color:indianred;">
+                                                    <button class="btn btn-link" Title=@((_help)?"-":"") @onclick="()=>BtnOpenThisChat(chat.FromId, chat.ToId)">
+                                                        <img src="/img/icoEnvelop2.png" width="18" />
+                                                    </button>
+                                                    @chat.DateTimeSent 
+                                                    @if(chat.FromId == student.UserId)
+                                                        {
+                                                        <span style="font-size:small; font-weight:normal;color:green;padding-left:10px;">>@chat.ToName</span>
+                                                        }
+                                                    else
+                                                        {
+                                                        <span style="font-size:small; font-weight:bold;color:royalblue;padding-left:10px;">@chat.FromName:</span>
+                                                        }
+                                                    @if (chat.ChatText.Length == 10)
+                                                        {
+                                                        <span style="font-size:small; font-weight:normal;color:black;padding-left:10px;"> @chat.ChatText<span>...</span></span>
+                                                        }
+                                                    else
+                                                        {
+                                                        <span style="font-size:small; font-weight:normal;color:black;padding-left:10px;"> @chat.ChatText</span>
+                                                        }
+                                                </div>
+                                                @* <div  style="color:black;font-weight:normal;padding-left:15px; text-align:left;">
+                                                </div> *@
+                                            </MudCardContent>
+                                        </MudCard>
+                                    </MudContainer>
+                                    }
+                                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                    <MudCard Class="mx-auto">
+                                        <MudCardContent Style="background-color:rgba(249,249,249);">
+                                            @* SEARCH *@
+                                            <div class="d-flex">
+                                                <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="search friends" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                                <button class="btn btn-link" Title=@((_help)?"Search my friends":"") @onclick="()=>BtnReadStudentsBySearch()">
+                                                    <img src="/img/icoSearch.png" width="24" />
+                                                </button>
+                                            </div>
+                                            @* RESULTS: LIST FRIENDS *@
+                                            @if(lstStudents.Count > 0)
+                                                {
+                                                @foreach(User stdnt in lstStudents)
+                                                    {
+                                                    <div class="d-flex align-items-center mb-1" style="font-size:smaller">
+                                                        <button class="btn btn-link" Title=@((_help)?"-":"") @onclick="()=>BtnOpenThisChat(stdnt.UserId, 0)">
+                                                            <img src="/img/icoUser.png" width="20" />
+                                                        </button>
+                                                        @stdnt.UserName - @stdnt.UserNickname
+                                                    </div>
+                                                    }
+                                                }        
+                                        </MudCardContent>
+                                    </MudCard>
+                                </MudContainer>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
         <br />
         <MudSwitch @bind-Value="_help" Label="help on mouse hover" Color="Color.Primary" Dense="true"></MudSwitch>
@@ -286,15 +369,22 @@
 
 @code {
     User student = new User ();
+    private MudTextField<string> reftxtSearch;
+    string strSearch = "";
     public List<StudentCourse> lstStudentCourses = new List<StudentCourse>();
     public List<CourseFolder> lstCourseFolders = new List<CourseFolder> ();
     public List<StudentExam> lstStudentExams = new List<StudentExam>();
     public List<StudentMessage> lstStudentMessages = new List<StudentMessage> ();
+    public List<Chat> lstChats = new List<Chat> ();
+    public List<User> lstStudents = new List<User> ();    
     public string? strRunningPoint = "";
     private bool _hasFetched = false;
     private bool hasScrolled = false;
-    private int unreadCount = 0;
+    private int unreadMessageCount = 0;
+    private int unreadChatCount = 0;
+    private int mateId=0;
     bool _help;
+    string _cmd = "";
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
@@ -314,6 +404,7 @@
             student.UserNickname = appState.UserNickname ?? "";
             lstStudentCourses = await feService.Read_StudentCourses (student.UserId, "ByStudentId");
             await ReadMessageList ();
+            await ReadChatList ();
             _hasFetched = true;
             }
         }
@@ -398,11 +489,6 @@
         {
         Navman.NavigateTo ($"/S_ReportStudentExam/{studentExamId}/Review");
         }    
-    //btns under the table
-    private void BtnExit()
-        {
-        Navman.NavigateTo("/Login", true);
-        }
     //btns for StudentMessages
     private async Task BtnSetStudentMessageAsRead(StudentMessage studentMessage)
         {
@@ -497,11 +583,69 @@
             }
         StateHasChanged ();                
         }
+    //btns for Chats
+    public async Task BtnReadStudentsBySearch()
+        {
+        if(strSearch !="")
+            {
+            int teacherId = Convert.ToInt32(appState.TeacherId);
+            lstStudents = await feService.Read_StudentsByKeyword (teacherId, strSearch, 0);
+            Snackbar.Add($"Students like '{strSearch}' listed...", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            StateHasChanged ();
+            }
+        }
+    private async Task BtnSetChatAsRead(Chat chat)
+        {
+        //modes: setOn, setOff
+        await ReadChatList ();
+        StateHasChanged ();
+        }
+    private async Task BtnOpenThisChat(int fromId, int toId)
+        {
+        mateId = (fromId == Convert.ToInt32(appState.UserId))? toId : fromId;
+        appState.SetChatMateId(mateId);
+        _cmd = "OpenThisChat";
+        StateHasChanged ();
+        }
+    private async Task BtnDeleteChat(StudentMessage studentMessage)
+        {
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Message? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
+            {
+            studentMessage.StudentMessageTags |= 4;
+            bool result = await feService.Update_StudentMessageTags (studentMessage);
+            Snackbar.Add("Deleted", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            await ReadMessageList ();
+            }
+        StateHasChanged ();                
+        }
     //methods
     private async Task ReadMessageList()
         {
         lstStudentMessages = await feService.Read_StudentMessages (student.UserId, "ByStudentIdIgnoreDeletedMessages");        
         //first bit: 0 = unread, 1 = read
-        unreadCount = lstStudentMessages.Count(m => (m.StudentMessageTags & (1 << 1)) == 0);
+        unreadMessageCount = lstStudentMessages.Count(m => (m.StudentMessageTags & (1 << 1)) == 0);
+        }
+    private async Task ReadChatList()
+        {
+        lstChats.Clear ();
+        lstChats = await feService.Read_Chats (student.UserId);        
+        //first bit: 0 = unread, 1 = read
+        unreadChatCount = lstChats.Count(m => (m.ChatTags & (1 << 1)) == 0);
+        }
+    private async Task HandleModalClose() 
+        {
+        _cmd = "";
+        int userId = Convert.ToInt32 (appState.UserId);
+        lstStudentCourses = await feService.Read_StudentCourses (userId, "ByStudentId");
+        await ReadMessageList ();
+        await ReadChatList();        
+        StateHasChanged(); 
+        }
+    //btns under the tables
+    private void BtnExit()
+        {
+        Navman.NavigateTo("/Login", true);
         }
 }

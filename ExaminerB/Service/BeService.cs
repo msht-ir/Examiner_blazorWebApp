@@ -1,9 +1,12 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using DocumentFormat.OpenXml.Packaging;
 using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
 using System.Data;
+using static MudBlazor.CategoryTypes;
+using Chat = ExaminerS.Models.Chat;
 using Group = ExaminerS.Models.Group;
 
 namespace ExaminerB.Services2Backend
@@ -3437,6 +3440,136 @@ COMMIT TRANSACTION;
             int i = cmd.ExecuteNonQuery ();
             await cnn.CloseAsync ();
             return (i > 0) ? true : false;
+            }
+        #endregion
+        #region CH:Chat
+        public async Task<int> Create_ChatAsync (Chat chat)
+            {
+            string sql = "INSERT INTO Chats (FromId, ToId, DateTimeSent, ChatText, ChatTags) VALUES (@fromid, @toid, @datetimesent, @chattext, @chattags); SELECT CAST (scope_identity() AS int)";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@fromid", chat.FromId);
+            cmd.Parameters.AddWithValue ("@toid", chat.ToId);
+            cmd.Parameters.AddWithValue ("@datetimesent", chat.DateTimeSent);
+            cmd.Parameters.AddWithValue ("@chattext", chat.ChatText);
+            cmd.Parameters.AddWithValue ("@chattags", chat.ChatTags);
+            int i = (int) await cmd.ExecuteScalarAsync ();
+            Console.WriteLine ($"be ----------------------------  i={i}");
+            await cnn.CloseAsync ();
+            return i;
+            }
+        public async Task<List<Chat>> Read_ChatsAsync (int studentId)
+            {
+            List<Chat> lstChats = new List<Chat> ();
+            string sql = @"SELECT ch.ChatId, ch.FromId, ch.ToId, ch.DateTimeSent, Left(ch.ChatText, 10), ch.ChatTags, sf.StudentName, st.StudentName
+                        FROM Chats ch 
+                        INNER JOIN Students sf ON ch.FromId = sf.StudentId
+                        INNER JOIN Students st ON ch.ToId = st.StudentId
+                        WHERE ch.FromId=@meid OR ch.ToId=@meid 
+                        ORDER BY DateTimeSent DESC
+                        OFFSET 0 ROWS FETCH NEXT 50 ROWS ONLY ";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@meid", studentId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            lstChats.Clear ();
+            while (await reader.ReadAsync ())
+                {
+                lstChats.Add (new Chat
+                    {
+                    ChatId = reader.GetInt32(0),
+                    FromId = reader.GetInt32 (1),
+                    ToId = reader.GetInt32 (2),
+                    DateTimeSent = reader.GetString (3),
+                    ChatText = reader.GetString (4),
+                    ChatTags = reader.GetInt32 (5),
+                    FromName=reader.GetString(6),
+                    ToName=reader.GetString(7)
+                    });
+                }
+            await cnn.CloseAsync ();
+            return lstChats;
+            }
+        public async Task<List<Chat>> Read_ChatsWithOneMateAsync (int studentId, int mateId)
+            {
+            List<Chat> lstChats = new List<Chat> ();
+            string sql = @"SELECT ch.ChatId, ch.FromId, ch.ToId, ch.DateTimeSent, ch.ChatText, ch.ChatTags, sf.StudentName, st.StudentName
+                        FROM Chats ch 
+                        INNER JOIN Students sf ON ch.FromId = sf.StudentId
+                        INNER JOIN Students st ON ch.ToId = st.StudentId
+                        WHERE ((ch.FromId=@meid) AND (ch.ToId=@mateid)) OR ((ch.FromId=@mateid) AND (ch.ToId=@meid)) 
+                        ORDER BY DateTimeSent DESC
+                        OFFSET 0 ROWS FETCH NEXT 50 ROWS ONLY ";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@meid", studentId);
+            cmd.Parameters.AddWithValue ("@mateid", mateId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            lstChats.Clear ();
+            while (await reader.ReadAsync ())
+                {
+                lstChats.Add (new Chat
+                    {
+                    ChatId = reader.GetInt32 (0),
+                    FromId = reader.GetInt32 (1),
+                    ToId = reader.GetInt32 (2),
+                    DateTimeSent = reader.GetString (3),
+                    ChatText = reader.GetString (4),
+                    ChatTags = reader.GetInt32 (5),
+                    FromName = reader.GetString (6),
+                    ToName = reader.GetString (7)
+                    });
+                }
+            await cnn.CloseAsync ();
+            return lstChats;
+            }
+        public async Task<bool> Update_ChatAsync (Chat chat)
+            {
+            string sql = "UPDATE Chats SET FromId=@fromid, ToId=@toid, DateTimeSent=@datetimesent, ChatText=@chattext, ChatTags=@chattags WHERE ChatId=@chatid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@fromid", chat.FromId);
+            cmd.Parameters.AddWithValue ("@toid", chat.ToId);
+            cmd.Parameters.AddWithValue ("@datetimesent", chat.DateTimeSent);
+            cmd.Parameters.AddWithValue ("@chattext", chat.ChatText);
+            cmd.Parameters.AddWithValue ("@chattags", chat.ChatTags);
+            cmd.Parameters.AddWithValue ("@chatid", chat.ChatId);
+            await cmd.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
+            }
+        public async Task<bool> Update_ChatTagsAsync (Chat chat)
+            {
+            string sql = "UPDATE Chats SET ChatTags=@chattags WHERE ChatId=@chatid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@chattags", chat.ChatTags);
+            cmd.Parameters.AddWithValue ("@chatid", chat.ChatId);
+            await cmd.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
+            }
+        public async Task<bool> Delete_ChatAsync (int chatId)
+            {
+            string sql = "DELETE FROM Chats WHERE ChatId=@chatid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@chatid", chatId);
+            await cmd.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
             }
         #endregion
         #region P:Projects

@@ -1,0 +1,235 @@
+﻿@using System.Globalization
+@using System.Reflection
+@inject FeService feService
+@inject AppState appState;
+@inject NavigationManager Navman
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+
+@if (IsOpen)
+{
+    Title = "Chats";
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal show d-block">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Title</h5>
+                    @* <button class="btn-close" @onclick="Close"></button> *@
+                </div>
+                <div class="modal-body">
+                    <div class="mt-3">
+                        @if (lstChats.Count > 0)
+                            {
+                            <h5 style="text-align:center; color:indianred; font-weight:bold;">
+                                @lstChats[0].FromName --- @lstChats[0].ToName                            
+                            </h5>
+                            }
+                    </div>
+                    @foreach (Chat chat in lstChats)
+                        {
+                        <div class="mt-3">
+                                <MudContainer Class="mt-2 px-0">
+                                    <MudCard Class="mx-0">
+                                        <MudCardContent Style="background-color:whitesmoke;">
+                                            <div class="d-flex align-items-center" style="font-size:smaller; font-weight:bold;color:indianred;">
+                                                @chat.DateTimeSent 
+                                            </div>
+                                            @if(chat.FromId == student.UserId)
+                                                {
+                                                <div style="white-space: pre-wrap;font-size:small; font-weight:normal;color:green;padding-left:10px;">
+                                                    @chat.ToName:
+                                                </div>
+                                                }
+                                            else
+                                                {
+                                                <div style="white-space: pre-wrap;font-size:small; font-weight:bold;color:royalblue;padding-left:10px;">
+                                                    @chat.FromName:
+                                                </div>
+                                                }
+                                            <div style='white-space: pre-wrap;font-size:small; font-weight:normal;color:black;padding-left:10px; font-size:@(_cmd == "UseLargeFontSize" ? "large" : "small")'> @chat.ChatText</div>
+                                            <button class="btn btn-link" @onclick="()=>BtnDeleteChatItem(chat.ChatId)">
+                                                <img src="/img/icoDelete1.png" width="22" title="Delete chat item" />
+                                            </button>
+                                        </MudCardContent>
+                                    </MudCard>
+                                </MudContainer>
+                        </div>                        
+                        } 
+                    @if (_cmd == "AddNewChatItem")
+                        {
+                        <div class="mt-3">
+                            <span style="color:royalblue; font-weight:bold;">
+                                @appState.NoteParentName
+                            </span>
+                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                <MudCard Class="mx-0">
+                                    <MudCardContent Style="background-color:whitesmoke;">
+                                        <MudTextField T="string" Label="Text" @bind-Value="chat.ChatText" Variant="Variant.Text" Lines="8" AutoResize="true" Style="width:100%;font-family:'Courier New', Courier, monospace" />
+                                            <br />
+                                            <div style="text-align:center">
+                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Dense="true" @onclick="BtnCreateChat">Send</MudButton>
+                                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Dense="true" @onclick="BtnCancel">Cancel</MudButton>
+                                            </div>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
+                        </div>                        
+                        }
+                    <br />
+                    <br />
+                    <div style="text-align:center">
+                        <button class="btn btn-link" @onclick="AddNewChatItem">
+                            <img src="/img/icoAdd0.png" width="22" />
+                        </button>
+                        <button class="btn btn-link" @onclick="BtnChangeFontSize">
+                            <img src="/img/icoFontAa.png" title="Font Size  تغيير انداز فونت" alt="FontSize" width="28"/>
+                        </button>
+                        <button class="btn btn-link" @onclick="Close">
+                            <img src="/img/icoCancel.png" width="20" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string Title { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    Chat chat = new Chat ();
+    string _cmd = "";
+    bool _hasFetched;
+    public bool IsOpen { get; set; } = true;
+    int studentId = 0;
+    int chatMateId = 0;
+    User student = new User ();
+    private MudTextField<string> reftxtSearch;
+    string strSearch = "";
+    public List<StudentCourse> lstStudentCourses = new List<StudentCourse>();
+    public List<CourseFolder> lstCourseFolders = new List<CourseFolder> ();
+    public List<StudentExam> lstStudentExams = new List<StudentExam>();
+    public List<StudentMessage> lstStudentMessages = new List<StudentMessage> ();
+    public List<Chat> lstChats = new List<Chat> ();
+    public List<User> lstStudents = new List<User> ();    
+    public string? strRunningPoint = "";
+    private bool hasScrolled = false;
+    private int unreadMessageCount = 0;
+    private int unreadChatCount = 0;
+    private int mateId=0;
+    bool _help;
+
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            Navman.NavigateTo ("/Login");
+            }
+        ReadChats ();
+        _hasFetched = true;
+        } 
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    public void Open() => IsOpen = true;
+    private async Task Close()
+        {
+        if (OnClose.HasDelegate)
+            {
+            await OnClose.InvokeAsync();
+            IsOpen = false;
+            }
+        }
+    private async Task BtnChangeFontSize()
+        {
+        _cmd = (_cmd == "UseLargeFontSize") ? "": "UseLargeFontSize";
+        StateHasChanged ();
+        }
+    public async Task BtnDeleteChatItem(int chatId)
+        {
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> this chat item?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
+            {
+            bool result = await feService.Delete_Chat (chatId);
+            if(result)
+                {
+                Snackbar.Add($"deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                _hasFetched = false;
+                studentId = Convert.ToInt32 (appState.UserId);
+                chatMateId = Convert.ToInt32 (appState.ChatMateId);
+                lstChats = await feService.Read_ChatsWithOneMate (studentId, chatMateId);
+                StateHasChanged ();
+                _hasFetched = true;
+
+                }
+            else
+                {
+                Snackbar.Add($"Failed to delete note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
+            }
+        }
+    public async Task ReadChats()
+        {
+        studentId = Convert.ToInt32 (appState.UserId);
+        chatMateId = Convert.ToInt32 (appState.ChatMateId);
+        lstChats.Clear ();
+        lstChats = await feService.Read_ChatsWithOneMate (studentId, chatMateId);
+        StateHasChanged ();
+        }
+    public void AddNewChatItem()
+        {
+        _cmd = "AddNewChatItem";
+        chat.ChatText = "";
+        StateHasChanged ();
+        }
+    public async Task BtnCreateChat()
+        {
+        if (chat.ChatText.Trim() == "")
+            {
+            Snackbar.Add("Text is empty!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            return;
+            }
+        else
+            {
+            studentId = Convert.ToInt32 (appState.UserId);
+            chatMateId = Convert.ToInt32 (appState.ChatMateId);
+            chat.FromId = studentId;
+            chat.ToId = chatMateId;
+            chat.DateTimeSent = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
+            chat.ChatTags = 0;
+            _hasFetched = false;
+            int result = await feService.Create_Chat (chat);
+            if(result > 0)
+                {
+                Snackbar.Add("Saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                _cmd = "";
+                lstChats.Clear ();
+                lstChats = await feService.Read_ChatsWithOneMate (studentId, chatMateId);
+                StateHasChanged ();
+                }
+            else
+                {
+                Snackbar.Add("Failed to save chat!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
+            _hasFetched = true;
+
+            }
+        }
+    public void BtnCancel()
+        {    
+        appState.SetCmd("");
+        Close ();
+        }
+
+}

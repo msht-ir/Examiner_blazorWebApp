@@ -158,6 +158,14 @@ namespace ExaminerB.Services2Backend
         Task<bool> Update_StudentMessageSetAsReadAsync (StudentMessage studentMessage);
         Task<bool> Delete_StudentMessageAsync (int studentMessageId);
         #endregion
+        #region CH:Chats
+        Task<int> Create_ChatAsync (Chat chat);
+        Task<List<Chat>> Read_ChatsAsync (int studentId);
+        Task<List<Chat>> Read_ChatsWithOneMateAsync (int studentId, int mateId);
+        Task<bool> Update_ChatAsync (Chat chat);
+        Task<bool> Update_ChatTagsAsync (Chat chat);
+        Task<bool> Delete_ChatAsync (int chatId);
+        #endregion
         #region P:Projects
         Task<int> Create_ProjectAsync (Project project);
         Task<List<Project>> Read_ProjectsAsync (int userI, string mode);

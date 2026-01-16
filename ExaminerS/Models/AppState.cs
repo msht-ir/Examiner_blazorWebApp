@@ -17,13 +17,11 @@
         public string? ReturnPage { get; private set; }
         public void SetReturnPage (string _ReturnPage) { ReturnPage = _ReturnPage; OnChange?.Invoke (); }
         public bool? HelpOnHover {get; private set;}
-        public void SetHelpOnHover (bool _HelpOnHover)
-            {
-            HelpOnHover = _HelpOnHover;
-            OnChange?.Invoke ();
-            }
+        public void SetHelpOnHover (bool _HelpOnHover) { HelpOnHover = _HelpOnHover; OnChange?.Invoke (); }
 
         //user (teacher|student)
+        public int? TeacherId { get; private set; }
+        public void SetTeacherId (int _TeacherId) { TeacherId = _TeacherId; OnChange?.Invoke (); }
         public int? UserId { get; private set; }
         public void SetUserId (int _UserId) { UserId = _UserId; OnChange?.Invoke (); }
         public string? UserNickname { get; private set; }
@@ -119,6 +117,9 @@
         public void SetMessageTitle (string _MessageTitle) { MessageTitle = _MessageTitle; OnChange?.Invoke (); }
         public string? MessageBody { get; private set; }
         public void SetMessageBody (string _MessageBody) { MessageBody = _MessageBody; OnChange?.Invoke (); }
+        //Chat
+        public int? ChatMateId { get; private set; }
+        public void SetChatMateId (int _ChatMateId) { ChatMateId = _ChatMateId; OnChange?.Invoke (); }
         //Project
         public int? ProjectId { get; private set; }
         public void SetProjectId (int _ProjectId) { ProjectId = _ProjectId; OnChange?.Invoke (); }

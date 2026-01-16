@@ -1,6 +1,8 @@
 ﻿using ExaminerB.Services2Backend;
 using ExaminerS.Models;
 using Microsoft.AspNetCore.Mvc;
+using static MudBlazor.CategoryTypes;
+using Chat = ExaminerS.Models.Chat;
 using Group = ExaminerS.Models.Group;
 
 namespace ExaminerB.Backend
@@ -726,6 +728,44 @@ namespace ExaminerB.Backend
         public async Task<ActionResult<bool>> Delete_StudentMessage ([FromBody] int studentMessageId)
             {
             var result = await _BeService.Delete_StudentMessageAsync (studentMessageId);
+            return Ok (result);
+            }
+        #endregion
+        #region CH:Chats
+        [HttpPost ("Create_Chat")]
+        public async Task<ActionResult<int>> Create_Chat ([FromBody] Chat chat)
+            {
+            var result = await _BeService.Create_ChatAsync (chat);
+            return Ok (result);
+            }
+        [HttpPost ("Read_Chats")]
+        public async Task<ActionResult<List<Chat>>> Read_Chats ([FromBody] int studentId)
+            {
+            var result = await _BeService.Read_ChatsAsync (studentId);
+            return Ok (result);
+            }
+        [HttpPost ("Read_ChatsWithOneMate")]
+        public async Task<ActionResult<List<Chat>>> Read_ChatsWithOneMate ([FromBody] int studentId, [FromQuery] int mateId)
+            {
+            var result = await _BeService.Read_ChatsWithOneMateAsync (studentId, mateId);
+            return Ok (result);
+            }
+        [HttpPost ("Update_Chats")]
+        public async Task<ActionResult<bool>> Update_Chat ([FromBody] Chat chat)
+            {
+            var result = await _BeService.Update_ChatAsync (chat);
+            return Ok (result);
+            }
+        [HttpPost ("Update_ChatTags")]
+        public async Task<ActionResult<bool>> Update_ChatTags ([FromBody] Chat chat)
+            {
+            var result = await _BeService.Update_ChatTagsAsync (chat);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_Chat")]
+        public async Task<ActionResult<bool>> Delete_Chat ([FromBody] int chatId)
+            {
+            var result = await _BeService.Delete_ChatAsync(chatId);
             return Ok (result);
             }
         #endregion

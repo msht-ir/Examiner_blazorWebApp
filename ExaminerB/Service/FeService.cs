@@ -1028,6 +1028,54 @@ namespace ExaminerB.Service
             return response.IsSuccessStatusCode ? true : false;
             }
         #endregion
+        #region CH:Chats
+        public async Task<int>Create_Chat(Chat chat)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Create_Chat", chat);
+            return response.IsSuccessStatusCode ? 1 : 0;
+            }
+        public async Task<List<Chat>> Read_Chats(int studentId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_Chats", studentId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Chat>? lstChats = await response.Content.ReadFromJsonAsync<List<Chat>> ();
+                return lstChats ?? new List<Chat> ();
+                }
+            else
+                {
+                return new List<Chat> ();
+                }
+            }
+        public async Task<List<Chat>> Read_ChatsWithOneMate(int studentId, int mateId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_ChatsWithOneMate?mateId={mateId}", studentId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Chat>? lstChats = await response.Content.ReadFromJsonAsync<List<Chat>> ();
+                return lstChats ?? new List<Chat> ();
+                }
+            else
+                {
+                return new List<Chat> ();
+                }
+            }
+        public async Task<bool>Update_Chat(Chat chat)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Update_Chat", chat);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool>Update_ChatTags(Chat chat)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Update_ChatTags", chat);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool> Delete_Chat (int chatId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Delete_Chat", chatId);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        #endregion
         #region P:Projects
         public async Task<int> Create_Project (Project project)
             {
@@ -1173,17 +1221,6 @@ namespace ExaminerB.Service
             }
         public async Task<bool> Update_Note (Note note)
             {
-            Console.WriteLine (@$"
-                                fe--------------------------- 
-                                {note.NoteId}
-                                {note.ParentId}
-                                {note.ParentType}
-                                {note.NoteDatum}
-                                {note.NoteText}
-                                {note.NoteTags}
-                                -----------------------------
-                                ");
-
             var response = await _http.PostAsJsonAsync ("api/Update_Note", note);
             return response.IsSuccessStatusCode ? true : false;
             }

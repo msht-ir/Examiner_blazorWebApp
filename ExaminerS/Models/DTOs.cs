@@ -354,7 +354,63 @@ namespace ExaminerS.Models
         public string DateTimeSent { get; set; } = "";
         public string DateTimeRead { get; set; } = "";
         public int StudentMessageTags { get; set; } = 0;
-
+        }
+    //CH
+    public class Chat
+        {
+        public int ChatId { get; set; } = 0;
+        public int FromId { get; set; } = 0;
+        public string FromName { get; set; } = "";
+        public int ToId { get; set; } = 0;
+        public string ToName { get; set; } = "";
+        public string DateTimeSent { get; set; } = "";
+        public string ChatText { get; set; } = "";
+        public int ChatTags { get; set; } = 0;
+        //wrapper properties for each flag
+        public bool IsRead
+            {
+            get => (ChatTags & 1) == 1;
+            set
+                {
+                if (value)
+                    ChatTags |= 1;
+                else
+                    ChatTags &= ~1;
+                }
+            }
+        public bool IsImp
+            {
+            get => (ChatTags & 2) == 2;
+            set
+                {
+                if (value)
+                    ChatTags |= 2;
+                else
+                    ChatTags &= ~2;
+                }
+            }
+        public bool IsBookmrked
+            {
+            get => (ChatTags & 4) == 4;
+            set
+                {
+                if (value)
+                    ChatTags |= 4;
+                else
+                    ChatTags &= ~4;
+                }
+            }
+        public bool IsDeleted
+            {
+            get => (ChatTags & 8) == 8;
+            set
+                {
+                if (value)
+                    ChatTags |= 8;
+                else
+                    ChatTags &= ~8;
+                }
+            }
         }
     //P
     public class Project
@@ -396,7 +452,6 @@ namespace ExaminerS.Models
                     NoteTags &= ~1;
                 }
             }
-
         }
     //NN
     public class NoteNet
