@@ -118,6 +118,8 @@
         public string? MessageBody { get; private set; }
         public void SetMessageBody (string _MessageBody) { MessageBody = _MessageBody; OnChange?.Invoke (); }
         //Chat
+        public int? SelectedChatId { get; private set; }
+        public void SetSelectedChatId (int _SelectedChatId) { SelectedChatId = _SelectedChatId; OnChange?.Invoke (); }
         public int? ChatMateId { get; private set; }
         public void SetChatMateId (int _ChatMateId) { ChatMateId = _ChatMateId; OnChange?.Invoke (); }
         //Project

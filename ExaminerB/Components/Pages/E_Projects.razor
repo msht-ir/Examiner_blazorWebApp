@@ -17,7 +17,7 @@
     {
     <_LoadingTimer />
     }
-else if (appState.Cmd == "CreateNewSubprojectNote")
+else if (appState.Cmd == "CreateNote")
     {
     <Modal_CreateNote />
     }
@@ -73,7 +73,7 @@ else
                                         @if(note.NoteText.Length >60)
                                             {
                                             <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
-                                                @note.NoteText.Substring(0,100) <span style="font-weight:bold;color:indianred">[...]</span>
+                                                @note.NoteText.Substring(0,100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span>
                                             </div>
                                             }
                                         else
@@ -109,7 +109,7 @@ else
                                         @if(note.NoteText.Length >60)
                                             {
                                             <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
-                                                @note.NoteText.Substring(0,100) <span style="font-weight:bold;color:indianred">[...]</span>
+                                                @note.NoteText.Substring(0,60) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span>
                                             </div>
                                             }
                                         else
@@ -280,13 +280,14 @@ else
                                                                                             <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
                                                                                                 @if(notex.NoteText.Length > 60)
                                                                                                     {
-                                                                                                    <div> @notex.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span></div>
+                                                                                                    <div> @notex.NoteText.Substring(0,60) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
                                                                                                     }
                                                                                                 else
                                                                                                     {
                                                                                                     <div> @notex.NoteText</div>
                                                                                                     }
                                                                                             </div>
+                                                                                            <hr />
                                                                                             <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
                                                                                                 <img src="/img/icoNote2.png" width="24" />
                                                                                             </button>
@@ -311,13 +312,14 @@ else
                                                                                             <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
                                                                                                 @if(notex.NoteText.Length > 60)
                                                                                                     {
-                                                                                                    <div> @notex.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span></div>
+                                                                                                    <div> @notex.NoteText.Substring(0,60) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
                                                                                                     }
                                                                                                 else
                                                                                                     {
                                                                                                     <div> @notex.NoteText</div>
                                                                                                     }
                                                                                             </div>
+                                                                                            <hr />
                                                                                             <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
                                                                                                 <img src="/img/icoNote2.png" width="24" />
                                                                                             </button>
@@ -692,7 +694,7 @@ else
         //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
         appState.SetNoteParentType (2);
         appState.SetNoteParentId (subProjectId);
-        appState.SetCmd ("CreateNewSubprojectNote");
+        appState.SetCmd ("CreateNote");
         StateHasChanged ();
         }
     public async Task BtnEditNoteInDialog(Note note)

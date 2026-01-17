@@ -41,6 +41,42 @@ else
                 <div id="Accordion_GCEM" class="accordion-collapse collapse" data-bs-parent="#accordionTStudents">
                     <div class="accordion-body" style="background-color:white">
                         <div id="T1">
+                            @* SEARCH - ADD.NEW.STUDENT - IMPORT *@
+                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                <MudCard Class="mx-auto">
+                                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                                        @if (_cmd == "AddnewStudent")
+                                            {
+                                            @* ADD NEW STUDENT *@
+                                            <div class="d-flex" style="gap:10px;">
+                                                <MudTextField  @ref="refNewUser" @bind-Value="user.UserName"  Label="Username يوزر"   Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield" />
+                                                <MudTextField  @ref="refNewPass" @bind-Value="user.UserPass"  Label="Password پسورد"  Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield"  InputType="InputType.Password"/>
+                                                <button class="btn btn-link" Title=@((_help)?"Save new student":"") @onclick="()=>BtnCreateNewStudent(user.UserName, user.UserPass, user.UserName)">
+                                                    <img src="/img/icoSave2.png" width="24" />
+                                                </button>
+                                            </div>
+                                            @* IMPORT EXCEL *@
+                                            <InputFile  Title=@((_help)?"Import from Excel":"") OnChange="HandleFileSelected" />
+                                            }
+                                        else
+                                            {
+                                            @* SEARCH *@
+                                            <div class="d-flex" style="padding:0;">
+                                                <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="Search جستجو" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                                <button class="btn btn-link" Title=@((_help)?"Search students":"") @onclick="()=>BtnReadStudentsBySearch()">
+                                                    <img src="/img/icoSearch.png" width="22" />
+                                                </button>
+                                                <button class="btn btn-link" Title=@((_help)?"Cancel":"") @onclick="BtnCancelSearchStudent">
+                                                    <img src="/img/icoCancel.png" width="18" />
+                                                </button>
+                                                <button class="btn btn-link" Title=@((_help)?"Add new student":"") @onclick="BtnAddNewStudent">
+                                                    <img src="/img/icoAdd0.png" width="22" />
+                                                </button>
+                                            </div>
+                                            }
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
                             @* COMBO G *@
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-auto">
@@ -64,6 +100,9 @@ else
                                                     <MudSelectItem Value="0">Select a Group</MudSelectItem>
                                                     @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
                                                 </MudSelect>
+                                                <button class="btn btn-link" Title=@((_help)?"Delete group حذف گروه - اعضا در ليست دانشجويان باقي مي مانند":"") @onclick='()=>BtnDeleteGroup(GroupId)'>
+                                                    <img src="/img/icoDelete1.png" width="24" />
+                                                </button>
                                             </div>
                                             <div>
                                                 <button class="btn btn-link" Title=@((_help)?"List Students in this Group":"") @onclick='()=>BtnReadStudents(GroupId,"G")'>
@@ -80,9 +119,6 @@ else
                                                 </button>
                                                 <button class="btn btn-link" Title=@((_help)?"Edit group ويرايش نام گروه":"") @onclick='()=>BtnEditGroup(GroupId)'>
                                                     <img src="/img/icoRename.png" width="32" />
-                                                </button>
-                                                <button class="btn btn-link" Title=@((_help)?"Delete group حذف گروه - اعضا در ليست دانشجويان باقي مي مانند":"") @onclick='()=>BtnDeleteGroup(GroupId)'>
-                                                    <img src="/img/icoDelete1.png" width="24" />
                                                 </button>
                                             </div>    
                                             }
@@ -122,6 +158,9 @@ else
                                                 <MudSelectItem Value="0">Select an Exam</MudSelectItem>
                                                 @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                                             </MudSelect>
+                                            <button class="btn btn-link" Title=@((_help)?"Report Students Points in this Exam":"") @onclick='()=>BtnGotoPageExamPoints(ExamId)'>
+                                                <img src="/img/icoChartPie.png" width="26" />
+                                            </button>
                                         </div>
                                         <div>
                                             <button class="btn btn-link" Title=@((_help)?"List students in this Exam":"") @onclick='()=>BtnReadStudents(ExamId,"E")'>
@@ -138,9 +177,6 @@ else
                                             </button>
                                             <button class="btn btn-link" Title=@((_help)?"Goto page Exams":"") @onclick='()=>BtnGotoExamsPage(ExamId, refCourses.Text.ToString() ?? "")'>
                                                 <img src="/img/icoFolderE.png" width="26" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Report Students Points in this Exam":"") @onclick='()=>BtnGotoPageExamPoints(ExamId)'>
-                                                <img src="/img/icoChartPie.png" width="26" />
                                             </button>
                                         </div>
                                     </MudCardContent>
@@ -167,36 +203,6 @@ else
                                     </MudCardContent>
                                 </MudCard>
                             </MudContainer>
-                            @* SEARCH - ADD.NEW.STUDENT - IMPORT *@
-                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
-                                <MudCard Class="mx-auto">
-                                    <MudCardContent Style="background-color:rgba(249,249,249);">
-                                        @* SEARCH *@
-                                        <div class="d-flex">
-                                            <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="Search جستجو" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
-                                            <button class="btn btn-link" Title=@((_help)?"Search Students by a keyword":"") @onclick="()=>BtnReadStudentsBySearch()">
-                                                <img src="/img/icoSearch.png" width="24" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Create new Student Account":"") @onclick="BtnAddNewStudent">
-                                                <img src="/img/icoAdd0.png" width="20" />
-                                            </button>
-                                        </div>
-                                        @* ADD NEW STUDENT *@
-                                        @if (_cmd == "AddnewStudent")
-                                            {
-                                            <div class="d-flex" style="gap:10px;">
-                                                <MudTextField  @ref="refNewUser" @bind-Value="user.UserName"  Label="Username يوزر"   Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield" />
-                                                <MudTextField  @ref="refNewPass" @bind-Value="user.UserPass"  Label="Password پسورد"  Variant="Variant.Outlined"  Autocomplete="off"  Dense="true"  Margin="Margin.Dense"  Class="my-textfield"  InputType="InputType.Password"/>
-                                                <button class="btn btn-link" Title=@((_help)?"Save new student account":"") @onclick="()=>BtnCreateNewStudent(user.UserName, user.UserPass, user.UserName)">
-                                                    <img src="/img/icoSave2.png" width="24" />
-                                                </button>
-                                            </div>
-                                            @* IMPORT EXCEL *@
-                                            <InputFile  Title=@((_help)?"Import new Students List from Excel":"") OnChange="HandleFileSelected" />
-                                            }
-                                    </MudCardContent>
-                                </MudCard>
-                            </MudContainer>
                         </div>
                     </div>
                 </div>
@@ -211,13 +217,13 @@ else
                                 {
                                 <div class="d-flex align-items-center mb-1">
                                     <input class="form-check-input" style="margin-left:2px;margin-right:5px;" type="checkbox" @bind="student.IsSelected" />
-                                    <button class="btn btn-link" Title=@((_help)?"Add new Note يادداشت جديد":"") @onclick='()=>BtnCreateNote(student.UserId, "S")'>
+                                    <button class="btn btn-link" Title=@((_help)?"New note يادداشت جديد":"") @onclick='()=>BtnCreateNote(student.UserId, "S")'>
                                         <img src="/img/icoNewNote1.png" width="20" />
                                     </button>
                                     <button class="btn btn-link" Title=@((_help)?"Report Notes and Messages يادداشت ها و پيام ها":"") @onclick='()=>BtnGotoPageReportMessages(student)'>
                                         <img src="/img/icoEnvelop0.png" width="20" />
                                     </button>
-                                    <button class="btn btn-link" Title=@((_help)?"Report Students Coutses and Exams درس ها و آزمون هاي دانشجو":"") @onclick='()=>BtnReportStudent(student.UserId, "S")'>
+                                    <button class="btn btn-link" Title=@((_help)?"Report Students Courses and Exams درس ها و آزمون ها":"") @onclick='()=>BtnReportStudent(student.UserId, "S")'>
                                         <img src="/img/icoFolderS.png" width="22" />
                                     </button>
                                     @student.UserName - @student.UserNickname
@@ -976,6 +982,8 @@ else
             }
         else
             {
+            user.UserName = "new student";
+            user.UserPass = "1234";
             _cmd = "AddnewStudent";
             }
         StateHasChanged ();
@@ -1030,6 +1038,12 @@ else
         appState.SetCmd ("");
         }
     //cancel-back
+    public void BtnCancelSearchStudent()
+        {
+        lstStudents.Clear();
+        Snackbar.Add($"List cleared", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        StateHasChanged ();
+        }
     public void BtnGotoPageExamPoints(int examId)
         {
         appState.SetReturnPage ("T_Students");

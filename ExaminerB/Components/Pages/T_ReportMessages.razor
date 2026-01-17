@@ -209,7 +209,7 @@ else
         {
         <br />
         <hr style="color:red" />
-        <h5 style="margin-top:10px">no notes!</h5>
+        @* <h5 style="margin-top:10px">no notes!</h5> *@
         }
     else
         {
@@ -229,7 +229,7 @@ else
                                 <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
                                     @if(notex.NoteText.Length > 60)
                                         {
-                                        <div> @notex.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span></div>
+                                        <div> @notex.NoteText.Substring(0,60) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
                                         }
                                     else
                                         {
@@ -260,7 +260,7 @@ else
                                 <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
                                     @if(notex.NoteText.Length > 60)
                                         {
-                                        <div> @notex.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span></div>
+                                        <div> @notex.NoteText.Substring(0,60) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
                                         }
                                     else
                                         {

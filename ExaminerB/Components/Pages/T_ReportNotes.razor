@@ -8,26 +8,32 @@
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
-    <h4 style="text-align:center;color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h4>
+    <h5 style="text-align:center;color:steelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h5>
     <hr style="color:red"/>
-
     @if (!_hasFetched)
         {
         <_ScanSheets />
         }
     else
         {
-        <h5 style="text-align:center;">Notes</h5>
-        <h6 style="text-align:center;color:indianred">@appState.StudentNickname</h6>
-        <div style="text-align:center">
-            <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/img/icoBack3.png" width="40" />
-            </button>                
-            <button class="btn btn-link" @onclick="CreateNote">
-                <img src="/img/icoAdd0.png" width="24" />
-            </button>
-        </div>        
-        <hr />
+        @if (lstNotes.Count > 0)
+            {
+            <div class="d-flex align-items-center" style="text-align:left">
+                <button class="btn btn-link" @onclick="BtnBack">
+                    <img src="/img/icoBack3.png" width="40" />
+                </button>
+                <button class="btn btn-link" @onclick="CreateNote">
+                    <img src="/img/icoAdd0.png" width="24" />
+                </button>            
+               <h5 style="text-align:center;padding-left:15px;">Notes: <span style="font-size:smaller;text-align:center;color:indianred">@appState.UserNickname</span></h5>
+            </div>
+            }
+        else
+            {
+            <div class="align-items-center" style="text-align:center">
+               <h5 style="text-align:center;padding-left:15px;">Notes: <span style="font-size:smaller;text-align:center;color:indianred">@appState.UserNickname</span></h5>        
+            </div>
+            }
         <EditForm Model="lstNotes">
                 @if (appState.Cmd == "ShowNoteInDialog")
                     {
@@ -51,27 +57,27 @@
                                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
-                                            <div style="text-align:center; color:indianred; font-weight:bold;">
+                                            <div class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;">
                                                 @notex.NoteDatum
                                             </div>
                                             <hr />
                                             <div style="white-space: pre-wrap; font-weight:normal; font-family:'Segoe UI';font-size:small">
                                                 @if(notex.NoteText.Length > 60)
                                                     {
-                                                    <div> @notex.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span></div>
+                                                    <div> @notex.NoteText.Substring(0,60) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
                                                     }
                                                 else
                                                     {
                                                     <div style="font-weight:normal;font-family:'Segoe UI'"> @notex.NoteText</div>
                                                     }
                                             </div>
-                                            <div style="text-align:center;">
-                                                <hr />
+                                            <hr />
+                                            <div class="d-flex align-items-center">
                                                 <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                    <img src="/img/icoNote2.png" width="24" />
+                                                    <img src="/img/icoNote2.png" width="22" />
                                                 </button>
                                                 <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
-                                                    <img src="/img/icoRename.png" width="34" />
+                                                    <img src="/img/icoRename.png" width="32" />
                                                 </button>
                                                 <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
                                                     <img src="/img/icoDelete1.png" width="24" />
@@ -88,30 +94,30 @@
                                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
-                                            <div style="text-align:center; color:indianred; font-weight:bold;">
+                                            <div class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;">
                                                 @notex.NoteDatum
                                             </div>
                                             <hr />
                                             <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
                                                 @if(notex.NoteText.Length > 60)
                                                     {
-                                                    <div style="font-weight:bold;"> @notex.NoteText.Substring(0,60) <span style="font-weight:bold;color:indianred">[...]</span></div>
+                                                    <div style="font-weight:bold;"> @notex.NoteText.Substring(0,60) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
                                                     }
                                                 else
                                                     {
                                                     <div style="font-weight:bold;"> @notex.NoteText</div>
                                                     }
                                             </div>
-                                            <div style="text-align:center;">
-                                                <hr />
-                                                <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
-                                                    <img src="/img/icoRename.png" width="34" />
-                                                </button>
+                                            <hr />
+                                            <div class="d-flex align-items-center">
                                                 <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                    <img src="/img/icoNote2.png" width="24" />
+                                                    <img src="/img/icoNote2.png" width="22" />
+                                                </button>
+                                                <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
+                                                    <img src="/img/icoRename.png" width="32" />
                                                 </button>
                                                 <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
-                                                    <img src="/img/icoDelete1.png" width="26" />
+                                                    <img src="/img/icoDelete1.png" width="24" />
                                                 </button>
                                             </div>
                                         </MudCardContent>
@@ -123,13 +129,24 @@
                 }
         </EditForm>
         }
+        <br />
+    @if (lstNotes.Count > 0)
+        {
         <div style="text-align:center">
-            <br />
             <button class="btn btn-link" @onclick="BtnBack">
                 <img src="/img/icoBack3.png" width="40" />
             </button>
-        </div>
-    <script>
+        </div>    
+        }
+    else
+        {
+        <div style="text-align:center">
+            <button class="btn btn-link" @onclick="BtnBack">
+            <img src="/img/gifUserLogin.gif" width="70" />
+            </button>
+        </div>    
+        }
+<script>
         window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
     </script>
 
@@ -235,5 +252,4 @@
         _hasFetched = true;
         StateHasChanged(); 
         }
-
 }
