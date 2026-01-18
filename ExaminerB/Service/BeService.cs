@@ -3461,34 +3461,53 @@ COMMIT TRANSACTION;
             }
         public async Task<List<Chat>> Read_ChatsAsync (int studentId)
             {
-            List<Chat> lstChats = new List<Chat> ();
-            string sql = @"SELECT ch.ChatId, ch.FromId, ch.ToId, ch.DateTimeSent, Left(ch.ChatText, 10), ch.ChatTags, sf.StudentName, st.StudentName
-                        FROM Chats ch 
-                        INNER JOIN Students sf ON ch.FromId = sf.StudentId
-                        INNER JOIN Students st ON ch.ToId = st.StudentId
-                        WHERE ch.FromId=@meid OR ch.ToId=@meid 
-                        ORDER BY DateTimeSent DESC
-                        OFFSET 0 ROWS FETCH NEXT 50 ROWS ONLY ";
+            List<Chat> lstTempIds = new List<Chat> ();
+            string sql = @"SELECT DISTINCT FromId, ToId FROM Chats WHERE FromId=@meid OR ToId=@meid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@meid", studentId);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            lstChats.Clear ();
-            while (await reader.ReadAsync ())
+            SqlCommand cmd1 = new SqlCommand (sql, cnn);
+            cmd1.Parameters.AddWithValue ("@meid", studentId);
+            SqlDataReader reader1 = await cmd1.ExecuteReaderAsync ();
+            lstTempIds.Clear ();
+            while (await reader1.ReadAsync ())
                 {
-                lstChats.Add (new Chat
+                lstTempIds.Add (new Chat
                     {
-                    ChatId = reader.GetInt32(0),
-                    FromId = reader.GetInt32 (1),
-                    ToId = reader.GetInt32 (2),
-                    DateTimeSent = reader.GetString (3),
-                    ChatText = reader.GetString (4),
-                    ChatTags = reader.GetInt32 (5),
-                    FromName=reader.GetString(6),
-                    ToName=reader.GetString(7)
+                    ChatId = 0,
+                    FromId = reader1.GetInt32 (0),
+                    ToId = reader1.GetInt32 (1),
                     });
+                }
+            await reader1.CloseAsync ();
+            List<Chat> lstChats = new List<Chat> ();
+            foreach(Chat cht in lstTempIds)
+                {
+                sql = @$"SELECT ch.ChatId, ch.FromId, ch.ToId, ch.DateTimeSent, Left(ch.ChatText, 10), ch.ChatTags, sf.StudentName, st.StudentName
+                    FROM Chats ch 
+                    INNER JOIN Students sf ON ch.FromId = sf.StudentId
+                    INNER JOIN Students st ON ch.ToId = st.StudentId
+                    WHERE FromId={cht.FromId} AND ToId={cht.ToId}
+                    ORDER BY DateTimeSent DESC
+                    OFFSET 0 ROWS FETCH NEXT 50 ROWS ONLY ";
+                SqlCommand cmd2 = new SqlCommand (sql, cnn);
+                SqlDataReader reader = await cmd2.ExecuteReaderAsync ();
+                lstChats.Clear ();
+                while (await reader.ReadAsync ())
+                    {
+                    lstChats.Add (new Chat
+                        {
+                        ChatId = reader.GetInt32(0),
+                        FromId = reader.GetInt32 (1),
+                        ToId = reader.GetInt32 (2),
+                        DateTimeSent = reader.GetString (3),
+                        ChatText = reader.GetString (4),
+                        ChatTags = reader.GetInt32 (5),
+                        FromName=reader.GetString(6),
+                        ToName=reader.GetString(7)
+                        });
+                    }
+                await reader.CloseAsync ();
                 }
             await cnn.CloseAsync ();
             return lstChats;

@@ -46,7 +46,7 @@ else
                                 <MudTextField @bind-Value="student.UserName" Label="Name نام کاربري" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                 <MudTextField @bind-Value="student.UserPass" Label="Password پسورد" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                 <MudTextField @bind-Value="student.UserNickname" Label=Nickname نام دانشجو" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI'" />
-                                <div class= "d-flex gap-3">
+                                <div class= "d-flex align-items-center gap-3">
                                     <MudCheckBox @bind-Value="student.IsActive" Label="active" Dense="true" Color="Color.Primary"/>
                                     <MudCheckBox @bind-Value="student.CanChangePass" Label="password" Dense="true" Color="Color.Primary"/>
                                     <button class="btn btn-link" style="border:none" title="Save Accs" @onclick="()=>BtnUpdateStudent(student)">
@@ -64,11 +64,11 @@ else
                                 @foreach (StudentCourse stCrs in student.StudentCourses)
                                     {
                                     <hr />
-                                    <div class="d-flex gap-2" style="color:indianred; font-weight:bold;">
+                                    <div class="d-flex gap-1" style="color:indianred; font-weight:bold;">
                                         @stCrs.CourseName
                                         <span style="color:Black; font-weight:normal; font-size:small">( @stCrs.CorrectAnswers / @stCrs.NumberOfTests )</span>
                                     </div>
-                                    <div class="d-flex gap-2 juctity-content:center align-items:center">
+                                    <div class="d-flex gap-1 juctity-content:center align-items:center">
                                         <button class="btn btn-link" style="border:none" title="Report Tests ( + answeres )" @onclick='()=>BtnReviewStudentTestsSheet(stCrs.StudentCourseId, "studentcoursetests")'>
                                             <img src="/img/icoReport1.png" width="20" />
                                         </button>
@@ -78,9 +78,9 @@ else
                                         <button class="btn btn-link" style="border:none" title="Save Accs" @onclick="()=>BtnUpdateStudentCourseTags(stCrs)">
                                             <img src="/img/icoSave2.png" width="22" />
                                         </button>
-                                        <MudCheckBox @bind-Value="stCrs.IsActive" Label="active"  Dense="true" Color="Color.Success"/>
-                                        <MudCheckBox @bind-Value="stCrs.Retry" Label="retry" Dense="true" Color="Color.Success"/>
-                                        <MudCheckBox @bind-Value="stCrs.Review" Label="review" Dense="true" Color="Color.Success"/>
+                                        <MudCheckBox @bind-Value="stCrs.IsActive" Label="act"  Dense="true" Color="Color.Success"/>
+                                        <MudCheckBox @bind-Value="stCrs.Retry" Label="ret" Dense="true" Color="Color.Success"/>
+                                        <MudCheckBox @bind-Value="stCrs.Review" Label="rev" Dense="true" Color="Color.Success"/>
                                     </div>
                                     }
                             </MudCardContent>
@@ -103,32 +103,32 @@ else
                                                 @if((exm.StudentExamTags & 4) == 4)
                                                     {
                                                     <button class="btn btn-link" style="border:none" @onclick="()=>BtnResetStudentExam(exm)" >
-                                                        <img src="/img/icoClock2.png" width="25" />
+                                                        <img src="/img/icoClock2.png" width="24" />
                                                     </button>
                                                     }
                                                 else if((exm.StudentExamTags & 6) == 2)
                                                     {
                                                     <button class="btn btn-link" style="border:none" @onclick="()=>BtnSetStudentExamAsFinished(exm)" >
-                                                        <img src="/img/icoEditPen.png" width="25" />
+                                                        <img src="/img/icoEditPen.png" width="24" />
                                                     </button>
                                                     } 
                                                 else if ((exm.StudentExamTags & 2) == 0)
                                                     {
                                                     <button class="btn btn-link" style="border:none" @onclick="()=>BtnSetStudentExamAsFinished(exm)" >
-                                                        <img src="/img/icoGo1.png" width="25" />
+                                                        <img src="/img/icoGo1.png" width="24" />
                                                     </button>
                                                     }
                                                 <button class="btn btn-link" style="border:none" @onclick='()=>BtnReviewStudentTestsSheet(exm.StudentExamId, "studentexamtests")' >
-                                                    <img src="/img/icoReport1.png" width="25" />
+                                                    <img src="/img/icoReport1.png" width="22" />
                                                 </button>
                                                 <button class="btn btn-link" style="border:none" @onclick="()=>BtnDeleteStudentExam(exm.StudentExamId)" >
-                                                    <img src="/img/icoDelete1.png" width="25" />
+                                                    <img src="/img/icoDelete1.png" width="24" />
                                                 </button>
                                                 <button class="btn btn-link" style="border:none" @onclick="()=>BtnUpdateStudentExam(exm)" >
-                                                    <img src="/img/icoSave2.png" width="24" />
+                                                    <img src="/img/icoSave2.png" width="22" />
                                                 </button>
                                             </td>  
-                                            <td style="width:180px">
+                                            <td style="width:140px">
                                             @if(exm.StudentExamTags>=2)
                                                 {
                                                 <span style="text-align:left;padding:0px;">
@@ -225,22 +225,22 @@ else
             if(result)
                 {
                 int id = Convert.ToInt32 (Id);
-
                 lstStudents.Clear();
                 switch (mode)
                     {
-                    case "students":
-                            {
-                            var resultx = await feService.Read_StudentsByGCEMId (id,"G", 15);
-                            lstStudents = resultx;
-                            break;
-                            }
-                    case "student":
+                    case "S":
                             {
                             List<User> student = await feService.Read_StudentsByGCEMId (id, "S", 15);
                             student[0].StudentExams = await feService.Read_StudentExams (id, "ByStudentId");
                             student[0].StudentCourses = await feService.Read_StudentCourses (id, "ByStudentId");
                             lstStudents.Add (student[0]);
+                            break;
+                            }
+                    default:
+                            {
+                            //modes: GCEM (not S)
+                            var resultx = await feService.Read_StudentsByGCEMId (id, mode, 15);
+                            lstStudents = resultx;
                             break;
                             }
                     }
@@ -269,18 +269,18 @@ else
                 lstStudents.Clear();
                 switch (mode)
                     {
-                    case "students":
-                            {
-                            var resultx = await feService.Read_StudentsByGCEMId (id, "ByGroupId", 15);
-                            lstStudents = resultx;
-                            break;
-                            }
-                    case "student":
+                    case "S":
                             {
                             List<User> students = await feService.Read_StudentsByGCEMId (id, "S", 15); //15 = all GCEM
                             students[0].StudentExams = await feService.Read_StudentExams (id, "ByStudentId");
                             students[0].StudentCourses = await feService.Read_StudentCourses (id, "ByStudentId");
                             //lstStudents.Add (student);
+                            break;
+                            }
+                    default:
+                            {
+                            var resultx = await feService.Read_StudentsByGCEMId (id, "mode", 15);
+                            lstStudents = resultx;
                             break;
                             }
                     }

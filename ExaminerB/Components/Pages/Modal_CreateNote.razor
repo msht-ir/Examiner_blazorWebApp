@@ -97,7 +97,6 @@
         {
         appState.OnChange -= TriggerRender;
         }
-
     public void Open() => IsOpen = true;
     private async Task Close()
         {
@@ -112,6 +111,7 @@
         appState.SetCmd("");
         IsOpen = false; //at top of page
         }
+    //methods
     public async Task BtnCreateNote()
         {
         if (note.NoteText.Trim() == "")
@@ -133,7 +133,7 @@
                 Snackbar.Add("Saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 user.UserId = Convert.ToInt32(appState.UserId);
                 appState.SetCmd("");
-                Close ();
+                await Close ();
                 }
             else
                 {
@@ -173,7 +173,7 @@
             _hasFetched = true;
             }
         }
-    //Calendar
+    //calendar
     public CultureInfo GetPersianCulture()
         {
         var culture = new CultureInfo("fa-IR");

@@ -841,8 +841,8 @@ else
     private async Task HandleModalClose() 
         {
         int userId = Convert.ToInt32 (appState.UserId);
-        await GetListOfProjects (userId, _ShowProjectsMode); 
-        //StateHasChanged(); 
+        await GetListOfProjects (userId, _ShowProjectsMode);
+        StateHasChanged ();
         }
     public void BtnCancel()
         {    
