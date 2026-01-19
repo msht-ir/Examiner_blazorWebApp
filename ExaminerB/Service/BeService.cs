@@ -3649,7 +3649,7 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             foreach (Project prj in lstProjects)
                 {
-                prj.Subprojects = await Read_SubprojectsAsync (prj.ProjectId, true);
+                prj.Subprojects = await Read_SubprojectsAsync (prj.ProjectId, false);
                 }
             return lstProjects;
             }
