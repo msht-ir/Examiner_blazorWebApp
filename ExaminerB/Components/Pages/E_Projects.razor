@@ -82,15 +82,18 @@ else
                                                 @note.NoteText
                                             </div>
                                             }
-                                        <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
-                                            <img src="/img/icoNote2.png" width="24" />
+                                        <button class="btn btn-link" @onclick="()=>BtnDeleteNote(note.NoteId)">
+                                            <img src="/img/icoDelete1.png" width="24" />
                                         </button>
                                         <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(note)">
                                             <img src="/img/icoRename.png" width="34" />
                                         </button>
-                                        <button class="btn btn-link" @onclick="()=>BtnDeleteNote(note.NoteId)">
-                                            <img src="/img/icoDelete1.png" width="24" />
-                                        </button>
+                                        @if(note.NoteText.Length > 60)
+                                            {
+                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
+                                                <img src="/img/icoNote2.png" width="24" />
+                                            </button>                                            
+                                            }
                                     </MudCardContent>
                                 </MudCard>
                             </MudContainer>
@@ -119,14 +122,17 @@ else
                                             </div>
                                             }
                                         <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
-                                            <img src="/img/icoNote2.png" width="24" />
+                                            <img src="/img/icoDelete1.png" width="24" />
                                         </button>
                                         <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(note)">
                                             <img src="/img/icoRename.png" width="34" />
                                         </button>
-                                        <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
-                                            <img src="/img/icoDelete1.png" width="24" />
-                                        </button>
+                                        @if(note.NoteText.Length > 60)
+                                            {
+                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
+                                                <img src="/img/icoNote2.png" width="24" />
+                                            </button>                                            
+                                            }
                                     </MudCardContent>
                                 </MudCard>
                             </MudContainer>
@@ -240,11 +246,11 @@ else
                                                                 </button>
                                                             </div>
                                                             <div>
+                                                                <button class="btn btn-link" @onclick="()=>BtnReadSubprojectNote(subProject.SubprojectId)">
+                                                                    <img src="/img/icoListN.png" width="36" />
+                                                                </button>
                                                                 <button class="btn btn-link" @onclick="()=>BtnCreateNewSubprojectNote(subProject.SubprojectId)">
                                                                     <img src="/img/icoAdd0.png" width="22" />
-                                                                </button>
-                                                                <button class="btn btn-link" @onclick="()=>BtnReadSubprojectNote(subProject.SubprojectId)">
-                                                                    <img src="/img/icoListN.png" width="32" />
                                                                 </button>
                                                             </div>
                                                             <div style="text-align: center;">
@@ -725,11 +731,6 @@ else
         appState.SetNoteParentType (2);
         appState.SetNoteParentId (subProjectId);
         lstSPNotes = await feService.Read_Notes (subProjectId, 2);
-        Console.WriteLine($"page =============================== lstSPNotes.Count = {lstSPNotes.Count} , subProjectId = {subProjectId}");
-        foreach (Note nt in lstSPNotes)
-            {
-            Console.WriteLine ($"NoteText ---  {nt.NoteText}");
-            }
         StateHasChanged ();
         }
     public async Task BtnEditNoteInDialog(Note note)
@@ -877,6 +878,7 @@ else
         {
         int userId = Convert.ToInt32 (appState.UserId);
         await GetListOfProjects (userId, _ShowProjectsMode);
+        await BtnReadSubprojectNote (Convert.ToInt32 (appState.NoteParentId));
         StateHasChanged ();
         }
     public void BtnCancel()

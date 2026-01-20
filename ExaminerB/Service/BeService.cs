@@ -106,7 +106,7 @@ namespace ExaminerB.Services2Backend
             SqlCommand cmd = new (sql, cnn);
             cmd.Parameters.AddWithValue ("@userid", userId);
             cmd.Parameters.AddWithValue ("@userlogtext", 21);
-            cmd.Parameters.AddWithValue ("@datetime", DateTime.Now.ToString ("yyyy-MM-dd . HH:mm"));
+            cmd.Parameters.AddWithValue ("@datetime", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
             await cmd.ExecuteNonQueryAsync ();
             }
         #endregion
@@ -630,7 +630,7 @@ namespace ExaminerB.Services2Backend
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.Parameters.AddWithValue ("@studentid", st);
                 cmd.Parameters.AddWithValue ("@groupid", groupId);
-                cmd.Parameters.AddWithValue ("@datetimejoined", DateTime.Now.ToString ("yyyy-MM-dd . HH:mm"));
+                cmd.Parameters.AddWithValue ("@datetimejoined", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
                 cmd.Parameters.AddWithValue ("@studentgrouptags", 1);
                 int i = (int) cmd.ExecuteNonQuery ();
                 }
@@ -2526,7 +2526,7 @@ COMMIT TRANSACTION;
         public async Task<bool> Update_StudentsExamTagsAsync (string mode, int examId)
             {
             //Update tags of an exam for all student
-            string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd . HH:mm");
+            string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
             string sql = "";
             switch (mode)
                 {
@@ -3142,7 +3142,7 @@ COMMIT TRANSACTION;
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.Parameters.AddWithValue ("@userid", message.UserId);
-                cmd.Parameters.AddWithValue ("@datetimecreated", DateTime.Now.ToString ("yyyy-MM-dd . HH:mm"));
+                cmd.Parameters.AddWithValue ("@datetimecreated", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
                 cmd.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
                 cmd.Parameters.AddWithValue ("@messagebody", message.MessageBody);
                 int newMessageId = (int) await cmd.ExecuteScalarAsync ();
@@ -3241,7 +3241,7 @@ COMMIT TRANSACTION;
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@datetimecreated", DateTime.Now.ToString ("yyyy-MM-dd . HH:mm"));
+            cmd.Parameters.AddWithValue ("@datetimecreated", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
             cmd.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
             cmd.Parameters.AddWithValue ("@messagebody", message.MessageBody);
             cmd.Parameters.AddWithValue ("@messageid", message.MessageId);
@@ -3300,7 +3300,7 @@ COMMIT TRANSACTION;
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.Parameters.AddWithValue ("@studentid", st);
                 cmd.Parameters.AddWithValue ("@messageid", messageId);
-                cmd.Parameters.AddWithValue ("@datetimesent", DateTime.Now.ToString ("yyyy-MM-dd . HH:mm"));
+                cmd.Parameters.AddWithValue ("@datetimesent", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
                 cmd.Parameters.AddWithValue ("@studentmessagetags", _tags);
                 int i = (int) cmd.ExecuteNonQuery ();
                 }
@@ -3423,7 +3423,7 @@ COMMIT TRANSACTION;
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@datetimeread", DateTime.Now.ToString ("yyyy-MM.dd . HH.mm"));
+            cmd.Parameters.AddWithValue ("@datetimeread", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
             cmd.Parameters.AddWithValue ("@studentmessageid", studentMessage.StudentMessageId);
             int i = cmd.ExecuteNonQuery ();
             await cnn.CloseAsync ();

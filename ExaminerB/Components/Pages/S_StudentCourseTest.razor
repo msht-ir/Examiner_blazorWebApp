@@ -163,7 +163,7 @@
                 }
             }
         studentCourseTest.UserAns = _selectedOpt;
-        studentCourseTest.DateTime = DateTime.Now.ToString ("yyyy-MM.dd . HH:mm");
+        studentCourseTest.DateTime = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
         //update: save both ans and key (mode = new|edit)
         var result = await feService.Update_StudentCourseTest (studentCourseTest, mode);
         BtnBack ();

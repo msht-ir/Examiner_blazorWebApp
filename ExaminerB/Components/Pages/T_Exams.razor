@@ -160,7 +160,7 @@
         }
     public async Task BtnCreateExam ()
         {
-        Exam newExam = new Exam () { CourseId = course.CourseId, ExamTitle = txtNewExamTitle, ExamDateTime=DateTime.Now.ToString("yyyy-MM-dd . HH:mm"), ExamDuration=10 };
+        Exam newExam = new Exam () { CourseId = course.CourseId, ExamTitle = txtNewExamTitle, ExamDateTime=DateTime.Now.ToString("yyyy-MM-dd HH:mm"), ExamDuration=10 };
         int result = await feService.Create_Exam (newExam);
         if (result > 0)
             {

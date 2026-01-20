@@ -497,7 +497,7 @@
         {
         //modes: setOn, setOff
         studentMessage.StudentMessageTags |= 1;
-        studentMessage.DateTimeRead = DateTime.Now.ToString("yyyy-MM-dd . HH:mm");
+        studentMessage.DateTimeRead = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
         bool result = await feService.Update_StudentMessageSetAsRead (studentMessage);
         await ReadMessageList ();
         StateHasChanged ();

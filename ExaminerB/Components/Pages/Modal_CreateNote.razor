@@ -70,6 +70,12 @@
     string textDirection = "ltr";
     private DateTime? _date = DateTime.Now;
     private TimeSpan? _time = DateTime.Now.TimeOfDay;
+    int _PersianYear = 0;
+    int _PersianMonth = 0;
+    int _PersianDay = 0;
+    int _Hour = 0;
+    int _Minute = 0;
+    //PersianCalendar persianCalendar = new PersianCalendar();
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
@@ -81,12 +87,19 @@
             }
         if(appState.Cmd == "UpdateNote")
             {
+            _PersianYear = Convert.ToInt32 (appState.NoteDatum.Substring (0, 4));
+            _PersianMonth = Convert.ToInt32 (appState.NoteDatum.Substring (5, 2));
+            _PersianDay = Convert.ToInt32 (appState.NoteDatum.Substring (8, 2));
+            _Hour   = Convert.ToInt32 (appState.NoteDatum.Substring (11, 2));
+            _Minute = Convert.ToInt32 (appState.NoteDatum.Substring (14, 2));
+            _date = Convert.ToDateTime($"{_PersianYear}/{_PersianMonth}/{_PersianDay} {_Hour}:{_Minute}");           
+            _time = TimeSpan.Parse ($"{_Hour}:{_Minute}");
             note.NoteText = appState.NoteText;
             note.IsRtl = Convert.ToBoolean (appState.NoteIsRtl);
             note.ParentId = Convert.ToInt32 (appState.NoteParentId);
             note.ParentType = Convert.ToInt32 (appState.NoteParentType);
             note.ParentType = Convert.ToInt32 (appState.NoteParentType);
-            }
+        }
         _hasFetched = true;
         } 
     private void TriggerRender()

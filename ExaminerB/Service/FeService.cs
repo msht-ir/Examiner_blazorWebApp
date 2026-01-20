@@ -789,7 +789,7 @@ namespace ExaminerB.Service
             }
         public async Task<bool> Update_StudentExamTags (StudentExam studentExam, string strNewStudentExamTags)
             {
-            string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd . HH:mm");
+            string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
             switch (strNewStudentExamTags)
                 {
                 case "startedOn":
