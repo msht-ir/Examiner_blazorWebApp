@@ -18,7 +18,7 @@
         {
         @if (lstNotes.Count > 0)
             {
-            <div class="d-flex align-items-center" style="text-align:left">
+            <div class="d-flex align-items-center" style="text-align:left;max-width:500px; margin: 0 auto;">
                 <button class="btn btn-link" @onclick="BtnBack">
                     <img src="/img/icoBack3.png" width="40" />
                 </button>
@@ -30,7 +30,7 @@
             }
         else
             {
-            <div class="align-items-center" style="text-align:center">
+            <div class="align-items-center" style="text-align:center;max-width:500px; margin: 0 auto;">
                <h5 style="text-align:center;padding-left:15px;">Notes: <span style="font-size:smaller;text-align:center;color:indianred">@appState.UserNickname</span></h5>        
             </div>
             }
