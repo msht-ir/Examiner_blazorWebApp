@@ -19,7 +19,7 @@
     }
 else if (appState.Cmd == "CreateNote")
     {
-    <Modal_CreateNote />
+    <Modal_CreateNote OnClose="HandleModalClose" />
     }
 else if(appState.Cmd == "ShowNoteInDialog")
     {
@@ -39,16 +39,16 @@ else
             <div class="d-flex align-items-center mb-3">
                 <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search... جستجو" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';width:90%" />
                 <button class="btn btn-link" @onclick="BtnReadNotesBySearch">
-                    <img src="/img/icoSearch.png" width="26" />
+                    <img src="/img/icoSearch.png" width="26" title="Search notes"/>
                 </button>
                 @if(lstNotes.Count > 0)
                     {
                     <button class="btn btn-link" @onclick="BtnCancelSearch">
-                        <img src="/img/icoCancel.png" width="22" />
+                        <img src="/img/icoCancel.png" width="22" title="cancel search"/>
                     </button>                            
                     }
                 <button class="btn btn-link" @onclick="BtnToggleShowProjectsMode">
-                    <img src="/img/icoListP.png" width="34" />
+                    <img src="/img/icoListP.png" width="34" title="toggle: active / non-active / all-notes"/>
                 </button>
             </div>
         </div>
@@ -82,7 +82,7 @@ else
                                                 @note.NoteText
                                             </div>
                                             }
-                                        <button class="btn btn-link" @onclick="()=>BtnDeleteNote(note.NoteId)">
+                                        <button class="btn btn-link" @onclick="()=>BtnDeleteNote(note)">
                                             <img src="/img/icoDelete1.png" width="24" />
                                         </button>
                                         <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(note)">
@@ -157,8 +157,7 @@ else
                 @foreach (Project project in lstProjects)
                     {
                     var collapseId = $"collapse{project.ProjectId}";
-                    string clps = "";
-                    clps = ((appState.GroupId ?? 0) != project.ProjectId) ? "collapse" : "collapse show";
+                    _clpsP = ((appState.ProjectId) != project.ProjectId) ? "collapse" : "collapse show";
                     <div class="accordion-item">
                         <h4 class="accordion-header" style="background-color:rgba(252,252,252)">
                             <button class="accordion-button collapsed" 
@@ -171,7 +170,7 @@ else
                                 <h5>@project.ProjectName</h5>
                             </button>
                         </h4>
-                        <div id="@collapseId" class="accordion-collapse collapse" data-bs-parent="#accordionProjects">
+                        <div id="@collapseId" class="accordion-collapse @_clpsP" data-bs-parent="#accordionProjects">
                             <div class="accordion-body" style="background-color:rgba(250,250,250)">
                                 <div id="T1">
                                     @if ((appState.Cmd == "EditProject") && (appState.ProjectId == project.ProjectId))
@@ -221,7 +220,8 @@ else
                                             @foreach (Subproject subProject in project.Subprojects)
                                                 {
                                                 var collapseId2 = $"collapse{subProject.SubprojectId}";
-                                                <div class="accordion-item mb-2">
+                                                    _clpsSP = ((appState.NoteParentId) != subProject.SubprojectId) ? "collapse" : "collapse show";
+                                                    <div class="accordion-item mb-2">
                                                     <h4 class="accordion-header">
                                                         <button class="accordion-button collapsed"
                                                                 type="button"
@@ -234,7 +234,7 @@ else
                                                             </h6>
                                                         </button>
                                                     </h4>
-                                                    <div id="@collapseId2" class="accordion-collapse collapse" data-bs-parent="#accordionSubprojects-@project.ProjectId">
+                                                    <div id="@collapseId2" class="accordion-collapse @_clpsSP" data-bs-parent="#accordionSubprojects-@project.ProjectId">
                                                         <div class="accordion-body" style="background-color:rgba(252,252,252)">
                                                             <div class="d-flex mb-1">
                                                                 <MudTextField @ref="refSubprojectName" @bind-Value="subProject.SubprojectName" Label="Subproject name نام زير پروژه" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
@@ -246,17 +246,17 @@ else
                                                                 </button>
                                                             </div>
                                                             <div>
-                                                                <button class="btn btn-link" @onclick="()=>BtnReadSubprojectNote(subProject.SubprojectId)">
+                                                                <button class="btn btn-link" @onclick="()=>BtnReadSubprojectNote(subProject)">
                                                                     <img src="/img/icoListN.png" width="36" />
                                                                 </button>
-                                                                <button class="btn btn-link" @onclick="()=>BtnCreateNewSubprojectNote(subProject.SubprojectId)">
+                                                                <button class="btn btn-link" @onclick="()=>BtnCreateNewSubprojectNote(subProject)">
                                                                     <img src="/img/icoAdd0.png" width="22" />
                                                                 </button>
                                                             </div>
                                                             <div style="text-align: center;">
                                                                 @if((appState.Cmd == "EditSubprojectNote") & (subProject.SubprojectId ==appState.SubprojectId))
                                                                     {
-                                                                    @* Create a new note here *@
+                                                                    @* Create a new note here /////// ABANDONED*@
                                                                     <hr style="color:indianred"/>
                                                                     <h5>New Note</h5>
                                                                     <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
@@ -301,7 +301,7 @@ else
                                                                                                         }
                                                                                                 </span>
                                                                                                 <hr />
-                                                                                                <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
+                                                                                                <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex)">
                                                                                                     <img src="/img/icoDelete1.png" width="24" />
                                                                                                 </button>
                                                                                                 <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
@@ -339,7 +339,7 @@ else
                                                                                                         }
                                                                                                 </span>
                                                                                                 <hr />
-                                                                                                <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
+                                                                                                <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex)">
                                                                                                     <img src="/img/icoDelete1.png" width="24" />
                                                                                                 </button>
                                                                                                 <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
@@ -356,7 +356,10 @@ else
                                                                                     </MudContainer>
                                                                                 </div>
                                                                                 }
-                                                                            }                                                                          
+                                                                            }  
+                                                                        <button class="btn btn-link" @onclick="()=>BtnCreateNewSubprojectNote(subProject)">
+                                                                            <img src="/img/icoAdd0.png" width="22" title="add new note"/>
+                                                                        </button>
                                                                         }
                                                                     }
                                                             </div>
@@ -442,6 +445,9 @@ else
     string _ShowProjectsMode = "active";
     private DateTime? _date = DateTime.Now;
     private TimeSpan? _time = DateTime.Now.TimeOfDay;
+    public string _clpsP = "";  //collapse Accardion Projects
+    public string _clpsSP = ""; //collapse Accardion Subprojects
+
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
@@ -717,20 +723,23 @@ else
         //Navman.NavigateTo ($"/T_ReportStudents/{mode}/{stdnt.UserId}");
         }
     //subproject notes
-    public async Task BtnCreateNewSubprojectNote(int subProjectId)
+    public async Task BtnCreateNewSubprojectNote(Subproject subProject)
         {
         //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
         appState.SetNoteParentType (2);
-        appState.SetNoteParentId (subProjectId);
+        appState.SetNoteParentId (subProject.SubprojectId);
+        appState.SetProjectId (subProject.ProjectId);
+        Console.WriteLine($"project ID = {subProject.ProjectId}");
         appState.SetCmd ("CreateNote");
         StateHasChanged ();
         }
-    public async Task BtnReadSubprojectNote(int subProjectId)
+    public async Task BtnReadSubprojectNote(Subproject subProject)
         {
+        appState.SetProjectId (subProject.ProjectId);
         //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
         appState.SetNoteParentType (2);
-        appState.SetNoteParentId (subProjectId);
-        lstSPNotes = await feService.Read_Notes (subProjectId, 2);
+        appState.SetNoteParentId (subProject.SubprojectId);
+        lstSPNotes = await feService.Read_Notes (subProject.SubprojectId, 2);
         StateHasChanged ();
         }
     public async Task BtnEditNoteInDialog(Note note)
@@ -748,6 +757,7 @@ else
         }
     public async Task BtnUpdateSubprojectNote(int subProjectId)
         {
+            ///////////ABANDONED : now there is a modal to update note.
         if (note.NoteText.Trim() == "")
             {
             Snackbar.Add("Note is empty!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
@@ -798,21 +808,23 @@ else
         lstNotes.Clear ();
         StateHasChanged ();
         }  
-    public async Task BtnDeleteNote(int noteId)
+    public async Task BtnDeleteNote(Note note)
         {
         var message = new MarkupString($"Delete note?");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            bool result = await feService.Delete_Note (noteId);
+            appState.SetNoteParentId (note.ParentId);
+            bool result = await feService.Delete_Note (note.NoteId);
             if(result)
                 {
                 Snackbar.Add($"deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 user.UserId = Convert.ToInt32(appState.UserId);
                 _hasFetched = false;
                 await GetListOfProjects (user.UserId, _ShowProjectsMode); 
+                Subproject _subProject = new Subproject () { SubprojectId = Convert.ToInt32 (note.ParentId), ProjectId = Convert.ToInt32 (appState.ProjectId) };
+                await BtnReadSubprojectNote (_subProject);
                 _hasFetched = true;
-                appState.SetCmd("");
                 StateHasChanged();
                 }
             else
@@ -878,7 +890,8 @@ else
         {
         int userId = Convert.ToInt32 (appState.UserId);
         await GetListOfProjects (userId, _ShowProjectsMode);
-        await BtnReadSubprojectNote (Convert.ToInt32 (appState.NoteParentId));
+        Subproject _subProject = new Subproject () { SubprojectId = Convert.ToInt32 (appState.NoteParentId), ProjectId = Convert.ToInt32 (appState.ProjectId) };
+        await BtnReadSubprojectNote (_subProject);
         StateHasChanged ();
         }
     public void BtnCancel()

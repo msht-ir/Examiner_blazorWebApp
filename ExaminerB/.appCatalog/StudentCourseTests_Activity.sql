@@ -1,6 +1,4 @@
 ﻿Use msht_eLib2
---SELECT DISTINCT FromId, ToId FROM Chats WHERE FromId=47 OR ToId=47
-
 
 -- STUDENTS COURSE TESTS
 select sct.DateTime, s.StudentNickname, c.CourseName, sc.NumberOfTests, sc.CorrectAnswers, s.StudentName, s.StudentNickname, s.StudentPass 
@@ -18,5 +16,8 @@ INNER JOIN Students st ON ch.ToId = st.StudentId
 ORDER BY DateTimeSent DESC
 OFFSET 0 ROWS FETCH NEXT 50 ROWS ONLY
 
+
+select * from courses
+select * from tests where courseId = 53
 
 
