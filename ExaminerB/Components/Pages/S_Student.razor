@@ -30,7 +30,7 @@
                             type="button"
                             data-bs-toggle="collapse"
                             data-bs-target="#CollapseId2"
-                            aria-expanded='@(appState.Cmd=="ShowCourseFolders" ? "true" : "false")'
+                            aria-expanded="false"
                             aria-controls="CollapseId2" style="background-color:WhiteSmoke">
                             <h4>Courses <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentCourses.Count )</span></h4>
                         </button>
@@ -52,46 +52,59 @@
                                         <MudCard Class="mx-0">
                                             <MudCardContent Style="background-color: rgba(250,250,2250);">
                                                 @* use (double) to make result decimal not integer *@
-                                                @{strRunningPoint = studentCourse.NumberOfTests == 0 ?"---": $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double)studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F2}";}
-                                                <div style="color:black;font-weight:bold;">@studentCourse.CourseName : <span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span></div>
-                                                <button class="btn btn-link" Title=@((_help)?"Get a random Test from course" + studentCourse.CourseName :"") @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
-                                                    <img src="/img/gifChart2.gif" width="30" />
+                                                @{strRunningPoint = studentCourse.NumberOfTests == 0 ?"---": $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double)studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F1}";}
+                                                <div style="color:black;font-weight:bold;">
+                                                    @studentCourse.CourseName : <span style="font-size:small;font-weight:bold;color:indianred">@strRunningPoint</span>
+                                                </div>
+                                                <button class="btn btn-link" Title=@((_help)?"get a random Test from course" + studentCourse.CourseName :"") @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
+                                                    <img src="/img/gifChart2.gif" width="32" />
                                                 </button>
                                                 @if ((studentCourse.StudentCourseTags & 5) == 5)
                                                     {
-                                                    <button class="btn btn-link" Title=@((_help)?"Report " + studentCourse.StudentNickname + " tests answered in course: " + studentCourse.CourseName:"") @onclick="()=>BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
+                                                    <button class="btn btn-link" Title=@((_help)?"report " + studentCourse.StudentNickname + " tests answered in course: " + studentCourse.CourseName:"") @onclick="()=>BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
                                                         <img src="/img/icoReport1.png" width="20" />
                                                     </button>
                                                     }
                                                 @if ((studentCourse.StudentCourseTags & 3) == 3)
                                                     {
-                                                    <button class="btn btn-link" Title=@((_help)?"Try correct your answers in course: " + studentCourse.CourseName:"") @onclick="()=>BtnTryToCorrect(studentCourse.StudentCourseId)">
+                                                    <button class="btn btn-link" Title=@((_help)?"try correct your answers in course: " + studentCourse.CourseName:"") @onclick="()=>BtnTryToCorrect(studentCourse.StudentCourseId)">
                                                         <img src="/img/icoRedo.png" width="22" />
                                                     </button>
                                                     }
                                                 @if ((studentCourse.StudentCourseTags & 3) == 3)
                                                     {
-                                                    <button class="btn btn-link" Title=@((_help)?"Keep tests you have answered incorrectly":"") @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
+                                                    <button class="btn btn-link" Title=@((_help)?"keep tests you have answered incorrectly":"") @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse , "filter")'>
                                                         <img src="/img/icoFilter.png" width="22" />
                                                     </button>
-                                                    <button class="btn btn-link" Title=@((_help)?"Clear your sheet":"") style="border: none;" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse, "wipeout")'>
+                                                    <button class="btn btn-link" Title=@((_help)?"clear your sheet":"") style="border: none;" @onclick='async ()=> await BtnFilterStudentCourseTests(studentCourse, "wipeout")'>
                                                         <img src="/img/icoEraser.png" width="22" />
                                                     </button>
                                                     }
                                                 @* CourseFolders *@
                                                 @if((appState.Cmd=="ShowCourseFolders") & (studentCourse.CourseId == appState.CourseId))
                                                     {
-                                                    <h6 style="padding-left:10px;">folders: </h6>
-                                                    foreach(CourseFolder cf in lstCourseFolders)
+                                                    if ((lstCourseFolders.Count > 0))
                                                         {
-                                                        <h6 style="padding-left:10px;"><a href="@cf.CourseFolderUrl" target="_blank">@cf.CourseFolderTitle</a></h6>
+                                                        <hr style="color:indianred" />
+                                                        <h6 style="padding-left:10px;">web folders: </h6>
+                                                        @foreach(CourseFolder cf in lstCourseFolders)
+                                                            {                                                        
+                                                            <div style="color:indianred;font-size:small;padding-left:15px;"><a href="@cf.CourseFolderUrl" target="_blank" style="color:indianred;text-decoration:none;">@cf.CourseFolderTitle</a></div>
+                                                            }
                                                         }
-                                                    }
+                                                    else
+                                                        {
+                                                        <hr style="color:gray" />
+                                                        <div style="color:gray">No folders for this course</div>
+                                                        }
+                                                }
                                                 else
                                                     {
-                                                    <button class="btn btn-link" Title=@((_help)?"Show links to "+studentCourse.CourseName + " folder(s) online":"") style="border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
-                                                        <img src="/img/icoFolderCF.png" width="25" />
-                                                    </button>
+                                                    <div>
+                                                        <button class="btn btn-link" Title=@((_help)?"show links for "+studentCourse.CourseName + " folder(s) online":"") style="padding:15px;border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
+                                                            <img src="/img/icoFolderCF.png" width="26"/>
+                                                        </button>
+                                                    </div>
                                                     }
                                             </MudCardContent>
                                         </MudCard>
@@ -492,6 +505,7 @@
         //     case "filter":{message = $"Filter out correct answers in Course ( {studentCourse.CourseName} ) \n just keep incorrect ones?";break;}
         //     case "wipeout":{message = $"Clear Running Tests in Course ( {studentCourse.CourseName} ) ?";break;}
         //---lambda:
+        appState.SetClps ("C");
         string msg = mode switch
             {
                 "filter" => $"<hr><span style='color:indianred'>Filter out </span>your correct answers in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoFilter.png' width='40'/></div><br><hr>",
@@ -534,7 +548,7 @@
     //btns for StudentMessages
     private async Task BtnSetStudentMessageAsRead(StudentMessage studentMessage)
         {
-        appState.SetClps ("E");
+        appState.SetClps ("M");
         //modes: setOn, setOff
         studentMessage.StudentMessageTags |= 1;
         studentMessage.DateTimeRead = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
@@ -544,7 +558,7 @@
         }
     private async Task BtnSetStudentMessageBookmark(StudentMessage studentMessage, int mode)
         {
-        appState.SetClps ("E");
+        appState.SetClps ("M");
         //modes: 0:setOff, 1:setOn
         switch (mode)
             {
