@@ -35,7 +35,15 @@
                             <h4>Courses <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentCourses.Count )</span></h4>
                         </button>
                     </h4>
-                    <div id="CollapseId2" class="accordion-collapse collapse @(appState.Cmd=="ShowCourseFolders" ? "show" : "")" data-bs-parent="#accordionStudent">
+                    @if (appState.Clps=="C")
+                        {
+                        _clps = "collapse show";
+                        }
+                    else
+                        {
+                        _clps = "collapse";
+                        }
+                    <div id="CollapseId2" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
                         <div class="accordion-body" style="background-color:white">
                             <div id="T2">
                                 @foreach (StudentCourse studentCourse in lstStudentCourses)
@@ -105,7 +113,15 @@
                             <h4>Exams <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentExams.Count )</span></h4>
                         </button>
                     </h4>
-                    <div id="CollapseId1" class="accordion-collapse collapse" data-bs-parent="#accordionStudent">
+                    @if (appState.Clps=="E")
+                        {
+                        _clps = "collapse show";
+                        }
+                    else
+                        {
+                        _clps = "collapse";
+                        }
+                    <div id="CollapseId1" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
                         <div class="accordion-body" style="background-color:white">
                             <div id="T1">
                                 <table class="table table-borderless">
@@ -182,7 +198,15 @@
                             <h4>Messages <span style="font-weight:bold;font-size:x-small;color:indianred">( @unreadMessageCount <span style="color:blue">/@lstStudentMessages.Count</span> )</span></h4>
                         </button>
                     </h4>
-                    <div id="CollapseId3" class="accordion-collapse collapse" data-bs-parent="#accordionStudent">
+                    @if (appState.Clps=="M")
+                        {
+                        _clps = "collapse show";
+                        }
+                    else
+                        {
+                        _clps = "collapse";
+                        }
+                    <div id="CollapseId3" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
                         <div class="accordion-body" style="background-color:white">
                             <div id="T3">
                                 @* List messages *@
@@ -263,7 +287,7 @@
                                                         <button class="btn btn-link" Title=@((_help)?"Open/Show this message":"") @onclick="()=>BtnSetStudentMessageAsRead(studentMessage)">
                                                             <img src="/img/icoEnvelop2.png" width="20" />
                                                         </button>
-                                                        <span style="color:black;font-weight:bold;padding-left:2px;">@studentMessage.MessageTitle.Substring(0,6) ...</span>
+                                                        <span style="color:black;font-weight:bold;padding-left:2px;">@(studentMessage.MessageTitle.Length > 6 ? studentMessage.MessageTitle.Substring(0,6) + "..." : studentMessage.MessageTitle)</span>
                                                         }
                                             </MudCardContent>
                                         </MudCard>
@@ -286,7 +310,15 @@
                             <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count</span> )</span></h4>
                         </button>
                     </h4>
-                    <div id="CollapseId4" class="accordion-collapse collapse" data-bs-parent="#accordionStudent">
+                    @if (appState.Clps=="CH")
+                        {
+                        _clps = "collapse show";
+                        }
+                    else
+                        {
+                        _clps = "collapse";
+                        }
+                    <div id="CollapseId4" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
                         <div class="accordion-body" style="background-color:white">
                             <div id="T3">
                                 @* List Chats *@
@@ -387,6 +419,7 @@
     private int unreadChatCount = 0;
     private int mateId=0;
     bool _help;
+    string _clps=""; //appState.Clps values: C:Courses, E:Exams, M:Messages, CH:Chats
     string _cmd = "";
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
@@ -430,14 +463,17 @@
     //btns for StudentCourses
     private void BtnTakeATest (int studentCourseId)
         {
+        appState.SetClps ("C");
         Navman.NavigateTo ($"S_StudentCourseTest/{student.UserId}/{studentCourseId}/new");
         }
     private void BtnTryToCorrect (int studentCourseId)
         {     
+        appState.SetClps ("C");
         Navman.NavigateTo ($"S_StudentCourseTest/{student.UserId}/{studentCourseId}/edit");
         }
     private async Task BtnShowCourseFolders (StudentCourse studentCourse)
         {
+        appState.SetClps ("C");
         _hasFetched = false;
         appState.SetCmd ("ShowCourseFolders");
         appState.SetCourseId (studentCourse.CourseId);
@@ -446,6 +482,7 @@
         }
     private void BtnReportStudentCourseTests (int studentCourseId, string courseName)
         {
+        appState.SetClps ("C");
         Navman.NavigateTo ($"/S_ReportStudentCourse/{student.UserId}/{studentCourseId}/{courseName}");
         }
     private async Task BtnFilterStudentCourseTests (StudentCourse studentCourse, string mode)
@@ -477,6 +514,7 @@
     //btns for StudentExams
     public async Task BtnStartExam(StudentExam studentExam)
         {
+        appState.SetClps ("E");
         //read ExamTags : is exam training? Yes:allow Help
         Exam exam = await feService.Read_Exam (studentExam.ExamId, false);
         //keep ExamTags in appState (use in S-StudentExamTest page)
@@ -490,11 +528,13 @@
         }
     private void BtnReportExam(int studentExamId)
         {
+        appState.SetClps ("E");
         Navman.NavigateTo ($"/S_ReportStudentExam/{studentExamId}/Review");
         }    
     //btns for StudentMessages
     private async Task BtnSetStudentMessageAsRead(StudentMessage studentMessage)
         {
+        appState.SetClps ("E");
         //modes: setOn, setOff
         studentMessage.StudentMessageTags |= 1;
         studentMessage.DateTimeRead = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
@@ -504,6 +544,7 @@
         }
     private async Task BtnSetStudentMessageBookmark(StudentMessage studentMessage, int mode)
         {
+        appState.SetClps ("E");
         //modes: 0:setOff, 1:setOn
         switch (mode)
             {
@@ -539,6 +580,7 @@
         }
     private async Task BtnSetMyAnswer(StudentMessage studentMessage, int ans)
         {
+        appState.SetClps ("M");
         //ans: 0:No, 1:Yes
         switch (ans)
             {
@@ -568,6 +610,7 @@
         }
     private async Task BtnGetStudentAnswer(int messageId)
         {
+        appState.SetClps ("M");
         //Lets GetStudentAnswer...
         appState.SetCmd ("GetStudentAnswer");
         appState.SetMessageId (messageId);
@@ -575,6 +618,7 @@
         }
     private async Task BtnDeleteStudentMessage(StudentMessage studentMessage)
         {
+        appState.SetClps ("M");
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Message? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
@@ -589,6 +633,7 @@
     //btns for Chats
     public async Task BtnReadStudentsBySearch()
         {
+        appState.SetClps ("CH");
         if(strSearch !="")
             {
             int teacherId = Convert.ToInt32(appState.TeacherId);
@@ -599,12 +644,14 @@
         }
     private async Task BtnSetChatAsRead(Chat chat)
         {
+        appState.SetClps ("CH");
         //modes: setOn, setOff
         await ReadChatList ();
         StateHasChanged ();
         }
     private async Task BtnOpenThisChat(int fromId, int toId)
         {
+        appState.SetClps ("CH");
         mateId = (fromId == Convert.ToInt32(appState.UserId))? toId : fromId;
         appState.SetChatMateId(mateId);
         _cmd = "OpenThisChat";
@@ -612,6 +659,7 @@
         }
     private async Task BtnDeleteChat(StudentMessage studentMessage)
         {
+        appState.SetClps ("CH");
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Message? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)

@@ -363,7 +363,7 @@ else
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                         @if (_cmd == "AddNewMessage")
                                             {
-                                            <h5>New Message</h5>
+                                            <h5>New message</h5>
                                             <MudTextField @ref="reftxtNewMessageTitle" @bind-Value="strNewMessageTitle" Label="Title عنوان " Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                             <MudTextField @ref="reftxtNewMessageBody" @bind-Value="strNewMessageBody" Label="Message پيام" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Lines="5" />
                                             <div style="text-align:center">
@@ -375,9 +375,9 @@ else
                                                 </button>
                                             </div>
                                             }
-                                        @if (_cmd == "EditMessage")
+                                        else if (_cmd == "EditMessage")
                                             {
-                                            <h5>New Message</h5>
+                                            <h5>Edit message</h5>
                                             <MudTextField @ref="reftxtNewMessageTitle" @bind-Value="strNewMessageTitle" Label="Title عنوان " Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                             <MudTextField @ref="reftxtNewMessageBody" @bind-Value="strNewMessageBody" Label="Message پيام" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Lines="5" />
                                             <div style="text-align:center">
@@ -396,19 +396,34 @@ else
                                                     <MudSelectItem Value="0">Select a Message</MudSelectItem>
                                                     @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
                                                 </MudSelect>
-                                            </div>                                            
+                                                    <button class="btn btn-link" Title=@((_help)?"show/hide message body":"") @onclick="()=>BtnShowHideMessage(MessageId)">
+                                                        <img src="/img/icoNote2.png" width="22" />
+                                                    </button>                                                    
+                                            </div>
+                                            @if(_cmd == "ShowMessageBody")
+                                                {
+                                                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                                    <MudCard Class="mx-0">
+                                                        <MudCardContent Style="background-color:whitesmoke;">
+                                                            <div class="align-items-center" style="white-space: pre-wrap;text-align:center; color:gray; font-weight:normal;font-size:smaller;">
+                                                                @message.MessageBody
+                                                            </div>
+                                                        </MudCardContent>
+                                                    </MudCard>
+                                                </MudContainer>
+                                                }
                                             <div class="d-flex">
-                                                <button class="btn btn-link" Title=@((_help)?"Add new Message":"") @onclick="BtnAddNewMessage">
+                                                <button class="btn btn-link" Title=@((_help)?"add new message":"") @onclick="BtnAddNewMessage">
                                                     <img src="/img/icoAdd0.png" width="20" />
                                                 </button>
-                                                <button class="btn btn-link" Title=@((_help)?"Edit message ويرايش پيام":"") @onclick='()=>BtnEditMessage(MessageId)'>
+                                                <button class="btn btn-link" Title=@((_help)?"edit message ويرايش پيام":"") @onclick='()=>BtnEditMessage(MessageId)'>
                                                     <img src="/img/icoRename.png" width="32" />
                                                 </button>
-                                                <button class="btn btn-link" Title=@((_help)?"Delete this Message":"") @onclick="()=>BtnDeleteMessage(MessageId)">
-                                                    <img src="/img/icoDelete1.png" width="20" />
+                                                <button class="btn btn-link" Title=@((_help)?"delete this message":"") @onclick="()=>BtnDeleteMessage(MessageId)">
+                                                    <img src="/img/icoDelete2.png" width="30" />
                                                 </button>
                                                 <MudCheckBox @bind-Value="requestFeedback" Label="feedback" Color="Color.Primary"></MudCheckBox>
-                                                <button class="btn btn-link ml-5" Title=@((_help)?"Send this Message to: selected students (above)":"") @onclick="()=>BtnAddStudentsToMessage()">
+                                                <button class="btn btn-link ml-5" Title=@((_help)?"send this message to: selected students (above)":"") @onclick="()=>BtnAddStudentsToMessage()">
                                                     <img src="/img/icoEnvelopSend.png" width="28" />
                                                 </button>
                                             </div>
@@ -607,6 +622,7 @@ else
         appState.SetReturnPage ("T_Students");
         appState.SetStudentId (student.UserId);
         appState.SetStudentName (student.UserName);
+        appState.SetStudentNickname (student.UserNickname);
         Navman.NavigateTo ($"/T_ReportMessages/S/{student.UserId}");
         }
     //group
@@ -793,14 +809,36 @@ else
     //message
     private async Task OnMessageChanged(int newValue) 
         {
+        _cmd = "HideMessageBody";
         //update MessageId from the event
         MessageId = newValue;
         appState.SetMessageId (MessageId);
         StateHasChanged();
         } 
+    private async Task BtnShowHideMessage(int messageId) 
+        {
+        if (messageId > 0)
+            {
+            _cmd = (_cmd == "ShowMessageBody") ? "HideMessageBody" : "ShowMessageBody";
+            if (_cmd == "ShowMessageBody")
+                {
+                MessageId = messageId;
+                appState.SetMessageId (MessageId);
+                message = await feService.Read_Message (MessageId, false);
+                }
+            StateHasChanged();                
+            }
+        else
+            {
+            _cmd = "HideMessageBody";
+            Snackbar.Add($"Select a Message", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        } 
     private void BtnAddNewMessage()
         {
         _cmd="AddNewMessage";
+        strNewMessageTitle="";
+        strNewMessageBody = "";
         StateHasChanged ();
         }
     private async Task BtnCreateNewMessage(string messageTitle, string messageBody)
@@ -847,7 +885,7 @@ else
         {
         if(messageId > 0)
             {
-            var message = new MarkupString($"<hr><span style='color:indianred'>Edit</span> message? There may be previous Messages send using existing Title/Body.<br>Continue?<br><br><div style='text-align:center'><img src='/img/icoRename.png' width='70'/></div><br><hr>");
+            var message = new MarkupString($"<hr><span style='color:indianred'>Edit</span> message?<br>There may be previous Messages send using existing Title/Body.<br>Continue?<br><br><div style='text-align:center'><img src='/img/icoRename.png' width='70'/></div><br><hr>");
             bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
                 {
@@ -887,11 +925,12 @@ else
             bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
                 {
-                bool result = await feService.Delete_Messages ("onemessage", messageId);
+                bool result = await feService.Delete_Messages ("ByMessageId", messageId);
                 if (result)
                     {
                     Snackbar.Add ("Message deleted", Severity.Success);
                     MessageId = 0;
+                    _cmd="HideMessageBody";
                     lstMessages = await feService.Read_Messages (user.UserId, false);
                     StateHasChanged ();
                     }
