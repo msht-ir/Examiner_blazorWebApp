@@ -788,6 +788,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Read_ProjectAsync (projectId);
             return Ok (result);
             }
+        [HttpPost ("Update_Project")]
+        public async Task<ActionResult<bool>> Update_Project ([FromBody] Project project)
+            {
+            var result = await _BeService.Update_ProjectAsync (project);
+            return Ok (result);
+            }
         #endregion
         #region SP:Subprojects
         [HttpPost ("Create_Subproject")]
@@ -806,6 +812,12 @@ namespace ExaminerB.Backend
         public async Task<ActionResult<Subproject>> Read_Subproject ([FromBody] int subProjectId, [FromQuery] bool readNotes)
             {
             var result = await _BeService.Read_SubprojectsAsync (subProjectId, readNotes);
+            return Ok (result);
+            }
+        [HttpPost ("Update_Subproject")]
+        public async Task<ActionResult<bool>> Update_Subproject ([FromBody] Subproject subProject)
+            {
+            var result = await _BeService.Update_SubprojectAsync (subProject);
             return Ok (result);
             }
         [HttpPost ("Delete_Subproject")]

@@ -3676,6 +3676,20 @@ COMMIT TRANSACTION;
             project.Subprojects = await Read_SubprojectsAsync (project.ProjectId, false);
             return project;
             }
+        public async Task<bool> Update_ProjectAsync (Project project)
+            {
+            string sql = "UPDATE Projects SET ProjectName=@projectname, ProjectTags=@projecttags WHERE ProjectId=@projectid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@projectname", project.ProjectName);
+            cmd.Parameters.AddWithValue ("@projecttags", project.ProjectTags);
+            cmd.Parameters.AddWithValue ("@projectid", project.ProjectId);
+            await cmd.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
+            }
         #endregion
         #region SP:Subprojects
         public async Task<int> Create_SubprojectAsync (Subproject subProject)
@@ -3747,6 +3761,21 @@ COMMIT TRANSACTION;
                 }
             return subProject;
             }
+        public async Task<bool> Update_SubprojectAsync (Subproject subProject)
+            {
+            string sql = "UPDATE subprojects SET SubprojectName=@subprojectname, SubprojectTags=@subprojecttags WHERE SubprojectId=@subprojectid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@subprojectname", subProject.SubprojectName);
+            cmd.Parameters.AddWithValue ("@subprojecttags", subProject.SubprojectTags);
+            cmd.Parameters.AddWithValue ("@subprojectid", subProject.SubprojectId);
+            await cmd.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
+            }
+
         public async Task<bool> Delete_SubprojectAsync (int subProjectId, bool delNotes)
             {
             string sql = "";

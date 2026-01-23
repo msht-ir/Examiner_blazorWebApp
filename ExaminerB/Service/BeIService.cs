@@ -170,11 +170,13 @@ namespace ExaminerB.Services2Backend
         Task<int> Create_ProjectAsync (Project project);
         Task<List<Project>> Read_ProjectsAsync (int userI, string mode);
         Task<Project> Read_ProjectAsync (int projectId);
+        Task<bool> Update_ProjectAsync (Project project);
         #endregion
         #region SP:Subprojects
         Task<int> Create_SubprojectAsync (Subproject subProject);
         Task<List<Subproject>> Read_SubprojectsAsync (int projectId, bool readNotes);
         Task<Subproject> Read_SubprojectAsync (int subProjectId, bool readNotes);
+        Task<bool> Update_SubprojectAsync (Subproject subProject);
         Task<bool> Delete_SubprojectAsync (int subProjectId, bool delNotes);
         #endregion
         #region N:Notes

@@ -8,7 +8,7 @@
 
 @if (IsOpen)
     {
-    Title = "New note";
+    Title = (appState.Cmd == "UpdateNote") ? "Edit note" : "New note";
     <div class="modal-backdrop fade show"></div>
     <div class="modal show d-block">
         <div class="modal-dialog">
@@ -26,9 +26,10 @@
                         <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                             <MudCard Class="mx-0">
                                 <MudCardContent Style="background-color:whitesmoke;">
-                                    <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Dense="true" />
+                                    @* <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Dense="true" /> *@
+                                    <MudDatePicker Label="Calendar YMD تقويم" @bind-Date="_date" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Dense="true" />
                                     <MudTimePicker Label="Time ساعت" @bind-Time="_time" TimeFormat="HH:mm" Variant="Variant.Outlined" Dense="true"/>
-                                    <MudTextField T="string" Label="Note" @bind-Value="note.NoteText" Variant="Variant.Text" Lines="10" AutoResize="true" Style=@($"width:100%;direction:{(note.IsRtl ? "rtl" : "ltr")};font-family:{(note.IsRtl ? "'Segoe UI'" : "'Courier New', Courier, monospace")};") />
+                                    <MudTextField T="string" Label="Note" @bind-Value="note.NoteText" Variant="Variant.Outlined" Lines="15" AutoResize="true" Style=@($"width:100%;direction:{(note.IsRtl ? "rtl" : "ltr")};font-family:{(note.IsRtl ? "'Segoe UI'" : "'Courier New', Courier, monospace")};") />
                                         <MudCheckBox @bind-Value="note.IsRtl" Label="RTL" Color="Color.Primary"></MudCheckBox>
                                         <br />
                                         @if (appState.Cmd == "CreateNote")
@@ -94,12 +95,12 @@
             _Minute = Convert.ToInt32 (appState.NoteDatum.Substring (14, 2));
             _date = Convert.ToDateTime($"{_PersianYear}/{_PersianMonth}/{_PersianDay} {_Hour}:{_Minute}");           
             _time = TimeSpan.Parse ($"{_Hour}:{_Minute}");
-            note.NoteText = appState.NoteText;
+            note.NoteText = appState.NoteText ?? "";
             note.IsRtl = Convert.ToBoolean (appState.NoteIsRtl);
             note.ParentId = Convert.ToInt32 (appState.NoteParentId);
             note.ParentType = Convert.ToInt32 (appState.NoteParentType);
             note.ParentType = Convert.ToInt32 (appState.NoteParentType);
-        }
+            }
         _hasFetched = true;
         } 
     private void TriggerRender()

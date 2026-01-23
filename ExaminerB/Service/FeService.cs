@@ -1110,9 +1110,8 @@ namespace ExaminerB.Service
             }
         public async Task<bool> Update_Project (Project project)
             {
-            //var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
-            //return response.IsSuccessStatusCode ? true : false;
-            return false;
+            var response = await _http.PostAsJsonAsync ("api/Update_Project", project);
+            return response.IsSuccessStatusCode ? true : false;
             }
         public async Task<bool> Delete_Projects (int userId)
             {
@@ -1159,9 +1158,8 @@ namespace ExaminerB.Service
             }
         public async Task<bool> Update_Subproject (Subproject subProject)
             {
-            //var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
-            //return response.IsSuccessStatusCode ? true : false;
-            return false;
+            var response = await _http.PostAsJsonAsync ("api/Update_Subproject", subProject);
+            return response.IsSuccessStatusCode ? true : false;
             }
         public async Task<bool> Delete_Subprojects (int projectId)
             {
