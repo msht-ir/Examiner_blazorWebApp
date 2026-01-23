@@ -177,7 +177,7 @@ namespace ExaminerB.Services2Backend
         Task<List<Subproject>> Read_SubprojectsAsync (int projectId, bool readNotes);
         Task<Subproject> Read_SubprojectAsync (int subProjectId, bool readNotes);
         Task<bool> Update_SubprojectAsync (Subproject subProject);
-        Task<bool> Delete_SubprojectAsync (int subProjectId, bool delNotes);
+        Task<bool> Delete_SubprojectAsync (int subProjectId);
         #endregion
         #region N:Notes
         Task<int> Create_NoteAsync (Note note);

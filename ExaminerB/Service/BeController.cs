@@ -821,9 +821,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Delete_Subproject")]
-        public async Task<ActionResult<bool>> Delete_Subproject ([FromBody] int subProjectId, [FromQuery] bool delNotes)
+        public async Task<ActionResult<bool>> Delete_Subproject ([FromBody] int subProjectId)
             {
-            var result = await _BeService.Read_SubprojectsAsync (subProjectId, delNotes);
+            var result = await _BeService.Delete_SubprojectAsync (subProjectId);
             return Ok (result);
             }
         #endregion

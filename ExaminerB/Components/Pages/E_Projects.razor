@@ -55,7 +55,7 @@ else
         <hr style="color:indianred" />
         @if(lstNotes.Count > 0)
             {
-            @* SEARCH RESULTS *@ 
+            @* 1 SEARCH RESULTS *@ 
             <h5 style="text-align:center">TOP 20 results:</h5>
             foreach (Note note in lstNotes)
                 {
@@ -146,13 +146,13 @@ else
             <h5 style="text-align:center;color:royalBlue">
                 @(_ShowProjectsMode switch
                     {
-                    "all"      => "All Projects",
-                    "active"   => "Active Projects",
-                    "inactive" => "Inactive Projects",
+                    "all"      => "All Notebookss",
+                    "active"   => "Active Notebooks",
+                    "inactive" => "Inactive Notebooks",
                     _          => ""
                     })
             </h5>            
-            @* PROJECTS/SUBPROJECTS *@
+            @* 2 PROJECTS/SUBPROJECTS *@
             <div class="accordion" id="accordionProjects" style="max-width:500px; margin: 0 auto;">
                 @foreach (Project project in lstProjects)
                     {
@@ -220,7 +220,7 @@ else
                                             @foreach (Subproject subProject in project.Subprojects)
                                                 {
                                                 var collapseId2 = $"collapse{subProject.SubprojectId}";
-                                                    _clpsSP = ((appState.NoteParentId) != subProject.SubprojectId) ? "collapse" : "collapse show";
+                                                    _clpsSP = (appState.NoteParentId != subProject.SubprojectId) ? "collapse" : "collapse show";
                                                     <div class="accordion-item mb-2">
                                                     <h4 class="accordion-header">
                                                         <button class="accordion-button collapsed"
@@ -241,7 +241,7 @@ else
                                                                 <button class="btn btn-link" @onclick="()=>BtnUpdateSubproject(subProject)">
                                                                     <img src="/img/icoSave2.png" width="22" title="update section name"/>
                                                                 </button>
-                                                                <button class="btn btn-link" @onclick="()=>BtnDeleteSubproject(subProject.SubprojectId)">
+                                                                <button class="btn btn-link" @onclick="()=>BtnDeleteSubproject(subProject)">
                                                                     <img src="/img/icoDelete1.png" width="22" title="delete section" />
                                                                 </button>
                                                             </div>
@@ -680,7 +680,7 @@ else
         }
     public async Task BtnUpdateSubproject(Subproject subProject)
         {
-        appState.SetGroupId (subProject.ProjectId);
+        appState.SetSubprojectId (subProject.ProjectId);
         bool result = await feService.Update_Subproject (subProject);
         if (result)
             {
@@ -700,11 +700,14 @@ else
             StateHasChanged ();            
             }
         }
-    private async Task BtnDeleteSubproject(int subProjectId)
+    private async Task BtnDeleteSubproject(Subproject subProject)
         {
-        if (await JS.InvokeAsync<bool>("confirm", "\n\nDelete Sudent?"))
+        appState.SetProjectId (subProject.ProjectId);
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> section <span style='color:royalblue'>{subProject.SubprojectName}</span> ?<br><br><span style='font-weight:bold'>All</span> notes in this section will also be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
-            bool result = await feService.Delete_Subproject (subProjectId);
+            bool result = await feService.Delete_Subproject (subProject.SubprojectId);
             if (result)
                 {
                 appState.SetCmd("");
@@ -724,7 +727,7 @@ else
             }
         else
             {
-            Snackbar.Add($"Failed to remove Student", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"Failed to remove section!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     public void BtnReportSubproject(Subproject subProject)

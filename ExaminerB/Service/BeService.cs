@@ -3775,18 +3775,9 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             return true;
             }
-
-        public async Task<bool> Delete_SubprojectAsync (int subProjectId, bool delNotes)
+        public async Task<bool> Delete_SubprojectAsync (int subProjectId)
             {
-            string sql = "";
-            if (delNotes)
-                {
-                sql = "DELETE FROM Notes WHERE Parent_ID=@subprojectid; DELETE FROM SubProjects WHERE ID=@subprojectid";
-                }
-            else
-                {
-                sql = "DELETE FROM SubProjects WHERE ID=@subprojectid";
-                }
+            string sql =  "DELETE FROM Notes WHERE ParentId=@subprojectid; DELETE FROM SubProjects WHERE SubprojectId=@subprojectid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
