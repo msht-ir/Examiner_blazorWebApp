@@ -339,19 +339,17 @@ else
         }
     public async Task BtnUpdateTestOption (TestOption testOption)
         {
-        // if (await JS.InvokeAsync<bool>("confirm","Update Test Option?"))
-        //     {
-        //     }
         bool result = await feService.Update_TestOption (testOption);
         if (result)
             {
             test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
+            Snackbar.Add("Updated", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             appState.SetCmd ("");
             StateHasChanged ();                
             }
         else
             {
-            await JS.InvokeVoidAsync("alert","Option was not Updated! -- operation failed");
+            Snackbar.Add("Failed to update", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     public async Task BtnDeleteTestOption (int testOptionId)
@@ -398,19 +396,6 @@ else
         }
     public void BtnBack ()
         {
-        // switch (appState.ReturnPage)
-        //     {
-        //     case "/T_CourseTests":
-        //             {
-        //             appState.SetCmd ("ListCourseTests");
-        //             break;
-        //             }
-        //     case "/T_ReportTests":
-        //             {
-        //             appState.SetCmd ("coursetestraw");
-        //             break;
-        //             }
-        //     }
         Navman.NavigateTo (appState.ReturnPage?? "/T_SwitchBoard");
         }
 }

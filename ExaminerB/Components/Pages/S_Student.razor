@@ -240,6 +240,9 @@
                                                     <div style="color:black;font-weight:normal;padding-left:10px; white-space: pre-wrap">@studentMessage.MessageBody</div>
                                                         <hr style="color:gray" />
                                                         <div style="text-align:center">
+                                                            <button class="btn btn-link" Title=@((_help)?"message statistics":"") @onclick="()=>BtnGotoReportStudentMessages(studentMessage)">
+                                                                <img src="/img/icoChartPie.png" width="26" />
+                                                            </button>
                                                             <button class="btn btn-link" Title=@((_help)?"Delete student Message":"") @onclick="()=>BtnDeleteStudentMessage(studentMessage)">
                                                                 <img src="/img/icoDelete1.png" width="20" />
                                                             </button>
@@ -644,6 +647,16 @@
             }
         StateHasChanged ();                
         }
+    private async Task BtnGotoReportStudentMessages(StudentMessage studentMessage)
+        {
+        appState.SetClps ("M");
+        appState.SetReturnPage ("S_Student");
+        appState.SetStudentId (student.UserId);
+        appState.SetStudentName (student.UserName);
+        appState.SetStudentNickname (student.UserNickname);
+        Navman.NavigateTo ($"/T_ReportMessages/S/{student.UserId}");
+        }
+    
     //btns for Chats
     public async Task BtnReadStudentsBySearch()
         {
