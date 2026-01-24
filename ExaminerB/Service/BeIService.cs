@@ -61,6 +61,7 @@ namespace ExaminerB.Services2Backend
         Task<List<StudentCourse>> Read_StudentCoursesAsync (int Id, string mode);
         Task<StudentCourse> Read_StudentCourseAsync (int studentCourseId);
         Task<bool> Update_StudentCourseAsync (StudentCourse studentCourse);
+        Task<bool> Update_StudentCoursesTagsAsync (List<int> lstStudentIds, int courseId, bool activeStatus);
         Task<bool> Delete_StudentCoursesAsync (int Id, string mode);
         Task<bool> Delete_StudentCourseAsync (int studentCourseId);
         Task<bool> CalculatePoints_StudentCourseAsync (StudentCourse studentCourse);

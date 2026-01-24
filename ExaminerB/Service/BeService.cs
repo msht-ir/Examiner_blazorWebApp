@@ -1026,6 +1026,11 @@ namespace ExaminerB.Services2Backend
                         INNER JOIN Students s ON sc.StudentId = s.StudentId ";
             switch (mode)
                 {
+                case "ByStudentIdIgnoreInactiveCourses":
+                        {
+                        sql += " WHERE sc.StudentId=@id AND (StudentCourseTags & 1) = 1 ORDER BY s.StudentNickname";
+                        break;
+                        }
                 case "ByStudentId":
                         {
                         sql += " WHERE sc.StudentId=@id ORDER BY s.StudentNickname";
@@ -1112,6 +1117,22 @@ namespace ExaminerB.Services2Backend
             cmd.Parameters.AddWithValue ("@studentcoursetags", studentCourse.StudentCourseTags);
             cmd.Parameters.AddWithValue ("@studentcourseid", studentCourse.StudentCourseId);
             int i = await cmd.ExecuteNonQueryAsync ();
+            return (i > 0) ? true : false;
+            }
+        public async Task<bool> Update_StudentCoursesTagsAsync (List<int> lstStudentIds, int courseId, bool activeStatus)
+            {
+            int i = 0;
+            string sql = (activeStatus) ? "UPDATE StudentCourses SET StudentCourseTags = (StudentCourseTags | 3) WHERE StudentId=@studentid AND CourseId=@courseid" : "UPDATE StudentCourses SET StudentCourseTags = (StudentCourseTags & ~7) WHERE StudentId=@studentid AND CourseId=@courseid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();            
+            foreach (int studentId in lstStudentIds)
+                {
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@studentid", studentId);
+                cmd.Parameters.AddWithValue ("@courseid", courseId);
+                i = await cmd.ExecuteNonQueryAsync ();
+                }
             return (i > 0) ? true : false;
             }
         public async Task<bool> Delete_StudentCoursesAsync (int Id, string mode)

@@ -318,8 +318,11 @@ else
                                             <button class="btn btn-link" Title=@((_help)?"Goto page Courses":"") @onclick="()=>BtnGotoPageCourses()">
                                                 <img src="/img/icoFolderC.png" width="26" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Change student Accesses to this Course":"") @onclick="()=>BtnGotoPageCourses()">
-                                                <img src="/img/icoLock2.png" width="18" />
+                                            <button class="btn btn-link" Title=@((_help)?"Change students Accesses to this Course":"") @onclick="()=>BtnChangeStudentCoursesStatus(false)">
+                                                <img src="/img/icoYesNo_No.png" width="18" />
+                                            </button>
+                                            <button class="btn btn-link" Title=@((_help)?"Change students Accesses to this Course":"") @onclick="()=>BtnChangeStudentCoursesStatus(true)">
+                                                <img src="/img/icoYesNo_Yes.png" width="18" />
                                             </button>
                                         </div>
                                         <div class="d-flex">
@@ -333,8 +336,11 @@ else
                                             <button class="btn btn-link" Title=@((_help)?"Goto page Exams":"") @onclick="()=>BtnGotoPageExams()">
                                                 <img src="/img/icoFolderE.png" width="26" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Change student Accesses to this Exam":"") @onclick="()=>BtnGotoPageExams()">
-                                                <img src="/img/icoLock2.png" width="18" />
+                                            <button class="btn btn-link" Title=@((_help)?"Change student Accesses to this Exam":"") @onclick="()=>BtnChangeStudentCoursesStatus(false)">
+                                                <img src="/img/icoYesNo_No.png" width="18" />
+                                            </button>
+                                            <button class="btn btn-link" Title=@((_help)?"Change student Accesses to this Exam":"") @onclick="()=>BtnChangeStudentCoursesStatus(true)">
+                                                <img src="/img/icoYesNo_Yes.png" width="18" />
                                             </button>
                                         </div>
                                 </MudCardContent>
@@ -564,7 +570,7 @@ else
         if(Id > 0)
             {
             lstStudents = await feService.Read_StudentsByGCEMId (Id, mode, 0);
-            Snackbar.Add("Listed...", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"{lstStudents.Count} Students listed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             StateHasChanged ();
             }
         else
@@ -781,6 +787,42 @@ else
             Snackbar.Add ($"Failed!", Severity.Error);
             }
         _hasFetched = true;
+        }
+    private async Task BtnChangeStudentCoursesStatus(bool activeStatus)
+        {
+        if(CourseId == 0)
+            {
+            Snackbar.Add ($"select a course", Severity.Warning);
+            }
+        else
+            {
+            _hasFetched = false;
+            List<int> lstStudentIds = new List<int>();
+            int _count = 0;
+            foreach (User student in lstStudents)
+                {
+                if (student.IsSelected)
+                    {
+                    lstStudentIds.Add(student.UserId);
+                    _count++;
+                    student.IsSelected = false;
+                    }
+                }
+            bool result = await feService.Update_StudentCoursesTags(lstStudentIds, CourseId, activeStatus); //StudentCourseTags bit values: 1:active? 2:retry? 4:review?
+            if (result & activeStatus)
+                {
+                Snackbar.Add ($"{_count} students-courses activated", Severity.Success);
+                }
+            else if (result & !activeStatus)
+                {
+                Snackbar.Add ($"{_count} students-courses inactivated", Severity.Warning);
+                }
+            else
+                {
+                Snackbar.Add ($"Failed!", Severity.Error);
+                }
+            _hasFetched = true;            
+            }
         }
     private void BtnGotoCoursesPage(int courseId)
         {

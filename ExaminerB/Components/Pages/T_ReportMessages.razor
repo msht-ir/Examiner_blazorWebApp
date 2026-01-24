@@ -123,7 +123,7 @@ else
                         @if ((appState.Cmd == "ShowMessageStats") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
                             {
                             <div style="text-align:left; padding-left:25px;">
-                                <div style="font-weight:bold">Terget Students <span style="font-weight:normal;"> ( @nStudents ) </span></div>
+                                <div style="font-weight:bold">Target Students <span style="font-weight:normal;"> ( @nStudents ) </span></div>
                                 <div style="padding-left:15px;">@nStudentsRead ( @(nStudentsRead * 100 / nStudents)% ) Read</div>
                                 <div style="padding-left:15px;">@nStudentsBookmarked Bookmarked</div>
                                 <div style="padding-left:15px;">@nStudentsDeleted Deleted</div>
@@ -287,7 +287,7 @@ else
                     </MudContainer>
                 </div>
                 }
-        }
+            }
         }
     </EditForm>
     <div style="text-align:center">
@@ -337,7 +337,7 @@ else
             }
         appState.SetCmd ("");
         user.UserRole = appState.UserRole ?? "";
-        await GetListOfNotes ();
+        await GetListOfMessagesAndNotes ();
         _hasFetched = true;
         } 
     private void TriggerRender()
@@ -527,9 +527,16 @@ else
         Navman.NavigateTo (appState.ReturnPage ?? "/Login");
         }
     //methods
-    public async Task GetListOfNotes()
+    public async Task GetListOfMessagesAndNotes()
         {
-        lstStudentMessages = await feService.Read_StudentMessages (Id, "ByStudentId");
+        if (user.UserRole == "teacher")
+            {
+            lstStudentMessages = await feService.Read_StudentMessages (Id, "ByStudentId");
+            }
+        else
+            {
+            lstStudentMessages = await feService.Read_StudentMessages (Id, "ByStudentIdIgnoreDeletedMessages");
+            }
         int parentType = mode switch
             {
             "U" => 1,
@@ -580,7 +587,7 @@ else
                 Snackbar.Add($"deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 user.UserId = Convert.ToInt32(appState.UserId);
                 _hasFetched = false;
-                await GetListOfNotes ();
+                await GetListOfMessagesAndNotes ();
                 _hasFetched = true;
                 appState.SetCmd("");
                 StateHasChanged();
@@ -594,7 +601,7 @@ else
     private async Task HandleModalClose() 
         {
         int userId = Convert.ToInt32 (appState.UserId);
-        await GetListOfNotes (); 
+        await GetListOfMessagesAndNotes (); 
         //StateHasChanged(); 
         }
 

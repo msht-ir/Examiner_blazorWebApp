@@ -359,6 +359,18 @@ namespace ExaminerB.Service
                 return false;
                 }
             }
+        public async Task<bool> Update_StudentCoursesTags (List<int> lstStudentIds, int CourseId, bool activeStatus)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Update_StudentCoursesTags?CourseId={CourseId}&activeStatus={activeStatus}", lstStudentIds);
+            if (response.IsSuccessStatusCode)
+                {
+                return true;
+                }
+            else
+                {
+                return false;
+                }
+            }
         public async Task<bool> Delete_StudentCourses (int Id, string mode)
             {
             var response = await _http.PostAsJsonAsync ($"api/Delete_StudentCourses?mode={mode}", Id);

@@ -265,6 +265,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Update_StudentCourseAsync (studentCourse);
             return Ok (result);
             }
+        [HttpPost ("Update_StudentCoursesTags")]
+        public async Task<ActionResult<bool>> Update_StudentCoursesTags ([FromBody] List<int> lstStudentIds, [FromQuery] int courseId, [FromQuery] bool activeStatus)
+            {
+            var result = await _BeService.Update_StudentCoursesTagsAsync (lstStudentIds, courseId, activeStatus);
+            return Ok (result);
+            }
         [HttpPost ("Delete_StudentCourses")]
         public async Task<ActionResult<bool>> Delete_StudentCourses ([FromQuery] int Id, [FromBody] string mode)
             {

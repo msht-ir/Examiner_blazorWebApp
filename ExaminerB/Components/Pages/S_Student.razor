@@ -437,6 +437,7 @@
     bool _help;
     string _clps=""; //appState.Clps values: C:Courses, E:Exams, M:Messages, CH:Chats
     string _cmd = "";
+
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
@@ -454,7 +455,7 @@
             student.UserTags = Convert.ToInt32(appState.UserTags);
             student.UserName = appState.UserName ?? "";
             student.UserNickname = appState.UserNickname ?? "";
-            lstStudentCourses = await feService.Read_StudentCourses (student.UserId, "ByStudentId");
+            lstStudentCourses = await feService.Read_StudentCourses (student.UserId, "ByStudentIdIgnoreInactiveCourses");
             await ReadMessageList ();
             await ReadChatList ();
             _hasFetched = true;
