@@ -657,7 +657,7 @@
         appState.SetStudentNickname (student.UserNickname);
         Navman.NavigateTo ($"/T_ReportMessages/S/{student.UserId}");
         }
-    
+
     //btns for Chats
     public async Task BtnReadStudentsBySearch()
         {
@@ -708,6 +708,7 @@
         }
     private async Task ReadChatList()
         {
+        student.UserId = appState.UserId ?? 0;
         lstChats.Clear ();
         lstChats = await feService.Read_Chats (student.UserId);        
         //first bit: 0 = unread, 1 = read

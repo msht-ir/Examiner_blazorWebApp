@@ -3483,53 +3483,55 @@ COMMIT TRANSACTION;
             }
         public async Task<List<Chat>> Read_ChatsAsync (int studentId)
             {
-            List<Chat> lstTempIds = new List<Chat> ();
-            string sql = @"SELECT DISTINCT FromId, ToId FROM Chats WHERE FromId=@meid OR ToId=@meid";
+            //1 get netList of chatMates
+            List<int> lstMateIds = new List<int> ();
+            string sql = @"SELECT DISTINCT ch.FromId mateId
+                        FROM Chats ch INNER JOIN Students sf ON ch.FromId = sf.StudentId
+                        WHERE ch.ToId=@meId
+                        UNION
+                        SELECT DISTINCT ch.ToId mateId
+                        FROM Chats ch INNER JOIN Students st ON ch.ToId = st.StudentId
+                        WHERE ch.FromId = @meId";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd1 = new SqlCommand (sql, cnn);
             cmd1.Parameters.AddWithValue ("@meid", studentId);
             SqlDataReader reader1 = await cmd1.ExecuteReaderAsync ();
-            lstTempIds.Clear ();
+            lstMateIds.Clear ();
             while (await reader1.ReadAsync ())
                 {
-                lstTempIds.Add (new Chat
-                    {
-                    ChatId = 0,
-                    FromId = reader1.GetInt32 (0),
-                    ToId = reader1.GetInt32 (1),
-                    });
+                lstMateIds.Add (reader1.GetInt32 (0));
                 }
             await reader1.CloseAsync ();
+            //2 get display data
             List<Chat> lstChats = new List<Chat> ();
-            foreach(Chat cht in lstTempIds)
+            lstChats.Clear ();
+            foreach(int mateId in lstMateIds)
                 {
-                sql = @$"SELECT ch.ChatId, ch.FromId, ch.ToId, ch.DateTimeSent, Left(ch.ChatText, 10), ch.ChatTags, sf.StudentName, st.StudentName
+                sql = @$"SELECT TOP 1 ch.ChatId, ch.FromId, ch.ToId, ch.DateTimeSent, Left(ch.ChatText, 10), ch.ChatTags, sf.StudentNickname, st.StudentNickname
                     FROM Chats ch 
                     INNER JOIN Students sf ON ch.FromId = sf.StudentId
                     INNER JOIN Students st ON ch.ToId = st.StudentId
-                    WHERE FromId={cht.FromId} AND ToId={cht.ToId}
-                    ORDER BY DateTimeSent DESC
-                    OFFSET 0 ROWS FETCH NEXT 50 ROWS ONLY ";
+                    WHERE (FromId={mateId} AND ToId={studentId}) OR (FromId={studentId} AND ToId={mateId})
+                    ORDER BY DateTimeSent DESC";
                 SqlCommand cmd2 = new SqlCommand (sql, cnn);
-                SqlDataReader reader = await cmd2.ExecuteReaderAsync ();
-                lstChats.Clear ();
-                while (await reader.ReadAsync ())
+                SqlDataReader reader2 = await cmd2.ExecuteReaderAsync ();
+                while (await reader2.ReadAsync ())
                     {
                     lstChats.Add (new Chat
                         {
-                        ChatId = reader.GetInt32(0),
-                        FromId = reader.GetInt32 (1),
-                        ToId = reader.GetInt32 (2),
-                        DateTimeSent = reader.GetString (3),
-                        ChatText = reader.GetString (4),
-                        ChatTags = reader.GetInt32 (5),
-                        FromName=reader.GetString(6),
-                        ToName=reader.GetString(7)
+                        ChatId = reader2.GetInt32(0),
+                        FromId = reader2.GetInt32 (1),
+                        ToId = reader2.GetInt32 (2),
+                        DateTimeSent = reader2.GetString (3),
+                        ChatText = reader2.GetString (4),
+                        ChatTags = reader2.GetInt32 (5),
+                        FromName=reader2.GetString(6),
+                        ToName=reader2.GetString(7)
                         });
                     }
-                await reader.CloseAsync ();
+                await reader2.CloseAsync ();
                 }
             await cnn.CloseAsync ();
             return lstChats;
