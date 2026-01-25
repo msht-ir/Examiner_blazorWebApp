@@ -352,12 +352,13 @@
                                                 <div>
                                                     @if(chat.FromId == student.UserId)
                                                         {
-                                                        <span style="font-size:small; font-weight:normal;color:green;padding-left:10px;">>@chat.ToName</span>
+                                                        <span style="font-size:x-small; font-weight:normal;color:green;padding-left:10px;">@chat.ToName</span>
                                                         }
                                                     else
                                                         {
-                                                        <span style="font-size:small; font-weight:bold;color:royalblue;padding-left:10px;">@chat.FromName:</span>
+                                                        <span style="font-size:x-small; font-weight:bold;color:royalblue;padding-left:10px;">@chat.FromName:</span>
                                                         }
+                                                        <br />
                                                     @if (chat.ChatText.Length == 10)
                                                         {
                                                         <span style="font-size:small; font-weight:normal;color:black;padding-left:10px;"> @chat.ChatText<span>...</span></span>

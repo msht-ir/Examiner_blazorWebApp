@@ -3539,7 +3539,7 @@ COMMIT TRANSACTION;
         public async Task<List<Chat>> Read_ChatsWithOneMateAsync (int studentId, int mateId)
             {
             List<Chat> lstChats = new List<Chat> ();
-            string sql = @"SELECT ch.ChatId, ch.FromId, ch.ToId, ch.DateTimeSent, ch.ChatText, ch.ChatTags, sf.StudentName, st.StudentName
+            string sql = @"SELECT ch.ChatId, ch.FromId, ch.ToId, ch.DateTimeSent, ch.ChatText, ch.ChatTags, sf.StudentNickname, st.StudentNickname
                         FROM Chats ch 
                         INNER JOIN Students sf ON ch.FromId = sf.StudentId
                         INNER JOIN Students st ON ch.ToId = st.StudentId
