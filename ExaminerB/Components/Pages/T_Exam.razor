@@ -41,8 +41,8 @@ else
                         <MudTextField @ref="refExamDateTime" @bind-Value="exam.ExamDateTime" Label="Date-Time" placeholder="____-__-__ __:__" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" style="width:200px;" />
                     </div>
                     <div class="d-flex justify-content-start mb-2" >
-                        <MudCheckBox @bind-Value="exam.IsActive" Label="Active" Dense="true" Color="Color.Success"/>
-                        <MudCheckBox @bind-Value="exam.IsTrainingMode" Label="Training" Dense="true" Color="Color.Primary" />
+                        <MudCheckBox @bind-Value="exam.IsActive" Label="Active" Dense="true" Color="Color.Success" title="advice: keep exam inactive until exam day!"/>
+                        <MudCheckBox @bind-Value="exam.IsTrainingMode" Label="Training" Dense="true" Color="Color.Primary" title="students can get help" />
                     </div>
                 </MudCardContent>
             </MudCard>
@@ -62,7 +62,7 @@ else
                 <h4 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#ExamCompositionList" aria-expanded="false" aria-controls="ExamCompositionList">
-                        <h4 style="color:indianred"> Exam Design </h4>
+                        <h4 style="color:indianred"> Design </h4>
                     </button>
                 </h4>
                 <div id="ExamCompositionList" class="accordion-collapse @clps"
@@ -79,10 +79,10 @@ else
                                                 @foreach (CourseTopic topic in lstCourseTopics) { <MudSelectItem Value="@topic.CourseTopicId">@topic.CourseTopicTitle</MudSelectItem> }
                                             </MudSelect>
                                             <button class="btn btn-link" @onclick="()=>BtnUpdateExamComposition (comp)" >
-                                                <img src="/img/icoSave2.png" width="25" />
+                                                <img src="/img/icoSave2.png" width="25" title="update" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnDeleteExamComposition(comp.ExamCompositionId)">
-                                                <img src="/img/icoDelete1.png" width="25" />
+                                                <img src="/img/icoDelete1.png" width="25" title="delete" />
                                             </button>
                                         </div>
                                         @* Slider NTests *@
@@ -116,10 +116,10 @@ else
                                                    @foreach (CourseTopic topic in lstCourseTopics) { <MudSelectItem Value="@topic.CourseTopicId">@topic.CourseTopicTitle</MudSelectItem> }
                                                 </MudSelect>
                                                 <button class="btn btn-link" @onclick="BtnCreateExamComposition">
-                                                    <img src="/img/icoSave2.png" width="25" />
+                                                    <img src="/img/icoSave2.png" width="25" title="save"/>
                                                 </button>
                                                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                    <img src="/img/icoCancel.png" width="24" />
+                                                    <img src="/img/icoCancel.png" width="24" title="cancel" />
                                                 </button>
                                             </div>
                                             @* Slider NTests *@
@@ -144,10 +144,10 @@ else
                         else
                             {
                             <button class="btn btn-link" @onclick="BtnAddNewExamComposition">
-                                <img src="/img/icoAdd0.png" width="25" />
+                                <img src="/img/icoAdd0.png" width="25" title="add new composition"/>
                             </button>
                             <button class="btn btn-link" @onclick="BtnDrawRandomTestsByExamComposition">
-                                <img src="/img/icoShuffle.png" width="30" />
+                                <img src="/img/icoShuffle.png" width="30" title="use compositions to draw random tests"/>
                             </button>
                             <br />
                             }
@@ -168,14 +168,14 @@ else
                 <h4 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#ExamTestList" aria-expanded="false" aria-controls="ExamTestList">
-                        <h4 style="color:indianred"> Exam Tests </h4>
+                        <h4 style="color:indianred"> Tests </h4>
                     </button>
                 </h4>
                 <div id="ExamTestList" class="accordion-collapse @clps" data-bs-parent="#accordionCourses">
                     <div class="accordion-body" style="background-color:whitesmoke">
                         @* SEARCH *@ 
                         <div class="mb-3" style="background-color:WhiteSmoke">
-                            <span style="font-size:larger; font-weight:bold;color:royalblue;">Add Tests to Exam</span>
+                            <span style="font-size:larger; font-weight:bold;color:royalblue;">Add tests to exam</span>
                             <div class="d-flex align-items-center mb-3">
                                 <MudTextField @ref="txtSearchTest" @bind-Value="strSearch" Label="Search..." Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';" />
                                 <button class="btn btn-link" @onclick="BtnReadTestsBySearch">
@@ -183,7 +183,7 @@ else
                                 </button>
                             </div>
                             <div class="d-flex align-atems-center mb-3">
-                                <MudSelect T="int" Label="Result نتيجه" @bind-Value="cboCourseTestId" Class="w-auto my-select d-inline" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:80%;font-size:small; font-family:'Segoe UI';text-overflow: ellipsis;">
+                                <MudSelect T="int" Label="Result نتيجه" @bind-Value="cboCourseTestId" Class="w-auto my-select d-inline" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;max-width:420px;font-size:small; font-family:'Segoe UI';text-overflow: ellipsis;">
                                     <MudSelectItem Value="0">select from results</MudSelectItem>
                                     @foreach (var ct in lstCourseTests) { <MudSelectItem Value="@ct.TestId" Style="font-family:'Segoe UI';text-overflow: ellipsis;"> @ct.TestId - @(ct.TestTitle.Length > 50 ? ct.TestTitle.Substring(0, 50) : ct.TestTitle)</MudSelectItem> }
                                 </MudSelect>
@@ -195,6 +195,7 @@ else
                                 </button>
                             </div>
                         </div>
+                        <hr style="color:indianred"/>
                         @* END SEARCH *@
                         @{i = 0;}
                         @foreach (Test tst in lstExamTests)
@@ -398,11 +399,12 @@ else
         }
     //Tests
     public void BtnGotoReportCourseTests(int courseId)
-        {    
-        appState.SetCmd ("coursetests");
+        {
+        appState.SetCmd ("ListCourseTests");
         appState.SetCourseId (courseId);
         appState.SetReturnPage ("/T_Courses");
-        Navman.NavigateTo ("/T_ReportTests");
+        //Navman.NavigateTo ("/T_ReportTests");
+        Navman.NavigateTo ("/T_CourseTests");
         }
     public async Task BtnAddNewExamTest()
         {

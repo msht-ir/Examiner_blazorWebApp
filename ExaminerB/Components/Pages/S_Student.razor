@@ -323,7 +323,7 @@
                             aria-expanded="false"
                             aria-controls="CollapseId4" style="background-color:WhiteSmoke">
                             @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
-                            <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count</span> )</span></h4>
+                            <h4>Chat <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count</span> )</span></h4>
                         </button>
                     </h4>
                     @if (appState.Clps=="CH")
@@ -343,22 +343,21 @@
                                     <MudContainer Class="mt-2 px-0">
                                         <MudCard Class="mx-0">
                                             <MudCardContent Style="background-color:whitesmoke;">
-                                                <div class="d-flex align-items-center" style="font-size:smaller; font-weight:bold;color:indianred;">
+                                                <div class="d-flex align-items-center" style="font-size:x-small; font-weight:bold;color:indianred;">
                                                     <button class="btn btn-link" Title=@((_help)?"Show chat history with this friend":"") @onclick="()=>BtnOpenThisChat(chat.FromId, chat.ToId)">
                                                         <img src="/img/icoEnvelop2.png" width="18" />
                                                     </button>
-                                                    @chat.DateTimeSent 
-                                                </div>
-                                                <div>
+                                                    @chat.DateTimeSent -
                                                     @if(chat.FromId == student.UserId)
                                                         {
-                                                        <span style="font-size:x-small; font-weight:normal;color:green;padding-left:10px;">@chat.ToName</span>
+                                                        <span style="font-size:x-small; font-weight:normal;color:gray;padding-left:10px;">@chat.ToName</span>
                                                         }
                                                     else
                                                         {
-                                                        <span style="font-size:x-small; font-weight:bold;color:royalblue;padding-left:10px;">@chat.FromName:</span>
+                                                        <span style="font-size:x-small; font-weight:bold;color:Indianred;padding-left:10px;">@chat.FromName:</span>
                                                         }
-                                                        <br />
+                                                </div>
+                                                <div>
                                                     @if (chat.ChatText.Length == 10)
                                                         {
                                                         <span style="font-size:small; font-weight:normal;color:black;padding-left:10px;"> @chat.ChatText<span>...</span></span>

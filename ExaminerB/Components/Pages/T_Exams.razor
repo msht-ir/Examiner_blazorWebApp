@@ -11,8 +11,7 @@
 @inject ISnackbar Snackbar
 
 <div style="text-align: center; "max-width:500px; margin: 0 auto;">
-    <h4 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h4>
-    <h3 class="card-title text-center text-secondary">@course.CourseName - exams</h3>
+    <h3 class="card-title text-center text-secondary">@course.CourseName exams</h3>
     @if (appState.Message != "")
         {
         <h6 style="color:indianred">@appState.Message</h6>
@@ -32,10 +31,12 @@
                     <MudCard Class="mx-0">
                         <MudCardContent Style="background-color:whitesmoke;">
                             <div style="text-align:center">
-                                <span style="color:indianred; font-weight:bold;">@exam.ExamTitle</span> <br />
-                                <span style="color:royalblue; font-weight:bold;font-size:smaller">@exam.ExamDateTime</span>
-                                <span style="font-weight:bold;font-size:smaller;"> -- @exam.ExamNTests Tests, @exam.ExamDuration min</span><br />
+                                <span style="color:Black; font-weight:bold;">@exam.ExamTitle</span> <br />
+                                <span style="color:indianred; font-weight:bold;font-size:small">@exam.ExamDateTime</span>
+                                <div style="font-weight:bold;font-size:smaller;"> @exam.ExamNTests Tests, @exam.ExamDuration min</div>
                                 <hr style="color:indianred"/>
+                            </div>
+                            <div style="text-align:center">
                                 <button style="border:none" class="btn btn-link" @onclick="()=>BtnEditExam(exam)" >
                                     <img src="/img/icoRename.png" width="26" />
                                 </button>

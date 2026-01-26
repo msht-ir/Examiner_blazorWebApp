@@ -26,71 +26,90 @@ else
     <EditForm Model="lstCourseTests" style="max-width:600px; margin: 0 auto;">
         @if (appState.Cmd == "importexcelfile")
             {
-            <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnCancel">
-                <img src="/img/icoCancel.png" width="22" />
-            </button>
-            <img src="/img/icoDownload.png" width="28" style="margin-right:10px;" />
-            <InputFile OnChange="HandleFileSelected" />
+            <br />
+            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                <MudCard Class="mx-0">
+                    <MudCardContent Style="background-color:whitesmoke;">
+                    <div>
+                        <br />
+                        <img src="/img/icoExcel1.png" width="28" style="margin-right:10px;" />
+                        <InputFile OnChange="HandleFileSelected" title="Refer to Examiner guide for correct Excel format"/>
+                        <br />
+                        <br />
+                    </div>
+                    <hr />
+                    <div style="text-align:center">
+                        <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnCancel">
+                            <img src="/img/icoCancel.png" width="24" />
+                        </button>
+                    </div>
+                </MudCardContent>
+                </MudCard>
+            </MudContainer>
             }
         else
             {
             <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/img/icoBack2.png" width="28" />
+                <img src="/img/icoBack3.png" width="40" />
             </button>
             <button class="btn btn-link" @onclick="BtnImportFromExcelFile">
-                <img src="/img/icoDownload.png" width="30" />
-            </button>
-            <button class="btn btn-link" @onclick="()=>BtnAddNewTest()">
-                <img src="/img/icoAdd0.png" width="24" />
+                <img src="/img/icoExcel1.png" width="28" />
             </button>
             <p></p>
             <hr style="border-color:red" />
             <h3>@course.CourseName</h3>
             @* SEARCH *@
-            <div class="mb-3">
-                <input class="form-control d-inline" @ref="txtSearch" @bind ="strSearch"  placeholder="Search tests..." style="width:50%"/>
+            <div class="d-flex mb-3">
+                <MudTextField @ref="txtSearch" @bind-Value="strSearch" Label="Search tests..." Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                 <button class="btn btn-link" @onclick="()=>BtnReadTestsBySearch()">
                     <img src="/img/icoSearch.png" width="25" />
                 </button>
                 @* Paginate *@
-                <input class="form-control d-inline" type="number" @ref="txtPageNumber" @bind="intPageNumber" min="1" placeholder="1" style="width: 60px; display: inline-block;"/>
-                <button class="btn btn-link" @onclick="()=>BtnReadTestsByPage(course.CourseId)">
-                    <img src="/img/icoList.png" width="25" />
-                </button>
+                    <MudNumericField @ref="refPageNumber" @bind-Value="intPendingPageNumber" Label="Page" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" style="max-width:80px;padding-left:10px" Min="1" />
+                    <button class="btn btn-link  ms-2" @onclick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)">
+                        <img src="/img/icoListT.png" width="38" />
+                    </button>
+                    <button class="btn btn-link" @onclick="()=>BtnAddNewTest()">
+                        <img src="/img/icoAdd0.png" width="24" />
+                    </button>
             </div>
             @* List of tests *@
             <hr style="border-color:red" />
             i = (intPageNumber - 1) * 20; //important: see pageSize in BackendService
-            @foreach (Test test in lstCourseTests)
+            @foreach (var tst in lstxTests)
                 {
-                i++;
-                int localId = test.TestId;
+                int localId = tst.TestId;
                 <MudContainer Class="mt-2 px-0">
                     <MudCard Class="mx-0">
                         <MudCardContent Style="background-color:whitesmoke;">
-                            @if ((test.TestTags & 1) == 1)
+                        @{
+                        string testRtlStatus = ((tst.TestTags & 1) == 1) ? "direction:rtl;text-align:right;" : "";
+                        string optRtlStatus = ((tst.TestTags & 2) == 2) ? "direction:rtl;text-align:right;" : "";
+                        i++;
+                        }
+                        <div style="font-weight:bold; @testRtlStatus">@i - @tst.TestTitle</div>
+                        <div style="@testRtlStatus display:flex; align-items:center; gap:2px;" >
+                            <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected" />
+                            <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst.TestId)">
+                                <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="18px"/>
+                            </button>
+                        </div>
+                        @* Show-TestOptions *@
+                        @foreach (var opt in tst.TestOptions)
+                            {
+                            if((opt.TestOptionId == tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
                                 {
-                                <p style="text-align:right;" dir="rtl">- @test.TestTitle</p>
-                                <button class="btn btn-link" @onclick="()=>BtnEditCourseTest(localId)" style="text-align:right;" dir="rtl">
-                                    <img src="img/icoEditPen.png" title="Edit Test" alt="Edit" width="25px"/>
-                                </button>
+                                <div style="color:blue; @optRtlStatus"> - @opt.TestOptionTitle</div>
                                 }
-                            else
+                            else if((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
                                 {
-                                <p style="text-align:left;">- @test.TestTitle</p>
-                                <button class="btn btn-link" @onclick="()=>BtnEditCourseTest(localId)" style="text-align:right;" dir="rtl">
-                                    <img src="img/icoEditPen.png" title="Edit Test" alt="Edit" width="25px"/>
-                                </button>
-                                }                
-                        </MudCardContent>
+                                <div style="color:black; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                                }
+                            }
+                    </MudCardContent>
                     </MudCard>
                 </MudContainer>
                 }
-            <div style="text-align: center;">
-                <button class="btn btn-link" @onclick="BtnBack">
-                    <img src="/img/icoBack3.png" width="40" />
-                </button>
-            </div>
             <div id="loadingOverlay" class="d-none">
                 <div class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 z-3 d-flex justify-content-center align-items-center">
                     <div class="text-center bg-white p-4 rounded shadow">
@@ -99,9 +118,34 @@ else
                     </div>
                 </div>
             </div>
+            <hr style="color:red" />
+            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                <MudCard Class="mx-0">
+                    <MudCardContent Style="background-color:whitesmoke;">
+                        <div style="font-weight:bold;color:royalblue;padding-bottom:5px;">Add tests to:</div>
+                        <div class="d-flex">
+                            <MudSelect T="int" Label="Exam آزمون" @bind-Value="intExamId" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
+                                @foreach (Exam exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
+                            </MudSelect>
+                            <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
+                                <img src="/img/icoSave2.png" width="24" />
+                            </button>
+                            <button class="btn btn-link" type="submit" @onclick="BtnEditExam">
+                                <img src="/img/icoFolderE.png" width="30" />
+                            </button>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudContainer>
+            <div style="max-width:500px; margin: 0 auto; text-align:center;">
+                <br />
+                <button class="btn btn-link" @onclick="BtnBack">
+                    <img src="/img/icoBack3.png" width="40" />
+                </button>
+            </div>
             }
     </EditForm>
-    
     }
 <script>
     function showLoading() {
@@ -118,23 +162,26 @@ else
 
 @code {
     Course course = new Course ();
-    Test test = new Test ();
     List<Test> lstCourseTests = new List<Test>();
+    List<Exam> lstExams = new List<Exam> ();
+    private MudNumericField <int> refPageNumber;
+    List<StudentExamTest> lstxTests = new List<StudentExamTest> ();
     public bool _hasFetched = false;
-    private ElementReference txtSearch;
+    private MudTextField<string> txtSearch;
     public string strSearch = "";
-    private ElementReference txtPageNumber;
     public int intPageNumber = 1;
+    private int intPendingPageNumber = 1; //value typed in the input (prevent changing i (index number) of tests in list)
     public string strExcelFile = "";
     public int i = 0;
-    
+    private int intExamId;
+
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {
+        _hasFetched = false;
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-
             Navman.NavigateTo ("/Login");
             }
         switch (appState.Cmd)
@@ -151,6 +198,9 @@ else
                     }
             }
         course.CourseId = Convert.ToInt32(appState.CourseId);
+        await BtnReadTestsPaginated (1);
+        lstExams.Clear ();
+        lstExams = await feService.Read_Exams (course.CourseId);
         _hasFetched = true;
         } 
     private void TriggerRender()
@@ -173,36 +223,137 @@ else
         }
     public async Task BtnReadTestsBySearch()
         {
+        intPendingPageNumber = 1;
+        i = 0;
         int courseId = Convert.ToInt32(appState.CourseId);
         string courseName = appState.CourseName;
         lstCourseTests = await feService.Read_TestsBySearch (strSearch, courseId, false);
-        StateHasChanged ();
-        }
-    public async Task BtnReadTestsByPage(int courseId)
-        {
-        _hasFetched = false;
-        StateHasChanged ();
-        switch (appState.Cmd)
+        lstxTests.Clear ();
+        foreach(Test tst in lstCourseTests)
             {
-            case "ListCourseTests":
+            lstxTests.Add (new StudentExamTest()
+                {
+                StudentExamId = tst.CourseId,
+                TestId = tst.TestId,
+                StudentExamTestKey = 0,
+                StudentExamTestAns = 0,
+                TestIndex = 0,
+                TestTitle = tst.TestTitle,
+                TestType = tst.TestType,
+                CourseTopicId = tst.TopicId,
+                CourseTopicTitle = "",
+                TestTags = tst.TestTags,
+                TestLevel = tst.TestLevel,
+                TestOptions = tst.TestOptions
+                }
+            );}
+        //find and set key
+        foreach(StudentExamTest t in lstxTests)
+            {
+            foreach(TestOption opt in t.TestOptions)
+                {
+                if (opt.TestOptionTags >= 2)
                     {
-                    lstCourseTests = await feService.Read_TestsByCourseId (Convert.ToInt32(appState.CourseId), intPageNumber, false);
+                    t.StudentExamTestKey = opt.TestOptionId;
                     break;
                     }
-            case "ListCourseTopicTests":
-                    {
-                    lstCourseTests = await feService.Read_TestsByCourseTopicId (Convert.ToInt32(appState.CourseTopicId), intPageNumber, false);
-                    break;
-                    }
+                }
             }
-        _hasFetched = true;
         StateHasChanged ();
         }
+    public async Task BtnReadTestsPaginated(int newPage)
+        {
+        strSearch = "";
+        intPageNumber = newPage;
+        if (appState.Cmd == "ListCourseTests")
+            {
+            lstCourseTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), intPageNumber, true);        
+            }
+        else if (appState.Cmd == "ListCourseTopicTests")
+            {
+            lstCourseTests = await feService.Read_TestsByCourseTopicId (Convert.ToInt32 (appState.CourseTopicId), intPageNumber, true);           
+            }
+        lstxTests.Clear ();
+        foreach(Test tst in lstCourseTests)
+            {
+            lstxTests.Add (new StudentExamTest()
+                {
+                StudentExamId = tst.CourseId,
+                TestId = tst.TestId,
+                StudentExamTestKey = 0,
+                StudentExamTestAns = 0,
+                TestIndex = 0,
+                TestTitle = tst.TestTitle,
+                TestType = tst.TestType,
+                CourseTopicId = tst.TopicId,
+                CourseTopicTitle = "",
+                TestTags = tst.TestTags,
+                TestLevel = tst.TestLevel,
+                TestOptions = tst.TestOptions
+                }
+            );}
+        //find and set key
+        foreach(StudentExamTest t in lstxTests)
+            {
+            foreach(TestOption opt in t.TestOptions)
+                {
+                if (opt.TestOptionTags >= 2)
+                    {
+                    t.StudentExamTestKey = opt.TestOptionId;
+                    break;
+                    }
+                }
+            }
+        }
+
     public void BtnEditCourseTest(int testId)
         {
         appState.SetTestId (testId);
         appState.SetReturnPage ("/T_CourseTests");
         Navman.NavigateTo ("/T_CourseTest");
+        }
+    //add to exam
+    public async Task BtnAddSelectedTestsToAnExam()
+        {
+        if (intExamId <= 0)
+            {
+            Snackbar.Add("Select an exam!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            //await JS.InvokeVoidAsync ("alert", "");            
+            }
+        else
+            {
+            var selectedIds = lstxTests
+                .Where(t => t.IsSelected)
+                .Select(t => t.TestId)
+                .ToList();
+            int testCount = 0;
+            foreach(int intTestId in selectedIds)
+                {
+                ExamTest examTest = new ExamTest () {ExamId = intExamId, TestId= intTestId };
+                int result = await feService.Create_ExamTest (examTest);
+                if (result > 0)
+                    {
+                    testCount++;
+                    Console.WriteLine($"Test {testCount} added to Exam");
+                    }
+                }
+            //appState.SetCmd ("coursetests");
+            StateHasChanged ();            
+            Snackbar.Add($"\n\n{testCount} Tests was added to the Exam Successfully", Severity.Success); //{Severity.Warning .Error | .Info | .Success} --needs: @inject ISnackbar Snackbar
+            //old code: await JS.InvokeVoidAsync ("alert", $"\n\n{testCount} Tests was added to the Exam Successfully")
+            }
+        }
+    public async Task BtnEditExam()
+        {
+        if (intExamId > 0)
+            {
+            Navman.NavigateTo ($"/T_Exam/{intExamId}");
+            }
+        else
+            {
+            Snackbar.Add("Select an exam!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            //await JS.InvokeVoidAsync ("alert", "");            
+            }
         }
     //methods
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
