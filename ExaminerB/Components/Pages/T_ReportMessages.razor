@@ -8,7 +8,7 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
-<h5 style="text-align:center;color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h5>
+<h6 style="text-align:center;color:royalblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h6>
 <hr style="color:red"/>
 
 @if (!_hasFetched)
@@ -92,9 +92,20 @@ else
                         <div style="font-weight:bold; text-align:center; white-space: pre-wrap;">
                             @message.MessageTitle
                         </div>
+                        <hr style="color:gray" />
+                        <button class="btn btn-link" Title="change font" @onclick="()=>BtnCangeFont(message.MessageId)">
+                            <img src="/img/icoFontAa.png" width="20" />
+                        </button>
+                        @if((message.MessageId == Convert.ToInt32(appState.MessageId)) & (_cmd=="useCourierFont"))
+                            {
+                            _font="font-family:Courier New, Courier, monospace;font-size:small;";
+                            }
+                        else
+                            {
+                            _font="font-family:'Segoe UI';";
+                            }
                         <div style="text-align:center;">
-                            <hr style="color:royalblue" />
-                            <div style="text-align:left; white-space: pre-wrap">
+                            <div style="@_font text-align:left; white-space: pre-wrap">
                                 @message.MessageBody
                             </div>
                             <hr style="color:royalblue" />
@@ -326,6 +337,8 @@ else
     List<StudentMessage> lstStudentMessageInstances = new List<StudentMessage> ();
     List<Note> lstNotes = new List<Note> ();
     public bool _hasFetched = false;
+    string _cmd = "";
+    string _font="font-family:'Segoe UI';";
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
@@ -522,6 +535,19 @@ else
                 }            
             }
         }    
+    private void BtnCangeFont(int messageId)
+        {
+        if(messageId == Convert.ToInt32(appState.MessageId))
+            {
+            _cmd = (_cmd == "useCourierFont")?  "": "useCourierFont";
+            }
+        else
+            {
+            appState.SetMessageId (messageId);
+            _cmd = "useCourierFont";
+            }
+        StateHasChanged ();
+        }
     public void BtnBack()
         {
         Navman.NavigateTo (appState.ReturnPage ?? "/Login");
