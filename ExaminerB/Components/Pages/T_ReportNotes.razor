@@ -155,7 +155,7 @@
         [Parameter] public int Id { get; set; }
         User user = new User ();
         List<Note> lstNotes = new List<Note> ();
-    public bool _hasFetched = false;
+        public bool _hasFetched = false;
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
@@ -201,6 +201,8 @@
         appState.SetNoteDatum (note.NoteDatum);
         appState.SetNoteText (note.NoteText);
         appState.SetNoteIsRtl (note.IsRtl);
+        appState.SetNoteParentId (note.ParentId);
+        appState.SetNoteParentType (note.ParentType);
         appState.SetNoteParentName (note.ParentName);
         appState.SetCmd ("ShowNoteInDialog");
         StateHasChanged();
@@ -210,11 +212,12 @@
     public async Task BtnEditNoteInDialog(Note note)
         {
         appState.SetSelectedNoteId (note.NoteId);
-        appState.SetNoteParentId (note.ParentId);
-        appState.SetNoteParentType (note.ParentType);
         appState.SetNoteDatum (note.NoteDatum);
         appState.SetNoteText (note.NoteText);
         appState.SetNoteIsRtl (note.IsRtl);
+        appState.SetNoteParentId (note.ParentId);
+        appState.SetNoteParentType (note.ParentType);
+        appState.SetNoteParentName (note.ParentName);
         appState.SetCmd ("UpdateNote");
         StateHasChanged ();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
