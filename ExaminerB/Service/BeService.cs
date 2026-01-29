@@ -3514,7 +3514,7 @@ COMMIT TRANSACTION;
                     INNER JOIN Students sf ON ch.FromId = sf.StudentId
                     INNER JOIN Students st ON ch.ToId = st.StudentId
                     WHERE (FromId={mateId} AND ToId={studentId}) OR (FromId={studentId} AND ToId={mateId})
-                    ORDER BY DateTimeSent DESC";
+                    ORDER BY (ch.ChatTags & 1) ASC, ch.DateTimeSent DESC";
                 SqlCommand cmd2 = new SqlCommand (sql, cnn);
                 SqlDataReader reader2 = await cmd2.ExecuteReaderAsync ();
                 while (await reader2.ReadAsync ())
@@ -3534,6 +3534,10 @@ COMMIT TRANSACTION;
                 await reader2.CloseAsync ();
                 }
             await cnn.CloseAsync ();
+            lstChats = lstChats
+                .OrderBy (chat => (chat.ChatTags & 1))   // 0 comes before 1  → bit=0 first
+                .ThenByDescending (chat => chat.DateTimeSent)
+                .ToList ();
             return lstChats;
             }
         public async Task<List<Chat>> Read_ChatsWithOneMateAsync (int studentId, int mateId)
@@ -3590,6 +3594,7 @@ COMMIT TRANSACTION;
             }
         public async Task<bool> Update_ChatTagsAsync (Chat chat)
             {
+            //1:IsRead 2:IsImp 3:IsBookmarked 4:Deleted
             string sql = "UPDATE Chats SET ChatTags=@chattags WHERE ChatId=@chatid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);

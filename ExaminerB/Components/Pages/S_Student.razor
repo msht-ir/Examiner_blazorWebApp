@@ -359,18 +359,19 @@
                                     <MudContainer Class="mt-2 px-0">
                                         <MudCard Class="mx-0">
                                             <MudCardContent Style="background-color:whitesmoke;">
-                                                <div class="d-flex align-items-center" style="font-size:x-small; font-weight:bold;color:indianred;">
-                                                    <button class="btn btn-link" Title=@((_help)?"Show chat history with this friend":"") @onclick="()=>BtnOpenThisChat(chat.FromId, chat.ToId)">
+                                                <div class="d-flex align-items-center">
+                                                    <button class="btn btn-link" Title=@((_help)?"Show chat history with this friend":"") @onclick="()=>BtnOpenThisChat(chat)">
                                                         <img src="/img/icoEnvelop2.png" width="18" />
                                                     </button>
-                                                    @chat.DateTimeSent -
                                                     @if(chat.FromId == student.UserId)
                                                         {
-                                                        <span style="font-size:x-small; font-weight:normal;color:gray;padding-left:10px;">@chat.ToName</span>
+                                                        <span style="font-size:x-small; font-weight:bold;color:gray;"> @chat.DateTimeSent </span>
+                                                        <span style="font-size:x-small; font-weight:normal;color:gray;padding-left:10px;"> @chat.ToName </span>
                                                         }
                                                     else
                                                         {
-                                                        <span style="font-size:x-small; font-weight:bold;color:Indianred;padding-left:10px;">@chat.FromName:</span>
+                                                        <span style="font-size:x-small; font-weight:bold;color:indianred;"> @chat.DateTimeSent </span>
+                                                        <span style="font-size:x-small; font-weight:bold;color:Indianred;padding-left:10px;"> @chat.FromName </span>
                                                         }
                                                 </div>
                                                 <div>
@@ -405,7 +406,7 @@
                                                 @foreach(User stdnt in lstStudents)
                                                     {
                                                     <div class="d-flex align-items-center mb-1" style="font-size:smaller">
-                                                        <button class="btn btn-link" Title=@((_help)?"Open/Start chat with this friend":"") @onclick="()=>BtnOpenThisChat(stdnt.UserId, 0)">
+                                                        <button class="btn btn-link" Title=@((_help)?"Open/Start chat with this friend":"") @onclick="()=>BtnStartNewChat(stdnt.UserId)">
                                                             <img src="/img/icoUser.png" width="20" />
                                                         </button>
                                                         @stdnt.UserName - @stdnt.UserNickname
@@ -543,7 +544,7 @@
             {
             var result = await feService.Delete_StudentCourseTests (mode, studentCourse);
             //refresh
-            lstStudentCourses = await feService.Read_StudentCourses (student.UserId, "ByStudentId");        
+            lstStudentCourses = await feService.Read_StudentCourses (student.UserId, "ByStudentIdIgnoreInactiveCourses");
             }
         }
     //btns for StudentExams
@@ -701,15 +702,25 @@
         }
     private async Task BtnSetChatAsRead(Chat chat)
         {
+        chat.ChatTags |= 1; //set chatTags bit1(IsRead) On
+        bool result = await feService.Update_ChatTags (chat);
         appState.SetClps ("CH");
         //modes: setOn, setOff
         await ReadChatList ();
         StateHasChanged ();
         }
-    private async Task BtnOpenThisChat(int fromId, int toId)
+    private async Task BtnOpenThisChat(Chat chat)
+        {
+        await BtnSetChatAsRead(chat);
+        appState.SetClps ("CH");
+        mateId = (chat.FromId == Convert.ToInt32(appState.UserId))? chat.ToId : chat.FromId;
+        appState.SetChatMateId(mateId);
+        _cmd = "OpenThisChat";
+        StateHasChanged ();
+        }
+    private async Task BtnStartNewChat(int mateId)
         {
         appState.SetClps ("CH");
-        mateId = (fromId == Convert.ToInt32(appState.UserId))? toId : fromId;
         appState.SetChatMateId(mateId);
         _cmd = "OpenThisChat";
         StateHasChanged ();
@@ -747,7 +758,7 @@
         {
         _cmd = "";
         int userId = Convert.ToInt32 (appState.UserId);
-        lstStudentCourses = await feService.Read_StudentCourses (userId, "ByStudentId");
+        lstStudentCourses = await feService.Read_StudentCourses (student.UserId, "ByStudentIdIgnoreInactiveCourses");
         await ReadMessageList ();
         await ReadChatList();        
         StateHasChanged(); 

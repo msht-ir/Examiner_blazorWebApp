@@ -1079,6 +1079,7 @@ namespace ExaminerB.Service
             }
         public async Task<bool>Update_ChatTags(Chat chat)
             {
+            //1:IsRead 2:IsImp 3:IsBookmarked 4:Deleted
             var response = await _http.PostAsJsonAsync ($"api/Update_ChatTags", chat);
             return response.IsSuccessStatusCode ? true : false;
             }
