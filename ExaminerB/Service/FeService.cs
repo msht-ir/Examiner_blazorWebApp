@@ -46,16 +46,16 @@ namespace ExaminerB.Service
                 return new List<User> ();
                 }
             }
-        public async Task<bool> Update_UserPassword (User user)
+        public async Task<bool> Update_User (User user)
             {
             if (user.UserRole.ToLower () == "student")
                 {
-                var response = await _http.PostAsJsonAsync ("api/Update_StudentPassword", user);
+                var response = await _http.PostAsJsonAsync ("api/Update_Student", user);
                 return (response.IsSuccessStatusCode) ? true : false;
                 }
             else if (user.UserRole.ToLower () == "teacher")
                 {
-                var response = await _http.PostAsJsonAsync ("api/Update_TeacherPassword", user);
+                var response = await _http.PostAsJsonAsync ("api/Update_Teacher", user);
                 return (response.IsSuccessStatusCode) ? true : false;
                 }
             else

@@ -146,9 +146,9 @@ namespace ExaminerB.Services2Backend
                 }
             return users;
             }
-        public async Task<bool> Update_TeacherPasswordAsync (User user)
+        public async Task<bool> Update_TeacherAsync (User user)
             {
-            string sql = "UPDATE usrs SET UsrPass=@usrpass, UsrNickname=@usrnickname WHERE ID=@userid";
+            string sql = "UPDATE usrs SET UsrPass=@usrpass, UsrNickname=@usrnickname WHERE UsrId=@userid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try

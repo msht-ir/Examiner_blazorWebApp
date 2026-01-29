@@ -42,6 +42,7 @@
                                     @lstChats[0].FromName                                 
                                 </div>
                                 }                                
+                            <hr style="color:indianred" />
                             }
                     </div>
                     @if (_cmd == "AddNewChatItem")
@@ -66,7 +67,7 @@
                         }
                     else
                         {
-                        <div style="text-align:left">
+                        <div style="text-align:center">
                             <button class="btn btn-link" @onclick="AddNewChatItem">
                                 <img src="/img/icoAdd0.png" width="22" title="Add new chat item" />
                             </button>
@@ -75,81 +76,82 @@
                     @foreach (Chat chat in lstChats)
                         {
                         <div class="mt-3">
-                                <MudContainer Class="mt-2 px-0">
-                                    <MudCard Class="mx-0">
-                                        <MudCardContent Style="background-color:whitesmoke;">
-                                            <div class="d-flex align-items-center" style="font-size:smaller; font-weight:bold;color:indianred;">
-                                                @chat.DateTimeSent 
-                                            </div>
-                                            @if(chat.FromId == Convert.ToInt32(appState.UserId))
-                                                {
-                                                <div style="font-size:small; font-weight:bold;color:green;padding-left:5px;">
-                                                    @chat.FromName.Trim():
-                                                </div>
-                                                }
-                                            else
-                                                {
-                                                <div style="font-size:small; font-weight:bold;color:royalblue;padding-left:5px;">
-                                                    @chat.FromName.Trim():
-                                                </div>
-                                                }
+                            <MudChat ChatPosition="ChatBubblePosition.Start">
+                                <MudChatBubble>
+                                    <div class="d-flex align-items-center" style="font-size:smaller; font-weight:bold;color:indianred;">
+                                        @chat.DateTimeSent 
+                                    </div>
+                                    @if(chat.FromId == Convert.ToInt32(appState.UserId))
+                                        {
+                                        @* <div style="font-size:smaller; font-weight:bold;color:green;padding-left:5px;">
+                                            @chat.FromName.Trim()
+                                        </div> *@
+                                        }
+                                    else
+                                        {
+                                        <div style="font-size:smaller; font-weight:bold;color:royalblue;padding-left:5px;">
+                                            @chat.FromName.Trim()
+                                        </div>
+                                        }
+                                <hr />
+                                @if((_cmd=="ReadThisChatItem") & (appState.SelectedChatId == chat.ChatId))
+                                    {
+                                    <div style='white-space: pre-wrap;font-size:small; font-weight:normal;color:black;padding-left:10px;font-size:@(_cmd == "UseLargeFontSize" ? "large" : "small")'> @chat.ChatText.Trim()</div>
+                                    <hr />
+                                    <div style="text-align:right">
+                                        <button class="btn btn-link" @onclick="()=>BtnReadThisChatItem(chat)">
+                                            <img src="/img/icoCourse.png" width="24" title="Expand to read this item" />
+                                        </button>
+                                        <button class="btn btn-link" @onclick="()=>BtnDeleteChatItem(chat.ChatId)">
+                                            <img src="/img/icoDelete1.png" width="20" title="Delete chat item" />
+                                        </button>
+                                    </div>
+                                    }
+                                else
+                                    {
+                                    if (chat.ChatText.Trim().Length < 100)
+                                        {
+                                        <div style='white-space: pre-wrap;font-size:small; font-weight:normal;color:black;padding-left:10px;font-size:@(_cmd == "UseLargeFontSize" ? "large" : "small")'> @chat.ChatText.Trim()</div>
                                         <hr />
-                                        @if((_cmd=="ReadThisChatItem") & (appState.SelectedChatId == chat.ChatId))
-                                            {
-                                            <div style='white-space: pre-wrap;font-size:small; font-weight:normal;color:black;padding-left:10px;font-size:@(_cmd == "UseLargeFontSize" ? "large" : "small")'> @chat.ChatText.Trim()</div>
-                                            <hr />
-                                            <div style="text-align:right">
-                                                <button class="btn btn-link" @onclick="()=>BtnReadThisChatItem(chat)">
-                                                    <img src="/img/icoCourse.png" width="24" title="Expand to read this item" />
-                                                </button>
-                                                <button class="btn btn-link" @onclick="()=>BtnDeleteChatItem(chat.ChatId)">
-                                                    <img src="/img/icoDelete1.png" width="20" title="Delete chat item" />
-                                                </button>
-                                            </div>
-                                            }
-                                        else
-                                            {
-                                            if (chat.ChatText.Trim().Length < 20)
-                                                {
-                                                <div style='white-space: pre-wrap;font-size:small; font-weight:normal;color:black;padding-left:10px;font-size:@(_cmd == "UseLargeFontSize" ? "large" : "small")'> @chat.ChatText.Trim()</div>
-                                                <hr />
-                                                <div style="text-align:right">
-                                                    <button class="btn btn-link" @onclick="()=>BtnDeleteChatItem(chat.ChatId)">
-                                                        <img src="/img/icoDelete1.png" width="20" title="Delete chat item" />
-                                                    </button>
-                                                </div>
-                                                }
-                                            else
-                                                {                                                
-                                                <div style='white-space: pre-wrap;font-size:small; font-weight:normal;color:black;padding-left:10px;font-size:@(_cmd == "UseLargeFontSize" ? "large" : "small")'> @chat.ChatText.Trim().Substring(0, 19)...</div>
-                                                <hr />
-                                                <div style="text-align:right">
-                                                    <button class="btn btn-link" @onclick="()=>BtnReadThisChatItem(chat)">
-                                                        <img src="/img/icoCourse.png" width="24" title="Expand to read this item" />
-                                                    </button>
-                                                    <button class="btn btn-link" @onclick="()=>BtnDeleteChatItem(chat.ChatId)">
-                                                        <img src="/img/icoDelete1.png" width="20" title="Delete chat item" />
-                                                    </button>
-                                                </div>
-                                                }
-                                            }
-                                        </MudCardContent>
-                                    </MudCard>
-                                </MudContainer>
+                                        <div style="text-align:left">
+                                            <button class="btn btn-link" @onclick="()=>BtnDeleteChatItem(chat.ChatId)">
+                                                <img src="/img/icoDelete1.png" width="20" title="Delete chat item" />
+                                            </button>
+                                        </div>
+                                        }
+                                    else
+                                        {                                                
+                                        <div style='white-space: pre-wrap;font-size:small; font-weight:normal;color:black;padding-left:10px;font-size:@(_cmd == "UseLargeFontSize" ? "large" : "small")'> @chat.ChatText.Trim().Substring(0, 99)...</div>
+                                        <hr />
+                                        <div style="text-align:left">
+                                            <button class="btn btn-link" @onclick="()=>BtnDeleteChatItem(chat.ChatId)">
+                                                <img src="/img/icoDelete1.png" width="20" title="Delete chat item" />
+                                            </button>
+                                            <button class="btn btn-link" @onclick="()=>BtnReadThisChatItem(chat)">
+                                                <img src="/img/icoCourse.png" width="24" title="Expand to read this item" />
+                                            </button>
+                                        </div>
+                                        }
+                                    }
+                                </MudChatBubble>
+                            </MudChat>
                         </div>                        
                         } 
-                    <br />
-                    <div style="text-align:center">
-                        <button class="btn btn-link" @onclick="Close">
-                            <img src="/img/icoBack3.png" width="35" title="Back" />
-                        </button>
-                        <button class="btn btn-link" @onclick="ReadChats">
-                            <img src="/img/gifUserLogin.gif" width="35" title="Refresh" />
-                        </button>
-                        <button class="btn btn-link" @onclick="BtnChangeFontSize">
-                            <img src="/img/icoFontAa.png" title="Font Size  تغيير انداز فونت" alt="FontSize" width="28"/>
-                        </button>
-                    </div>
+                    @if (lstChats.Count > 0)
+                        {
+                        <br />
+                        <div style="text-align:center">
+                            <button class="btn btn-link" @onclick="Close">
+                                <img src="/img/icoBack3.png" width="35" title="Back" />
+                            </button>
+                            <button class="btn btn-link" @onclick="ReadChats">
+                                <img src="/img/gifUserLogin.gif" width="35" title="Refresh" />
+                            </button>
+                            <button class="btn btn-link" @onclick="BtnChangeFontSize">
+                                <img src="/img/icoFontAa.png" title="Font Size  تغيير انداز فونت" alt="FontSize" width="28"/>
+                            </button>
+                        </div>                        
+                        }
                 </div>
             </div>
         </div>
@@ -240,7 +242,7 @@
             bool result = await feService.Delete_Chat (chatId);
             if(result)
                 {
-                Snackbar.Add($"deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"deleted", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 _hasFetched = false;
                 studentId = Convert.ToInt32 (appState.UserId);
                 chatMateId = Convert.ToInt32 (appState.ChatMateId);

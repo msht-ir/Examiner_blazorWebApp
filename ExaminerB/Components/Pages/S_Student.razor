@@ -49,8 +49,8 @@
                                 @foreach (StudentCourse studentCourse in lstStudentCourses)
                                     {
                                     <MudContainer Class="mt-2 px-0">
-                                        <MudCard Class="mx-0">
-                                            <MudCardContent Style="background-color: rgba(250,250,2250);">
+                                        <MudCard Class="mx-0" elevation="2">
+                                            <MudCardContent Style="background-color: rgba(250,250,250);">
                                                 @* use (double) to make result decimal not integer *@
                                                 @{strRunningPoint = studentCourse.NumberOfTests == 0 ?"---": $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double)studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F1}";}
                                                 <div style="color:black;font-weight:bold;">
@@ -339,7 +339,7 @@
                             aria-expanded="false"
                             aria-controls="CollapseId4" style="background-color:WhiteSmoke">
                             @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
-                            <h4>Chat <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count</span> )</span></h4>
+                            <h4>Chat <span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChats.Count ) </span></span></h4>
                         </button>
                     </h4>
                     @if (appState.Clps=="CH")
@@ -353,6 +353,11 @@
                     <div id="CollapseId4" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
                         <div class="accordion-body" style="background-color:white">
                             <div id="T3">
+                                <div style="text-align:center">
+                                    <button class="btn btn-link align-items-center" Title=@((_help)?"message statistics":"") @onclick="ReadMessageList">
+                                        <img src="/img/gifUserLogin.gif" width="30" title="Refresh chat list" />
+                                    </button>
+                                </div>
                                 @* list chats *@
                                 @foreach (Chat chat in lstChats)
                                     {
@@ -745,6 +750,7 @@
         lstStudentMessages = await feService.Read_StudentMessages (student.UserId, "ByStudentIdIgnoreDeletedMessages");        
         //first bit: 0 = unread, 1 = read
         unreadMessageCount = lstStudentMessages.Count(m => (m.StudentMessageTags & (1 << 1)) == 0);
+        Snackbar.Add("Chat list refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
     private async Task ReadChatList()
         {

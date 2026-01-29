@@ -47,10 +47,10 @@ namespace ExaminerB.Backend
             var result = await _BeService.Read_TeachersAsync ();
             return Ok (result);
             }
-        [HttpPost ("Update_TeacherPassword")]
-        public async Task<ActionResult<bool>> Update_TeacherPassword ([FromBody] User user)
+        [HttpPost ("Update_Teacher")]
+        public async Task<ActionResult<bool>> Update_Teacher ([FromBody] User user)
             {
-            var result = await _BeService.Update_TeacherPasswordAsync (user);
+            var result = await _BeService.Update_TeacherAsync (user);
             return Ok (result);
             }
         [HttpPost ("Delete_Teacher")]

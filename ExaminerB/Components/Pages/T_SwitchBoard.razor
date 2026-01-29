@@ -34,8 +34,8 @@
             </tr>
             <tr style="text-align:center;">
                 <td>
-                    <button class="btn btn-link" @onclick="CreateNote">
-                        <img src="/img/icoNewNote1.png" width="60" />
+                    <button class="btn btn-link" @onclick="GotoProjects">
+                        <img src="/img/gifNotebook.gif" width="80" />
                     </button>
                 </td>
                 <td>
@@ -44,22 +44,13 @@
                     </button>
                 </td>
                 <td>
-                    <button class="btn btn-link" @onclick="GotoProjects">
-                        <img src="/img/gifNotebook.gif" width="80" />
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>
                     <button class="btn btn-link" @onclick="GotoLogin">
                         <img src="/img/gifExit.gif" style="width:80px" />
                     </button>
                 </td>
-                <td></td>
             </tr>
         </table>
-        <br />
+        @* <E_Projects /> *@
         <hr style="color:red" />
         @if (appState.Cmd == "CreateNote")
             {

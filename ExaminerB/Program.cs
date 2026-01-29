@@ -14,8 +14,8 @@ builder.Services.AddScoped<BeIService, BeService> ();
 builder.Services.AddHttpClient<FeService> (client =>
     {
         //var baseAddress = builder.Configuration["BaseAddress"] ?? "http://localhost:5232";  //local server - Linux (http ONLY)
-        //var baseAddress = builder.Configuration["BaseAddress"] ?? "https://localhost:7139";  //local server - Windows
-        var baseAddress = builder.Configuration ["BaseAddress"] ?? "https://x.msht.ir";      //remote server: [x].msht.ir
+        var baseAddress = builder.Configuration["BaseAddress"] ?? "https://localhost:7139";  //local server - Windows
+        //var baseAddress = builder.Configuration ["BaseAddress"] ?? "https://x.msht.ir";      //remote server: [x].msht.ir
         //var baseAddress = builder.Configuration["BaseAddress"] ?? "https://www.msht.ir";      //remote server: wwww.msht.ir
         client.BaseAddress = new Uri (baseAddress);
         client.Timeout = TimeSpan.FromSeconds (120);

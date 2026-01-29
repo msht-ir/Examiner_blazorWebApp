@@ -13,7 +13,7 @@ namespace ExaminerB.Services2Backend
         #region U:usrs
         Task<int> Create_TeacherAsync (User user);
         Task<List<User>> Read_TeachersAsync ();
-        Task<bool> Update_TeacherPasswordAsync (User user);
+        Task<bool> Update_TeacherAsync (User user);
         Task<bool> Delete_TeacherAsync (int userId);
         #endregion
         #region S:Students
