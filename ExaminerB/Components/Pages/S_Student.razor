@@ -224,12 +224,6 @@
                     <div id="CollapseId3" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
                         <div class="accordion-body" style="background-color:white">
                             <div id="T3">
-                            <div style="text-align:center">
-                                <button class="btn btn-outline-info align-items-center" Title=@((_help)?"message statistics":"") @onclick="()=>BtnGotoReportStudentMessages()">
-                                    <img src="/img/icoChartPie.png" width="24" />
-                                     Check statistics of your messages
-                                </button>
-                            </div>
                                 @* List messages *@
                                 @foreach (StudentMessage studentMessage in lstStudentMessages)
                                     {
@@ -245,9 +239,14 @@
                                                         @studentMessage.DateTimeSent
                                                     </div>
                                                     <hr style="color:gray" />
-                                                    <button class="btn btn-link" Title=@((_help)?"change font":"") @onclick="()=>BtnCangeFont(studentMessage.MessageId)">
-                                                        <img src="/img/icoFontAa.png" width="20" />
-                                                    </button>
+                                                    <div class="d-flex">
+                                                        <button class="btn btn-link" Title=@((_help)?"change font":"") @onclick="()=>BtnCangeFont(studentMessage.MessageId)">
+                                                            <img src="/img/icoFontAa.png" width="20" />
+                                                        </button>
+                                                        <button class="btn btn-link align-items-center" Title=@((_help)?"message statistics":"") @onclick="()=>BtnGotoReportStudentMessages()">
+                                                            <img src="/img/icoChartPie.png" width="20" />
+                                                        </button>
+                                                    </div>
                                                     @if((studentMessage.MessageId == Convert.ToInt32(appState.MessageId)) & (_cmd=="useCourierFont"))
                                                         {
                                                         _font="font-family:Courier New, Courier, monospace;font-size:small;";

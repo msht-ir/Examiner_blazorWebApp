@@ -45,7 +45,7 @@ else
                     <div class="mb-3" style="max-width:500px; margin:0 auto">
                         @* <span style="font-size:larger; font-weight:bold;color:royalblue;">Search</span> *@
                         <div class="d-flex align-items-center mb-3">
-                            <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search... جستجو" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';width:90%" />
+                            <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';width:90%" />
                             <button class="btn btn-link" @onclick="BtnReadNotesBySearch">
                                 <img src="/img/icoSearch.png" width="26" title="Search notes"/>
                             </button>
@@ -187,7 +187,7 @@ else
                                         {
                                         string btnProjectId = "btnProjectName";
                                         <div class="d-flex mb-3">
-                                            <MudTextField @ref="refProjectName" @bind-Value="project.ProjectName" Label="NoteBook... نام دفترچه " Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                            <MudTextField @ref="refProjectName" @bind-Value="project.ProjectName" Label="NoteBook" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                             <button class="btn btn-link" name="@btnProjectId" @onclick="()=>BtnUpdateProject(project)">
                                                 <img src="/img/icoSave2.png" width="25" title="save notebook"/>
                                             </button>
@@ -214,7 +214,7 @@ else
                                             {
                                             <div>
                                                 <div class="d-flex mb-3">
-                                                    <MudTextField @ref="refNewSubproject" @bind-Value="txtNewSubprojectTitle" Label="new section سرفصل " Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                                    <MudTextField @ref="refNewSubproject" @bind-Value="txtNewSubprojectTitle" Label="new section" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                                     <button class="btn btn-link" @onclick="()=>BtnSaveNewSubproject(project.ProjectId)">
                                                         <img src="/img/icoSave2.png" width="24" title="save new section"/>
                                                     </button>
@@ -231,7 +231,7 @@ else
                                                 {
                                                 var collapseId2 = $"collapse{subProject.SubprojectId}";
                                                     _clpsSP = (appState.NoteParentId != subProject.SubprojectId) ? "collapse" : "collapse show";
-                                                    <div class="accordion-item mb-2">
+                                                    <div class="accordion-item mb-1">
                                                     <h4 class="accordion-header">
                                                         <button class="accordion-button collapsed"
                                                                 type="button"
@@ -247,7 +247,7 @@ else
                                                     <div id="@collapseId2" class="accordion-collapse @_clpsSP" data-bs-parent="#accordionSubprojects-@project.ProjectId">
                                                         <div class="accordion-body" style="background-color:rgba(252,252,252)">
                                                             <div class="d-flex mb-1">
-                                                                <MudTextField @ref="refSubprojectName" @bind-Value="subProject.SubprojectName" Label="Section سرفصل" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                                                <MudTextField @ref="refSubprojectName" @bind-Value="subProject.SubprojectName" Label="Section" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                                                 <button class="btn btn-link" @onclick="()=>BtnUpdateSubproject(subProject)">
                                                                     <img src="/img/icoSave2.png" width="22" title="update section name"/>
                                                                 </button>
@@ -273,8 +273,8 @@ else
                                                                         <MudCard Class="mx-0">
                                                                             <MudCardContent Style="background-color:whitesmoke;">
                                                                                 @* <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Dense="true" /> *@
-                                                                                <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" DateFormat="yyyy-MM-dd" PickerVariant="PickerVariant.Static" Variant="Variant.Outlined" Dense="true" />
-                                                                                <MudTimePicker Label="Time ساعت" @bind-Time="_time" TimeFormat="HH:mm" Variant="Variant.Outlined" Dense="true"/>
+                                                                                <MudDatePicker Label="Calendar" @bind-Date="_date" DateFormat="yyyy-MM-dd" PickerVariant="PickerVariant.Static" Variant="Variant.Outlined" Dense="true" />
+                                                                                <MudTimePicker Label="Time" @bind-Time="_time" TimeFormat="HH:mm" Variant="Variant.Outlined" Dense="true"/>
                                                                                 <MudTextField T="string" Label="New Note" @bind-Value="note.NoteText" Variant="Variant.Filled" Lines="10" AutoResize="true" Style="width:100%;" />
                                                                                 <div>
                                                                                     <br />
@@ -314,10 +314,10 @@ else
                                                                                                 <hr />
                                                                                                 <div class="d-flex align-items-center">
                                                                                                     <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex)">
-                                                                                                        <img src="/img/icoDelete1.png" width="24" title="delete note"/>
+                                                                                                        <img src="/img/icoDelete1.png" width="22" title="delete note"/>
                                                                                                     </button>
                                                                                                     <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
-                                                                                                        <img src="/img/icoRename.png" width="32" title="edit note"/>
+                                                                                                        <img src="/img/icoRename.png" width="28" title="edit note"/>
                                                                                                     </button>
                                                                                                     @if(notex.NoteText.Length > 60)
                                                                                                         {
@@ -353,10 +353,10 @@ else
                                                                                                 </span>
                                                                                                 <hr />
                                                                                                 <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex)">
-                                                                                                    <img src="/img/icoDelete1.png" width="24" title="delete note"/>
+                                                                                                    <img src="/img/icoDelete1.png" width="22" title="delete note"/>
                                                                                                 </button>
                                                                                                 <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
-                                                                                                    <img src="/img/icoRename.png" width="30" title="edit note"/>
+                                                                                                    <img src="/img/icoRename.png" width="28" title="edit note"/>
                                                                                                 </button>
                                                                                                 @if(notex.NoteText.Length > 60)
                                                                                                     {
@@ -397,9 +397,9 @@ else
                 @if (appState.Cmd == "AddNewProject")
                     {
                     <hr style="color:red"/>
-                    <h6>New Project</h6>
+                    <h6>Create new Notebook</h6>
                     <div class="mb-3">
-                        <MudTextField @ref="refNewProject" @bind-Value="project.ProjectName" Label="notebook name... نام دفترچه" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                        <MudTextField @ref="refNewProject" @bind-Value="project.ProjectName" Label="Notebook" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                     </div>
                     <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewProject">
                         <img src="/img/icoSave2.png" width="22" title="save notebook"/>

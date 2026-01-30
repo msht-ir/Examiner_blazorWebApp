@@ -3340,8 +3340,10 @@ COMMIT TRANSACTION;
                 {
                 case "ByStudentIdIgnoreDeletedMessages":
                         {
-                        //put new messages at top, FeddbackMessages in mid and simple already-read messages at buttom, finally sorted by date-sent
-                        sql += " WHERE (sm.StudentId=@id) AND ((sm.StudentMessageTags & 4) = 0) ORDER BY (sm.StudentMessageTags & 1), (sm.StudentMessageTags & 8) DESC, (sm.StudentMessageTags & 48), sm.DateTimeSent DESC"; //48=(16:AnsY+32:AnsN)
+                        //sort: put new messages at top, FeddbackMessages in mid and simple already-read messages at buttom, finally sorted by date-sent:
+                        //sql += " WHERE (sm.StudentId=@id) AND ((sm.StudentMessageTags & 4) = 0) ORDER BY (sm.StudentMessageTags & 1), (sm.StudentMessageTags & 8) DESC, (sm.StudentMessageTags & 48), sm.DateTimeSent DESC"; //48=(16:AnsY+32:AnsN)
+                        //sort: by date-sent:
+                        sql += " WHERE (sm.StudentId=@id) AND ((sm.StudentMessageTags & 4) = 0) ORDER BY sm.DateTimeSent DESC"; //48=(16:AnsY+32:AnsN)
                         break;
                         }
                 case "ByStudentId":

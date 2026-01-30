@@ -11,49 +11,62 @@
             <h5 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h5>
         </div>
         <h4 style="color:royalblue">@appState.UserNickname</h4>
-        <br/>
         <hr style="color:red" />
         <br />
-        <table class="table table-borderless">
-            <tr>
-                <td>
-                    <button class="btn btn-link" @onclick="GotoCreateNewUser">
-                        <img src="/img/icoUserTeacher.png" width="70" />
+        <br />
+        <MudGrid Spacing="@Spacing" Justify="Justify.Center">
+            <MudItem>
+                <MudPaper Elevation="1" Height="100px" Width="120px">
+                    <button class="btn btn-link" @onclick="ReportUserNotes">
+                        <img src="/img/icoNoteReport.png" style="width:80px" />
                     </button>
-                </td>
-                <td>
+                </MudPaper>
+            </MudItem>
+            <MudItem>
+                <MudPaper Elevation="1" Height="100px" Width="120px">
+                    <button class="btn btn-link" @onclick="GotoProjects">
+                        <img src="/img/gifNotebook.gif" width="90" />
+                    </button>
+                </MudPaper>
+            </MudItem>
+            <MudItem>
+                <MudPaper Elevation="1" Height="100px" Width="120px">
+                    <button class="btn btn-link" @onclick="GotoCourses">
+                        <img src="/img/gifBooks.gif" width="85" />
+                    </button>
+                </MudPaper>
+            </MudItem>
+            <MudItem>
+                <MudPaper Elevation="1" Height="100px" Width="120px">
                     <button class="btn btn-link" @onclick="GotoGroupsStudents">
                         <img src="/img/gifGroup1.gif" width="80" />
                     </button>
-                </td>
-                <td>
-                    <button class="btn btn-link" @onclick="GotoCourses">
-                        <img src="/img/gifBooks.gif" width="75" />
+                </MudPaper>
+            </MudItem>
+            <MudItem>
+                <MudPaper Elevation="1" Height="100px" Width="120px">
+                    <button class="btn btn-link" @onclick="GotoCreateNewUser">
+                        <img src="/img/icoUserTeacher.png" width="70" />
                     </button>
-                </td>
-            </tr>
-            <tr style="text-align:center;">
-                <td>
-                    <button class="btn btn-link" @onclick="GotoProjects">
-                        <img src="/img/gifNotebook.gif" width="80" />
-                    </button>
-                </td>
-                <td>
-                    <button class="btn btn-link" @onclick="ReportUserNotes">
-                        <img src="/img/icoNoteReport.png" style="width:60px" />
-                    </button>
-                </td>
-                <td>
+                </MudPaper>
+            </MudItem>
+            <MudItem>
+                <MudPaper Elevation="1" Height="100px" Width="120px">
                     <button class="btn btn-link" @onclick="GotoLogin">
-                        <img src="/img/gifExit.gif" style="width:80px" />
+                        <img src="/img/gifExit.gif" style="width:90px" />
                     </button>
-                </td>
-            </tr>
-        </table>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+        <br />
+        <br />
+        <br />
+        <br />
+        <MudSlider @bind-Value="Spacing" Min="0" Max="20" Color="Color.Info" Class="mb-6"></MudSlider>
         @* <E_Projects /> *@
-        <hr style="color:red" />
         @if (appState.Cmd == "CreateNote")
             {
+            <hr style="color:red" />    
             <Modal_CreateNote />
             }
     </div>
@@ -64,6 +77,8 @@
 {
     private bool _firstRender = true;
     User user = new User ();
+    public int Spacing { get; set; } = 6;
+    
     //LifeCycleEvents
     protected override async Task OnInitializedAsync ()
         {
