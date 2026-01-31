@@ -135,7 +135,7 @@ else
             studentExam = await feService.Read_StudentExam(studentExam.StudentExamId, false);
             if (studentExam.StudentExamTests.Count == 0)
                 {
-                Snackbar.Add("Exam is just expired!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("exam is not active or exam has just expired!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 //old code:await JS.InvokeVoidAsync ("alert", "Exam is just expired!");
                 BtnBack ();
                 }

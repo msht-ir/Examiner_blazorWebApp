@@ -2215,7 +2215,6 @@ COMMIT TRANSACTION;
                     lstTestIds.Add (reader.GetInt32 (0));
                     }
                 }
-            ;
             ExamTest examTest = new ExamTest { ExamId = examComposition.ExamId, TestId = 0, PercentCorrect = 0, PercentIncorrect = 0, PercentHelped = 0 };
             foreach (int testId in lstTestIds)
                 {
@@ -3348,7 +3347,7 @@ COMMIT TRANSACTION;
                         }
                 case "ByStudentId":
                         {
-                        sql += " WHERE sm.StudentId=@id ORDER BY m.DateTimeCreated, sm.DateTimeSent ";
+                        sql += " WHERE sm.StudentId=@id ORDER BY sm.DateTimeSent DESC";
                         break;
                         }
                 case "ByMessageId":
