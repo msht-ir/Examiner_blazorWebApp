@@ -3996,6 +3996,20 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             return true;
             }
+        public async Task<bool> Update_NoteParentAsync (Note note)
+            {
+            string sql = "UPDATE Notes SET ParentId=@parentid, ParentType=@parenttype WHERE NoteId=@noteid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd2 = new SqlCommand (sql, cnn);
+            cmd2.Parameters.AddWithValue ("@parentid", note.ParentId);
+            cmd2.Parameters.AddWithValue ("@parenttype", note.ParentType);
+            cmd2.Parameters.AddWithValue ("@noteid", note.NoteId); 
+            await cmd2.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
+            }
         public async Task<bool> Delete_NotesAsync (int parentId, int parentType)
             {
             //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)

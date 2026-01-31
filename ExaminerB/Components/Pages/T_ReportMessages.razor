@@ -176,50 +176,45 @@ else
                             }
                         @if((appState.Cmd == "ShowListOfAnswersToThisMessage") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
                             {
-                            <MudContainer Class="mt-2 px-0">
-                                <MudCard Class="mx-0">
-                                    <MudCardContent Style="background-color:ghostwhite;">
-                                        <table class="table table-borderless">
-                                            @foreach (StudentMessage studentMessage in lstStudentMessageInstances)
+                            <hr style="color:indianred"/>
+                            <table class="table table-borderless">
+                                @foreach (StudentMessage studentMessage in lstStudentMessageInstances)
+                                    {
+                                    <tr>
+                                        <td style="text-align:left">
+                                            @if((studentMessage.StudentMessageTags & 1) == 1)
                                                 {
-                                                <tr>
-                                                    <td style="text-align:left">
-                                                        @if((studentMessage.StudentMessageTags & 1) == 1)
-                                                            {
-                                                            <span style="font-size:x-small;font-style:normal;font-weight:bold;color:royalblue">
-                                                                @studentMessage.DateTimeRead
-                                                            </span>                                                
-                                                            }
-                                                        else
-                                                            {
-                                                            <span style="font-size:x-small;font-style:normal;font-weight:bold;color:indianred">
-                                                                not read
-                                                            </span>
-                                                            }
-                                                        <br/>
-                                                        <span style="font-size:smaller">
-                                                            @studentMessage.StudentName (@studentMessage.StudentNickname)
-                                                        </span>
-                                                        <hr />
-                                                    </td>
-                                                    @if((@studentMessage.StudentMessageTags & 16) == 16)
-                                                        {
-                                                        <span style="font-size:smaller;font-weight:bold; color:royalblue">YES</span>
-                                                        }
-                                                    else if((@studentMessage.StudentMessageTags & 32) == 32)
-                                                        {
-                                                        <span style="font-size:smaller;font-weight:bold; color:indianred">NO</span>
-                                                        }
-                                                    else
-                                                        {
-                                                        <span style="font-size:smaller;font-weight:bold; color:lightslategray">--</span>
-                                                        }
-                                                </tr>
+                                                <span style="font-size:x-small;font-style:normal;font-weight:bold;color:royalblue">
+                                                    @studentMessage.DateTimeRead
+                                                </span>                                                
                                                 }
-                                        </table>
-                                    </MudCardContent>
-                                </MudCard>
-                            </MudContainer>
+                                            else
+                                                {
+                                                <span style="font-size:x-small;font-style:normal;font-weight:bold;color:indianred">
+                                                    not read
+                                                </span>
+                                                }
+                                            <br/>
+                                            <span style="font-size:smaller">
+                                                @studentMessage.StudentName (@studentMessage.StudentNickname)
+                                            </span>
+                                            <hr />
+                                        </td>
+                                        @if((@studentMessage.StudentMessageTags & 16) == 16)
+                                            {
+                                            <span style="font-size:smaller;font-weight:bold; color:royalblue">YES</span>
+                                            }
+                                        else if((@studentMessage.StudentMessageTags & 32) == 32)
+                                            {
+                                            <span style="font-size:smaller;font-weight:bold; color:indianred">NO</span>
+                                            }
+                                        else
+                                            {
+                                            <span style="font-size:smaller;font-weight:bold; color:lightslategray">--</span>
+                                            }
+                                    </tr>
+                                    }
+                            </table>
                             }
                     </MudCardContent>
                 </MudCard>

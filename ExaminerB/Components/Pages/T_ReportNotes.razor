@@ -1,5 +1,6 @@
 ﻿@page "/T_ReportNotes/{mode:int}/{Id:int}"
 @using ExaminerB.Service
+@using System.Threading.Tasks
 @inject FeService feService
 @inject NavigationManager Navman
 @inject AppState appState
@@ -72,17 +73,47 @@
                                                     }
                                             </div>
                                             <hr />
-                                            <div class="d-flex align-items-center">
-                                                <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                    <img src="/img/icoNote2.png" width="20" />
-                                                </button>
-                                                <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
-                                                    <img src="/img/icoRename.png" width="28" />
-                                                </button>
-                                                <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
-                                                    <img src="/img/icoDelete1.png" width="22" />
-                                                </button>
-                                            </div>
+                                            @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId)==notex.NoteId))
+                                                {
+                                                <h6 style="font-style:italic;color:royalblue">Move to:</h6>
+                                                @* COMBO Notebooks *@
+                                                <div class="d-flex">
+                                                    <MudSelect T="int" @ref="refProjects" Label="Notebooks" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                        <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
+                                                        @foreach (var project in lstProjects) { <MudSelectItem Value="@project.ProjectId">@project.ProjectName</MudSelectItem> }
+                                                    </MudSelect>
+                                                </div>
+                                                @* COMBO Sections *@
+                                                <div class="d-flex">
+                                                    <MudSelect T="int" @ref="refSubprojects" Label="Sections" Value="SubprojectId" ValueChanged="OnSubprojectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                        <MudSelectItem Value="0">Select a Section...</MudSelectItem>
+                                                        @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
+                                                    </MudSelect>
+                                                    <button class="btn btn-link" Title="Select Section") @onclick='()=>BtnSelectSection(SubprojectId, notex.NoteId)'>
+                                                        <img src="/img/icoLink.png" width="30" />
+                                                    </button>
+                                                    <button class="btn btn-link" Title="Select Section") @onclick='()=>BtnCancel()'>
+                                                        <img src="/img/icoCancel.png" width="20" />
+                                                    </button>
+                                                </div>
+                                                }
+                                            else
+                                                {
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                    <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
+                                                        <img src="/img/icoNote2.png" width="20" title="نمايش يادداشت در صفحه"/>
+                                                    </button>
+                                                    <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
+                                                        <img src="/img/icoRename.png" width="28"  title="ويرايش يادداشت"/>
+                                                    </button>
+                                                    <button class="btn btn-link" @onclick="()=>BtnMoveNoteToNotebook(notex.NoteId)">
+                                                        <img src="/img/icoLink.png" width="30" title="انتقال يادداشت به دفترچه" />
+                                                    </button>
+                                                    <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
+                                                        <img src="/img/icoDelete1.png" width="22" title="حذف يادداشت"/>
+                                                    </button>
+                                                </div>                                        
+                                                }
                                         </MudCardContent>
                                     </MudCard>
                                 </MudContainer>
@@ -109,17 +140,47 @@
                                                     }
                                             </div>
                                             <hr />
-                                            <div class="d-flex align-items-center">
-                                                <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                    <img src="/img/icoNote2.png" width="20" />
-                                                </button>
-                                                <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
-                                                    <img src="/img/icoRename.png" width="28" />
-                                                </button>
-                                                <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
-                                                    <img src="/img/icoDelete1.png" width="22" />
-                                                </button>
-                                            </div>
+                                            @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId)==notex.NoteId))
+                                                {
+                                                <h6 style="font-style:italic;color:royalblue">Move to:</h6>
+                                                @* COMBO Notebooks *@
+                                                <div class="d-flex">
+                                                    <MudSelect T="int" @ref="refProjects" Label="Notebooks" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                        <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
+                                                        @foreach (var project in lstProjects) { <MudSelectItem Value="@project.ProjectId">@project.ProjectName</MudSelectItem> }
+                                                    </MudSelect>
+                                                </div>
+                                                @* COMBO Sections *@
+                                                <div class="d-flex">
+                                                    <MudSelect T="int" @ref="refSubprojects" Label="Sections" Value="SubprojectId" ValueChanged="OnSubprojectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                        <MudSelectItem Value="0">Select a Section...</MudSelectItem>
+                                                        @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
+                                                    </MudSelect>
+                                                    <button class="btn btn-link" Title="Select Section") @onclick='()=>BtnSelectSection(SubprojectId, notex.NoteId)'>
+                                                        <img src="/img/icoLink.png" width="30" />
+                                                    </button>
+                                                    <button class="btn btn-link" Title="Select Section") @onclick='()=>BtnCancel()'>
+                                                        <img src="/img/icoCancel.png" width="20" />
+                                                    </button>
+                                                </div>
+                                                }
+                                            else
+                                                {
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                    <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
+                                                        <img src="/img/icoNote2.png" width="20" title="show note in dialog"/>
+                                                    </button>
+                                                    <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
+                                                        <img src="/img/icoRename.png" width="28" title="edit note"/>
+                                                    </button>
+                                                    <button class="btn btn-link" @onclick="()=>BtnMoveNoteToNotebook(notex.NoteId)">
+                                                        <img src="/img/icoLink.png" width="30" title="move note to a notebook"/>
+                                                    </button>
+                                                    <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
+                                                        <img src="/img/icoDelete1.png" width="22" title="delete note"/>
+                                                    </button>
+                                                </div>
+                                                }
                                         </MudCardContent>
                                     </MudCard>
                                 </MudContainer>
@@ -151,11 +212,20 @@
     </script>
 
 @code {
-        [Parameter] public int mode { get; set; }
-        [Parameter] public int Id { get; set; }
-        User user = new User ();
-        List<Note> lstNotes = new List<Note> ();
-        public bool _hasFetched = false;
+    [Parameter] public int mode { get; set; }
+    [Parameter] public int Id { get; set; }
+    private MudSelect<int> refProjects;
+    private MudSelect<int> refSubprojects;
+    int ProjectId = 0;
+    int SubprojectId = 0;
+    string _cmd = "";
+
+    User user = new User ();
+    List<Note> lstNotes = new List<Note> ();
+    List<Project> lstProjects = new List<Project> ();
+    List<Subproject> lstSubprojects = new List<Subproject> ();
+    string _ShowProjectsMode = "active";
+    public bool _hasFetched = false;
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
@@ -169,6 +239,7 @@
         user.UserId = Convert.ToInt32(appState.UserId);
         user.UserName = appState.UserName;
         lstNotes = await feService.Read_Notes (Id, mode);
+        await GetListOfProjects (user.UserId, _ShowProjectsMode); 
         _hasFetched = true;
         } 
     private void TriggerRender()
@@ -179,8 +250,54 @@
         {
         appState.OnChange -= TriggerRender;
         }
-    //btns-Students
-    //btns-Messages
+    //btns
+    private async Task OnProjectChanged(int newValue) 
+        {
+        ProjectId = newValue;
+        appState.SetProjectId (ProjectId);
+        SubprojectId = 0;
+        await FilterSubprojects (ProjectId);        
+        StateHasChanged();
+        } 
+    private async Task OnSubprojectChanged(int newValue) 
+        {
+        SubprojectId = newValue;
+        appState.SetSubprojectId (SubprojectId);
+        StateHasChanged();
+        } 
+    private void BtnMoveNoteToNotebook(int noteId)
+        {
+        if(Convert.ToInt32(appState.NoteId) == noteId)
+            {
+            _cmd = (_cmd == "MoveNoteToNotebook") ? "" : "MoveNoteToNotebook";        
+            }
+        else
+            {
+            appState.SetNoteId (noteId);
+            _cmd = "MoveNoteToNotebook";
+            }
+        StateHasChanged ();
+        }
+    private async Task BtnSelectSection(int subprojectId, int noteid)
+        {
+        Note _note = new Note {NoteId = noteid, ParentType = 3, ParentId = subprojectId};
+        bool result = await feService.Update_NoteParent (_note);
+        if(result)
+            {
+            Snackbar.Add("note moved to Notebook", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            _cmd = "";
+            StateHasChanged ();
+            }
+        else
+            {
+            Snackbar.Add("Failed", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        }
+    private void BtnCancel()
+        {
+        _cmd = "";
+        StateHasChanged ();
+        }
     public void BtnBack()
         {Navman.NavigateTo (appState.ReturnPage?? "/T_SwitchBoard");
         }
@@ -254,5 +371,24 @@
         lstNotes = await feService.Read_Notes(Id, mode);
         _hasFetched = true;
         StateHasChanged(); 
+        }
+    public async Task GetListOfProjects(int userId, string mode)
+        {
+        _hasFetched = false;
+        lstProjects.Clear();
+        lstProjects = await feService.Read_Projects (userId, mode);
+        _hasFetched = true;
+        }
+    private async Task FilterSubprojects(int projectId)
+        {
+        lstSubprojects.Clear ();
+        foreach (Project project in lstProjects)
+            {
+            if (project.ProjectId == projectId)
+                {
+                lstSubprojects = project.Subprojects;
+                return;
+                }
+            }
         }
 }

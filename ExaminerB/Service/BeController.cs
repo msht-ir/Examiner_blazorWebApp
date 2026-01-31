@@ -864,6 +864,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Update_NoteAsync (note);
             return Ok (result);
             }
+        [HttpPost ("Update_NoteParent")]
+        public async Task<ActionResult<bool>> Apdate_NoteParent ([FromBody] Note note)
+            {
+            var result = await _BeService.Update_NoteParentAsync (note);
+            return Ok (result);
+            }
         [HttpPost ("Delete_Notes")]
         public async Task<ActionResult<bool>> Delete_Notes ([FromBody] int parentId, [FromQuery] int parentType)
             {

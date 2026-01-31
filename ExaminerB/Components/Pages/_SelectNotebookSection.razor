@@ -1,0 +1,56 @@
+﻿@using ExaminerB.Service
+@inject NavigationManager Navman
+@inject AppState appState
+@inject FeService feService
+@inject IJSRuntime JS
+@implements IDisposable
+@using System.Globalization
+@using System.Reflection
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<h3>_SelectNotebookSection</h3>
+
+@* PROJECTS/SUBPROJECTS *@
+<div class="accordion" id="accordionProjects" style="max-width:500px; margin: 0 auto;">
+    @foreach (Project project in lstProjects)
+        {
+        var collapseId = $"collapse{project.ProjectId}";
+        _clpsP = ((appState.ProjectId) != project.ProjectId) ? "collapse" : "collapse show";
+        <div class="accordion-item">
+            <h4 class="accordion-header" style="background-color:rgba(252,252,252)">
+                <button class="accordion-button collapsed"
+                        style="background-color:rgba(245,245,245)"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#@collapseId"
+                        aria-expanded="true"
+                        aria-controls="@collapseId">
+                    <h5>@project.ProjectName</h5>
+                </button>
+            </h4>
+            <div id="@collapseId" class="accordion-collapse @_clpsP" data-bs-parent="#accordionProjects">
+                <div class="accordion-body" style="background-color:rgba(250,250,250)">
+                    <div id="T1">
+                        @* add code here *@
+                        add code here
+                    </div>
+                </div>
+            </div>
+            <br />
+        </div>
+        }
+    <hr style="color:red" />
+</div>
+
+
+@code {
+    public List<Project> lstProjects = new List<Project> ();
+
+    public void Dispose()
+        {
+        throw new NotImplementedException();
+        }
+
+    string _clpsP = "";
+}
