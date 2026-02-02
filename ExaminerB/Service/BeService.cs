@@ -1,11 +1,8 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
-using DocumentFormat.OpenXml.Packaging;
 using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
 using System.Data;
-using static MudBlazor.CategoryTypes;
 using Chat = ExaminerS.Models.Chat;
 using Group = ExaminerS.Models.Group;
 
@@ -1125,7 +1122,7 @@ namespace ExaminerB.Services2Backend
             string sql = (activeStatus) ? "UPDATE StudentCourses SET StudentCourseTags = (StudentCourseTags | 3) WHERE StudentId=@studentid AND CourseId=@courseid" : "UPDATE StudentCourses SET StudentCourseTags = (StudentCourseTags & ~7) WHERE StudentId=@studentid AND CourseId=@courseid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();            
+            await cnn.OpenAsync ();
             foreach (int studentId in lstStudentIds)
                 {
                 SqlCommand cmd = new SqlCommand (sql, cnn);
@@ -3508,7 +3505,7 @@ COMMIT TRANSACTION;
             //2 get display data
             List<Chat> lstChats = new List<Chat> ();
             lstChats.Clear ();
-            foreach(int mateId in lstMateIds)
+            foreach (int mateId in lstMateIds)
                 {
                 sql = @$"SELECT TOP 1 ch.ChatId, ch.FromId, ch.ToId, ch.DateTimeSent, Left(ch.ChatText, 10), ch.ChatTags, sf.StudentNickname, st.StudentNickname
                     FROM Chats ch 
@@ -3522,14 +3519,14 @@ COMMIT TRANSACTION;
                     {
                     lstChats.Add (new Chat
                         {
-                        ChatId = reader2.GetInt32(0),
+                        ChatId = reader2.GetInt32 (0),
                         FromId = reader2.GetInt32 (1),
                         ToId = reader2.GetInt32 (2),
                         DateTimeSent = reader2.GetString (3),
                         ChatText = reader2.GetString (4),
                         ChatTags = reader2.GetInt32 (5),
-                        FromName=reader2.GetString(6),
-                        ToName=reader2.GetString(7)
+                        FromName = reader2.GetString (6),
+                        ToName = reader2.GetString (7)
                         });
                     }
                 await reader2.CloseAsync ();
@@ -3806,7 +3803,7 @@ COMMIT TRANSACTION;
             }
         public async Task<bool> Delete_SubprojectAsync (int subProjectId)
             {
-            string sql =  "DELETE FROM Notes WHERE ParentId=@subprojectid; DELETE FROM SubProjects WHERE SubprojectId=@subprojectid";
+            string sql = "DELETE FROM Notes WHERE ParentId=@subprojectid; DELETE FROM SubProjects WHERE SubprojectId=@subprojectid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
@@ -3991,7 +3988,7 @@ COMMIT TRANSACTION;
             cmd2.Parameters.AddWithValue ("@notedatum", note.NoteDatum);
             cmd2.Parameters.AddWithValue ("@notetext", note.NoteText);
             cmd2.Parameters.AddWithValue ("@notetags", note.NoteTags); //1:rtl 2:done 4:shared 8:readonly
-            cmd2.Parameters.AddWithValue ("@noteid", note.NoteId); 
+            cmd2.Parameters.AddWithValue ("@noteid", note.NoteId);
             await cmd2.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
             return true;
@@ -4005,7 +4002,7 @@ COMMIT TRANSACTION;
             SqlCommand cmd2 = new SqlCommand (sql, cnn);
             cmd2.Parameters.AddWithValue ("@parentid", note.ParentId);
             cmd2.Parameters.AddWithValue ("@parenttype", note.ParentType);
-            cmd2.Parameters.AddWithValue ("@noteid", note.NoteId); 
+            cmd2.Parameters.AddWithValue ("@noteid", note.NoteId);
             await cmd2.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
             return true;

@@ -1,5 +1,4 @@
-﻿using Azure;
-using ExaminerS.Models;
+﻿using ExaminerS.Models;
 using Group = ExaminerS.Models.Group;
 
 namespace ExaminerB.Service
@@ -1041,12 +1040,12 @@ namespace ExaminerB.Service
             }
         #endregion
         #region CH:Chats
-        public async Task<int>Create_Chat(Chat chat)
+        public async Task<int> Create_Chat (Chat chat)
             {
             var response = await _http.PostAsJsonAsync ($"api/Create_Chat", chat);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<List<Chat>> Read_Chats(int studentId)
+        public async Task<List<Chat>> Read_Chats (int studentId)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_Chats", studentId);
             if (response.IsSuccessStatusCode)
@@ -1059,7 +1058,7 @@ namespace ExaminerB.Service
                 return new List<Chat> ();
                 }
             }
-        public async Task<List<Chat>> Read_ChatsWithOneMate(int studentId, int mateId)
+        public async Task<List<Chat>> Read_ChatsWithOneMate (int studentId, int mateId)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_ChatsWithOneMate?mateId={mateId}", studentId);
             if (response.IsSuccessStatusCode)
@@ -1072,12 +1071,12 @@ namespace ExaminerB.Service
                 return new List<Chat> ();
                 }
             }
-        public async Task<bool>Update_Chat(Chat chat)
+        public async Task<bool> Update_Chat (Chat chat)
             {
             var response = await _http.PostAsJsonAsync ($"api/Update_Chat", chat);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<bool>Update_ChatTags(Chat chat)
+        public async Task<bool> Update_ChatTags (Chat chat)
             {
             //1:IsRead 2:IsImp 3:IsBookmarked 4:Deleted
             var response = await _http.PostAsJsonAsync ($"api/Update_ChatTags", chat);

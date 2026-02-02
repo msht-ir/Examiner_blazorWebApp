@@ -1,7 +1,6 @@
 ﻿using ExaminerB.Services2Backend;
 using ExaminerS.Models;
 using Microsoft.AspNetCore.Mvc;
-using static MudBlazor.CategoryTypes;
 using Chat = ExaminerS.Models.Chat;
 using Group = ExaminerS.Models.Group;
 
@@ -771,7 +770,7 @@ namespace ExaminerB.Backend
         [HttpPost ("Delete_Chat")]
         public async Task<ActionResult<bool>> Delete_Chat ([FromBody] int chatId)
             {
-            var result = await _BeService.Delete_ChatAsync(chatId);
+            var result = await _BeService.Delete_ChatAsync (chatId);
             return Ok (result);
             }
         #endregion
