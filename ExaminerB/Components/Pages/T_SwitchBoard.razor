@@ -8,59 +8,49 @@
 <div class="container" style="max-width:500px; margin: 0 auto;">
     <div style="text-align: center;">
         <div style="text-align: center;">
-            <h5 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h5>
+            <span style="font-style:italic;font-size:small;color:royalblue">@appState.UserNickname</span>
         </div>
-        <h4 style="color:royalblue">@appState.UserNickname</h4>
         <hr style="color:red" />
         <br />
         <br />
-        <MudGrid Spacing="@Spacing" Justify="Justify.Center">
-            <MudItem>
-                <MudPaper Elevation="1" Height="100px" Width="120px">
-                    <button class="btn btn-link" @onclick="ReportUserNotes">
-                        <img src="/img/icoNoteReport.png" style="width:80px" />
-                    </button>
-                </MudPaper>
-            </MudItem>
-            <MudItem>
-                <MudPaper Elevation="1" Height="100px" Width="120px">
-                    <button class="btn btn-link" @onclick="GotoProjects">
-                        <img src="/img/gifNotebook.gif" width="90" />
-                    </button>
-                </MudPaper>
-            </MudItem>
-            <MudItem>
-                <MudPaper Elevation="1" Height="100px" Width="120px">
-                    <button class="btn btn-link" @onclick="GotoCourses">
-                        <img src="/img/gifBooks.gif" width="85" />
-                    </button>
-                </MudPaper>
-            </MudItem>
-            <MudItem>
-                <MudPaper Elevation="1" Height="100px" Width="120px">
+        <table class="table table-borderless" style="text-align:center;align-content:center">
+            <tr>
+                <td>
                     <button class="btn btn-link" @onclick="GotoGroupsStudents">
-                        <img src="/img/gifGroup1.gif" width="80" />
+                        <img src="/img/icoSwitchBoardStudents.png" width="80" />
                     </button>
-                </MudPaper>
-            </MudItem>
-            <MudItem>
-                <MudPaper Elevation="1" Height="100px" Width="120px">
-                    <button class="btn btn-link" @onclick="GotoCreateNewUser">
-                        <img src="/img/icoUserTeacher.png" width="70" />
+                </td>
+                <td>
+                    <button class="btn btn-link" @onclick="GotoCourses">
+                        <img src="/img/icoSwitchBoardCourses.png" width="85" />
                     </button>
-                </MudPaper>
-            </MudItem>
-            <MudItem>
-                <MudPaper Elevation="1" Height="100px" Width="120px">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button class="btn btn-link" @onclick="BtnCreateNote">
+                        <img src="/img/icoEditPen.png" style="width:55px" />
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-link" @onclick="GotoProjects">
+                        <img src="/img/icoSwitchBoardNoteBook.png" width="90" />
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button class="btn btn-link" @onclick="ReportUserNotes">
+                        <img src="/img/icoNoteReport.png" style="width:70px" />
+                    </button>
+                </td>
+                <td>
                     <button class="btn btn-link" @onclick="GotoLogin">
-                        <img src="/img/gifExit.gif" style="width:90px" />
+                        <img src="/img/icoSwitchBoardExit.png" style="width:90px" />
                     </button>
-                </MudPaper>
-            </MudItem>
-        </MudGrid>
-        <br />
-        <br />
-        <br />
+                </td>
+            </tr>
+        </table>
         <br />
         @* <MudSlider @bind-Value="Spacing" Min="0" Max="20" Color="Color.Info" Class="mb-6"></MudSlider> *@
         @* <E_Projects /> *@
@@ -77,7 +67,7 @@
 {
     private bool _firstRender = true;
     User user = new User ();
-    public int Spacing { get; set; } = 6;
+    public int Spacing { get; set; } = 3;
     
     //LifeCycleEvents
     protected override async Task OnInitializedAsync ()
@@ -123,7 +113,6 @@
         {
         appState.OnChange -= TriggerRender;
         }
-    //btns
     //methods
     public void GotoLogin()
         {
@@ -141,13 +130,15 @@
         {
         Navman.NavigateTo ("/E_Projects");
         }
-    public async Task CreateNote ()
+    public async Task BtnCreateNote ()
         {
         //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
-        appState.SetNoteParentId (Convert.ToInt32(appState.UserId));
         appState.SetNoteParentType (1);
+        appState.SetNoteParentId (Convert.ToInt32(appState.UserId));
         appState.SetCmd ("CreateNote");
-        StateHasChanged();
+        StateHasChanged ();
+        //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
+        //to handel close event, I added in the Modal_CreateNote: [Parameter] public EventCallback OnClose 
         }
     public void ReportUserNotes ()
         {
