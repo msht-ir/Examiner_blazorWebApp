@@ -9,8 +9,6 @@
 @inject IDialogService DialogService
 
     <div style="text-align: center;">
-        <h4 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h4>
-        <hr style="color:red"/>
         <h2 style="color:royalblue">Courses</h2>
     </div>
 @if (!_hasFetched)
@@ -53,7 +51,7 @@
                                             <MudCard Class="mx-0">
                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                     <div class="mb-3">
-                                                        <MudTextField @ref="txtNewCourseName" @bind-Value="crs.CourseName" Label="Enter Course Name..." Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                                        <MudTextField @ref="txtNewCourseName" @bind-Value="crs.CourseName" Label="Course name" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                                     </div>
                                                     <div style="text-align:center">
                                                         <button class="btn btn-link" name="btnCourseId" @onclick="()=>BtnUpdateCourse(crs)" >
@@ -135,7 +133,7 @@
                                                             <MudCardContent Style="background-color:whitesmoke;">
                                                                 <h5 style="text-align:center;color:royalblue">Add New Course Topic</h5>
                                                                 <div class="mb-3">
-                                                                    <MudTextField @ref="txtNewCourseTopicTitle" @bind-Value="courseTopic.CourseTopicTitle" Label="New Topic ..." Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                                                    <MudTextField @ref="txtNewCourseTopicTitle" @bind-Value="courseTopic.CourseTopicTitle" Label="New Topic" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                                                 </div>
                                                                 <div style="text-align:center">
                                                                     <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseTopic(crs.CourseId)">
@@ -170,10 +168,10 @@
                                             <MudCard Class="mx-0">
                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                     <div class="mb-2">
-                                                        <MudTextField @ref="txtNewCourseFolderTitle" @bind-Value="cf.CourseFolderTitle" Label="Folder title ..." Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                                        <MudTextField @ref="txtNewCourseFolderTitle" @bind-Value="cf.CourseFolderTitle" Label="Folder title" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                                     </div>
                                                     <div class="mb-2">
-                                                        <MudTextField @ref="txtNewCourseFolderUrl" @bind-Value="cf.CourseFolderUrl" Label="Folder url ..." Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                                        <MudTextField @ref="txtNewCourseFolderUrl" @bind-Value="cf.CourseFolderUrl" Label="Folder url" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                                     </div>
                                                     <input class="form-inline border" @bind="cf.CourseFolderActive" type="checkbox" />
                                                     <label style="padding-right:5px;">Active</label>
@@ -194,10 +192,10 @@
                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                     <h5 style="color:royalblue;text-align:center">Add New Web Folder:</h5>
                                                     <div class="mb-2">
-                                                        <MudTextField @ref="txtNewCourseFolderTitle" @bind-Value="courseFolder.CourseFolderTitle" Label="Folder title ..." Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                                        <MudTextField @ref="txtNewCourseFolderTitle" @bind-Value="courseFolder.CourseFolderTitle" Label="Folder title" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                                     </div>
                                                     <div class="mb-2">
-                                                        <MudTextField @ref="txtNewCourseFolderUrl" @bind-Value="courseFolder.CourseFolderUrl" Label="Folder url ..." Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                                        <MudTextField @ref="txtNewCourseFolderUrl" @bind-Value="courseFolder.CourseFolderUrl" Label="Folder url" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                                     </div>
                                                     <div style="text-align:center">
                                                         <input class="form-inline border" @bind="courseFolder.CourseFolderActive" type="checkbox" />
@@ -233,7 +231,7 @@
                             <h5 style="color:royalblue">Add New Course</h5>
                             <MudCard Class="mx-0">
                                 <MudCardContent Class="d-flex" Style="background-color:whitesmoke;">
-                                    <MudTextField @ref="txtNewCourseName" @bind-Value="course.CourseName" Label="Cousre name نام درس" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                    <MudTextField @ref="txtNewCourseName" @bind-Value="course.CourseName" Label="Cousre name" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                                         <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewCourse">
                                             <img src="/img/icoSave2.png" width="24" />
                                         </button>

@@ -3833,7 +3833,7 @@ COMMIT TRANSACTION;
             }
         public async Task<List<Note>> Read_NotesAsync (int parentId, int parentType)
             {
-            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
+            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
             string sql = "";
             List<Note> lstNotes = new List<Note> ();
             switch (parentType)
@@ -3866,6 +3866,11 @@ COMMIT TRANSACTION;
                 case 6:
                         {
                         sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, e.ExamTitle FROM Notes n INNER JOIN Exams e ON n.ParentId = e.ExamId WHERE n.ParentId=@parentid ORDER BY NoteDatum DESC, NoteId DESC ";
+                        break;
+                        }
+                case 7:
+                        {
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE n.ParentId=@parentid ORDER BY NoteDatum DESC, NoteId DESC ";
                         break;
                         }
                 }
@@ -3926,6 +3931,11 @@ COMMIT TRANSACTION;
                 case "E":
                         {
                         sql += " INNER JOIN Exams e ON n.ParentId = e.ExamId WHERE e.ExamId=@id ";
+                        break;
+                        }
+                case "SN":
+                        {
+                        sql += " INNER JOIN Students s ON n.ParentId = s.StudentId WHERE s.StudentId=@id ";
                         break;
                         }
                 }
@@ -4009,7 +4019,7 @@ COMMIT TRANSACTION;
             }
         public async Task<bool> Delete_NotesAsync (int parentId, int parentType)
             {
-            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
+            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
             string sql = "DELETE FROM Notes WHERE Parent_ID=@parentid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);

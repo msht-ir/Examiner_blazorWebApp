@@ -28,8 +28,8 @@
             </tr>
             <tr>
                 <td>
-                    <button class="btn btn-link" @onclick="BtnCreateNote">
-                        <img src="/img/icoEditPen.png" style="width:55px" />
+                    <button class="btn btn-link" @onclick="ReportUserNotes">
+                        <img src="/img/icoNoteReport.png" style="width:70px" />
                     </button>
                 </td>
                 <td>
@@ -40,8 +40,8 @@
             </tr>
             <tr>
                 <td>
-                    <button class="btn btn-link" @onclick="ReportUserNotes">
-                        <img src="/img/icoNoteReport.png" style="width:70px" />
+                    <button class="btn btn-link" @onclick="BtnCreateNote">
+                        <img src="/img/icoEditPen.png" style="width:55px" />
                     </button>
                 </td>
                 <td>
@@ -132,7 +132,7 @@
         }
     public async Task BtnCreateNote ()
         {
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
         appState.SetNoteParentType (1);
         appState.SetNoteParentId (Convert.ToInt32(appState.UserId));
         appState.SetCmd ("CreateNote");

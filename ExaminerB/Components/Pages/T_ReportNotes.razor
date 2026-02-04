@@ -9,7 +9,7 @@
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
-    <h5 style="text-align:center;color:steelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h5>
+    <h5 style="text-align:center;padding-left:15px;">Quick Notes - <span style="font-size:smaller;text-align:center;color:indianred">@appState.UserNickname</span></h5>
     <hr style="color:red"/>
     @if (!_hasFetched)
         {
@@ -21,15 +21,14 @@
             {
             <div class="d-flex align-items-center" style="text-align:left;max-width:500px; margin: 0 auto;">
                 <button class="btn btn-link" @onclick="BtnBack">
-                    <img src="/img/icoBack3.png" width="40" />
+                    <img src="/img/icoBack3.png" width="40" title="back"/>
                 </button>
                 <button class="btn btn-link" @onclick= "()=> GotoProjects()">
-                    <img src="/img/icoSwitchBoardNoteBook.png" style="width:40px" title="back"/>
+                    <img src="/img/icoSwitchBoardNoteBook.png" style="width:40px" title="goto Notebooks"/>
                 </button>
                 <button class="btn btn-link" @onclick="CreateNote">
-                    <img src="/img/icoAdd0.png" width="24" />
+                    <img src="/img/icoAdd0.png" width="24" title="add new quick-note"/>
                 </button>            
-               <h5 style="text-align:center;padding-left:15px;">Notes: <span style="font-size:smaller;text-align:center;color:indianred">@appState.UserNickname</span></h5>
             </div>
             }
         else
@@ -311,7 +310,7 @@
     //methods
     public async Task CreateNote ()
         {
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
         appState.SetNoteParentType (1);
         appState.SetNoteParentId (Convert.ToInt32(appState.UserId));
         appState.SetCmd ("CreateNote");

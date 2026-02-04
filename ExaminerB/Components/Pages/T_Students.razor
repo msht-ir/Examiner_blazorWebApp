@@ -990,7 +990,7 @@ else
     //Notes
     private async Task BtnCreateNote(int Id, string mode)
         {
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
         if (Id > 0)
             {
             int? parentType = mode.ToLower() switch

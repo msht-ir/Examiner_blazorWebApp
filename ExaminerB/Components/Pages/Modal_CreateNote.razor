@@ -135,7 +135,7 @@
             }
         else
             {
-            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
             note.ParentId = Convert.ToInt32(appState.NoteParentId);
             note.ParentType = Convert.ToInt32(appState.NoteParentType);
             DateTime _dt = _date.Value.Date + _time.Value;
@@ -165,7 +165,7 @@
             }
         else
             {
-            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E)
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
             note.NoteId = Convert.ToInt32(appState.SelectedNoteId);
             note.ParentId = Convert.ToInt32(appState.NoteParentId);
             note.ParentType = Convert.ToInt32(appState.NoteParentType);
