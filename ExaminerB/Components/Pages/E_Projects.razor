@@ -802,7 +802,7 @@ else
             note.ParentType = 1;
             DateTime _dt = _date.Value.Date + _time.Value;
             note.NoteDatum = _dt.ToString ("yyyy-MM-dd HH:mm");
-            note.NoteTags = 0; //1:rtl 2:done 4:shared 8:readonly
+            note.NoteTags = 0; //1:rtl 2:done 4:shared 8:readonly 16:S-Note?
             _hasFetched = false;
             bool result = await feService.Update_Note (note);
             if(result)

@@ -3850,7 +3850,7 @@ COMMIT TRANSACTION;
                         }
                 case 3:
                         {
-                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE n.ParentId=@parentid ORDER BY NoteDatum DESC, NoteId DESC ";
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE (n.ParentId=@parentid) AND (NoteTags & 16 = 0) ORDER BY NoteDatum DESC, NoteId DESC ";
                         break;
                         }
                 case 4:
@@ -3870,7 +3870,7 @@ COMMIT TRANSACTION;
                         }
                 case 7:
                         {
-                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE n.ParentId=@parentid ORDER BY NoteDatum DESC, NoteId DESC ";
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE (n.ParentId=@parentid) AND (NoteTags & 16 = 16) ORDER BY NoteDatum DESC, NoteId DESC ";
                         break;
                         }
                 }
@@ -3915,7 +3915,7 @@ COMMIT TRANSACTION;
                         }
                 case "S":
                         {
-                        sql += " INNER JOIN Students s ON n.ParentId = s.StudentId WHERE s.StudentId=@id ";
+                        sql += " INNER JOIN Students s ON n.ParentId = s.StudentId WHERE (s.StudentId=@id) AND (NoteTags & 16 = 0)";
                         break;
                         }
                 case "G":
@@ -3935,7 +3935,7 @@ COMMIT TRANSACTION;
                         }
                 case "SN":
                         {
-                        sql += " INNER JOIN Students s ON n.ParentId = s.StudentId WHERE s.StudentId=@id ";
+                        sql += " INNER JOIN Students s ON n.ParentId = s.StudentId WHERE (s.StudentId=@id) AND (NoteTags & 16 = 16)";
                         break;
                         }
                 }

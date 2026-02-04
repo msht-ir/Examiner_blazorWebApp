@@ -135,11 +135,15 @@
             }
         else
             {
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
+            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
             note.ParentId = Convert.ToInt32(appState.NoteParentId);
             note.ParentType = Convert.ToInt32(appState.NoteParentType);
             DateTime _dt = _date.Value.Date + _time.Value;
             note.NoteDatum = _dt.ToString ("yyyy-MM-dd HH:mm");
+            if (note.ParentType == 7)
+                {
+                note.NoteTags |= 16;
+                }
             _hasFetched = false;
             int result = await feService.Create_Note (note);
             if(result > 0)
@@ -165,12 +169,17 @@
             }
         else
             {
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
+            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
             note.NoteId = Convert.ToInt32(appState.SelectedNoteId);
             note.ParentId = Convert.ToInt32(appState.NoteParentId);
             note.ParentType = Convert.ToInt32(appState.NoteParentType);
             DateTime _dt = _date.Value.Date + _time.Value;
             note.NoteDatum = _dt.ToString ("yyyy-MM-dd HH:mm");
+            //not neccessary, but just to ensure everything is ok:
+            if (note.ParentType == 7)
+                {
+                note.NoteTags |= 16;
+                }
             _hasFetched = false;
             bool result = await feService.Update_Note (note);
             if(result)
@@ -178,7 +187,7 @@
                 Snackbar.Add("Updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 user.UserId = Convert.ToInt32(appState.UserId);
                 appState.SetCmd("");
-                Close ();
+                await Close ();
                 }
             else
                 {

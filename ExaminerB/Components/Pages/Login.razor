@@ -11,6 +11,37 @@
 @inject ISnackbar Snackbar
 
 <PageTitle>Examiner Home</PageTitle>
+<br />
+<center>
+    <div class="accordion align-items-center" id="accordionIndex" style="text-align:center;min-width:400px;max-width:420px;">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
+                    <h6 style="color:lightseagreen">about</h6>
+                </button>
+            </h2>
+            <div id="collapseZero" class="accordion-collapse collapse" data-bs-parent="#accordionIndex">
+                <div class="accordion-body" style="text-align:center">
+                    <br />
+                    <hr />
+                    <h6>https://www.msht.ir</h6>
+                    <hr />
+                    <a href="https://www.msht.ir/" target="_blank">
+                        <img src="/img/mshtQRCodeReoRex.png" width="170" style="margin-left:10px;margin-right:10px" />
+                    </a>
+                    <hr />
+                    <div style="text-align:center">
+                        E<span style="font-style:italic;font-weight:bold;color:indianred">x</span>aminer (<span style="font-style:italic">LeoRex</span>) developed by Majid SharifiTehrani<br />
+                        <span style="font-size:smaller">assistant prof of plant ecology and systematics</span><br />
+                        <br />
+                        JAN 2026<br />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</center>
+<br />
 <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
     @* <h5 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole </span></h5> *@
     <img src="/img/pngStudyGirl.png" width="300" style="margin-left:10px;margin-right:10px" />
@@ -42,38 +73,12 @@
         <img src="/img/gifUserLogin.gif" width="60" />
     </button>
     </EditForm>
-    @* <div style="text-align:left;">
-        <img src="/img/pngExam02.png" width="100" style="margin-left:5px;margin-right:40px" />
-    </div> *@
-    <br />
-    <div class="accordion align-items-center" id="accordionIndex" style="min-width:400px;max-width:500px;">
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
-                    <h6>info</h6>
-                </button>
-            </h2>
-            <div id="collapseZero" class="accordion-collapse collapse" data-bs-parent="#accordionIndex">
-                <div class="accordion-body" style="text-align:center">
-                    <br />
-                    <hr />
-                    <h6>https://www.msht.ir</h6>
-                    <hr />
-                    <a href="https://www.msht.ir/" target="_blank">
-                        <img src="/img/mshtQRCodeReoRex.png" width="170" style="margin-left:10px;margin-right:10px" />
-                    </a>
-                    <hr />
-                    <div style="text-align:center">
-                        E<span style="font-style:italic;font-weight:bold;color:indianred">x</span>aminer (<span style="font-style:italic">LeoRex</span>) developed by Majid SharifiTehrani<br />
-                        <span style="font-size:smaller">assistant prof of plant ecology and systematics</span><br />
-                        <br />
-                        JAN 2026<br />
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
+<hr />
+@* <br />
+<div style="text-align:left;">
+    <img src="/img/pngExam02.png" width="150" style="margin-left:5px;margin-right:40px" />
+</div> *@
 <script>
     document.getElementById("txtUser").focus();
     document.getElementById("txtUser").addEventListener("keydown", function(event) {
