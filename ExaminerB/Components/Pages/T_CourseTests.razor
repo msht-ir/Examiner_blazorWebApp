@@ -24,7 +24,7 @@ else
         </div>
         }
     <EditForm Model="lstCourseTests" style="max-width:600px; margin: 0 auto;">
-        @if (appState.Cmd == "importexcelfile")
+        @if (appState.Cmd == "readexcelworksheets")
             {
             <br />
             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
@@ -36,34 +36,52 @@ else
                             <InputFile OnChange="HandleFileSelected" title="Refer to Examiner guide for correct Excel format"/>
                         </div>
                         <br /><br />
+                        <hr />
+                        <div style="text-align:center">
+                            <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnCancel">
+                                <img src="/img/icoCancel.png" width="24" />
+                            </button>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudContainer>
+            }
+        else if (appState.Cmd == "importexcelworksheets")
+            {
+            <br />
+            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                <MudCard Class="mx-0">
+                    <MudCardContent Style="background-color:whitesmoke;">
+                        <br />
                         <div class="d-flex">
-                        <MudSelect T="string" @ref="refWorksheets" Label="Worksheet" Value="WorksheetName" ValueChanged="@((string worcksheetname) => OnWorksheetChanged(worcksheetname))" Class="w-auto" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="font-size:small;">
-                            @foreach (string ws in lstWorksheets)
-                                {
-                                <MudSelectItem Value="@ws">@ws</MudSelectItem> 
-                                }
-                        </MudSelect>
-                        <button class="btn btn-link" Title="import from excel" @onclick="()=>ReadExcelAsync()">
-                            <img src="/img/icoGo1.png" width="36" />
-                        </button>
-                    </div>
-                    <hr />
-                    <div style="text-align:center">
-                        <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnCancel">
-                            <img src="/img/icoCancel.png" width="24" />
-                        </button>
-                    </div>
-                </MudCardContent>
+                            <MudSelect T="string" @ref="refWorksheets" Label="Worksheet" Value="WorksheetName" ValueChanged="@((string worcksheetname) => OnWorksheetChanged(worcksheetname))" Class="w-auto" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="font-size:small;">
+                                @foreach (string ws in lstWorksheets)
+                                    {
+                                    <MudSelectItem Value="@ws">@ws</MudSelectItem> 
+                                    }
+                            </MudSelect>
+                            <button class="btn btn-link" Title="import from excel" @onclick="()=>ReadExcelAsync()">
+                                <img src="/img/icoGo1.png" width="36" />
+                            </button>
+                        </div>
+                        <br /><br />
+                        <hr />
+                        <div style="text-align:center">
+                            <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnCancel">
+                                <img src="/img/icoCancel.png" width="24" />
+                            </button>
+                        </div>
+                    </MudCardContent>
                 </MudCard>
             </MudContainer>
             }
         else
             {
             <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/img/icoBack3.png" width="40" />
+                <img src="/img/icoBack3.png" width="40" title="back"/>
             </button>
             <button class="btn btn-link" @onclick="BtnImportFromExcelFile">
-                <img src="/img/icoExcel1.png" width="28" />
+                <img src="/img/icoExcel1.png" width="28" title="import tests from excel"/>
             </button>
             <p></p>
             <hr style="border-color:red" />
@@ -72,15 +90,15 @@ else
             <div class="d-flex mb-3">
                 <MudTextField @ref="txtSearch" @bind-Value="strSearch" Label="Search tests..." Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
                 <button class="btn btn-link" @onclick="()=>BtnReadTestsBySearch()">
-                    <img src="/img/icoSearch.png" width="25" />
+                    <img src="/img/icoSearch.png" width="25" title="search tests"/>
                 </button>
                 @* Paginate *@
                     <MudNumericField @ref="refPageNumber" @bind-Value="intPendingPageNumber" Label="Page" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" style="max-width:80px;padding-left:10px" Min="1" />
                     <button class="btn btn-link  ms-2" @onclick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)">
-                        <img src="/img/icoListT.png" width="38" />
+                        <img src="/img/icoListT.png" width="38" title="goto page ..."/>
                     </button>
                     <button class="btn btn-link" @onclick="()=>BtnAddNewTest()">
-                        <img src="/img/icoAdd0.png" width="24" />
+                        <img src="/img/icoAdd0.png" width="24" title="add a new test"/>
                     </button>
             </div>
             @* List of tests *@
@@ -101,7 +119,7 @@ else
                         <div style="@testRtlStatus display:flex; align-items:center; gap:2px;" >
                             <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected" />
                             <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst.TestId)">
-                                <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="18px"/>
+                                <img src="/img/icoEditPen.png" title="Eedit test" alt="Edit" width="18px"/>
                             </button>
                         </div>
                         @* Show-TestOptions *@
@@ -139,10 +157,10 @@ else
                                 @foreach (Exam exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                             </MudSelect>
                             <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
-                                <img src="/img/icoSave2.png" width="24" />
+                                <img src="/img/icoSave2.png" width="24" title="save to exam"/>
                             </button>
                             <button class="btn btn-link" type="submit" @onclick="BtnEditExam">
-                                <img src="/img/icoFolderE.png" width="30" />
+                                <img src="/img/icoFolderE.png" width="30" title="goto exam folder"/>
                             </button>
                         </div>
                     </MudCardContent>
@@ -368,25 +386,37 @@ else
     //excel
     public void BtnImportFromExcelFile()
         {
-        appState.SetCmd ("importexcelfile");
+        appState.SetCmd ("readexcelworksheets");
         }
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
         {
         /* method 1: Save excel file to server folder
         mothod 2: Parse directly in memory */
-                                                _hasFetched = false;
-        excelFile = e.File;
-        //using var memoryStream = new MemoryStream();
-        await excelFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(stream);
-        stream.Position = 0;
-        using var workbook = new XLWorkbook(stream);
-        int i = 0;
-        foreach (IXLWorksheet ws in workbook.Worksheets)
+        try
             {
-            lstWorksheets.Add (ws.Worksheet.Name);
+            _hasFetched = false;
+            excelFile = e.File;
+            //using var memoryStream = new MemoryStream();
+            await excelFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(stream);
+            stream.Position = 0;
+            using var workbook = new XLWorkbook(stream);
+            int i = 0;
+            foreach (IXLWorksheet ws in workbook.Worksheets)
+                {
+                lstWorksheets.Add (ws.Worksheet.Name);
+                }
+            StateHasChanged ();
+            Snackbar.Add("excel worksheets listed", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            appState.SetCmd ("importexcelworksheets");
+            _hasFetched = true;
             }
-        StateHasChanged ();
-        _hasFetched = true;
+        catch (Exception ex)
+            {
+            Console.WriteLine($"--------Error\n{ex}");
+            appState.SetCmd ("");
+            _hasFetched = true;
+            return;
+            }
         }
     private async Task OnWorksheetChanged(string newValue) 
         {
@@ -399,7 +429,7 @@ else
         {
         if (WorksheetName == "")
             {
-            //msg
+            Snackbar.Add("select a worksheet", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             return;
             }
         else
@@ -469,7 +499,7 @@ else
             lstWorksheets.Clear ();
             lstCourseTests.Clear ();
             lstCourseTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), intPageNumber, false);
-            Snackbar.Add("Import completed!", Severity.Success); //Severity.Warning .Error | .Info | .Success
+            Snackbar.Add("worksheet data imported", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             _hasFetched = true;
             appState.SetCmd ("");
             }

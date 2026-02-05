@@ -68,19 +68,19 @@
                                     else
                                         {
                                          <div style="text-align: center;">
-                                            <button class="btn btn-link" title="Rename this Course" @onclick="()=>BtnEditCourse(crs.CourseId)">
+                                            <button class="btn btn-link" title="rename course" @onclick="()=>BtnEditCourse(crs.CourseId)">
                                                 <img src="/img/icoRename.png" width="30" />
                                             </button>
-                                            <button class="btn btn-link" title="List Tests" @onclick="()=>BtnListCourseTests(crs.CourseId, crs.CourseName)" >
+                                            <button class="btn btn-link" title="report tests" @onclick="()=>BtnListCourseTests(crs.CourseId, crs.CourseName)" >
                                                 <img src="/img/icoFolderT.png" width="26" />
                                             </button>
-                                            <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTests(crs.CourseId)" >
+                                            <button class="btn btn-link" title="list tests" @onclick="()=>BtnReportCourseTests(crs.CourseId)" >
                                                 <img src="/img/icoListT.png" width="36" />
                                             </button>
-                                            <button class="btn btn-link" title="List Exams" @onclick="()=>BtnExams(crs)" >
+                                            <button class="btn btn-link" title="list exams" @onclick="()=>BtnExams(crs)" >
                                                 <img src="/img/icoListE.png" width="36" />
                                             </button>
-                                            <button class="btn btn-link" title="Delete this Course!" @onclick="()=>BtnDeleteCourse(crs)" >
+                                            <button class="btn btn-link" title="delete course" @onclick="()=>BtnDeleteCourse(crs)" >
                                                 <img src="/img/icoDelete1.png" width="26" />
                                             </button>
                                             <br />
@@ -245,7 +245,7 @@
                     else
                         {
                         <button class="btn btn-link" @onclick="BtnAddNewCourse">
-                            <img src="/img/icoCourseAddNew.png" width="35" />
+                            <img src="/img/icoAdd1.png" width="30" />
                         </button>
                         }
                     <hr style="color:red" /> 
