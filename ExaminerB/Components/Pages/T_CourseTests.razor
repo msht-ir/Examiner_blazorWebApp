@@ -30,12 +30,22 @@ else
             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                 <MudCard Class="mx-0">
                     <MudCardContent Style="background-color:whitesmoke;">
-                    <div>
-                        <br />
-                        <img src="/img/icoExcel1.png" width="28" style="margin-right:10px;" />
-                        <InputFile OnChange="HandleFileSelected" title="Refer to Examiner guide for correct Excel format"/>
-                        <br />
-                        <br />
+                        <div>
+                            <br />
+                            <img src="/img/icoExcel1.png" width="28" style="margin-right:10px;" />
+                            <InputFile OnChange="HandleFileSelected" title="Refer to Examiner guide for correct Excel format"/>
+                        </div>
+                        <br /><br />
+                        <div class="d-flex">
+                        <MudSelect T="string" @ref="refWorksheets" Label="Worksheet" Value="WorksheetName" ValueChanged="@((string worcksheetname) => OnWorksheetChanged(worcksheetname))" Class="w-auto" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="font-size:small;">
+                            @foreach (string ws in lstWorksheets)
+                                {
+                                <MudSelectItem Value="@ws">@ws</MudSelectItem> 
+                                }
+                        </MudSelect>
+                        <button class="btn btn-link" Title="import from excel" @onclick="()=>ReadExcelAsync()">
+                            <img src="/img/icoGo1.png" width="36" />
+                        </button>
                     </div>
                     <hr />
                     <div style="text-align:center">
@@ -161,7 +171,12 @@ else
 </script>
 
 @code {
+    List<string> lstWorksheets = new List<string> ();
+    private MudSelect<string> refWorksheets;
+    private string WorksheetName = "";
     Course course = new Course ();
+    MemoryStream stream = new MemoryStream();
+    IBrowserFile? excelFile;
     List<Test> lstCourseTests = new List<Test>();
     List<Exam> lstExams = new List<Exam> ();
     private MudNumericField <int> refPageNumber;
@@ -172,8 +187,8 @@ else
     public int intPageNumber = 1;
     private int intPendingPageNumber = 1; //value typed in the input (prevent changing i (index number) of tests in list)
     public string strExcelFile = "";
-    public int i = 0;
     private int intExamId;
+    public int i = 0;
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
@@ -212,10 +227,6 @@ else
         appState.OnChange -= TriggerRender;
         }
     //btns
-    public void BtnImportFromExcelFile()
-        {
-        appState.SetCmd ("importexcelfile");
-        }
     public void BtnAddNewTest()
         {
         appState.SetCmd ("AddNewTest");
@@ -305,7 +316,6 @@ else
                 }
             }
         }
-
     public void BtnEditCourseTest(int testId)
         {
         appState.SetTestId (testId);
@@ -355,96 +365,120 @@ else
             //await JS.InvokeVoidAsync ("alert", "");            
             }
         }
-    //methods
+    //excel
+    public void BtnImportFromExcelFile()
+        {
+        appState.SetCmd ("importexcelfile");
+        }
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
         {
-        // ------ method 1: Save excel file to server folder
-        //var file = e.File;
-        // var path = Path.Combine("wwwroot", "documents", file.Name);
-        // await using var fs = new FileStream(path, FileMode.Create);
-        // await file.OpenReadStream().CopyToAsync(fs);
-        // ------ mothod 2: Parse directly in memory
-        _hasFetched = false;
-        var file = e.File;
-        using var memoryStream = new MemoryStream();
-        await file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(memoryStream);
-        memoryStream.Position = 0;
-        await ParseExcelAsync(memoryStream);
-
+        /* method 1: Save excel file to server folder
+        mothod 2: Parse directly in memory */
+                                                _hasFetched = false;
+        excelFile = e.File;
+        //using var memoryStream = new MemoryStream();
+        await excelFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(stream);
+        stream.Position = 0;
+        using var workbook = new XLWorkbook(stream);
+        int i = 0;
+        foreach (IXLWorksheet ws in workbook.Worksheets)
+            {
+            lstWorksheets.Add (ws.Worksheet.Name);
+            }
+        StateHasChanged ();
         _hasFetched = true;
         }
-    private async Task ParseExcelAsync(Stream stream)
+    private async Task OnWorksheetChanged(string newValue) 
         {
-        try
+        WorksheetName = newValue;
+        await Task.Delay (1);
+        await refWorksheets.FocusAsync ();
+        StateHasChanged();
+        } 
+    private async Task ReadExcelAsync()
+        {
+        if (WorksheetName == "")
             {
-            List<CourseTopic> lstCourseTopics = await feService.Read_CourseTopics (course.CourseId);
-            using var workbook = new XLWorkbook(stream);
-            var worksheet = workbook.Worksheet(1); //1:first sheet
-            //ExcelColumns: {1:Topic, 2:Level, 3:Question, 4:nOpts, 5-9:Opts, 10:Ans, 11:ForceLast, 12:TestRtl,13:OptRtl}
-            foreach (var row in worksheet.RowsUsed().Skip(1)) //skip header
+            //msg
+            return;
+            }
+        else
+            {
+            _hasFetched = false;
+            stream.Position = 0;
+            try
                 {
-                Test test = new Test ();
-                test.CourseId = course.CourseId;
-                test.TopicId = 0;
-                test.TestTitle = row.Cell (3).GetString ();
-                test.TestType = row.Cell (4).GetValue<int> ();
-                test.TestType = (test.TestType > 5) ? 5 : test.TestType;
-                test.TestLevel = row.Cell (2).GetValue<int> ();
-                test.TestTags = 0;
-                if (row.Cell(12).GetString().ToLower() == "r") test.TestTags += 1;
-                if (row.Cell(13).GetString().ToLower() == "r") test.TestTags += 2;
-                test.TestOptions = new List<TestOption> ();
-                //Topic handling
-                string ctt = row.Cell(1).GetString().Trim();
-                ctt = ctt.Length > 30 ? ctt[..30] : ctt;
-                var existingTopic = lstCourseTopics.FirstOrDefault(t => string.Equals(t.CourseTopicTitle, ctt, StringComparison.OrdinalIgnoreCase));
-                if (existingTopic != null)
+                List<CourseTopic> lstCourseTopics = await feService.Read_CourseTopics (course.CourseId);
+                using var wb = new XLWorkbook(stream);
+                var worksheet = wb.Worksheet($"{WorksheetName}");
+                //ExcelColumns: 1:Topic 2:Question 3:nOpts 4-8:Opts 9:Ans 10:ForceLast 11:TestRtl 12:OptRtl 13:Level
+                foreach (var row in worksheet.RowsUsed().Skip(1)) //skip header
                     {
-                    test.TopicId = existingTopic.CourseTopicId;
-                    }
-                else
-                    {
-                    CourseTopic newCourseTopic = new CourseTopic { CourseId= course.CourseId, CourseTopicTitle = ctt };
-                    test.TopicId = await feService.Create_CourseTopic(newCourseTopic);
-                    newCourseTopic.CourseTopicId = test.TopicId;
-                    lstCourseTopics.Add (newCourseTopic);
-                    }
-                //Options
-                for (int col = 5; col <= test.TestType + 4; col++)
-                    {
-                    var strOpt = row.Cell(col).GetString();
-                    test.TestOptions.Add (new TestOption { TestOptionTitle = strOpt, TestId = 1 }); //initialize TestId here and set the value when test is saved to DB 
-                    }
-                //Answer
-                int answ = row.Cell(10).GetValue<int>();
-                if (answ > 0 && answ <= test.TestOptions?.Count)
-                    {
-                    test.TestOptions[answ - 1].TestOptionTags = 2; //2:IsAns                
-                    }
-                //ForceLast
-                int forceLast = row.Cell(11).GetValue<int>();
-                if (forceLast > 0 && forceLast <= test.TestOptions?.Count)
-                    {
-                    test.TestOptions[forceLast - 1].TestOptionTags += 1; //1:ForceLast
-                    }
-                //Create New Test+Options
-                test.TestId = await feService.Create_Test(test);
-                }                
+                    Test test = new Test ();
+                    test.CourseId = course.CourseId;
+                    test.TopicId = 0;
+                    test.TestTitle = row.Cell (2).GetString ();
+                    test.TestType = row.Cell (3).GetValue<int> ();
+                    test.TestType = (test.TestType > 5) ? 5 : test.TestType;
+                    test.TestLevel = row.Cell (13).GetValue<int> ();
+                    test.TestTags = 0;
+                    if (row.Cell(11).GetString().ToLower() == "r") test.TestTags += 1;
+                    if (row.Cell(12).GetString().ToLower() == "r") test.TestTags += 2;
+                    test.TestOptions = new List<TestOption> ();
+                    //Topic handling
+                    string crsTestTopic = row.Cell(1).GetString().Trim();
+                    crsTestTopic = crsTestTopic.Length > 30 ? crsTestTopic[..30] : crsTestTopic;
+                    var existingTopic = lstCourseTopics.FirstOrDefault(t => string.Equals(t.CourseTopicTitle, crsTestTopic, StringComparison.OrdinalIgnoreCase));
+                    if (existingTopic != null)
+                        {
+                        test.TopicId = existingTopic.CourseTopicId;
+                        }
+                    else
+                        {
+                        CourseTopic newCourseTopic = new CourseTopic { CourseId= course.CourseId, CourseTopicTitle = crsTestTopic };
+                        test.TopicId = await feService.Create_CourseTopic(newCourseTopic);
+                        newCourseTopic.CourseTopicId = test.TopicId;
+                        lstCourseTopics.Add (newCourseTopic);
+                        }
+                    //Options
+                    for (int col = 4; col < test.TestType + 4; col++)
+                        {
+                        var strOpt = row.Cell(col).GetString();
+                        test.TestOptions.Add (new TestOption { TestOptionTitle = strOpt, TestId = 1 }); //initialize TestId here and set the value when test is saved to DB 
+                        }
+                    //Answer
+                    int answ = row.Cell(9).GetValue<int>();
+                    if (answ > 0 && answ <= test.TestOptions?.Count)
+                        {
+                        test.TestOptions[answ - 1].TestOptionTags = 2; //2:IsAns                
+                        }
+                    //ForceLast
+                    int forceLast = row.Cell(10).GetValue<int>();
+                    if (forceLast > 0 && forceLast <= test.TestOptions?.Count)
+                        {
+                        test.TestOptions[forceLast - 1].TestOptionTags += 1; //1:ForceLast
+                        }
+                    //Create New Test+Options
+                    test.TestId = await feService.Create_Test(test);
+                    }                
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine($"Error in [ImportExcel]: {ex}");
+                }
+            lstWorksheets.Clear ();
+            lstCourseTests.Clear ();
+            lstCourseTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), intPageNumber, false);
+            Snackbar.Add("Import completed!", Severity.Success); //Severity.Warning .Error | .Info | .Success
+            _hasFetched = true;
+            appState.SetCmd ("");
             }
-        catch (Exception ex)
-            {
-            Console.WriteLine($"Error in [ImportExcel]: {ex}");
-            }
-        lstCourseTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), intPageNumber, false);
-        //needs: @inject ISnackbar Snackbar
-        Snackbar.Add("Import completed!", Severity.Success); //Severity.Warning .Error | .Info | .Success
-        //old code: await JS.InvokeVoidAsync ("alert", "Import completed!");
-        _hasFetched = true;
-        appState.SetCmd ("");
         }
     //Exit
     public void BtnCancel()
         {
+        lstWorksheets.Clear ();
+        WorksheetName = "";
         appState.SetCmd ("");
         }
     public void BtnBack()
