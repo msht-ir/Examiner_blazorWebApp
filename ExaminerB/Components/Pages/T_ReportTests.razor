@@ -1,6 +1,8 @@
 ﻿@page "/T_ReportTests"
 @using ExaminerB.Service
 @using Microsoft.VisualBasic
+@using QRCoder
+@using System.Drawing
 @inject FeService feService
 @inject NavigationManager Navman
 @inject AppState appState
@@ -33,6 +35,14 @@ else
             Student Exam Tests <br /> @appState.StudentName - @appState.StudentNickname
         </h5>
         }
+    else if (appState.Cmd.ToLower() == "studentexamtestsraw")
+        {
+        <div style="text-align:center">
+            <img src="@qrCodeImageUrl" alt="QR Code" width="180"/>
+            <br />
+            @* @appState.StudentName - @appState.StudentNickname *@
+        </div>
+        }
     else if (appState.Cmd.ToLower() == "studentcoursetests")
         {
         <h4 style="text-align:center">@appState.Cmd</h4>                
@@ -53,7 +63,7 @@ else
                 <img src="/img/icoFontAa.png" title="Use Larger/Smaller  تغيير انداز فونت" alt="Edit" width="35px"/>
             </button>
             @* Keys *@
-            <button class="btn btn-link" @onclick="BtnShowAnswers" title="Show Tests ليست تست ها">
+            <button class="btn btn-link" @onclick="BtnShowAnswers">
                 <img src="/img/icoKeys.png" title="Show Test Answers گزينه صحيح را نمايش بده" alt="Edit" width="30px"/>
             </button>
             @* Paginate *@
@@ -142,28 +152,27 @@ else
                                     }
                                 }
                             }
-                            @if ((appState.Cmd == "studentexamtests") & (appState.TestId == tst.TestId))
-                                {
-                                <div style="font-weight:bold;">stats:</div>
-                                <div style="padding-left:30px;">
-                                    <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
-                                    <div style="font-weight:bold">
-                                        @nStudentsAnswered Answers
-                                        <span style="font-weight:normal; padding-left:15px;">( @nStudentsAnsweredCorrectly correct</span> 
-                                        <span style="font-weight:normal; padding-left:15px;">@nStudentsAnsweredIncorrectly incorrect )</span>
-                                    </div> 
-                                    <div style="font-weight:bold;">@nStudentsNotAnswered noAnswer</div>                
-                                </div>
-                                <br /> 
-                                <div class="d-flex justify-content-center">
+                        @if ((appState.Cmd == "studentexamtests") & (appState.TestId == tst.TestId))
+                            {
+                            <div style="font-weight:bold;">stats:</div>
+                            <div style="padding-left:30px;">
+                                <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
+                                <div style="font-weight:bold">
+                                    @nStudentsAnswered Answers
+                                    <span style="font-weight:normal; padding-left:15px;">( @nStudentsAnsweredCorrectly correct</span> 
+                                    <span style="font-weight:normal; padding-left:15px;">@nStudentsAnsweredIncorrectly incorrect )</span>
+                                </div> 
+                                <div style="font-weight:bold;">@nStudentsNotAnswered noAnswer</div>                
+                            </div>
+                            <br /> 
+                            <div class="d-flex justify-content-center">
                             <MudChart ChartType="ChartType.Donut"
                                 InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
                                 InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
                                 Width="100px" Height="100px" />
                             <br /> 
-                        </div>
-                        }
-
+                            </div>
+                           }
                     </MudCardContent>
                 </MudCard>
             </MudContainer>        
@@ -192,6 +201,20 @@ else
                 <hr style="color:red" />
                 }
             <br />
+            <br />
+            @* QRCODE FOR STUDENT EXAM TESTS *@
+            @if (appState.Cmd.ToLower() == "studentexamtestsraw")
+                {
+                <div class="page-break" style="text-align:center">
+                    <img src="@qrCodeImageUrl" alt="QR Code" width="180"/>
+                    <br />
+                    @appState.StudentName - @appState.StudentNickname
+                    <_AnswerSheet/>
+                </div>
+                }
+            <br />
+            <br />
+            <hr />
             <div style="text-align: left;">
                 <button class="btn btn-link" type="submit" @onclick="BtnBack">
                     <img src="/img/icoBack3.png" width="40" />
@@ -229,6 +252,7 @@ else
     public int nStudentsSlectedOpt3 = 0;
     public int nStudentsSlectedOpt4 = 0;
     public int nStudentsSlectedOpt5 = 0;
+    public string qrCodeImageUrl;
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
@@ -258,6 +282,7 @@ else
         _appstatecmd = (_appstatecmd.EndsWith ("raw")) ? (Strings.Left (_appstatecmd, _appstatecmd.Length - 3)) : (_appstatecmd + "raw");
         appState.SetCmd (_appstatecmd);
         i = 0;
+        GenerateQRCode ();
         }
     public void BtnCourseExamStats()
         {
@@ -541,5 +566,25 @@ else
                     }
             }
         _hasFetched = true;
+        }
+    private void GenerateQRCode()
+        {
+        QRCodeGenerator qrGen = new QRCodeGenerator ();
+        QRCodeData qrData = qrGen.CreateQrCode ($"{@appState.StudentName} - {@appState.StudentNickname}", QRCodeGenerator.ECCLevel.Q);
+        QRCode qRCode = new QRCode(qrData);
+        Bitmap bitmap = qRCode.GetGraphic (15);
+        var BitmapBytes = ConvertBitmapToBytes (bitmap);
+        var bitmapBytes = ConvertBitmapToBytes(bitmap);
+        // Convert to base64 for displaying in img tag
+        qrCodeImageUrl = $"data:image/png;base64,{Convert.ToBase64String(bitmapBytes)}";
+        StateHasChanged();       
+        }
+    private byte[] ConvertBitmapToBytes(Bitmap bitmap)
+        {
+        using (MemoryStream ms = new())
+            {
+            bitmap.Save (ms, System.Drawing.Imaging.ImageFormat.Png);
+            return ms.ToArray ();
+            }
         }
 }

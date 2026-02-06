@@ -5,6 +5,7 @@
 @inject IJSRuntime JS
 @implements IDisposable
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 @if (!_hasFetched)
         {
@@ -39,7 +40,7 @@ else
             <div id="selectTopicComboBox" style="display: flex; gap: 20px; align-items: flex-start; background-color: whitesmoke; padding: 10px; border-radius: 12px;">  
                 @* 2- Combo: Topics *@
                 <div style="flex: 1; color: IndianRed;">
-                    <MudSelect T="int" Label="Topics موضوعات" @bind-Value="@test.TopicId" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                    <MudSelect T="int" Label="Topic" @bind-Value="@test.TopicId" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                         @foreach (var topic in lstCourseTopics)
                             {
                             if (topic.CourseTopicId == test.TopicId)
@@ -64,7 +65,7 @@ else
                 </div>
                 @* 3- Combo: Levels *@
                 <div style="flex: 1; color: IndianRed;">
-                    <MudSelect T="int" Label="Level سطح" @bind-Value="@test.TestLevel" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                    <MudSelect T="int" Label="Level" @bind-Value="@test.TestLevel" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                          @for (int i = 1; i <= 5; i++)
                             {
                             int x = i;
@@ -292,7 +293,6 @@ else
         }
     public async Task BtnUpdateTest ()
         {
-        Console.WriteLine($"testId={test.TestId}, topicId={test.TopicId}, title= {test.TestTitle}, test/OptRTL=>{test.TestTags}, Level={test.TestLevel}");
         bool results = await feService.Update_Test (test);
         if (results)
             {
@@ -301,13 +301,16 @@ else
         }
     public async Task BtnDeleteTest ()
         {
-        if (await JS.InvokeAsync<bool>("confirm","Delete Tets?"))
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> test? (test options will also be deleted) <br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(
+            title: "Confirm",
+            markupMessage: message,
+            yesText: "Yes",
+            cancelText: "No");
+        if (confirmResult == true)
             {
-            bool result = await feService.Delete_Test (test.TestId);
-            if (result)
-                {
-                BtnBack ();
-                }
+            Snackbar.Add("updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            BtnBack ();            
             }
         }
     //TestOption
@@ -343,23 +346,30 @@ else
         if (result)
             {
             test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
-            Snackbar.Add("Updated", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("updated", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             appState.SetCmd ("");
-            StateHasChanged ();                
+            StateHasChanged ();
             }
         else
             {
-            Snackbar.Add("Failed to update", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("update failed", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     public async Task BtnDeleteTestOption (int testOptionId)
         {
-        if (await JS.InvokeAsync<bool>("confirm","Delete Test Option?"))
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> test option? <br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(
+            title: "Confirm",
+            markupMessage: message,
+            yesText: "Yes",
+            cancelText: "No");
+        if (confirmResult == true)
             {
             bool result = await feService.Delete_TestOption (testOptionId);
+            Snackbar.Add("deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
             appState.SetCmd ("");
-            StateHasChanged ();
+            StateHasChanged ();            
             }
         }
     //Add Test2Exam
@@ -386,7 +396,6 @@ else
         else
             {
             Snackbar.Add("Select an exam!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            //await JS.InvokeVoidAsync ("alert", "");            
             }
         }
     //Exit
