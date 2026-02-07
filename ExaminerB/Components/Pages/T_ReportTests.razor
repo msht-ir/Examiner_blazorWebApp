@@ -108,7 +108,7 @@ else
                                     <img src="/img/icoDelete1.png" title="Delete Test حذف تست" alt="Edit" width="20px"/>
                                 </button>
                                 }
-                            else if (appState.Cmd.ToLower() == "studentexamtests")
+                            else if ((appState.Cmd.ToLower() == "studentexamtests") | (appState.Cmd.ToLower() == "studentexamtestsanswers"))
                                 {                
                                 <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
                                     <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px"/>
@@ -151,7 +151,7 @@ else
                                     }
                                 }
                             }
-                        @if ((appState.Cmd == "studentexamtests") & (appState.TestId == tst.TestId))
+                        @if (((appState.Cmd == "studentexamtests") | (appState.Cmd == "studentexamtestsanswers")) & (appState.TestId == tst.TestId))
                             {
                             <div style="font-weight:bold;">stats:</div>
                             <div style="padding-left:30px;">
@@ -204,7 +204,7 @@ else
             <br />
         @if (appState.Cmd.ToLower() == "studentexamtestsraw")
             {
-            <div class="page-break" style="text-align:center">
+            <div style="break-before: page;text-align:center">
                 <img src="@qrCodeImageUrl" alt="QR Code" width="180"/>
                 <div style="font-size:small;">@appState.StudentName - @appState.StudentNickname</div>
                 <_AnswerSheet/>
@@ -212,7 +212,7 @@ else
             }
         else if (appState.Cmd.ToLower() == "studentexamtests")
             {
-            @* PREPARE FOR QRCODE FOR STUDENT EXAM TESTS *@
+            @* PREPARE FOR QRCODE FOR STUDENT EXAM TESTS - SHOW CORRECT OPTIONS*@
             lstQstns.Clear();
             nrtst = 0;
             @foreach (var tstx in lstxTests) 
@@ -228,99 +228,199 @@ else
                         lstQstns[nrtst-1] = nropt;
                         }
                     }
-                @* Console.WriteLine($"------ Question: {nrtst}  ----- correct option is: {lstQstns[nrtst-1]}"); *@
                 }
-            @* QRCODE AND KEYS *@
-                <div class="page-break" style="text-align:center">
-                    <div>KEY</div>
-                    <div class="simple-sheet">
-                        <hr />
-                        <div class="sheet-columns">
-                            @for (int col = 0; col < 3; col++)
-                                {
-                                <div class="sheet-column">
-                                    @for (int i = 1; i <= 20; i++)
-                                        {
-                                        var qstn = col * 20 + i;
-                                        <div class="question-line">
-                                            <span class="q-number">@qstn.</span>
-                                            @if(qstn <= lstQstns.Count)
+            @* QRCODE AND SHEET *@
+            <div style="break-before: page;text-align:center">
+                <div>KEY</div>
+                <div class="simple-sheet">
+                    <hr />
+                    <div class="sheet-columns">
+                        @for (int col = 0; col < 3; col++)
+                            {
+                            <div class="sheet-column">
+                                @for (int i = 1; i <= 20; i++)
+                                    {
+                                    var qstn = col * 20 + i;
+                                    <div class="question-line">
+                                        <span class="q-number">@qstn.</span>
+                                        @if(qstn <= lstQstns.Count)
+                                            {
+                                            @if(@lstQstns[qstn-1] == 1)
                                                 {
-                                                @if(@lstQstns[qstn-1] == 1)
-                                                    {
-                                                    <div class="choice-box" style="background-color:black"></div>
-                                                    }
-                                                else
-                                                    {
-                                                    <div class="choice-box" style="background-color:white"></div>
-                                                    }
-                                                @if(@lstQstns[qstn-1] == 2)
-                                                    {
-                                                    <div class="choice-box" style="background-color:black"></div>
-                                                    }
-                                                else
-                                                    {
-                                                    <div class="choice-box" style="background-color:white"></div>
-                                                    }
-                                                @if(@lstQstns[qstn-1] == 3)
-                                                    {
-                                                    <div class="choice-box" style="background-color:black"></div>
-                                                    }
-                                                else
-                                                    {
-                                                    <div class="choice-box" style="background-color:white"></div>
-                                                    }
-                                                @if(@lstQstns[qstn-1] == 4)
-                                                    {
-                                                    <div class="choice-box" style="background-color:black"></div>
-                                                    }
-                                                else
-                                                    {
-                                                    <div class="choice-box" style="background-color:white"></div>
-                                                    }
-                                                @if(@lstQstns[qstn-1] == 5)
-                                                    {
-                                                    <div class="choice-box" style="background-color:black"></div>
-                                                    }
-                                                else
-                                                    {
-                                                    <div class="choice-box" style="background-color:white"></div>
-                                                    }
+                                                <div class="choice-box" style="background-color:black"></div>
                                                 }
                                             else
                                                 {
-                                                <div class="choice-box"></div>
-                                                <div class="choice-box"></div>
-                                                <div class="choice-box"></div>
-                                                <div class="choice-box"></div>                                            
-                                                <div class="choice-box"></div>                                            
+                                                <div class="choice-box" style="background-color:white"></div>
                                                 }
-                                        </div>
-                                        }
-                                </div>
-                                }
-                        </div>
-                        <hr />
+                                            @if(@lstQstns[qstn-1] == 2)
+                                                {
+                                                <div class="choice-box" style="background-color:black"></div>
+                                                }
+                                            else
+                                                {
+                                                <div class="choice-box" style="background-color:white"></div>
+                                                }
+                                            @if(@lstQstns[qstn-1] == 3)
+                                                {
+                                                <div class="choice-box" style="background-color:black"></div>
+                                                }
+                                            else
+                                                {
+                                                <div class="choice-box" style="background-color:white"></div>
+                                                }
+                                            @if(@lstQstns[qstn-1] == 4)
+                                                {
+                                                <div class="choice-box" style="background-color:black"></div>
+                                                }
+                                            else
+                                                {
+                                                <div class="choice-box" style="background-color:white"></div>
+                                                }
+                                            @if(@lstQstns[qstn-1] == 5)
+                                                {
+                                                <div class="choice-box" style="background-color:black"></div>
+                                                }
+                                            else
+                                                {
+                                                <div class="choice-box" style="background-color:white"></div>
+                                                }
+                                            }
+                                        else
+                                            {
+                                            <div class="choice-box"></div>
+                                            <div class="choice-box"></div>
+                                            <div class="choice-box"></div>
+                                            <div class="choice-box"></div>                                            
+                                            <div class="choice-box"></div>                                            
+                                            }
+                                    </div>
+                                    }
+                            </div>
+                            }
                     </div>
-
-                    <style>
-                        .simple-sheet {font-family: Arial, sans-serif; padding: 10px;}
-                        .sheet-columns {display: flex; gap: 25px;}
-                        .sheet-column {flex: 1;}
-                        .question-line {display: flex; align-items: center; gap: 8px; margin-bottom: 5px;}
-                        .q-number {width: 25px; text-align: right;font-size: 12px;}
-                        .choice-box {width: 18px; height: 18px; border: 1px solid #333; margin: 0 2px;}
-                    </style>
+                    <hr />
                 </div>
+            </div>
+            }
+        else if (appState.Cmd.ToLower() == "studentexamtestsanswers")
+            {
+            @* PREPARE FOR QRCODE FOR STUDENT EXAM TESTS - SHOW STUDENT ANSWERS*@
+            lstAnswr.Clear();
+            nrtst = 0;
+            @foreach (var tstx in lstxTests) 
+                {
+                lstAnswr.Add (0);
+                nrtst++;
+                nropt = 0;
+                foreach (var optx in tstx.TestOptions)
+                    {
+                    nropt++;
+                    if(optx.TestOptionId == tstx.StudentExamTestAns)
+                        {
+                        lstAnswr[nrtst-1] = nropt;
+                        }
+                    }
                 }
-            <br />
-            <div style="text-align: left;">
+            @* QRCODE AND SHEET *@
+            <div style="break-before: page;text-align:center">
+                <div>ANSWERS</div>
+                <div class="simple-sheet">
+                    <hr />
+                    <div class="sheet-columns">
+                        @for (int col = 0; col < 3; col++)
+                            {
+                            <div class="sheet-column">
+                                @for (int i = 1; i <= 20; i++)
+                                    {
+                                    var qstn = col * 20 + i;
+                                    <div class="question-line">
+                                        <span class="q-number">@qstn.</span>
+                                        @if(qstn <= lstAnswr.Count)
+                                            {
+                                            @if(@lstAnswr[qstn-1] == 1)
+                                                {
+                                                <div class="choice-box" style="background-color:gray"></div>
+                                                }
+                                            else
+                                                {
+                                                <div class="choice-box" style="background-color:white"></div>
+                                                }
+                                            @if(@lstAnswr[qstn-1] == 2)
+                                                {
+                                                <div class="choice-box" style="background-color:gray"></div>
+                                                }
+                                            else
+                                                {
+                                                <div class="choice-box" style="background-color:white"></div>
+                                                }
+                                            @if(@lstAnswr[qstn-1] == 3)
+                                                {
+                                                <div class="choice-box" style="background-color:gray"></div>
+                                                }
+                                            else
+                                                {
+                                                <div class="choice-box" style="background-color:white"></div>
+                                                }
+                                            @if(@lstAnswr[qstn-1] == 4)
+                                                {
+                                                <div class="choice-box" style="background-color:gray"></div>
+                                                }
+                                            else
+                                                {
+                                                <div class="choice-box" style="background-color:white"></div>
+                                                }
+                                            @if(@lstAnswr[qstn-1] == 5)
+                                                {
+                                                <div class="choice-box" style="background-color:gray"></div>
+                                                }
+                                            else
+                                                {
+                                                <div class="choice-box" style="background-color:white"></div>
+                                                }
+                                            }
+                                        else
+                                            {
+                                            <div class="choice-box"></div>
+                                            <div class="choice-box"></div>
+                                            <div class="choice-box"></div>
+                                            <div class="choice-box"></div>                                            
+                                            <div class="choice-box"></div>                                            
+                                            }
+                                    </div>
+                                    }
+                            </div>
+                            }
+                    </div>
+                    <hr />
+                </div>
+            </div>
+            }
+            <div style="text-align: center;">
                 <button class="btn btn-link" type="submit" @onclick="BtnBack">
                     <img src="/img/icoBack3.png" width="40" />
                 </button>
+                <button class="btn btn-link" @onclick="BtnShowRawAnswerSheet">
+                    <img src="/img/gifQRCode.gif" title="show raw answer sheet" alt="show raw answer sheet" width="45"/>
+                </button>
+                <button class="btn btn-link" @onclick="BtnShowTestKeys">
+                    <img src="/img/icoKeys.png" title="show student answers" alt="Show student answers" width="30"/>
+                </button>
+                <button class="btn btn-link" @onclick="BtnShowStudentAnswers">
+                    <img src="/img/icoReport1.png" title="show student answers" alt="Show student answers" width="30"/>
+                </button>
             </div>
+            <hr />
     </EditForm>
     }
+    <style>
+        .simple-sheet {font-family: Arial, sans-serif; padding: 10px;}
+        .sheet-columns {display: flex; gap: 25px;}
+        .sheet-column {flex: 1;}
+        .question-line {display: flex; align-items: center; gap: 8px; margin-bottom: 5px;}
+        .q-number {width: 25px; text-align: right;font-size: 12px;}
+        .choice-box {width: 18px; height: 18px; border: 1px solid #333; margin: 0 2px;}
+    </style>
     <script>
         window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
     </script>
@@ -335,6 +435,7 @@ else
     List<StudentExamTest> lstxTests = new List<StudentExamTest> ();
     List<Test> lstTests = new List<Test> ();
     List<int> lstQstns = new List<int> ();
+    List<int> lstAnswr = new List<int> ();
     List<Exam> lstExams = new List<Exam> ();
     private int intExamId;
     int i = 0;
@@ -565,6 +666,22 @@ else
             Snackbar.Add("Select an exam!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             //await JS.InvokeVoidAsync ("alert", "");            
             }
+        }
+    public async Task BtnShowRawAnswerSheet()
+        {
+        BtnShowAnswers ();
+        appState.SetCmd ("studentexamtestsraw");
+        Snackbar.Add("raw answer sheet is shown", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        }
+    public async Task BtnShowStudentAnswers()
+        {
+        appState.SetCmd ("studentexamtestsanswers");
+        Snackbar.Add("student answers are shown", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        }
+    public async Task BtnShowTestKeys()
+        {
+        appState.SetCmd ("studentexamtests");
+        Snackbar.Add("tests keys are shown", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
     public void BtnBack()
         {
