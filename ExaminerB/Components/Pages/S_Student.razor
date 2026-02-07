@@ -965,6 +965,7 @@
         _hasFetched = false;
         lstNotes.Clear();
         lstNotes = await feService.Read_Notes(student.UserId, 7);
+        _cmd = "";
         _hasFetched = true;
         StateHasChanged(); 
         }
