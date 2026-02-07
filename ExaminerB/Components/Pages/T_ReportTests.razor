@@ -31,16 +31,15 @@ else
         }
     else if (appState.Cmd.ToLower() == "studentexamtests")
         {
-        <h5 style="text-align:center">
+        <h6 style="text-align:center">
             Student Exam Tests <br /> @appState.StudentName - @appState.StudentNickname
-        </h5>
+        </h6>
         }
     else if (appState.Cmd.ToLower() == "studentexamtestsraw")
         {
         <div style="text-align:center">
             <img src="@qrCodeImageUrl" alt="QR Code" width="180"/>
-            <br />
-            @* @appState.StudentName - @appState.StudentNickname *@
+            <div style="font-size:small;">@appState.StudentName - @appState.StudentNickname</div>
         </div>
         }
     else if (appState.Cmd.ToLower() == "studentcoursetests")
@@ -56,15 +55,15 @@ else
         <div class="d-flex align-items-center" style="text-align: center; text-align:center">
             @* Back *@
             <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/img/icoBack3.png" title="Back بازگشت" alt="Edit" width="40px"/>
+                <img src="/img/icoBack3.png" title="Back بازگشت" alt="Edit" width="40"/>
             </button>
             @* Font *@
             <button class="btn btn-link" @onclick="BtnChangeFontSize">
-                <img src="/img/icoFontAa.png" title="Use Larger/Smaller  تغيير انداز فونت" alt="Edit" width="35px"/>
+                <img src="/img/icoFontAa.png" title="Use Larger/Smaller  تغيير انداز فونت" alt="Edit" width="35"/>
             </button>
             @* Keys *@
             <button class="btn btn-link" @onclick="BtnShowAnswers">
-                <img src="/img/icoKeys.png" title="Show Test Answers گزينه صحيح را نمايش بده" alt="Edit" width="30px"/>
+                <img src="/img/icoKeys.png" title="Show Test Answers گزينه صحيح را نمايش بده" alt="Edit" width="30"/>
             </button>
             @* Paginate *@
             @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
@@ -179,6 +178,7 @@ else
             }
             @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
                 {
+                @* ADD TESTS TO AN EXAM *@
                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                     <MudCard Class="mx-0">
                         <MudCardContent Style="background-color:whitesmoke;">
@@ -202,19 +202,117 @@ else
                 }
             <br />
             <br />
-            @* QRCODE FOR STUDENT EXAM TESTS *@
-            @if (appState.Cmd.ToLower() == "studentexamtestsraw")
+        @if (appState.Cmd.ToLower() == "studentexamtestsraw")
+            {
+            <div class="page-break" style="text-align:center">
+                <img src="@qrCodeImageUrl" alt="QR Code" width="180"/>
+                <div style="font-size:small;">@appState.StudentName - @appState.StudentNickname</div>
+                <_AnswerSheet/>
+            </div>
+            }
+        else if (appState.Cmd.ToLower() == "studentexamtests")
+            {
+            @* PREPARE FOR QRCODE FOR STUDENT EXAM TESTS *@
+            lstQstns.Clear();
+            nrtst = 0;
+            @foreach (var tstx in lstxTests) 
                 {
+                lstQstns.Add (0);
+                nrtst++;
+                nropt = 0;
+                foreach (var optx in tstx.TestOptions)
+                    {
+                    nropt++;
+                    if(optx.TestOptionId == tstx.StudentExamTestKey)
+                        {
+                        lstQstns[nrtst-1] = nropt;
+                        }
+                    }
+                @* Console.WriteLine($"------ Question: {nrtst}  ----- correct option is: {lstQstns[nrtst-1]}"); *@
+                }
+            @* QRCODE AND KEYS *@
                 <div class="page-break" style="text-align:center">
-                    <img src="@qrCodeImageUrl" alt="QR Code" width="180"/>
-                    <br />
-                    @appState.StudentName - @appState.StudentNickname
-                    <_AnswerSheet/>
+                    <div class="simple-sheet">
+                        <hr />
+                        <div class="sheet-columns">
+                            @for (int col = 0; col < 3; col++)
+                                {
+                                <div class="sheet-column">
+                                    @for (int i = 1; i <= 20; i++)
+                                        {
+                                        var qstn = col * 20 + i;
+                                        <div class="question-line">
+                                            <span class="q-number">@qstn.</span>
+                                            @if(qstn <= lstQstns.Count)
+                                                {
+                                                @if(@lstQstns[qstn-1] == 1)
+                                                    {
+                                                    <div class="choice-box" style="background-color:black"></div>
+                                                    }
+                                                else
+                                                    {
+                                                    <div class="choice-box" style="background-color:white"></div>
+                                                    }
+                                                @if(@lstQstns[qstn-1] == 2)
+                                                    {
+                                                    <div class="choice-box" style="background-color:black"></div>
+                                                    }
+                                                else
+                                                    {
+                                                    <div class="choice-box" style="background-color:white"></div>
+                                                    }
+                                                @if(@lstQstns[qstn-1] == 3)
+                                                    {
+                                                    <div class="choice-box" style="background-color:black"></div>
+                                                    }
+                                                else
+                                                    {
+                                                    <div class="choice-box" style="background-color:white"></div>
+                                                    }
+                                                @if(@lstQstns[qstn-1] == 4)
+                                                    {
+                                                    <div class="choice-box" style="background-color:black"></div>
+                                                    }
+                                                else
+                                                    {
+                                                    <div class="choice-box" style="background-color:white"></div>
+                                                    }
+                                                @if(@lstQstns[qstn-1] == 5)
+                                                    {
+                                                    <div class="choice-box" style="background-color:black"></div>
+                                                    }
+                                                else
+                                                    {
+                                                    <div class="choice-box" style="background-color:white"></div>
+                                                    }
+                                                }
+                                            else
+                                                {
+                                                <div class="choice-box"></div>
+                                                <div class="choice-box"></div>
+                                                <div class="choice-box"></div>
+                                                <div class="choice-box"></div>                                            
+                                                <div class="choice-box"></div>                                            
+                                                }
+                                        </div>
+                                        }
+                                </div>
+                                }
+                        </div>
+                        <hr />
+                    </div>
+
+                    <style>
+                        .simple-sheet {font-family: Arial, sans-serif; padding: 10px;}
+                        .sheet-columns {display: flex; gap: 25px;}
+                        .sheet-column {flex: 1;}
+                        .question-line {display: flex; align-items: center; gap: 8px; margin-bottom: 5px;}
+                        .q-number {width: 25px; text-align: right;font-size: 12px;}
+                        .choice-box {width: 18px; height: 18px; border: 1px solid #333; margin: 0 2px;}
+                    </style>
                 </div>
                 }
             <br />
-            <br />
-            <hr />
             <div style="text-align: left;">
                 <button class="btn btn-link" type="submit" @onclick="BtnBack">
                     <img src="/img/icoBack3.png" width="40" />
@@ -235,9 +333,12 @@ else
     Course course = new Course ();
     List<StudentExamTest> lstxTests = new List<StudentExamTest> ();
     List<Test> lstTests = new List<Test> ();
+    List<int> lstQstns = new List<int> ();
     List<Exam> lstExams = new List<Exam> ();
     private int intExamId;
     int i = 0;
+    int nrtst = 0;
+    int nropt = 0;
     int StudentId;
     string _cmd;
     string stl;
