@@ -34,15 +34,15 @@ else
                 <MudCardContent Style="background-color:whitesmoke;">                                         
                     <div style="font-size:130%;font-weight:bold;color:royalblue">Exam <span style="font-size:small;font-weight:normal;color:gray">Title - DateTime - Duration</span></div>
                     <div class="d-flex mb-2" style="gap:10px;">
-                        <MudTextField @ref="refExamTitle" @bind-Value="exam.ExamTitle" Label="Exam Title" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
-                        <MudNumericField @ref="refExamDuration" @bind-Value="exam.ExamDuration" Label="Duration min" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" style="width:100px;text-align:center;" />
+                        <MudTextField @ref="refExamTitle" @bind-Value="exam.ExamTitle" Label="Exam Title" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                        <MudNumericField T="int" @ref="refExamDuration" @bind-Value="exam.ExamDuration" Label="Duration min" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" style="width:100px;text-align:center;" />
                     </div>
                     <div class="d-flex justify-content-start mb-2" >
-                        <MudTextField @ref="refExamDateTime" @bind-Value="exam.ExamDateTime" Label="Date-Time" placeholder="____-__-__ __:__" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" style="width:200px;" />
+                        <MudTextField @ref="refExamDateTime" @bind-Value="exam.ExamDateTime" Label="Date-Time" placeholder="____-__-__ __:__" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" style="width:200px;" />
                     </div>
                     <div class="d-flex justify-content-start mb-2" >
-                        <MudCheckBox @bind-Value="exam.IsActive" Label="Active" Dense="true" Color="Color.Success" title="advice: keep exam inactive until exam day!"/>
-                        <MudCheckBox @bind-Value="exam.IsTrainingMode" Label="Training" Dense="true" Color="Color.Primary" title="students can get help" />
+                        <MudCheckBox @bind-Value="exam.IsActive" Label="Active" Color="Color.Success" title="advice: keep exam inactive until exam day!"/>
+                        <MudCheckBox @bind-Value="exam.IsTrainingMode" Label="Training" Color="Color.Primary" title="students can get help" />
                     </div>
                 </MudCardContent>
             </MudCard>
@@ -74,7 +74,7 @@ else
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:whitesmoke;">                                         
                                         <div class="d-flex">
-                                            <MudSelect T="int" Label="Course topic موضوع" @bind-Value="@comp.TopicId" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:120px;font-size:small;">
+                                            <MudSelect T="int" Label="Course topic موضوع" Value="0" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:120px;font-size:small;">
                                                 <MudSelectItem Value="@comp.TopicId">Select an Exam...</MudSelectItem>
                                                 @foreach (CourseTopic topic in lstCourseTopics) { <MudSelectItem Value="@topic.CourseTopicId">@topic.CourseTopicTitle</MudSelectItem> }
                                             </MudSelect>
@@ -87,14 +87,14 @@ else
                                         </div>
                                         @* Slider NTests *@
                                         <div class="d-flex align-items-center">
-                                            <MudSlider @bind-Value="comp.TopicNTests" Variant="Variant.Filled" min="1" max="20">Tests</MudSlider>
+                                            <MudSlider T="int" @bind-Value="comp.TopicNTests" Variant="Variant.Filled" Min="1" Max="20">Tests</MudSlider>
                                             <span style="color:indianred; font-weight:bold;">
                                                 @comp.TopicNTests
                                             </span>
                                         </div>
                                         @* Slider Level *@
                                         <div class="d-flex align-items-center">
-                                            <MudSlider @bind-Value="@comp.TestsLevel" Variant="Variant.Filled" min="1" max="5">Level</MudSlider>
+                                            <MudSlider T="int" @bind-Value="@comp.TestsLevel" Variant="Variant.Filled" Min="1" Max="5">Level</MudSlider>
                                             <span style="color:indianred; font-weight:bold;">
                                                 @comp.TestsLevel
                                             </span>
@@ -111,7 +111,7 @@ else
                                         <div style="text-align: left;margin-left:20px;margin-right:10px">
                                             <h5 style="color:indianred;font-weight:bold;"> New Exam Composition</h5>
                                             <div class="d-flex">
-                                                <MudSelect T="int" Label="Course topic موضوع" @bind-Value="cboCourseTopicId" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:120px;font-size:small;">
+                                                <MudSelect T="int" Label="Course topic موضوع" @bind-Value="cboCourseTopicId" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:120px;font-size:small;">
                                                    <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
                                                    @foreach (CourseTopic topic in lstCourseTopics) { <MudSelectItem Value="@topic.CourseTopicId">@topic.CourseTopicTitle</MudSelectItem> }
                                                 </MudSelect>
@@ -124,14 +124,14 @@ else
                                             </div>
                                             @* Slider NTests *@
                                             <div class="d-flex align-items-center">
-                                                <MudSlider @bind-Value="@sliderTopicNTests" Variant="Variant.Filled" min="1" max="20">Tests</MudSlider>
+                                                <MudSlider T="int" @bind-Value="@sliderTopicNTests" Variant="Variant.Filled" Min="1" Max="20">Tests</MudSlider>
                                                 <span style="color:indianred; font-weight:bold;">
                                                     @sliderTopicNTests
                                                 </span>
                                             </div>
                                             @* Slider Level *@
                                             <div class="d-flex align-items-center">
-                                                <MudSlider @bind-Value="@sliderTestsLevel" Variant="Variant.Filled" min="1" max="5">Level</MudSlider>
+                                                <MudSlider T="int" @bind-Value="@sliderTestsLevel" Variant="Variant.Filled" Min="1" Max="5">Level</MudSlider>
                                                 <span style="color:indianred; font-weight:bold;">
                                                     @sliderTestsLevel
                                                 </span>
@@ -177,13 +177,13 @@ else
                         <div class="mb-3" style="background-color:WhiteSmoke">
                             <span style="font-size:larger; font-weight:bold;color:royalblue;">Add tests to exam</span>
                             <div class="d-flex align-items-center mb-3">
-                                <MudTextField @ref="txtSearchTest" @bind-Value="strSearch" Label="Search..." Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';" />
+                                <MudTextField @ref="txtSearchTest" @bind-Value="strSearch" Label="Search..." Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';" />
                                 <button class="btn btn-link" @onclick="BtnReadTestsBySearch">
                                     <img src="/img/icoSearch.png" width="30" />
                                 </button>
                             </div>
                             <div class="d-flex align-atems-center mb-3">
-                                <MudSelect T="int" Label="Result نتيجه" @bind-Value="cboCourseTestId" Class="w-auto my-select d-inline" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;max-width:420px;font-size:small; font-family:'Segoe UI';text-overflow: ellipsis;">
+                                <MudSelect T="int" Label="Result نتيجه" @bind-Value="cboCourseTestId" Class="w-auto my-select d-inline" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;max-width:420px;font-size:small; font-family:'Segoe UI';text-overflow: ellipsis;">
                                     <MudSelectItem Value="0">select from results</MudSelectItem>
                                     @foreach (var ct in lstCourseTests) { <MudSelectItem Value="@ct.TestId" Style="font-family:'Segoe UI';text-overflow: ellipsis;"> @ct.TestId - @(ct.TestTitle.Length > 50 ? ct.TestTitle.Substring(0, 50) : ct.TestTitle)</MudSelectItem> }
                                 </MudSelect>
@@ -277,105 +277,119 @@ else
     public bool _hasFetched = false;
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
-        {
+    {
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
-            {
+        {
 
             Navman.NavigateTo ("/Login");
-            }
+        }
         appState.SetCmd ("");
         exam = await feService.Read_Exam (examId, false);
         lstExamCompositions = await feService.Read_ExamCompositions (examId);
         lstExamTests = await feService.Read_TestsByExamId (examId, true);
         lstCourseTopics = await feService.Read_CourseTopics (exam.CourseId);
         if (lstCourseTopics.Count > 0)
-            {
+        {
             _hasFetched = true;
-            }
         }
+    }
     private void TriggerRender()
-        {
+    {
         InvokeAsync(StateHasChanged);
-        }
+    }
     public void Dispose()
-        {
+    {
         appState.OnChange -= TriggerRender;
-        }
+    }
     //btns
     public async Task BtnUpdateExam()
-        {
+    {
         exam.ExamNTests = lstExamTests.Count;
         bool result = await feService.Update_Exam (exam);
         //StateHasChanged ();
         //BtnBack ();
-        }
+    }
     //ExamComposition
     public async Task BtnAddNewExamComposition()
-        {
+    {
         appState.SetCmd ("AddNewExamComposition");
-        }
+    }
     public async Task BtnCreateExamComposition()
-        {
+    {
         if (cboCourseTopicId == 0)
-            {
+        {
             Snackbar.Add("Select a Topic!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            }
+        }
         else
-            {
+        {
             ExamComposition examComposition = new ExamComposition () { ExamId=exam.ExamId, TopicId=cboCourseTopicId, TopicNTests=sliderTopicNTests, TestsLevel=sliderTestsLevel};
             int result = await feService.Create_ExamComposition (examComposition);
             if (result > 0)
-                {
+            {
                 lstExamCompositions.Clear ();
                 lstExamCompositions = await feService.Read_ExamCompositions (examId);
                 Snackbar.Add("Exam composition added successfully!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 appState.SetCmd ("");
                 StateHasChanged ();
-                }
             }
         }
+    }
     public async Task BtnUpdateExamComposition(ExamComposition comp)
-        {
+    {
         if (comp.TopicId == 0)
-            {
+        {
             Snackbar.Add("Select a Topic!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            }
+        }
         else
-            {
+        {
             bool result = await feService.Update_ExamComposition (comp);
             if (result)
-                {
+            {
                 lstExamCompositions.Clear ();
                 lstExamCompositions = await feService.Read_ExamCompositions (examId);
                 Snackbar.Add("Exam composition Updated!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 appState.SetCmd ("");
                 StateHasChanged ();
-                }
             }
+        }
 
-        }
+    }
     public async Task BtnDeleteExamComposition(int examCompositionId)
-        {
+    {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Exam Composition? <br>Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
-        if (confirmResult == true)
+        var parameters = new DialogParameters
             {
-            bool result = await feService.Delete_ExamComposition (examCompositionId);
-            if (result)
-                {
-                Snackbar.Add("Exam composition Removed!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                lstExamCompositions.Clear ();
-                lstExamCompositions = await feService.Read_ExamCompositions (examId);
-                appState.SetCmd ("");
-                StateHasChanged ();
-                }
-            else
-                {
-                Snackbar.Add("Exam Composition was not Deleted! --- operation Canceled", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                }
-            }
+                { "MarkupMessage", message },
+                { "ButtonText", "Yes" },
+                { "CancelText", "No" }
+            };
+        var options = new DialogOptions 
+            { 
+                CloseButton = false,
+                BackdropClick = false,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
+        var dialogresult = await dialog.Result;
+        if (!dialogresult.Canceled)
+        {
+            Snackbar.Add("Exam composition Removed!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            lstExamCompositions.Clear ();
+            lstExamCompositions = await feService.Read_ExamCompositions (examId);
+            appState.SetCmd ("");
+            StateHasChanged ();
         }
+        else
+        {
+            Snackbar.Add("Exam Composition was not Deleted! --- operation Canceled", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        }
+    }
+    private void BtnReadTestsBySearch(MouseEventArgs args)
+    {
+        throw new NotImplementedException();
+    }        
     //Draw Tests using ExamComposition
     public async Task BtnDrawRandomTestsByExamComposition()
         {
@@ -418,7 +432,7 @@ else
         {
         if (cboCourseTestId == 0)
             {
-            Snackbar.Add("Select a Test", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("Select a Test", severity: Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             //await JS.InvokeVoidAsync ("alert", "\n");
             }
         else
@@ -427,7 +441,7 @@ else
             int result = await feService.Create_ExamTest (examTest);
             lstExamTests.Clear ();
             lstExamTests = await feService.Read_TestsByExamId (examId, true);
-            Snackbar.Add("Test added to the exam list", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("Test added to the exam list", severity: Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             appState.SetCmd ("");
             StateHasChanged ();
             }
@@ -440,8 +454,22 @@ else
     public async Task BtnDeleteExamTest(int testId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Remove</span> this test from <span style='color:royalblue'>Exam</span> test list? <br> Remove??<br><br> <div style='text-align:center'><img src='/img/icoEraser.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
-        if (confirmResult == true)
+        var parameters = new DialogParameters
+            {
+                { "MarkupMessage", message },
+                { "ButtonText", "Yes" },
+                { "CancelText", "No" }
+            };
+        var options = new DialogOptions 
+            { 
+                CloseButton = false,
+                BackdropClick = false,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
+        var dialogresult = await dialog.Result;
+        if (!dialogresult.Canceled)
             {
             ExamTest examTest = new ExamTest () { ExamId=exam.ExamId, TestId=testId, PercentCorrect=0, PercentIncorrect=0, PercentHelped=0 };
             bool result = await feService.Delete_ExamTest (examTest);
@@ -462,14 +490,24 @@ else
     public async Task BtnBack()
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Save</span> Exam Changes? <br><span style='font-weight:bold;'>Notice:</span><br>Number of tests in this exam will be <span style='color:royalblue'>Updated</span> automatically<br><br> <div style='text-align:center'><img src='/img/icoSave1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(
-            title: "Confirm Exam Changes",
-            markupMessage: message,
-            yesText: "Yes",
-            cancelText: "No");
-        if (confirmResult == true)
+        var parameters = new DialogParameters
             {
-            BtnUpdateExam ();            
+                { "MarkupMessage", message },
+                { "ButtonText", "Yes" },
+                { "CancelText", "No" }
+            };
+        var options = new DialogOptions 
+            { 
+                CloseButton = false,
+                BackdropClick = false,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
+        var dialogresult = await dialog.Result;
+        if (!dialogresult.Canceled)
+            {
+            await BtnUpdateExam ();            
             }
         appState.SetCmd ("");
         Navman.NavigateTo ("/T_Exams");

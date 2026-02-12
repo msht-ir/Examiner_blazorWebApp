@@ -36,9 +36,9 @@ else
                 </div>
                 <br />
                 <div class="d-flex justify-content-center">
-                    <MudChart ChartType="ChartType.Donut"
-                        InputData="@(new double[] {nTestsAnsweredCorrectly, (nTests - nTestsAnsweredCorrectly) })"
-                        InputLabels="@(new[] { "correct: "+ nTestsAnsweredCorrectly, "rest: " + (nTests - nTestsAnsweredCorrectly) })"
+                    <MudDonutChart
+                        Data="@(new double[] {nTestsAnsweredCorrectly, (nTests - nTestsAnsweredCorrectly) })"
+                        Labels="@(new[] { "correct: "+ nTestsAnsweredCorrectly, "rest: " + (nTests - nTestsAnsweredCorrectly) })"
                         Width="100px" Height="100px" />
                     <br /> 
                 </div>
@@ -125,9 +125,9 @@ else
                     </div>
                     <br /> 
                     <div class="d-flex justify-content-center">
-                        <MudChart ChartType="ChartType.Donut"
-                            InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
-                            InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
+                        <MudDonutChart
+                            Data="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
+                            Labels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
                             Width="100px" Height="100px" />
                         <br /> 
                     </div>

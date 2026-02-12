@@ -54,7 +54,7 @@ else
                     <MudCardContent Style="background-color:whitesmoke;">
                         <br />
                         <div class="d-flex">
-                            <MudSelect T="string" @ref="refWorksheets" Label="Worksheet" Value="WorksheetName" ValueChanged="@((string worcksheetname) => OnWorksheetChanged(worcksheetname))" Class="w-auto" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="font-size:small;">
+                            <MudSelect T="string" @ref="refWorksheets" Label="Worksheet" Value="WorksheetName" ValueChanged="@((string worcksheetname) => OnWorksheetChanged(worcksheetname))" Class="w-auto" Variant="Variant.Outlined" Margin="Margin.Dense" Style="font-size:small;">
                                 @foreach (string ws in lstWorksheets)
                                     {
                                     <MudSelectItem Value="@ws">@ws</MudSelectItem> 
@@ -88,12 +88,12 @@ else
             <h3>@course.CourseName</h3>
             @* SEARCH *@
             <div class="d-flex mb-3">
-                <MudTextField @ref="txtSearch" @bind-Value="strSearch" Label="Search tests..." Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                <MudTextField @ref="txtSearch" @bind-Value="strSearch" Label="Search tests..." Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
                 <button class="btn btn-link" @onclick="()=>BtnReadTestsBySearch()">
                     <img src="/img/icoSearch.png" width="25" title="search tests"/>
                 </button>
                 @* Paginate *@
-                    <MudNumericField @ref="refPageNumber" @bind-Value="intPendingPageNumber" Label="Page" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" style="max-width:80px;padding-left:10px" Min="1" />
+                    <MudNumericField T="int" @ref="refPageNumber" @bind-Value="intPendingPageNumber" Label="Page" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" style="max-width:80px;padding-left:10px" Min="1" />
                     <button class="btn btn-link  ms-2" @onclick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)">
                         <img src="/img/icoListT.png" width="38" title="goto page ..."/>
                     </button>
@@ -152,7 +152,7 @@ else
                     <MudCardContent Style="background-color:whitesmoke;">
                         <div style="font-weight:bold;color:royalblue;padding-bottom:5px;">Add tests to:</div>
                         <div class="d-flex">
-                            <MudSelect T="int" Label="Exam آزمون" @bind-Value="intExamId" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                            <MudSelect T="int" Label="Exam آزمون" @bind-Value="intExamId" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                 <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
                                 @foreach (Exam exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                             </MudSelect>

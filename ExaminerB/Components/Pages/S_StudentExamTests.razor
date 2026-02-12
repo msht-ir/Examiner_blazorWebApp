@@ -161,12 +161,22 @@ else
     public async Task BtnFinishExam(StudentExam studentExam)
         {
         var message = new MarkupString($"<hr><span style='font-weight:bold;color:indianred'>Finish</span> exam <strong>({studentExam.ExamTitle})</strong>?<br/><br/>Sure?<div style='text-align:center'><img src='/img/icoClock2.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(
-            title: "Finish Exam",
-            markupMessage: message,
-            yesText: "Yes ( Finish ! )",
-            cancelText: "Cancel");
-        if (confirmResult == true)
+        var parameters = new DialogParameters
+            {
+                { "MarkupMessage", message },
+                { "ButtonText", "Yes" },
+                { "CancelText", "No" }
+            };
+        var options = new DialogOptions 
+            { 
+                CloseButton = false,
+                BackdropClick = false,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
+        var dialogresult = await dialog.Result;
+        if (!dialogresult.Canceled)
             {
             bool result = await feService.Update_StudentExamTags(studentExam, "finishedOn");        
             Snackbar.Add("This exam Terminated!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
@@ -182,8 +192,22 @@ else
     public async Task BtnClearTagTestIsAnswered(StudentExamTest studentExamTest)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Clear</span>  your answer for this Test?<div style='text-align:center'><img src='/img/icoEraser.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
-        if (confirmResult == true)
+        var parameters = new DialogParameters
+            {
+                { "MarkupMessage", message },
+                { "ButtonText", "Yes" },
+                { "CancelText", "No" }
+            };
+        var options = new DialogOptions 
+            { 
+                CloseButton = false,
+                BackdropClick = false,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
+        var dialogresult = await dialog.Result;
+        if (!dialogresult.Canceled)
             {
             await feService.Update_StudentExamTestAnswer (studentExamTest.StudentExamTestId, 0);
             studentExamTest.StudentExamTestTags = (studentExamTest.StudentExamTestTags & ~4);

@@ -69,7 +69,7 @@ else
             @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
                 {
                 <div class="d-flex align-items-center ms-5">
-                    <MudNumericField @ref="refPageNumber" @bind-Value="intPendingPageNumber" Label="Page" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" style="width: 100px;padding-left:10px" />
+                    <MudNumericField T="int" @ref="refPageNumber" @bind-Value="intPendingPageNumber" Label="Page" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" style="width: 100px;padding-left:10px" />
                     <button class="btn btn-link  ms-2" @onclick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)">
                         <img src="/img/icoListT.png" width="38" />
                     </button>
@@ -165,9 +165,9 @@ else
                             </div>
                             <br /> 
                             <div class="d-flex justify-content-center">
-                            <MudChart ChartType="ChartType.Donut"
-                                InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
-                                InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
+                            <MudDonutChart
+                                Data="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
+                                Labels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
                                 Width="100px" Height="100px" />
                             <br /> 
                             </div>
@@ -184,7 +184,7 @@ else
                         <MudCardContent Style="background-color:whitesmoke;">
                             <div style="font-weight:bold;color:royalblue;padding-bottom:5px;">Add tests to:</div>
                             <div class="d-flex">
-                                <MudSelect T="int" Label="Exam آزمون" @bind-Value="intExamId" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                <MudSelect T="int" Label="Exam آزمون" @bind-Value="intExamId" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                     <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
                                     @foreach (Exam exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                                 </MudSelect>

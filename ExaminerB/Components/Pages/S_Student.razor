@@ -413,7 +413,7 @@
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                         @* SEARCH *@
                                         <div class="d-flex">
-                                            <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="search friends" Variant="Variant.Outlined" Autocomplete="off" Dense="true" Margin="Margin.Dense" Class="my-textfield" />
+                                            <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="search friends" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
                                             <button class="btn btn-link" Title=@((_help)?"Search my friends":"") @onclick="()=>BtnReadStudentsBySearch()">
                                                 <img src="/img/icoSearch.png" width="24" />
                                             </button>
@@ -673,12 +673,22 @@
                 _ => throw new ArgumentException($"Invalid mode: {mode}")
                 };        
         var message = new MarkupString($"{msg}");
-        bool? confirmResult = await DialogService.ShowMessageBox(
-            title: "Confirm Clear your data",
-            markupMessage: message,
-            yesText: "Yes",
-            cancelText: "No");
-        if (confirmResult == true)
+        var parameters = new DialogParameters
+            {
+                { "MarkupMessage", message },
+                { "ButtonText", "Yes" },
+                { "CancelText", "No" }
+            };
+        var options = new DialogOptions 
+            { 
+                CloseButton = false,
+                BackdropClick = false,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
+        var dialogresult = await dialog.Result;
+        if (!dialogresult.Canceled)
             {
             var result = await feService.Delete_StudentCourseTests (mode, studentCourse);
             //refresh
@@ -794,8 +804,22 @@
         {
         appState.SetClps ("M");
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Message? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
-        if (confirmResult == true)
+        var parameters = new DialogParameters
+            {
+                { "MarkupMessage", message },
+                { "ButtonText", "Yes" },
+                { "CancelText", "No" }
+            };
+        var options = new DialogOptions 
+            { 
+                CloseButton = false,
+                BackdropClick = false,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
+        var dialogresult = await dialog.Result;
+        if (!dialogresult.Canceled)
             {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags (studentMessage);
@@ -867,8 +891,22 @@
         {
         appState.SetClps ("CH");
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Message? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
-        if (confirmResult == true)
+        var parameters = new DialogParameters
+            {
+                { "MarkupMessage", message },
+                { "ButtonText", "Yes" },
+                { "CancelText", "No" }
+            };
+        var options = new DialogOptions 
+            { 
+                CloseButton = false,
+                BackdropClick = false,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
+        var dialogresult = await dialog.Result;
+        if (!dialogresult.Canceled)
             {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags (studentMessage);
@@ -924,8 +962,22 @@
         {
         appState.SetClps ("SN");
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> note? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
-        if (confirmResult == true)
+        var parameters = new DialogParameters
+            {
+                { "MarkupMessage", message },
+                { "ButtonText", "Yes" },
+                { "CancelText", "No" }
+            };
+        var options = new DialogOptions 
+            { 
+                CloseButton = false,
+                BackdropClick = false,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
+        var dialogresult = await dialog.Result;
+        if (!dialogresult.Canceled)
             {
             bool result = await feService.Delete_Note (noteId);
             if(result)

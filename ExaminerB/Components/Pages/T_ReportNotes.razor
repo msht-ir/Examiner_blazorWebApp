@@ -80,14 +80,14 @@
                                                 <h6 style="font-style:italic;color:royalblue">Move to:</h6>
                                                 @* COMBO Notebooks *@
                                                 <div class="d-flex">
-                                                    <MudSelect T="int" @ref="refProjects" Label="Notebooks" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                    <MudSelect T="int" @ref="refProjects" Label="Notebooks" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                         <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
                                                         @foreach (var project in lstProjects) { <MudSelectItem Value="@project.ProjectId">@project.ProjectName</MudSelectItem> }
                                                     </MudSelect>
                                                 </div>
                                                 @* COMBO Sections *@
                                                 <div class="d-flex">
-                                                    <MudSelect T="int" @ref="refSubprojects" Label="Sections" Value="SubprojectId" ValueChanged="OnSubprojectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                    <MudSelect T="int" @ref="refSubprojects" Label="Sections" Value="SubprojectId" ValueChanged="OnSubprojectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                         <MudSelectItem Value="0">Select a Section...</MudSelectItem>
                                                         @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
                                                     </MudSelect>
@@ -147,14 +147,14 @@
                                                 <h6 style="font-style:italic;color:royalblue">Move to:</h6>
                                                 @* COMBO Notebooks *@
                                                 <div class="d-flex">
-                                                    <MudSelect T="int" @ref="refProjects" Label="Notebooks" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                    <MudSelect T="int" @ref="refProjects" Label="Notebooks" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                         <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
                                                         @foreach (var project in lstProjects) { <MudSelectItem Value="@project.ProjectId">@project.ProjectName</MudSelectItem> }
                                                     </MudSelect>
                                                 </div>
                                                 @* COMBO Sections *@
                                                 <div class="d-flex">
-                                                    <MudSelect T="int" @ref="refSubprojects" Label="Sections" Value="SubprojectId" ValueChanged="OnSubprojectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                    <MudSelect T="int" @ref="refSubprojects" Label="Sections" Value="SubprojectId" ValueChanged="OnSubprojectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                         <MudSelectItem Value="0">Select a Section...</MudSelectItem>
                                                         @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
                                                     </MudSelect>
@@ -349,8 +349,22 @@
     public async Task BtnDeleteNote(int noteId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> note? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
-        if (confirmResult == true)
+        var parameters = new DialogParameters
+            {
+                { "MarkupMessage", message },
+                { "ButtonText", "Yes" },
+                { "CancelText", "No" }
+            };
+        var options = new DialogOptions 
+            { 
+                CloseButton = false,
+                BackdropClick = false,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
+        var dialogresult = await dialog.Result;
+        if (!dialogresult.Canceled)
             {
             bool result = await feService.Delete_Note (noteId);
             if(result)

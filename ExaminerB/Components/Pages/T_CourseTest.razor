@@ -40,7 +40,7 @@ else
             <div id="selectTopicComboBox" style="display: flex; gap: 20px; align-items: flex-start; background-color: whitesmoke; padding: 10px; border-radius: 12px;">  
                 @* 2- Combo: Topics *@
                 <div style="flex: 1; color: IndianRed;">
-                    <MudSelect T="int" Label="Topic" @bind-Value="@test.TopicId" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                    <MudSelect T="int" Label="Topic" @bind-Value="@test.TopicId" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                         @foreach (var topic in lstCourseTopics)
                             {
                             if (topic.CourseTopicId == test.TopicId)
@@ -65,7 +65,7 @@ else
                 </div>
                 @* 3- Combo: Levels *@
                 <div style="flex: 1; color: IndianRed;">
-                    <MudSelect T="int" Label="Level" @bind-Value="@test.TestLevel" Class="w-auto my-select" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                    <MudSelect T="int" Label="Level" @bind-Value="@test.TestLevel" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                          @for (int i = 1; i <= 5; i++)
                             {
                             int x = i;
@@ -302,12 +302,22 @@ else
     public async Task BtnDeleteTest ()
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> test? (test options will also be deleted) <br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(
-            title: "Confirm",
-            markupMessage: message,
-            yesText: "Yes",
-            cancelText: "No");
-        if (confirmResult == true)
+        var parameters = new DialogParameters
+            {
+                { "MarkupMessage", message },
+                { "ButtonText", "Yes" },
+                { "CancelText", "No" }
+            };
+        var options = new DialogOptions 
+            { 
+                CloseButton = false,
+                BackdropClick = false,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
+        var dialogresult = await dialog.Result;
+        if (!dialogresult.Canceled)
             {
             Snackbar.Add("updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             BtnBack ();            
@@ -358,12 +368,22 @@ else
     public async Task BtnDeleteTestOption (int testOptionId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> test option? <br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(
-            title: "Confirm",
-            markupMessage: message,
-            yesText: "Yes",
-            cancelText: "No");
-        if (confirmResult == true)
+        var parameters = new DialogParameters
+            {
+                { "MarkupMessage", message },
+                { "ButtonText", "Yes" },
+                { "CancelText", "No" }
+            };
+        var options = new DialogOptions 
+            { 
+                CloseButton = false,
+                BackdropClick = false,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
+        var dialogresult = await dialog.Result;
+        if (!dialogresult.Canceled)
             {
             bool result = await feService.Delete_TestOption (testOptionId);
             Snackbar.Add("deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
