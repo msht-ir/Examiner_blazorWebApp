@@ -42,6 +42,12 @@ else
             <div style="font-size:small;">@appState.StudentName - @appState.StudentNickname</div>
         </div>
         }
+    else if (appState.Cmd.ToLower() == "studentexamtestsanswers")
+        {
+        <div style="text-align:center">
+            <div style="font-size:small;">@appState.StudentName - @appState.StudentNickname</div>
+        </div>
+        }
     else if (appState.Cmd.ToLower() == "studentcoursetests")
         {
         <h4 style="text-align:center">@appState.Cmd</h4>                
@@ -346,7 +352,7 @@ else
                                             {
                                             @if((@lstQstns[qstn-1] == 1) & (@lstAnswr[qstn-1] == 1))
                                                 {
-                                                <div class="choice-box" style="background-color:darkg"></div>
+                                                <div class="choice-box" style="background-color:gray"></div>
                                                 }
                                             else if((@lstQstns[qstn-1] == 1) & (@lstAnswr[qstn-1] != 1))
                                                 {
@@ -446,15 +452,18 @@ else
                 <button class="btn btn-link" type="submit" @onclick="BtnBack">
                     <img src="/img/icoBack3.png" width="40" />
                 </button>
-                <button class="btn btn-link" @onclick="BtnShowRawAnswerSheet">
-                    <img src="/img/gifQRCode.gif" title="show raw answer sheet" alt="show raw answer sheet" width="45"/>
-                </button>
-                <button class="btn btn-link" @onclick="BtnShowTestKeys">
-                    <img src="/img/icoKeys.png" title="show student answers" alt="Show student answers" width="30"/>
-                </button>
-                <button class="btn btn-link" @onclick="BtnShowStudentAnswers">
-                    <img src="/img/icoReport1.png" title="show student answers" alt="Show student answers" width="30"/>
-                </button>
+                @if ((appState.Cmd == "studentexamtests") || (appState.Cmd == "studentexamtestsraw") || (appState.Cmd == "studentexamtestsanswers"))
+                    {
+                    <button class="btn btn-link" @onclick="BtnShowRawAnswerSheet">
+                        <img src="/img/gifQRCode.gif" title="show raw answer sheet" alt="show raw answer sheet" width="45"/>
+                    </button>
+                    <button class="btn btn-link" @onclick="BtnShowTestKeys">
+                        <img src="/img/icoKeys.png" title="show student answers" alt="Show student answers" width="30"/>
+                    </button>
+                    <button class="btn btn-link" @onclick="BtnShowStudentAnswers">
+                        <img src="/img/icoReport1.png" title="show student answers" alt="Show student answers" width="30"/>
+                    </button>
+                    }
             </div>
             <hr />
     </EditForm>
@@ -511,6 +520,7 @@ else
             {
             Navman.NavigateTo ("/Login");
             }
+        appState.SetTestId (0);
         await RefreshPageData ();
         StudentId = Convert.ToInt32(appState.UserId);
         stl = "";
@@ -717,21 +727,22 @@ else
         {
         BtnShowAnswers ();
         appState.SetCmd ("studentexamtestsraw");
-        Snackbar.Add("raw answer sheet", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        Snackbar.Add("raw sheet", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
     public async Task BtnShowStudentAnswers()
         {
         appState.SetCmd ("studentexamtestsanswers");
-        Snackbar.Add("student answers", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        Snackbar.Add("student sheet", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
     public async Task BtnShowTestKeys()
         {
         appState.SetCmd ("studentexamtests");
-        Snackbar.Add("tests keys", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        Snackbar.Add("keys", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
     public void BtnBack()
         {
-        Navman.NavigateTo (appState.ReturnPage);
+        appState.SetReturnPage((appState.ReturnPage == "/T_ReportTests") ? "/T_SwitchBoard" : appState.ReturnPage);
+        Navman.NavigateTo(appState.ReturnPage ?? "/T_SwitchBoard");
         }
     //method
     public async Task RefreshPageData()
@@ -792,6 +803,8 @@ else
                     break;
                     }
             case"studentexamtests":
+            case "studentexamtestsraw":
+            case "studentexamtestsanswers":
                     {
                     lstxTests.Clear ();
                     StudentExam studentExam = await feService.Read_StudentExam (Convert.ToInt32 (appState.StudentExamId), false);
@@ -804,7 +817,7 @@ else
             case "studentcoursetests":
                     {
                     lstxTests.Clear ();
-                    StudentCourse studentCourse = new StudentCourse ()
+                    StudentCourse studentCourse = new StudentCourse () 
                     {
                         StudentCourseId = Convert.ToInt32 (appState.StudentCourseId)
                     };

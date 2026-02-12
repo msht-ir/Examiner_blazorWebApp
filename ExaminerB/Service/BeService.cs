@@ -2668,7 +2668,6 @@ COMMIT TRANSACTION;
             }
         public async Task<bool> CalculatePoints_StudentExamsAsync (int studentexamid)
             {
-            Console.WriteLine ("Be.... Starting CALC...");
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try

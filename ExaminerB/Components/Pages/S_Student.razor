@@ -556,9 +556,9 @@
                     </div>
                 </div>
             </div>
+            <br />
+            <MudSwitch @bind-Value="_help" Label="help on mouse hover" Color="Color.Primary" Dense="true"></MudSwitch>
         </div>
-        <br />
-        <MudSwitch @bind-Value="_help" Label="help on mouse hover" Color="Color.Primary" Dense="true"></MudSwitch>
         <hr />
         <div style="text-align:center; margin-top:30px">
             <button class="btn btn-link" Title=@((_help)?"Exit":"") @onclick= "()=> BtnExit()">
@@ -595,15 +595,15 @@
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
-        {
+    {
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
-            {
+        {
             Navman.NavigateTo ("/Login");
-            }
+        }
         student.UserId = appState.UserId ?? 0;
         if(student.UserId > 0)
-            {
+        {
             //on first run, student.UserId is 0
             //student.UserId = appState.UserId ?? 0;
             await ReadCourseList();
@@ -615,51 +615,51 @@
             await ReadChatList ();
             await ReadNoteList ();
             _hasFetched = true;
-            }
         }
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
+    {
         if (firstRender && !hasScrolled)
-            {
+        {
             hasScrolled = true;
             await JS.InvokeVoidAsync("scrollToTop");
-            }
         }
+    }
     private void TriggerRender()
-        {
+    {
         InvokeAsync(StateHasChanged);
-        }
+    }
     public void Dispose()
-        {
+    {
         appState.OnChange -= TriggerRender;
-        }    
+    }    
     //btns for StudentCourses
     private void BtnTakeATest (int studentCourseId)
-        {
+    {
         appState.SetClps ("C");
         Navman.NavigateTo ($"S_StudentCourseTest/{student.UserId}/{studentCourseId}/new");
-        }
+    }
     private void BtnTryToCorrect (int studentCourseId)
-        {     
+    {     
         appState.SetClps ("C");
         Navman.NavigateTo ($"S_StudentCourseTest/{student.UserId}/{studentCourseId}/edit");
-        }
+    }
     private async Task BtnShowCourseFolders (StudentCourse studentCourse)
-        {
+    {
         appState.SetClps ("C");
         _hasFetched = false;
         appState.SetCmd ("ShowCourseFolders");
         appState.SetCourseId (studentCourse.CourseId);
         lstCourseFolders = await feService.Read_CourseFolders (studentCourse.CourseId);
         _hasFetched = true;
-        }
+    }
     private void BtnReportStudentCourseTests (int studentCourseId, string courseName)
-        {
+    {
         appState.SetClps ("C");
         Navman.NavigateTo ($"/S_ReportStudentCourse/{student.UserId}/{studentCourseId}/{courseName}");
-        }
+    }
     private async Task BtnFilterStudentCourseTests (StudentCourse studentCourse, string mode)
-        {
+    {
         //this code replaced by lambda equivalent
         // switch (mode)
         //     case "filter":{message = $"Filter out correct answers in Course ( {studentCourse.CourseName} ) \n just keep incorrect ones?";break;}
@@ -667,11 +667,11 @@
         //---lambda:
         appState.SetClps ("C");
         string msg = mode switch
-            {
-                "filter" => $"<hr><span style='color:indianred'>Filter out </span>your correct answers in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoFilter.png' width='40'/></div><br><hr>",
-                "wipeout" => $"<hr><span style='color:indianred'>Clear</span> all your sample tests in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>",
-                _ => throw new ArgumentException($"Invalid mode: {mode}")
-                };        
+        {
+            "filter" => $"<hr><span style='color:indianred'>Filter out </span>your correct answers in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoFilter.png' width='40'/></div><br><hr>",
+            "wipeout" => $"<hr><span style='color:indianred'>Clear</span> all your sample tests in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>",
+            _ => throw new ArgumentException($"Invalid mode: {mode}")
+        };        
         var message = new MarkupString($"{msg}");
         var parameters = new DialogParameters
             {
@@ -689,25 +689,38 @@
         var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
         var dialogresult = await dialog.Result;
         if (!dialogresult.Canceled)
-            {
+        {
             var result = await feService.Delete_StudentCourseTests (mode, studentCourse);
             //refresh
             lstStudentCourses = await feService.Read_StudentCourses (student.UserId, "ByStudentIdIgnoreInactiveCourses");
-            }
         }
+    }
     //btns for StudentExams
     public async Task BtnStartExam(StudentExam studentExam)
         {
         appState.SetClps ("E");
         //read ExamTags : is exam training? Yes:allow Help
         Exam exam = await feService.Read_Exam (studentExam.ExamId, false);
-        //keep ExamTags in appState (use in S-StudentExamTest page)
-        appState.SetExamTags (exam.ExamTags);
-        bool result = await feService.Update_StudentExamTags(studentExam, "startedOn");
-        if (result)
+        DateTime _examDateTimeStart = DateTime.ParseExact(exam.ExamDateTime, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+        DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);
+        if (_examDateTimeStart > DateTime.Now)
             {
-            appState.SetStudentExamId (studentExam.StudentExamId);
-            Navman.NavigateTo ($"/S_StudentExamTests");
+            Snackbar.Add($"exam will be started at {_examDateTimeStart}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        else if ( DateTime.Now > _examDateTimeFinish)
+            {
+            Snackbar.Add($"exam is finished at {_examDateTimeFinish}", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        else
+            {
+            //keep ExamTags in appState (use in S-StudentExamTest page)
+            appState.SetExamTags (exam.ExamTags);
+            bool result = await feService.Update_StudentExamTags(studentExam, "startedOn");
+            if (result)
+                {
+                appState.SetStudentExamId (studentExam.StudentExamId);
+                Navman.NavigateTo ($"/S_StudentExamTests");
+                }
             }
         }
     private void BtnReportExam(int studentExamId)

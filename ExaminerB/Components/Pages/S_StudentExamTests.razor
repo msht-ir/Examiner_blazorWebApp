@@ -18,34 +18,49 @@ else
     <EditForm Model="studentExam">
         <div class="container primary mt-5">
             <div class="card">
-                <h3 style="color:RoyalBlue">@appState.UserName</h3>
+                <h5 style="color:RoyalBlue">@appState.UserName</h5>
                 <div class="card-body">
                     <div class="accordion" id="accordionIndex">
                         <div class="accordion-item">
-                            <h2 class="accordion-header">
+                                <h4 class="accordion-header">
                                 <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
-                                    <h4>@studentExam.ExamTitle</h4>
+                                    <h5>exam info</h5>
                                 </button>
-                            </h2>
+                            </h4>
                             <div id="collapseZero" class="accordion-collapse collapse" data-bs-parent="#accordionIndex">
                                 <div class="accordion-body">
-                                    Course: <span style="color:indianred">@studentExam.CourseName </span><br />
-                                    <hr style="color:red"/>
-                                    @studentExam.ExamDateTime <br />
-                                    Tests: @studentExam.ExamNTests <br />
-                                    Time: @studentExam.ExamDuration min<br />
-                                    @if ((@studentExam.ExamTags & 1) == 1)
-                                        {
-                                        <h6 style="color:blue">Exam is active</h6>
-                                        }
-                                    @if ((@studentExam.ExamTags & 2) == 2)
-                                        {
-                                        <h6 style="color:green">Sample Tests mode</h6>
-                                        }
-                                    @if ((@studentExam.ExamTags & 4) == 4)
-                                        {
-                                        <h6 style="color:green">Training mode</h6>
-                                        }
+                                    <MudContainer Class="mt-2 px-0">
+                                        <MudCard Class="mx-0" elevation="2">
+                                            <MudCardContent Style="background-color: rgba(248,248,248);">
+                                                course: <span style="color:indianred">@studentExam.CourseName </span><br />
+                                                exam: <span style="color:indianred">@studentExam.ExamTitle </span><br />
+                                                <hr style="color:red"/>
+                                                @studentExam.ExamDateTime <br />
+                                                Tests: @studentExam.ExamNTests <br />
+                                                Time: @studentExam.ExamDuration min<br />
+                                                @if ((@studentExam.ExamTags & 1) == 1)
+                                                    {
+                                                    <h6 style="color:blue">Exam is active</h6>
+                                                    }
+                                                @if ((@studentExam.ExamTags & 2) == 2)
+                                                    {
+                                                    <h6 style="color:green">Sample Tests mode</h6>
+                                                    }
+                                                @if ((@studentExam.ExamTags & 4) == 4)
+                                                    {
+                                                    <h6 style="color:green">Training mode</h6>
+                                                    }
+                                                <hr style="color:red" />
+                                                <div class="d-flex align-items-center ms-5">
+                                                    <span style="font-weight:bold; margin-right:20px;">Alarm: </span>
+                                                    <MudNumericField T="int" @ref="refExamAlarm" @bind-Value="intExamAlarm" Label="min to timeout" Variant="Variant.Outlined" Min="0" Max="15" Margin="Margin.Dense" Class="my-textfield" style="width: 120px;padding-left:10px" />
+                                                    <button class="btn btn-link  ms-2" style="margin-right:30px;" @onclick="() => SetExamAlarm(intExamAlarm)">
+                                                        <img src="/img/icoSave2.png" width="24" />
+                                                    </button>
+                                                </div>
+                                            </MudCardContent>
+                                        </MudCard>
+                                    </MudContainer>
                                 </div>
                             </div>
                         </div>
@@ -112,6 +127,8 @@ else
     }
 
 @code {
+    private MudNumericField<int> refExamAlarm;
+    private int intExamAlarm;
     private bool _hasFetched = false;
     public User student = new User ();
     public Course course = new Course ();
@@ -133,9 +150,10 @@ else
             student.UserName = appState.UserName ?? "";
             studentExam.StudentExamId = Convert.ToInt32(appState.StudentExamId);
             studentExam = await feService.Read_StudentExam(studentExam.StudentExamId, false);
+            intExamAlarm = Convert.ToInt32 (appState.ExamAlarm);
             if (studentExam.StudentExamTests.Count == 0)
                 {
-                Snackbar.Add("exam is not active or exam has just expired!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("exam not active or exam expired", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 //old code:await JS.InvokeVoidAsync ("alert", "Exam is just expired!");
                 BtnBack ();
                 }
@@ -154,9 +172,24 @@ else
     //btns
     public async Task BtnShowTest(StudentExamTest studentExamTest, int testIndex)
         {
-        studentExamTest.StudentExamTestTags = (studentExamTest.StudentExamTestTags | 1);
-        bool result = await feService.Update_StudentExamTestTags(studentExamTest);        
-        Navman.NavigateTo ($"/S_StudentExamTest/{studentExamTest.StudentExamTestId}/{testIndex}");
+        //instead of qury the exam, try get examDT from an appstate!
+        Exam exam = await feService.Read_Exam(studentExam.ExamId, false);
+        DateTime _examDateTimeStart = DateTime.ParseExact(exam.ExamDateTime, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+        DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);
+        if (DateTime.Now > _examDateTimeFinish)
+            {
+            Snackbar.Add($"time is over", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        else
+            {
+            if (DateTime.Now > _examDateTimeFinish.AddMinutes(-1 * intExamAlarm))
+                {
+                Snackbar.Add($"... ALARM ...", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
+            studentExamTest.StudentExamTestTags = (studentExamTest.StudentExamTestTags | 1);
+            bool result = await feService.Update_StudentExamTestTags(studentExamTest);        
+            Navman.NavigateTo ($"/S_StudentExamTest/{studentExamTest.StudentExamTestId}/{testIndex}");
+            }
         }
     public async Task BtnFinishExam(StudentExam studentExam)
         {
@@ -228,5 +261,11 @@ else
             studentExam = await feService.Read_StudentExam(studentExam.StudentExamId, false);
             StateHasChanged();
             }
+        }
+    private void SetExamAlarm (int examAlarm)
+        {
+        appState.SetExamAlarm (examAlarm);
+        Snackbar.Add($"alarm: {examAlarm} min to time-out", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        StateHasChanged ();
         }
     }

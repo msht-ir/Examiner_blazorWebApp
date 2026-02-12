@@ -13,44 +13,50 @@
         <hr style="color:red" />
         <br />
         <br />
-        <table class="table table-borderless" style="text-align:center;align-content:center">
-            <tr>
-                <td>
-                    <button class="btn btn-link" @onclick="GotoGroupsStudents">
-                        <img src="/img/icoSwitchBoardStudents.png" width="80" />
-                    </button>
-                </td>
-                <td>
-                    <button class="btn btn-link" @onclick="GotoCourses">
-                        <img src="/img/icoSwitchBoardCourses.png" width="85" />
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button class="btn btn-link" @onclick="ReportUserNotes">
-                        <img src="/img/icoNoteReport.png" style="width:70px" />
-                    </button>
-                </td>
-                <td>
-                    <button class="btn btn-link" @onclick="GotoProjects">
-                        <img src="/img/icoSwitchBoardNoteBook.png" width="90" />
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button class="btn btn-link" @onclick="BtnCreateNote">
-                        <img src="/img/icoEditPen.png" style="width:55px" />
-                    </button>
-                </td>
-                <td>
-                    <button class="btn btn-link" @onclick="GotoLogin">
-                        <img src="/img/icoSwitchBoardExit.png" style="width:90px" />
-                    </button>
-                </td>
-            </tr>
-        </table>
+        <MudContainer Class="mt-2 px-0">
+            <MudCard Class="mx-0" elevation="2">
+                <MudCardContent Style="background-color: rgba(250,250,250);">
+                    <table class="table table-borderless" style="text-align:center;align-content:center">
+                        <tr>
+                            <td>
+                                <button class="btn btn-link" @onclick="GotoGroupsStudents">
+                                    <img src="/img/icoSwitchBoardStudents.png" width="80" />
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-link" @onclick="GotoCourses">
+                                    <img src="/img/icoSwitchBoardCourses.png" width="85" />
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button class="btn btn-link" @onclick="ReportUserNotes">
+                                    <img src="/img/icoNoteReport.png" style="width:70px" />
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-link" @onclick="GotoProjects">
+                                    <img src="/img/icoSwitchBoardNoteBook.png" width="90" />
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button class="btn btn-link" @onclick="BtnCreateNote">
+                                    <img src="/img/icoEditPen.png" style="width:55px" />
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-link" @onclick="GotoLogin">
+                                    <img src="/img/icoSwitchBoardExit.png" style="width:90px" />
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                </MudCardContent>
+            </MudCard>
+        </MudContainer>
         <br />
         @* <E_Projects /> *@
         @if (appState.Cmd == "CreateNote")

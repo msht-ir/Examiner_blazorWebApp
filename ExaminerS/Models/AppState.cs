@@ -20,6 +20,8 @@
         public void SetReturnPage (string _ReturnPage) { ReturnPage = _ReturnPage; OnChange?.Invoke (); }
         public bool? HelpOnHover {get; private set;}
         public void SetHelpOnHover (bool _HelpOnHover) { HelpOnHover = _HelpOnHover; OnChange?.Invoke (); }
+        public int? ExamAlarm { get; private set; }
+        public void SetExamAlarm (int _ExamAlarm) { ExamAlarm = _ExamAlarm; OnChange?.Invoke (); }
 
         //user (teacher|student)
         public int? TeacherId { get; private set; }

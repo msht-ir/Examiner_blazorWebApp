@@ -34,7 +34,7 @@
                         e<span style="font-style:italic;font-weight:bold;color:indianred">x</span>aminer developed by Majid SharifiTehrani<br />
                         <span style="font-size:smaller">assistant prof of plant ecology and systematics</span><br />
                         <br />
-                        JAN 2026<br />
+                        Feb 2026<br />
                     </div>
                 </div>
             </div>
@@ -62,8 +62,12 @@
                             </MudSelect>
                             }
                     </div>
-                    <MudTextField @ref="refUser" @bind-Value="user.UserName" Label="Username يوزر" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
-                    <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password پسورد" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" InputType="InputType.Password" />
+                    @* <div class="mb-3 d-flex gap-1">
+                        <MudTextField @ref="refUser" @bind-Value="user.UserName" Label="Username" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                        <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" InputType="InputType.Password" />
+                    </div> *@
+                    <MudTextField @ref="refUser" @bind-Value="user.UserName" Label="Username" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                    <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" InputType="InputType.Password" />
                 </MudCardContent>
             </MudCard>
         </MudContainer>    
@@ -75,6 +79,14 @@
     </EditForm>
 </div>
 <hr />
+@* <MudContainer Class="mt-2 px-0">
+    <MudCard Class="mx-0">
+        <MudCardContent Style="background-color:rgba(248,248,248, 1);max-width:500px;min-width:400px">
+            text here
+        </MudCardContent>
+    </MudCard>
+</MudContainer> *@
+
 <script>
     document.getElementById("txtUser").focus();
     document.getElementById("txtUser").addEventListener("keydown", function(event) {
