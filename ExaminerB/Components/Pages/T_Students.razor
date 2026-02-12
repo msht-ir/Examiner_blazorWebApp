@@ -543,7 +543,7 @@ else
         int result = await feService.Create_Student(student);
         if (result == 1)
             {
-            Snackbar.Add($"{user.UserNickname} Created!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"{user.UserNickname} created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             _cmd="";
             strSearch = user.UserName;
             user.UserName = ""; //clear text-area
@@ -552,7 +552,7 @@ else
             }
         else
             {
-            Snackbar.Add($"Failed to create student: {user.UserNickname} !", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed to create new student", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     public async Task BtnReadStudentsBySearch()
@@ -561,7 +561,7 @@ else
             {
             user.UserId = Convert.ToInt32 (appState.UserId);
             lstStudents = await feService.Read_StudentsByKeyword (user.UserId, strSearch, 0);
-            Snackbar.Add($"Students like '{strSearch}' listed...", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"students like '{strSearch}' listed...", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             StateHasChanged ();
             }
         }
@@ -570,18 +570,18 @@ else
         if(Id > 0)
             {
             lstStudents = await feService.Read_StudentsByGCEMId (Id, mode, 0);
-            Snackbar.Add($"{lstStudents.Count} Students listed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"{lstStudents.Count} students listed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             StateHasChanged ();
             }
         else
             {
             string? itemx = mode.ToLower() switch
                 {
-                    "s" =>  "Select a Student from list",
-                    "g" =>  "Select a Group from list",
-                    "c" =>  "Select a Course from list",
-                    "e" =>  "Select a Course, then select an Exam",
-                    "m" =>  "Select a Mesage from list",
+                    "s" =>  "select a Student from list",
+                    "g" =>  "select a Group from list",
+                    "c" =>  "select a Course from list",
+                    "e" =>  "select a Course, then select an Exam",
+                    "m" =>  "select a Mesage from list",
                     _ => null
                     };
             Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
@@ -655,13 +655,13 @@ else
         if (result)
             {
             lstGroups = await feService.Read_Groups (user, false);
-            Snackbar.Add($"Group {groupName} created!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"group {groupName} created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             _cmd="";
             StateHasChanged ();            
             }
         else
             {
-            Snackbar.Add($"Failed to create {groupName} !", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed to create {groupName}", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     private async Task BtnAddStudentsToGroup()
@@ -684,7 +684,7 @@ else
             }
         else
             {
-            Snackbar.Add ($"Failed!", Severity.Error);
+            Snackbar.Add ($"failed", Severity.Error);
             }
         }
     private async Task BtnEditGroup(int groupId)
@@ -707,7 +707,7 @@ else
             group.GroupName = strGroupName;
             group.UserId = Convert.ToInt32 (appState.UserId);
             bool Result = await feService.Update_Group(group);
-            Snackbar.Add($"Updated to: {group.GroupName}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"updated to: {group.GroupName}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             lstGroups.Clear ();
             lstGroups = await feService.Read_Groups (user, false); //refresh list
             _cmd = "";
@@ -760,7 +760,7 @@ else
             }
         else
             {
-            Snackbar.Add ($"Failed!", Severity.Error);
+            Snackbar.Add ($"failed", Severity.Error);
             }
         }
     private async Task BtnAddStudentsToExam()
@@ -784,7 +784,7 @@ else
             }
         else
             {
-            Snackbar.Add ($"Failed!", Severity.Error);
+            Snackbar.Add ($"failed", Severity.Error);
             }
         _hasFetched = true;
         }
@@ -819,7 +819,7 @@ else
                 }
             else
                 {
-                Snackbar.Add ($"Failed!", Severity.Error);
+                Snackbar.Add ($"failed", Severity.Error);
                 }
             _hasFetched = true;            
             }
@@ -832,7 +832,7 @@ else
             Navman.NavigateTo("/T_Courses");
             }
         else{
-            Snackbar.Add($"Select a course", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"select a course", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     private void BtnGotoExamsPage(int examId, string CourseName)
@@ -845,7 +845,7 @@ else
             Navman.NavigateTo ("/T_Exams");
             }
         else{
-            Snackbar.Add($"Select a course", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"select a course", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     //message
@@ -873,7 +873,7 @@ else
         else
             {
             _cmd = "HideMessageBody";
-            Snackbar.Add($"Select a Message", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"select a message", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         } 
     private void BtnAddNewMessage()
@@ -891,13 +891,13 @@ else
         if(result > 0)
             {
             lstMessages = await feService.Read_Messages (user.UserId, false);
-            Snackbar.Add($"Message {messageTitle} created!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"message {messageTitle} created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             _cmd="";
             StateHasChanged ();            
             }
         else
             {
-            Snackbar.Add($"Failed to create Message {messageTitle} !", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed to create message {messageTitle}", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     private async Task BtnAddStudentsToMessage()
@@ -916,11 +916,11 @@ else
         bool result = await feService.Create_StudentMessages(MessageId, lstStudentIds, requestFeedback);
         if (result)
             {
-            Snackbar.Add ($"Message sent to {_count} students", Severity.Success);
+            Snackbar.Add ($"message sent to {_count} students", Severity.Success);
             }
         else
             {
-            Snackbar.Add ($"Failed!", Severity.Error);
+            Snackbar.Add ($"failed", Severity.Error);
             }
         }
     private async Task BtnEditMessage(int messageId)
@@ -951,7 +951,7 @@ else
                 appState.SetMessageBody(thisMessage.MessageBody);
                 strNewMessageTitle = appState.MessageTitle;
                 strNewMessageBody = appState.MessageBody;
-                Snackbar.Add($"Updated to: {strNewMessageTitle}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"updated to: {strNewMessageTitle}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 _cmd="EditMessage";
                 StateHasChanged ();
                 }
@@ -965,7 +965,7 @@ else
             message.MessageTitle = strNewMessageTitle;
             message.MessageBody = strNewMessageBody;
             bool Result = await feService.Update_Message(message);
-            Snackbar.Add($"Updated to: {message.MessageTitle}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"updated to: {message.MessageTitle}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             lstMessages.Clear ();
             lstMessages = await feService.Read_Messages (user.UserId, false); //refresh list
             _cmd = "";
@@ -998,7 +998,7 @@ else
                 bool result = await feService.Delete_Messages ("ByMessageId", messageId);
                 if (result)
                     {
-                    Snackbar.Add ("Message deleted", Severity.Success);
+                    Snackbar.Add ("message deleted", Severity.Success);
                     MessageId = 0;
                     _cmd="HideMessageBody";
                     lstMessages = await feService.Read_Messages (user.UserId, false);
@@ -1006,13 +1006,13 @@ else
                     }
                 else
                     {
-                    Snackbar.Add ("Failed to delete message", Severity.Error);
+                    Snackbar.Add ("failed to delete message", Severity.Error);
                     }                
                 }
             }
         else
             {
-            Snackbar.Add ("Select a message", Severity.Warning);
+            Snackbar.Add ("select a message", Severity.Warning);
             }
         }
     //Notes
@@ -1043,10 +1043,10 @@ else
             {
             string? itemx = mode.ToLower() switch
                 {
-                    "s" =>  "Select a Student from List",
-                    "g" =>  "Select a Group from List",
-                    "c" =>  "Select a Course from List",
-                    "e" =>  "Select a Course, then select an Exam",
+                    "s" =>  "select a Student from List",
+                    "g" =>  "select a Group from List",
+                    "c" =>  "select a Course from List",
+                    "e" =>  "select a Course, then select an Exam",
                     _ => null
                     };
             Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
@@ -1150,7 +1150,7 @@ else
     public void BtnCancelSearchStudent()
         {
         lstStudents.Clear();
-        Snackbar.Add($"List cleared", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        Snackbar.Add($"list cleared", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         StateHasChanged ();
         }
     public void BtnGotoPageExamPoints(int examId)
@@ -1168,7 +1168,7 @@ else
             }
         else
             {
-            Snackbar.Add($"Select a course", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"select a course", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     public void BtnGotoPageExams()
@@ -1182,7 +1182,7 @@ else
             }
         else
             {
-            Snackbar.Add($"Select an exam", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"select an exam", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     public void BtnCancel()

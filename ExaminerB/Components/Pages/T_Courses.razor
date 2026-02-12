@@ -342,7 +342,7 @@
             }
         else
             {
-            Snackbar.Add($"Course did not created", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed to create course", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     public void BtnEditCourse(int courseId)
@@ -362,7 +362,7 @@
             }
         else
             {
-            Snackbar.Add("Course name did not changed!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("failed to update course name", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             //await JS.InvokeVoidAsync ("alert", "Course name did not changed --- process failed");
             }
         }
@@ -432,7 +432,7 @@
         int result = await feService.Create_CourseTopic (courseTopic);
         if (result>0)
             {
-            Snackbar.Add("Course Topic Created!", Severity.Success); //Severity.Warning .Error | .Info | .Success
+            Snackbar.Add("course topic created", Severity.Success); //Severity.Warning .Error | .Info | .Success
             //old code: await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
             lstCourses = await feService.Read_Courses (user.UserId);
             appState.SetCmd ("");
@@ -440,7 +440,7 @@
             }
         else
             {
-            Snackbar.Add($"Course Topic did not changed", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed to create course topic", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }        
         }
     public async Task BtnUpdateCourseTopic(CourseTopic courseTopic)
@@ -451,13 +451,13 @@
             await inputRefs[courseTopic.CourseTopicId].FocusAsync();
             StateHasChanged ();
             //needs: @inject ISnackbar Snackbar
-            Snackbar.Add("Course Topic Updated Successfully!", Severity.Success); //Severity.Warning .Error | .Info | .Success
+            Snackbar.Add("course topic updated", Severity.Success); //Severity.Warning .Error | .Info | .Success
             }
         }
     public async Task BtnDeleteCourseTopic(int courseTopicId)
         {
         //needs: @inject ISnackbar Snackbar
-        Snackbar.Add("This feature is not available at this time.", Severity.Warning); //Severity.Warning .Error | .Info | .Success
+        Snackbar.Add("not available in this version", Severity.Warning); //Severity.Warning .Error | .Info | .Success
         //old code: await JS.InvokeVoidAsync ("alert", "Topics can not be Deleted \n\n-- This feature is not available at this time.");
         }
     public void BtnListCourseTopicTests(CourseTopic courseTopic)
@@ -496,7 +496,7 @@
             }
         else
             {
-            Snackbar.Add($"CourseFolder did not saved", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed to save course folder", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }        
         appState.SetCourseId (courseId);
         _hasFetched = true;

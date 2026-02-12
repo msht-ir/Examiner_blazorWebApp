@@ -675,7 +675,7 @@ else
         {
         if (intExamId <= 0)
             {
-            Snackbar.Add("Select an exam!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select an exam", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             //await JS.InvokeVoidAsync ("alert", "");            
             }
         else
@@ -697,7 +697,7 @@ else
                 }
             //appState.SetCmd ("coursetests");
             StateHasChanged ();            
-            Snackbar.Add($"\n\n{testCount} Tests was added to the Exam Successfully", Severity.Success); //{Severity.Warning .Error | .Info | .Success} --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"\n\n{testCount} tests added to exam", Severity.Success); //{Severity.Warning .Error | .Info | .Success} --needs: @inject ISnackbar Snackbar
             //old code: await JS.InvokeVoidAsync ("alert", $"\n\n{testCount} Tests was added to the Exam Successfully")
             }
         }
@@ -709,7 +709,7 @@ else
             }
         else
             {
-            Snackbar.Add("Select an exam!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select an exam", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             //await JS.InvokeVoidAsync ("alert", "");            
             }
         }
@@ -717,17 +717,17 @@ else
         {
         BtnShowAnswers ();
         appState.SetCmd ("studentexamtestsraw");
-        Snackbar.Add("raw answer sheet is shown", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        Snackbar.Add("raw answer sheet", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
     public async Task BtnShowStudentAnswers()
         {
         appState.SetCmd ("studentexamtestsanswers");
-        Snackbar.Add("student answers are shown", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        Snackbar.Add("student answers", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
     public async Task BtnShowTestKeys()
         {
         appState.SetCmd ("studentexamtests");
-        Snackbar.Add("tests keys are shown", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        Snackbar.Add("tests keys", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
     public void BtnBack()
         {

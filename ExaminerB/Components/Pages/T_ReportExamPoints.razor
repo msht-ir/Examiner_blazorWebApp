@@ -221,11 +221,11 @@ else
             {
             string? itemx = mode.ToLower() switch
                 {
-                    "s" =>  "Select a Student from list",
-                    "g" =>  "Select a Group from list",
-                    "c" =>  "Select a Course from list",
-                    "e" =>  "Select a Course, then select an Exam",
-                    "m" =>  "Select a Mesage from list",
+                    "s" =>  "select a Student from list",
+                    "g" =>  "select a Group from list",
+                    "c" =>  "select a Course from list",
+                    "e" =>  "select a Course, then select an Exam",
+                    "m" =>  "select a Mesage from list",
                     _ => null
                     };
             Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
@@ -249,7 +249,7 @@ else
         else
             {
             //needs: @inject ISnackbar Snackbar --at top of page
-            Snackbar.Add("List of Students (for this Exam) is Empty!", Severity.Warning); //Severity.Error | Severity.Info | Severity.Success
+            Snackbar.Add("students list is empty", Severity.Warning); //Severity.Error | Severity.Info | Severity.Success
             //--old code was: await JS.InvokeVoidAsync ("alert", "List of Students (for this Exam) is Empty!");
             BtnBack ();
             }

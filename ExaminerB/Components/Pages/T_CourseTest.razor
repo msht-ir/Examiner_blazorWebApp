@@ -296,6 +296,7 @@ else
         bool results = await feService.Update_Test (test);
         if (results)
             {
+            Snackbar.Add("test updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             StateHasChanged ();
             }
         }
@@ -406,7 +407,7 @@ else
             int result = await feService.Create_ExamTest (examTest);
             if (result > 0)
                 {
-                Snackbar.Add("TEST added to the exam Successfully!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("test added to the exam", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 //await JS.InvokeVoidAsync ("alert", "");
                 test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
                 appState.SetCmd ("");
@@ -415,7 +416,7 @@ else
             }
         else
             {
-            Snackbar.Add("Select an exam!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select an exam", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     //Exit

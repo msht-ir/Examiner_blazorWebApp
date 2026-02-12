@@ -254,7 +254,7 @@
                 {
                 appState.SetCmd ("");
                 lstCourseExams = await feService.Read_Exams(course.CourseId);
-                Snackbar.Add("Exam deleted!", Severity.Warning); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("exam deleted", Severity.Warning); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 StateHasChanged ();
                 }
             }

@@ -130,7 +130,7 @@
         {
         if (note.NoteText.Trim() == "")
             {
-            Snackbar.Add("Note is empty!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("note is empty!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             return;
             }
         else
@@ -148,14 +148,14 @@
             int result = await feService.Create_Note (note);
             if(result > 0)
                 {
-                Snackbar.Add("Saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 user.UserId = Convert.ToInt32(appState.UserId);
                 appState.SetCmd("");
                 await Close ();
                 }
             else
                 {
-                Snackbar.Add("Failed to save note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed to save note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             _hasFetched = true;
             }
@@ -164,7 +164,7 @@
         {
         if (note.NoteText.Trim() == "")
             {
-            Snackbar.Add("Note is empty!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("note is empty", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             return;
             }
         else
@@ -184,14 +184,14 @@
             bool result = await feService.Update_Note (note);
             if(result)
                 {
-                Snackbar.Add("Updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 user.UserId = Convert.ToInt32(appState.UserId);
                 appState.SetCmd("");
                 await Close ();
                 }
             else
                 {
-                Snackbar.Add("Failed to Update note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed to update note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             _hasFetched = true;
             }

@@ -345,7 +345,7 @@ else
         {
         if (intExamId <= 0)
             {
-            Snackbar.Add("Select an exam!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select an exam", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             //await JS.InvokeVoidAsync ("alert", "");            
             }
         else
@@ -367,7 +367,7 @@ else
                 }
             //appState.SetCmd ("coursetests");
             StateHasChanged ();            
-            Snackbar.Add($"\n\n{testCount} Tests was added to the Exam Successfully", Severity.Success); //{Severity.Warning .Error | .Info | .Success} --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"\n\n{testCount} tests added to the exam", Severity.Success); //{Severity.Warning .Error | .Info | .Success} --needs: @inject ISnackbar Snackbar
             //old code: await JS.InvokeVoidAsync ("alert", $"\n\n{testCount} Tests was added to the Exam Successfully")
             }
         }
@@ -379,7 +379,7 @@ else
             }
         else
             {
-            Snackbar.Add("Select an exam!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select an exam", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             //await JS.InvokeVoidAsync ("alert", "");            
             }
         }
@@ -499,7 +499,7 @@ else
             lstWorksheets.Clear ();
             lstCourseTests.Clear ();
             lstCourseTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), intPageNumber, false);
-            Snackbar.Add("worksheet data imported", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("data imported", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             _hasFetched = true;
             appState.SetCmd ("");
             }

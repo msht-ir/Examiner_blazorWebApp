@@ -267,7 +267,7 @@
                 }
             else
                 {
-                Snackbar.Add($"Failed to delete note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"failed to delete chat", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             }
         }
@@ -289,7 +289,7 @@
         {
         if (chat.ChatText.Trim() == "")
             {
-            Snackbar.Add("Text is empty!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("text is empty!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             return;
             }
         else
@@ -304,7 +304,7 @@
             int result = await feService.Create_Chat (chat);
             if(result > 0)
                 {
-                Snackbar.Add("Saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 _cmd = "";
                 lstChats.Clear ();
                 lstChats = await feService.Read_ChatsWithOneMate (studentId, chatMateId);
@@ -312,7 +312,7 @@
                 }
             else
                 {
-                Snackbar.Add("Failed to save chat!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed to save chat", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             _hasFetched = true;
 

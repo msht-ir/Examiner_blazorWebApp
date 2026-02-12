@@ -425,7 +425,7 @@ else
             if(result)
                 {
                 int id = Convert.ToInt32 (Id);
-                Snackbar.Add("Deleted.", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("deleted", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 lstStudentMessages.Clear();
                 lstStudentMessages = await feService.Read_StudentMessages (Id, "ByStudentId");
                 appState.SetCmd("");
@@ -433,7 +433,7 @@ else
                 }
             else
                 {
-                Snackbar.Add("Message was not Deleted.", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed to delete message", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }            
             }
         }
@@ -522,7 +522,7 @@ else
             bool result = await feService.Delete_Messages ("ByStudentMesssageId", studentMessageId);
             if(result)
                 {
-                Snackbar.Add("Deleted", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("deleted", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 int id = Convert.ToInt32 (Id);
                 lstStudentMessages.Clear();
                 lstStudentMessages = await feService.Read_StudentMessages (Id, "ByStudentId");
@@ -531,7 +531,7 @@ else
                 }
             else
                 {
-                Snackbar.Add("Message was not Deleted.", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed to delete message", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             }
         }
@@ -560,7 +560,7 @@ else
             if(result)
                 {
                 int id = Convert.ToInt32 (Id);
-                Snackbar.Add("Deleted.", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("deleted.", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 lstStudentMessages.Clear();
                 lstStudentMessages = await feService.Read_StudentMessages (Id, "ByStudentId");
                 appState.SetCmd("");
@@ -568,7 +568,7 @@ else
                 }
             else
                 {
-                Snackbar.Add("Message was not Deleted.", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed to delete message", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }            
             }
         }    
@@ -671,7 +671,7 @@ else
                 }
             else
                 {
-                Snackbar.Add($"Failed to delete note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"failed to delete note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             }
         }

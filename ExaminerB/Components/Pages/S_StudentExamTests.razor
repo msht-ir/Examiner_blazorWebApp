@@ -179,7 +179,7 @@ else
         if (!dialogresult.Canceled)
             {
             bool result = await feService.Update_StudentExamTags(studentExam, "finishedOn");        
-            Snackbar.Add("This exam Terminated!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("exam terminated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             Navman.NavigateTo ("/S_Student");
             }
         //old code: if(await JS.InvokeAsync<bool>("confirm",$"Finish exam ( {studentExam.ExamTitle} ) ?\n\n Sure?")){}

@@ -293,7 +293,7 @@ else
             if(result)
                 {
                 int id = Convert.ToInt32 (Id);
-                Snackbar.Add("Deleted", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("deleted", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 lstStudents.Clear();
                 switch (mode)
                     {
@@ -318,7 +318,7 @@ else
                 }
             else
                 {
-                Snackbar.Add("Failed1", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }  
             _hasFetched = true;                               
             }
@@ -348,13 +348,13 @@ else
             bool result = await feService.Update_StudentExamTags (studentExam, "finishedOn");
             if(result)
                 {
-                Snackbar.Add("Set as Finished", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("set as finished", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 appState.SetCmd("");
                 StateHasChanged();
                 }
             else
                 {
-                Snackbar.Add("Failed", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             }
         }
@@ -381,13 +381,13 @@ else
             bool result = await feService.Update_StudentExamTags (studentExam, "finishedOff");
             if(result)
                 {
-                Snackbar.Add("Activated", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("activated", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 appState.SetCmd("");
                 StateHasChanged();
                 }
             else
                 {
-                Snackbar.Add("Failed", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }                     
             }
         }
@@ -396,11 +396,11 @@ else
         bool result = await feService.Update_Student (student);
         if (result)
             {
-            Snackbar.Add($"Saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         else
             {
-            Snackbar.Add($"Failed!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     private async Task BtnUpdateStudentCourseTags(StudentCourse studentCourse)
@@ -408,11 +408,11 @@ else
         bool result = await feService.Update_StudentCourse (studentCourse);
         if (result)
             {
-            Snackbar.Add($"Saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         else
             {
-            Snackbar.Add($"Failed!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
 
         }
@@ -421,11 +421,11 @@ else
         bool result = await feService.Update_StudentExam (studentExam);
         if (result)
             {
-            Snackbar.Add($"Saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         else
             {
-            Snackbar.Add($"Failed!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     public void BtnBack()

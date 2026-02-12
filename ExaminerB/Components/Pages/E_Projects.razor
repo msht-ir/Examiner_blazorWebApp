@@ -258,12 +258,13 @@ else
                                                                     <img src="/img/icoDelete1.png" width="22" title="delete section" />
                                                                 </button>
                                                             </div>
-                                                            <div>
-                                                                <button class="btn btn-link" @onclick="()=>BtnCreateNewSubprojectNote(subProject)">
-                                                                    <img src="/img/icoAdd0.png" width="22" title="new note"/>
-                                                                </button>
+                                                            <hr style="color:blue"/>
+                                                            <div style="text-align:center">
                                                                 <button class="btn btn-link" @onclick="()=>BtnReadSubprojectNote(subProject)">
-                                                                    <img src="/img/icoListN.png" width="36" title="show notes"/>
+                                                                    <img src="/img/icoListN.png" width="32" title="show notes"/>
+                                                                </button>
+                                                                <button class="btn btn-link" @onclick="()=>BtnCreateNewSubprojectNote(subProject)">
+                                                                    <img src="/img/icoAdd0.png" width="20" title="new note"/>
                                                                 </button>
                                                             </div>
                                                             <div style="text-align: center;">
@@ -588,7 +589,22 @@ else
         }
     private async Task BtnDeleteProject(int projectId)
         {
-        if (await JS.InvokeAsync<bool>("confirm", "\n\nDelete this project?"))
+        var parameters = new DialogParameters
+            {
+                { "MarkupMessage",  new MarkupString($"<hr><span style='color:indianred'>Delete</span> notebook <span style='color:royalblue'>{project.ProjectName}</span> ?<br><br><span style='font-weight:bold'>All</span> notes in this section will also be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>") },
+                { "ButtonText", "Yes" },
+                { "CancelText", "No" }
+            };
+        var options = new DialogOptions 
+            { 
+                CloseButton = false,
+                BackdropClick = false,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
+        var dialogresult = await dialog.Result;
+        if (!dialogresult.Canceled)
             {
             bool result = await feService.Delete_Project (projectId);
             if (result)
@@ -611,7 +627,7 @@ else
                 }
             else
                 {
-                Snackbar.Add($"There are subProjects in this Project!!!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"there are sections in this notebook", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             }
         }
@@ -680,7 +696,7 @@ else
         int result = await feService.Create_Subproject (subProject);
         if (result > 0)
             {
-            Snackbar.Add($"New subProject : {subProject.SubprojectName} created!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"new section : {subProject.SubprojectName} created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             // Refresh the list
             var user = new User
             {
@@ -696,7 +712,7 @@ else
             }
         else
             {
-            Snackbar.Add($"Failed to create new subProject!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed to create new section", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     public async Task BtnUpdateSubproject(Subproject subProject)
@@ -761,7 +777,7 @@ else
             }
         else
             {
-            Snackbar.Add($"Failed to remove section!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed to remove section!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     public void BtnReportSubproject(Subproject subProject)
@@ -803,10 +819,10 @@ else
         }
     public async Task BtnUpdateSubprojectNote(int subProjectId)
         {
-            ///////////ABANDONED : now there is a modal to update note.
+        ///////////ABANDONED : now there is a modal to update note.
         if (note.NoteText.Trim() == "")
             {
-            Snackbar.Add("Note is empty!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("note is empty!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             return;
             }
         else
@@ -820,7 +836,7 @@ else
             bool result = await feService.Update_Note (note);
             if(result)
                 {
-                Snackbar.Add("Updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 user.UserId = Convert.ToInt32(appState.UserId);
                 await GetListOfProjects (user.UserId, _ShowProjectsMode);
                 appState.SetCmd("");
@@ -828,7 +844,7 @@ else
                 }
             else
                 {
-                Snackbar.Add("Failed to update note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed to update note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             _hasFetched = true;
             }
@@ -887,7 +903,7 @@ else
                 }
             else
                 {
-                Snackbar.Add("Failed to copy note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed to copy note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             _hasFetched = true;    
             }
@@ -927,7 +943,7 @@ else
                 }
             else
                 {
-                Snackbar.Add($"Failed to delete note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"failed to delete note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             }
         }
@@ -936,7 +952,7 @@ else
         //delete all subprojects of a Project
         if(0 == 0)
             {
-            Snackbar.Add($"Select a Course from List", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"select a course", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             return;
             }
         else
@@ -944,13 +960,13 @@ else
             //bool result = await feService.Delete_SubprojectNote (0, groupId);
             if(0==0)
                 {
-                Snackbar.Add($"All Subprojects in this Project are removed from the course.", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"all sections in this notebook are removed from the course.", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 appState.SetCmd("");
                 StateHasChanged();
                 }
             else
                 {
-                Snackbar.Add($"Students did not removed from the course", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"students did not removed from the course", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             }
         }

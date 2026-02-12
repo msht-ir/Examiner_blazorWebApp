@@ -77,10 +77,9 @@
                                             <hr />
                                             @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId)==notex.NoteId))
                                                 {
-                                                <h6 style="font-style:italic;color:royalblue">Move to:</h6>
                                                 @* COMBO Notebooks *@
                                                 <div class="d-flex">
-                                                    <MudSelect T="int" @ref="refProjects" Label="Notebooks" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                    <MudSelect T="int" @ref="refProjects" Label="Move to notebook" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                         <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
                                                         @foreach (var project in lstProjects) { <MudSelectItem Value="@project.ProjectId">@project.ProjectName</MudSelectItem> }
                                                     </MudSelect>
@@ -91,10 +90,10 @@
                                                         <MudSelectItem Value="0">Select a Section...</MudSelectItem>
                                                         @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
                                                     </MudSelect>
-                                                    <button class="btn btn-link" Title="Select Section") @onclick='()=>BtnSelectSection(SubprojectId, notex.NoteId)'>
-                                                        <img src="/img/icoLink.png" width="30" />
+                                                    <button class="btn btn-link" Title="move!") @onclick='()=>BtnSelectSection(SubprojectId, notex.NoteId)'>
+                                                <img src="/img/icoMoveToNoteBook.png" width="32" />
                                                     </button>
-                                                    <button class="btn btn-link" Title="Select Section") @onclick='()=>BtnCancel()'>
+                                                    <button class="btn btn-link" Title="cancel") @onclick='()=>BtnCancel()'>
                                                         <img src="/img/icoCancel.png" width="20" />
                                                     </button>
                                                 </div>
@@ -109,7 +108,7 @@
                                                         <img src="/img/icoRename.png" width="28"  title="ويرايش يادداشت"/>
                                                     </button>
                                                     <button class="btn btn-link" @onclick="()=>BtnMoveNoteToNotebook(notex.NoteId)">
-                                                        <img src="/img/icoLink.png" width="30" title="انتقال يادداشت به دفترچه" />
+                                                <img src="/img/icoMoveToNoteBook.png" width="32" title="انتقال يادداشت به دفترچه" />
                                                     </button>
                                                     <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
                                                         <img src="/img/icoDelete1.png" width="22" title="حذف يادداشت"/>
@@ -144,10 +143,9 @@
                                             <hr />
                                             @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId)==notex.NoteId))
                                                 {
-                                                <h6 style="font-style:italic;color:royalblue">Move to:</h6>
                                                 @* COMBO Notebooks *@
                                                 <div class="d-flex">
-                                                    <MudSelect T="int" @ref="refProjects" Label="Notebooks" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                    <MudSelect T="int" @ref="refProjects" Label="Move to notebook" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                         <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
                                                         @foreach (var project in lstProjects) { <MudSelectItem Value="@project.ProjectId">@project.ProjectName</MudSelectItem> }
                                                     </MudSelect>
@@ -158,10 +156,10 @@
                                                         <MudSelectItem Value="0">Select a Section...</MudSelectItem>
                                                         @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
                                                     </MudSelect>
-                                                    <button class="btn btn-link" Title="Select Section") @onclick='()=>BtnSelectSection(SubprojectId, notex.NoteId)'>
-                                                        <img src="/img/icoLink.png" width="30" />
+                                                    <button class="btn btn-link" Title="move!") @onclick='()=>BtnSelectSection(SubprojectId, notex.NoteId)'>
+                                                <img src="/img/icoMoveToNoteBook.png" width="32" />
                                                     </button>
-                                                    <button class="btn btn-link" Title="Select Section") @onclick='()=>BtnCancel()'>
+                                                    <button class="btn btn-link" Title="cancel") @onclick='()=>BtnCancel()'>
                                                         <img src="/img/icoCancel.png" width="20" />
                                                     </button>
                                                 </div>
@@ -176,7 +174,7 @@
                                                         <img src="/img/icoRename.png" width="28" title="edit note"/>
                                                     </button>
                                                     <button class="btn btn-link" @onclick="()=>BtnMoveNoteToNotebook(notex.NoteId)">
-                                                        <img src="/img/icoLink.png" width="30" title="move note to a notebook"/>
+                                                <img src="/img/icoMoveToNoteBook.png" width="32" title="move note to a notebook" />
                                                     </button>
                                                     <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
                                                         <img src="/img/icoDelete1.png" width="22" title="delete note"/>
@@ -290,13 +288,13 @@
         bool result = await feService.Update_NoteParent (_note);
         if(result)
             {
-            Snackbar.Add("note moved to Notebook", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("note moved to notebook", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             _cmd = "";
             StateHasChanged ();
             }
         else
             {
-            Snackbar.Add("Failed", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("failed", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     private void BtnCancel()

@@ -44,7 +44,7 @@
                             data-bs-target="#CollapseId2"
                             aria-expanded="false"
                             aria-controls="CollapseId2" style="background-color:WhiteSmoke">
-                            <h4>Courses <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentCourses.Count )</span></h4>
+                            <h4>courses <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentCourses.Count )</span></h4>
                         </button>
                     </h4>
                     @if (appState.Clps=="C")
@@ -134,7 +134,7 @@
                             data-bs-target="#CollapseId1"
                             aria-expanded="false"
                             aria-controls="CollapseId1" style="background-color:whitesmoke">
-                            <h4>Exams <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentExams.Count )</span></h4>
+                            <h4>exams <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentExams.Count )</span></h4>
                         </button>
                     </h4>
                     @if (appState.Clps=="E")
@@ -149,7 +149,7 @@
                         <div class="accordion-body" style="background-color:white">
                             <div style="text-align:center">
                                 <button class="btn btn-link align-items-center" Title=@((_help)?"message statistics":"") @onclick="ReadExamList">
-                                    <img src="/img/gifUserLogin.gif" width="30" title="Refresh chat list" />
+                                    <img src="/img/gifUserLogin.gif" width="30" title="refresh exams" />
                                 </button>
                             </div>
                             <div id="T1">
@@ -224,7 +224,7 @@
                             aria-expanded="false"
                             aria-controls="CollapseId3" style="background-color:WhiteSmoke">
                             <h4>
-                                Messages <span style="font-weight:bold;font-size:x-small;color:indianred">( @unreadMessageCount <span style="color:blue">/@lstStudentMessages.Count</span> )</span>
+                                messages <span style="font-weight:bold;font-size:x-small;color:indianred">( @unreadMessageCount <span style="color:blue">/@lstStudentMessages.Count</span> )</span>
                             </h4>
                         </button>
                     </h4>
@@ -352,7 +352,7 @@
                         aria-expanded="false"
                         aria-controls="CollapseId4" style="background-color:WhiteSmoke">
                         @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
-                        <h4>Chats<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChats.Count ) </span></span></h4>
+                        <h4>chats<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChats.Count ) </span></span></h4>
                     </button>
                 </h4>
                 @if (appState.Clps=="CH")
@@ -368,7 +368,7 @@
                         <div id="T3">
                             <div style="text-align:center">
                                 <button class="btn btn-link align-items-center" Title=@((_help)?"message statistics":"") @onclick="ReadMessageList">
-                                    <img src="/img/gifUserLogin.gif" width="30" title="Refresh chat list" />
+                                    <img src="/img/gifUserLogin.gif" width="30" title="refresh chats" />
                                 </button>
                             </div>
                             @* list chats *@
@@ -447,7 +447,7 @@
                         aria-expanded="false"
                         aria-controls="CollapseId5" style="background-color:WhiteSmoke">
                         @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
-                        <h4>Notes<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstNotes.Count ) </span></span></h4>
+                        <h4>notebook<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstNotes.Count ) </span></span></h4>
                     </button>
                 </h4>
                 @if (appState.Clps=="SN")
@@ -560,7 +560,7 @@
         <br />
         <MudSwitch @bind-Value="_help" Label="help on mouse hover" Color="Color.Primary" Dense="true"></MudSwitch>
         <hr />
-        <div style="text-align:center">
+        <div style="text-align:center; margin-top:30px">
             <button class="btn btn-link" Title=@((_help)?"Exit":"") @onclick= "()=> BtnExit()">
                 <img src="/img/icoLogout1.png" style="width:60px" />
             </button>
@@ -750,12 +750,12 @@
             {
             case 0:
                     {
-                    Snackbar.Add("Bookmark removed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+                    Snackbar.Add("bookmark removed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
                     break;
                     }
             case 1:
                     {
-                    Snackbar.Add("Message Bookmarked", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+                    Snackbar.Add("message bookmarked", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
                     break;
                     }
             }
@@ -823,7 +823,7 @@
             {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags (studentMessage);
-            Snackbar.Add("Deleted", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("deleted", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             await ReadMessageList ();
             }
         StateHasChanged ();                
@@ -858,7 +858,7 @@
             {
             int teacherId = Convert.ToInt32(appState.TeacherId);
             lstStudents = await feService.Read_StudentsByKeyword (teacherId, strSearch, 0);
-            Snackbar.Add($"Students like '{strSearch}' listed...", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"students like '{strSearch}' listed...", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             StateHasChanged ();
             }
         }
@@ -910,7 +910,7 @@
             {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags (studentMessage);
-            Snackbar.Add("Deleted", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("deleted", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             await ReadMessageList ();
             }
         StateHasChanged ();                
@@ -993,7 +993,7 @@
                 }
             else
                 {
-                Snackbar.Add($"Failed to delete note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"failed to delete note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             }
         }
@@ -1003,35 +1003,35 @@
         student.UserId = appState.UserId ?? 0;
         lstStudentCourses.Clear ();
         lstStudentCourses = await feService.Read_StudentCourses (student.UserId, "ByStudentIdIgnoreInactiveCourses");
-        Snackbar.Add("course list refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        //Snackbar.Add("refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
     private async Task ReadExamList()
         {
         student.UserId = appState.UserId ?? 0;
         lstStudentExams.Clear ();
         lstStudentExams = await feService.Read_StudentExams(student.UserId, "ByStudentId")?? new List<StudentExam>();
-        Snackbar.Add("exam list refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        //Snackbar.Add("refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
     private async Task ReadMessageList()
         {
         lstStudentMessages = await feService.Read_StudentMessages (student.UserId, "ByStudentIdIgnoreDeletedMessages");        
         //first bit: 0 = unread, 1 = read
         unreadMessageCount = lstStudentMessages.Count(m => (m.StudentMessageTags & (1 << 1)) == 0);
-        Snackbar.Add("message list refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        //Snackbar.Add("refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
     private async Task ReadChatList()
         {
         student.UserId = appState.UserId ?? 0;
         lstChats.Clear ();
         lstChats = await feService.Read_Chats (student.UserId);
-        Snackbar.Add("chat list refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        //Snackbar.Add("refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
     private async Task ReadNoteList()
         {
         student.UserId = appState.UserId ?? 0;
         lstNotes.Clear ();
         lstNotes = await feService.Read_Notes (student.UserId, 7);        
-        Snackbar.Add("notes refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        //Snackbar.Add("refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
     private async Task HandleModalClose() 
         {

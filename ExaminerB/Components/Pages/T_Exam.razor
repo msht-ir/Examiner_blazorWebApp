@@ -319,7 +319,7 @@ else
     {
         if (cboCourseTopicId == 0)
         {
-            Snackbar.Add("Select a Topic!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select a topic!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
         else
         {
@@ -329,7 +329,7 @@ else
             {
                 lstExamCompositions.Clear ();
                 lstExamCompositions = await feService.Read_ExamCompositions (examId);
-                Snackbar.Add("Exam composition added successfully!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("exam composition added", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 appState.SetCmd ("");
                 StateHasChanged ();
             }

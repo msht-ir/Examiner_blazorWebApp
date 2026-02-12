@@ -199,7 +199,7 @@
         if (result)
             {
             studentExamTest.StudentExamTestTags = status ? (studentExamTest.StudentExamTestTags | 2) : (studentExamTest.StudentExamTestTags & ~2);
-            string bookmarkState = status ? "Bookmarked" : "Bookmark removed";
+            string bookmarkState = status ? "bookmarked" : "bookmark removed";
             Snackbar.Add(bookmarkState, Severity.Info); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             StateHasChanged();
             }
