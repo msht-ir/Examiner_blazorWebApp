@@ -164,18 +164,18 @@ else
                                 <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
                                 <div style="font-weight:bold">
                                     @nStudentsAnswered Answers
-                                    <span style="font-weight:normal; padding-left:15px;">( @nStudentsAnsweredCorrectly correct</span> 
-                                    <span style="font-weight:normal; padding-left:15px;">@nStudentsAnsweredIncorrectly incorrect )</span>
+                                    <span style="font-weight:normal;padding-left:5px;">(@nStudentsAnsweredCorrectly correct, @nStudentsAnsweredIncorrectly incorrect)</span>
+                                    <span style="font-weight:bold;padding-left:10px;">@nStudentsNotAnswered noAnswer</span>
                                 </div> 
-                                <div style="font-weight:bold;">@nStudentsNotAnswered noAnswer</div>                
                             </div>
                             <br /> 
                             <div class="d-flex justify-content-center">
-                            <MudDonutChart
-                                Data="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
-                                Labels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
-                                Width="100px" Height="100px" />
-                            <br /> 
+                                <MudChart ChartType="ChartType.Donut"
+                                    InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
+                                    InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
+                                    Width="100px" Height="100px">
+                                </MudChart>
+                                <br /> 
                             </div>
                            }
                     </MudCardContent>

@@ -49,27 +49,27 @@ else
                                             {
                                             @* ADD NEW STUDENT *@
                                             <div class="d-flex" style="gap:10px;">
-                                                <MudTextField  @ref="refNewUser" @bind-Value="user.UserName"  Label="Username يوزر"   Variant="Variant.Outlined" Margin="Margin.Dense"  Class="my-textfield" />
-                                                <MudTextField  @ref="refNewPass" @bind-Value="user.UserPass"  Label="Password پسورد"  Variant="Variant.Outlined" Margin="Margin.Dense"  Class="my-textfield"  InputType="InputType.Password"/>
-                                                <button class="btn btn-link" Title=@((_help)?"Save new student":"") @onclick="()=>BtnCreateNewStudent(user.UserName, user.UserPass, user.UserName)">
+                                                <MudTextField  @ref="refNewUser" @bind-Value="user.UserName"  Label="Username"   Variant="Variant.Outlined" Margin="Margin.Dense"  Class="my-textfield" />
+                                                <MudTextField  @ref="refNewPass" @bind-Value="user.UserPass"  Label="Password"  Variant="Variant.Outlined" Margin="Margin.Dense"  Class="my-textfield"  InputType="InputType.Password"/>
+                                                <button class="btn btn-link" Title=@((_help)?"save new student":"") @onclick="()=>BtnCreateNewStudent(user.UserName, user.UserPass, user.UserName)">
                                                     <img src="/img/icoSave2.png" width="24" />
                                                 </button>
                                             </div>
                                             @* IMPORT EXCEL *@
-                                            <InputFile  Title=@((_help)?"Import from Excel":"") OnChange="HandleFileSelected" />
+                                            <InputFile  Title=@((_help)?"import from excel":"") OnChange="HandleFileSelected" />
                                             }
                                         else
                                             {
                                             @* SEARCH *@
                                             <div class="d-flex" style="padding:0;">
-                                                <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="Search جستجو" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
-                                                <button class="btn btn-link" Title=@((_help)?"Search students":"") @onclick="()=>BtnReadStudentsBySearch()">
+                                                <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                                                <button class="btn btn-link" Title=@((_help)?"search students":"") @onclick="()=>BtnReadStudentsBySearch()">
                                                     <img src="/img/icoSearch.png" width="22" />
                                                 </button>
-                                                <button class="btn btn-link" Title=@((_help)?"Cancel":"") @onclick="BtnCancelSearchStudent">
+                                                <button class="btn btn-link" Title=@((_help)?"cancel":"") @onclick="BtnCancelSearchStudent">
                                                     <img src="/img/icoCancel.png" width="18" />
                                                 </button>
-                                                <button class="btn btn-link" Title=@((_help)?"Add new student":"") @onclick="BtnAddNewStudent">
+                                                <button class="btn btn-link" Title=@((_help)?"add new student":"") @onclick="BtnAddNewStudent">
                                                     <img src="/img/icoAdd0.png" width="22" />
                                                 </button>
                                             </div>
@@ -84,11 +84,11 @@ else
                                         @if (_cmd == "EditGroup")
                                             {
                                             <div class="d-flex">
-                                                <MudTextField @ref="reftxtNewGroup" @bind-Value="strGroupName" Label="Edit Group ويرايش " Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
-                                                <button class="btn btn-link" Title=@((_help)?"Save Group":"") @onclick="()=>BtnUpdateGroup(strGroupName)">
+                                                <MudTextField @ref="reftxtNewGroup" @bind-Value="strGroupName" Label="Edit Group" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                                                <button class="btn btn-link" Title=@((_help)?"save group":"") @onclick="()=>BtnUpdateGroup(strGroupName)">
                                                     <img src="/img/icoSave2.png" width="24" />
                                                 </button>
-                                                <button class="btn btn-link" Title=@((_help)?"Cancel":"") @onclick="BtnCancel">
+                                                <button class="btn btn-link" Title=@((_help)?"cancel":"") @onclick="BtnCancel">
                                                     <img src="/img/icoCancel.png" width="24" />
                                                 </button>
                                             </div>
@@ -96,29 +96,29 @@ else
                                         else
                                             {
                                             <div class="d-flex">
-                                                <MudSelect T="int" @ref="refGroups" Label="Group گروه" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                <MudSelect T="int" @ref="refGroups" Label="Group" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                     <MudSelectItem Value="0">Select a Group</MudSelectItem>
                                                     @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
                                                 </MudSelect>
-                                                <button class="btn btn-link" Title=@((_help)?"Delete group حذف گروه - اعضا در ليست دانشجويان باقي مي مانند":"") @onclick='()=>BtnDeleteGroup(GroupId)'>
+                                                <button class="btn btn-link" Title=@((_help)?"delete group":"") @onclick='()=>BtnDeleteGroup(GroupId)'>
                                                     <img src="/img/icoDelete1.png" width="24" />
                                                 </button>
                                             </div>
                                             <div>
-                                                <button class="btn btn-link" Title=@((_help)?"List Students in this Group":"") @onclick='()=>BtnReadStudents(GroupId,"G")'>
+                                                <button class="btn btn-link" Title=@((_help)?"list students in this group":"") @onclick='()=>BtnReadStudents(GroupId,"G")'>
                                                     <img src="/img/icoListS.png" width="36" />
                                                 </button>
-                                                <button class="btn btn-link" Title=@((_help)?"Report Students Courses and Exams":"") @onclick='()=>BtnReportStudent(GroupId, "G")'>
+                                                <button class="btn btn-link" Title=@((_help)?"report students courses and exams":"") @onclick='()=>BtnReportStudent(GroupId, "G")'>
                                                     <img src="/img/icoFolderS.png" width="26" />
                                                 </button>
-                                                <button class="btn btn-link" Title=@((_help)?"Add new note about this Group":"") @onclick='()=>BtnCreateNote(GroupId, "G")'>
+                                                <button class="btn btn-link" Title=@((_help)?"add note about this group":"") @onclick='()=>BtnCreateNote(GroupId, "G")'>
                                                     <img src="/img/icoNewNote1.png" width="24" />
                                                 </button>
-                                                <button class="btn btn-link" Title=@((_help)?"Report notes about this Group":"") @onclick='()=>BtnReportNotes(GroupId, "G")'>
-                                                    <img src="/img/icoNote2.png" width="24" />
+                                                <button class="btn btn-link" Title=@((_help)?"report notes about this group":"") @onclick='()=>BtnReportNotes(GroupId, "G")'>
+                                                    <img src="/img/icoListNote2.png" width="22" />
                                                 </button>
-                                                <button class="btn btn-link" Title=@((_help)?"Edit group ويرايش نام گروه":"") @onclick='()=>BtnEditGroup(GroupId)'>
-                                                    <img src="/img/icoRename.png" width="32" />
+                                                <button class="btn btn-link" Title=@((_help)?"edit group":"") @onclick='()=>BtnEditGroup(GroupId)'>
+                                                    <img src="/img/icoRename.png" width="30" />
                                                 </button>
                                             </div>    
                                             }
@@ -130,52 +130,52 @@ else
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                         @* COMBO C *@
                                         <div class="d-flex">
-                                            <MudSelect T="int" @ref="refCourses" Label="Course درس" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <MudSelect T="int" @ref="refCourses" Label="Course" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                 <MudSelectItem Value="0">Select a Course</MudSelectItem>
                                                 @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
                                             </MudSelect>
                                         </div>
                                         <div>
-                                            <button class="btn btn-link" Title=@((_help)?"List Studentsin this Course":"") @onclick='()=>BtnReadStudents(CourseId,"C")'>
+                                            <button class="btn btn-link" Title=@((_help)?"list students in this course":"") @onclick='()=>BtnReadStudents(CourseId,"C")'>
                                                 <img src="/img/icoListS.png" width="36" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Report Courses and Exams of Students in this Course":"") @onclick='()=>BtnReportStudent(CourseId, "C")'>
+                                            <button class="btn btn-link" Title=@((_help)?"report courses and exams of students in this course":"") @onclick='()=>BtnReportStudent(CourseId, "C")'>
                                                 <img src="/img/icoFolderS.png" width="26" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Add new note about thisCourse":"") @onclick='()=>BtnCreateNote(CourseId, "C")'>
+                                            <button class="btn btn-link" Title=@((_help)?"add note about this course":"") @onclick='()=>BtnCreateNote(CourseId, "C")'>
                                                 <img src="/img/icoNewNote1.png" width="24" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Report notes about this Course":"") @onclick='()=>BtnReportNotes(CourseId, "C")'>
-                                                <img src="/img/icoNote2.png" width="24" />
+                                            <button class="btn btn-link" Title=@((_help)?"report notes about this course":"") @onclick='()=>BtnReportNotes(CourseId, "C")'>
+                                                <img src="/img/icoNote2.png" width="22" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Goto page: Courses":"") @onclick='()=>BtnGotoCoursesPage(CourseId)'>
+                                            <button class="btn btn-link" Title=@((_help)?"goto page courses":"") @onclick='()=>BtnGotoCoursesPage(CourseId)'>
                                                 <img src="/img/icoFolderC.png" width="26" />
                                             </button>
                                         </div>
                                         @* COMBO E *@
                                         <div class="d-flex">
-                                            <MudSelect T="int" @ref="refExams" Label="Exam آزمون" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <MudSelect T="int" @ref="refExams" Label="Exam" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                 <MudSelectItem Value="0">Select an Exam</MudSelectItem>
                                                 @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                                             </MudSelect>
-                                            <button class="btn btn-link" Title=@((_help)?"Report Students Points in this Exam":"") @onclick='()=>BtnGotoPageExamPoints(ExamId)'>
+                                            <button class="btn btn-link" Title=@((_help)?"report Students Points in this exam":"") @onclick='()=>BtnGotoPageExamPoints(ExamId)'>
                                                 <img src="/img/icoChartPie.png" width="26" />
                                             </button>
                                         </div>
                                         <div>
-                                            <button class="btn btn-link" Title=@((_help)?"List students in this Exam":"") @onclick='()=>BtnReadStudents(ExamId,"E")'>
+                                            <button class="btn btn-link" Title=@((_help)?"list students in this exam":"") @onclick='()=>BtnReadStudents(ExamId,"E")'>
                                                 <img src="/img/icoListS.png" width="36" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Report Courses and Exams ofStudents in this Exam":"") @onclick='()=>BtnReportStudent(ExamId, "E")'>
+                                            <button class="btn btn-link" Title=@((_help)?"report courses and exams of students in this Exam":"") @onclick='()=>BtnReportStudent(ExamId, "E")'>
                                                 <img src="/img/icoFolderS.png" width="26" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Add new note about this Exam":"") @onclick='()=>BtnCreateNote(ExamId, "E")'>
+                                            <button class="btn btn-link" Title=@((_help)?"add note about this exam":"") @onclick='()=>BtnCreateNote(ExamId, "E")'>
                                                 <img src="/img/icoNewNote1.png" width="24" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Report notes about this Exam":"") @onclick='()=>BtnReportNotes(ExamId, "E")'>
-                                                <img src="/img/icoNote2.png" width="24" />
+                                            <button class="btn btn-link" Title=@((_help)?"report notes on this exam":"") @onclick='()=>BtnReportNotes(ExamId, "E")'>
+                                                <img src="/img/icoNote2.png" width="22" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Goto page Exams":"") @onclick='()=>BtnGotoExamsPage(ExamId, refCourses.Text.ToString() ?? "")'>
+                                            <button class="btn btn-link" Title=@((_help)?"goto page exams":"") @onclick='()=>BtnGotoExamsPage(ExamId, refCourses.Text.ToString() ?? "")'>
                                                 <img src="/img/icoFolderE.png" width="26" />
                                             </button>
                                         </div>
@@ -187,16 +187,16 @@ else
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                         @* COMBO M *@
                                         <div class="d-flex">
-                                            <MudSelect T="int" @ref="refMessages" Label="Message پيام" Value="MessageId" ValueChanged="OnMessageChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <MudSelect T="int" @ref="refMessages" Label="Message" Value="MessageId" ValueChanged="OnMessageChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                 <MudSelectItem Value="0">Select Message</MudSelectItem>
                                                 @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
                                             </MudSelect>
                                         </div>
                                         <div>
-                                            <button class="btn btn-link" Title=@((_help)?"List Stdents that received this Messsage":"") @onclick='()=>BtnReadStudents(MessageId,"M")'>
+                                            <button class="btn btn-link" Title=@((_help)?"list stdents received this messsage":"") @onclick='()=>BtnReadStudents(MessageId,"M")'>
                                                 <img src="/img/icoListS.png" width="36" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Report Courses and Exams of students that received this Message":"") @onclick='()=>BtnReportStudent(MessageId, "M")'>
+                                            <button class="btn btn-link" Title=@((_help)?"report courses and exams of students that received this message":"") @onclick='()=>BtnReportStudent(MessageId, "M")'>
                                                 <img src="/img/icoFolderS.png" width="26" />
                                             </button>
                                         </div>
@@ -217,17 +217,20 @@ else
                                 {
                                 <div class="d-flex align-items-center mb-1">
                                     <input class="form-check-input" style="margin-left:2px;margin-right:5px;" type="checkbox" @bind="student.IsSelected" />
-                                    <button class="btn btn-link" Title=@((_help)?"New note يادداشت جديد":"") @onclick='()=>BtnCreateNote(student.UserId, "S")'>
-                                        <img src="/img/icoNewNote1.png" width="20" />
-                                    </button>
-                                    <button class="btn btn-link" Title=@((_help)?"Report Notes and Messages يادداشت ها و پيام ها":"") @onclick='()=>BtnGotoPageReportMessages(student)'>
-                                        <img src="/img/icoEnvelop0.png" width="20" />
-                                    </button>
-                                    <button class="btn btn-link" Title=@((_help)?"Report Students Courses and Exams درس ها و آزمون ها":"") @onclick='()=>BtnReportStudent(student.UserId, "S")'>
-                                        <img src="/img/icoFolderS.png" width="22" />
-                                    </button>
                                     @student.UserName - @student.UserNickname
                                 </div>
+                                <div class="d-flex align-items-center mb-1">
+                                    <button class="btn btn-link" style="margin-left:15px" Title=@((_help)?"report students courses and exams":"") @onclick='()=>BtnReportStudent(student.UserId, "S")'>
+                                        <img src="/img/icoFolderS.png" width="24" />
+                                    </button>
+                                    <button class="btn btn-link" Title=@((_help)?"report notes and messages":"") @onclick='()=>BtnGotoPageReportMessages(student)'>
+                                        <img src="/img/icoListM.png" width="30" />
+                                    </button>
+                                    <button class="btn btn-link" Title=@((_help)?"add note about this student":"") @onclick='()=>BtnCreateNote(student.UserId, "S")'>
+                                        <img src="/img/icoNewNote1.png" width="20" />
+                                    </button>
+                                </div>
+                                <hr />
                                 }
                             <br />
                             <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="BtnSelectAllStudents">All</MudButton>
@@ -260,10 +263,10 @@ else
                                             {
                                             <div class="d-flex">
                                                 <MudTextField @ref="reftxtNewGroup" @bind-Value="strNewGroupName" Label="New Group گروه جديد" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
-                                                <button class="btn btn-link" Title=@((_help)?"Save Group":"") @onclick="()=>BtnCreateNewGroup(strNewGroupName)">
+                                                <button class="btn btn-link" Title=@((_help)?"save group":"") @onclick="()=>BtnCreateNewGroup(strNewGroupName)">
                                                     <img src="/img/icoSave2.png" width="24" />
                                                 </button>
-                                                <button class="btn btn-link" Title=@((_help)?"Cancel":"") @onclick="BtnCancel">
+                                                <button class="btn btn-link" Title=@((_help)?"cancel":"") @onclick="BtnCancel">
                                                     <img src="/img/icoCancel.png" width="24" />
                                                 </button>
                                             </div>
@@ -275,10 +278,10 @@ else
                                                     <MudSelectItem Value="0">Select a Group</MudSelectItem>
                                                     @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
                                                 </MudSelect>
-                                                <button class="btn btn-link" Title=@((_help)?"Add new Group":"") @onclick="BtnAddNewGroup">
+                                                <button class="btn btn-link" Title=@((_help)?"add new group":"") @onclick="BtnAddNewGroup">
                                                     <img src="/img/icoAdd0.png" width="20" />
                                                 </button>
-                                                <button class="btn btn-link" Title=@((_help)?"Add selected students (above) to: this Group":"") @onclick="()=>BtnAddStudentsToGroup()">
+                                                <button class="btn btn-link" Title=@((_help)?"add selected students to this group":"") @onclick="()=>BtnAddStudentsToGroup()">
                                                     <img src="/img/icoListAddNew1.png" width="38" />
                                                 </button>
                                             </div>
@@ -312,16 +315,16 @@ else
                                                 <MudSelectItem Value="0">Select a Course</MudSelectItem>
                                                 @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
                                             </MudSelect>
-                                            <button class="btn btn-link" Title=@((_help)?"Add selected students (above) to: this Course":"") @onclick="()=>BtnAddStudentsToCourse()">
+                                            <button class="btn btn-link" Title=@((_help)?"add selected students to: this course":"") @onclick="()=>BtnAddStudentsToCourse()">
                                                 <img src="/img/icoListAddNew1.png" width="36" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Goto page Courses":"") @onclick="()=>BtnGotoPageCourses()">
+                                            <button class="btn btn-link" Title=@((_help)?"goto page courses":"") @onclick="()=>BtnGotoPageCourses()">
                                                 <img src="/img/icoFolderC.png" width="26" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Change students Accesses to this Course":"") @onclick="()=>BtnChangeStudentCoursesStatus(false)">
+                                            <button class="btn btn-link" Title=@((_help)?"change students accesses to this course":"") @onclick="()=>BtnChangeStudentCoursesStatus(false)">
                                                 <img src="/img/icoYesNo_No.png" width="18" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Change students Accesses to this Course":"") @onclick="()=>BtnChangeStudentCoursesStatus(true)">
+                                            <button class="btn btn-link" Title=@((_help)?"change students accesses to this course":"") @onclick="()=>BtnChangeStudentCoursesStatus(true)">
                                                 <img src="/img/icoYesNo_Yes.png" width="18" />
                                             </button>
                                         </div>
@@ -330,16 +333,16 @@ else
                                                 <MudSelectItem Value="0">Select an Exam</MudSelectItem>
                                                 @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                                             </MudSelect>
-                                            <button class="btn btn-link" Title=@((_help)?"Add selected students (above) to: this Exam":"") @onclick="()=>BtnAddStudentsToExam()">
+                                            <button class="btn btn-link" Title=@((_help)?"add selected students to this exam":"") @onclick="()=>BtnAddStudentsToExam()">
                                                 <img src="/img/icoListAddNew1.png" width="36" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Goto page Exams":"") @onclick="()=>BtnGotoPageExams()">
+                                            <button class="btn btn-link" Title=@((_help)?"goto page exams":"") @onclick="()=>BtnGotoPageExams()">
                                                 <img src="/img/icoFolderE.png" width="26" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Change student Accesses to this Exam":"") @onclick="()=>BtnChangeStudentCoursesStatus(false)">
+                                            <button class="btn btn-link" Title=@((_help)?"change student accesses to this exam":"") @onclick="()=>BtnChangeStudentCoursesStatus(false)">
                                                 <img src="/img/icoYesNo_No.png" width="18" />
                                             </button>
-                                            <button class="btn btn-link" Title=@((_help)?"Change student Accesses to this Exam":"") @onclick="()=>BtnChangeStudentCoursesStatus(true)">
+                                            <button class="btn btn-link" Title=@((_help)?"change student accesses to this exam":"") @onclick="()=>BtnChangeStudentCoursesStatus(true)">
                                                 <img src="/img/icoYesNo_Yes.png" width="18" />
                                             </button>
                                         </div>
@@ -373,10 +376,10 @@ else
                                             <MudTextField @ref="reftxtNewMessageTitle" @bind-Value="strNewMessageTitle" Label="Title عنوان " Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
                                             <MudTextField @ref="reftxtNewMessageBody" @bind-Value="strNewMessageBody" Label="Message پيام" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" Lines="5" />
                                             <div style="text-align:center">
-                                                <button class="btn btn-link" Title=@((_help)?"Save Message":"") @onclick="()=>BtnCreateNewMessage(strNewMessageTitle, strNewMessageBody)">
+                                                <button class="btn btn-link" Title=@((_help)?"save message":"") @onclick="()=>BtnCreateNewMessage(strNewMessageTitle, strNewMessageBody)">
                                                     <img src="/img/icoSave2.png" width="24" />
                                                 </button>
-                                                <button class="btn btn-link" Title=@((_help)?"Cancel":"") @onclick="BtnCancel">
+                                                <button class="btn btn-link" Title=@((_help)?"cancel":"") @onclick="BtnCancel">
                                                     <img src="/img/icoCancel.png" width="24" />
                                                 </button>
                                             </div>
@@ -387,10 +390,10 @@ else
                                             <MudTextField @ref="reftxtNewMessageTitle" @bind-Value="strNewMessageTitle" Label="Title عنوان " Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
                                             <MudTextField @ref="reftxtNewMessageBody" @bind-Value="strNewMessageBody" Label="Message پيام" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" Lines="5" />
                                             <div style="text-align:center">
-                                                <button class="btn btn-link" Title=@((_help)?"Save Message":"") @onclick="()=>BtnUpdateMessage()">
+                                                <button class="btn btn-link" Title=@((_help)?"save message":"") @onclick="()=>BtnUpdateMessage()">
                                                     <img src="/img/icoSave2.png" width="24" />
                                                 </button>
-                                                <button class="btn btn-link" Title=@((_help)?"Cancel":"") @onclick="BtnCancel">
+                                                <button class="btn btn-link" Title=@((_help)?"cancel":"") @onclick="BtnCancel">
                                                     <img src="/img/icoCancel.png" width="24" />
                                                 </button>
                                             </div>
@@ -444,7 +447,7 @@ else
             @* BACK *@
             <br />
             <div class="d-flex align-items-center">
-                <button class="btn btn-link" Title=@((_help)?"Back to Main page بازگشت به صفحه اول":"") @onclick= "()=> BtnBack()">
+                <button class="btn btn-link" Title=@((_help)?"back to main page":"") @onclick= "()=> BtnBack()">
                     <img src="/img/icoBack3.png" style="width:40px" />
                 </button>
                 <MudSwitch @bind-Value="_help" Label="help on mouse hover" Color="Color.Primary" Dense="true"></MudSwitch>

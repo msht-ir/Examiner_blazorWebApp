@@ -51,10 +51,10 @@ else
                                                     <h6 style="color:green">Training mode</h6>
                                                     }
                                                 <hr style="color:red" />
-                                                <div class="d-flex align-items-center ms-5">
-                                                    <span style="font-weight:bold; margin-right:20px;">Alarm: </span>
-                                                    <MudNumericField T="int" @ref="refExamAlarm" @bind-Value="intExamAlarm" Label="min to timeout" Variant="Variant.Outlined" Min="0" Max="15" Margin="Margin.Dense" Class="my-textfield" style="width: 120px;padding-left:10px" />
-                                                    <button class="btn btn-link  ms-2" style="margin-right:30px;" @onclick="() => SetExamAlarm(intExamAlarm)">
+                                                <div class="d-flex align-items-center">
+                                                    <span style="font-weight:bold; margin-right:10px;">Alarm: </span>
+                                                    <MudNumericField T="int" @ref="refExamAlarm" @bind-Value="intExamAlarm" Label="min to timeout" Variant="Variant.Outlined" Min="0" Max="15" Margin="Margin.Dense" Class="my-textfield" style="width: 150px;padding-left:10px" />
+                                                    <button class="btn btn-link  ms-2" style="margin-right:10px;" @onclick="() => SetExamAlarm(intExamAlarm)">
                                                         <img src="/img/icoSave2.png" width="24" />
                                                     </button>
                                                 </div>
@@ -68,7 +68,6 @@ else
                     <table class="table table-borderless">
                         <thead>
                             <tr style="font-weight:bold">
-                                <td>Tests</td>
                                 <td></td>
                                 <td></td>
                             </tr>

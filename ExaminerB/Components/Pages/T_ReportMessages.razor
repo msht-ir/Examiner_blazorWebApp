@@ -1,5 +1,6 @@
 ﻿@page "/T_ReportMessages/{mode}/{Id:int}"
 @using ExaminerB.Service
+@using MudBlazor.Charts
 @inject FeService feService
 @inject NavigationManager Navman
 @inject AppState appState
@@ -58,14 +59,15 @@ else
                 @if(nMessagesTypeIsFeedback > 0)
                     {
                     <div style="font-weight:bold; padding-left:25px;">Feedbacks: <span style="font-weight:normal;"> @(nMessagesAnsweredYes + nMessagesAnsweredNo) /  @nMessagesTypeIsFeedback ( @((nMessagesAnsweredYes + nMessagesAnsweredNo) * 100 / @nMessagesTypeIsFeedback)% ) </span></div>
+                    <div class="d-flex justify-content-center">
+                        <MudChart ChartType="ChartType.Donut"
+                            InputData="@(new double[] {nMessagesAnsweredYes, nMessagesAnsweredNo,nMessagesNotAnswered })"
+                            InputLabels="@(new[] { "Yes: "+ @nMessagesAnsweredYes, "No: " + nMessagesAnsweredNo, "notSure: "+ nMessagesNotAnswered })"
+                            Width="100px" Height="100px" >
+                        </MudChart>
+                        <br />
+                    </div>
                     }
-                <div class="d-flex justify-content-center">
-                    <MudDonutChart
-                        Data="@(new double[] {nMessagesAnsweredYes, nMessagesAnsweredNo,nMessagesNotAnswered })"
-                        Labels="@(new[] { "Yes: "+ @nMessagesAnsweredYes, "No: " + nMessagesAnsweredNo, "notSure: "+ nMessagesNotAnswered })"
-                        Width="100px" Height="100px" />
-                    <br /> 
-                </div>
             }
             else
                 {
@@ -147,14 +149,15 @@ else
                             </div>
                             @if((message.StudentMessageTags & 8) == 8)
                                 {
-                                <div style="text-align:left;font-weight:bold; padding-left:25px;">Feedbacks: <span style="font-weight:normal;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>                    
                                 <div class="d-flex justify-content-center">
-                                    <MudDonutChart 
-                                        Data="@(new double[] {nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered, nStudentsNotRead })"
-                                        Labels="@(new[] { "Yes: " + @nStudentsAnsweredYes, "No: " + nStudentsAnsweredNo, "notSure: " + nStudentsNotAnswered, "notRead: " + nStudentsNotRead })"
-                                        Width="100px" Height="100px" />
-                                    <br /> 
+                                    <MudChart ChartType="ChartType.Donut"
+                                              InputData="@(new double[] { nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered, (nStudents - nStudentsRead) })"
+                                              InputLabels="@(new[] { "Yes: " + nStudentsAnsweredYes, "No: " + nStudentsAnsweredNo, "notSure: " + nStudentsNotAnswered, "notRead: " + (nStudents - nStudentsRead) })"
+                                              Width="100px" Height="100px">
+                                    </MudChart>
                                 </div>
+                                <div class="d-flex justify-content-center" style="text-align:left;font-weight:bold; padding-left:25px;">Feedbacks: <span style="font-weight:normal;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>                    
+                                <br />
                                 }
                             }
                         else
@@ -327,6 +330,10 @@ else
     public int nStudentsAnsweredYes = 0;
     public int nStudentsAnsweredNo = 0;
     public int nStudentsNotAnswered = 0;
+
+    private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    int dataSize = 4;
+
     User user = new User ();
     List<StudentMessage> lstStudentMessages = new List<StudentMessage> ();
     List<StudentMessage> lstStudentMessageInstances = new List<StudentMessage> ();
