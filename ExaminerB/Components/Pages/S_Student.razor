@@ -561,9 +561,10 @@
         </div>
         <hr />
         <div style="text-align:center; margin-top:30px">
-            <button class="btn btn-link" Title=@((_help)?"Exit":"") @onclick= "()=> BtnExit()">
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Logout" Size="Size.Large" OnClick="@(() => BtnExit())">Logout</MudButton>
+            @* <button class="btn btn-link" Title=@((_help)?"Exit":"") @onclick= "()=> BtnExit()">
                 <img src="/img/icoLogout1.png" style="width:60px" />
-            </button>
+            </button> *@
         </div>
         }
 </div>

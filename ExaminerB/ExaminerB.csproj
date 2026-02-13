@@ -11,14 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazored.Modal" Version="7.3.1" />
     <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0-preview3.25342.7" />
-	<PackageReference Include="MudBlazor" Version="8.15.0" />
-    <PackageReference Include="OpenCvSharp4.Extensions" Version="4.13.0.20260213" />
     <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260213" />
-    <PackageReference Include="QRCoder" Version="1.7.0" />
-	<PackageReference Include="OpenCvSharp4" Version="4.13.0.20260213" />
   </ItemGroup>
 
   <ItemGroup>
