@@ -34,15 +34,15 @@ else
                 <MudCardContent Style="background-color:whitesmoke;">                                         
                     <div style="font-size:130%;font-weight:bold;color:royalblue">Exam <span style="font-size:small;font-weight:normal;color:gray">Title - DateTime - Duration</span></div>
                     <div class="d-flex mb-2" style="gap:10px;">
-                        <MudTextField @ref="refExamTitle" @bind-Value="exam.ExamTitle" Label="Exam Title" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
-                        <MudNumericField T="int" @ref="refExamDuration" @bind-Value="exam.ExamDuration" Label="Duration min" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" style="width:100px;text-align:center;" />
+                        <MudTextField @ref="refExamTitle" @bind-Value="exam.ExamTitle" Label="exam title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                        <MudNumericField T="int" @ref="refExamDuration" @bind-Value="exam.ExamDuration" Label="duration min" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width:100px;text-align:center;" />
                     </div>
                     <div class="d-flex justify-content-start mb-2" >
-                        <MudTextField @ref="refExamDateTime" @bind-Value="exam.ExamDateTime" Label="Date-Time" placeholder="____-__-__ __:__" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" style="width:200px;" />
+                        <MudTextField @ref="refExamDateTime" @bind-Value="exam.ExamDateTime" Label="date-time" placeholder="____-__-__ __:__" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width:200px;" />
                     </div>
                     <div class="d-flex justify-content-start mb-2" >
-                        <MudCheckBox @bind-Value="exam.IsActive" Label="Active" Color="Color.Success" title="advice: keep exam inactive until exam day!"/>
-                        <MudCheckBox @bind-Value="exam.IsTrainingMode" Label="Training" Color="Color.Primary" title="students can get help" />
+                        <MudCheckBox @bind-Value="exam.IsActive" Label="active" Color="Color.Success" title="advice: keep exam inactive until exam day!"/>
+                        <MudCheckBox @bind-Value="exam.IsTrainingMode" Label="train mode" Color="Color.Primary" title="students can get help" />
                     </div>
                 </MudCardContent>
             </MudCard>
@@ -74,8 +74,8 @@ else
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:whitesmoke;">                                         
                                         <div class="d-flex">
-                                            <MudSelect T="int" Label="Course topic موضوع" Value="0" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:120px;font-size:small;">
-                                                <MudSelectItem Value="@comp.TopicId">Select an Exam...</MudSelectItem>
+                                            <MudSelect @bind-Value="comp.TopicId" Label="course topic" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:120px;font-size:small;">
+                                                <MudSelectItem Value="0">select an exam...</MudSelectItem>
                                                 @foreach (CourseTopic topic in lstCourseTopics) { <MudSelectItem Value="@topic.CourseTopicId">@topic.CourseTopicTitle</MudSelectItem> }
                                             </MudSelect>
                                             <button class="btn btn-link" @onclick="()=>BtnUpdateExamComposition (comp)" >
@@ -87,14 +87,14 @@ else
                                         </div>
                                         @* Slider NTests *@
                                         <div class="d-flex align-items-center">
-                                            <MudSlider T="int" @bind-Value="comp.TopicNTests" Variant="Variant.Filled" Min="1" Max="20">Tests</MudSlider>
+                                            <MudSlider T="int" @bind-Value="comp.TopicNTests" Variant="Variant.Filled" Min="1" Max="20">tests</MudSlider>
                                             <span style="color:indianred; font-weight:bold;">
                                                 @comp.TopicNTests
                                             </span>
                                         </div>
                                         @* Slider Level *@
                                         <div class="d-flex align-items-center">
-                                            <MudSlider T="int" @bind-Value="@comp.TestsLevel" Variant="Variant.Filled" Min="1" Max="5">Level</MudSlider>
+                                            <MudSlider T="int" @bind-Value="@comp.TestsLevel" Variant="Variant.Filled" Min="1" Max="5">level</MudSlider>
                                             <span style="color:indianred; font-weight:bold;">
                                                 @comp.TestsLevel
                                             </span>
@@ -111,8 +111,8 @@ else
                                         <div style="text-align: left;margin-left:20px;margin-right:10px">
                                             <h5 style="color:indianred;font-weight:bold;"> New Exam Composition</h5>
                                             <div class="d-flex">
-                                                <MudSelect T="int" Label="Course topic موضوع" @bind-Value="cboCourseTopicId" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:120px;font-size:small;">
-                                                   <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
+                                                <MudSelect Label="course topic" @bind-Value="cboCourseTopicId" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:120px;font-size:small;">
+                                                   <MudSelectItem Value="0">select an exam...</MudSelectItem>
                                                    @foreach (CourseTopic topic in lstCourseTopics) { <MudSelectItem Value="@topic.CourseTopicId">@topic.CourseTopicTitle</MudSelectItem> }
                                                 </MudSelect>
                                                 <button class="btn btn-link" @onclick="BtnCreateExamComposition">
@@ -124,14 +124,14 @@ else
                                             </div>
                                             @* Slider NTests *@
                                             <div class="d-flex align-items-center">
-                                                <MudSlider T="int" @bind-Value="@sliderTopicNTests" Variant="Variant.Filled" Min="1" Max="20">Tests</MudSlider>
+                                                <MudSlider T="int" @bind-Value="@sliderTopicNTests" Variant="Variant.Filled" Min="1" Max="20">tests</MudSlider>
                                                 <span style="color:indianred; font-weight:bold;">
                                                     @sliderTopicNTests
                                                 </span>
                                             </div>
                                             @* Slider Level *@
                                             <div class="d-flex align-items-center">
-                                                <MudSlider T="int" @bind-Value="@sliderTestsLevel" Variant="Variant.Filled" Min="1" Max="5">Level</MudSlider>
+                                                <MudSlider T="int" @bind-Value="@sliderTestsLevel" Variant="Variant.Filled" Min="1" Max="5">level</MudSlider>
                                                 <span style="color:indianred; font-weight:bold;">
                                                     @sliderTestsLevel
                                                 </span>
@@ -177,13 +177,13 @@ else
                         <div class="mb-3" style="background-color:WhiteSmoke">
                             <span style="font-size:larger; font-weight:bold;color:royalblue;">Add tests to exam</span>
                             <div class="d-flex align-items-center mb-3">
-                                <MudTextField @ref="txtSearchTest" @bind-Value="strSearch" Label="Search..." Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';" />
+                                <MudTextField @ref="txtSearchTest" @bind-Value="strSearch" Label="search..." Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:'Segoe UI';" />
                                 <button class="btn btn-link" @onclick="BtnReadTestsBySearch">
                                     <img src="/img/icoSearch.png" width="30" />
                                 </button>
                             </div>
                             <div class="d-flex align-atems-center mb-3">
-                                <MudSelect T="int" Label="Result نتيجه" @bind-Value="cboCourseTestId" Class="w-auto my-select d-inline" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;max-width:420px;font-size:small; font-family:'Segoe UI';text-overflow: ellipsis;">
+                                <MudSelect T="int" Label="result" @bind-Value="cboCourseTestId" Class="w-auto my-select d-inline" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;max-width:420px;font-size:small; font-family:'Segoe UI';text-overflow: ellipsis;">
                                     <MudSelectItem Value="0">select from results</MudSelectItem>
                                     @foreach (var ct in lstCourseTests) { <MudSelectItem Value="@ct.TestId" Style="font-family:'Segoe UI';text-overflow: ellipsis;"> @ct.TestId - @(ct.TestTitle.Length > 50 ? ct.TestTitle.Substring(0, 50) : ct.TestTitle)</MudSelectItem> }
                                 </MudSelect>
@@ -225,7 +225,7 @@ else
                                                     }
                                                 }
                                         <button class="btn btn-link" style="text-align:right;" dir="rtl" @onclick="()=>BtnDeleteExamTest(localTestId)" >
-                                            <img src="img/icoDelete1.png" title="Edit Test" alt="Edit" width="25px"/>
+                                            <img src="img/icoDelete1.png" title="delete test" alt="delete test" width="25"/>
                                         </button>
                                     </MudCardContent>
                                 </MudCard>
@@ -358,22 +358,8 @@ else
     public async Task BtnDeleteExamComposition(int examCompositionId)
     {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Exam Composition? <br>Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
         {
             Snackbar.Add("Exam composition Removed!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             lstExamCompositions.Clear ();
@@ -454,22 +440,8 @@ else
     public async Task BtnDeleteExamTest(int testId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Remove</span> this test from <span style='color:royalblue'>Exam</span> test list? <br> Remove??<br><br> <div style='text-align:center'><img src='/img/icoEraser.png' width='40'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             ExamTest examTest = new ExamTest () { ExamId=exam.ExamId, TestId=testId, PercentCorrect=0, PercentIncorrect=0, PercentHelped=0 };
             bool result = await feService.Delete_ExamTest (examTest);
@@ -490,22 +462,8 @@ else
     public async Task BtnBack()
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Save</span> Exam Changes? <br><span style='font-weight:bold;'>Notice:</span><br>Number of tests in this exam will be <span style='color:royalblue'>Updated</span> automatically<br><br> <div style='text-align:center'><img src='/img/icoSave1.png' width='40'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             await BtnUpdateExam ();            
             }

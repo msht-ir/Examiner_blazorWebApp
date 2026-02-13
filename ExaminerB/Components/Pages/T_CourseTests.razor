@@ -88,12 +88,12 @@ else
             <h3>@course.CourseName</h3>
             @* SEARCH *@
             <div class="d-flex mb-3">
-                <MudTextField @ref="txtSearch" @bind-Value="strSearch" Label="Search tests..." Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                <MudTextField @ref="txtSearch" @bind-Value="strSearch" Label="Search tests..." Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                 <button class="btn btn-link" @onclick="()=>BtnReadTestsBySearch()">
                     <img src="/img/icoSearch.png" width="25" title="search tests"/>
                 </button>
                 @* Paginate *@
-                    <MudNumericField T="int" @ref="refPageNumber" @bind-Value="intPendingPageNumber" Label="Page" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" style="max-width:80px;padding-left:10px" Min="1" />
+                    <MudNumericField T="int" @ref="refPageNumber" @bind-Value="intPendingPageNumber" Label="Page" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="max-width:80px;padding-left:10px" Min="1" />
                     <button class="btn btn-link  ms-2" @onclick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)">
                         <img src="/img/icoListT.png" width="38" title="goto page ..."/>
                     </button>

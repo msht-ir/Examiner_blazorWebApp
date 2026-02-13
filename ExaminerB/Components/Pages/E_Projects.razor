@@ -48,7 +48,7 @@ else
                     <div class="mb-3" style="max-width:500px; margin:0 auto">
                         @* <span style="font-size:larger; font-weight:bold;color:royalblue;">Search</span> *@
                         <div class="d-flex align-items-center mb-3">
-                            <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" Style="font-family:'Segoe UI';width:90%" />
+                            <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:'Segoe UI';width:90%" />
                             <button class="btn btn-link" @onclick="BtnReadNotesBySearch">
                                 <img src="/img/icoSearch.png" width="26" title="Search notes"/>
                             </button>
@@ -191,7 +191,7 @@ else
                                         {
                                         string btnProjectId = "btnProjectName";
                                         <div class="d-flex mb-3">
-                                            <MudTextField @ref="refProjectName" @bind-Value="project.ProjectName" Label="NoteBook" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                                            <MudTextField @ref="refProjectName" @bind-Value="project.ProjectName" Label="NoteBook" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                                             <button class="btn btn-link" name="@btnProjectId" @onclick="()=>BtnUpdateProject(project)">
                                                 <img src="/img/icoSave2.png" width="25" title="save notebook"/>
                                             </button>
@@ -218,7 +218,7 @@ else
                                             {
                                             <div>
                                                 <div class="d-flex mb-3">
-                                                    <MudTextField @ref="refNewSubproject" @bind-Value="txtNewSubprojectTitle" Label="new section" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                                                    <MudTextField @ref="refNewSubproject" @bind-Value="txtNewSubprojectTitle" Label="new section" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                                                     <button class="btn btn-link" @onclick="()=>BtnSaveNewSubproject(project.ProjectId)">
                                                         <img src="/img/icoSave2.png" width="24" title="save new section"/>
                                                     </button>
@@ -250,7 +250,7 @@ else
                                                     <div id="@collapseId2" class="accordion-collapse @_clpsSP" data-bs-parent="#accordionSubprojects-@project.ProjectId">
                                                         <div class="accordion-body" style="background-color:rgba(252,252,252)">
                                                             <div class="d-flex mb-1">
-                                                                <MudTextField @ref="refSubprojectName" @bind-Value="subProject.SubprojectName" Label="Section" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                                                                <MudTextField @ref="refSubprojectName" @bind-Value="subProject.SubprojectName" Label="Section" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                                                                 <button class="btn btn-link" @onclick="()=>BtnUpdateSubproject(subProject)">
                                                                     <img src="/img/icoSave2.png" width="22" title="update section name"/>
                                                                 </button>
@@ -410,7 +410,7 @@ else
                     <hr style="color:red"/>
                     <h6>Create new Notebook</h6>
                     <div class="mb-3">
-                        <MudTextField @ref="refNewProject" @bind-Value="project.ProjectName" Label="Notebook" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                        <MudTextField @ref="refNewProject" @bind-Value="project.ProjectName" Label="Notebook" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                     </div>
                     <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewProject">
                         <img src="/img/icoSave2.png" width="22" title="save notebook"/>
@@ -589,22 +589,9 @@ else
         }
     private async Task BtnDeleteProject(int projectId)
         {
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage",  new MarkupString($"<hr><span style='color:indianred'>Delete</span> notebook <span style='color:royalblue'>{project.ProjectName}</span> ?<br><br><span style='font-weight:bold'>All</span> notes in this section will also be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>") },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        var message = new MarkupString ($"<hr><span style='color:indianred'>Delete</span> notebook <span style='color:royalblue'>{project.ProjectName}</span> ?<br><br><span style='font-weight:bold'>All</span> notes in this section will also be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             bool result = await feService.Delete_Project (projectId);
             if (result)
@@ -740,22 +727,9 @@ else
     private async Task BtnDeleteSubproject(Subproject subProject)
         {
         appState.SetProjectId (subProject.ProjectId);
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage",  new MarkupString($"<hr><span style='color:indianred'>Delete</span> section <span style='color:royalblue'>{subProject.SubprojectName}</span> ?<br><br><span style='font-weight:bold'>All</span> notes in this section will also be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>") },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        var message = new MarkupString ($"<hr><span style='color:indianred'>Delete</span> section <span style='color:royalblue'>{subProject.SubprojectName}</span> ?<br><br><span style='font-weight:bold'>All</span> notes in this section will also be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             bool result = await feService.Delete_Subproject (subProject.SubprojectId);
             if (result)
@@ -873,22 +847,8 @@ else
     public async Task BtnCopyToNoteReport(Note note)
         {
         var message = new MarkupString($"<hr><span style='color:DarkGreen'>COPY</span> this note to Quick-Notes?<br><br><div style='text-align:center'><img src='/img/icoCopyToNoteReport.png' width='70'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
         //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
             note.ParentType = 1;
@@ -911,22 +871,8 @@ else
     public async Task BtnDeleteNote(Note note)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> this note?<br><br><span style='font-weight:bold'>This note</span> will be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             appState.SetNoteParentId (note.ParentId);
             bool result = await feService.Delete_Note (note.NoteId);

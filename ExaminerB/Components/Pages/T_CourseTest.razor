@@ -29,18 +29,18 @@ else
         @* 1-Test title *@
         @if ((test.TestTags & 1) == 1)
             {
-            <textarea class="form-control form-text" @ref="txtTestTitle" @bind = "test.TestTitle" placeholder="Test Title..." style="font-weight:bold; width:100%; height:60px; text-align: right;" dir="rtl">@test.TestTitle</textarea>
+            <textarea class="form-control form-text" @ref="txtTestTitle" @bind = "test.TestTitle" placeholder="test title..." style="font-weight:bold; width:100%; height:60px; text-align: right;" dir="rtl">@test.TestTitle</textarea>
             }
         else
             {
-            <textarea class="form-control form-text" @ref="txtTestTitle" @bind = "test.TestTitle" placeholder="Test Title..." style="font-weight:bold; width:100%;height:60px;">@test.TestTitle</textarea>
+            <textarea class="form-control form-text" @ref="txtTestTitle" @bind = "test.TestTitle" placeholder="test title..." style="font-weight:bold; width:100%;height:60px;">@test.TestTitle</textarea>
             }
         <br />
         <div>
             <div id="selectTopicComboBox" style="display: flex; gap: 20px; align-items: flex-start; background-color: whitesmoke; padding: 10px; border-radius: 12px;">  
                 @* 2- Combo: Topics *@
                 <div style="flex: 1; color: IndianRed;">
-                    <MudSelect T="int" Label="Topic" @bind-Value="@test.TopicId" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                    <MudSelect T="int" Label="topic" @bind-Value="@test.TopicId" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                         @foreach (var topic in lstCourseTopics)
                             {
                             if (topic.CourseTopicId == test.TopicId)
@@ -53,7 +53,6 @@ else
                                 }
                             }
                     </MudSelect>
-                    <br />
                     <div class="form-check form-check-inline" style="padding-top:8px;">
                         <input class="form-check-input" type="checkbox" checked="@((test.TestTags & 1) == 1)" @onchange="e=>BtnUpdateTestTagsInPlace(test, 1, (bool)e.Value)"/>
                         <label class="form-check-label" style="font-size: small; color: RoyalBlue;padding-right:15px;">Test RTL </label>
@@ -65,30 +64,28 @@ else
                 </div>
                 @* 3- Combo: Levels *@
                 <div style="flex: 1; color: IndianRed;">
-                    <MudSelect T="int" Label="Level" @bind-Value="@test.TestLevel" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                         @for (int i = 1; i <= 5; i++)
-                            {
-                            int x = i;
-                            <MudSelectItem Value=@x>level @x</MudSelectItem> 
-                            }
-                    </MudSelect>
-                    <br />
+                    <div class="d-flex align-items-center">
+                        <MudSlider T="int" @bind-Value="@test.TestLevel" Variant="Variant.Filled" Min="1" Max="5">level</MudSlider>
+                        <span style="color:indianred; font-weight:bold;">
+                            @test.TestLevel
+                        </span>
+                    </div>
                     @if (appState.Cmd == "AddNewTest")
                         {
                         <button class="btn btn-link" @onclick="BtnCreateTest">
-                            <img src="/img/icoSave2.png" width="25" />
+                            <img src="/img/icoSave2.png" width="22" />
                         </button>
                         }
                     else
                         {
                         <button class="btn btn-link" @onclick="BtnUpdateTest">
-                            <img src="/img/icoSave2.png" width="25" />
+                            <img src="/img/icoSave2.png" width="22" />
                         </button>
                         <button class="btn btn-link" @onclick="BtnDeleteTest">
-                            <img src="/img/icoDelete1.png" width="25" />
+                            <img src="/img/icoDelete1.png" width="22" />
                         </button>
                         <button class="btn btn-link" type="submit" @onclick="BtnBack">
-                            <img src="/img/icoBack2.png" width="25" />
+                            <img src="/img/icoBack2.png" width="22" />
                         </button>
                         }
                 </div>
@@ -141,10 +138,10 @@ else
                                                 <label class="form-check-label" style="font-size: small; color: RoyalBlue;padding-right:15px;">ForceLast </label>
                                             </div>
                                             <button class="btn btn-link" type="submit" @onclick="()=>BtnUpdateTestOption(opt)">
-                                                <img src="/img/icoSave2.png" width="25" />
+                                                <img src="/img/icoSave2.png" width="22" />
                                             </button>
                                             <button class="btn btn-link" type="submit" @onclick="()=>BtnDeleteTestOption(opt.TestOptionId)">
-                                                <img src="/img/icoDelete1.png" width="25" />
+                                                <img src="/img/icoDelete1.png" width="22" />
                                             </button>
                                         </div>
                                     </div>
@@ -303,22 +300,8 @@ else
     public async Task BtnDeleteTest ()
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> test? (test options will also be deleted) <br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             Snackbar.Add("updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             BtnBack ();            
@@ -369,22 +352,8 @@ else
     public async Task BtnDeleteTestOption (int testOptionId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> test option? <br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             bool result = await feService.Delete_TestOption (testOptionId);
             Snackbar.Add("deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar

@@ -62,19 +62,16 @@
                             </MudSelect>
                             }
                     </div>
-                    @* <div class="mb-3 d-flex gap-1">
-                        <MudTextField @ref="refUser" @bind-Value="user.UserName" Label="Username" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
-                        <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" InputType="InputType.Password" />
-                    </div> *@
-                    <MudTextField @ref="refUser" @bind-Value="user.UserName" Label="Username" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
-                    <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" InputType="InputType.Password" />
+                    <MudTextField @ref="refUser" @bind-Value="user.UserName" Label="Username" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                    <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" InputType="InputType.Password" />
                 </MudCardContent>
             </MudCard>
         </MudContainer>    
     <br />
-    <button class="btn btn-link">
-        <img src="/img/icoLogin1.png" width="50" style="border-radius:1px"/>
-    </button>
+        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Login" Size="Size.Large" OnClick="@(() => BtnLogin())">Login</MudButton>
+    @* <button class="btn btn-link">
+        <img src="/img/icoLogin3.png" width="100" style="border-radius:1px"/>
+    </button> *@
     <br />
     </EditForm>
 </div>

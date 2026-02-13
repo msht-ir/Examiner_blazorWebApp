@@ -111,22 +111,8 @@
     public async Task BtnDeleteNote()
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> note? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             int noteId = Convert.ToInt32(appState.SelectedNoteId);
             bool result = await feService.Delete_Note (noteId);

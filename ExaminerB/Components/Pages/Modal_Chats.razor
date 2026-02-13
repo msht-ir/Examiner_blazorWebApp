@@ -58,7 +58,7 @@
                                             <br />
                                             <div style="text-align:center">
                                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Margin="Margin.Dense" @onclick="BtnCreateChat">Send</MudButton>
-                                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Margin="Margin.Dense" @onclick="BtnCancelNewChat">Cancel</MudButton>
+                                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Margin="Margin.Dense" @onclick="BtnCancelNewChat">Cancel</MudButton>
                                             </div>
                                     </MudCardContent>
                                 </MudCard>
@@ -238,22 +238,8 @@
     public async Task BtnDeleteChatItem(int chatId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> this chat item?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             bool result = await feService.Delete_Chat (chatId);
             if(result)

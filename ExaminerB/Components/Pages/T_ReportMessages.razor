@@ -58,15 +58,14 @@ else
                 <br /> 
                 @if(nMessagesTypeIsFeedback > 0)
                     {
-                    <div style="font-weight:bold; padding-left:25px;">Feedbacks: <span style="font-weight:normal;"> @(nMessagesAnsweredYes + nMessagesAnsweredNo) /  @nMessagesTypeIsFeedback ( @((nMessagesAnsweredYes + nMessagesAnsweredNo) * 100 / @nMessagesTypeIsFeedback)% ) </span></div>
                     <div class="d-flex justify-content-center">
                         <MudChart ChartType="ChartType.Donut"
                             InputData="@(new double[] {nMessagesAnsweredYes, nMessagesAnsweredNo,nMessagesNotAnswered })"
                             InputLabels="@(new[] { "Yes: "+ @nMessagesAnsweredYes, "No: " + nMessagesAnsweredNo, "notSure: "+ nMessagesNotAnswered })"
                             Width="100px" Height="100px" >
                         </MudChart>
-                        <br />
                     </div>
+                    <div style="color:gray;font-weight:bold; padding-left:25px;">Feedback <span style="font-weight:normal;"> @(nMessagesAnsweredYes + nMessagesAnsweredNo) /  @nMessagesTypeIsFeedback ( @((nMessagesAnsweredYes + nMessagesAnsweredNo) * 100 / @nMessagesTypeIsFeedback)% ) </span></div>
                     }
             }
             else
@@ -156,7 +155,7 @@ else
                                               Width="100px" Height="100px">
                                     </MudChart>
                                 </div>
-                                <div class="d-flex justify-content-center" style="text-align:left;font-weight:bold; padding-left:25px;">Feedbacks: <span style="font-weight:normal;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>                    
+                                <div class="d-flex justify-content-center" style="color:gray;text-align:left;font-weight:bold; padding-left:25px;">Feedback <span style="font-weight:normal;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>                    
                                 <br />
                                 }
                             }
@@ -411,22 +410,8 @@ else
     public async Task BtnDelete_MessagesOfstudent(int studentId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> all messages of this student?<div style='text-align:center'><br><br><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             bool result = await feService.Delete_Messages ("ByStudentId", studentId);
             if(result)
@@ -508,22 +493,8 @@ else
     public async Task BtnDelete_Message(int studentMessageId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> message permanently?<br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             int userId = Convert.ToInt32 (appState.UserId);
             bool result = await feService.Delete_Messages ("ByStudentMesssageId", studentMessageId);
@@ -545,22 +516,8 @@ else
     public async Task BtnDelete_Messages(int messageId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> messages permanently?<br><span style='font-weight:bold;color:royalblue'>All</span> instances of this message sent to students<br>will also be <span style='color:indianred'>deleted</span><br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             int groupId = Convert.ToInt32 (appState.GroupId);
             bool result = await feService.Delete_Messages ("ByMessageid", messageId);
@@ -648,22 +605,8 @@ else
     public async Task BtnDeleteNote(int noteId)
         {
         var message = new MarkupString($"Delete note?");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             bool result = await feService.Delete_Note (noteId);
             if(result)

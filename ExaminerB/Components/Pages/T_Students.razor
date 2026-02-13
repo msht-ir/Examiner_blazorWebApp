@@ -49,8 +49,8 @@ else
                                             {
                                             @* ADD NEW STUDENT *@
                                             <div class="d-flex" style="gap:10px;">
-                                                <MudTextField  @ref="refNewUser" @bind-Value="user.UserName"  Label="Username"   Variant="Variant.Outlined" Margin="Margin.Dense"  Class="my-textfield" />
-                                                <MudTextField  @ref="refNewPass" @bind-Value="user.UserPass"  Label="Password"  Variant="Variant.Outlined" Margin="Margin.Dense"  Class="my-textfield"  InputType="InputType.Password"/>
+                                                <MudTextField  @ref="refNewUser" @bind-Value="user.UserName"  Label="Username"   Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off"  Class="my-textfield" />
+                                                <MudTextField  @ref="refNewPass" @bind-Value="user.UserPass"  Label="Password"  Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off"  Class="my-textfield"  InputType="InputType.Password"/>
                                                 <button class="btn btn-link" Title=@((_help)?"save new student":"") @onclick="()=>BtnCreateNewStudent(user.UserName, user.UserPass, user.UserName)">
                                                     <img src="/img/icoSave2.png" width="24" />
                                                 </button>
@@ -62,7 +62,7 @@ else
                                             {
                                             @* SEARCH *@
                                             <div class="d-flex" style="padding:0;">
-                                                <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                                                <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                                                 <button class="btn btn-link" Title=@((_help)?"search students":"") @onclick="()=>BtnReadStudentsBySearch()">
                                                     <img src="/img/icoSearch.png" width="22" />
                                                 </button>
@@ -84,7 +84,7 @@ else
                                         @if (_cmd == "EditGroup")
                                             {
                                             <div class="d-flex">
-                                                <MudTextField @ref="reftxtNewGroup" @bind-Value="strGroupName" Label="Edit Group" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                                                <MudTextField @ref="reftxtNewGroup" @bind-Value="strGroupName" Label="Edit Group" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                                                 <button class="btn btn-link" Title=@((_help)?"save group":"") @onclick="()=>BtnUpdateGroup(strGroupName)">
                                                     <img src="/img/icoSave2.png" width="24" />
                                                 </button>
@@ -262,7 +262,7 @@ else
                                         @if (_cmd == "AddNewGroup")
                                             {
                                             <div class="d-flex">
-                                                <MudTextField @ref="reftxtNewGroup" @bind-Value="strNewGroupName" Label="New Group گروه جديد" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                                                <MudTextField @ref="reftxtNewGroup" @bind-Value="strNewGroupName" Label="New Group" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                                                 <button class="btn btn-link" Title=@((_help)?"save group":"") @onclick="()=>BtnCreateNewGroup(strNewGroupName)">
                                                     <img src="/img/icoSave2.png" width="24" />
                                                 </button>
@@ -274,7 +274,7 @@ else
                                         else
                                             {
                                             <div class="d-flex">
-                                                <MudSelect T="int" @ref="refGroups" Label="Group گروه" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                <MudSelect T="int" @ref="refGroups" Label="Group" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                     <MudSelectItem Value="0">Select a Group</MudSelectItem>
                                                     @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
                                                 </MudSelect>
@@ -311,7 +311,7 @@ else
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                         <div class="d-flex">
-                                            <MudSelect T="int" @ref="refCourses" Label="Course درس" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <MudSelect T="int" @ref="refCourses" Label="Course" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                 <MudSelectItem Value="0">Select a Course</MudSelectItem>
                                                 @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
                                             </MudSelect>
@@ -329,7 +329,7 @@ else
                                             </button>
                                         </div>
                                         <div class="d-flex">
-                                            <MudSelect T="int" @ref="refExams" Label="Exam آزمون" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <MudSelect T="int" @ref="refExams" Label="Exam" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                 <MudSelectItem Value="0">Select an Exam</MudSelectItem>
                                                 @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                                             </MudSelect>
@@ -373,8 +373,8 @@ else
                                         @if (_cmd == "AddNewMessage")
                                             {
                                             <h5>New message</h5>
-                                            <MudTextField @ref="reftxtNewMessageTitle" @bind-Value="strNewMessageTitle" Label="Title عنوان " Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
-                                            <MudTextField @ref="reftxtNewMessageBody" @bind-Value="strNewMessageBody" Label="Message پيام" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" Lines="5" />
+                                            <MudTextField @ref="reftxtNewMessageTitle" @bind-Value="strNewMessageTitle" Label="Title " Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                                            <MudTextField @ref="reftxtNewMessageBody" @bind-Value="strNewMessageBody" Label="Message" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="5" />
                                             <div style="text-align:center">
                                                 <button class="btn btn-link" Title=@((_help)?"save message":"") @onclick="()=>BtnCreateNewMessage(strNewMessageTitle, strNewMessageBody)">
                                                     <img src="/img/icoSave2.png" width="24" />
@@ -387,8 +387,8 @@ else
                                         else if (_cmd == "EditMessage")
                                             {
                                             <h5>Edit message</h5>
-                                            <MudTextField @ref="reftxtNewMessageTitle" @bind-Value="strNewMessageTitle" Label="Title عنوان " Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
-                                            <MudTextField @ref="reftxtNewMessageBody" @bind-Value="strNewMessageBody" Label="Message پيام" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" Lines="5" />
+                                            <MudTextField @ref="reftxtNewMessageTitle" @bind-Value="strNewMessageTitle" Label="Title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                                            <MudTextField @ref="reftxtNewMessageBody" @bind-Value="strNewMessageBody" Label="Message" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="5" />
                                             <div style="text-align:center">
                                                 <button class="btn btn-link" Title=@((_help)?"save message":"") @onclick="()=>BtnUpdateMessage()">
                                                     <img src="/img/icoSave2.png" width="24" />
@@ -401,7 +401,7 @@ else
                                         else
                                             {
                                             <div class="d-flex">
-                                                <MudSelect T="int" @ref="refMessages" Label="Message پيام" Value="MessageId" ValueChanged="OnMessageChanged" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                <MudSelect T="int" @ref="refMessages" Label="Message" Value="MessageId" ValueChanged="OnMessageChanged" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                     <MudSelectItem Value="0">Select a Message</MudSelectItem>
                                                     @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
                                                 </MudSelect>
@@ -425,7 +425,7 @@ else
                                                 <button class="btn btn-link" Title=@((_help)?"add new message":"") @onclick="BtnAddNewMessage">
                                                     <img src="/img/icoAdd0.png" width="20" />
                                                 </button>
-                                                <button class="btn btn-link" Title=@((_help)?"edit message ويرايش پيام":"") @onclick='()=>BtnEditMessage(MessageId)'>
+                                                <button class="btn btn-link" Title=@((_help)?"edit message":"") @onclick='()=>BtnEditMessage(MessageId)'>
                                                     <img src="/img/icoRename.png" width="32" />
                                                 </button>
                                                 <button class="btn btn-link" Title=@((_help)?"delete this message":"") @onclick="()=>BtnDeleteMessage(MessageId)">
@@ -931,22 +931,8 @@ else
         if(messageId > 0)
             {
             var message = new MarkupString($"<hr><span style='color:indianred'>Edit</span> message?<br>There may be previous Messages send using existing Title/Body.<br>Continue?<br><br><div style='text-align:center'><img src='/img/icoRename.png' width='70'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+            bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+            if (confirmResult == true)
                 {
                 Message thisMessage = await feService.Read_Message (messageId, false);
                 appState.SetMessageId(messageId);
@@ -981,22 +967,8 @@ else
         if(messageId>0)
             {
             var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> the message and <span style='color:indianred; font-weight:bold'>all</span> instances already sent to Students?<br><br>Are you <span style='color:royalblue'>Sure</span>? <div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+            bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+            if (confirmResult == true)
                 {
                 bool result = await feService.Delete_Messages ("ByMessageId", messageId);
                 if (result)

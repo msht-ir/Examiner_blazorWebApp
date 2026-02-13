@@ -53,7 +53,7 @@ else
                                                 <hr style="color:red" />
                                                 <div class="d-flex align-items-center">
                                                     <span style="font-weight:bold; margin-right:10px;">Alarm: </span>
-                                                    <MudNumericField T="int" @ref="refExamAlarm" @bind-Value="intExamAlarm" Label="min to timeout" Variant="Variant.Outlined" Min="0" Max="15" Margin="Margin.Dense" Class="my-textfield" style="width: 150px;padding-left:10px" />
+                                                    <MudNumericField T="int" @ref="refExamAlarm" @bind-Value="intExamAlarm" Label="min to timeout" Variant="Variant.Outlined" Min="0" Max="15" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width: 150px;padding-left:10px" />
                                                     <button class="btn btn-link  ms-2" style="margin-right:10px;" @onclick="() => SetExamAlarm(intExamAlarm)">
                                                         <img src="/img/icoSave2.png" width="24" />
                                                     </button>
@@ -193,22 +193,8 @@ else
     public async Task BtnFinishExam(StudentExam studentExam)
         {
         var message = new MarkupString($"<hr><span style='font-weight:bold;color:indianred'>Finish</span> exam <strong>({studentExam.ExamTitle})</strong>?<br/><br/>Sure?<div style='text-align:center'><img src='/img/icoClock2.png' width='70'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             bool result = await feService.Update_StudentExamTags(studentExam, "finishedOn");        
             Snackbar.Add("exam terminated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
@@ -224,22 +210,8 @@ else
     public async Task BtnClearTagTestIsAnswered(StudentExamTest studentExamTest)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Clear</span>  your answer for this Test?<div style='text-align:center'><img src='/img/icoEraser.png' width='70'/></div><br><hr>");
-        var parameters = new DialogParameters
-            {
-                { "MarkupMessage", message },
-                { "ButtonText", "Yes" },
-                { "CancelText", "No" }
-            };
-        var options = new DialogOptions 
-            { 
-                CloseButton = false,
-                BackdropClick = false,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            };
-        var dialog = await DialogService.ShowAsync<MudMessageBox>("Confirm", parameters, options);
-        var dialogresult = await dialog.Result;
-        if (!dialogresult.Canceled)
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
             await feService.Update_StudentExamTestAnswer (studentExamTest.StudentExamTestId, 0);
             studentExamTest.StudentExamTestTags = (studentExamTest.StudentExamTestTags & ~4);
