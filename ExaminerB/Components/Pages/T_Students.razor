@@ -115,7 +115,7 @@ else
                                                     <img src="/img/icoNewNote1.png" width="24" />
                                                 </button>
                                                 <button class="btn btn-link" Title=@((_help)?"report notes about this group":"") @onclick='()=>BtnReportNotes(GroupId, "G")'>
-                                                    <img src="/img/icoListNote2.png" width="22" />
+                                                    <img src="/img/icoNote2.png" width="22" />
                                                 </button>
                                                 <button class="btn btn-link" Title=@((_help)?"edit group":"") @onclick='()=>BtnEditGroup(GroupId)'>
                                                     <img src="/img/icoRename.png" width="30" />
@@ -216,21 +216,18 @@ else
                             @foreach(User student in lstStudents)
                                 {
                                 <div class="d-flex align-items-center mb-1">
-                                    <input class="form-check-input" style="margin-left:2px;margin-right:5px;" type="checkbox" @bind="student.IsSelected" />
-                                    @student.UserName - @student.UserNickname
-                                </div>
-                                <div class="d-flex align-items-center mb-1">
-                                    <button class="btn btn-link" style="margin-left:15px" Title=@((_help)?"report students courses and exams":"") @onclick='()=>BtnReportStudent(student.UserId, "S")'>
-                                        <img src="/img/icoFolderS.png" width="24" />
+                                    <input class="form-check-input" style="margin-left:1px;margin-right:1px;" type="checkbox" @bind="student.IsSelected" />
+                                    <button class="btn btn-link" style="margin-left:1px" Title=@((_help)?"report students courses and exams":"") @onclick='()=>BtnReportStudent(student.UserId, "S")'>
+                                        <img src="/img/icoFolderS.png" width="22" />
                                     </button>
-                                    <button class="btn btn-link" Title=@((_help)?"report notes and messages":"") @onclick='()=>BtnGotoPageReportMessages(student)'>
+                                    <button class="btn btn-link" style="margin-left:1px" Title=@((_help) ? "report notes and messages" : "") @onclick='() => BtnGotoPageReportMessages(student)'>
                                         <img src="/img/icoListM.png" width="30" />
                                     </button>
-                                    <button class="btn btn-link" Title=@((_help)?"add note about this student":"") @onclick='()=>BtnCreateNote(student.UserId, "S")'>
+                                    <button class="btn btn-link" style="margin-left:1px" Title=@((_help) ? "add note about this student" : "") @onclick='() => BtnCreateNote(student.UserId, "S")'>
                                         <img src="/img/icoNewNote1.png" width="20" />
                                     </button>
+                                    <span style="font-size:x-small">@student.UserName - @student.UserNickname</span>
                                 </div>
-                                <hr />
                                 }
                             <br />
                             <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="BtnSelectAllStudents">All</MudButton>
@@ -421,21 +418,37 @@ else
                                                     </MudCard>
                                                 </MudContainer>
                                                 }
-                                            <div class="d-flex">
-                                                <button class="btn btn-link" Title=@((_help)?"add new message":"") @onclick="BtnAddNewMessage">
-                                                    <img src="/img/icoAdd0.png" width="20" />
-                                                </button>
-                                                <button class="btn btn-link" Title=@((_help)?"edit message":"") @onclick='()=>BtnEditMessage(MessageId)'>
-                                                    <img src="/img/icoRename.png" width="32" />
-                                                </button>
-                                                <button class="btn btn-link" Title=@((_help)?"delete this message":"") @onclick="()=>BtnDeleteMessage(MessageId)">
-                                                    <img src="/img/icoDelete2.png" width="30" />
-                                                </button>
-                                                <MudCheckBox @bind-Value="requestFeedback" Label="feedback" Color="Color.Primary"></MudCheckBox>
-                                                <button class="btn btn-link ml-5" Title=@((_help)?"send this message to: selected students (above)":"") @onclick="()=>BtnAddStudentsToMessage()">
-                                                    <img src="/img/icoEnvelopSend.png" width="28" />
-                                                </button>
-                                            </div>
+                                            <br>
+                                            <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                <MudMenuItem>
+                                                    <button class="btn btn-link" Title=@((_help)?"add new message":"") @onclick="BtnAddNewMessage">
+                                                        <img src="/img/icoAdd0.png" width="20" />
+                                                    </button>
+                                                    create new message
+                                                </MudMenuItem> 
+                                                <MudMenuItem>
+                                                    <button class="btn btn-link" Title=@((_help)?"edit message":"") @onclick='()=>BtnEditMessage(MessageId)'>
+                                                        <img src="/img/icoRename.png" width="32" />
+                                                    </button>
+                                                    edit selected message
+                                                </MudMenuItem> 
+                                                <MudMenuItem>
+                                                    <button class="btn btn-link" Title=@((_help)?"delete this message":"") @onclick="()=>BtnDeleteMessage(MessageId)">
+                                                        <img src="/img/icoDelete2.png" width="30" />
+                                                    </button>
+                                                    delete message
+                                                </MudMenuItem> 
+                                                <MudDivider />
+                                                <MudMenuItem>
+                                                    <MudCheckBox @bind-Value="requestFeedback" Label="feedback" Color="Color.Primary"></MudCheckBox>
+                                                </MudMenuItem> 
+                                                <MudMenuItem>
+                                                    <button class="btn btn-link" Title=@((_help)?"send this message to: selected students (above)":"") @onclick="()=>BtnAddStudentsToMessage()">
+                                                        <img src="/img/icoEnvelopSend.png" width="28" />
+                                                    </button>
+                                                    send message to students
+                                                </MudMenuItem> 
+                                            </MudMenu>
                                             }
                                     </MudCardContent>
                                 </MudCard>
@@ -446,11 +459,12 @@ else
             </div>
             @* BACK *@
             <br />
+            <MudSwitch @bind-Value="_help" Label="help on mouse hover" Color="Color.Primary" Dense="true"></MudSwitch>
+            <br />
             <div class="d-flex align-items-center">
                 <button class="btn btn-link" Title=@((_help)?"back to main page":"") @onclick= "()=> BtnBack()">
                     <img src="/img/icoBack3.png" style="width:40px" />
                 </button>
-                <MudSwitch @bind-Value="_help" Label="help on mouse hover" Color="Color.Primary" Dense="true"></MudSwitch>
             </div>
         </div>
     </EditForm>
@@ -852,14 +866,6 @@ else
             }
         }
     //message
-    private async Task OnMessageChanged(int newValue) 
-        {
-        _cmd = "HideMessageBody";
-        //update MessageId from the event
-        MessageId = newValue;
-        appState.SetMessageId (MessageId);
-        StateHasChanged();
-        } 
     private async Task BtnShowHideMessage(int messageId) 
         {
         if (messageId > 0)
@@ -879,6 +885,14 @@ else
             Snackbar.Add($"select a message", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         } 
+    private async Task OnMessageChanged(int newValue) 
+        {
+        _cmd = "HideMessageBody";
+        //update MessageId from the event
+        MessageId = newValue;
+        appState.SetMessageId (MessageId);
+        StateHasChanged();
+        } 
     private void BtnAddNewMessage()
         {
         _cmd="AddNewMessage";
@@ -888,19 +902,26 @@ else
         }
     private async Task BtnCreateNewMessage(string messageTitle, string messageBody)
         {
-        user.UserId = Convert.ToInt32 (appState.UserId);
-        Message message = new Message () { UserId = user.UserId, DateTimeCreated = "", MessageTitle = messageTitle, MessageBody=messageBody};
-        int result = await feService.Create_Message(message);
-        if(result > 0)
+        if(messageBody.Length < 4000)
             {
-            lstMessages = await feService.Read_Messages (user.UserId, false);
-            Snackbar.Add($"message {messageTitle} created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            _cmd="";
-            StateHasChanged ();            
+            user.UserId = Convert.ToInt32(appState.UserId);
+            Message message = new Message () { UserId = user.UserId, DateTimeCreated = "", MessageTitle = messageTitle, MessageBody=messageBody};
+            int result = await feService.Create_Message(message);
+            if(result > 0)
+                {
+                lstMessages = await feService.Read_Messages (user.UserId, false);
+                Snackbar.Add($"message {messageTitle} (len:{messageBody.Length}) created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                _cmd="";
+                StateHasChanged ();            
+                }
+            else
+                {
+                Snackbar.Add($"failed to create message {messageTitle}", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
             }
         else
             {
-            Snackbar.Add($"failed to create message {messageTitle}", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"large message ({messageBody.Length}), max: 4000", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     private async Task BtnAddStudentsToMessage()
@@ -975,7 +996,9 @@ else
                     {
                     Snackbar.Add ("message deleted", Severity.Success);
                     MessageId = 0;
+                    appState.SetMessageId (0);
                     _cmd="HideMessageBody";
+                    lstMessages.Clear ();
                     lstMessages = await feService.Read_Messages (user.UserId, false);
                     StateHasChanged ();
                     }

@@ -2421,12 +2421,12 @@ COMMIT TRANSACTION;
                 {
                 case "ByStudentId":
                         {
-                        sql += " WHERE se.StudentId=@id ORDER BY e.ExamDateTime";
+                        sql += " WHERE se.StudentId=@id ORDER BY e.ExamDateTime DESC";
                         break;
                         }
                 case "ByExamId":
                         {
-                        sql += " WHERE se.ExamId=@id ORDER BY e.ExamDateTime";
+                        sql += " WHERE se.ExamId=@id ORDER BY e.ExamDateTime DESC";
                         break;
                         }
                 }
@@ -3150,24 +3150,32 @@ COMMIT TRANSACTION;
         #region M:Messages
         public async Task<int> Create_MessageAsync (Message message)
             {
-            try
+            if(message.MessageBody.Length < 4000)
                 {
-                string? connString = _config.GetConnectionString ("cnni");
-                using SqlConnection cnn = new (connString);
-                string sql = "INSERT INTO Messages (UserId, DateTimeCreated, MessageTitle, MessageBody) VALUES (@userid, @datetimecreated, @messagetitle, @messagebody); SELECT CAST (scope_identity() AS int)";
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.AddWithValue ("@userid", message.UserId);
-                cmd.Parameters.AddWithValue ("@datetimecreated", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
-                cmd.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
-                cmd.Parameters.AddWithValue ("@messagebody", message.MessageBody);
-                int newMessageId = (int) await cmd.ExecuteScalarAsync ();
-                await cnn.CloseAsync ();
-                return newMessageId;
+                try
+                    {
+                    string? connString = _config.GetConnectionString ("cnni");
+                    using SqlConnection cnn = new (connString);
+                    string sql = "INSERT INTO Messages (UserId, DateTimeCreated, MessageTitle, MessageBody) VALUES (@userid, @datetimecreated, @messagetitle, @messagebody); SELECT CAST (scope_identity() AS int)";
+                    await cnn.OpenAsync ();
+                    SqlCommand cmd = new SqlCommand (sql, cnn);
+                    cmd.Parameters.AddWithValue ("@userid", message.UserId);
+                    cmd.Parameters.AddWithValue ("@datetimecreated", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
+                    cmd.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
+                    cmd.Parameters.AddWithValue ("@messagebody", message.MessageBody);
+                    int newMessageId = (int) await cmd.ExecuteScalarAsync ();
+                    await cnn.CloseAsync ();
+                    return newMessageId;
+                    }
+                catch (Exception ex)
+                    {
+                    Console.WriteLine ($"be error (create message failed):\n{ex}");
+                    return 0;
+                    }
                 }
-            catch (Exception ex)
+            else
                 {
-                Console.WriteLine ($"be error (create message failed):\n{ex}");
+                //msg_body > 4000 chars!
                 return 0;
                 }
             }
@@ -3211,7 +3219,7 @@ COMMIT TRANSACTION;
         public async Task<List<Message>> Read_MessagesAsync (int userId, bool getStudentMessages)
             {
             List<Message> lstMessages = new List<Message> ();
-            string sql = "SELECT MessageId, UserId, DateTimeCreated, MessageTitle, MessageBody FROM Messages WHERE UserId=@userid ORDER BY DateTimeCreated";
+            string sql = "SELECT MessageId, UserId, DateTimeCreated, MessageTitle, MessageBody FROM Messages WHERE UserId=@userid ORDER BY DateTimeCreated DESC";
             Message message = new Message ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);

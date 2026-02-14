@@ -35,15 +35,15 @@
                                         @if (appState.Cmd == "CreateNote")
                                             {
                                             <div style="text-align:center">
-                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="BtnCreateNote">Save note</MudButton>
-                                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="BtnCancel">Cancel</MudButton>
+                                            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" @onclick="BtnCreateNote">Save note</MudButton>
+                                            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Cancel" @onclick="BtnCancel">Cancel</MudButton>
                                             </div>
                                             }
                                         else if (appState.Cmd == "UpdateNote")
                                             {
                                             <div style="text-align:center">
-                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="BtnUpdateNote">Update note</MudButton>
-                                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="BtnCancel">Cancel</MudButton>
+                                            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" @onclick="BtnUpdateNote">Update note</MudButton>
+                                            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Cancel" @onclick="BtnCancel">Cancel</MudButton>
                                             </div>
                                             }
                                 </MudCardContent>

@@ -560,8 +560,9 @@
             <MudSwitch @bind-Value="_help" Label="help on mouse hover" Color="Color.Primary" Dense="true"></MudSwitch>
         </div>
         <hr />
+        <br />
         <div style="text-align:center; margin-top:30px">
-            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Logout" Size="Size.Large" OnClick="@(() => BtnExit())">Logout</MudButton>
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Logout" Size="Size.Small" OnClick="@(() => BtnExit())">Logout</MudButton>
             @* <button class="btn btn-link" Title=@((_help)?"Exit":"") @onclick= "()=> BtnExit()">
                 <img src="/img/icoLogout1.png" style="width:60px" />
             </button> *@

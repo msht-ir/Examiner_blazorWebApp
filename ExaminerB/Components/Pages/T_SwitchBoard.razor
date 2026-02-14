@@ -7,57 +7,82 @@
 
 <div class="container" style="max-width:500px; margin: 0 auto;">
     <div style="text-align: center;">
+        <br />
         <div style="text-align: center;">
             <span style="font-style:italic;font-size:small;color:royalblue">@appState.UserNickname</span>
         </div>
+        <br />
         <hr style="color:red" />
         <br />
+        @* <table class="table table-borderless" style="text-align:center;align-content:center">
+            <tr>
+                <td>
+                    <button class="btn btn-link" @onclick="GotoGroupsStudents">
+                        <img src="/img/icoSwitchBoardStudents.png" width="80" />
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-link" @onclick="GotoCourses">
+                        <img src="/img/icoSwitchBoardCourses.png" width="85" />
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button class="btn btn-link" @onclick="ReportUserNotes">
+                        <img src="/img/icoNoteReport.png" style="width:70px" />
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-link" @onclick="GotoProjects">
+                        <img src="/img/icoSwitchBoardNoteBook.png" width="90" />
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button class="btn btn-link" @onclick="BtnCreateNote">
+                        <img src="/img/icoEditPen.png" style="width:55px" />
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-link" @onclick="GotoLogin">
+                        <img src="/img/icoSwitchBoardExit.png" style="width:90px" />
+                    </button>
+                </td>
+            </tr>
+        </table> *@
         <br />
-        <MudContainer Class="mt-2 px-0">
-            <MudCard Class="mx-0" elevation="2">
-                <MudCardContent Style="background-color: rgba(250,250,250);">
-                    <table class="table table-borderless" style="text-align:center;align-content:center">
-                        <tr>
-                            <td>
-                                <button class="btn btn-link" @onclick="GotoGroupsStudents">
-                                    <img src="/img/icoSwitchBoardStudents.png" width="80" />
-                                </button>
-                            </td>
-                            <td>
-                                <button class="btn btn-link" @onclick="GotoCourses">
-                                    <img src="/img/icoSwitchBoardCourses.png" width="85" />
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <button class="btn btn-link" @onclick="ReportUserNotes">
-                                    <img src="/img/icoNoteReport.png" style="width:70px" />
-                                </button>
-                            </td>
-                            <td>
-                                <button class="btn btn-link" @onclick="GotoProjects">
-                                    <img src="/img/icoSwitchBoardNoteBook.png" width="90" />
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <button class="btn btn-link" @onclick="BtnCreateNote">
-                                    <img src="/img/icoEditPen.png" style="width:55px" />
-                                </button>
-                            </td>
-                            <td>
-                                <button class="btn btn-link" @onclick="GotoLogin">
-                                    <img src="/img/icoSwitchBoardExit.png" style="width:90px" />
-                                </button>
-                            </td>
-                        </tr>
-                    </table>
-                </MudCardContent>
-            </MudCard>
-        </MudContainer>
+        <div class="align-content-center">
+            <button class="btn btn-link" @onclick="GotoGroupsStudents">
+                <img src="/img/icoSwitchBoardStudents.png" width="44" />
+            </button>
+            <button class="btn btn-link" @onclick="GotoCourses">
+                <img src="/img/icoSwitchBoardCourses.png" width="44" />
+            </button>
+            <button class="btn btn-link" @onclick="GotoProjects">
+                <img src="/img/icoSwitchBoardNoteBook.png" width="42" />
+            </button>
+            <button class="btn btn-link" @onclick="ReportUserNotes">
+                <img src="/img/icoNoteReport.png" style="width:32px" />
+            </button>
+            <button class="btn btn-link" @onclick="BtnCreateNote">
+                <img src="/img/icoEditPen.png" style="width:28px" />
+            </button>
+            @* <button class="btn btn-link" @onclick="GotoLogin">
+                <img src="/img/icoSwitchBoardExit.png" style="width:40px" />
+            </button> *@
+        </div>
         <br />
+        <br />
+        <div class="d-flex">
+        </div>
+        <hr style="color:red" />
+        <br />
+        <div style="text-align:center; margin-top:30px">
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Logout" Size="Size.Small" OnClick="@(() => GotoLogin())">Logout</MudButton>
+        </div>
+
         @* <E_Projects /> *@
         @if (appState.Cmd == "CreateNote")
             {
