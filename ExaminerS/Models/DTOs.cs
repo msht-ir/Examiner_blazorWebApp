@@ -419,6 +419,18 @@ namespace ExaminerS.Models
         public int UserId { get; set; } = 0;
         public string ProjectName { get; set; } = "";
         public int ProjectTags { get; set; }
+        //wrapper properties for each flag
+        public bool IsActive
+            {
+            get => (ProjectTags & 1) == 1;
+            set
+                {
+                if (value)
+                    ProjectTags |= 1;
+                else
+                    ProjectTags &= ~1;
+                }
+            }
         public List<Subproject> Subprojects { get; set; } = new List<Subproject> ();
         public List<Note> Notes { get; set; } = new List<Note> ();
         }

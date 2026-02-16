@@ -162,6 +162,11 @@
         }
     public async Task BtnUpdateNote()
         {
+        if (note.ParentId == 0)
+            {
+            Snackbar.Add("failed... try again", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            return;
+            }
         if (note.NoteText.Trim() == "")
             {
             Snackbar.Add("note is empty", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
