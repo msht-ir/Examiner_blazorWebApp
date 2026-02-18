@@ -61,17 +61,29 @@ else
                                         else
                                             {
                                             @* SEARCH *@
-                                            <div class="d-flex" style="padding:0;">
+                                            <div class="d-flex gap-3" style="padding:0;">
                                                 <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                                <button class="btn btn-link" Title=@((_help)?"search students":"") @onclick="()=>BtnReadStudentsBySearch()">
-                                                    <img src="/img/icoSearch.png" width="22" />
-                                                </button>
-                                                <button class="btn btn-link" Title=@((_help)?"cancel":"") @onclick="BtnCancelSearchStudent">
-                                                    <img src="/img/icoCancel.png" width="18" />
-                                                </button>
-                                                <button class="btn btn-link" Title=@((_help)?"add new student":"") @onclick="BtnAddNewStudent">
-                                                    <img src="/img/icoAdd0.png" width="22" />
-                                                </button>
+                                                <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                    <MudMenuItem @onclick="()=>BtnReadStudentsBySearch()">
+                                                        <button class="btn btn-link" Title=@((_help)?"search students":"") >
+                                                            <img src="/img/icoSearch.png" width="22" />
+                                                        </button>
+                                                        search students
+                                                    </MudMenuItem> 
+                                                    <MudMenuItem @onclick="BtnCancelSearchStudent">
+                                                        <button class="btn btn-link" Title=@((_help)?"cancel":"")>
+                                                            <img src="/img/icoCancel.png" width="18" />
+                                                        </button>
+                                                        cancel
+                                                    </MudMenuItem> 
+                                                    <MudDivider />
+                                                    <MudMenuItem @onclick="BtnAddNewStudent">
+                                                        <button class="btn btn-link" Title=@((_help)?"add new student":"")>
+                                                            <img src="/img/icoExcel1.png" width="22" />
+                                                        </button>
+                                                        import from excel
+                                                    </MudMenuItem>
+                                                </MudMenu>
                                             </div>
                                             }
                                     </MudCardContent>
@@ -95,32 +107,50 @@ else
                                             }
                                         else
                                             {
-                                            <div class="d-flex">
+                                            <div class="d-flex gap-3">
                                                 <MudSelect T="int" @ref="refGroups" Label="Group" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                     <MudSelectItem Value="0">Select a Group</MudSelectItem>
                                                     @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
                                                 </MudSelect>
-                                                <button class="btn btn-link" Title=@((_help)?"delete group":"") @onclick='()=>BtnDeleteGroup(GroupId)'>
-                                                    <img src="/img/icoDelete1.png" width="24" />
-                                                </button>
+                                                <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                    <MudMenuItem @onclick='() => BtnReadStudents(GroupId, "G")'>
+                                                        <button class="btn btn-link" Title=@((_help)?"list students in this group":"")>
+                                                            <img src="/img/icoListS.png" width="36" />
+                                                        </button>
+                                                        list students
+                                                    </MudMenuItem>
+                                                    <MudMenuItem @onclick='() => BtnReportStudent(GroupId, "G")'>
+                                                        <button class="btn btn-link" Title=@((_help)?"report students courses and exams":"")>
+                                                            <img src="/img/icoFolderS.png" width="26" />
+                                                        </button>
+                                                        goto students folder
+                                                    </MudMenuItem>
+                                                    <MudMenuItem @onclick='() => BtnCreateNote(GroupId, "G")'>
+                                                        <button class="btn btn-link" Title=@((_help)?"add note about this group":"")>
+                                                            <img src="/img/icoNewNote1.png" width="24" />
+                                                        </button>
+                                                        +note about group
+                                                    </MudMenuItem>
+                                                    <MudMenuItem @onclick='() => BtnReportNotes(GroupId, "G")'>
+                                                        <button class="btn btn-link" Title=@((_help)?"report notes about this group":"")>
+                                                            <img src="/img/icoNote2.png" width="22" />
+                                                        </button>
+                                                        show notes
+                                                    </MudMenuItem>
+                                                    <MudMenuItem @onclick='() => BtnEditGroup(GroupId)'>
+                                                        <button class="btn btn-link" Title=@((_help)?"edit group":"")>
+                                                            <img src="/img/icoRename.png" width="30" />
+                                                        </button>
+                                                        edit group
+                                                    </MudMenuItem>
+                                                    <MudMenuItem @onclick='() => BtnDeleteGroup(GroupId)'>
+                                                        <button class="btn btn-link" Title=@((_help)?"delete group":"")>
+                                                            <img src="/img/icoDelete1.png" width="24" />
+                                                        </button>
+                                                        delete group
+                                                    </MudMenuItem>
+                                                </MudMenu>
                                             </div>
-                                            <div>
-                                                <button class="btn btn-link" Title=@((_help)?"list students in this group":"") @onclick='()=>BtnReadStudents(GroupId,"G")'>
-                                                    <img src="/img/icoListS.png" width="36" />
-                                                </button>
-                                                <button class="btn btn-link" Title=@((_help)?"report students courses and exams":"") @onclick='()=>BtnReportStudent(GroupId, "G")'>
-                                                    <img src="/img/icoFolderS.png" width="26" />
-                                                </button>
-                                                <button class="btn btn-link" Title=@((_help)?"add note about this group":"") @onclick='()=>BtnCreateNote(GroupId, "G")'>
-                                                    <img src="/img/icoNewNote1.png" width="24" />
-                                                </button>
-                                                <button class="btn btn-link" Title=@((_help)?"report notes about this group":"") @onclick='()=>BtnReportNotes(GroupId, "G")'>
-                                                    <img src="/img/icoNote2.png" width="22" />
-                                                </button>
-                                                <button class="btn btn-link" Title=@((_help)?"edit group":"") @onclick='()=>BtnEditGroup(GroupId)'>
-                                                    <img src="/img/icoRename.png" width="30" />
-                                                </button>
-                                            </div>    
                                             }
                                     </MudCardContent>
                                 </MudCard>
@@ -129,55 +159,90 @@ else
                                 <MudCard Class="mx-auto">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                         @* COMBO C *@
-                                        <div class="d-flex">
+                                        <div class="d-flex gap-3">
                                             <MudSelect T="int" @ref="refCourses" Label="Course" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                 <MudSelectItem Value="0">Select a Course</MudSelectItem>
                                                 @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
                                             </MudSelect>
+                                            <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                <MudMenuItem @onclick='() => BtnReadStudents(CourseId, "C")'>
+                                                    <button class="btn btn-link" Title=@((_help)?"list students in this course":"")>
+                                                        <img src="/img/icoListS.png" width="36" />
+                                                    </button>
+                                                    list students
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick='() => BtnReportStudent(CourseId, "C")'>
+                                                    <button class="btn btn-link" Title=@((_help)?"report courses and exams of students in this course":"")>
+                                                        <img src="/img/icoFolderS.png" width="26" />
+                                                    </button>
+                                                    goto students folder
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick='() => BtnCreateNote(CourseId, "C")'>
+                                                    <button class="btn btn-link" Title=@((_help)?"add note about this course":"")>
+                                                        <img src="/img/icoNewNote1.png" width="24" />
+                                                    </button>
+                                                    +note about course
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick='() => BtnReportNotes(CourseId, "C")'>
+                                                    <button class="btn btn-link" Title=@((_help)?"report notes about this course":"")>
+                                                        <img src="/img/icoNote2.png" width="22" />
+                                                    </button>
+                                                    show notes
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick='() => BtnGotoCoursesPage(CourseId)'>
+                                                    <button class="btn btn-link" Title=@((_help)?"goto page courses":"")>
+                                                        <img src="/img/icoFolderC.png" width="26" />
+                                                    </button>
+                                                    goto course folder
+                                                </MudMenuItem>
+                                            </MudMenu>
                                         </div>
                                         <div>
-                                            <button class="btn btn-link" Title=@((_help)?"list students in this course":"") @onclick='()=>BtnReadStudents(CourseId,"C")'>
-                                                <img src="/img/icoListS.png" width="36" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"report courses and exams of students in this course":"") @onclick='()=>BtnReportStudent(CourseId, "C")'>
-                                                <img src="/img/icoFolderS.png" width="26" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"add note about this course":"") @onclick='()=>BtnCreateNote(CourseId, "C")'>
-                                                <img src="/img/icoNewNote1.png" width="24" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"report notes about this course":"") @onclick='()=>BtnReportNotes(CourseId, "C")'>
-                                                <img src="/img/icoNote2.png" width="22" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"goto page courses":"") @onclick='()=>BtnGotoCoursesPage(CourseId)'>
-                                                <img src="/img/icoFolderC.png" width="26" />
-                                            </button>
                                         </div>
                                         @* COMBO E *@
-                                        <div class="d-flex">
+                                        <div class="d-flex gap-3">
                                             <MudSelect T="int" @ref="refExams" Label="Exam" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                 <MudSelectItem Value="0">Select an Exam</MudSelectItem>
                                                 @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                                             </MudSelect>
-                                            <button class="btn btn-link" Title=@((_help)?"report Students Points in this exam":"") @onclick='()=>BtnGotoPageExamPoints(ExamId)'>
-                                                <img src="/img/icoChartPie.png" width="26" />
-                                            </button>
-                                        </div>
-                                        <div>
-                                            <button class="btn btn-link" Title=@((_help)?"list students in this exam":"") @onclick='()=>BtnReadStudents(ExamId,"E")'>
-                                                <img src="/img/icoListS.png" width="36" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"report courses and exams of students in this Exam":"") @onclick='()=>BtnReportStudent(ExamId, "E")'>
-                                                <img src="/img/icoFolderS.png" width="26" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"add note about this exam":"") @onclick='()=>BtnCreateNote(ExamId, "E")'>
-                                                <img src="/img/icoNewNote1.png" width="24" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"report notes on this exam":"") @onclick='()=>BtnReportNotes(ExamId, "E")'>
-                                                <img src="/img/icoNote2.png" width="22" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"goto page exams":"") @onclick='()=>BtnGotoExamsPage(ExamId, refCourses.Text.ToString() ?? "")'>
-                                                <img src="/img/icoFolderE.png" width="26" />
-                                            </button>
+                                            <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                <MudMenuItem @onclick='() => BtnGotoPageExamPoints(ExamId)'>
+                                                    <button class="btn btn-link" Title=@((_help)?"report Students Points in this exam":"")>
+                                                        <img src="/img/icoChartPie.png" width="26" />
+                                                    </button>
+                                                    statistics
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick='() => BtnReadStudents(ExamId, "E")'>
+                                                    <button class="btn btn-link" Title=@((_help)?"list students in this exam":"")>
+                                                        <img src="/img/icoListS.png" width="36" />
+                                                    </button>
+                                                    list students
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick='() => BtnReportStudent(ExamId, "E")'>
+                                                    <button class="btn btn-link" Title=@((_help)?"report courses and exams of students in this Exam":"")>
+                                                        <img src="/img/icoFolderS.png" width="26" />
+                                                    </button>
+                                                    goto students folder
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick='() => BtnCreateNote(ExamId, "E")'>
+                                                    <button class="btn btn-link" Title=@((_help)?"add note about this exam":"")>
+                                                        <img src="/img/icoNewNote1.png" width="24" />
+                                                    </button>
+                                                    +note about exam
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick='() => BtnReportNotes(ExamId, "E")'>
+                                                    <button class="btn btn-link" Title=@((_help)?"report notes on this exam":"")>
+                                                        <img src="/img/icoNote2.png" width="22" />
+                                                    </button>
+                                                    show notes
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick='() => BtnGotoExamsPage(ExamId, refCourses.Text.ToString() ?? "")'>
+                                                    <button class="btn btn-link" Title=@((_help)?"goto page exams":"")>
+                                                        <img src="/img/icoFolderE.png" width="26" />
+                                                    </button>
+                                                    goto exam folder
+                                                </MudMenuItem>
+                                            </MudMenu>
                                         </div>
                                     </MudCardContent>
                                 </MudCard>
@@ -186,19 +251,25 @@ else
                                 <MudCard Class="mx-auto">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                         @* COMBO M *@
-                                        <div class="d-flex">
-                                            <MudSelect T="int" @ref="refMessages" Label="Message" Value="MessageId" ValueChanged="OnMessageChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                        <div class="d-flex gap-3">
+                                            <MudSelect T="int" @ref="refMessages" Label="Message" Value="MessageId" ValueChanged="OnMessageChanged" Class="my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:smaller;">
                                                 <MudSelectItem Value="0">Select Message</MudSelectItem>
                                                 @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
                                             </MudSelect>
-                                        </div>
-                                        <div>
-                                            <button class="btn btn-link" Title=@((_help)?"list stdents received this messsage":"") @onclick='()=>BtnReadStudents(MessageId,"M")'>
-                                                <img src="/img/icoListS.png" width="36" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"report courses and exams of students that received this message":"") @onclick='()=>BtnReportStudent(MessageId, "M")'>
-                                                <img src="/img/icoFolderS.png" width="26" />
-                                            </button>
+                                            <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                <MudMenuItem @onclick='() => BtnReadStudents(MessageId, "M")'>
+                                                    <button class="btn btn-link" Title=@((_help)?"list stdents received this messsage":"")>
+                                                        <img src="/img/icoListS.png" width="36" />
+                                                    </button>
+                                                    list students
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
+                                                    <button class="btn btn-link" Title=@((_help)?"report courses and exams of students that received this message":"")>
+                                                        <img src="/img/icoFolderS.png" width="26" />
+                                                    </button>
+                                                    goto students folder
+                                                </MudMenuItem>
+                                            </MudMenu>
                                         </div>
                                     </MudCardContent>
                                 </MudCard>
@@ -270,17 +341,25 @@ else
                                             }
                                         else
                                             {
-                                            <div class="d-flex">
+                                            <div class="d-flex gap-3">
                                                 <MudSelect T="int" @ref="refGroups" Label="Group" Value="GroupId" ValueChanged="OnGroupChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                     <MudSelectItem Value="0">Select a Group</MudSelectItem>
                                                     @foreach (var group in lstGroups) { <MudSelectItem Value="@group.GroupId">@group.GroupName</MudSelectItem> }
                                                 </MudSelect>
-                                                <button class="btn btn-link" Title=@((_help)?"add new group":"") @onclick="BtnAddNewGroup">
-                                                    <img src="/img/icoAdd0.png" width="20" />
-                                                </button>
-                                                <button class="btn btn-link" Title=@((_help)?"add selected students to this group":"") @onclick="()=>BtnAddStudentsToGroup()">
-                                                    <img src="/img/icoListAddNew1.png" width="38" />
-                                                </button>
+                                                <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                    <MudMenuItem @onclick="BtnAddNewGroup">
+                                                        <button class="btn btn-link" Title=@((_help) ? "add new group" : "")>
+                                                            <img src="/img/icoAdd0.png" width="20" />
+                                                        </button>
+                                                        add new group
+                                                    </MudMenuItem>
+                                                    <MudMenuItem @onclick="() => BtnAddStudentsToGroup()">
+                                                        <button class="btn btn-link" Title=@((_help)?"add selected students to this group":"")>
+                                                            <img src="/img/icoListAddNew1.png" width="34" />
+                                                        </button>
+                                                        add students to group
+                                                    </MudMenuItem>
+                                                </MudMenu>
                                             </div>
                                             }
                                     </MudCardContent>
@@ -307,41 +386,69 @@ else
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                        <div class="d-flex">
+                                        <div class="d-flex gap-3">
                                             <MudSelect T="int" @ref="refCourses" Label="Course" Value="CourseId" ValueChanged="OnCourseChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                 <MudSelectItem Value="0">Select a Course</MudSelectItem>
                                                 @foreach (var course in lstCourses) { <MudSelectItem Value="@course.CourseId">@course.CourseName</MudSelectItem> }
                                             </MudSelect>
-                                            <button class="btn btn-link" Title=@((_help)?"add selected students to: this course":"") @onclick="()=>BtnAddStudentsToCourse()">
-                                                <img src="/img/icoListAddNew1.png" width="36" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"goto page courses":"") @onclick="()=>BtnGotoPageCourses()">
-                                                <img src="/img/icoFolderC.png" width="26" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"change students accesses to this course":"") @onclick="()=>BtnChangeStudentCoursesStatus(false)">
-                                                <img src="/img/icoYesNo_No.png" width="18" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"change students accesses to this course":"") @onclick="()=>BtnChangeStudentCoursesStatus(true)">
-                                                <img src="/img/icoYesNo_Yes.png" width="18" />
-                                            </button>
+                                            <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                <MudMenuItem @onclick="() => BtnAddStudentsToCourse()">
+                                                    <button class="btn btn-link" Title=@((_help)?"add selected students to: this course":"")>
+                                                        <img src="/img/icoListAddNew1.png" width="32" />
+                                                    </button>
+                                                    add students to course
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick="() => BtnGotoPageCourses()">
+                                                    <button class="btn btn-link" Title=@((_help)?"goto page courses":"")>
+                                                        <img src="/img/icoFolderC.png" width="24" />
+                                                    </button>
+                                                    goto page courses
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick="() => BtnChangeStudentCoursesStatus(false)">
+                                                    <button class="btn btn-link" Title=@((_help)?"change students accesses to this course":"")>
+                                                        <img src="/img/icoYesNo_No.png" width="20" />
+                                                    </button>
+                                                    remove access to course
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick="() => BtnChangeStudentCoursesStatus(true)">
+                                                    <button class="btn btn-link" Title=@((_help)?"change students accesses to this course":"")>
+                                                        <img src="/img/icoYesNo_Yes.png" width="20" />
+                                                    </button>
+                                                    grant access to course
+                                                </MudMenuItem>
+                                            </MudMenu>
                                         </div>
-                                        <div class="d-flex">
+                                        <div class="d-flex gap-3">
                                             <MudSelect T="int" @ref="refExams" Label="Exam" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                 <MudSelectItem Value="0">Select an Exam</MudSelectItem>
                                                 @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                                             </MudSelect>
-                                            <button class="btn btn-link" Title=@((_help)?"add selected students to this exam":"") @onclick="()=>BtnAddStudentsToExam()">
-                                                <img src="/img/icoListAddNew1.png" width="36" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"goto page exams":"") @onclick="()=>BtnGotoPageExams()">
-                                                <img src="/img/icoFolderE.png" width="26" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"change student accesses to this exam":"") @onclick="()=>BtnChangeStudentCoursesStatus(false)">
-                                                <img src="/img/icoYesNo_No.png" width="18" />
-                                            </button>
-                                            <button class="btn btn-link" Title=@((_help)?"change student accesses to this exam":"") @onclick="()=>BtnChangeStudentCoursesStatus(true)">
-                                                <img src="/img/icoYesNo_Yes.png" width="18" />
-                                            </button>
+                                            <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                <MudMenuItem @onclick="() => BtnAddStudentsToExam()">
+                                                    <button class="btn btn-link" Title=@((_help)?"add selected students to this exam":"")>
+                                                        <img src="/img/icoListAddNew1.png" width="32" />
+                                                    </button>
+                                                    add students to exam
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick="() => BtnGotoPageExams()">
+                                                    <button class="btn btn-link" Title=@((_help)?"goto page exams":"")>
+                                                        <img src="/img/icoFolderE.png" width="24" />
+                                                    </button>
+                                                    goto page exams
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick="() => BtnChangeStudentCoursesStatus(false)">
+                                                    <button class="btn btn-link" Title=@((_help)?"change student accesses to this exam":"")>
+                                                        <img src="/img/icoYesNo_No.png" width="20" />
+                                                    </button>
+                                                    remove access to exam
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick="() => BtnChangeStudentCoursesStatus(true)">
+                                                    <button class="btn btn-link" Title=@((_help)?"change student accesses to this exam":"")>
+                                                        <img src="/img/icoYesNo_Yes.png" width="20" />
+                                                    </button>
+                                                    grant access to exam
+                                                </MudMenuItem>
+                                            </MudMenu>
                                         </div>
                                 </MudCardContent>
                             </MudCard>
@@ -397,21 +504,54 @@ else
                                             }
                                         else
                                             {
-                                            <div class="d-flex">
-                                                <MudSelect T="int" @ref="refMessages" Label="Message" Value="MessageId" ValueChanged="OnMessageChanged" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                            <div class="d-flex gap-3">
+                                                <MudSelect T="int" @ref="refMessages" Label="Message" Value="MessageId" ValueChanged="OnMessageChanged" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:smaller;">
                                                     <MudSelectItem Value="0">Select a Message</MudSelectItem>
                                                     @foreach (var message in lstMessages) { <MudSelectItem Value="@message.MessageId">@message.MessageTitle</MudSelectItem> }
                                                 </MudSelect>
-                                                    <button class="btn btn-link" Title=@((_help)?"show/hide message body":"") @onclick="()=>BtnShowHideMessage(MessageId)">
-                                                        <img src="/img/icoNote2.png" width="22" />
-                                                    </button>                                                    
+                                                <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                <MudMenuItem @onclick="() => BtnShowHideMessage(MessageId)">
+                                                        <button class="btn btn-link" Title=@((_help)?"show/hide message body":"")>
+                                                            <img src="/img/icoNote2.png" width="22" />
+                                                        </button>                                                    
+                                                        show message
+                                                    </MudMenuItem> 
+                                                <MudMenuItem @onclick="BtnAddNewMessage">
+                                                        <button class="btn btn-link" Title=@((_help)?"add new message":"")>
+                                                            <img src="/img/icoAdd0.png" width="20" />
+                                                        </button>
+                                                        create new message
+                                                    </MudMenuItem> 
+                                                <MudMenuItem @onclick='() => BtnEditMessage(MessageId)'>
+                                                        <button class="btn btn-link" Title=@((_help)?"edit message":"")>
+                                                            <img src="/img/icoRename.png" width="32" />
+                                                        </button>
+                                                        edit selected message
+                                                    </MudMenuItem> 
+                                                <MudMenuItem @onclick="() => BtnDeleteMessage(MessageId)">
+                                                        <button class="btn btn-link" Title=@((_help)?"delete this message":"")>
+                                                            <img src="/img/icoDelete2.png" width="30" />
+                                                        </button>
+                                                        delete message
+                                                    </MudMenuItem> 
+                                                    <MudDivider />
+                                                    <MudMenuItem>
+                                                        <MudCheckBox @bind-Value="requestFeedback" Label="feedback" Color="Color.Primary"></MudCheckBox>
+                                                    </MudMenuItem> 
+                                                <MudMenuItem @onclick="() => BtnAddStudentsToMessage()">
+                                                        <button class="btn btn-link" Title=@((_help)?"send this message to: selected students (above)":"")>
+                                                            <img src="/img/icoEnvelopSend.png" width="28" />
+                                                        </button>
+                                                        send message to students
+                                                    </MudMenuItem> 
+                                                </MudMenu>
                                             </div>
                                             @if(_cmd == "ShowMessageBody")
                                                 {
                                                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                                     <MudCard Class="mx-0">
                                                         <MudCardContent Style="background-color:whitesmoke;">
-                                                            <div class="align-items-center" style="white-space: pre-wrap;text-align:center; color:gray; font-weight:normal;font-size:smaller;">
+                                                            <div class="align-items-center" style="white-space: pre-wrap;text-align:left; color:gray; font-weight:normal;font-size:smaller;">
                                                                 @message.MessageBody
                                                             </div>
                                                         </MudCardContent>
@@ -419,36 +559,6 @@ else
                                                 </MudContainer>
                                                 }
                                             <br>
-                                            <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                                <MudMenuItem>
-                                                    <button class="btn btn-link" Title=@((_help)?"add new message":"") @onclick="BtnAddNewMessage">
-                                                        <img src="/img/icoAdd0.png" width="20" />
-                                                    </button>
-                                                    create new message
-                                                </MudMenuItem> 
-                                                <MudMenuItem>
-                                                    <button class="btn btn-link" Title=@((_help)?"edit message":"") @onclick='()=>BtnEditMessage(MessageId)'>
-                                                        <img src="/img/icoRename.png" width="32" />
-                                                    </button>
-                                                    edit selected message
-                                                </MudMenuItem> 
-                                                <MudMenuItem>
-                                                    <button class="btn btn-link" Title=@((_help)?"delete this message":"") @onclick="()=>BtnDeleteMessage(MessageId)">
-                                                        <img src="/img/icoDelete2.png" width="30" />
-                                                    </button>
-                                                    delete message
-                                                </MudMenuItem> 
-                                                <MudDivider />
-                                                <MudMenuItem>
-                                                    <MudCheckBox @bind-Value="requestFeedback" Label="feedback" Color="Color.Primary"></MudCheckBox>
-                                                </MudMenuItem> 
-                                                <MudMenuItem>
-                                                    <button class="btn btn-link" Title=@((_help)?"send this message to: selected students (above)":"") @onclick="()=>BtnAddStudentsToMessage()">
-                                                        <img src="/img/icoEnvelopSend.png" width="28" />
-                                                    </button>
-                                                    send message to students
-                                                </MudMenuItem> 
-                                            </MudMenu>
                                             }
                                     </MudCardContent>
                                 </MudCard>
@@ -733,7 +843,34 @@ else
         }
     private async Task BtnDeleteGroup(int groupId)
         {
-        int Result = await feService.Delete_Group (groupId);
+        //deletes a Group and all its StudentGroups
+        if (groupId > 0)
+            {
+            var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> the group?<br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
+            bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+            if (confirmResult == true)
+                {
+                int result = await feService.Delete_Group (groupId);
+                if (result>0)
+                    {
+                    Snackbar.Add("group deleted", Severity.Success);
+                    GroupId = 0;
+                    appState.SetGroupId(0);
+                    _cmd = "";
+                    lstGroups.Clear();
+                    lstGroups = await feService.Read_Groups(user, false);
+                    StateHasChanged();
+                    }
+                else
+                    {
+                    Snackbar.Add("failed to delete group", Severity.Error);
+                    }
+                }
+            }
+        else
+            {
+            Snackbar.Add("select a group", Severity.Warning);
+            }
         }
     //course-exam
     private async Task OnCourseChanged(int newValue) 
@@ -1132,6 +1269,7 @@ else
                 int result = await feService.Create_Student (student);
                 if(result > 0 )
                     {
+                    student.UserId = result; //'result' is int StudentId returned by be
                     lstStudents.Add (student);
                     }                
                 }

@@ -72,7 +72,17 @@ namespace ExaminerB.Service
         public async Task<int> Create_Student (User student)
             {
             var response = await _http.PostAsJsonAsync ("api/Create_Student", student);
-            return response.IsSuccessStatusCode ? 1 : 0;
+            //return response.IsSuccessStatusCode ? 1 : 0;
+            if (response.IsSuccessStatusCode)
+                {
+                int i = await response.Content.ReadFromJsonAsync<int> ();
+                return i;
+                }
+            else
+                {
+                return 0;
+                }
+
             }
         public async Task<List<User>> Read_StudentsByKeyword (int userId, string keyword, int getGCEM)
             {
