@@ -19,16 +19,16 @@
         {
         @if (lstNotes.Count > 0)
             {
-            <div class="d-flex align-items-center" style="text-align:left;max-width:500px; margin: 0 auto;">
+            <div class="d-flex align-items-center gap-3" style="text-align:center;max-width:500px; margin: 0 auto;">
                 <button class="btn btn-link" @onclick="BtnBack">
                     <img src="/img/icoBack3.png" width="40" title="back"/>
-                </button>
-                <button class="btn btn-link" @onclick= "()=> GotoProjects()">
-                    <img src="/img/icoSwitchBoardNoteBook.png" style="width:40px" title="goto Notebooks"/>
                 </button>
                 <button class="btn btn-link" @onclick="CreateNote">
                     <img src="/img/icoAdd0.png" width="24" title="add new quick-note"/>
                 </button>            
+                <button class="btn btn-link" @onclick= "()=> GotoProjects()">
+                    <img src="/img/icoSwitchBoardNoteBook.png" style="width:40px" title="goto Notebooks"/>
+                </button>
             </div>
             }
         @* else
@@ -56,6 +56,7 @@
                         {
                         @if ((notex.NoteTags & 1) == 1)
                             {
+                            @* RTL *@
                             <div class="mt-3 text-end">
                                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                     <MudCard Class="mx-0">
@@ -91,7 +92,7 @@
                                                         @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
                                                     </MudSelect>
                                                     <button class="btn btn-link" Title="move!") @onclick='()=>BtnSelectSection(SubprojectId, notex.NoteId)'>
-                                                <img src="/img/icoMoveToNoteBook.png" width="32" />
+                                                        <img src="/img/icoMoveToNoteBook.png" width="32" />
                                                     </button>
                                                     <button class="btn btn-link" Title="cancel") @onclick='()=>BtnCancel()'>
                                                         <img src="/img/icoCancel.png" width="20" />
@@ -101,18 +102,32 @@
                                             else
                                                 {
                                                 <div class="d-flex align-items-center justify-content-center">
-                                                    <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                        <img src="/img/icoNote2.png" width="20" title="نمايش يادداشت در صفحه"/>
-                                                    </button>
-                                                    <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
-                                                        <img src="/img/icoRename.png" width="28"  title="ويرايش يادداشت"/>
-                                                    </button>
-                                                    <button class="btn btn-link" @onclick="()=>BtnMoveNoteToNotebook(notex.NoteId)">
-                                                <img src="/img/icoMoveToNoteBook.png" width="32" title="انتقال يادداشت به دفترچه" />
-                                                    </button>
-                                                    <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
-                                                        <img src="/img/icoDelete1.png" width="22" title="حذف يادداشت"/>
-                                                    </button>
+                                                    <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                        <MudMenuItem @onclick="() => BtnShowNoteInDialog(notex)">
+                                                            <button class="btn btn-link">
+                                                                <img src="/img/icoNote2.png" width="20" title="نمايش يادداشت در صفحه"/>
+                                                            </button>
+                                                            show note
+                                                        </MudMenuItem>
+                                                        <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
+                                                            <button class="btn btn-link">
+                                                                <img src="/img/icoRename.png" width="28"  title="ويرايش يادداشت"/>
+                                                            </button>
+                                                            edit note
+                                                        </MudMenuItem>
+                                                        <MudMenuItem @onclick="() => BtnMoveNoteToNotebook(notex.NoteId)">
+                                                            <button class="btn btn-link">
+                                                                <img src="/img/icoMoveToNoteBook.png" width="32" title="انتقال يادداشت به دفترچه" />
+                                                            </button>
+                                                            move to notebook
+                                                        </MudMenuItem>
+                                                        <MudMenuItem @onclick="() => BtnDeleteNote(notex.NoteId)">
+                                                            <button class="btn btn-link">
+                                                                <img src="/img/icoDelete1.png" width="22" title="حذف يادداشت"/>
+                                                            </button>
+                                                            delete note
+                                                        </MudMenuItem>
+                                                    </MudMenu>
                                                 </div>                                        
                                                 }
                                         </MudCardContent>
@@ -122,6 +137,7 @@
                             }
                         else
                             {
+                            @* LTR *@
                             <div class="mt-3 text-start">
                                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                     <MudCard Class="mx-0">
@@ -140,10 +156,10 @@
                                                     <div style="font-weight:bold;"> @notex.NoteText</div>
                                                     }
                                             </div>
-                                            <hr />
                                             @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId)==notex.NoteId))
                                                 {
                                                 @* COMBO Notebooks *@
+                                                <hr />
                                                 <div class="d-flex">
                                                     <MudSelect T="int" @ref="refProjects" Label="Move to notebook" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                         <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
@@ -157,7 +173,7 @@
                                                         @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
                                                     </MudSelect>
                                                     <button class="btn btn-link" Title="move!") @onclick='()=>BtnSelectSection(SubprojectId, notex.NoteId)'>
-                                                <img src="/img/icoMoveToNoteBook.png" width="32" />
+                                                        <img src="/img/icoMoveToNoteBook.png" width="32" />
                                                     </button>
                                                     <button class="btn btn-link" Title="cancel") @onclick='()=>BtnCancel()'>
                                                         <img src="/img/icoCancel.png" width="20" />
@@ -167,19 +183,33 @@
                                             else
                                                 {
                                                 <div class="d-flex align-items-center justify-content-center">
-                                                    <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                        <img src="/img/icoNote2.png" width="20" title="show note in dialog"/>
-                                                    </button>
-                                                    <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
-                                                        <img src="/img/icoRename.png" width="28" title="edit note"/>
-                                                    </button>
-                                                    <button class="btn btn-link" @onclick="()=>BtnMoveNoteToNotebook(notex.NoteId)">
-                                                <img src="/img/icoMoveToNoteBook.png" width="32" title="move note to a notebook" />
-                                                    </button>
-                                                    <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex.NoteId)">
-                                                        <img src="/img/icoDelete1.png" width="22" title="delete note"/>
-                                                    </button>
-                                                </div>
+                                                    <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                        <MudMenuItem @onclick="() => BtnShowNoteInDialog(notex)">
+                                                            <button class="btn btn-link">
+                                                                <img src="/img/icoNote2.png" width="20" title="نمايش يادداشت در صفحه"/>
+                                                            </button>
+                                                            show note
+                                                        </MudMenuItem>
+                                                        <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
+                                                            <button class="btn btn-link">
+                                                                <img src="/img/icoRename.png" width="28"  title="ويرايش يادداشت"/>
+                                                            </button>
+                                                            edit note
+                                                        </MudMenuItem>
+                                                        <MudMenuItem @onclick="() => BtnMoveNoteToNotebook(notex.NoteId)">
+                                                            <button class="btn btn-link">
+                                                                <img src="/img/icoMoveToNoteBook.png" width="32" title="انتقال يادداشت به دفترچه" />
+                                                            </button>
+                                                            move to notebook
+                                                        </MudMenuItem>
+                                                        <MudMenuItem @onclick="() => BtnDeleteNote(notex.NoteId)">
+                                                            <button class="btn btn-link">
+                                                                <img src="/img/icoDelete1.png" width="22" title="حذف يادداشت"/>
+                                                            </button>
+                                                            delete note
+                                                        </MudMenuItem>
+                                                    </MudMenu>
+                                                </div>                                        
                                                 }
                                         </MudCardContent>
                                     </MudCard>
