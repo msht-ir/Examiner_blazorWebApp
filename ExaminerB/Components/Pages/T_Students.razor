@@ -81,7 +81,7 @@ else
                                                         <button class="btn btn-link" Title=@((_help)?"add new student":"")>
                                                             <img src="/img/icoExcel1.png" width="22" />
                                                         </button>
-                                                        import from excel
+                                                        import excel
                                                     </MudMenuItem>
                                                 </MudMenu>
                                             </div>
@@ -123,13 +123,13 @@ else
                                                         <button class="btn btn-link" Title=@((_help)?"report students courses and exams":"")>
                                                             <img src="/img/icoFolderS.png" width="26" />
                                                         </button>
-                                                        goto students folder
+                                                        students folder
                                                     </MudMenuItem>
                                                     <MudMenuItem @onclick='() => BtnCreateNote(GroupId, "G")'>
                                                         <button class="btn btn-link" Title=@((_help)?"add note about this group":"")>
                                                             <img src="/img/icoNewNote1.png" width="24" />
                                                         </button>
-                                                        +note about group
+                                                        note on group
                                                     </MudMenuItem>
                                                     <MudMenuItem @onclick='() => BtnReportNotes(GroupId, "G")'>
                                                         <button class="btn btn-link" Title=@((_help)?"report notes about this group":"")>
@@ -175,13 +175,13 @@ else
                                                     <button class="btn btn-link" Title=@((_help)?"report courses and exams of students in this course":"")>
                                                         <img src="/img/icoFolderS.png" width="26" />
                                                     </button>
-                                                    goto students folder
+                                                    students folder
                                                 </MudMenuItem>
                                                 <MudMenuItem @onclick='() => BtnCreateNote(CourseId, "C")'>
                                                     <button class="btn btn-link" Title=@((_help)?"add note about this course":"")>
                                                         <img src="/img/icoNewNote1.png" width="24" />
                                                     </button>
-                                                    +note about course
+                                                    note on course
                                                 </MudMenuItem>
                                                 <MudMenuItem @onclick='() => BtnReportNotes(CourseId, "C")'>
                                                     <button class="btn btn-link" Title=@((_help)?"report notes about this course":"")>
@@ -193,7 +193,7 @@ else
                                                     <button class="btn btn-link" Title=@((_help)?"goto page courses":"")>
                                                         <img src="/img/icoFolderC.png" width="26" />
                                                     </button>
-                                                    goto course folder
+                                                    course folder
                                                 </MudMenuItem>
                                             </MudMenu>
                                         </div>
@@ -222,13 +222,13 @@ else
                                                     <button class="btn btn-link" Title=@((_help)?"report courses and exams of students in this Exam":"")>
                                                         <img src="/img/icoFolderS.png" width="26" />
                                                     </button>
-                                                    goto students folder
+                                                    students folder
                                                 </MudMenuItem>
                                                 <MudMenuItem @onclick='() => BtnCreateNote(ExamId, "E")'>
                                                     <button class="btn btn-link" Title=@((_help)?"add note about this exam":"")>
                                                         <img src="/img/icoNewNote1.png" width="24" />
                                                     </button>
-                                                    +note about exam
+                                                    note on exam
                                                 </MudMenuItem>
                                                 <MudMenuItem @onclick='() => BtnReportNotes(ExamId, "E")'>
                                                     <button class="btn btn-link" Title=@((_help)?"report notes on this exam":"")>
@@ -240,7 +240,7 @@ else
                                                     <button class="btn btn-link" Title=@((_help)?"goto page exams":"")>
                                                         <img src="/img/icoFolderE.png" width="26" />
                                                     </button>
-                                                    goto exam folder
+                                                    exam folder
                                                 </MudMenuItem>
                                             </MudMenu>
                                         </div>
@@ -267,7 +267,7 @@ else
                                                     <button class="btn btn-link" Title=@((_help)?"report courses and exams of students that received this message":"")>
                                                         <img src="/img/icoFolderS.png" width="26" />
                                                     </button>
-                                                    goto students folder
+                                                    students folder
                                                 </MudMenuItem>
                                             </MudMenu>
                                         </div>
@@ -512,7 +512,7 @@ else
                                                 <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
                                                 <MudMenuItem @onclick="() => BtnShowHideMessage(MessageId)">
                                                         <button class="btn btn-link" Title=@((_help)?"show/hide message body":"")>
-                                                            <img src="/img/icoNote2.png" width="22" />
+                                                            <img src="/img/icoNote2.png" width="20" />
                                                         </button>                                                    
                                                         show message
                                                     </MudMenuItem> 
@@ -520,17 +520,17 @@ else
                                                         <button class="btn btn-link" Title=@((_help)?"add new message":"")>
                                                             <img src="/img/icoAdd0.png" width="20" />
                                                         </button>
-                                                        create new message
+                                                        new message
                                                     </MudMenuItem> 
                                                 <MudMenuItem @onclick='() => BtnEditMessage(MessageId)'>
                                                         <button class="btn btn-link" Title=@((_help)?"edit message":"")>
-                                                            <img src="/img/icoRename.png" width="32" />
+                                                            <img src="/img/icoRename.png" width="28" />
                                                         </button>
-                                                        edit selected message
+                                                        edit message
                                                     </MudMenuItem> 
                                                 <MudMenuItem @onclick="() => BtnDeleteMessage(MessageId)">
                                                         <button class="btn btn-link" Title=@((_help)?"delete this message":"")>
-                                                            <img src="/img/icoDelete2.png" width="30" />
+                                                            <img src="/img/icoDelete2.png" width="28" />
                                                         </button>
                                                         delete message
                                                     </MudMenuItem> 
@@ -540,7 +540,7 @@ else
                                                     </MudMenuItem> 
                                                 <MudMenuItem @onclick="() => BtnAddStudentsToMessage()">
                                                         <button class="btn btn-link" Title=@((_help)?"send this message to: selected students (above)":"")>
-                                                            <img src="/img/icoEnvelopSend.png" width="28" />
+                                                            <img src="/img/icoEnvelopSend.png" width="26" />
                                                         </button>
                                                         send message to students
                                                     </MudMenuItem> 
