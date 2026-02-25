@@ -83,7 +83,7 @@ else
                                             @note.NoteDatum
                                         </span>
                                         <hr />
-                                        @if(note.NoteText.Length >60)
+                                        @if(note.NoteText.Length >100)
                                             {
                                             <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
                                                 @note.NoteText.Substring(0,100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span>
@@ -101,7 +101,7 @@ else
                                         <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(note)">
                                             <img src="/img/icoRename.png" width="34" />
                                         </button>
-                                        @if(note.NoteText.Length > 60)
+                                        @if(note.NoteText.Length > 100)
                                             {
                                             <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
                                                 <img src="/img/icoNote2.png" width="24" title="show note"/>
@@ -122,10 +122,10 @@ else
                                             @note.NoteDatum
                                         </span>
                                         <hr />
-                                        @if(note.NoteText.Length >60)
+                                        @if(note.NoteText.Length >100)
                                             {
                                             <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
-                                                @note.NoteText.Substring(0,60) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span>
+                                                @note.NoteText.Substring(0,100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span>
                                             </div>
                                             }
                                         else
@@ -140,7 +140,7 @@ else
                                         <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(note)">
                                             <img src="/img/icoRename.png" width="34" title="edit note"/>
                                         </button>
-                                        @if(note.NoteText.Length > 60)
+                                        @if(note.NoteText.Length > 100)
                                             {
                                             <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
                                                 <img src="/img/icoNote2.png" width="24" title="show note"/>
@@ -319,9 +319,9 @@ else
                                                                                                         </div>
                                                                                                         <hr />
                                                                                                         <div style="white-space: pre-wrap; font-weight:normal; font-family:'Segoe UI';font-size:small">
-                                                                                                            @if(notex.NoteText.Length > 60)
+                                                                                                            @if(notex.NoteText.Length > 100)
                                                                                                                 {
-                                                                                                                <div> @notex.NoteText.Substring(0,60) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
+                                                                                                                <div> @notex.NoteText.Substring(0,100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
                                                                                                                 }
                                                                                                             else
                                                                                                                 {
@@ -335,7 +335,7 @@ else
                                                                                                                 <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
                                                                                                                     <img src="/img/icoRename.png" width="28" title="edit note"/>
                                                                                                                 </button>
-                                                                                                                @if(notex.NoteText.Length > 60)
+                                                                                                                @if(notex.NoteText.Length > 100)
                                                                                                                     {
                                                                                                                     <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
                                                                                                                         <img src="/img/icoNote2.png" width="22" title="show note expanded"/>
@@ -362,9 +362,9 @@ else
                                                                                                         </div>
                                                                                                         <hr />
                                                                                                         <span class="d-flex align-items-center mt-1" style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
-                                                                                                            @if(notex.NoteText.Length > 60)
+                                                                                                            @if(notex.NoteText.Length > 100)
                                                                                                                 {
-                                                                                                                <div class="mt-1" style="font-weight:bold;"> @notex.NoteText.Substring(0,60) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
+                                                                                                                <div class="mt-1" style="font-weight:bold;"> @notex.NoteText.Substring(0,100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
                                                                                                                 }
                                                                                                             else
                                                                                                                 {
@@ -373,21 +373,36 @@ else
                                                                                                         </span>
                                                                                                         <hr />
                                                                                                         <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
-                                                                                                            <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex)">
-                                                                                                                <img src="/img/icoDelete1.png" width="22" title="delete note"/>
-                                                                                                            </button>
-                                                                                                            <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
-                                                                                                                <img src="/img/icoRename.png" width="28" title="edit note"/>
-                                                                                                            </button>
-                                                                                                            @if(notex.NoteText.Length > 60)
-                                                                                                                {
-                                                                                                                <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                                                                                    <img src="/img/icoNote2.png" width="22" title="show note expanded"/>
-                                                                                                                </button>
-                                                                                                                }
-                                                                                                            <button class="btn btn-link" @onclick="()=>BtnCopyToNoteReport(notex)">
-                                                                                                                <img src="/img/icoCopyToNoteReport.png" width="28" title="copy to quick note" />
-                                                                                                            </button>
+                                                                                                            <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                                                                                @if(notex.NoteText.Length > 100)
+                                                                                                                    {
+                                                                                                                    <MudMenuItem @onclick="() => BtnShowNoteInDialog(notex)">
+                                                                                                                        <button class="btn btn-link">
+                                                                                                                            <img src="/img/icoNote2.png" width="22" title="show note expanded"/>
+                                                                                                                        </button>
+                                                                                                                        show note
+                                                                                                                    </MudMenuItem>
+                                                                                                                    }
+                                                                                                                <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
+                                                                                                                    <button class="btn btn-link">
+                                                                                                                        <img src="/img/icoRename.png" width="28" title="edit note"/>
+                                                                                                                    </button>
+                                                                                                                    edit note
+                                                                                                                </MudMenuItem>
+                                                                                                                <MudMenuItem @onclick="() => BtnCopyToNoteReport(notex)">
+                                                                                                                    <button class="btn btn-link">
+                                                                                                                        <img src="/img/icoCopyToNoteReport.png" width="26" title="copy to quick note" />
+                                                                                                                    </button>
+                                                                                                                    copy to quick notes
+                                                                                                                </MudMenuItem>
+                                                                                                                <MudDivider/>
+                                                                                                                <MudMenuItem @onclick="() => BtnDeleteNote(notex)">
+                                                                                                                    <button class="btn btn-link">
+                                                                                                                        <img src="/img/icoDelete1.png" width="22" title="delete note"/>
+                                                                                                                    </button>
+                                                                                                                    delete note
+                                                                                                                </MudMenuItem>
+                                                                                                            </MudMenu>                                                                                                            
                                                                                                         </div>
                                                                                                     </MudCardContent>
                                                                                                 </MudCard>

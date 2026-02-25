@@ -66,9 +66,9 @@
                                             </span>
                                             <hr />
                                             <div style="white-space: pre-wrap; font-weight:normal; font-family:'Segoe UI';font-size:small">
-                                                @if(notex.NoteText.Length > 60)
+                                                @if(notex.NoteText.Length > 100)
                                                     {
-                                                    <div> @notex.NoteText.Substring(0,60) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
+                                                    <div> @notex.NoteText.Substring(0,100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
                                                     }
                                                 else
                                                     {
@@ -147,19 +147,19 @@
                                             </span>
                                             <hr />
                                             <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
-                                                @if(notex.NoteText.Length > 60)
+                                                @if(notex.NoteText.Length > 100)
                                                     {
-                                                    <div style="font-weight:bold;"> @notex.NoteText.Substring(0,60) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
+                                                    <div style="font-weight:bold;"> @notex.NoteText.Substring(0,100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
                                                     }
                                                 else
                                                     {
                                                     <div style="font-weight:bold;"> @notex.NoteText</div>
                                                     }
                                             </div>
-                                            @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId)==notex.NoteId))
+                                            <hr />
+                                            @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId) == notex.NoteId))
                                                 {
                                                 @* COMBO Notebooks *@
-                                                <hr />
                                                 <div class="d-flex">
                                                     <MudSelect T="int" @ref="refProjects" Label="Move to notebook" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                         <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
