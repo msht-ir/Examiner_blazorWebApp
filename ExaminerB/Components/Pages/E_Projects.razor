@@ -265,12 +265,12 @@ else
                                                                         <button class="btn btn-link" @onclick="()=>BtnCancel()">
                                                                             <img src="/img/icoCancel.png" width="20" title="cancel" />
                                                                         </button>
-                                                                    </div>                                            
+                                                                    </div>
                                                                     }
                                                                 else
                                                                     {
                                                                     <div style="text-align:center">
-                                                                        <button class="btn btn-link" @onclick="()=>BtnReadSubprojectNote(subProject)">
+                                                                        <button class="btn btn-link" @onclick="()=>BtnReadSubprojectNotes(subProject)">
                                                                             <img src="/img/icoListN.png" width="32" title="show notes"/>
                                                                         </button>
                                                                         <button class="btn btn-link" @onclick="()=>BtnCreateNewSubprojectNote(subProject)">
@@ -329,21 +329,36 @@ else
                                                                                                                 }
                                                                                                             <hr />
                                                                                                             <div class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
-                                                                                                                <button class="btn btn-link" @onclick="()=>BtnDeleteNote(notex)">
-                                                                                                                    <img src="/img/icoDelete1.png" width="22" title="delete note"/>
-                                                                                                                </button>
-                                                                                                                <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(notex)">
-                                                                                                                    <img src="/img/icoRename.png" width="28" title="edit note"/>
-                                                                                                                </button>
-                                                                                                                @if(notex.NoteText.Length > 100)
-                                                                                                                    {
-                                                                                                                    <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                                                                                        <img src="/img/icoNote2.png" width="22" title="show note expanded"/>
-                                                                                                                    </button>
-                                                                                                                    }
-                                                                                                                <button class="btn btn-link" @onclick="()=>BtnCopyToNoteReport(notex)">
-                                                                                                                    <img src="/img/icoCopyToNoteReport.png" width="28" title="copy to quick note"/>
-                                                                                                                </button>
+                                                                                                                <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                                                                                    @if (notex.NoteText.Length > 100)
+                                                                                                                        {
+                                                                                                                        <MudMenuItem @onclick="() => BtnShowNoteInDialog(notex)">
+                                                                                                                            <button class="btn btn-link">
+                                                                                                                                <img src="/img/icoNote2.png" width="22" title="show note expanded" />
+                                                                                                                            </button>
+                                                                                                                            show note
+                                                                                                                        </MudMenuItem>
+                                                                                                                        }
+                                                                                                                    <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
+                                                                                                                        <button class="btn btn-link">
+                                                                                                                            <img src="/img/icoRename.png" width="28" title="edit note" />
+                                                                                                                        </button>
+                                                                                                                        edit note
+                                                                                                                    </MudMenuItem>
+                                                                                                                    <MudMenuItem @onclick="() => BtnCopyToNoteReport(notex)">
+                                                                                                                        <button class="btn btn-link">
+                                                                                                                            <img src="/img/icoCopyToNoteReport.png" width="26" title="copy to quick note" />
+                                                                                                                        </button>
+                                                                                                                        copy to quick notes
+                                                                                                                    </MudMenuItem>
+                                                                                                                    <MudDivider />
+                                                                                                                    <MudMenuItem @onclick="() => BtnDeleteNote(notex)">
+                                                                                                                        <button class="btn btn-link">
+                                                                                                                            <img src="/img/icoDelete1.png" width="22" title="delete note" />
+                                                                                                                        </button>
+                                                                                                                        delete note
+                                                                                                                    </MudMenuItem>
+                                                                                                                </MudMenu>
                                                                                                             </div>
                                                                                                         </div>
                                                                                                     </MudCardContent>
@@ -739,7 +754,6 @@ else
         await Task.Delay(1);
         await refSubprojectName.FocusAsync();
         }
-
     public async Task BtnUpdateSubproject(Subproject subProject)
         {
         appState.SetSubprojectId (subProject.ProjectId);
@@ -807,7 +821,7 @@ else
         appState.SetCmd ("CreateNote");
         StateHasChanged ();
         }
-    public async Task BtnReadSubprojectNote(Subproject subProject)
+    public async Task BtnReadSubprojectNotes(Subproject subProject)
         {
         appState.SetProjectId (subProject.ProjectId);
         //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
@@ -818,14 +832,15 @@ else
         }
     public async Task BtnEditNoteInDialog(Note note)
         {
-        appState.SetCmd ("UpdateNote"); //to edit note in dialog
-        appState.SetSelectedNoteId (note.NoteId);
-        appState.SetNoteParentId (note.ParentId);
-        appState.SetNoteParentType (note.ParentType);
-        appState.SetNoteDatum (note.NoteDatum);
-        appState.SetNoteText (note.NoteText);
-        appState.SetNoteIsRtl (note.IsRtl);
-        StateHasChanged ();
+        appState.SetSelectedNoteId(note.NoteId);
+        appState.SetNoteDatum(note.NoteDatum);
+        appState.SetNoteText(note.NoteText);
+        appState.SetNoteIsRtl(note.IsRtl);
+        appState.SetNoteParentId(note.ParentId);
+        appState.SetNoteParentType(note.ParentType);
+        appState.SetNoteParentName(note.ParentName);
+        appState.SetCmd("UpdateNote");
+        StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
         //to handel close event, I added in the Modal_CreateNote: [Parameter] public EventCallback OnClose 
         }
@@ -863,13 +878,17 @@ else
         }
     public async Task BtnShowNoteInDialog(Note note)
         {
-        appState.SetCmd("ShowNoteInDialog");
         appState.SetSelectedNoteId (note.NoteId);
         appState.SetNoteDatum (note.NoteDatum);
         appState.SetNoteText (note.NoteText);
         appState.SetNoteIsRtl (note.IsRtl);
+        appState.SetNoteParentId (note.ParentId);
+        appState.SetNoteParentType (note.ParentType);
         appState.SetNoteParentName (note.ParentName);
-        StateHasChanged ();
+        appState.SetCmd ("ShowNoteInDialog");
+        StateHasChanged();
+
+
         }
     public async Task BtnReadNotesBySearch()
         {
@@ -921,7 +940,7 @@ else
                 _hasFetched = false;
                 await GetListOfProjects (user.UserId, _ShowProjectsMode); 
                 Subproject _subProject = new Subproject () { SubprojectId = Convert.ToInt32 (note.ParentId), ProjectId = Convert.ToInt32 (appState.ProjectId) };
-                await BtnReadSubprojectNote (_subProject);
+                await BtnReadSubprojectNotes (_subProject);
                 _hasFetched = true;
                 StateHasChanged();
                 }
@@ -995,7 +1014,7 @@ else
         int userId = Convert.ToInt32 (appState.UserId);
         await GetListOfProjects (userId, _ShowProjectsMode);
         Subproject _subProject = new Subproject () { SubprojectId = Convert.ToInt32 (appState.NoteParentId), ProjectId = Convert.ToInt32 (appState.ProjectId) };
-        await BtnReadSubprojectNote (_subProject);
+        await BtnReadSubprojectNotes (_subProject);
         StateHasChanged ();
         }
     public void BtnCancel()
