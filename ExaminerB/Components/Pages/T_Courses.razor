@@ -71,26 +71,41 @@
                                     else
                                         {
                                          <div style="text-align: center;">
-                                            <button class="btn btn-link" title="rename course" @onclick="()=>BtnEditCourse(crs.CourseId)">
-                                                <img src="/img/icoRename.png" width="30" />
-                                            </button>
-                                            <button class="btn btn-link" title="report tests" @onclick="()=>BtnListCourseTests(crs.CourseId, crs.CourseName)" >
-                                                <img src="/img/icoFolderT.png" width="26" />
-                                            </button>
-                                            <button class="btn btn-link" title="list tests" @onclick="()=>BtnReportCourseTests(crs.CourseId)" >
-                                                <img src="/img/icoListT.png" width="36" />
-                                            </button>
-                                            <button class="btn btn-link" title="list exams" @onclick="()=>BtnExams(crs)" >
-                                                <img src="/img/icoListE.png" width="36" />
-                                            </button>
-                                            <button class="btn btn-link" title="delete course" @onclick="()=>BtnDeleteCourse(crs)" >
-                                                <img src="/img/icoDelete1.png" width="26" />
-                                            </button>
-                                            <br />
-                                            <br />
+                                            <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                <MudMenuItem>
+                                                     <button class="btn btn-link" title="rename course" @onclick="()=>BtnEditCourse(crs.CourseId)">
+                                                        <img src="/img/icoRename.png" width="28" />
+                                                    </button>
+                                                    rename course
+                                                </MudMenuItem>
+                                                <MudMenuItem>
+                                                    <button class="btn btn-link" title="report tests" @onclick="()=>BtnListCourseTests(crs.CourseId, crs.CourseName)" >
+                                                        <img src="/img/icoFolderT.png" width="26" />
+                                                    </button>
+                                                    Course Tests Folder
+                                                </MudMenuItem>
+                                                <MudMenuItem>
+                                                    <button class="btn btn-link" title="list tests" @onclick="()=>BtnReportCourseTests(crs.CourseId)" >
+                                                        <img src="/img/icoListT.png" width="30" />
+                                                    </button>
+                                                    Course Tests List
+                                                </MudMenuItem>
+                                                <MudMenuItem>
+                                                    <button class="btn btn-link" title="list exams" @onclick="()=>BtnExams(crs)" >
+                                                        <img src="/img/icoListE.png" width="30" />
+                                                    </button>
+                                                    Course Exams
+                                                </MudMenuItem>
+                                                <MudMenuItem>
+                                                    <button class="btn btn-link" title="delete course" @onclick="()=>BtnDeleteCourse(crs)" >
+                                                        <img src="/img/icoDelete1.png" width="22" />
+                                                    </button>
+                                                    Delete Course
+                                                </MudMenuItem>
+                                            </MudMenu>
                                         </div>
                                         //CourseTopics
-                                        <div class="accordion" id="accordionTopicss">
+                                        <div class="accordion" id="accordionTopicss" style="margin-top:20px;">
                                             <div class="accordion-item mb-2">
                                                 <h4 class="accordion-header">
                                                     <button class="accordion-button collapsed"
@@ -480,11 +495,12 @@
         appState.SetReturnPage ("/T_Courses");
         Navman.NavigateTo ("/T_ReportTests");
         }
-
     //CourseFolder
     public void BtnAddNewCourseFolder(int courseId)
         {
         appState.SetCmd ("AddNewCourseFolder");
+        courseFolder.CourseFolderTitle = "new folder";
+        courseFolder.CourseFolderUrl = "https://";
         appState.SetCourseId (courseId);
         StateHasChanged ();
         }

@@ -55,8 +55,14 @@ else
                                                     <img src="/img/icoSave2.png" width="24" />
                                                 </button>
                                             </div>
+                                            <hr style="color:slateblue" />
                                             @* IMPORT EXCEL *@
-                                            <InputFile  Title=@((_help)?"import from excel":"") OnChange="HandleFileSelected" />
+                                            <div class="d-flex" style="gap:10px;margin-top:10px">
+                                                <InputFile  Title=@((_help)?"import from excel":"") OnChange="HandleFileSelected" />
+                                                <button class="btn btn-link" Title=@((_help) ? "cancel" : "") @onclick="BtnCancel">
+                                                    <img src="/img/icoCancel.png" width="18" />
+                                                </button>
+                                            </div>
                                             }
                                         else
                                             {
@@ -70,19 +76,19 @@ else
                                                         </button>
                                                         search students
                                                     </MudMenuItem> 
+                                                    <MudDivider />
+                                                    <MudMenuItem @onclick="BtnAddNewStudent">
+                                                        <button class="btn btn-link" Title=@((_help)?"add new student":"")>
+                                                            <img src="/img/icoExcel1.png" width="22" />
+                                                        </button>
+                                                        add new students
+                                                    </MudMenuItem>
                                                     <MudMenuItem @onclick="BtnCancelSearchStudent">
                                                         <button class="btn btn-link" Title=@((_help)?"cancel":"")>
                                                             <img src="/img/icoCancel.png" width="18" />
                                                         </button>
                                                         cancel
                                                     </MudMenuItem> 
-                                                    <MudDivider />
-                                                    <MudMenuItem @onclick="BtnAddNewStudent">
-                                                        <button class="btn btn-link" Title=@((_help)?"add new student":"")>
-                                                            <img src="/img/icoExcel1.png" width="22" />
-                                                        </button>
-                                                        import excel
-                                                    </MudMenuItem>
                                                 </MudMenu>
                                             </div>
                                             }
