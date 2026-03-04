@@ -1,0 +1,203 @@
+﻿@page "/T_SignUp"
+@using ExaminerB.Service
+@using System.ComponentModel.DataAnnotations
+@inject ProtectedSessionStorage sessionStorage
+@inject NavigationManager Navman
+@inject AppState appState
+@inject FeService feService
+@implements IDisposable
+@inject ISnackbar Snackbar
+
+<br />
+    <div class="d-flex flex-column align-items-center justify-content-center text-center">
+        <h4 style="color:royalblue">Terms of use</h4>
+        <EditForm Model="teacher" OnValidSubmit="BtnSignupNewTeacher" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <ValidationSummary></ValidationSummary>
+            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                <MudCard Class="mx-auto">
+                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                        <div style="text-align:left">
+                            A teacher-account will be created.<br />
+                            You'll be notified by email when accoount is approved by the admin.<br />
+                            Please make a reminer if weren't notified within 2 working days.<br />
+                            <br />
+                            <span style="font-weight:bold;">notice:</span><br />
+                            <ul>
+                                <li>
+                                    use Examiner webApp for educational purposes<br />
+                                </li>
+                                <li>
+                                    provide Examiner service free for all students<br />
+                                </li>
+                                <li>
+                                    backup regularly<br />
+                                </li>
+                            </ul>
+                            <div class="form-check form-check-inline" style="padding-top:8px;">
+                                <input class="form-check-input" type="checkbox" checked="@checkAgree" @onchange="e => BtnAgree((bool) e.Value)" />
+                                <label class="form-check-label" style="font-size: small; color: RoyalBlue;">I Agree</label>
+                            </div>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudContainer>
+        @if (_cmd == "agreed")
+            {
+            <h6 style="color:royalblue; margin-top:20px;">SIGN UP <span style="font-style:italic;color:gray"> (new teacher)</span></h6>
+            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                <MudCard Class="mx-auto">
+                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                        <div class="mb-3">
+                            <MudTextField @ref="refUsername" @bind-Value="teacher.Username" Label="Username" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                        </div>
+                        <div class="mb-3">
+                            <MudTextField @ref="refPassword" @bind-Value="teacher.Password" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" />
+                        </div>
+                        <div class="mb-3">
+                            <MudTextField @ref="refRepeatPass" @bind-Value="teacher.RepeatPass" Label="Repeat Pass" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" />
+                        </div>
+                        <div style="color:indianred; text-align:left">
+                            <ValidationSummary />
+                        </div>
+                        <hr />
+                        <div class="mb-3">
+                            <MudTextField @ref="refEmail" @bind-Value="teacher.Email" Label="email" Variant="Variant.Outlined" Margin="Margin.Dense" Class="my-textfield" />
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudContainer>
+            }
+            <div style="margin-top:40px;margin-bottom:25px;">
+                @if (_cmd == "agreed")
+                    {
+                    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Save" Size="Size.Small" OnClick="@(() => BtnSignupNewTeacher())" Style="margin-right:20px">Sing-Up </MudButton>
+                    }
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Help" Size="Size.Small" OnClick="@(() => BtnHelpSignupNewTeacher())" Style="margin-right:20px">Guide </MudButton>
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Cancel" Size="Size.Small" OnClick="@(() => BtnCancel())">Cancel </MudButton>
+            </div>
+        </EditForm>
+        <br />
+    </div>    
+
+@code {
+    bool isShow;
+    bool checkAgree;
+    string _cmd = "";
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    private User user = new User ();
+    private bool _firstRender = true;
+    private class Teacher
+        {
+        [Required (ErrorMessage = "enter username")] 
+        public string Username { get; set; } = "";
+        [Required (ErrorMessage = "enter password")] 
+        public string Password { get; set; } = "";
+        [Required (ErrorMessage = "repeat password")] 
+        public string RepeatPass { get; set; } = "";
+        [Required (ErrorMessage = "enter email")] 
+        public string Email { get; set; } = "";
+        }
+    private Teacher teacher = new Teacher ();
+    int loginStatus = 0;
+    private MudTextField<string>? refUsername;
+    private MudTextField<string>? refPassword;
+    private MudTextField<string>? refRepeatPass;
+    private MudTextField<string>? refEmail;
+
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        teacher.Password = "";
+        teacher.RepeatPass = "";
+        teacher.Username = "";
+        }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+        if (_firstRender)
+            {
+            _firstRender = false;
+            }
+        }
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //btns
+    public async Task BtnSignupNewTeacher()
+        {
+        if ((!checkAgree))
+            { 
+            Snackbar.Add("read terms of use", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            return;
+            }
+        if ((teacher.Password == teacher.RepeatPass) && (teacher.Password.Length > 3))
+            {
+            user.UserId = 1;
+            user.TeacherId = 1;
+            user.UserName = teacher.Username;
+            user.UserPass = teacher.Password;
+            user.UserNickname = teacher.Username;
+            user.UserEmail = teacher.Email;
+            user.UserRole = "-";
+            user.UserTags = 0;
+            bool result = await feService.Create_Teacher (user);
+            if (result)
+                {
+                Navman.NavigateTo ("/Login");
+                Snackbar.Add("account created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+                BtnCancel ();
+                }
+            else
+                {
+                Snackbar.Add("failed to create account", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+                }
+            }
+        else
+            {
+            Snackbar.Add("password error", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+            }
+        }
+    public void BtnHelpSignupNewTeacher ()
+        {
+        Navman.NavigateTo("/Login");
+        }
+    public void BtnAgree (bool agree)
+        {
+        if (agree)
+            {
+            _cmd = "agreed";
+            //Snackbar.Add("Agreed", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        else
+            {
+            _cmd = "notagreed";
+            //Snackbar.Add("Not Agreed", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+            }
+        }
+    public void BtnCancel ()
+        {
+        Navman.NavigateTo("/Login");
+        }
+    void ButtonTestclick()
+    {
+    @if (isShow)
+        {
+        isShow = false;
+        PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+        PasswordInput = InputType.Password;
+        }
+    else 
+        {
+        isShow = true;
+        PasswordInputIcon = Icons.Material.Filled.Visibility;
+        PasswordInput = InputType.Text;
+        }
+    }
+}

@@ -22,8 +22,6 @@
             </h2>
             <div id="collapseZero" class="accordion-collapse collapse" data-bs-parent="#accordionIndex">
                 <div class="accordion-body" style="text-align:center">
-                    <br />
-                    <hr />
                     <h6>https://www.msht.ir</h6>
                     <hr />
                     <a href="https://www.msht.ir/" target="_blank">
@@ -34,7 +32,10 @@
                         e<span style="font-style:italic;font-weight:bold;color:indianred">x</span>aminer developed by Majid SharifiTehrani<br />
                         <span style="font-size:smaller">assistant prof of plant ecology and systematics</span><br />
                         <br />
-                        Feb 2026<br />
+                        Feb 2026
+                    </div>
+                    <div style="margin-top:40px;margin-bottom:25px;">
+                        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AppRegistration" Size="Size.Small" OnClick="@(() => BtnSignup())" Style="margin-left:20px">new Teacher (SingUp)</MudButton>
                     </div>
                 </div>
             </div>
@@ -66,24 +67,13 @@
                     <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" InputType="InputType.Password" />
                 </MudCardContent>
             </MudCard>
-        </MudContainer>    
+        </MudContainer>
         <div style="margin-top:40px;margin-bottom:25px;">
             <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Login" Size="Size.Small" OnClick="@(() => BtnLogin())">Login</MudButton>
-            @* <button class="btn btn-link">
-                <img src="/img/icoLogin1.png" width="60" style="border-radius:1px"/>
-            </button> *@
         </div>
     </EditForm>
 </div>
 <hr />
-@* <MudContainer Class="mt-2 px-0">
-    <MudCard Class="mx-0">
-        <MudCardContent Style="background-color:rgba(248,248,248, 1);max-width:500px;min-width:400px">
-            text here
-        </MudCardContent>
-    </MudCard>
-</MudContainer> *@
-
 <script>
     document.getElementById("txtUser").focus();
     document.getElementById("txtUser").addEventListener("keydown", function(event) {
@@ -105,7 +95,7 @@
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
-        {
+    {
         appState.OnChange += StateHasChanged;
         appState.OnChange += TriggerRender;
         appState.SetUserLoginStatus (0);
@@ -113,45 +103,45 @@
         appState.SetUserName ("");
         StateHasChanged ();
         lstTeachers = await feService.Read_Teachers ();
-        } 
+    } 
     protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
+    {
         if (_firstRender)
-            {
+        {
             _firstRender = false;
             await Task.Delay (1);
             await refRole.FocusAsync ();        
-            }
         }
+    }
     private void TriggerRender()
-        {
+    {
         InvokeAsync(StateHasChanged);
-        }
+    }
     public void Dispose()
-        {
+    {
         appState.OnChange -= TriggerRender;
-        }
+    }
     //btns
     public async Task BtnLogin ()
-        {
+    {
         //via 'OnValidSubmic of EditForm'
         if ((user.UserRole == "student") & (TeacherId == 0))
-            {
+        {
             Snackbar.Add("select your teacher", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             //old code: await JS.InvokeVoidAsync ("alert", "Select your Class (group)!");
             return;
-            }
+        }
         user.UserId = 0;
         user.UserTags = 0;
         user.TeacherId = TeacherId;
         appState.SetTeacherId (TeacherId);
         user = await feService.Login(user) ?? new User { UserRole = "student" };        
         if (user.UserId != 0)
-            {
+        {
             switch (user.UserRole)
-                {
+            {
                 case "student":
-                        {
+                    {
                         appState.SetUserLoginStatus (1);
                         appState.SetUserId (user.UserId);
                         appState.SetUserName (user.UserName);
@@ -164,9 +154,9 @@
                         Navman.NavigateTo("/S_Student");
                         Snackbar.Add($"\n\nwelcome {user.UserNickname}!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                         break;
-                        }
+                    }
                 case "teacher":
-                        {
+                    {
                         appState.SetUserLoginStatus (1);
                         appState.SetUserId (user.UserId);
                         appState.SetUserName (user.UserName);
@@ -179,17 +169,21 @@
                         Navman.NavigateTo("/T_SwitchBoard"); 
                         Snackbar.Add($"\n\nwelcome {user.UserNickname}!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                         break;
-                        }
-                }
+                    }
             }
+        }
         else
-            {
+        {
             Snackbar.Add("incorrect username or password!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             user.UserRole = "student";
             TeacherId = 0;
             return;
-            }
-        } 
+        }
+    } 
+    public void BtnSignup ()
+        {
+        Navman.NavigateTo("/T_SignUp");
+        }
     //methods
     public async Task HandleUserKeyDown (KeyboardEventArgs e)
         {

@@ -108,19 +108,21 @@ namespace ExaminerB.Services2Backend
             }
         #endregion
         #region U:Usrs
-        public async Task<int> Create_TeacherAsync (User user)
+        public async Task<bool> Create_TeacherAsync (User teacher)
             {
-            string sql = @"INSERT INTO usrs (UsrName, UsrPass, UsrNickname, UsrActive) VALUES (@usrname, @usrpass, @usrnickname, 1); 
+            string sql = @"INSERT INTO usrs (UsrName, UsrPass, UsrNickname, UsrEmail, UsrTags)
+                        VALUES (@usrname, @usrpass, @usrnickname, @usremail, 0); 
                         SELECT CAST (scope_identity() AS int)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             using SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@usrname", user.UserName);
-            cmd.Parameters.AddWithValue ("@usrpass", user.UserPass);
-            cmd.Parameters.AddWithValue ("@usrnickname", user.UserNickname);
+            cmd.Parameters.AddWithValue ("@usrname", teacher.UserName);
+            cmd.Parameters.AddWithValue ("@usrpass", teacher.UserPass);
+            cmd.Parameters.AddWithValue ("@usrnickname", teacher.UserNickname);
+            cmd.Parameters.AddWithValue ("@usremail", teacher.UserEmail);
             await cnn.OpenAsync ();
-            int i = (int) await cmd.ExecuteScalarAsync ();
-            return i;
+            await cmd.ExecuteScalarAsync ();
+            return true;
             }
         public async Task<List<User>> Read_TeachersAsync ()
             {

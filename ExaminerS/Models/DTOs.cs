@@ -14,6 +14,7 @@ namespace ExaminerS.Models
         [Required (ErrorMessage = "UserRole is required")]
         public string UserRole { get; set; } = "";
         public string UserNickname { get; set; } = "";
+        public string UserEmail { get; set; } = "";
         public int UserTags { get; set; } = 0;  //1:IsActive 2:CanChangePass 4:CanReviewExam 8:CanGetStudentExamTests 16:CanCorrectStudentExamTests 32:CanReviewStudentExamTests
         //wrapper properties for each flag
         public bool IsActive

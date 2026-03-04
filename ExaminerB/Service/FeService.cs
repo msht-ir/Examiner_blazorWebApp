@@ -30,7 +30,14 @@ namespace ExaminerB.Service
         public async Task<bool> Create_Teacher (User user)
             {
             var response = await _http.PostAsJsonAsync ("api/Create_Teacher", user);
-            return response.IsSuccessStatusCode ? true : false;
+            if (response.IsSuccessStatusCode)
+                {
+                return true;
+                }
+            else
+                {
+                return false;
+                }
             }
         public async Task<List<User>> Read_Teachers ()
             {
@@ -82,7 +89,6 @@ namespace ExaminerB.Service
                 {
                 return 0;
                 }
-
             }
         public async Task<List<User>> Read_StudentsByKeyword (int userId, string keyword, int getGCEM)
             {

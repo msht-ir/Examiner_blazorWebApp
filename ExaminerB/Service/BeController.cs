@@ -35,9 +35,9 @@ namespace ExaminerB.Backend
         #endregion
         #region U:usrs
         [HttpPost ("Create_Teacher")]
-        public async Task<ActionResult<bool>> Create_Teacher ([FromBody] User user)
+        public async Task<ActionResult<bool>> Create_Teacher ([FromBody] User teacher)
             {
-            var result = await _BeService.Create_TeacherAsync (user);
+            var result = await _BeService.Create_TeacherAsync (teacher);
             return Ok (result);
             }
         [HttpPost ("Read_Teachers")]

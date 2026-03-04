@@ -11,7 +11,7 @@ namespace ExaminerB.Services2Backend
         Task LogAsync (int userId, SqlConnection cnn);
         #endregion
         #region U:usrs
-        Task<int> Create_TeacherAsync (User user);
+        Task<bool> Create_TeacherAsync (User teacher);
         Task<List<User>> Read_TeachersAsync ();
         Task<bool> Update_TeacherAsync (User user);
         Task<bool> Delete_TeacherAsync (int userId);
