@@ -69,16 +69,13 @@
                                 </button>
                                 delete this note
                             </MudMenuItem>
-                            <MudMenuItem @onclick="Close">
-                                <button class="btn btn-link">
-                                    <img src="/img/icoCancel.png" width="20" title="close / back"/>
-                                </button>
-                                cancel
-                            </MudMenuItem>
                         </MudMenu>
                     </div>
+                    <hr />
                     <div style="text-align:center">
-                        <hr />
+                        <button class="btn btn-link" @onclick="Close">
+                            <img src="/img/icoCancel.png" width="20" title="back"/>
+                        </button>
                     </div>
                 </div>
             </div>

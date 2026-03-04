@@ -50,17 +50,14 @@ else
                         <div class="d-flex align-items-center mb-3">
                             <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:'Segoe UI';width:90%" />
                             <button class="btn btn-link" @onclick="BtnReadNotesBySearch">
-                                <img src="/img/icoSearch.png" width="26" title="Search notes"/>
+                                <img src="/img/icoSearch.png" width="24" title="Search notes"/>
                             </button>
                             @if(lstNotes.Count > 0)
                                 {
                                 <button class="btn btn-link" @onclick="BtnCancelSearch">
-                                    <img src="/img/icoCancel.png" width="22" title="cancel search"/>
+                                    <img src="/img/icoCancel.png" width="20" title="cancel search"/>
                                 </button>                            
                                 }
-                            <button class="btn btn-link" @onclick="BtnToggleShowProjectsMode">
-                                <img src="/img/icoListP.png" width="34" title="toggle: active / non-active / all-notes"/>
-                            </button>
                         </div>
                     </div>
                 </MudCardContent>
@@ -69,7 +66,7 @@ else
         @if(lstNotes.Count > 0)
             {
             @* 1 SEARCH RESULTS *@ 
-            <h5 style="text-align:center">TOP 20 results:</h5>
+            <h5 style="text-align:center; margin-top:10px;">top 20 results</h5>
             foreach (Note note in lstNotes)
                 {
                 <div>
@@ -95,18 +92,30 @@ else
                                                 @note.NoteText
                                             </div>
                                             }
-                                        <button class="btn btn-link" @onclick="()=>BtnDeleteNote(note)">
-                                            <img src="/img/icoDelete1.png" width="24" title="delete note"/>
-                                        </button>
-                                        <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(note)">
-                                            <img src="/img/icoRename.png" width="34" />
-                                        </button>
-                                        @if(note.NoteText.Length > 100)
-                                            {
-                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
-                                                <img src="/img/icoNote2.png" width="24" title="show note"/>
-                                            </button>                                            
-                                            }
+                                        <hr />
+                                        <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                            @if(note.NoteText.Length > 100)
+                                                {
+                                                <MudMenuItem @onclick="() => BtnShowNoteInDialog(note)">
+                                                    <button class="btn btn-link">
+                                                        <img src="/img/icoNote2.png" width="20" title="show note"/>
+                                                    </button>                                            
+                                                    show note
+                                                </MudMenuItem>
+                                                }
+                                            <MudMenuItem @onclick="() => BtnEditNoteInDialog(note)">
+                                                <button class="btn btn-link">
+                                                    <img src="/img/icoRename.png" width="28" />
+                                                </button>
+                                                edit note
+                                            </MudMenuItem>
+                                            <MudMenuItem @onclick="() => BtnDeleteNote(note)">
+                                                <button class="btn btn-link">
+                                                    <img src="/img/icoDelete1.png" width="20" title="delete note"/>
+                                                </button>
+                                                delete note
+                                            </MudMenuItem>
+                                        </MudMenu>
                                     </MudCardContent>
                                 </MudCard>
                             </MudContainer>
@@ -134,37 +143,54 @@ else
                                                 @note.NoteText
                                             </div>
                                             }
-                                        <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
-                                            <img src="/img/icoDelete1.png" width="24" title="delete note"/>
-                                        </button>
-                                        <button class="btn btn-link" @onclick="()=>BtnEditNoteInDialog(note)">
-                                            <img src="/img/icoRename.png" width="34" title="edit note"/>
-                                        </button>
-                                        @if(note.NoteText.Length > 100)
-                                            {
-                                            <button class="btn btn-link" @onclick="()=>BtnShowNoteInDialog(note)">
-                                                <img src="/img/icoNote2.png" width="24" title="show note"/>
-                                            </button>                                            
-                                            }
+                                        <hr />
+                                        <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                            @if(note.NoteText.Length > 100)
+                                                {
+                                                <MudMenuItem @onclick="() => BtnShowNoteInDialog(note)">
+                                                    <button class="btn btn-link">
+                                                        <img src="/img/icoNote2.png" width="20" title="show note"/>
+                                                    </button>                                            
+                                                    show note
+                                                </MudMenuItem>
+                                                }
+                                            <MudMenuItem @onclick="() => BtnEditNoteInDialog(note)">
+                                                <button class="btn btn-link">
+                                                    <img src="/img/icoRename.png" width="28" />
+                                                </button>
+                                                edit note
+                                            </MudMenuItem>
+                                            <MudMenuItem @onclick="() => BtnDeleteNote(note)">
+                                                <button class="btn btn-link">
+                                                    <img src="/img/icoDelete1.png" width="20" title="delete note"/>
+                                                </button>
+                                                delete note
+                                            </MudMenuItem>
+                                        </MudMenu>
                                     </MudCardContent>
                                 </MudCard>
                             </MudContainer>
                         </div>
                         }
                 </div>
-            }
+                }
             }
         else
             {
-            <h5 style="text-align:center;color:indianred; margin:10px;">
-                @(_ShowProjectsMode switch
-                    {
-                    "all"      => "All Notebookss",
-                    "active"   => "Active Notebooks",
-                    "inactive" => "Inactive Notebooks",
-                    _          => ""
-                    })
-            </h5>            
+            <div class="d-flex">
+                <button class="btn btn-link" @onclick="BtnToggleShowProjectsMode">
+                    <img src="/img/icoListP.png" width="34" title="toggle: active / non-active / all-notes" />
+                </button>
+                <h5 style="text-align:center;color:indianred; margin:10px;">
+                    @(_ShowProjectsMode switch
+                        {
+                        "all"      => "all notebooks",
+                        "active"   => "active notebooks",
+                        "inactive" => "inactive notebooks",
+                        _          => ""
+                        })
+                </h5>
+            </div>
             @* 2 PROJECTS/SUBPROJECTS *@
             <div class="accordion" id="accordionProjects" style="max-width:500px; margin: 0 auto;">
                 @foreach (Project project in lstProjects)
