@@ -21,7 +21,7 @@
                 </button>
             </h2>
             <div id="collapseZero" class="accordion-collapse collapse" data-bs-parent="#accordionIndex">
-                <div class="accordion-body" style="text-align:center">
+                <div class="accordion-body" style="text-align:center;margin-bottom:25px;">
                     <h6>https://www.msht.ir</h6>
                     <hr />
                     <a href="https://www.msht.ir/" target="_blank">
@@ -31,11 +31,8 @@
                     <div style="text-align:center">
                         e<span style="font-style:italic;font-weight:bold;color:indianred">x</span>aminer developed by Majid SharifiTehrani<br />
                         <span style="font-size:smaller">assistant prof of plant ecology and systematics</span><br />
-                        <br />
-                        Feb 2026
-                    </div>
-                    <div style="margin-top:40px;margin-bottom:25px;">
-                        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AppRegistration" Size="Size.Small" OnClick="@(() => BtnSignup())" Style="margin-left:20px">new Teacher (SingUp)</MudButton>
+                        Feb 2026<br /><br />
+                        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AppRegistration" Size="Size.Small" OnClick="@(() => BtnSignup())" Style="margin-left:20px">SingUp (Teacher)</MudButton>
                     </div>
                 </div>
             </div>
@@ -70,6 +67,10 @@
         </MudContainer>
         <div style="margin-top:40px;margin-bottom:25px;">
             <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Login" Size="Size.Small" OnClick="@(() => BtnLogin())">Login</MudButton>
+            @if (user.UserRole == "teacher")
+                {
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AppRegistration" Size="Size.Small" OnClick="@(() => BtnSignup())" Style="margin-left:20px">SingUp</MudButton>
+                }
         </div>
     </EditForm>
 </div>

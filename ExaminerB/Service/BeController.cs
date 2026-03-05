@@ -1,5 +1,6 @@
 ﻿using ExaminerB.Services2Backend;
 using ExaminerS.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Chat = ExaminerS.Models.Chat;
 using Group = ExaminerS.Models.Group;
@@ -38,7 +39,15 @@ namespace ExaminerB.Backend
         public async Task<ActionResult<bool>> Create_Teacher ([FromBody] User teacher)
             {
             var result = await _BeService.Create_TeacherAsync (teacher);
-            return Ok (result);
+            if (result)
+                {
+                return Ok (result);
+                }
+            else
+                {
+                //don't send a response.IsSuccessStatusCode to Fe
+                return BadRequest (result);
+                }
             }
         [HttpPost ("Read_Teachers")]
         public async Task<ActionResult<List<User>>> Read_Teachers ()

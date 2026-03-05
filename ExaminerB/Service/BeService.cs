@@ -115,14 +115,23 @@ namespace ExaminerB.Services2Backend
                         SELECT CAST (scope_identity() AS int)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@usrname", teacher.UserName);
-            cmd.Parameters.AddWithValue ("@usrpass", teacher.UserPass);
-            cmd.Parameters.AddWithValue ("@usrnickname", teacher.UserNickname);
-            cmd.Parameters.AddWithValue ("@usremail", teacher.UserEmail);
-            await cnn.OpenAsync ();
-            await cmd.ExecuteScalarAsync ();
-            return true;
+            try
+                {
+                using SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@usrname", teacher.UserName);
+                cmd.Parameters.AddWithValue ("@usrpass", teacher.UserPass);
+                cmd.Parameters.AddWithValue ("@usrnickname", teacher.UserNickname);
+                cmd.Parameters.AddWithValue ("@usremail", teacher.UserEmail);
+                await cnn.OpenAsync ();
+                await cmd.ExecuteScalarAsync ();
+                await cnn.CloseAsync ();
+                return true;
+                }
+            catch (Exception)
+                {
+                await cnn.CloseAsync ();
+                return false;
+                }
             }
         public async Task<List<User>> Read_TeachersAsync ()
             {

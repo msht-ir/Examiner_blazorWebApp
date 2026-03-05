@@ -19,7 +19,7 @@
                     <MudCardContent Style="background-color:rgba(249,249,249);">
                         <div style="text-align:left">
                             A teacher-account will be created.<br />
-                            You'll be notified by email when accoount is approved by the admin.<br />
+                            You'll be notified by email when account is approved by the admin.<br />
                             Please make a reminer if weren't notified within 2 working days.<br />
                             <br />
                             <span style="font-weight:bold;">notice:</span><br />
@@ -36,7 +36,7 @@
                             </ul>
                             <div class="form-check form-check-inline" style="padding-top:8px;">
                                 <input class="form-check-input" type="checkbox" checked="@checkAgree" @onchange="e => BtnAgree((bool) e.Value)" />
-                                <label class="form-check-label" style="font-size: small; color: RoyalBlue;">I Agree</label>
+                                <label class="form-check-label" style="font-size: small; color: RoyalBlue;">agree</label>
                             </div>
                         </div>
                     </MudCardContent>
@@ -152,11 +152,13 @@
                 {
                 Navman.NavigateTo ("/Login");
                 Snackbar.Add("account created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+                Snackbar.Add("Notice: Don't create repeatitive accounts or all will be ignored", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+                Snackbar.Add("Wait untill your account be approved and you are noticed by email", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
                 BtnCancel ();
                 }
             else
                 {
-                Snackbar.Add("failed to create account", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+                Snackbar.Add($"failed to create account for: '{user.UserName}'", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             }
         else
@@ -173,12 +175,12 @@
         if (agree)
             {
             _cmd = "agreed";
-            //Snackbar.Add("Agreed", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            checkAgree = true;
             }
         else
             {
             _cmd = "notagreed";
-            //Snackbar.Add("Not Agreed", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+            checkAgree = false;
             }
         }
     public void BtnCancel ()
