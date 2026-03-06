@@ -20,6 +20,10 @@
         {
         <Modal_Chats OnClose="HandleModalClose" />
         }
+    else if (_cmd == "OpenChatroom")
+        {
+        <Modal_Chatroom OnClose="HandleModalClose" />
+        }
     else if (appState.Cmd == "ShowNoteInDialog")
         {
         <Modal_ShowNote OnClose="HandleModalClose" />
@@ -352,7 +356,7 @@
                         aria-expanded="false"
                         aria-controls="CollapseId4" style="background-color:WhiteSmoke">
                         @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
-                        <h4>chats<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChats.Count ) </span></span></h4>
+                        <h4>my chats<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChats.Count ) </span></span></h4>
                     </button>
                 </h4>
                 @if (appState.Clps=="CH")
@@ -367,7 +371,7 @@
                     <div class="accordion-body" style="background-color:white">
                         <div id="T3">
                             <div style="text-align:center">
-                                <button class="btn btn-link align-items-center" Title=@((_help)?"message statistics":"") @onclick="ReadMessageList">
+                                <button class="btn btn-link align-items-center" Title=@((_help)?"refresh chats":"") @onclick="ReadChatList">
                                     <img src="/img/gifUserLogin.gif" width="30" title="refresh chats" />
                                 </button>
                             </div>
@@ -438,7 +442,7 @@
                     </div>
                 </div>
             </div>
-            @* --- STUDENT NOTES *@
+            @* --- CHATROOMS *@
             <div class="accordion-item mb-2">
                 <h4 class="accordion-header">
                     <button class="accordion-button collapsed" type="button"
@@ -446,6 +450,56 @@
                         data-bs-target="#CollapseId5"
                         aria-expanded="false"
                         aria-controls="CollapseId5" style="background-color:WhiteSmoke">
+                        <h4>chat rooms</h4>
+                    </button>
+                </h4>
+                @if (appState.Clps=="CHR")
+                    {
+                    _clps = "collapse show";
+                    }
+                else
+                    {
+                    _clps = "collapse";
+                    }
+                <div id="CollapseId5" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
+                    <div class="accordion-body" style="background-color:white">
+                        <div id="T3">
+                            <div style="text-align:center">
+                                <button class="btn btn-link align-items-center" Title=@((_help)?"refresh chatrooms":"") @onclick="ReadChatroomList">
+                                    <img src="/img/gifUserLogin.gif" width="30" title="refresh chatrooms" />
+                                </button>
+                            </div>
+                            @* list chatrooms *@
+                            @foreach (Chatroom chatroom in lstChatrooms)
+                                {
+                                <MudContainer Class="mt-2 px-0">
+                                    <MudCard Class="mx-0">
+                                        <MudCardContent Style="background-color:whitesmoke;">
+                                            <div class="d-flex align-items-center">
+                                                <button class="btn btn-link" Title=@((_help)?"enter chatroom":"") @onclick="()=>BtnOpenThisChatroom(chatroom.ChatroomId)">
+                                                    <img src="/img/icoSwitchBoardStudents.png" width="34" />
+                                                </button>
+                                                <span style="font-weight:bold;color:gray;"> @chatroom.ChatroomName </span>
+                                            </div>
+                                            <div>
+                                                <span style="font-style:italic;font-size:small; font-weight:normal;color:black;padding-left:10px;">terms: <span style="color:royalblue;">@chatroom.ChatroomTerms</span></span>
+                                            </div>
+                                        </MudCardContent>
+                                    </MudCard>
+                                </MudContainer>
+                                }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @* --- STUDENT NOTES *@
+            <div class="accordion-item mb-2">
+                <h4 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#CollapseId6"
+                        aria-expanded="false"
+                        aria-controls="CollapseId6" style="background-color:WhiteSmoke">
                         @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
                         <h4>notebook<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstNotes.Count ) </span></span></h4>
                     </button>
@@ -458,7 +512,7 @@
                     {
                     _clps = "collapse";
                     }
-                <div id="CollapseId5" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
+                <div id="CollapseId6" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
                     <div class="accordion-body" style="background-color:white">
                         <div id="T3">
                             <div style="text-align:center">
@@ -582,6 +636,7 @@
     public List<StudentExam> lstStudentExams = new List<StudentExam>();
     public List<StudentMessage> lstStudentMessages = new List<StudentMessage> ();
     public List<Chat> lstChats = new List<Chat> ();
+    public List<Chatroom> lstChatrooms = new List<Chatroom> ();
     public List<User> lstStudents = new List<User> ();    
     public List<Note> lstNotes = new List<Note> ();
     public string? strRunningPoint = "";
@@ -615,6 +670,7 @@
             student.UserNickname = appState.UserNickname ?? "";
             await ReadMessageList ();
             await ReadChatList ();
+            await ReadChatroomList ();
             await ReadNoteList ();
             _hasFetched = true;
         }
@@ -837,7 +893,7 @@
             }
         StateHasChanged ();
         }
-    //btns for Chats
+    //btns for chats
     public async Task BtnReadStudentsBySearch()
         {
         appState.SetClps ("CH");
@@ -888,7 +944,15 @@
             }
         StateHasChanged ();                
         }
-    //btns for Chats
+    //btns for chatrooms
+    private async Task BtnOpenThisChatroom(int chatroomId)
+        {
+        appState.SetClps("CHR");
+        appState.SetSelectedChatroomId(chatroomId);
+        _cmd = "OpenChatroom";
+        StateHasChanged();
+        }
+    //btns for notes
     public async Task CreateNote ()
         {
         appState.SetClps ("SN");
@@ -984,6 +1048,12 @@
         lstChats.Clear ();
         lstChats = await feService.Read_Chats (student.UserId);
         //Snackbar.Add("refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        }
+    private async Task ReadChatroomList()
+        {
+        student.UserId = appState.UserId ?? 0;
+        lstChatrooms.Clear ();
+        lstChatrooms = await feService.Read_Chatrooms (Convert.ToInt32(appState.TeacherId), "teacher");
         }
     private async Task ReadNoteList()
         {

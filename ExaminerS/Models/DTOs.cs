@@ -473,4 +473,20 @@ namespace ExaminerS.Models
         public int NoteAId { get; set; } = 0;
         public int NoteBId { get; set; } = 0;
         }
+    public class Chatroom
+        {
+        public int ChatroomId { get; set; } = 0;
+        public int ChatroomUserId { get; set; } = 0;
+        public int ChatroomAdminId { get; set; } = 0;
+        public string ChatroomName { get; set; } = "";
+        public string ChatroomTerms { get; set; } = "";
+        }
+    public class ChatroomPost
+        {
+        public int ChatroomPostId { get; set; } = 0;
+        public int ChatroomId { get; set; } = 0;
+        public int SenderId { get; set; } = 0;
+        public string PostDateTime { get; set; } = "";
+        public string PostText { get; set; } = "";
+        }
     }

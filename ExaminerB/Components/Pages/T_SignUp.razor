@@ -36,7 +36,7 @@
                             </ul>
                             <div class="form-check form-check-inline" style="padding-top:8px;">
                                 <input class="form-check-input" type="checkbox" checked="@checkAgree" @onchange="e => BtnAgree((bool) e.Value)" />
-                                <label class="form-check-label" style="font-size: small; color: RoyalBlue;">agree</label>
+                                <label class="form-check-label" style="font-size: small; color: RoyalBlue;">I agree</label>
                             </div>
                         </div>
                     </MudCardContent>
@@ -71,7 +71,7 @@
             <div style="margin-top:40px;margin-bottom:25px;">
                 @if (_cmd == "agreed")
                     {
-                    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Save" Size="Size.Small" OnClick="@(() => BtnSignupNewTeacher())" Style="margin-right:20px">Sing-Up </MudButton>
+                    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.CloudUpload" Size="Size.Small" OnClick="@(() => BtnSignupNewTeacher())" Style="margin-right:20px">Sing-Up </MudButton>
                     }
                 <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Help" Size="Size.Small" OnClick="@(() => BtnHelpSignupNewTeacher())" Style="margin-right:20px">Guide </MudButton>
                 <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Cancel" Size="Size.Small" OnClick="@(() => BtnCancel())">Cancel </MudButton>
@@ -152,8 +152,9 @@
                 {
                 Navman.NavigateTo ("/Login");
                 Snackbar.Add("account created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
-                Snackbar.Add("Notice: Don't create repeatitive accounts or all will be ignored", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
-                Snackbar.Add("Wait untill your account be approved and you are noticed by email", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+                Snackbar.Add("Your account will be activated within 2 working days", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+                Snackbar.Add("You will be noticed by email if furture info be required", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+                Snackbar.Add("Notice: Don't create repeatitive accounts", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
                 BtnCancel ();
                 }
             else

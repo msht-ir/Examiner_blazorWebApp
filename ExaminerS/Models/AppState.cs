@@ -126,6 +126,11 @@
         public void SetSelectedChatId (int _SelectedChatId) { SelectedChatId = _SelectedChatId; OnChange?.Invoke (); }
         public int? ChatMateId { get; private set; }
         public void SetChatMateId (int _ChatMateId) { ChatMateId = _ChatMateId; OnChange?.Invoke (); }
+        //Chatroom
+        public int? SelectedChatroomId { get; private set; }
+        public void SetSelectedChatroomId (int _SelectedChatroomId) { SelectedChatroomId = _SelectedChatroomId; OnChange?.Invoke (); }
+        public int? SelectedChatroomPostId { get; private set; }
+        public void SetSelectedChatroomPostId (int _SelectedChatroomPostId) { SelectedChatroomPostId = _SelectedChatroomPostId; OnChange?.Invoke (); }
         //Project
         public int? ProjectId { get; private set; }
         public void SetProjectId (int _ProjectId) { ProjectId = _ProjectId; OnChange?.Invoke (); }

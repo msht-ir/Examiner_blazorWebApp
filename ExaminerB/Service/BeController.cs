@@ -783,6 +783,58 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         #endregion
+        #region CHR:Chatrooms
+        [HttpPost ("Create_Chatroom")]
+        public async Task<ActionResult<int>> Create_Chatroom ([FromBody] Chatroom chatroom)
+            {
+            var result = await _BeService.Create_ChatroomAsync (chatroom);
+            return Ok (result);
+            }
+        [HttpPost ("Read_Chatrooms")]
+        public async Task<ActionResult<List<Chatroom>>> Read_Chatrooms ([FromBody] int userId, [FromQuery] string mode)
+            {
+            var result = await _BeService.Read_ChatroomsAsync (userId, mode);
+            return Ok (result);
+            }
+        [HttpPost ("Update_Chatroom")]
+        public async Task<ActionResult<bool>> Update_Chatroom ([FromBody] Chatroom chatroom)
+            {
+            var result = await _BeService.Update_ChatroomAsync (chatroom);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_Chatroom")]
+        public async Task<ActionResult<bool>> Delete_Chatroom ([FromBody] int chatroomId)
+            {
+            var result = await _BeService.Delete_ChatroomAsync (chatroomId);
+            return Ok (result);
+            }
+        #endregion
+        #region CHRP:ChatroomPosts
+        [HttpPost ("Create_ChatroomPost")]
+        public async Task<ActionResult<int>> Create_ChatroomPost ([FromBody] ChatroomPost chatroomPost)
+            {
+            var result = await _BeService.Create_ChatroomPostAsync (chatroomPost);
+            return Ok (result);
+            }
+        [HttpPost ("Read_ChatroomPosts")]
+        public async Task<ActionResult<List<ChatroomPost>>> Read_ChatroomPosts ([FromBody] int chatroomId)
+            {
+            var result = await _BeService.Read_ChatroomPostsAsync (chatroomId);
+            return Ok (result);
+            }
+        [HttpPost ("Update_ChatroomPost")]
+        public async Task<ActionResult<bool>> Update_ChatroomPost ([FromBody] ChatroomPost chatroomPost)
+            {
+            var result = await _BeService.Update_ChatroomPostAsync (chatroomPost);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_ChatroomPost")]
+        public async Task<ActionResult<bool>> Delete_ChatroomPost ([FromBody] int chatroomPostId)
+            {
+            var result = await _BeService.Delete_ChatroomPostAsync (chatroomPostId);
+            return Ok (result);
+            }
+        #endregion
         #region P:Projects
         [HttpPost ("Create_Project")]
         public async Task<ActionResult<int>> Create_Project ([FromBody] Project project)

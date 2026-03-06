@@ -66,10 +66,15 @@
             </MudCard>
         </MudContainer>
         <div style="margin-top:40px;margin-bottom:25px;">
-            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Login" Size="Size.Small" OnClick="@(() => BtnLogin())">Login</MudButton>
             @if (user.UserRole == "teacher")
                 {
-                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AppRegistration" Size="Size.Small" OnClick="@(() => BtnSignup())" Style="margin-left:20px">SingUp</MudButton>
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Login" Size="Size.Small" OnClick="@(() => BtnLogin())">Login</MudButton>
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AppRegistration" Size="Size.Small" OnClick="@(() => BtnSignup())" Style="margin-left:20px">New Teacher</MudButton>
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AccountBox" Size="Size.Small" OnClick='() => user.UserRole = "student"' Style="margin-left:20px">I'm A Student</MudButton>
+                }
+            else if (user.UserRole == "student")
+                {
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Login" Size="Size.Small" OnClick="@(() => BtnLogin())">Login (Student)</MudButton>
                 }
         </div>
     </EditForm>
@@ -124,23 +129,23 @@
     }
     //btns
     public async Task BtnLogin ()
-    {
+        {
         //via 'OnValidSubmic of EditForm'
         if ((user.UserRole == "student") & (TeacherId == 0))
-        {
+            {
             Snackbar.Add("select your teacher", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             //old code: await JS.InvokeVoidAsync ("alert", "Select your Class (group)!");
             return;
-        }
+            }
         user.UserId = 0;
         user.UserTags = 0;
         user.TeacherId = TeacherId;
         appState.SetTeacherId (TeacherId);
         user = await feService.Login(user) ?? new User { UserRole = "student" };        
         if (user.UserId != 0)
-        {
-            switch (user.UserRole)
             {
+            switch (user.UserRole)
+                {
                 case "student":
                     {
                         appState.SetUserLoginStatus (1);
@@ -171,16 +176,16 @@
                         Snackbar.Add($"\n\nwelcome {user.UserNickname}!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                         break;
                     }
+                }
             }
-        }
         else
-        {
+            {
             Snackbar.Add("incorrect username or password!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             user.UserRole = "student";
             TeacherId = 0;
             return;
-        }
-    } 
+            }
+        } 
     public void BtnSignup ()
         {
         Navman.NavigateTo("/T_SignUp");

@@ -177,11 +177,11 @@ else
             }
         else
             {
-            <div class="d-flex">
+            <div class="d-flex justify-content-center align-items-center mb-1" style="text-align:center">
                 <button class="btn btn-link" @onclick="BtnToggleShowProjectsMode">
                     <img src="/img/icoListP.png" width="34" title="toggle: active / non-active / all-notes" />
                 </button>
-                <h5 style="text-align:center;color:indianred; margin:10px;">
+                <span style="font-size:large;text-align:center;color:indianred; margin:10px;">
                     @(_ShowProjectsMode switch
                         {
                         "all"      => "all notebooks",
@@ -189,7 +189,7 @@ else
                         "inactive" => "inactive notebooks",
                         _          => ""
                         })
-                </h5>
+                </span>
             </div>
             @* 2 PROJECTS/SUBPROJECTS *@
             <div class="accordion" id="accordionProjects" style="max-width:500px; margin: 0 auto;">

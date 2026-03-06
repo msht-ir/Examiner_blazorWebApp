@@ -1104,6 +1104,66 @@ namespace ExaminerB.Service
             return response.IsSuccessStatusCode ? true : false;
             }
         #endregion
+        #region CHR:Chatrooms
+        public async Task<int> Create_Chatroom (Chatroom chatroom)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Create_Chatroom", chatroom);
+            return response.IsSuccessStatusCode ? 1 : 0;
+            }
+        public async Task<List<Chatroom>> Read_Chatrooms (int userId, string mode)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_Chatrooms?mode={mode}", userId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Chatroom>? lstChatrooms = await response.Content.ReadFromJsonAsync<List<Chatroom>> ();
+                return lstChatrooms ?? new List<Chatroom> ();
+                }
+            else
+                {
+                return new List<Chatroom> ();
+                }
+            }
+        public async Task<bool> Update_Chatroom (Chatroom chatroom)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Update_Chatroom", chatroom);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool> Delete_Chatroom (int chatroomId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Delete_Chatroom", chatroomId);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        #endregion
+        #region CHRP:ChatroomPosts
+        public async Task<int> Create_ChatroomPost (ChatroomPost chatroomPost)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Create_ChatroomPost", chatroomPost);
+            return response.IsSuccessStatusCode ? 1 : 0;
+            }
+        public async Task<List<ChatroomPost>> Read_ChatroomPosts (int chatroomId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_ChatroomPosts", chatroomId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<ChatroomPost>? lstChatroomPosts = await response.Content.ReadFromJsonAsync<List<ChatroomPost>> ();
+                return lstChatroomPosts ?? new List<ChatroomPost> ();
+                }
+            else
+                {
+                return new List<ChatroomPost> ();
+                }
+            }
+        public async Task<bool> Update_ChatroomPost (ChatroomPost chatroomPost)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Update_ChatroomPost", chatroomPost);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool> Delete_ChatroomPost (int chatroomPostId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Delete_ChatroomPost", chatroomPostId);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        #endregion
         #region P:Projects
         public async Task<int> Create_Project (Project project)
             {

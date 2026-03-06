@@ -91,12 +91,20 @@
                                                         <MudSelectItem Value="0">Select a Section...</MudSelectItem>
                                                         @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
                                                     </MudSelect>
-                                                    <button class="btn btn-link" Title="move!") @onclick='()=>BtnSelectSection(SubprojectId, notex.NoteId)'>
-                                                        <img src="/img/icoMoveToNoteBook.png" width="32" />
-                                                    </button>
-                                                    <button class="btn btn-link" Title="cancel") @onclick='()=>BtnCancel()'>
-                                                        <img src="/img/icoCancel.png" width="20" />
-                                                    </button>
+                                                    <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true" Style="margin-left:10px;">
+                                                        <MudMenuItem @onclick='() => BtnSelectSection(SubprojectId, notex.NoteId)'>
+                                                            <button class="btn btn-link" Title="move!">
+                                                                <img src="/img/icoMoveToNoteBook.png" width="34" />
+                                                            </button>
+                                                            move to notebook
+                                                        </MudMenuItem>
+                                                        <MudMenuItem @onclick='() => BtnCancel()'>
+                                                            <button class="btn btn-link" Title="cancel">
+                                                                <img src="/img/icoCancel.png" width="20" />
+                                                            </button>
+                                                            cancel
+                                                        </MudMenuItem>
+                                                    </MudMenu>
                                                 </div>
                                                 }
                                             else
@@ -172,12 +180,20 @@
                                                         <MudSelectItem Value="0">Select a Section...</MudSelectItem>
                                                         @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
                                                     </MudSelect>
-                                                    <button class="btn btn-link" Title="move!") @onclick='()=>BtnSelectSection(SubprojectId, notex.NoteId)'>
-                                                        <img src="/img/icoMoveToNoteBook.png" width="32" />
-                                                    </button>
-                                                    <button class="btn btn-link" Title="cancel") @onclick='()=>BtnCancel()'>
-                                                        <img src="/img/icoCancel.png" width="20" />
-                                                    </button>
+                                                    <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true" Style="margin-left:10px;">
+                                                        <MudMenuItem @onclick='() => BtnSelectSection(SubprojectId, notex.NoteId)'>
+                                                            <button class="btn btn-link" Title="move!">
+                                                                <img src="/img/icoMoveToNoteBook.png" width="34" />
+                                                            </button>
+                                                            move to notebook
+                                                        </MudMenuItem>
+                                                        <MudMenuItem @onclick='() => BtnCancel()'>
+                                                            <button class="btn btn-link" Title="cancel">
+                                                                <img src="/img/icoCancel.png" width="20" />
+                                                            </button>
+                                                            cancel
+                                                        </MudMenuItem>
+                                                    </MudMenu>
                                                 </div>
                                                 }
                                             else
@@ -260,72 +276,79 @@
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
-        {
+    {
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
-            {
+        {
             Navman.NavigateTo ("/Login");
-            }
+        }
         appState.SetCmd ("");
         user.UserId = Convert.ToInt32(appState.UserId);
         user.UserName = appState.UserName;
         lstNotes = await feService.Read_Notes (Id, mode);
         await GetListOfProjects (user.UserId, _ShowProjectsMode); 
         _hasFetched = true;
-        } 
+    } 
     private void TriggerRender()
-        {
+    {
         InvokeAsync(StateHasChanged);
-        }
+    }
     public void Dispose()
-        {
+    {
         appState.OnChange -= TriggerRender;
-        }
+    }
     //btns
     public void GotoProjects ()
-        {
+    {
         Navman.NavigateTo ("/E_Projects");
-        }
+    }
     private async Task OnProjectChanged(int newValue) 
-        {
+    {
         ProjectId = newValue;
         appState.SetProjectId (ProjectId);
         SubprojectId = 0;
         await FilterSubprojects (ProjectId);        
         StateHasChanged();
-        } 
+    } 
     private async Task OnSubprojectChanged(int newValue) 
-        {
+    {
         SubprojectId = newValue;
         appState.SetSubprojectId (SubprojectId);
         StateHasChanged();
-        } 
+    } 
     private void BtnMoveNoteToNotebook(int noteId)
-        {
+    {
         if(Convert.ToInt32(appState.NoteId) == noteId)
-            {
+        {
             _cmd = (_cmd == "MoveNoteToNotebook") ? "" : "MoveNoteToNotebook";        
-            }
+        }
         else
-            {
+        {
             appState.SetNoteId (noteId);
             _cmd = "MoveNoteToNotebook";
-            }
-        StateHasChanged ();
         }
+        StateHasChanged ();
+    }
     private async Task BtnSelectSection(int subprojectId, int noteid)
         {
-        Note _note = new Note {NoteId = noteid, ParentType = 3, ParentId = subprojectId};
-        bool result = await feService.Update_NoteParent (_note);
-        if(result)
+        if(subprojectId > 0)
             {
-            Snackbar.Add("note moved to notebook", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            _cmd = "";
-            StateHasChanged ();
+            Note _note = new Note {NoteId = noteid, ParentType = 3, ParentId = subprojectId};
+            bool result = await feService.Update_NoteParent (_note);
+            if(result)
+                {
+                Snackbar.Add("note moved to notebook", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                _cmd = "";
+                StateHasChanged ();
+                }
+            else
+                {
+                Snackbar.Add("failed", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
             }
         else
             {
-            Snackbar.Add("failed", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select notebook and section", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar            
             }
         }
     private void BtnCancel()

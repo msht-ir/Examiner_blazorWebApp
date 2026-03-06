@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Office.Word;
 using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
@@ -111,7 +112,7 @@ namespace ExaminerB.Services2Backend
         public async Task<bool> Create_TeacherAsync (User teacher)
             {
             string sql = @"INSERT INTO usrs (UsrName, UsrPass, UsrNickname, UsrEmail, UsrTags)
-                        VALUES (@usrname, @usrpass, @usrnickname, @usremail, 0); 
+                        VALUES (@usrname, @usrpass, @usrnickname, @usremail, 1); 
                         SELECT CAST (scope_identity() AS int)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
@@ -3630,6 +3631,165 @@ COMMIT TRANSACTION;
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.Parameters.AddWithValue ("@chatid", chatId);
+            await cmd.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
+            }
+        #endregion
+        #region CHR:Chatroom
+        public async Task<int> Create_ChatroomAsync (Chatroom chatroom)
+            {
+            string sql = "INSERT INTO Chatrooms (ChatroomUserId, ChatroomAdminId, ChatroomName, ChatroomTerms) VALUES (@chatroomuserid, @chatroomadminid, @chatroomname, @chatroomterms); SELECT CAST (scope_identity() AS int)";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@chatroomuserid", chatroom.ChatroomUserId);
+            cmd.Parameters.AddWithValue ("@chatroomadminid", chatroom.ChatroomAdminId);
+            cmd.Parameters.AddWithValue ("@chatroomname", chatroom.ChatroomName);
+            cmd.Parameters.AddWithValue ("@chatroomterms", chatroom.ChatroomTerms);
+            int i = (int) await cmd.ExecuteScalarAsync ();
+            await cnn.CloseAsync ();
+            return i;
+            }
+        public async Task<List<Chatroom>> Read_ChatroomsAsync (int userId, string mode)
+            {
+            string sql = "";
+            List <Chatroom> lstChatrooms = new List<Chatroom> ();
+            switch (mode)
+                {
+                case "teacher":
+                        {
+                        sql = @"SELECT ChatroomId, ChatroomUserId, ChatroomAdminId, ChatroomName, ChatroomTerms FROM Chatrooms WHERE ChatroomUserId=@userid";
+                        break;
+                        }
+                case "student":
+                        {
+                        sql = @"SELECT ChatroomId, ChatroomUserId, ChatroomAdminId, ChatroomName, ChatroomTerms FROM Chatrooms WHERE ChatroomAdminId=@userid";
+                        break;
+                        }
+                }
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@userid", userId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            while (await reader.ReadAsync ())
+                {
+                lstChatrooms.Add (new Chatroom
+                    {
+                    ChatroomId = reader.GetInt32 (0),
+                    ChatroomUserId = reader.GetInt32 (1),
+                    ChatroomAdminId = reader.GetInt32 (2),
+                    ChatroomName = reader.GetString (3),
+                    ChatroomTerms = reader.GetString (4)
+                    });
+                }
+            await reader.CloseAsync ();
+            await cnn.CloseAsync ();
+            return lstChatrooms;
+            }
+        public async Task<bool> Update_ChatroomAsync (Chatroom chatroom)
+            {
+            string sql = "UPDATE Chatrooms SET ChatroomUserId=@chatroomuserid, ChatroomAdminId=@chatroomadminid, ChatroomName=chatroomname, ChatroomTerms=chatroomterms WHERE ChatroomId=@chatroomid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@chatroomuserid", chatroom.ChatroomUserId);
+            cmd.Parameters.AddWithValue ("@chatroomadminid", chatroom.ChatroomAdminId);
+            cmd.Parameters.AddWithValue ("@chatroomname", chatroom.ChatroomName);
+            cmd.Parameters.AddWithValue ("@chatroomterms", chatroom.ChatroomTerms);
+            cmd.Parameters.AddWithValue ("@chatroomid", chatroom.ChatroomId);
+            await cmd.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
+            }
+        public async Task<bool> Delete_ChatroomAsync (int chatroomId)
+            {
+            string sql = "DELETE FROM ChatroomPosts WHERE ChatroomId=@chatroomid; DELETE FROM Chatrooms WHERE ChatroomId=@chatroomid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@chatroomid", chatroomId);
+            await cmd.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
+            }
+        #endregion
+        #region CHRP:ChatroomPost
+        public async Task<int> Create_ChatroomPostAsync (ChatroomPost chatroomPost)
+            {
+            try
+                {
+                string sql = "INSERT INTO ChatroomPosts (ChatroomId, SenderId, PostDateTime, PostText) VALUES (@chatroomid, @senderid, @postdatetime, @posttext); SELECT CAST (scope_identity() AS int)";
+                string? connString = _config.GetConnectionString ("cnni");
+                using SqlConnection cnn = new (connString);
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@chatroomid", chatroomPost.ChatroomId);
+                cmd.Parameters.AddWithValue ("@senderid", chatroomPost.SenderId);
+                cmd.Parameters.AddWithValue ("@postdatetime", chatroomPost.PostDateTime);
+                cmd.Parameters.AddWithValue ("@posttext", chatroomPost.PostText);
+                int i = (int) await cmd.ExecuteScalarAsync ();
+                await cnn.CloseAsync ();
+                return i;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine (ex.ToString());
+                throw;
+                }
+            }
+        public async Task<List<ChatroomPost>> Read_ChatroomPostsAsync (int chatroomId)
+            {
+            List<ChatroomPost> lstChatroomPosts = new List<ChatroomPost> ();
+            string sql = "SELECT ChatroomPostId, ChatroomId, SenderId, PostDateTime, PostText FROM ChatroomPosts WHERE ChatroomId=@chatroomId ORDER BY PostDateTime DESC";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@chatroomid", chatroomId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            lstChatroomPosts.Clear ();
+            while (await reader.ReadAsync ())
+                {
+                lstChatroomPosts.Add (new ChatroomPost
+                    {
+                    ChatroomPostId = reader.GetInt32 (0),
+                    ChatroomId = reader.GetInt32 (1),
+                    SenderId = reader.GetInt32 (2),
+                    PostDateTime = reader.GetString (3),
+                    PostText = reader.GetString (4)
+                    });
+                }
+            await reader.CloseAsync ();
+            await cnn.CloseAsync ();
+            return lstChatroomPosts;
+            }
+        public async Task<bool> Update_ChatroomPostAsync (ChatroomPost chatroomPost)
+            {
+            string sql = "UPDATE ChatroomPosts SET PostText=@posttext WHERE ChatroomPostId=@chatroompostid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@posttext", chatroomPost.PostText);
+            cmd.Parameters.AddWithValue ("@chatroompostid", chatroomPost.ChatroomPostId);
+            await cmd.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
+            }
+        public async Task<bool> Delete_ChatroomPostAsync (int chatroomPostId)
+            {
+            string sql = "DELETE FROM ChatroomPosts WHERE ChatroomPostId=@chatroompostid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@chatroompostid", chatroomPostId);
             await cmd.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
             return true;

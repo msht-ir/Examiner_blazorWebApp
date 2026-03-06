@@ -167,6 +167,18 @@ namespace ExaminerB.Services2Backend
         Task<bool> Update_ChatTagsAsync (Chat chat);
         Task<bool> Delete_ChatAsync (int chatId);
         #endregion
+        #region CHR:Chatrooms
+        Task<int> Create_ChatroomAsync (Chatroom chatroom);
+        Task<List<Chatroom>> Read_ChatroomsAsync (int userId, string mode);
+        Task<bool> Update_ChatroomAsync (Chatroom chatroom);
+        Task<bool> Delete_ChatroomAsync (int chatroomId);
+        #endregion
+        #region CHRP:ChatroomPosts
+        Task<int> Create_ChatroomPostAsync (ChatroomPost chatroomPost);
+        Task<List<ChatroomPost>> Read_ChatroomPostsAsync (int chatroomId);
+        Task<bool> Update_ChatroomPostAsync (ChatroomPost chatroomPost);
+        Task<bool> Delete_ChatroomPostAsync (int chatroomPostId);
+        #endregion
         #region P:Projects
         Task<int> Create_ProjectAsync (Project project);
         Task<List<Project>> Read_ProjectsAsync (int userI, string mode);
