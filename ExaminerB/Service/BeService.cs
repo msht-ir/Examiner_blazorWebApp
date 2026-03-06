@@ -3660,7 +3660,7 @@ COMMIT TRANSACTION;
                 {
                 case "teacher":
                         {
-                        sql = @"SELECT ChatroomId, ChatroomUserId, ChatroomAdminId, ChatroomName, ChatroomTerms FROM Chatrooms WHERE ChatroomUserId=@userid";
+                        sql = @"SELECT ChatroomId, ChatroomUserId, ChatroomAdminId, ChatroomName, ChatroomTerms FROM Chatrooms WHERE ChatroomUserId=@userid ORDER BY ChatroomId DESC";
                         break;
                         }
                 case "student":

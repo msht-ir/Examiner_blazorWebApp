@@ -9,13 +9,13 @@
 
 @if (IsOpen)
     {
-    Title = "Chatroom";
+    Title = "Chatroom " + appState.SelectedChatroomName;
     <div class="modal-backdrop fade show"></div>
     <div class="modal show d-block">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    Chatroom
+                    chatroom: @appState.SelectedChatroomName
                 </div>
                 <div class="modal-body">
                     <div class="mt-1">
@@ -48,14 +48,14 @@
                             <button class="btn btn-link" @onclick="BtnCancel">
                                 <img src="/img/icoBack3.png" width="32" title="Back" />
                             </button>
-                            <button class="btn btn-link" @onclick="BtnCreateChatroomPost">
-                                <img src="/img/icoAdd0.png" width="22" title="Add new chat item" />
+                            <button class="btn btn-link" @onclick="ReadChatroomPosts">
+                                <img src="/img/gifUserLogin.gif" width="32" title="Refresh" />
                             </button>
                             <button class="btn btn-link" @onclick="BtnChangeFontSize">
                                 <img src="/img/icoFontAa.png" title="Font Size  تغيير انداز فونت" alt="FontSize" width="28"/>
                             </button>
-                            <button class="btn btn-link" @onclick="ReadChatroomPosts">
-                                <img src="/img/gifUserLogin.gif" width="32" title="Refresh" />
+                            <button class="btn btn-link" @onclick="BtnCreateChatroomPost">
+                                <img src="/img/icoAdd0.png" width="22" title="Add new chat item" />
                             </button>
                         </div>                        
                         }
@@ -172,7 +172,7 @@
         }
     public async Task BtnDeleteChatroomPost(int chatroomPostId)
         {
-        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> this chat item?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
+        var message = new MarkupString($"<hr>Do you want to <span style='color:indianred'>delete</span> this post?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {

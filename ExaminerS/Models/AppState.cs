@@ -129,6 +129,8 @@
         //Chatroom
         public int? SelectedChatroomId { get; private set; }
         public void SetSelectedChatroomId (int _SelectedChatroomId) { SelectedChatroomId = _SelectedChatroomId; OnChange?.Invoke (); }
+        public string? SelectedChatroomName { get; private set; }
+        public void SetSelectedChatroomName (string _SelectedChatroomName) { SelectedChatroomName = _SelectedChatroomName; OnChange?.Invoke (); }
         public int? SelectedChatroomPostId { get; private set; }
         public void SetSelectedChatroomPostId (int _SelectedChatroomPostId) { SelectedChatroomPostId = _SelectedChatroomPostId; OnChange?.Invoke (); }
         //Project
