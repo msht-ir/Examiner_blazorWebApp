@@ -7,6 +7,7 @@
 @inject FeService feService
 @implements IDisposable
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 <br />
     <div class="d-flex flex-column align-items-center justify-content-center text-center">
@@ -19,8 +20,8 @@
                     <MudCardContent Style="background-color:rgba(249,249,249);">
                         <div style="text-align:left">
                             A teacher-account will be created.<br />
-                            You'll be notified by email when account is approved by the admin.<br />
-                            Please make a reminer if weren't notified within 2 working days.<br />
+                            Your account will be activated within 2 working days.<br />
+                            You will be noticed by email if furture info be required.<br />
                             <br />
                             <span style="font-weight:bold;">notice:</span><br />
                             <ul>
@@ -150,12 +151,14 @@
             bool result = await feService.Create_Teacher (user);
             if (result)
                 {
-                Navman.NavigateTo ("/Login");
-                Snackbar.Add("account created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
-                Snackbar.Add("Your account will be activated within 2 working days", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
-                Snackbar.Add("You will be noticed by email if furture info be required", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
-                Snackbar.Add("Notice: Don't create repeatitive accounts", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
-                BtnCancel ();
+                var message = new MarkupString($"<span style='color:indianred'>Teacher</span> account created <br><br><ul><li> Your account will be activated within 2 working days </li><li> You will be noticed by email if furture info be required </li><li> Don't create repeatitive accounts </li><br>your email:<br>{user.UserEmail}<br><br><hr style=color:blue><span style='color:indianred'> You can login to </span> <strong>' {user.UserName} '</strong> as Teacher <hr style=color:blue>");
+                bool? confirmResult = await DialogService.ShowMessageBox(title: "Examiner accounts", markupMessage: message, yesText: "OK");
+                if (confirmResult == true)
+                    {
+                    Navman.NavigateTo ("/Login");
+                    Snackbar.Add("account created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+                    BtnCancel ();
+                    }
                 }
             else
                 {

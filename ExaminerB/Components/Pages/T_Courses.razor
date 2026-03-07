@@ -61,7 +61,7 @@
                                                             <img src="/img/icoSave2.png" width="22" />
                                                         </button>
                                                         <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                            <img src="/img/icoCancel.png" width="24" />
+                                                            <img src="/img/icoCancel.png" width="20" />
                                                         </button>
                                                     </div>
                                                 </MudCardContent>
@@ -72,32 +72,32 @@
                                         {
                                          <div style="text-align: center;">
                                             <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                                <MudMenuItem>
-                                                     <button class="btn btn-link" title="rename course" @onclick="()=>BtnEditCourse(crs.CourseId)">
+                                                <MudMenuItem @onclick="() => BtnEditCourse(crs.CourseId)">
+                                                     <button class="btn btn-link" title="rename course">
                                                         <img src="/img/icoRename.png" width="28" />
                                                     </button>
                                                     rename course
                                                 </MudMenuItem>
-                                                <MudMenuItem>
-                                                    <button class="btn btn-link" title="report tests" @onclick="()=>BtnListCourseTests(crs.CourseId, crs.CourseName)" >
+                                                <MudMenuItem @onclick="() => BtnListCourseTests(crs.CourseId, crs.CourseName)">
+                                                    <button class="btn btn-link" title="report tests">
                                                         <img src="/img/icoFolderT.png" width="26" />
                                                     </button>
                                                     Course Tests Folder
                                                 </MudMenuItem>
-                                                <MudMenuItem>
-                                                    <button class="btn btn-link" title="list tests" @onclick="()=>BtnReportCourseTests(crs.CourseId)" >
+                                                <MudMenuItem @onclick="() => BtnReportCourseTests(crs.CourseId)">
+                                                    <button class="btn btn-link" title="list tests" >
                                                         <img src="/img/icoListT.png" width="30" />
                                                     </button>
                                                     Course Tests List
                                                 </MudMenuItem>
-                                                <MudMenuItem>
-                                                    <button class="btn btn-link" title="list exams" @onclick="()=>BtnExams(crs)" >
+                                                <MudMenuItem @onclick="() => BtnExams(crs)">
+                                                    <button class="btn btn-link" title="list exams" >
                                                         <img src="/img/icoListE.png" width="30" />
                                                     </button>
                                                     Course Exams
                                                 </MudMenuItem>
-                                                <MudMenuItem>
-                                                    <button class="btn btn-link" title="delete course" @onclick="()=>BtnDeleteCourse(crs)" >
+                                                <MudMenuItem @onclick="() => BtnDeleteCourse(crs)">
+                                                    <button class="btn btn-link" title="delete course" >
                                                         <img src="/img/icoDelete1.png" width="22" />
                                                     </button>
                                                     Delete Course
@@ -151,14 +151,14 @@
                                                             <MudCardContent Style="background-color:whitesmoke;">
                                                                 @* <h5 style="text-align:center;color:royalblue">Add New Course Topic</h5> *@
                                                                 <div class="mb-3">
-                                                                    <MudTextField @ref="txtNewCourseTopicTitle" @bind-Value="courseTopic.CourseTopicTitle" Label="New Topic" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                                                                    <MudTextField @ref="txtNewCourseTopicTitle" @bind-Value="courseTopic.CourseTopicTitle" Label="new topic" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                                                                 </div>
                                                                 <div style="text-align:center">
                                                                     <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseTopic(crs.CourseId)">
                                                                         <img src="/img/icoSave2.png" width="22" />
                                                                     </button>
                                                                     <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                                        <img src="/img/icoCancel.png" width="24" />
+                                                                        <img src="/img/icoCancel.png" width="20" />
                                                                     </button>
                                                                 </div>
                                                             </MudCardContent>
@@ -199,10 +199,10 @@
                                                             <MudCard Class="mx-0">
                                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                                     <div class="mb-2">
-                                                                        <MudTextField @ref="txtNewCourseFolderTitle" @bind-Value="cf.CourseFolderTitle" Label="Folder title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                                                                        <MudTextField @ref="txtNewCourseFolderTitle" @bind-Value="cf.CourseFolderTitle" Label="title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                                                                     </div>
                                                                     <div class="mb-2">
-                                                                        <MudTextField @ref="txtNewCourseFolderUrl" @bind-Value="cf.CourseFolderUrl" Label="Folder url" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                                                                        <MudTextField @ref="txtNewCourseFolderUrl" @bind-Value="cf.CourseFolderUrl" Label="url" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                                                                     </div>
                                                                     <input class="form-inline border" @bind="cf.CourseFolderActive" type="checkbox" />
                                                                     <label style="padding-right:5px;">Active</label>
@@ -221,12 +221,12 @@
                                                         <MudContainer Class="mt-2 px-0">
                                                             <MudCard Class="mx-0">
                                                                 <MudCardContent Style="background-color:whitesmoke;">
-                                                                    <h5 style="color:royalblue;text-align:center">Add New Web Folder:</h5>
+                                                                    <h6 style="color:royalblue;text-align:center">add new folder</h6>
                                                                     <div class="mb-2">
-                                                                        <MudTextField @ref="txtNewCourseFolderTitle" @bind-Value="courseFolder.CourseFolderTitle" Label="Folder title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                                                                        <MudTextField @ref="txtNewCourseFolderTitle" @bind-Value="courseFolder.CourseFolderTitle" Label="title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                                                                     </div>
                                                                     <div class="mb-2">
-                                                                        <MudTextField @ref="txtNewCourseFolderUrl" @bind-Value="courseFolder.CourseFolderUrl" Label="Folder url" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                                                                        <MudTextField @ref="txtNewCourseFolderUrl" @bind-Value="courseFolder.CourseFolderUrl" Label="url" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                                                                     </div>
                                                                     <div style="text-align:center">
                                                                         <input class="form-inline border" @bind="courseFolder.CourseFolderActive" type="checkbox" />
@@ -235,7 +235,7 @@
                                                                             <img src="/img/icoSave2.png" width="22" />
                                                                         </button>
                                                                         <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                                            <img src="/img/icoCancel.png" width="24" />
+                                                                            <img src="/img/icoCancel.png" width="20" />
                                                                         </button>
                                                                     </div>
                                                                 </MudCardContent>
@@ -469,9 +469,8 @@
         bool result = await feService.Update_CourseTopic (courseTopic);
         if (result)
             {
-            await inputRefs[courseTopic.CourseTopicId].FocusAsync();
+            //await inputRefs[courseTopic.CourseTopicId].FocusAsync(); //this line throws an error 
             StateHasChanged ();
-            //needs: @inject ISnackbar Snackbar
             Snackbar.Add("course topic updated", Severity.Success); //Severity.Warning .Error | .Info | .Success
             }
         }
@@ -553,9 +552,9 @@
             }
         }
     public void BtnUpdateCourseFolderActiveInPlace(CourseFolder courseFolder, int flag , bool isChecked)
-{
+        {
     
-}   
+        }   
 //Back
     public void BtnCancel()
         {

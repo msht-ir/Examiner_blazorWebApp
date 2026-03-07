@@ -41,7 +41,7 @@
 </center>
 <br />
 <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-    <img src="/img/pngStudyGirl1.png" width="420" style="margin-left:10px;margin-right:10px" />
+    <img src="/img/pngStudyGirl1.png" width="380" style="margin-left:10px;margin-right:10px" />
     <EditForm Model="user" OnValidSubmit="BtnLogin" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <MudContainer Class="mt-2 px-0">
@@ -68,9 +68,9 @@
         <div style="margin-top:40px;margin-bottom:25px;">
             @if (user.UserRole == "teacher")
                 {
-                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Login" Size="Size.Small" OnClick="@(() => BtnLogin())">Login</MudButton>
-                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AppRegistration" Size="Size.Small" OnClick="@(() => BtnSignup())" Style="margin-left:20px">New Teacher</MudButton>
-                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AccountBox" Size="Size.Small" OnClick='() => user.UserRole = "student"' Style="margin-left:20px">I'm A Student</MudButton>
+                <MudButton Variant="Variant.Outlined" EndIcon="@Icons.Material.Filled.AccountBox"      Size="Size.Small" OnClick='() => user.UserRole = "student"'>I'm A Student</MudButton>
+                <MudButton Variant="Variant.Filled"   EndIcon="@Icons.Material.Filled.Login"           Size="Size.Medium" OnClick="@(() => BtnLogin())" Style="margin-left:20px">Login</MudButton>
+                <MudButton Variant="Variant.Outlined" EndIcon="@Icons.Material.Filled.AppRegistration" Size="Size.Small" OnClick="@(() => BtnSignup())" Style="margin-left:20px">New Teacher</MudButton>
                 }
             else if (user.UserRole == "student")
                 {
