@@ -486,6 +486,7 @@ namespace ExaminerS.Models
         public int ChatroomPostId { get; set; } = 0;
         public int ChatroomId { get; set; } = 0;
         public int SenderId { get; set; } = 0;
+        public string SenderName { get; set; } = "";
         public string PostDateTime { get; set; } = "";
         public string PostText { get; set; } = "";
         }

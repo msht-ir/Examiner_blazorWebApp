@@ -112,7 +112,7 @@ namespace ExaminerB.Services2Backend
         public async Task<bool> Create_TeacherAsync (User teacher)
             {
             string sql = @"INSERT INTO usrs (UsrName, UsrPass, UsrNickname, UsrEmail, UsrTags)
-                        VALUES (@usrname, @usrpass, @usrnickname, @usremail, 1); 
+                        VALUES (@usrname, @usrpass, @usrnickname, @usremail, 0); 
                         SELECT CAST (scope_identity() AS int)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
@@ -3746,7 +3746,10 @@ COMMIT TRANSACTION;
         public async Task<List<ChatroomPost>> Read_ChatroomPostsAsync (int chatroomId)
             {
             List<ChatroomPost> lstChatroomPosts = new List<ChatroomPost> ();
-            string sql = "SELECT ChatroomPostId, ChatroomId, SenderId, PostDateTime, PostText FROM ChatroomPosts WHERE ChatroomId=@chatroomId ORDER BY PostDateTime DESC";
+            string sql = @"SELECT ChatroomPostId, ChatroomId, SenderId, StudentName, PostDateTime, PostText 
+                         FROM ChatroomPosts INNER JOIN Students ON Students.StudentID = ChatroomPosts.SenderId
+                         WHERE ChatroomId=@chatroomId 
+                         ORDER BY PostDateTime DESC, ChatroomPostId DESC";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
@@ -3761,8 +3764,9 @@ COMMIT TRANSACTION;
                     ChatroomPostId = reader.GetInt32 (0),
                     ChatroomId = reader.GetInt32 (1),
                     SenderId = reader.GetInt32 (2),
-                    PostDateTime = reader.GetString (3),
-                    PostText = reader.GetString (4)
+                    SenderName = reader.GetString (3),
+                    PostDateTime = reader.GetString (4),
+                    PostText = reader.GetString (5)
                     });
                 }
             await reader.CloseAsync ();
