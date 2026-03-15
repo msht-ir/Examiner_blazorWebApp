@@ -3724,7 +3724,7 @@ COMMIT TRANSACTION;
             {
             try
                 {
-                string sql = "INSERT INTO ChatroomPosts (ChatroomId, SenderId, PostDateTime, PostText, PostTags) VALUES (@chatroomid, @senderid, @postdatetime, @posttext, 0s); SELECT CAST (scope_identity() AS int)";
+                string sql = "INSERT INTO ChatroomPosts (ChatroomId, SenderId, PostDateTime, PostText, PostTags) VALUES (@chatroomid, @senderid, @postdatetime, @posttext, 0); SELECT CAST (scope_identity() AS int)";
                 string? connString = _config.GetConnectionString ("cnni");
                 using SqlConnection cnn = new (connString);
                 await cnn.OpenAsync ();
@@ -3746,7 +3746,7 @@ COMMIT TRANSACTION;
         public async Task<List<ChatroomPost>> Read_ChatroomPostsAsync (int chatroomId)
             {
             List<ChatroomPost> lstChatroomPosts = new List<ChatroomPost> ();
-            string sql = @"SELECT ChatroomPostId, ChatroomId, SenderId, StudentName, PostDateTime, PostText, PostTags 
+            string sql = @"SELECT ChatroomPostId, ChatroomId, SenderId, concat(StudentNickname , ' - ', StudentName), PostDateTime, PostText, PostTags 
                          FROM ChatroomPosts INNER JOIN Students ON Students.StudentID = ChatroomPosts.SenderId
                          WHERE ChatroomId=@chatroomId 
                          ORDER BY PostDateTime DESC, ChatroomPostId DESC";
