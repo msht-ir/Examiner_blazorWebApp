@@ -10,7 +10,7 @@
 @inject ISnackbar Snackbar
 
 <div class="container mt-2 align-items-center">
-    <div style="font-size:larger; text-align:center;color:black">e<span style="color:indianred">x</span>aminer <span style="font-size:small;color:royalblue"> @appState.UserNickname</span></div>
+    <div style="font-size:larger; text-align:center;color:black">@appState.UserNickname</div>
     <hr style="color:red"/>
     @if (!_hasFetched)
         {
@@ -466,27 +466,29 @@
                         <div id="T3">
                             <div style="text-align:center">
                                 <button class="btn btn-link" @onclick="BtnAddNewChatroom">
-                                    <img src="/img/icoAdd0.png" width="22" />
+                                    <img src="/img/icoAdd0.png" width="24" />
                                 </button>
                                 <button class="btn btn-link align-items-center" Title=@((_help) ? "refresh chatrooms" : "") @onclick="ReadChatroomList">
-                                    <img src="/img/gifUserLogin.gif" width="30" title="refresh chatrooms" />
+                                    <img src="/img/gifUserLogin.gif" width="34" title="refresh chatrooms" />
                                 </button>
                             </div>
                             @if (_cmd == "AddNewChatroom")
                                 {
                                 <hr />
                                 <MudContainer>
-                                    <h6 style="color:royalblue">add new chatroom</h6>
+                                    <h5 style="color:darkgoldenrod;text-align:center;margin-top:20px">new chatroom</h5>
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
                                             <MudTextField @bind-Value="chatroom.ChatroomName" Label="chatroom name" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                            <MudTextField @bind-Value="chatroom.ChatroomTerms" Label="terms of use" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="5"/>
-                                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCreateChatroom">
-                                                <img src="/img/icoSave2.png" width="22" />
-                                            </button>
-                                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                <img src="/img/icoCancel.png" width="20" />
-                                            </button>
+                                            <MudTextField @bind-Value="chatroom.ChatroomTerms" Label="terms/notes" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="5"/>
+                                            <div class="align-content-center align-items-center justify-content-center" style="text-align:center">
+                                                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCreateChatroom">
+                                                    <img src="/img/icoSave2.png" width="20" />
+                                                </button>
+                                                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                                    <img src="/img/icoCancel.png" width="20" />
+                                                </button>
+                                            </div>
                                         </MudCardContent>
                                     </MudCard>
                                 </MudContainer>
@@ -500,10 +502,10 @@
                                         <MudCard Class="mx-0">
                                             <MudCardContent Style="background-color:whitesmoke;">
                                                 <div class="d-flex align-items-center">
-                                                    <button class="btn btn-link" Title=@((_help)?"enter chatroom":"") @onclick="()=>BtnOpenThisChatroom(chatroom)">
+                                                    <button class="btn btn-link" style="text-decoration: none;" Title=@((_help)?"enter chatroom":"") @onclick="()=>BtnOpenThisChatroom(chatroom)">
                                                         <img src="/img/icoSwitchBoardStudents.png" width="34" />
+                                                        <span style="font-weight:bold;color:gray;"> @chatroom.ChatroomName </span>
                                                     </button>
-                                                    <span style="font-weight:bold;color:gray;"> @chatroom.ChatroomName </span>
                                                 </div>
                                                 <div>
                                                     <span style="font-style:italic;font-size:small; font-weight:normal;color:black;padding-left:10px;">terms: <span style="color:royalblue;">@chatroom.ChatroomTerms</span></span>
@@ -512,7 +514,7 @@
                                                     {
                                                     <div style="text-align:left">
                                                         <button class="btn btn-link" @onclick="() => BtnDeleteChatroom(chatroom.ChatroomId)">
-                                                            <img src="/img/icoDelete1.png" width="20" title="Delete chat item" />
+                                                            <img src="/img/icoDelete1.png" width="20" title="Delete chatroom" />
                                                         </button>
                                                     </div>
                                                     }
@@ -632,14 +634,14 @@
                                     </div>
                                     }
                                 }
-                            @if(lstNotes.Count > 0)
+                            @* @if(lstNotes.Count > 0)
                                 {
                                 <div class="mt-4" style="text-align:center">
                                     <button class="btn btn-link align-items-center" Title=@((_help)?"add new note":"") @onclick="CreateNote">
                                         <img src="/img/icoAdd0.png" width="24" />
                                     </button>
                                 </div>
-                                }
+                                } *@
                         </div>
                     </div>
                 </div>
@@ -982,8 +984,10 @@
     //btns for chatrooms
     private async Task BtnAddNewChatroom()
         {
+        chatroom.ChatroomName="";
+        chatroom.ChatroomTerms="";
         appState.SetClps("CHR");
-        _cmd = "AddNewChatroom";
+        _cmd = _cmd == "AddNewChatroom" ? "" : "AddNewChatroom";
         StateHasChanged();
         }
     private async Task BtnCreateChatroom()

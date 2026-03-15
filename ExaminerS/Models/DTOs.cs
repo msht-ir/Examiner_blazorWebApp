@@ -489,5 +489,40 @@ namespace ExaminerS.Models
         public string SenderName { get; set; } = "";
         public string PostDateTime { get; set; } = "";
         public string PostText { get; set; } = "";
+        public int PostTags { get; set; } = 0;
+        public bool NeedsReply
+            {
+            get => (PostTags & 1) == 1;
+            set
+                {
+                if (value)
+                    PostTags |= 1;
+                else
+                    PostTags &= ~1;
+                }
+            }
+        public bool IsEdited
+            {
+            get => (PostTags & 2) == 2;
+            set
+                {
+                if (value)
+                    PostTags |= 2;
+                else
+                    PostTags &= ~2;
+                }
+            }
+        public bool IsDeleted
+            {
+            get => (PostTags & 4) == 4;
+            set
+                {
+                if (value)
+                    PostTags |= 4;
+                else
+                    PostTags &= ~4;
+                }
+            }
+
         }
     }

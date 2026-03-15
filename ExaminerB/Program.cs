@@ -13,8 +13,8 @@ builder.Services.AddScoped<BeIService, BeService> ();
 // Configure HttpClient with base address from configuration or environment
 builder.Services.AddHttpClient<FeService> (client =>
     {
-        //var baseAddress = builder.Configuration["BaseAddress"] ?? "http://localhost:5232";  //local server: Linux (http ONLY)
-        var baseAddress = builder.Configuration["BaseAddress"] ?? "https://localhost:7139";  //local server: Windows
+        //var baseAddress = builder.Configuration["BaseAddress"] ?? "http://localhost:5232";  //local server: for Linux (http ONLY)
+        var baseAddress = builder.Configuration["BaseAddress"] ?? "https://localhost:7139";  //local server: for Windows
         //var baseAddress = builder.Configuration["BaseAddress"] ?? "https://x.msht.ir";      //remote server: [x].msht.ir
         //var baseAddress = builder.Configuration["BaseAddress"] ?? "https://www.msht.ir";    //remote server: wwww.msht.ir
         client.BaseAddress = new Uri (baseAddress);
