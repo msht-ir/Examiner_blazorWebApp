@@ -382,19 +382,19 @@
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
                                             <div class="d-flex align-items-center">
-                                                <button class="btn btn-link" Title=@((_help)?"Show chat history with this friend":"") @onclick="()=>BtnOpenThisChat(chat)">
-                                                    <img src="/img/icoEnvelop2.png" width="18" />
+                                                <button class="btn btn-link" style="text-decoration:none;" Title=@((_help)?"Show chat history with this friend":"") @onclick="()=>BtnOpenThisChat(chat)">
+                                                    <img src="/img/icoEnvelop2.png" width="18" style="margin-right:10px;"/>
+                                                    @if(chat.FromId == student.UserId)
+                                                        {
+                                                        <span style="font-size:x-small; font-weight:bold;color:gray;"> @chat.DateTimeSent </span>
+                                                        <span style="font-size:x-small; font-weight:normal;color:gray;padding-left:10px;"> @chat.ToName </span>
+                                                        }
+                                                    else
+                                                        {
+                                                        <span style="font-size:x-small; font-weight:bold;color:indianred;"> @chat.DateTimeSent </span>
+                                                        <span style="font-size:x-small; font-weight:bold;color:Indianred;padding-left:10px;"> @chat.FromName </span>
+                                                        }
                                                 </button>
-                                                @if(chat.FromId == student.UserId)
-                                                    {
-                                                    <span style="font-size:x-small; font-weight:bold;color:gray;"> @chat.DateTimeSent </span>
-                                                    <span style="font-size:x-small; font-weight:normal;color:gray;padding-left:10px;"> @chat.ToName </span>
-                                                    }
-                                                else
-                                                    {
-                                                    <span style="font-size:x-small; font-weight:bold;color:indianred;"> @chat.DateTimeSent </span>
-                                                    <span style="font-size:x-small; font-weight:bold;color:Indianred;padding-left:10px;"> @chat.FromName </span>
-                                                    }
                                             </div>
                                             <div>
                                                 @if (chat.ChatText.Length == 10)
@@ -417,7 +417,7 @@
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                         @* SEARCH *@
                                         <div class="d-flex">
-                                            <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="search friends" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                                            <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="search people" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                                             <button class="btn btn-link" Title=@((_help)?"Search my friends":"") @onclick="()=>BtnReadStudentsBySearch()">
                                                 <img src="/img/icoSearch.png" width="24" />
                                             </button>
@@ -428,10 +428,10 @@
                                             @foreach(User stdnt in lstStudents)
                                                 {
                                                 <div class="d-flex align-items-center mb-1" style="font-size:smaller">
-                                                    <button class="btn btn-link" Title=@((_help)?"Open/Start chat with this friend":"") @onclick="()=>BtnStartNewChat(stdnt.UserId)">
+                                                    <button class="btn btn-link" style="text-decoration:none;" Title=@((_help)?"Open/Start chat with this friend":"") @onclick="()=>BtnStartNewChat(stdnt.UserId)">
                                                         <img src="/img/icoUser.png" width="20" />
+                                                        <span style="color:darkslategray">@stdnt.UserName - @stdnt.UserNickname</span>
                                                     </button>
-                                                    @stdnt.UserName - @stdnt.UserNickname
                                                 </div>
                                                 }
                                             }        
@@ -465,9 +465,6 @@
                     <div class="accordion-body" style="background-color:white">
                         <div id="T3">
                             <div style="text-align:center">
-                                <button class="btn btn-link" @onclick="BtnAddNewChatroom">
-                                    <img src="/img/icoAdd0.png" width="24" />
-                                </button>
                                 <button class="btn btn-link align-items-center" Title=@((_help) ? "refresh chatrooms" : "") @onclick="ReadChatroomList">
                                     <img src="/img/gifUserLogin.gif" width="34" title="refresh chatrooms" />
                                 </button>
@@ -480,7 +477,7 @@
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
                                             <MudTextField @bind-Value="chatroom.ChatroomName" Label="chatroom name" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                            <MudTextField @bind-Value="chatroom.ChatroomTerms" Label="terms/notes" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="5"/>
+                                            <MudTextField @bind-Value="chatroom.ChatroomTerms" Label="terms" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="5"/>
                                             <div class="align-content-center align-items-center justify-content-center" style="text-align:center">
                                                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCreateChatroom">
                                                     <img src="/img/icoSave2.png" width="20" />
@@ -501,18 +498,18 @@
                                     <MudContainer Class="mt-2 px-0">
                                         <MudCard Class="mx-0">
                                             <MudCardContent Style="background-color:whitesmoke;">
-                                                <div class="d-flex align-items-center">
+                                                <div>
                                                     <button class="btn btn-link" style="text-decoration: none;" Title=@((_help)?"enter chatroom":"") @onclick="()=>BtnOpenThisChatroom(chatroom)">
                                                         <img src="/img/icoSwitchBoardStudents.png" width="34" />
-                                                        <span style="font-weight:bold;color:gray;"> @chatroom.ChatroomName </span>
+                                                        <span style="font-weight:bold;color:gray;margin-left:5px;"> @chatroom.ChatroomName </span>
                                                     </button>
-                                                </div>
-                                                <div>
-                                                    <span style="font-style:italic;font-size:small; font-weight:normal;color:black;padding-left:10px;">terms: <span style="color:royalblue;">@chatroom.ChatroomTerms</span></span>
+                                                    <hr />
+                                                    <div style="font-style:italic;font-size:small; font-weight:normal;color:gray;padding-left:10px;">admin: <span style="color:royalblue;">@chatroom.ChatroomAdminName</span></div>
+                                                    <div style="font-style:italic;font-size:small; font-weight:normal;color:gray;padding-left:10px;">terms: <span style="color:indianred;">@chatroom.ChatroomTerms</span></div>
                                                 </div>
                                                 @if (chatroom.ChatroomAdminId == student.UserId)
                                                     {
-                                                    <div style="text-align:left">
+                                                    <div style="text-align:right">
                                                         <button class="btn btn-link" @onclick="() => BtnDeleteChatroom(chatroom.ChatroomId)">
                                                             <img src="/img/icoDelete1.png" width="20" title="Delete chatroom" />
                                                         </button>
@@ -522,8 +519,12 @@
                                         </MudCard>
                                     </MudContainer>
                                     }
-
                                 }
+                        </div>
+                        <div style="text-align:center; margin-top:15px;margin-bottom:15px;">
+                            <button class="btn btn-link" @onclick="BtnAddNewChatroom" title="create new chatroom">
+                                <img src="/img/icoAdd0.png" width="24" />
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1012,8 +1013,8 @@
     private async Task BtnDeleteChatroom(int chatroomId)
         {
         appState.SetClps("CHR");
-        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> chatroom? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> chatroom?<br>All Posts in this chatroom will be deleted!.<br><br>Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "Cancel");
         if (confirmResult == true)
             {
             student.UserId = appState.UserId ?? 0;

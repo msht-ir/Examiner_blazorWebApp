@@ -90,6 +90,19 @@ namespace ExaminerB.Service
                 return 0;
                 }
             }
+        public async Task<List<User>> Read_StudentsAll (int userId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsAll", userId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
+                return lstStudents;
+                }
+            else
+                {
+                return new List<User> ();
+                }
+            }
         public async Task<List<User>> Read_StudentsByKeyword (int userId, string keyword, int getGCEM)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByKeyword?keyword={keyword}&getGCEM={getGCEM}", userId);

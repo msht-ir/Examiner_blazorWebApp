@@ -139,7 +139,7 @@ namespace ExaminerB.Services2Backend
             var users = new List<User> ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
-            using SqlCommand cmd = new ("SELECT UsrId, UsrName, UsrPass, UsrNickname, UsrTags FROM usrs WHERE (UsrTags & 1) = 1", cnn);
+            using SqlCommand cmd = new ("SELECT UsrId, UsrName, UsrPass, UsrNickname, UsrTags FROM usrs WHERE (UsrTags & 1) = 1 ORDER BY UsrId", cnn);
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             while (await reader.ReadAsync ())
@@ -238,6 +238,40 @@ namespace ExaminerB.Services2Backend
                 Console.WriteLine ($"DB error: {ex.Message}");
                 return 0;
                 }
+            }
+        public async Task<List<User>> Read_StudentsAllAsync (int userId)
+            {
+            Console.WriteLine ($"be====================== {userId}");
+            //read list of all Students
+            List<User> lstStudents = new List<User> ();
+            string sql = @"SELECT s.StudentId, s.TeacherId, s.StudentName, s.StudentPass, s.StudentNickname, s.StudentTags 
+                    FROM Students s 
+                    WHERE s.TeacherId=@userid ORDER BY s.StudentName";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            using SqlCommand cmd = new (sql, cnn);
+            cmd.Parameters.AddWithValue ("@userid", userId);
+            await cnn.OpenAsync ();
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            while (await reader.ReadAsync ())
+                {
+                lstStudents.Add (new User
+                    {
+                    UserId = reader.GetInt32 (0),
+                    TeacherId = reader.GetInt32 (1),
+                    UserName = reader.GetString (2),
+                    UserPass = reader.GetString (3),
+                    UserNickname = reader.GetString (4),
+                    UserTags = reader.GetInt32 (5),
+                    UserRole = "-",
+                    StudentGroups = new List<StudentGroup> (),
+                    StudentCourses = new List<StudentCourse> (),
+                    StudentExams = new List<StudentExam> (),
+                    StudentMessages = new List<StudentMessage> (),
+                    StudentNotes = new List<Note> ()
+                    });
+                }
+                return lstStudents;
             }
         public async Task<List<User>> Read_StudentsByKeywordAsync (int userId, string keyword, int readStudentGCEM)
             {
@@ -3660,12 +3694,18 @@ COMMIT TRANSACTION;
                 {
                 case "teacher":
                         {
-                        sql = @"SELECT ChatroomId, ChatroomUserId, ChatroomAdminId, ChatroomName, ChatroomTerms FROM Chatrooms WHERE ChatroomUserId=@userid ORDER BY ChatroomId DESC";
+                        sql = @"SELECT chr.ChatroomId, chr.ChatroomUserId, chr.ChatroomAdminId, chr.ChatroomName, chr.ChatroomTerms, s.StudentNickName 
+                                FROM Chatrooms chr INNER JOIN Students s ON chr.ChatroomAdminId=s.StudentId
+                                WHERE ChatroomUserId=@userid 
+                                ORDER BY ChatroomId ";
                         break;
                         }
                 case "student":
                         {
-                        sql = @"SELECT ChatroomId, ChatroomUserId, ChatroomAdminId, ChatroomName, ChatroomTerms FROM Chatrooms WHERE ChatroomAdminId=@userid";
+                        sql = @"SELECT chr.ChatroomId, chr.ChatroomUserId, chr.ChatroomAdminId, chr.ChatroomName, chr.ChatroomTerms, s.StudentNickName 
+                                FROM Chatrooms chr INNER JOIN Students s ON chr.ChatroomAdminId=s.StudentId
+                                WHERE ChatroomAdminId=@userid 
+                                ORDER BY ChatroomId ";
                         break;
                         }
                 }
@@ -3683,7 +3723,8 @@ COMMIT TRANSACTION;
                     ChatroomUserId = reader.GetInt32 (1),
                     ChatroomAdminId = reader.GetInt32 (2),
                     ChatroomName = reader.GetString (3),
-                    ChatroomTerms = reader.GetString (4)
+                    ChatroomTerms = reader.GetString (4),
+                    ChatroomAdminName = reader.GetString (5)
                     });
                 }
             await reader.CloseAsync ();

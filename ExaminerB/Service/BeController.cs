@@ -75,6 +75,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Create_StudentAsync (student);
             return Ok (result);
             }
+        [HttpPost ("Read_StudentsAll")]
+        public async Task<ActionResult<List<User>>> Read_StudentsAll ([FromBody] int userId)
+            {
+            var result = await _BeService.Read_StudentsAllAsync (userId);
+            return Ok (result);
+            }
         [HttpPost ("Read_StudentsByKeyword")]
         public async Task<ActionResult<List<User>>> Read_StudentsByKeyword ([FromBody] int userId, [FromQuery] string keyword, [FromQuery] int getGCEM)
             {

@@ -18,6 +18,7 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region S:Students
         Task<int> Create_StudentAsync (User student);
+        Task<List<User>> Read_StudentsAllAsync (int userId);
         Task<List<User>> Read_StudentsByKeywordAsync (int userId, string keyword, int readStudentGCEM);
         Task<List<User>> Read_StudentsByGCEMSIdAsync (int Id, string mode, int readStudentGCEM);
         Task<bool> Update_StudentAsync (User student);

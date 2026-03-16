@@ -35,7 +35,7 @@
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:whitesmoke;">
-                                        <MudTextField T="string" Label="type here" @bind-Value="chatroomPost.PostText" Variant="Variant.Text" Lines="8" AutoResize="true" Style="width:100%;font-family:'Courier New', Courier, monospace" />
+                                        <MudTextField T="string" Label="new post" @bind-Value="chatroomPost.PostText" Variant="Variant.Text" Lines="5" AutoResize="true" Style="width:100%;font-family:'Courier New', Courier, monospace" />
                                             <br />
                                             <div style="text-align:center">
                                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Margin="Margin.Dense" @onclick="BtnInsertChatroomPost">Post</MudButton>
@@ -66,7 +66,7 @@
                                                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                                     <MudCard Class="mx-0">
                                                         <MudCardContent Style="background-color:whitesmoke;">
-                                                            <MudTextField T="string" Label="edit:" @bind-Value="chatroomPost.PostText" Variant="Variant.Text" Lines="8" AutoResize="true" Style="width:100%;font-family:'Courier New', Courier, monospace" />
+                                                            <MudTextField T="string" Label="EDIT :" @bind-Value="chatroomPost.PostText" Variant="Variant.Text" Lines="6" AutoResize="true" Style="width:100%;font-family:'Courier New', Courier, monospace" />
                                                                 <br />
                                                                 <div style="text-align:center">
                                                                     <MudButton Variant="Variant.Outlined" Color="Color.Primary" Margin="Margin.Dense" @onclick="()=>BtnUpdateChatroomPost(chatroomPost)">Update</MudButton>

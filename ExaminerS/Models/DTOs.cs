@@ -478,6 +478,7 @@ namespace ExaminerS.Models
         public int ChatroomId { get; set; } = 0;
         public int ChatroomUserId { get; set; } = 0;
         public int ChatroomAdminId { get; set; } = 0;
+        public string ChatroomAdminName { get; set; } = "";
         public string ChatroomName { get; set; } = "";
         public string ChatroomTerms { get; set; } = "";
         }
