@@ -241,7 +241,6 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<List<User>> Read_StudentsAllAsync (int userId)
             {
-            Console.WriteLine ($"be====================== {userId}");
             //read list of all Students
             List<User> lstStudents = new List<User> ();
             string sql = @"SELECT s.StudentId, s.TeacherId, s.StudentName, s.StudentPass, s.StudentNickname, s.StudentTags 
