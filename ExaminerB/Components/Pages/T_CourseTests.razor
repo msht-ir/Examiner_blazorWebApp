@@ -157,10 +157,10 @@ else
                                 @foreach (Exam exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                             </MudSelect>
                             <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
-                                <img src="/img/icoSave2.png" width="24" title="save to exam"/>
+                                <img src="/img/icoSave2.png" width="20" title="save to exam"/>
                             </button>
                             <button class="btn btn-link" type="submit" @onclick="BtnEditExam">
-                                <img src="/img/icoFolderE.png" width="30" title="goto exam folder"/>
+                                <img src="/img/icoFolderE.png" width="26" title="goto exam folder"/>
                             </button>
                         </div>
                     </MudCardContent>

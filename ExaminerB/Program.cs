@@ -16,6 +16,7 @@ builder.Services.AddHttpClient<FeService> (client =>
         //var baseAddress = builder.Configuration["BaseAddress"] ?? "http://localhost:5232";  //local server: for Linux (http ONLY)
         var baseAddress = builder.Configuration["BaseAddress"] ?? "https://localhost:7139";  //local server: for Windows
         //var baseAddress = builder.Configuration["BaseAddress"] ?? "https://x.msht.ir";      //remote server: [x].msht.ir
+        //var baseAddress = builder.Configuration["BaseAddress"] ?? "https://v.msht.ir";      //remote server: [v].msht.ir
         //var baseAddress = builder.Configuration["BaseAddress"] ?? "https://www.msht.ir";    //remote server: wwww.msht.ir
         client.BaseAddress = new Uri (baseAddress);
         client.Timeout = TimeSpan.FromSeconds (120);

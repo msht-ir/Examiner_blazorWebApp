@@ -112,7 +112,7 @@ namespace ExaminerB.Services2Backend
         public async Task<bool> Create_TeacherAsync (User teacher)
             {
             string sql = @"INSERT INTO usrs (UsrName, UsrPass, UsrNickname, UsrEmail, UsrTags)
-                        VALUES (@usrname, @usrpass, @usrnickname, @usremail, 0); 
+                        VALUES (@usrname, @usrpass, @usrnickname, @usremail, 1); 
                         SELECT CAST (scope_identity() AS int)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
