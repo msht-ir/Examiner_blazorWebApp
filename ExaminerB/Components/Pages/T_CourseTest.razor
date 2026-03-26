@@ -189,14 +189,15 @@ else
             @if (appState.Cmd == "AddTestToAnExam")
                 {
                 @* Get List Of Exams (courseId) *@
-                <h6 style="color:royalblue;">Add Test to an Exam</h6>
-                <select class="form-select d-inline" id="cboExams" @bind="intExam" style="width:50%; height:35px">
-                        <option value="0"> Select an exam... </option>                    
+                <h6 style="color:royalblue;">add to an exam</h6>
+                <select class="form-select d-inline" id="cboExams" @bind="intExam" style="width:75%; height:35px">
+                    <option value="0"> Select an exam... </option>                    
                     @foreach (var exm in lstExams)
                         {
                         <option value="@exm.ExamId"> @exm.ExamTitle </option>
                         }
                 </select>
+                <br />
                 <button class="btn btn-link" type="submit" @onclick="()=>BtnCreateExamTest(test)">
                     <img src="/img/icoSave2.png" width="25" />
                 </button>

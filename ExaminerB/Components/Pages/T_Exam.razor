@@ -79,10 +79,10 @@ else
                                                 @foreach (CourseTopic topic in lstCourseTopics) { <MudSelectItem Value="@topic.CourseTopicId">@topic.CourseTopicTitle</MudSelectItem> }
                                             </MudSelect>
                                             <button class="btn btn-link" @onclick="()=>BtnUpdateExamComposition (comp)" >
-                                                <img src="/img/icoSave2.png" width="25" title="update" />
+                                                <img src="/img/icoSave2.png" width="22" title="update" />
                                             </button>
                                             <button class="btn btn-link" @onclick="()=>BtnDeleteExamComposition(comp.ExamCompositionId)">
-                                                <img src="/img/icoDelete1.png" width="25" title="delete" />
+                                                <img src="/img/icoDelete1.png" width="22" title="delete" />
                                             </button>
                                         </div>
                                         @* Slider NTests *@
@@ -116,10 +116,10 @@ else
                                                    @foreach (CourseTopic topic in lstCourseTopics) { <MudSelectItem Value="@topic.CourseTopicId">@topic.CourseTopicTitle</MudSelectItem> }
                                                 </MudSelect>
                                                 <button class="btn btn-link" @onclick="BtnCreateExamComposition">
-                                                    <img src="/img/icoSave2.png" width="25" title="save"/>
+                                                    <img src="/img/icoSave2.png" width="22" title="save"/>
                                                 </button>
                                                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                    <img src="/img/icoCancel.png" width="24" title="cancel" />
+                                                    <img src="/img/icoCancel.png" width="20" title="cancel" />
                                                 </button>
                                             </div>
                                             @* Slider NTests *@

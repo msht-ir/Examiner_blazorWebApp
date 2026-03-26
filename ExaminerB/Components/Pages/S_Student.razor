@@ -477,7 +477,7 @@
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
                                             <MudTextField @bind-Value="chatroom.ChatroomName" Label="chatroom name" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                            <MudTextField @bind-Value="chatroom.ChatroomTerms" Label="terms" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="5"/>
+                                            <MudTextField @bind-Value="chatroom.ChatroomTerms" Label="terms" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="4"/>
                                             <div class="align-content-center align-items-center justify-content-center" style="text-align:center">
                                                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCreateChatroom">
                                                     <img src="/img/icoSave2.png" width="20" />
@@ -489,7 +489,7 @@
                                         </MudCardContent>
                                     </MudCard>
                                 </MudContainer>
-                                }
+                                <br />                                }
                             else
                                 {
                                 @* list chatrooms *@
@@ -519,12 +519,12 @@
                                         </MudCard>
                                     </MudContainer>
                                     }
+                                <div style="text-align:center; margin-top:15px;margin-bottom:15px;">
+                                    <button class="btn btn-link" @onclick="BtnAddNewChatroom" title="create new chatroom">
+                                        <img src="/img/icoAdd0.png" width="24" />
+                                    </button>
+                                </div>
                                 }
-                        </div>
-                        <div style="text-align:center; margin-top:15px;margin-bottom:15px;">
-                            <button class="btn btn-link" @onclick="BtnAddNewChatroom" title="create new chatroom">
-                                <img src="/img/icoAdd0.png" width="24" />
-                            </button>
                         </div>
                     </div>
                 </div>
