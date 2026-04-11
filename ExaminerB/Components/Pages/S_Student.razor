@@ -257,15 +257,15 @@
                                                     <div style="font-size:smaller; font-weight:bold;color:indianred;text-align:center; margin-top:10px;">
                                                         @studentMessage.DateTimeSent
                                                     </div>
-                                                    <hr style="color:gray" />
-                                                    <div class="d-flex">
-                                                        <button class="btn btn-link" Title=@((_help)?"change font":"") @onclick="()=>BtnCangeFont(studentMessage.MessageId)">
-                                                            <img src="/img/icoFontAa.png" width="20" />
-                                                        </button>
+                                                    <div style="text-align:center;">
                                                         <button class="btn btn-link align-items-center" Title=@((_help)?"message statistics":"") @onclick="()=>BtnGotoReportStudentMessages()">
                                                             <img src="/img/icoChartPie.png" width="20" />
                                                         </button>
+                                                        <button class="btn btn-link" Title=@((_help)?"change font":"") @onclick="()=>BtnCangeFont(studentMessage.MessageId)">
+                                                            <img src="/img/icoFontAa.png" width="20" />
+                                                        </button>
                                                     </div>
+                                                    <hr style="color:gray" />
                                                     @if((studentMessage.MessageId == Convert.ToInt32(appState.MessageId)) & (_cmd=="useCourierFont"))
                                                         {
                                                         _font="font-family:Courier New, Courier, monospace;font-size:small;";

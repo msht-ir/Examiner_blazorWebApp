@@ -28,6 +28,10 @@ else if(appState.Cmd == "UpdateNote")
     {
     <Modal_CreateNote OnClose="HandleModalClose" />
     }
+else if (appState.Cmd == "CreateNote")
+    {
+    <Modal_CreateNote OnClose="HandleModalClose"/>
+    }
 else
     {
     <h6 style="text-align:center;">Messages of: <span style="color:indianred">@appState.StudentName</span></h6>
@@ -85,75 +89,96 @@ else
     }
     <hr />
     <EditForm Model="lstStudentMessages" style="max-width:600px; margin: 0 auto;">
-    @if (lstNotes.Count != 0)
+    @if (user.UserRole == "teacher")
         {
-        <h5 style="text-align:left; margin-top:30px">notes</h5>
-        @foreach (Note notex in lstNotes)
-            {
-            if ((notex.NoteTags & 1) == 1)
-                {
-                <div class="mt-3 text-end">
-                    <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
-                        <MudCard Class="mx-0">
-                            <MudCardContent Style="background-color:whitesmoke;">
-                                <span style="color:indianred; font-weight:bold;">
-                                    @notex.NoteDatum
-                                </span>
-                                <hr />
-                                <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
-                                    @if (notex.NoteText.Length > 100)
-                                        {
-                                        <div> @notex.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
-                                        }
-                                    else
-                                        {
-                                        <div> @notex.NoteText</div>
-                                        }
-                                </div>
-                                <button class="btn btn-link" @onclick="() => BtnShowNoteInDialog(notex)">
-                                    <img src="/img/icoNote2.png" width="24" />
-                                </button>
-                                <button class="btn btn-link" @onclick="() => BtnDeleteNote(notex.NoteId)">
-                                    <img src="/img/icoDelete1.png" width="24" />
-                                </button>
-                            </MudCardContent>
-                        </MudCard>
-                    </MudContainer>
+        <div class="accordion" id="accordionStudent" style="margin: 0 auto;">
+            @* --- STUDENT Messages *@
+            <div class="accordion-item mb-2">
+                    <h4 class="accordion-header">
+                        <button class="accordion-button @(appState.Cmd=="ShowCourseFolders" ? "" : "collapsed")"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#CollapseId2"
+                            aria-expanded="false"
+                            aria-controls="CollapseId2" style="background-color:WhiteSmoke">
+                            <h4>notes <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstNotes.Count )</span></h4>
+                        </button>
+                    </h4>
+                <div id="CollapseId2" class="accordion-collapse collapse" data-bs-parent="#accordionStudent" style="text-align:center;">
+                        <div class="accordion-body" style="background-color:white">
+                        <button class="btn btn-link" style="margin-left:1px; text-align:center;" Title="add note about this student" @onclick='() => BtnCreateNote(Id, "S")'>
+                            <img src="/img/icoNewNote1.png" width="28" />
+                        </button>
+
+                            @foreach (Note notex in lstNotes)
+                                {
+                                if ((notex.NoteTags & 1) == 1)
+                                    {
+                                    <div class="mt-3 text-end">
+                                        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                            <MudCard Class="mx-0">
+                                                <MudCardContent Style="background-color:whitesmoke;">
+                                                    <span style="color:indianred; font-weight:bold;">
+                                                        @notex.NoteDatum
+                                                    </span>
+                                                    <hr />
+                                                    <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
+                                                        @if (notex.NoteText.Length > 100)
+                                                            {
+                                                            <div> @notex.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
+                                                            }
+                                                        else
+                                                            {
+                                                            <div> @notex.NoteText</div>
+                                                            }
+                                                    </div>
+                                                    <button class="btn btn-link" @onclick="() => BtnShowNoteInDialog(notex)">
+                                                        <img src="/img/icoNote2.png" width="24" />
+                                                    </button>
+                                                    <button class="btn btn-link" @onclick="() => BtnDeleteNote(notex.NoteId)">
+                                                        <img src="/img/icoDelete1.png" width="24" />
+                                                    </button>
+                                                </MudCardContent>
+                                            </MudCard>
+                                        </MudContainer>
+                                    </div>
+                                    }
+                                else
+                                    {
+                                    <div class="mt-3 text-start">
+                                        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                            <MudCard Class="mx-0">
+                                                <MudCardContent Style="background-color:whitesmoke;">
+                                                    <span style="color:indianred; font-weight:bold;">
+                                                        @notex.NoteDatum
+                                                    </span>
+                                                    <hr />
+                                                    <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
+                                                        @if (notex.NoteText.Length > 100)
+                                                            {
+                                                            <div> @notex.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
+                                                            }
+                                                        else
+                                                            {
+                                                            <div> @notex.NoteText</div>
+                                                            }
+                                                    </div>
+                                                    <button class="btn btn-link" @onclick="() => BtnShowNoteInDialog(notex)">
+                                                        <img src="/img/icoNote2.png" width="24" />
+                                                    </button>
+                                                    <button class="btn btn-link" @onclick="() => BtnDeleteNote(notex.NoteId)">
+                                                        <img src="/img/icoDelete1.png" width="24" />
+                                                    </button>
+                                                </MudCardContent>
+                                            </MudCard>
+                                        </MudContainer>
+                                    </div>
+                                    }
+                                }   
+                        </div>
+                    </div>
                 </div>
-                }
-            else
-                {
-                <div class="mt-3 text-start">
-                    <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
-                        <MudCard Class="mx-0">
-                            <MudCardContent Style="background-color:whitesmoke;">
-                                <span style="color:indianred; font-weight:bold;">
-                                    @notex.NoteDatum
-                                </span>
-                                <hr />
-                                <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
-                                    @if (notex.NoteText.Length > 100)
-                                        {
-                                        <div> @notex.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
-                                        }
-                                    else
-                                        {
-                                        <div> @notex.NoteText</div>
-                                        }
-                                </div>
-                                <button class="btn btn-link" @onclick="() => BtnShowNoteInDialog(notex)">
-                                    <img src="/img/icoNote2.png" width="24" />
-                                </button>
-                                <button class="btn btn-link" @onclick="() => BtnDeleteNote(notex.NoteId)">
-                                    <img src="/img/icoDelete1.png" width="24" />
-                                </button>
-                            </MudCardContent>
-                        </MudCard>
-                    </MudContainer>
-                </div>
-                }
-            }
-        <br>
+            </div>
         }
     @if(lstStudentMessages.Count > 0)
     {
@@ -166,11 +191,16 @@ else
                             <div style="font-weight:bold; text-align:center; white-space: pre-wrap;">
                                 @message.MessageTitle
                             </div>
+                        <div style="text-align:center;">
+                            <button class="btn btn-link" @onclick="() => BtnCalcPercentsForMessage(message)">
+                                    <img src="/img/icoChartPie.png" width="22" />
+                                </button>
+                                <button class="btn btn-link" Title="change font" @onclick="()=>BtnCangeFont(message.MessageId)">
+                                    <img src="/img/icoFontAa.png" width="20" />
+                                </button>
+                            </div>
                             <hr style="color:gray" />
-                            <button class="btn btn-link" Title="change font" @onclick="()=>BtnCangeFont(message.MessageId)">
-                                <img src="/img/icoFontAa.png" width="20" />
-                            </button>
-                            @if((message.MessageId == Convert.ToInt32(appState.MessageId)) & (_cmd=="useCourierFont"))
+                        @if ((message.MessageId == Convert.ToInt32(appState.MessageId)) & (_cmd == "useCourierFont"))
                                 {
                                 _font="font-family:Courier New, Courier, monospace;font-size:small;";
                                 }
@@ -235,9 +265,9 @@ else
                             else
                                 {
                                 <div style="text-align:center">
-                                    <button class="btn btn-link" @onclick="()=>BtnCalcPercentsForMessage(message)">
+                                    @* <button class="btn btn-link" @onclick="()=>BtnCalcPercentsForMessage(message)">
                                         <img src="/img/icoChartPie.png" width="26" />
-                                    </button>
+                                    </button> *@
                                     @if (user.UserRole == "teacher")
                                         {
                                         <button class="btn btn-link" @onclick="()=>BtnDelete_Messages(message.MessageId)">
@@ -328,10 +358,8 @@ else
     public int nStudentsAnsweredYes = 0;
     public int nStudentsAnsweredNo = 0;
     public int nStudentsNotAnswered = 0;
-
     private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
     int dataSize = 4;
-
     User user = new User ();
     List<StudentMessage> lstStudentMessages = new List<StudentMessage> ();
     List<StudentMessage> lstStudentMessageInstances = new List<StudentMessage> ();
@@ -492,7 +520,7 @@ else
     public async Task BtnDelete_Message(int studentMessageId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> message permanently?<br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "confirm", markupMessage: message, yesText: "Delete", cancelText: "No");
         if (confirmResult == true)
             {
             int userId = Convert.ToInt32 (appState.UserId);
@@ -547,6 +575,42 @@ else
             _cmd = "useCourierFont";
             }
         StateHasChanged ();
+        }
+    private async Task BtnCreateNote (int Id, string mode)
+        {
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
+        if (Id > 0)
+            {
+            int? parentType = mode.ToLower() switch
+                {
+                    "u" => 1,
+                    "sp" => 2,
+                    "s" => 3,
+                    "g" => 4,
+                    "c" => 5,
+                    "e" => 6,
+                    _ => null
+                    };
+            if (parentType.HasValue)
+                {
+                appState.SetNoteParentId(Id);
+                appState.SetNoteParentType(parentType.Value);
+                appState.SetCmd("CreateNote");
+                StateHasChanged();
+                }
+            }
+        else
+            {
+            string? itemx = mode.ToLower() switch
+                {
+                    "s" => "select a Student from List",
+                    "g" => "select a Group from List",
+                    "c" => "select a Course from List",
+                    "e" => "select a Course, then select an Exam",
+                    _ => null
+                    };
+            Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
         }
     public void BtnBack()
         {
@@ -605,8 +669,9 @@ else
         }
     public async Task BtnDeleteNote(int noteId)
         {
-        var message = new MarkupString($"Delete note?");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> note permanently?<br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
+
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "confirm", markupMessage: message, yesText: "Delete!", cancelText: "No");
         if (confirmResult == true)
             {
             bool result = await feService.Delete_Note (noteId);
@@ -630,7 +695,7 @@ else
         {
         int userId = Convert.ToInt32 (appState.UserId);
         await GetListOfMessagesAndNotes (); 
-        //StateHasChanged(); 
+        StateHasChanged(); 
         }
 
 }

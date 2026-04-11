@@ -58,17 +58,17 @@ else
                         <div class="d-flex gap-3" style="padding:0;">
                             <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="search" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                             <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                <MudMenuItem @onclick="()=>BtnReadStudentsBySearch()">
-                                    <button class="btn btn-link" Title=@((_help)?"search students":"") >
-                                        <img src="/img/icoSearch.png" width="20" />
-                                    </button>
-                                    search student
-                                </MudMenuItem> 
                                 <MudMenuItem @onclick="BtnListAllStudent">
                                     <button class="btn btn-link" Title=@((_help)?"list all students":"")>
                                         <img src="/img/icoListS.png" width="30" />
                                     </button>
                                     list all students
+                                </MudMenuItem> 
+                                <MudMenuItem @onclick="()=>BtnReadStudentsBySearch()">
+                                    <button class="btn btn-link" Title=@((_help)?"search students":"") >
+                                        <img src="/img/icoSearch.png" width="20" />
+                                    </button>
+                                    search student
                                 </MudMenuItem> 
                                 <MudMenuItem @onclick="BtnCancelSearchStudent">
                                     <button class="btn btn-link" Title=@((_help)?"clear list":"")>
