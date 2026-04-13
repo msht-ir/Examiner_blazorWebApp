@@ -31,12 +31,6 @@
                 </button>
             </div>
             }
-        @* else
-            {
-            <div class="align-items-center" style="text-align:center;max-width:500px; margin: 0 auto;">
-               <h5 style="text-align:center;padding-left:15px;">Notes: <span style="font-size:smaller;text-align:center;color:indianred">@appState.UserNickname</span></h5>        
-            </div>
-            } *@
         <EditForm Model="lstNotes">
                 @if (appState.Cmd == "ShowNoteInDialog")
                     {

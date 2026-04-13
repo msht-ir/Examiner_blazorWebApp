@@ -3851,7 +3851,7 @@ COMMIT TRANSACTION;
             SqlCommand cmd2 = new SqlCommand (sql, cnn);
             cmd2.Parameters.AddWithValue ("@userid", project.UserId);
             cmd2.Parameters.AddWithValue ("@projectname", project.ProjectName);
-            cmd2.Parameters.AddWithValue ("@active", project.ProjectTags);
+            cmd2.Parameters.AddWithValue ("@projecttags", project.ProjectTags);
             await cmd2.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
             return 1;
@@ -3935,6 +3935,20 @@ COMMIT TRANSACTION;
             cmd.Parameters.AddWithValue ("@projectname", project.ProjectName);
             cmd.Parameters.AddWithValue ("@projecttags", project.ProjectTags);
             cmd.Parameters.AddWithValue ("@projectid", project.ProjectId);
+            await cmd.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
+            }
+        public async Task<bool> Delete_ProjectAsync (int projectId)
+            {
+            string sql = @"DELETE FROM Notes WHERE ParentType=2 AND ParentId IN (SELECT SubProjectId FROM SubProjects WHERE ProjectId=@projectid);
+                           DELETE FROM SubProjects WHERE ProjectId=@projectid;
+                           DELETE FROM Projects WHERE ProjectId=@projectid;";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@projectid", projectId);
             await cmd.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
             return true;

@@ -866,6 +866,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Update_ProjectAsync (project);
             return Ok (result);
             }
+        [HttpPost ("Delete_Project")]
+        public async Task<ActionResult<bool>> Delete_Project ([FromBody] int projectId)
+            {
+            var result = await _BeService.Delete_ProjectAsync (projectId);
+            return Ok (result);
+            }
         #endregion
         #region SP:Subprojects
         [HttpPost ("Create_Subproject")]
