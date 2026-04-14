@@ -1,9 +1,11 @@
 ﻿using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Office.Word;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
 using System.Data;
+using static OpenCvSharp.Stitcher;
 using Chat = ExaminerS.Models.Chat;
 using Group = ExaminerS.Models.Group;
 
@@ -3441,12 +3443,14 @@ COMMIT TRANSACTION;
                 return new List<StudentMessage> ();
                 }
             }
-        public async Task<Message> Read_StudentMessageAsync (int studentMessageId)
+        public async Task<StudentMessage> Read_StudentMessageAsync (int studentMessageId)
             {
-            //by reading a studentMessage, its message (title, body) is also needed. so, a message (containing a studentMessage) is retured.
-            string sql = "SELECT StudentMessageId, StudentId, MessageId, DateTimeSent, DateTimeRead, StudentMessageTags FROM StudentMessages WHERE StudentMessageId=@studentmessageid";
             StudentMessage studentMessage = new StudentMessage ();
-            Message message = new Message ();
+            string sql = @"SELECT sm.StudentMessageId, sm.MessageId, sm.StudentId, s.StudentName, s.StudentNickname, m.MessageTitle, m.MessageBody, m.DateTimeCreated, sm.DateTimeSent, sm.DateTimeRead, sm.StudentMessageTags
+                        FROM StudentMessages sm 
+                        INNER JOIN Messages m ON sm.MessageId = m.MessageId 
+                        INNER JOIN Students s ON sm.StudentId = s.StudentId
+                        WHERE sm.StudentMessageId=@studentmessageid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
@@ -3458,21 +3462,25 @@ COMMIT TRANSACTION;
                 while (await reader.ReadAsync ())
                     {
                     studentMessage.StudentMessageId = reader.GetInt32 (0);
-                    studentMessage.StudentId = reader.GetInt32 (1);
-                    studentMessage.MessageId = reader.GetInt32 (2);
-                    studentMessage.DateTimeSent = reader.GetString (3);
-                    studentMessage.DateTimeRead = reader.GetString (4);
-                    studentMessage.StudentMessageTags = reader.GetInt32 (5);
+                    studentMessage.MessageId = reader.GetInt32 (1);
+                    studentMessage.StudentId = reader.GetInt32 (2);
+                    studentMessage.StudentName = reader.GetString (3);
+                    studentMessage.StudentNickname = reader.GetString (4);
+                    studentMessage.MessageTitle = reader.GetString (5);
+                    studentMessage.MessageBody = reader.GetString (6);
+                    studentMessage.DateTimeCreated = reader.GetString (7);
+                    studentMessage.DateTimeSent = reader.GetString (8);
+                    studentMessage.DateTimeRead = reader.GetString (9);
+                    studentMessage.StudentMessageTags = reader.GetInt32 (10);
                     }
                 await cnn.CloseAsync ();
-                message = await Read_MessageAsync (studentMessage.MessageId, false);
-                return message;
+                return studentMessage;
                 }
             catch (Exception ex)
                 {
                 Console.WriteLine ("Error: " + ex.ToString ());
                 await cnn.CloseAsync ();
-                return new Message ();
+                return new StudentMessage ();
                 }
             }
         public async Task<bool> Update_StudentMessageTagsAsync (StudentMessage studentMessage)
@@ -3533,7 +3541,7 @@ COMMIT TRANSACTION;
             }
         public async Task<List<Chat>> Read_ChatsAsync (int studentId)
             {
-            //1 get netList of chatMates
+            //1 get net-list of chatMates
             List<int> lstMateIds = new List<int> ();
             string sql = @"SELECT DISTINCT ch.FromId mateId
                         FROM Chats ch INNER JOIN Students sf ON ch.FromId = sf.StudentId
@@ -3564,7 +3572,7 @@ COMMIT TRANSACTION;
                     INNER JOIN Students sf ON ch.FromId = sf.StudentId
                     INNER JOIN Students st ON ch.ToId = st.StudentId
                     WHERE (FromId={mateId} AND ToId={studentId}) OR (FromId={studentId} AND ToId={mateId})
-                    ORDER BY (ch.ChatTags & 1) ASC, ch.DateTimeSent DESC";
+                    ORDER BY ch.DateTimeSent DESC";
                 SqlCommand cmd2 = new SqlCommand (sql, cnn);
                 SqlDataReader reader2 = await cmd2.ExecuteReaderAsync ();
                 while (await reader2.ReadAsync ())

@@ -1039,17 +1039,17 @@ namespace ExaminerB.Service
                 return new List<StudentMessage> ();
                 }
             }
-        public async Task<Message> Read_StudentMessage (int studentMessageId)
+        public async Task<StudentMessage> Read_StudentMessage (int studentMessageId)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_StudentMessage", studentMessageId);
             if (response.IsSuccessStatusCode)
                 {
-                Message? message = await response.Content.ReadFromJsonAsync<Message> ();
-                return message ?? new Message ();
+                StudentMessage? studentMessage = await response.Content.ReadFromJsonAsync<StudentMessage> ();
+                return studentMessage ?? new StudentMessage ();
                 }
             else
                 {
-                return new Message ();
+                return new StudentMessage ();
                 }
             }
         public async Task<bool> Update_StudentMessageTags (StudentMessage studentMessage)

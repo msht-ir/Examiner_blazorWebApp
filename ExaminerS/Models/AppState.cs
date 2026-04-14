@@ -115,6 +115,8 @@
         public string? StudentCourseName { get; private set; }
         public void SetStudentCourseName (string _StudentCourseName) { StudentCourseName = _StudentCourseName; OnChange?.Invoke (); }
         //Message
+        public int? StudentMessageId { get; private set; }
+        public void SetStudentMessageId (int _StudentMessageId) { StudentMessageId = _StudentMessageId; OnChange?.Invoke (); }
         public int? MessageId { get; private set; }
         public void SetMessageId (int _MessageId) { MessageId = _MessageId; OnChange?.Invoke (); }
         public string? MessageTitle { get; private set; }

@@ -625,7 +625,12 @@ else
             }
         else
             {
-            lstStudentMessages = await feService.Read_StudentMessages (Id, "ByStudentIdIgnoreDeletedMessages");
+            lstStudentMessages.Clear();
+            //old code (reads all student messages): lstStudentMessages = await feService.Read_StudentMessages (Id, "ByStudentIdIgnoreDeletedMessages");
+            StudentMessage studentMessage = await feService.Read_StudentMessage (Convert.ToInt32(appState.StudentMessageId));
+            lstStudentMessages.Add (studentMessage);
+            //if role=student: automatically call BtnCalcPercentsForMessage() for that one message!
+            await BtnCalcPercentsForMessage(studentMessage);
             }
         int parentType = mode switch
             {

@@ -727,7 +727,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_StudentMessage")]
-        public async Task<ActionResult<Message>> Read_StudentMessage ([FromBody] int studentMessageId)
+        public async Task<ActionResult<StudentMessage>> Read_StudentMessage ([FromBody] int studentMessageId)
             {
             var result = await _BeService.Read_StudentMessageAsync (studentMessageId);
             return Ok (result);
