@@ -19,16 +19,16 @@
         {
         @if (lstNotes.Count > 0)
             {
-            <div class="d-flex align-items-center gap-3" style="text-align:center;max-width:500px; margin: 0 auto;">
+            <div class="d-flex align-items-center gap-2" style="text-align:center;max-width:500px; margin: 0 auto;">
                 <button class="btn btn-link" @onclick="BtnBack">
                     <img src="/img/icoBack3.png" width="40" title="back"/>
+                </button>
+                <button class="btn btn-link" @onclick= "()=> GotoProjects()">
+                    <img src="/img/icoSwitchBoardNoteBook.png" style="width:44px" title="goto Notebooks"/>
                 </button>
                 <button class="btn btn-link" @onclick="CreateNote">
                     <img src="/img/icoAdd0.png" width="24" title="add new quick-note"/>
                 </button>            
-                <button class="btn btn-link" @onclick= "()=> GotoProjects()">
-                    <img src="/img/icoSwitchBoardNoteBook.png" style="width:40px" title="goto Notebooks"/>
-                </button>
             </div>
             }
         <EditForm Model="lstNotes">
@@ -72,33 +72,26 @@
                                             <hr />
                                             @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId)==notex.NoteId))
                                                 {
-                                                @* COMBO Notebooks *@
+                                        <h6 style="color:indianred;text-align:center;">move to:</h6>
+                                        @* COMBO Notebooks *@
                                                 <div class="d-flex">
-                                                    <MudSelect T="int" @ref="refProjects" Label="Move to notebook" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                    <MudSelect T="int" @ref="refProjects" Label="Notebook" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                         <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
                                                         @foreach (var project in lstProjects) { <MudSelectItem Value="@project.ProjectId">@project.ProjectName</MudSelectItem> }
                                                     </MudSelect>
                                                 </div>
                                                 @* COMBO Sections *@
-                                                <div class="d-flex">
-                                                    <MudSelect T="int" @ref="refSubprojects" Label="Sections" Value="SubprojectId" ValueChanged="OnSubprojectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                    <div class="d-flex align-content-center align-items-center align-content-md-center">
+                                                    <MudSelect T="int" @ref="refSubprojects" Label="Section" Value="SubprojectId" ValueChanged="OnSubprojectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                         <MudSelectItem Value="0">Select a Section...</MudSelectItem>
                                                         @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
                                                     </MudSelect>
-                                                    <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true" Style="margin-left:10px;">
-                                                        <MudMenuItem @onclick='() => BtnSelectSection(SubprojectId, notex.NoteId)'>
-                                                            <button class="btn btn-link" Title="move!">
-                                                                <img src="/img/icoMoveToNoteBook.png" width="34" />
-                                                            </button>
-                                                            move to notebook
-                                                        </MudMenuItem>
-                                                        <MudMenuItem @onclick='() => BtnCancel()'>
-                                                            <button class="btn btn-link" Title="cancel">
-                                                                <img src="/img/icoCancel.png" width="20" />
-                                                            </button>
-                                                            cancel
-                                                        </MudMenuItem>
-                                                    </MudMenu>
+                                            <button class="btn btn-link" Title="move!" @onclick='() => BtnMovetoSelectSection(SubprojectId, notex.NoteId)'>
+                                                        <img src="/img/icoMoveToNoteBook.png" width="34" />
+                                                    </button>
+                                                    <button class="btn btn-link" Title="cancel" @onclick='() => BtnCancel()'>
+                                                        <img src="/img/icoCancel.png" width="20" />
+                                                    </button>
                                                 </div>
                                                 }
                                             else
@@ -117,7 +110,7 @@
                                                             </button>
                                                             edit note
                                                         </MudMenuItem>
-                                                        <MudMenuItem @onclick="() => BtnMoveNoteToNotebook(notex.NoteId)">
+                                                        <MudMenuItem @onclick="() => BtnMoveNote(notex.NoteId)">
                                                             <button class="btn btn-link">
                                                                 <img src="/img/icoMoveToNoteBook.png" width="32" title="انتقال يادداشت به دفترچه" />
                                                             </button>
@@ -161,33 +154,26 @@
                                             <hr />
                                             @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId) == notex.NoteId))
                                                 {
+                                                <h6 style="color:indianred;text-align:center;">move to:</h6>
                                                 @* COMBO Notebooks *@
                                                 <div class="d-flex">
-                                                    <MudSelect T="int" @ref="refProjects" Label="Move to notebook" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                    <MudSelect T="int" @ref="refProjects" Label="Notebook" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                         <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
                                                         @foreach (var project in lstProjects) { <MudSelectItem Value="@project.ProjectId">@project.ProjectName</MudSelectItem> }
                                                     </MudSelect>
                                                 </div>
                                                 @* COMBO Sections *@
-                                                <div class="d-flex">
-                                                    <MudSelect T="int" @ref="refSubprojects" Label="Sections" Value="SubprojectId" ValueChanged="OnSubprojectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                <div class="d-flex align-content-center align-items-center align-content-md-center">
+                                                    <MudSelect T="int" @ref="refSubprojects" Label="Section" Value="SubprojectId" ValueChanged="OnSubprojectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                         <MudSelectItem Value="0">Select a Section...</MudSelectItem>
                                                         @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
                                                     </MudSelect>
-                                                    <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true" Style="margin-left:10px;">
-                                                        <MudMenuItem @onclick='() => BtnSelectSection(SubprojectId, notex.NoteId)'>
-                                                            <button class="btn btn-link" Title="move!">
-                                                                <img src="/img/icoMoveToNoteBook.png" width="34" />
-                                                            </button>
-                                                            move to notebook
-                                                        </MudMenuItem>
-                                                        <MudMenuItem @onclick='() => BtnCancel()'>
-                                                            <button class="btn btn-link" Title="cancel">
-                                                                <img src="/img/icoCancel.png" width="20" />
-                                                            </button>
-                                                            cancel
-                                                        </MudMenuItem>
-                                                    </MudMenu>
+                                            <button class="btn btn-link" Title="move!" @onclick='() => BtnMovetoSelectSection(SubprojectId, notex.NoteId)'>
+                                                        <img src="/img/icoMoveToNoteBook.png" width="34" />
+                                                    </button>
+                                                    <button class="btn btn-link" Title="cancel" @onclick='() => BtnCancel()'>
+                                                        <img src="/img/icoCancel.png" width="20" />
+                                                    </button>
                                                 </div>
                                                 }
                                             else
@@ -206,7 +192,7 @@
                                                             </button>
                                                             edit note
                                                         </MudMenuItem>
-                                                        <MudMenuItem @onclick="() => BtnMoveNoteToNotebook(notex.NoteId)">
+                                                        <MudMenuItem @onclick="() => BtnMoveNote(notex.NoteId)">
                                                             <button class="btn btn-link">
                                                                 <img src="/img/icoMoveToNoteBook.png" width="32" title="انتقال يادداشت به دفترچه" />
                                                             </button>
@@ -310,7 +296,7 @@
         appState.SetSubprojectId (SubprojectId);
         StateHasChanged();
     } 
-    private void BtnMoveNoteToNotebook(int noteId)
+    private void BtnMoveNote(int noteId)
     {
         if(Convert.ToInt32(appState.NoteId) == noteId)
         {
@@ -323,7 +309,7 @@
         }
         StateHasChanged ();
     }
-    private async Task BtnSelectSection(int subprojectId, int noteid)
+    private async Task BtnMovetoSelectSection(int subprojectId, int noteid)
         {
         if(subprojectId > 0)
             {
@@ -333,6 +319,8 @@
                 {
                 Snackbar.Add("note moved to notebook", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 _cmd = "";
+                appState.SetCmd("");
+                lstNotes = await feService.Read_Notes(Id, mode);
                 StateHasChanged ();
                 }
             else
