@@ -23,7 +23,7 @@ else if (appState.Cmd == "CreateNote")
 else
     {
     <EditForm Model="lstGroups" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <h2 style="color:royalblue; font-style:italic">Students & Actions</h2>
+        <h2 style="color:royalblue; font-style:italic">Students</h2>
         @* SECTION 1 ---- SOURSES *@
         @* SEARCH - ADD.NEW.STUDENT - IMPORT *@
         <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
@@ -62,13 +62,13 @@ else
                                     <button class="btn btn-link" Title=@((_help)?"list all students":"")>
                                         <img src="/img/icoListS.png" width="30" />
                                     </button>
-                                    list all students
+                                    all students
                                 </MudMenuItem> 
                                 <MudMenuItem @onclick="()=>BtnReadStudentsBySearch()">
                                     <button class="btn btn-link" Title=@((_help)?"search students":"") >
                                         <img src="/img/icoSearch.png" width="20" />
                                     </button>
-                                    search student
+                                    search
                                 </MudMenuItem> 
                                 <MudMenuItem @onclick="BtnCancelSearchStudent">
                                     <button class="btn btn-link" Title=@((_help)?"clear list":"")>
@@ -81,7 +81,7 @@ else
                                     <button class="btn btn-link" Title=@((_help)?"add new student":"")>
                                         <img src="/img/icoUserAddNew.png" width="24" />
                                     </button>
-                                    add new student
+                                    new student
                                 </MudMenuItem>
                             </MudMenu>
                         </div>
@@ -239,7 +239,7 @@ else
                                 <button class="btn btn-link" Title=@((_help) ? "goto page courses" : "")>
                                     <img src="/img/icoFolderC.png" width="24" />
                                 </button>
-                                goto page courses
+                                goto courses
                             </MudMenuItem>
                         </MudMenu>
                     </div>

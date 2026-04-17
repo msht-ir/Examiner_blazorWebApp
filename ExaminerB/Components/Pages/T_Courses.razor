@@ -39,10 +39,10 @@
                                 data-bs-target="#@collapseId"
                                 aria-expanded="false"
                                 aria-controls="@collapseId">
-                                <h6>
+                                <h5 style="color:dimgray">
                                     <img src="/img/icoCourse.png" width="24" style="margin-right:5px;"/>
                                     @crs.CourseName
-                                </h6>
+                                </h5>
                             </button>
                         </h6>
                         <div id="@collapseId" class="accordion-collapse @clps" data-bs-parent="#accordionCourses">
@@ -76,31 +76,31 @@
                                                      <button class="btn btn-link" title="rename course">
                                                         <img src="/img/icoRename.png" width="28" />
                                                     </button>
-                                                    rename course
+                                                    rename
                                                 </MudMenuItem>
                                                 <MudMenuItem @onclick="() => BtnListCourseTests(crs.CourseId, crs.CourseName)">
                                                     <button class="btn btn-link" title="report tests">
                                                         <img src="/img/icoFolderT.png" width="26" />
                                                     </button>
-                                                    Course Tests Folder
+                                                    tests folder
                                                 </MudMenuItem>
                                                 <MudMenuItem @onclick="() => BtnReportCourseTests(crs.CourseId)">
-                                                    <button class="btn btn-link" title="list tests" >
+                                                    <button class="btn btn-link" title="list tests"">
                                                         <img src="/img/icoListT.png" width="32" />
                                                     </button>
-                                                    Course Tests List
+                                                    tests list
                                                 </MudMenuItem>
                                                 <MudMenuItem @onclick="() => BtnExams(crs)">
-                                                    <button class="btn btn-link" title="list exams" >
+                                                    <button class="btn btn-link" title="course exams" >
                                                         <img src="/img/icoListE.png" width="32" />
                                                     </button>
-                                                    Course Exams
+                                                    exams
                                                 </MudMenuItem>
                                                 <MudMenuItem @onclick="() => BtnDeleteCourse(crs)">
-                                                    <button class="btn btn-link" title="delete course" >
+                                                    <button class="btn btn-link" title="delete this course" >
                                                         <img src="/img/icoDelete1.png" width="22" />
                                                     </button>
-                                                    Delete Course
+                                                    delete
                                                 </MudMenuItem>
                                             </MudMenu>
                                         </div>
@@ -127,16 +127,16 @@
                                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                                     <div class="mb-2">
                                                                     <MudTextField @bind-Value="ct.CourseTopicTitle" Label="topic" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family: 'Segoe UI';" />
-                                                                        <button class="btn btn-link" @onclick="()=>BtnListCourseTopicTests (ct)">
+                                                                        <button class="btn btn-link" title="tests" @onclick="()=>BtnListCourseTopicTests (ct)" >
                                                                             <img src="/img/icoFolderT.png" width="26" />
                                                                         </button>
-                                                                        <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTopicTests(ct)" >
+                                                                        <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTopicTests(ct)">
                                                                             <img src="/img/icoListT.png" width="34" />
                                                                         </button>
-                                                                        <button class="btn btn-link" @onclick="()=>BtnUpdateCourseTopic (ct)">
+                                                                        <button class="btn btn-link" title="save topic title" @onclick="()=>BtnUpdateCourseTopic (ct)">
                                                                             <img src="/img/icoSave2.png" width="22" />
                                                                         </button>
-                                                                        <button class="btn btn-link" @onclick="()=>BtnDeleteCourseTopic (ct.CourseTopicId)">
+                                                                        <button class="btn btn-link" title="delete this topic" @onclick="() => BtnDeleteCourseTopic(ct.CourseTopicId)">
                                                                             <img src="/img/icoDelete1.png" width="22" />
                                                                         </button>
                                                                     </div>

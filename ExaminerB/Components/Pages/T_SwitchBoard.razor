@@ -9,7 +9,7 @@
     <div style="text-align: center;">
         <br />
         <div style="text-align: center;">
-            <span style="font-style:italic;color:royalblue">@appState.UserNickname</span>
+            <span style="font-size:large;font-style:italic;color:royalblue">@appState.UserNickname</span>
         </div>
         <br />
         <hr style="color:red" />
@@ -20,10 +20,10 @@
                 <img src="/img/icoSwitchBoardStudents.png" width="44" title="students دانشجويان" />
             </button>
             <button class="btn btn-link" @onclick="GotoCourses">
-                <img src="/img/icoSwitchBoardCourses.png" width="44" title="courses درس ها" />
+                <img src="/img/icoSwitchBoardCourses.png" width="46" title="courses درس ها" />
             </button>
             <button class="btn btn-link" @onclick="GotoProjects">
-                <img src="/img/icoSwitchBoardNoteBook.png" width="42" title="notebooks دفترچه يادداشت"/>
+                <img src="/img/icoSwitchBoardNoteBook.png" width="44" title="notebooks دفترچه يادداشت"/>
             </button>
             <button class="btn btn-link" @onclick="ReportUserNotes">
                 <img src="/img/icoNoteReport.png" width="32" title="quick notes يادداشت ها"/>
@@ -38,8 +38,9 @@
         </div>
         <hr style="color:red" />
         <br />
-        <div style="text-align:center; margin-top:30px">
-            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Logout" Size="Size.Small" OnClick="@(() => GotoLogin())">Logout</MudButton>
+        <div class="d-flex gap-5 justify-content-center" style="text-align:center; margin-top:30px;max-width:500px;">
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Password" Size="Size.Small" OnClick="@(() => BtnChangeTeacherPassword())" FullWidth>Change Pass</MudButton>
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Logout" Size="Size.Small" OnClick="@(() => GotoLogin())" Fullwidth>Logout</MudButton>
         </div>
 
         @* <E_Projects /> *@
@@ -139,4 +140,10 @@
         {
         //Navman.NavigateTo ("/E_Projects");
         }
+    private void BtnChangeTeacherPassword ()
+        {
+        appState.SetUserLoginStatus(1);
+        Navman.NavigateTo("/ChangePassword");
+        }
+
 }

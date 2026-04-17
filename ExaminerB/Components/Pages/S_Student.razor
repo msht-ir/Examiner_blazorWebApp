@@ -11,7 +11,6 @@
 
 <div class="container mt-2 align-items-center">
     <div style="font-size:larger; text-align:center;color:black">@appState.UserNickname</div>
-    <hr style="color:red"/>
     @if (!_hasFetched)
         {
         <_Loading />
@@ -39,6 +38,7 @@
     else
         {
         <div class="accordion" id="accordionStudent" style="max-width:500px; margin: 0 auto;">
+            <hr style="color:red" />
             @* --- STUDENT COURSES *@
             <div class="accordion-item mb-2">
                     <h4 class="accordion-header">
@@ -48,7 +48,10 @@
                             data-bs-target="#CollapseId2"
                             aria-expanded="false"
                             aria-controls="CollapseId2" style="background-color:WhiteSmoke">
-                            <h4>courses <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentCourses.Count )</span></h4>
+                            <h4>
+                                <img src="/img/icoCourse.png" width="24" style="margin-right:10px;" title="درس ها" />
+                                courses <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentCourses.Count )</span>
+                            </h4>
                         </button>
                     </h4>
                     @if (appState.Clps=="C")
@@ -139,7 +142,10 @@
                             data-bs-target="#CollapseId1"
                             aria-expanded="false"
                             aria-controls="CollapseId1" style="background-color:whitesmoke">
-                            <h4>exams <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentExams.Count )</span></h4>
+                            <h4>
+                            <img src="/img/icoEditPen.png" width="22" style="margin-right:10px;" title="آزمون ها" />
+                                exams <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentExams.Count )</span>
+                            </h4>
                         </button>
                     </h4>
                     @if (appState.Clps=="E")
@@ -229,6 +235,7 @@
                             aria-expanded="false"
                             aria-controls="CollapseId3" style="background-color:WhiteSmoke">
                             <h4>
+                                <img src="/img/icoListM.png" width="32" style="margin-right:10px;" title="پيام ها" />
                                 messages <span style="font-weight:bold;font-size:x-small;color:indianred">( @unreadMessageCount <span style="color:blue">/@lstStudentMessages.Count</span> )</span>
                             </h4>
                         </button>
@@ -358,7 +365,10 @@
                         aria-expanded="false"
                         aria-controls="CollapseId4" style="background-color:WhiteSmoke">
                         @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
-                        <h4>my chats<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChats.Count ) </span></span></h4>
+                        <h4>
+                            <img src="/img/icoUser.png" width="26" style="margin-right:10px;" title="چت هاي من"/>
+                            my chats<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChats.Count ) </span></span>
+                        </h4>
                     </button>
                 </h4>
                 @if (appState.Clps=="CH")
@@ -452,7 +462,10 @@
                         data-bs-target="#CollapseId5"
                         aria-expanded="false"
                         aria-controls="CollapseId5" style="background-color:WhiteSmoke">
-                        <h4>group chats</h4>
+                        <h4>
+                            <img src="/img/icoSwitchBoardStudents.png" width="36" style="margin-right:10px;" title="چت گروهي"/>
+                            group chats
+                        </h4>
                     </button>
                 </h4>
                 @if (appState.Clps=="CHR")
@@ -540,7 +553,10 @@
                         aria-expanded="false"
                         aria-controls="CollapseId6" style="background-color:WhiteSmoke">
                         @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
-                        <h4>notebook<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstNotes.Count ) </span></span></h4>
+                        <h4>
+                            <img src="/img/icoSwitchBoardStickyNotes.png" width="36" style="margin-right:10px;" title="دفترچه يادداشت" />
+                            notebook<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstNotes.Count ) </span></span>
+                        </h4>
                     </button>
                 </h4>
                 @if (appState.Clps=="SN")
@@ -643,12 +659,12 @@
             </div>
             <br />
             <MudSwitch @bind-Value="_help" Label="help on mouse hover" Color="Color.Primary" Dense="true"></MudSwitch>
-        </div>
-        <hr />
-        <br />
-        <div class="d-flex gap-4 justify-content-center" style="text-align:center; margin-top:30px">
-            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Password" Size="Size.Small" OnClick="@(() => BtnChangeStudentPassword())" FullWidth>Change Pass</MudButton>
-            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Logout" Size="Size.Small" OnClick="@(() => BtnExit())" Fullwidth>Logout</MudButton>
+            <hr />
+            <br />
+            <div class="d-flex gap-4 justify-content-center" style="text-align:center; margin-top:30px;max-width:500px;">
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Password" Size="Size.Small" OnClick="@(() => BtnChangeStudentPassword())" FullWidth>Change Pass</MudButton>
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Logout" Size="Size.Small" OnClick="@(() => BtnExit())" Fullwidth>Logout</MudButton>
+            </div>
         </div>
         }
 </div>
