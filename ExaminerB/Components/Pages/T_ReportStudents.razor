@@ -11,8 +11,13 @@
 @* mode: {student|students} *@
 <h1 style="text-align:center;color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h1>
 <hr style="color:red"/>
-<h4 style="text-align:center">Students's Exams and Courses</h4>
-<hr style="color:red"/>
+<h4 style="text-align:center">
+    <button class="btn btn-link" @onclick="BtnBack">
+        <img src="/img/icoBack3.png" width="40" />
+    </button>
+    Students's Exams and Courses
+</h4>
+<hr style="color:red" />
 @if (!_hasFetched)
     {
     <_ScanSheets />

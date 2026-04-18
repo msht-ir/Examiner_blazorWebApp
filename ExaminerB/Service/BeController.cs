@@ -280,9 +280,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Update_StudentCoursesTags")]
-        public async Task<ActionResult<bool>> Update_StudentCoursesTags ([FromBody] List<int> lstStudentIds, [FromQuery] int courseId, [FromQuery] bool activeStatus)
+        public async Task<ActionResult<bool>> Update_StudentCoursesTags ([FromBody] List<int> lstStudentIds, [FromQuery] int courseId, [FromQuery] string mode)
             {
-            var result = await _BeService.Update_StudentCoursesTagsAsync (lstStudentIds, courseId, activeStatus);
+            var result = await _BeService.Update_StudentCoursesTagsAsync (lstStudentIds, courseId, mode);
             return Ok (result);
             }
         [HttpPost ("Delete_StudentCourses")]
@@ -592,6 +592,12 @@ namespace ExaminerB.Backend
         public async Task<ActionResult<bool>> Update_StudentExamTags ([FromBody] StudentExam tempstudentExam)
             {
             var result = await _BeService.Update_StudentExamTagsAsync (tempstudentExam);
+            return Ok (result);
+            }
+        [HttpPost ("Update_StudentExamsTags")]
+        public async Task<ActionResult<bool>> Update_StudentExamsTags ([FromBody] List<int> lstStudentIds, [FromQuery] int examId, [FromQuery] string mode)
+            {
+            var result = await _BeService.Update_StudentExamsTagsAsync (lstStudentIds, examId, mode);
             return Ok (result);
             }
         [HttpPost ("Delete_StudentExamsByStudentId")]

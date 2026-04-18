@@ -387,9 +387,9 @@ namespace ExaminerB.Service
                 return false;
                 }
             }
-        public async Task<bool> Update_StudentCoursesTags (List<int> lstStudentIds, int CourseId, bool activeStatus)
+        public async Task<bool> Update_StudentCoursesTags (List<int> lstStudentIds, int CourseId, string mode)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Update_StudentCoursesTags?CourseId={CourseId}&activeStatus={activeStatus}", lstStudentIds);
+            var response = await _http.PostAsJsonAsync ($"api/Update_StudentCoursesTags?CourseId={CourseId}&mode={mode}", lstStudentIds);
             if (response.IsSuccessStatusCode)
                 {
                 return true;
@@ -816,8 +816,23 @@ namespace ExaminerB.Service
             }
         public async Task<bool> Update_StudentsExamTags (string mode, int ExamId)
             {
-            //modes: setStudentExamStartedOn|Off , setStudentExamFinishedOn|Off
+            //update StudentExam for All Students having this ExamId
+            //modes: startedOn, startedOff, finishedOn, finishedOff, reviewOn, reviewOff
             var response = await _http.PostAsJsonAsync ($"api/Update_StudentsExamTags?mode={mode}", ExamId);
+            if (response.IsSuccessStatusCode)
+                {
+                return true;
+                }
+            else
+                {
+                return false;
+                }
+            }
+        public async Task<bool> Update_StudentExamsTags (List<int> lstStudentIds, int ExamId, string mode)
+            {
+            //update StudentExam for  selected Students having this ExamId
+            //modes: startedOn, startedOff, finishedOn, finishedOff, reviewOn, reviewOff
+            var response = await _http.PostAsJsonAsync ($"api/Update_StudentExamsTags?ExamId={ExamId}&mode={mode}", lstStudentIds);
             if (response.IsSuccessStatusCode)
                 {
                 return true;
@@ -853,6 +868,18 @@ namespace ExaminerB.Service
                 case "finishedOff":
                         {
                         studentExam.StudentExamTags = (studentExam.StudentExamTags & ~4);
+                        studentExam.StartDateTime = "";
+                        break;
+                        }
+                case "reviewOn":
+                        {
+                        studentExam.StudentExamTags = (studentExam.StudentExamTags | 8);
+                        studentExam.FinishDateTime = currentDateTime;
+                        break;
+                        }
+                case "reviewOff":
+                        {
+                        studentExam.StudentExamTags = (studentExam.StudentExamTags & ~8);
                         studentExam.StartDateTime = "";
                         break;
                         }

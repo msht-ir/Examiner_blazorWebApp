@@ -48,7 +48,7 @@ else
                     <div class="mb-3" style="max-width:500px; margin:0 auto">
                         @* <span style="font-size:larger; font-weight:bold;color:royalblue;">Search</span> *@
                         <div class="d-flex align-items-center mb-3">
-                            <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:'Segoe UI';width:90%" />
+                            <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:'Segoe UI';width:90%;color:black;" />
                             <button class="btn btn-link" @onclick="BtnReadNotesBySearch">
                                 <img src="/img/icoSearch.png" width="24" title="Search notes"/>
                             </button>
@@ -82,13 +82,13 @@ else
                                         <hr />
                                         @if(note.NoteText.Length >100)
                                             {
-                                            <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
+                                            <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small;color:black;">                                                            
                                                 @note.NoteText.Substring(0,100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span>
                                             </div>
                                             }
                                         else
                                             {
-                                            <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
+                                            <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small;color:black;">
                                                 @note.NoteText
                                             </div>
                                             }
@@ -133,13 +133,13 @@ else
                                         <hr />
                                         @if(note.NoteText.Length >100)
                                             {
-                                            <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
+                                            <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small;color:black;">                                                            
                                                 @note.NoteText.Substring(0,100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span>
                                             </div>
                                             }
                                         else
                                             {
-                                            <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">                                                            
+                                            <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small;color:black;">
                                                 @note.NoteText
                                             </div>
                                             }

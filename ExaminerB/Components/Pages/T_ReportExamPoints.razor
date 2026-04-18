@@ -16,17 +16,20 @@ else
     {
     //Page-Header
     <div style="text-align:center; padding:10px;">
-        <h6>Students Exam Points</h6>
-        <h3>Exam: @exam.ExamTitle</h3>
-        <h6 style="color:indianred">course: @course.CourseName</h6>
+        <h6 style="color:gray;">@course.CourseName</h6>
+        <h5 style="color:royalblue"><span style="color:darkgray;font-style:italic;">Exam </span>@exam.ExamTitle</h5>
+        <h6>@exam.ExamDateTime <span style="font-size:small;color:indianred"> /@exam.ExamDuration min </span><span style="font-size:small;color:gray"> /students: @lstStudentsExam.Count</span></h6>
     </div>
-    <div style="text-align: center;">
+    <hr />
+    <div style="text-align:center">
         <button class="btn btn-link" type="submit" @onclick="BtnBack">
             <img src="/img/icoBack3.png" width="40" />
         </button>
+        <button class="btn btn-link align-items-center" Title="refresh بروز رساني" @onclick="RefreshPageData">
+            <img src="/img/gifUserLogin.gif" width="36" />
+        </button>
     </div>
     <EditForm Model = "lstStudentsExam" style="max-width:600px; margin: 0 auto;">
-        <hr />
         @{
             i = 0;
         }
@@ -236,7 +239,6 @@ else
         exam.ExamId = Convert.ToInt32 (appState.ExamId);
         _hasFetched = false;
         exam = await feService.Read_Exam (exam.ExamId, true);
-        //
         lstStudentsExam.Clear ();
         lstStudentsExam = await feService.Read_StudentExams (Convert.ToInt32 (appState.ExamId), "ByExamId");
         if (lstStudentsExam.Count > 0)

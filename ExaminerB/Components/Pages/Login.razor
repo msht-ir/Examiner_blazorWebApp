@@ -50,7 +50,7 @@
             <MudCard Class="mx-0">
                 <MudCardContent Style="background-color:rgba(248,248,248, 1);max-width:500px;min-width:400px;padding-bottom:40px;">
                     <div class="mb-3 d-flex gap-1">
-                        <MudSelect T="string" @ref="refRole" Label="Role" Value="user.UserRole" ValueChanged="@((string role) => OnRoleChanged(role))" Class="w-auto" Variant="Variant.Outlined" Margin="Margin.Dense" Style="font-size:small;">
+                        <MudSelect T="string" @ref="refRole" Label="role" Value="user.UserRole" ValueChanged="@((string role) => OnRoleChanged(role))" Class="w-auto" Variant="Variant.Outlined" Margin="Margin.Dense" Style="font-size:small;">
                             <MudSelectItem Value=@("student")>Student</MudSelectItem>
                             <MudSelectItem Value=@("teacher")>Teacher</MudSelectItem>
                         </MudSelect>

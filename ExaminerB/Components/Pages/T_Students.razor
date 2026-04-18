@@ -203,17 +203,43 @@ else
                                 </button>
                                 add students
                             </MudMenuItem>
-                            <MudMenuItem @onclick="() => BtnChangeStudentCoursesStatus(true)">
+                            <MudMenuItem @onclick='() => BtnChangeStudentCoursesStatus("activeOn")'>
                                 <button class="btn btn-link" Title=@((_help) ? "change students accesses to this course" : "")>
                                     <img src="/img/icoYesNo_Yes.png" width="20" />
                                 </button>
                                 grant access to course
                             </MudMenuItem>
-                            <MudMenuItem @onclick="() => BtnChangeStudentCoursesStatus(false)">
+                            <MudMenuItem @onclick='() => BtnChangeStudentCoursesStatus("activeOff")'>
                                 <button class="btn btn-link" Title=@((_help) ? "change students accesses to this course" : "")>
                                     <img src="/img/icoYesNo_No.png" width="20" />
                                 </button>
                                 remove access to course
+                            </MudMenuItem>
+                            <MudDivider/>
+                            <MudMenuItem @onclick='() => BtnChangeStudentCoursesStatus("retryOn")'>
+                                <button class="btn btn-link" Title=@((_help) ? "change student accesses to review this exam" : "")>
+                                    <img src="/img/icoYesNo_Yes.png" width="20" />
+                                </button>
+                                grant retry tests
+                            </MudMenuItem>
+                            <MudMenuItem @onclick='() => BtnChangeStudentCoursesStatus("retryOff")'>
+                                <button class="btn btn-link" Title=@((_help) ? "change student accesses to review this exam" : "")>
+                                    <img src="/img/icoYesNo_No.png" width="20" />
+                                </button>
+                                prevent retry tests
+                            </MudMenuItem>
+                            <MudDivider/>
+                            <MudMenuItem @onclick='() => BtnChangeStudentCoursesStatus("reviewOn")'>
+                                <button class="btn btn-link" Title=@((_help) ? "change student accesses to review this exam" : "")>
+                                    <img src="/img/icoYesNo_Yes.png" width="20" />
+                                </button>
+                                grant review course
+                            </MudMenuItem>
+                            <MudMenuItem @onclick='() => BtnChangeStudentCoursesStatus("reviewOff")'>
+                                <button class="btn btn-link" Title=@((_help) ? "change student accesses to review this exam" : "")>
+                                    <img src="/img/icoYesNo_No.png" width="20" />
+                                </button>
+                                prevent review course
                             </MudMenuItem>
                             <MudDivider/>
                             <MudMenuItem @onclick='() => BtnCreateNote(CourseId, "C")'>
@@ -264,13 +290,13 @@ else
                                 </button>
                                 add students to exam
                             </MudMenuItem>
-                            <MudMenuItem @onclick="() => BtnChangeStudentCoursesStatus(true)">
+                            <MudMenuItem @onclick='() => BtnChangeStudentExamsStatus("activeOn")'>
                                 <button class="btn btn-link" Title=@((_help) ? "change student accesses to this exam" : "")>
                                     <img src="/img/icoYesNo_Yes.png" width="20" />
                                 </button>
                                 grant access to exam
                             </MudMenuItem>
-                            <MudMenuItem @onclick="() => BtnChangeStudentCoursesStatus(false)">
+                            <MudMenuItem @onclick='() => BtnChangeStudentExamsStatus("activeOff")'>
                                 <button class="btn btn-link" Title=@((_help) ? "change student accesses to this exam" : "")>
                                     <img src="/img/icoYesNo_No.png" width="20" />
                                 </button>
@@ -283,17 +309,30 @@ else
                                 statistics
                             </MudMenuItem>
                             <MudDivider/>
+                            <MudMenuItem @onclick='() => BtnChangeStudentExamsStatus("reviewOn")'>
+                                <button class="btn btn-link" Title=@((_help) ? "change student accesses to review this exam" : "")>
+                                    <img src="/img/icoYesNo_Yes.png" width="20" />
+                                </button>
+                                grant review exam
+                            </MudMenuItem>
+                            <MudMenuItem @onclick='() => BtnChangeStudentExamsStatus("reviewOff")'>
+                                <button class="btn btn-link" Title=@((_help) ? "change student accesses to review this exam" : "")>
+                                    <img src="/img/icoYesNo_No.png" width="20" />
+                                </button>
+                                prevent review exam
+                            </MudMenuItem>
+                            <MudDivider/>
                             <MudMenuItem @onclick='() => BtnCreateNote(ExamId, "E")'>
                                 <button class="btn btn-link" Title=@((_help)?"add note about this exam":"")>
                                     <img src="/img/icoNewNote1.png" width="22" />
                                 </button>
-                                note on exam
+                                add note to exam
                             </MudMenuItem>
                             <MudMenuItem @onclick='() => BtnReportNotes(ExamId, "E")'>
                                 <button class="btn btn-link" Title=@((_help)?"report notes on this exam":"")>
                                     <img src="/img/icoNote2.png" width="20" />
                                 </button>
-                                show notes
+                                show exam notes
                             </MudMenuItem>
                             <MudMenuItem @onclick='() => BtnReportStudent(ExamId, "E")'>
                                 <button class="btn btn-link" Title=@((_help)?"report courses and exams of students in this Exam":"")>
@@ -305,7 +344,7 @@ else
                                 <button class="btn btn-link" Title=@((_help)?"goto page exams":"")>
                                     <img src="/img/icoFolderE.png" width="24" />
                                 </button>
-                                exam folder
+                                exams folder
                             </MudMenuItem>
                         </MudMenu>
                     </div>
@@ -850,7 +889,7 @@ else
         }
         _hasFetched = true;
     }
-    private async Task BtnChangeStudentCoursesStatus(bool activeStatus)
+    private async Task BtnChangeStudentCoursesStatus(string mode)
     {
         if(CourseId == 0)
         {
@@ -870,19 +909,33 @@ else
                     student.IsSelected = false;
                 }
             }
-            bool result = await feService.Update_StudentCoursesTags(lstStudentIds, CourseId, activeStatus); //StudentCourseTags bit values: 1:active? 2:retry? 4:review?
-            if (result & activeStatus)
+            bool result = await feService.Update_StudentCoursesTags(lstStudentIds, CourseId, mode);
+            Snackbar.Add ($"{_count} students-courses tags updated", Severity.Success);
+            _hasFetched = true;            
+        }
+    }
+    private async Task BtnChangeStudentExamsStatus(string _status)
+    {
+        if(ExamId == 0)
+        {
+            Snackbar.Add ($"select an exam", Severity.Warning);
+        }
+        else
+        {
+            _hasFetched = false;
+            List<int> lstStudentIds = new List<int>();
+            int _count = 0;
+            foreach (User student in lstStudents)
             {
-                Snackbar.Add ($"{_count} students-courses activated", Severity.Success);
+                if (student.IsSelected)
+                {
+                    lstStudentIds.Add(student.UserId);
+                    _count++;
+                    student.IsSelected = false;
+                }
             }
-            else if (result & !activeStatus)
-            {
-                Snackbar.Add ($"{_count} students-courses inactivated", Severity.Warning);
-            }
-            else
-            {
-                Snackbar.Add ($"failed", Severity.Error);
-            }
+            bool result = await feService.Update_StudentExamsTags(lstStudentIds, ExamId, _status);
+            Snackbar.Add ($"{_count} students-exams items changed", Severity.Success);
             _hasFetched = true;            
         }
     }
@@ -1217,6 +1270,7 @@ else
         }
     public void BtnGotoPageCourses()
         {
+        appState.SetReturnPage("T_Students");
         if (CourseId > 0)
             {
             Navman.NavigateTo ("/T_Courses");        

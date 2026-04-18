@@ -141,7 +141,7 @@ namespace ExaminerB.Services2Backend
             var users = new List<User> ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
-            using SqlCommand cmd = new ("SELECT UsrId, UsrName, UsrPass, UsrNickname, UsrTags FROM usrs WHERE (UsrTags & 1) = 1 ORDER BY UsrId", cnn);
+            using SqlCommand cmd = new ("SELECT UsrId, UsrName, UsrPass, UsrNickname, UsrTags FROM usrs WHERE (UsrTags & 1) = 1 ORDER BY usrNickName", cnn);
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             while (await reader.ReadAsync ())
@@ -1163,10 +1163,52 @@ namespace ExaminerB.Services2Backend
             int i = await cmd.ExecuteNonQueryAsync ();
             return (i > 0) ? true : false;
             }
-        public async Task<bool> Update_StudentCoursesTagsAsync (List<int> lstStudentIds, int courseId, bool activeStatus)
+        public async Task<bool> Update_StudentCoursesTagsAsync (List<int> lstStudentIds, int courseId, string mode)
             {
             int i = 0;
-            string sql = (activeStatus) ? "UPDATE StudentCourses SET StudentCourseTags = (StudentCourseTags | 3) WHERE StudentId=@studentid AND CourseId=@courseid" : "UPDATE StudentCourses SET StudentCourseTags = (StudentCourseTags & ~7) WHERE StudentId=@studentid AND CourseId=@courseid";
+            string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
+            string sql = "";
+            switch (mode)
+                {
+                case "activeOn":
+                        {
+                        sql = "UPDATE StudentCourses SET StudentCourseTags=(StudentCourseTags | 1) ";
+                        break;
+                        }
+                case "activeOff":
+                        {
+                        sql = "UPDATE StudentCourses SET StudentCourseTags=(StudentCourseTags & ~1) ";
+                        break;
+                        }
+                case "retryOn":
+                        {
+                        sql = "UPDATE StudentCourses SET StudentCourseTags=(StudentCourseTags | 2) ";
+                        break;
+                        }
+                case "retryOff":
+                        {
+                        sql = "UPDATE StudentCourses SET StudentCourseTags=(StudentCourseTags & ~2) ";
+                        break;
+                        }
+                case "reviewOn":
+                        {
+                        sql = "UPDATE StudentCourses SET StudentCourseTags=(StudentCourseTags | 4) ";
+                        break;
+                        }
+                case "reviewOff":
+                        {
+                        sql = "UPDATE StudentCourses SET StudentCourseTags=(StudentCourseTags & ~4) ";
+                        break;
+                        }
+                }
+            if (sql == "")
+                {
+                return false;
+                }
+            else
+                {
+                sql += " WHERE CourseId=@courseid";
+                }
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
@@ -2042,7 +2084,7 @@ namespace ExaminerB.Services2Backend
             List<Exam> lstExams = new List<Exam> ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new ("SELECT ExamId, CourseId, ExamTitle, ExamDateTime, ExamDuration, ExamNTests, ExamTags FROM Exams WHERE CourseID=@courseid", cnn);
+            using SqlCommand cmd = new ("SELECT ExamId, CourseId, ExamTitle, ExamDateTime, ExamDuration, ExamNTests, ExamTags FROM Exams WHERE CourseID=@courseid ORDER BY ExamDateTime DESC", cnn);
             cmd.Parameters.AddWithValue ("@courseid", courseId);
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
@@ -2473,7 +2515,8 @@ COMMIT TRANSACTION;
                         }
                 case "ByExamId":
                         {
-                        sql += " WHERE se.ExamId=@id ORDER BY e.ExamDateTime DESC";
+                        //sort order be: notEntered, justEntered, ..., firstEntered
+                        sql += " WHERE se.ExamId=@id ORDER BY (se.StudentExamTags & 2), se.StartDateTime DESC"; 
                         break;
                         }
                 }
@@ -2589,14 +2632,14 @@ COMMIT TRANSACTION;
             }
         public async Task<bool> Update_StudentsExamTagsAsync (string mode, int examId)
             {
-            //Update tags of an exam for all student
+            //Update tags of StudentExams for all student having this ExamId
             string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
             string sql = "";
             switch (mode)
                 {
                 case "startedOn":
                         {
-                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 2), StartDateTime=@currectdatetime ";
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 2), StartDateTime=@currentdatetime ";
                         break;
                         }
                 case "startedOff":
@@ -2606,12 +2649,22 @@ COMMIT TRANSACTION;
                         }
                 case "finishedOn":
                         {
-                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 4), FinishDateTime=@currectdatetime ";
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 4), FinishDateTime=@currentdatetime ";
                         break;
                         }
                 case "finishedOff":
                         {
                         sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags & ~4) , FinishDateTime= ''";
+                        break;
+                        }
+                case "reviewOn":
+                        {
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 8), FinishDateTime=@currentdatetime ";
+                        break;
+                        }
+                case "reviewOff":
+                        {
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags & ~8) , FinishDateTime= ''";
                         break;
                         }
                 }
@@ -2630,7 +2683,7 @@ COMMIT TRANSACTION;
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.Parameters.AddWithValue ("@examid", examId);
-                cmd.Parameters.AddWithValue ("@currectdatetime", currentDateTime);
+                cmd.Parameters.AddWithValue ("@currentdatetime", currentDateTime);
                 int c = cmd.ExecuteNonQuery ();
                 await cnn.CloseAsync ();
                 //get list of students have this exam
@@ -2651,9 +2704,78 @@ COMMIT TRANSACTION;
                 return false;
                 }
             }
+        public async Task<bool> Update_StudentExamsTagsAsync (List<int> lstStudentIds, int examId, string mode)
+            {
+            int i = 0;
+            string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
+            string sql = "";
+            switch (mode)
+                {
+                case "activeOn":
+                        {
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 1) ";
+                        break;
+                        }
+                case "activeOff":
+                        {
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags & ~1) ";
+                        break;
+                        }
+                case "startedOn":
+                        {
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 2), StartDateTime=@currentdatetime ";
+                        break;
+                        }
+                case "startedOff":
+                        {
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags & ~2), StartDateTime='' ";
+                        break;
+                        }
+                case "finishedOn":
+                        {
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 4), FinishDateTime=@currentdatetime ";
+                        break;
+                        }
+                case "finishedOff":
+                        {
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags & ~4) , FinishDateTime= ''";
+                        break;
+                        }
+                case "reviewOn":
+                        {
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags | 8) ";
+                        break;
+                        }
+                case "reviewOff":
+                        {
+                        sql = "UPDATE StudentExams SET StudentExamTags=(StudentExamTags & ~8) ";
+                        break;
+                        }
+                }
+            if (sql == "")
+                {
+                return false;
+                }
+            else
+                {
+                sql += " WHERE ExamId=@examid";
+                }
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            foreach (int studentId in lstStudentIds)
+                {
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@studentid", studentId);
+                cmd.Parameters.AddWithValue ("@examid", examId);
+                cmd.Parameters.AddWithValue ("@currentdatetime", currentDateTime);
+                i = await cmd.ExecuteNonQueryAsync ();
+                }
+            return (i > 0) ? true : false;
+            }
         public async Task<bool> Update_StudentExamTagsAsync (StudentExam tempStudentExam)
             {
-            //Update tags of an exam for a student
+            //Update tags of a single StudentExam
             string sql = "UPDATE StudentExams SET StudentExamTags=@studentexamtags, StartDateTime=@startdatetime, FinishDateTime=@finishdatetime WHERE StudentExamId=@studentexamid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);

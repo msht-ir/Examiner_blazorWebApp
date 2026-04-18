@@ -62,7 +62,7 @@ namespace ExaminerB.Services2Backend
         Task<List<StudentCourse>> Read_StudentCoursesAsync (int Id, string mode);
         Task<StudentCourse> Read_StudentCourseAsync (int studentCourseId);
         Task<bool> Update_StudentCourseAsync (StudentCourse studentCourse);
-        Task<bool> Update_StudentCoursesTagsAsync (List<int> lstStudentIds, int courseId, bool activeStatus);
+        Task<bool> Update_StudentCoursesTagsAsync (List<int> lstStudentIds, int courseId, string mode);
         Task<bool> Delete_StudentCoursesAsync (int Id, string mode);
         Task<bool> Delete_StudentCourseAsync (int studentCourseId);
         Task<bool> CalculatePoints_StudentCourseAsync (StudentCourse studentCourse);
@@ -126,6 +126,7 @@ namespace ExaminerB.Services2Backend
         Task<bool> Update_StudentExamAsync (StudentExam studentExam);
         Task<bool> Update_StudentsExamTagsAsync (string mode, int examId);
         Task<bool> Update_StudentExamTagsAsync (StudentExam tempStudentExam);
+        Task<bool> Update_StudentExamsTagsAsync (List<int> lstStudentIds, int examId, string mode);
         Task<bool> Delete_StudentExamsByStudentIdAsync (int studentId);
         Task<bool> Delete_StudentExamsByExamIdAsync (int examId);
         Task<bool> Delete_StudentExamAsync (int studentExamId);

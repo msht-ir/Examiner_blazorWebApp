@@ -64,7 +64,12 @@
                         }
                     <div id="CollapseId2" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
                         <div class="accordion-body" style="background-color:white">
-                            <div id="T2">
+                        <div style="text-align:center">
+                            <button class="btn btn-link align-items-center" Title=@((_help) ? "refresh courses بروز رساني درس ها" : "") @onclick="ReadCourseList">
+                                <img src="/img/gifUserLogin.gif" width="30" />
+                            </button>
+                        </div>
+                        <div id="T2">
                                 @foreach (StudentCourse studentCourse in lstStudentCourses)
                                     {
                                     <MudContainer Class="mt-2 px-0">
@@ -159,8 +164,8 @@
                     <div id="CollapseId1" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
                         <div class="accordion-body" style="background-color:white">
                             <div style="text-align:center">
-                                <button class="btn btn-link align-items-center" Title=@((_help)?"message statistics":"") @onclick="ReadExamList">
-                                    <img src="/img/gifUserLogin.gif" width="30" title="refresh exams" />
+                                <button class="btn btn-link align-items-center" Title=@((_help)?"refresh exams بروز رساني آزمون ها":"") @onclick="ReadExamList">
+                                    <img src="/img/gifUserLogin.gif" width="30" />
                                 </button>
                             </div>
                             <div id="T1">
@@ -383,8 +388,8 @@
                     <div class="accordion-body" style="background-color:white">
                         <div id="T3">
                             <div style="text-align:center">
-                                <button class="btn btn-link align-items-center" Title=@((_help)?"refresh chats":"") @onclick="ReadChatList">
-                                    <img src="/img/gifUserLogin.gif" width="30" title="refresh chats" />
+                                <button class="btn btn-link align-items-center" Title=@((_help)?"refresh chats بروز رساني":"") @onclick="ReadChatList">
+                                    <img src="/img/gifUserLogin.gif" width="30" />
                                 </button>
                             </div>
                             @* list chats *@
@@ -480,8 +485,8 @@
                     <div class="accordion-body" style="background-color:white">
                         <div id="T3">
                             <div style="text-align:center">
-                                <button class="btn btn-link align-items-center" Title=@((_help) ? "refresh chatrooms" : "") @onclick="ReadChatroomList">
-                                    <img src="/img/gifUserLogin.gif" width="34" title="refresh chatrooms" />
+                                <button class="btn btn-link align-items-center" Title=@((_help) ? "refresh chatrooms بروز رساني" : "") @onclick="ReadChatroomList">
+                                    <img src="/img/gifUserLogin.gif" width="34" />
                                 </button>
                             </div>
                             @if (_cmd == "AddNewChatroom")

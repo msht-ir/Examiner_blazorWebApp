@@ -29,21 +29,20 @@
                                     @* <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Margin="Margin.Dense" /> *@
                                     <MudDatePicker Label="Calendar YMD تقويم" @bind-Date="_date" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Elevation="12" Margin="Margin.Dense" Modal="true" />
                                     <MudTimePicker Label="Time ساعت" @bind-Time="_time" TimeFormat="HH:mm" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Dense="true"/>
-                                    <MudTextField T="string" Label="Note" @bind-Value="note.NoteText" Variant="Variant.Outlined" Lines="15" AutoResize="true" Style=@($"width:100%;direction:{(note.IsRtl ? "rtl" : "ltr")};font-size:13px;font-family:{(note.IsRtl ? "'Segoe UI'" : "'Courier New', Courier, monospace")};") />
-                                        <MudCheckBox @bind-Value="note.IsRtl" Label="RTL" Color="Color.Primary"></MudCheckBox>
-                                        <br />
+                                    <MudTextField T="string" Label="Note" @bind-Value="note.NoteText" Variant="Variant.Outlined" Lines="24" AutoResize="true" Style=@($"width:100%;direction:{(note.IsRtl ? "rtl" : "ltr")};font-size:13px;font-family:{(note.IsRtl ? "'Segoe UI'" : "'Courier New', Courier, monospace")};color:black;") />
+                                    <MudCheckBox @bind-Value="note.IsRtl" Label="RTL" Color="Color.Primary"></MudCheckBox>
                                         @if (appState.Cmd == "CreateNote")
                                             {
-                                            <div style="text-align:center">
-                                                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" @onclick="BtnCreateNote">Save note</MudButton>
-                                                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Cancel" @onclick="BtnCancel">Cancel</MudButton>
+                                            <div class="d-flex gap-2 justify-content-center" style="text-align:center">
+                                                <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" @onclick="BtnCreateNote">Save note</MudButton>
+                                                <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Cancel" @onclick="BtnCancel">Cancel</MudButton>
                                             </div>
                                             }
                                         else if (appState.Cmd == "UpdateNote")
                                             {
-                                        <div style="text-align:center">
-                                            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" @onclick="BtnUpdateNote">Update note</MudButton>
-                                                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Cancel" @onclick="BtnCancel">Cancel</MudButton>
+                                            <div class="d-flex gap-2 justify-content-center" style="text-align:center">
+                                                <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" @onclick="BtnUpdateNote">Update note</MudButton>
+                                                <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Cancel" @onclick="BtnCancel">Cancel</MudButton>
                                             </div>
                                             }
                                 </MudCardContent>
