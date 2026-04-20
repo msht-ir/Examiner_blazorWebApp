@@ -96,16 +96,16 @@
                                                 }
                                             else
                                                 {
-                                                <div class="d-flex align-items-center justify-content-lg-end" style="margin-top:10px;">
+                                                <div class="d-flex align-items-center justify-content-center" style="text-align:center; margin-top:10px;">
+                                                    @if (notex.NoteText.Length > 100)
+                                                        {
+                                                        <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(notex)">
+                                                            <img src="/img/icoNote2.png" width="20" title="نمايش يادداشت در صفحه" />
+                                                        </button>
+                                                        }
                                                     <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                                        <MudMenuItem @onclick="() => BtnShowNoteInDialog(notex)">
-                                                            <button class="btn btn-link">
-                                                                <img src="/img/icoNote2.png" width="20" title="نمايش يادداشت در صفحه"/>
-                                                            </button>
-                                                            show
-                                                        </MudMenuItem>
                                                         <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
-                                                            <button class="btn btn-link">
+                                                            <button class="btn btn-link pulse-animation">
                                                                 <img src="/img/icoRename.png" width="28"  title="ويرايش يادداشت"/>
                                                             </button>
                                                             edit
@@ -123,7 +123,7 @@
                                                             delete note
                                                         </MudMenuItem>
                                                     </MudMenu>
-                                                </div>                                        
+                                                </div>
                                                 }
                                         </MudCardContent>
                                     </MudCard>
@@ -168,7 +168,7 @@
                                                         <MudSelectItem Value="0">Select a Section...</MudSelectItem>
                                                         @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
                                                     </MudSelect>
-                                            <button class="btn btn-link" Title="move!" @onclick='() => BtnMovetoSelectSection(SubprojectId, notex.NoteId)'>
+                                                    <button class="btn btn-link" Title="move!" @onclick='() => BtnMovetoSelectSection(SubprojectId, notex.NoteId)'>
                                                         <img src="/img/icoMoveToNoteBook.png" width="34" />
                                                     </button>
                                                     <button class="btn btn-link" Title="cancel" @onclick='() => BtnCancel()'>
@@ -178,16 +178,16 @@
                                                 }
                                             else
                                                 {
-                                                <div class="d-flex align-items-center justify-content-lg-end" style="margin-top:10px;">
+                                                <div class="d-flex justify-content-center" style="text-align:center;margin-top:10px;">
+                                                    @if (notex.NoteText.Length > 100)
+                                                        {
+                                                        <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(notex)">
+                                                            <img src="/img/icoNote2.png" width="20" title="نمايش يادداشت در صفحه" />
+                                                        </button>
+                                                        }
                                                     <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                                        <MudMenuItem @onclick="() => BtnShowNoteInDialog(notex)">
-                                                            <button class="btn btn-link">
-                                                                <img src="/img/icoNote2.png" width="20" title="نمايش يادداشت در صفحه"/>
-                                                            </button>
-                                                            show
-                                                        </MudMenuItem>
                                                         <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
-                                                            <button class="btn btn-link">
+                                                            <button class="btn btn-link pulse-animation">
                                                                 <img src="/img/icoRename.png" width="28"  title="ويرايش يادداشت"/>
                                                             </button>
                                                             edit
@@ -205,7 +205,7 @@
                                                             delete note
                                                         </MudMenuItem>
                                                     </MudMenu>
-                                                </div>                                        
+                                                </div>
                                                 }
                                         </MudCardContent>
                                     </MudCard>
