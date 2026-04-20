@@ -58,7 +58,7 @@
                                                     </div>
                                                     <div style="text-align:center">
                                                         <button class="btn btn-link" name="btnCourseId" @onclick="()=>BtnUpdateCourse(crs)" >
-                                                            <img src="/img/icoSave2.png" width="22" />
+                                                            <img class="pulse-animation" src="/img/icoSave2.png" width="22" />
                                                         </button>
                                                         <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
                                                             <img src="/img/icoCancel.png" width="20" />
@@ -91,7 +91,7 @@
                                                     tests list
                                                 </MudMenuItem>
                                                 <MudMenuItem @onclick="() => BtnExams(crs)">
-                                                    <button class="btn btn-link" title="course exams" >
+                                                    <button class="btn btn-link pulse-animation" title="course exams" >
                                                         <img src="/img/icoListE.png" width="32" />
                                                     </button>
                                                     exams
@@ -268,7 +268,7 @@
                                 <MudCardContent Class="d-flex" Style="background-color:whitesmoke;">
                                     <MudTextField @ref="txtNewCourseName" @bind-Value="course.CourseName" Label="Cousre name" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                                         <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewCourse">
-                                            <img src="/img/icoSave2.png" width="24" />
+                                            <img class="pulse-animation" src="/img/icoSave2.png" width="24" />
                                         </button>
                                         <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
                                             <img src="/img/icoCancel.png" width="24" />

@@ -151,7 +151,7 @@ else
                                     show notes
                                 </MudMenuItem>
                                 <MudMenuItem @onclick='() => BtnReportStudent(GroupId, "G")'>
-                                    <button class="btn btn-link" Title=@((_help)?"report students courses and exams":"")>
+                                    <button class="btn btn-link pulse-animation" Title=@((_help)?"report students courses and exams":"")>
                                         <img src="/img/icoFolderS.png" width="24" />
                                     </button>
                                     students folder
@@ -358,11 +358,11 @@ else
                     @if (_cmd == "AddNewMessage")
                         {
                         <h5>new message</h5>
-                        <MudTextField @ref="reftxtNewMessageTitle" @bind-Value="strNewMessageTitle" Label="title " Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                        <MudTextField @ref="reftxtNewMessageBody" @bind-Value="strNewMessageBody" Label="message" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="5" />
+                        <MudTextField @ref="reftxtNewMessageTitle" @bind-Value="strNewMessageTitle" Label="title " Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family: 'Segoe UI';" />
+                        <MudTextField @ref="reftxtNewMessageBody" @bind-Value="strNewMessageBody" Label="message" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="5" Style="font-family: 'Segoe UI';" />
                         <div style="text-align:center">
                             <button class="btn btn-link" Title=@((_help) ? "save message" : "") @onclick="() => BtnCreateNewMessage(strNewMessageTitle, strNewMessageBody)">
-                                <img src="/img/icoSave2.png" width="24" />
+                                <img class="pulse-animation" src="/img/icoSave2.png" width="24" />
                             </button>
                             <button class="btn btn-link" Title=@((_help) ? "cancel" : "") @onclick="BtnCancel">
                                 <img src="/img/icoCancel.png" width="24" />
@@ -374,11 +374,11 @@ else
                         if (_cmd == "EditMessage")
                             {
                             <h5>Edit message</h5>
-                            <MudTextField @ref="reftxtNewMessageTitle" @bind-Value="strNewMessageTitle" Label="title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                            <MudTextField @ref="reftxtNewMessageBody" @bind-Value="strNewMessageBody" Label="message" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="10" />
+                            <MudTextField @ref="reftxtNewMessageTitle" @bind-Value="strNewMessageTitle" Label="title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family: 'Segoe UI';"/>
+                            <MudTextField @ref="reftxtNewMessageBody" @bind-Value="strNewMessageBody" Label="message" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="10" Style="font-family: 'Segoe UI';" />
                             <div style="text-align:center">
                                 <button class="btn btn-link" Title=@((_help) ? "save message" : "") @onclick="() => BtnUpdateMessage()">
-                                    <img src="/img/icoSave2.png" width="24" />
+                                    <img class="pulse-animation" src="/img/icoSave2.png" width="24" />
                                 </button>
                                 <button class="btn btn-link" Title=@((_help) ? "cancel" : "") @onclick="BtnCancel">
                                     <img src="/img/icoCancel.png" width="24" />
@@ -401,7 +401,7 @@ else
                                     </MudMenuItem>
                                     <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
                                         <button class="btn btn-link" Title=@((_help)?"report courses and exams of students that received this message":"")>
-                                            <img src="/img/icoFolderS.png" width="22" />
+                                            <img src="/img/icoFolderS.png" width="24" />
                                         </button>
                                         students folder
                                     </MudMenuItem>
@@ -430,7 +430,7 @@ else
                                     </MudMenuItem>
                                     <MudMenuItem @onclick="() => BtnAddStudentsToMessage()">
                                         <button class="btn btn-link" Title=@((_help) ? "send this message to: selected students (above)" : "")>
-                                            <img src="/img/icoEnvelopSend.png" width="24" />
+                                            <img class="pulse-animation"  src="/img/icoEnvelopSend.png" width="24" />
                                         </button>
                                         send message to students
                                     </MudMenuItem>
@@ -468,7 +468,12 @@ else
             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                 <MudCard Class="mx-0">
                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                        <h6 style="color:royalblue">List of Students for: <span style="color:indianred">@appState.Message</span></h6>
+                        <h6 style="text-align:center;color:royalblue">List of Students for: <span style="color:indianred">@appState.Message</span></h6>
+                        <div class="d-flex gap-4 justify-content-center" style="margin-top:25px">
+                            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="BtnSelectAllStudents" style="width:120px;">select all</MudButton>
+                            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Tertiary" OnClick="BtnInvertSelection"  style="width:120px;">invert</MudButton>
+                        </div>
+                        <hr style="color:indianred"/>
                         @foreach(User student in lstStudents)
                             {
                             <div class="d-flex align-items-center mb-1">
@@ -485,10 +490,6 @@ else
                                 <span style="font-size:x-small">@student.UserName - @student.UserNickname</span>
                             </div>
                             }
-                        <div style="margin-top:15px">
-                            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="BtnSelectAllStudents">All</MudButton>
-                            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Tertiary" OnClick="BtnInvertSelection">Invert</MudButton>
-                        </div>
                     </MudCardContent>
                 </MudCard>
             </MudContainer>                

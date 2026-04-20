@@ -4,17 +4,37 @@
     50% { transform: scale(1.2); }
     100% { transform: scale(1); }
     }
+.pulse-animation { animation: pulse 2s infinite; }
+.pulse-hover:hover { animation: pulse 2s infinite; }
 
-.pulse-animation 
+
+@keyframes bounce 
     {
-    animation: pulse 2s infinite;
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-30px); }
+    60% { transform: translateY(-15px); }
     }
+.bounce { display: inline-block; animation: bounce 2s infinite; }
 
-.pulse-hover:hover 
+@keyframes moveUpDown 
     {
-    animation: pulse 2s infinite;
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
     }
+.up-down  { display: inline-block; animation: moveUpDown 2s ease-in-out infinite; }
 
 
+@keyframes fadeInOut 
+    {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+    }
+.fader  { animation: fadeInOut 3s ease-in-out infinite; }
 
+@keyframes rotate 
+    {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+    }
+.rotate  { display: inline-block; animation: rotate 2s linear infinite; }
 

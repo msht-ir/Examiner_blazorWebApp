@@ -38,34 +38,34 @@
                             </div>
                             <div style="text-align:center">
                                 <button style="border:none" class="btn btn-link" title="edit exam ويرايش آزمون" @onclick="()=>BtnEditExam(exam)" >
-                                    <img src="/img/icoRename.png" width="26" />
+                                    <img class="pulse-hover" src="/img/icoRename.png" width="26" />
                                 </button>
                                 <button style="border:none" class="btn btn-link" title="exam active / inactive آزمون فعال/غيرفعال" @onclick="() => BtnStratStopExam(exam)">
                                     @if (exam.IsActive)
                                         {
-                                        <img src="/img/icoOn.png" width="24" />                                        
+                                        <img class="pulse-hover" src="/img/icoOn.png" width="24" />
                                         }
                                     else
                                         {
-                                        <img src="/img/icoOff.png" width="24" />                                        
+                                        <img class="pulse-hover" src="/img/icoOff.png" width="24" />
                                         }
                                 </button>
                                 <button style="border:none" class="btn btn-link" title="ُset exam finished for all خاتمه آزمون براي همه" @onclick="() => BtnSetExamAsFinishedForAllStudents(exam.ExamId)">
-                                    <img src="/img/icoClock2.png" width="22" />
+                                    <img class="pulse-hover" src="/img/icoClock2.png" width="22" />
                                 </button>
                                 <button style="border:none" class="btn btn-link" title="delete exam حذف آزمون" @onclick="() => BtnDeleteExam(exam)">
-                                    <img src="/img/icoDelete1.png" width="20" />
+                                    <img class="pulse-hover" src="/img/icoDelete1.png" width="20" />
                                 </button>
                             </div>
                             <div style="text-align:center">
                                 <button style="border:none" class="btn btn-link" title="exam tests گزارش سوالات اين آزمون" @onclick="() => BtnReportExamTests(exam.ExamId)">
-                                    <img src="/img/icoListT.png" width="32" />
+                                    <img class="pulse-hover" src="/img/icoListT.png" width="32" />
                                 </button>
                                 <button style="border:none" class="btn btn-link" title="students folder فولدر دانشجويان" @onclick="() => BtnReportStudents(exam.ExamId)">
-                                    <img src="/img/icoFolderS.png" width="26" />
+                                    <img class="pulse-hover" src="/img/icoFolderS.png" width="26" />
                                 </button>
                                 <button style="border:none" class="btn btn-link" title="exam status and points گزارش وضعيت و نمرات آزمون" @onclick="() => BtnReportExamPoints(exam.ExamId)">
-                                    <img src="/img/icoFolderE.png" width="26" />
+                                    <img class="pulse-hover" src="/img/icoFolderE.png" width="26" />
                                 </button>
                             </div>
                         </MudCardContent>

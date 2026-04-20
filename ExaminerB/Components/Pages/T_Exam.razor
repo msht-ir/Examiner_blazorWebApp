@@ -34,7 +34,7 @@ else
                 <MudCardContent Style="background-color:whitesmoke;">                                         
                     <div style="font-size:130%;font-weight:bold;color:royalblue">exam </div>
                     <div class="d-flex mb-2" style="gap:10px;">
-                        <MudTextField @ref="refExamTitle" @bind-Value="exam.ExamTitle" Label="exam title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                        <MudTextField @ref="refExamTitle" @bind-Value="exam.ExamTitle" Label="title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                         <MudNumericField T="int" @ref="refExamDuration" @bind-Value="exam.ExamDuration" Label="duration min" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width:100px;text-align:center;" />
                     </div>
                     <div class="d-flex justify-content-start mb-2" >
@@ -145,10 +145,10 @@ else
                             {
                             <div style="text-align:center; margin-top:20px;margin-bottom:25px;">
                                 <button class="btn btn-link" @onclick="BtnAddNewExamComposition">
-                                    <img src="/img/icoAdd0.png" width="25" title="new composition"/>
+                                    <img class="pulse-hover" src="/img/icoAdd0.png" width="25" title="new composition" />
                                 </button>
                                 <button class="btn btn-link" @onclick="BtnDrawRandomTestsByExamComposition">
-                                    <img src="/img/icoShuffle.png" width="30" title="draw random tests"/>
+                                    <img class="pulse-hover" src="/img/icoShuffle.png" width="30" title="draw random tests" />
                                 </button>
                             </div>
                             }
@@ -180,7 +180,7 @@ else
                             <div class="d-flex align-items-center mb-3">
                                 <MudTextField @ref="txtSearchTest" @bind-Value="strSearch" Label="search" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:'Segoe UI';" />
                                 <button class="btn btn-link" @onclick="BtnReadTestsBySearch">
-                                    <img src="/img/icoSearch.png" width="24" />
+                                    <img class="pulse-hover" src="/img/icoSearch.png" width="24" />
                                 </button>
                             </div>
                             <div class="d-flex align-atems-center mb-3">
@@ -192,7 +192,7 @@ else
                                     <img src="/img/icoAdd0.png" width="20" />
                                 </button>
                                 <button class="btn btn-link" @onclick="()=>BtnGotoReportCourseTests(exam.CourseId)">
-                                    <img src="/img/icoFolderT.png" width="24" />
+                                    <img class="pulse-animation" src="/img/icoFolderT.png" width="24" />
                                 </button>
                             </div>
                         </div>
