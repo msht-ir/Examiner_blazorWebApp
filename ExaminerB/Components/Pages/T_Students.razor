@@ -66,7 +66,7 @@ else
                                 </MudMenuItem> 
                                 <MudMenuItem @onclick="()=>BtnReadStudentsBySearch()">
                                     <button class="btn btn-link" Title=@((_help)?"search students":"") >
-                                        <img src="/img/icoSearch.png" width="20" />
+                                        <img class="pulse-animation" src="/img/icoSearch.png" width="20" />
                                     </button>
                                     search
                                 </MudMenuItem> 
@@ -304,7 +304,7 @@ else
                             </MudMenuItem>
                             <MudMenuItem @onclick='() => BtnGotoPageExamPoints(ExamId)'>
                                 <button class="btn btn-link" Title=@((_help)?"report Students Points in this exam":"")>
-                                    <img src="/img/icoChartPie.png" width="24" />
+                                    <img class="pulse-animation" src="/img/icoChartPie.png" width="24" />
                                 </button>
                                 statistics
                             </MudMenuItem>
@@ -342,7 +342,7 @@ else
                             </MudMenuItem>
                             <MudMenuItem @onclick='() => BtnGotoExamsPage(ExamId, refCourses.Text.ToString() ?? "")'>
                                 <button class="btn btn-link" Title=@((_help)?"goto page exams":"")>
-                                    <img src="/img/icoFolderE.png" width="24" />
+                                    <img class="pulse-animation" src="/img/icoFolderE.png" width="24" />
                                 </button>
                                 exams folder
                             </MudMenuItem>
@@ -408,7 +408,7 @@ else
                                     <MudDivider/>
                                     <MudMenuItem @onclick="BtnAddNewMessage">
                                         <button class="btn btn-link" Title=@((_help) ? "add new message" : "")>
-                                            <img src="/img/icoAdd0.png" width="22" />
+                                            <img class="pulse-animation" src="/img/icoAdd0.png" width="22" />
                                         </button>
                                         new message
                                     </MudMenuItem>

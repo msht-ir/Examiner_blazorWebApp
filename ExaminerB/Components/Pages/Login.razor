@@ -23,7 +23,6 @@
             <div id="collapseZero" class="accordion-collapse collapse" data-bs-parent="#accordionIndex">
                 <div class="accordion-body" style="text-align:center;margin-bottom:25px;">
                     <img src="/img/_mshtConHat.png" width="90" style="margin-left:10px;margin-right:10px;border-radius:7px;" />
-                    @* <h6 style="margin-top:5px;">Majid SharifiTehrani</h6> *@
                     <hr />
                     <h6>https://www.msht.ir</h6>
                     <a href="https://www.msht.ir/" target="_blank">
@@ -43,7 +42,9 @@
 </center>
 <br />
 <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-    <img src="/img/pngStudyGirl1.png" width="380" style="margin-left:10px;margin-right:10px" />
+    <div style="display: flex; justify-content: flex-end;">
+        <img src="/img/pngStudyGirl1.png" width="320" style="margin-right:10px" onclick="SwitchUserRole" />
+    </div>
     <EditForm Model="user" OnValidSubmit="BtnLogin" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <MudContainer Class="mt-2 px-0">
@@ -102,7 +103,7 @@
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
-    {
+        {
         appState.OnChange += StateHasChanged;
         appState.OnChange += TriggerRender;
         appState.SetUserLoginStatus (0);
@@ -110,24 +111,24 @@
         appState.SetUserName ("");
         StateHasChanged ();
         lstTeachers = await feService.Read_Teachers ();
-    } 
+        } 
     protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (_firstRender)
         {
+        if (_firstRender)
+            {
             _firstRender = false;
             await Task.Delay (1);
             await refRole.FocusAsync ();        
+            }
         }
-    }
     private void TriggerRender()
-    {
+        {
         InvokeAsync(StateHasChanged);
-    }
+        }
     public void Dispose()
-    {
+        {
         appState.OnChange -= TriggerRender;
-    }
+        }
     //btns
     public async Task BtnLogin ()
         {
@@ -147,7 +148,7 @@
             switch (user.UserRole)
                 {
                 case "student":
-                    {
+                        {
                         appState.SetUserLoginStatus (1);
                         appState.SetUserId (user.UserId);
                         appState.SetUserName (user.UserName);
@@ -160,9 +161,9 @@
                         Navman.NavigateTo("/S_Student");
                         Snackbar.Add($"\n\nwelcome {user.UserNickname}!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                         break;
-                    }
+                        }
                 case "teacher":
-                    {
+                        {
                         appState.SetUserLoginStatus (1);
                         appState.SetUserId (user.UserId);
                         appState.SetUserName (user.UserName);
@@ -175,7 +176,7 @@
                         Navman.NavigateTo("/T_SwitchBoard"); 
                         Snackbar.Add($"\n\nwelcome {user.UserNickname}!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                         break;
-                    }
+                        }
                 }
             }
         else
@@ -228,5 +229,4 @@
             await refTeacher.FocusAsync();
             }
         }
-
 }

@@ -49,7 +49,7 @@
                             aria-expanded="false"
                             aria-controls="CollapseId2" style="background-color:WhiteSmoke">
                             <h4>
-                                <img src="/img/icoCourse.png" width="24" style="margin-right:10px;" title="درس ها" />
+                                <img class="pulse-hover" src="/img/icoCourse.png" width="24" style="margin-right:10px;" title="درس ها" />
                                 courses <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentCourses.Count )</span>
                             </h4>
                         </button>
@@ -82,7 +82,7 @@
                                                 </div>
                                                 <hr />
                                                 <button class="btn btn-link" Title=@((_help)?"get a random Test from course" + studentCourse.CourseName :"") @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
-                                                    <img src="/img/icoCourse.png" width="28" />
+                                                <img class="pulse-animation" src="/img/icoCourse.png" width="28" />
                                                 </button>
                                                 @if ((studentCourse.StudentCourseTags & 5) == 5)
                                                     {
@@ -148,7 +148,7 @@
                             aria-expanded="false"
                             aria-controls="CollapseId1" style="background-color:whitesmoke">
                             <h4>
-                            <img src="/img/icoEditPen.png" width="22" style="margin-right:10px;" title="آزمون ها" />
+                            <img class="pulse-hover" src="/img/icoEditPen.png" width="22" style="margin-right:10px;" title="آزمون ها" />
                                 exams <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentExams.Count )</span>
                             </h4>
                         </button>
@@ -240,7 +240,7 @@
                             aria-expanded="false"
                             aria-controls="CollapseId3" style="background-color:WhiteSmoke">
                             <h4>
-                                <img src="/img/icoListM.png" width="32" style="margin-right:10px;" title="پيام ها" />
+                            <img class="pulse-animation" src="/img/icoListM.png" width="32" style="margin-right:10px;" title="پيام ها" />
                                 messages <span style="font-weight:bold;font-size:x-small;color:indianred">( @unreadMessageCount <span style="color:blue">/@lstStudentMessages.Count</span> )</span>
                             </h4>
                         </button>
@@ -313,7 +313,7 @@
                                                                     {
                                                                     //Lets GetStudentAnswer...
                                                                     <button class="btn btn-link" Title=@((_help)?"Answer Y/N":"") @onclick="()=>BtnGetStudentAnswer(studentMessage.MessageId)">
-                                                                        <img src="/img/icoYesNo.png" width="26" />
+                                                                        <img class="pulse-animation" src="/img/icoYesNo.png" width="26" />
                                                                     </button>
                                                                     }
                                                                 }
@@ -322,25 +322,25 @@
                                                     <hr style="color:gray" />
                                                     <div style="text-align:center">
                                                         <button class="btn btn-link" Title=@((_help) ? "message statistics" : "") @onclick="() => BtnGotoReportStudentMessages(studentMessage)">
-                                                        <img src="/img/icoChartPie.png" width="22" />
+                                                        <img class="pulse-animation" src="/img/icoChartPie.png" width="22" />
                                                         </button>
                                                         <button class="btn btn-link" Title=@((_help) ? "change font" : "") @onclick="() => BtnCangeFont(studentMessage.MessageId)">
-                                                            <img src="/img/icoFontAa.png" width="24" />
+                                                        <img class="pulse-hover" src="/img/icoFontAa.png" width="24" />
                                                         </button>
                                                         <button class="btn btn-link" Title=@((_help) ? "delete message" : "") @onclick="() => BtnDeleteStudentMessage(studentMessage)">
-                                                            <img src="/img/icoDelete1.png" width="20" />
+                                                        <img class="pulse-hover" src="/img/icoDelete1.png" width="20" />
                                                         </button>
                                                         @* IsBookmarked? *@
                                                         @if ((studentMessage.StudentMessageTags & 2) == 2)
                                                             {
                                                             <button class="btn btn-link" Title=@((_help) ? "remove bookmark" : "") @onclick="() => BtnSetStudentMessageBookmark(studentMessage, 0)">
-                                                                <img src="/img/icoBookmark1.png" width="22" />
+                                                            <img class="pulse-hover" src="/img/icoBookmark1.png" width="22" />
                                                             </button>
                                                             }
                                                         else
                                                             {
                                                             <button class="btn btn-link" Title=@((_help) ? "bookmark this message" : "") @onclick="() => BtnSetStudentMessageBookmark(studentMessage, 1)">
-                                                                <img src="/img/icoBookmark0.png" width="22" />
+                                                            <img class="pulse-hover" src="/img/icoBookmark0.png" width="22" />
                                                             </button>
                                                             }
                                                     </div>
@@ -371,7 +371,7 @@
                         aria-controls="CollapseId4" style="background-color:WhiteSmoke">
                         @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
                         <h4>
-                            <img src="/img/icoUser.png" width="26" style="margin-right:10px;" title="چت هاي من"/>
+                            <img class="pulse-hover" src="/img/icoUser.png" width="26" style="margin-right:10px;" title="چت هاي من" />
                             my chats<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChats.Count ) </span></span>
                         </h4>
                     </button>
@@ -436,7 +436,7 @@
                                         <div class="d-flex">
                                             <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="search people" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                                             <button class="btn btn-link" Title=@((_help)?"Search my friends":"") @onclick="()=>BtnReadStudentsBySearch()">
-                                                <img src="/img/icoSearch.png" width="24" />
+                                                <img class="pulse-hover" src="/img/icoSearch.png" width="24" />
                                             </button>
                                         </div>
                                         @* RESULTS: LIST FRIENDS *@
@@ -468,7 +468,7 @@
                         aria-expanded="false"
                         aria-controls="CollapseId5" style="background-color:WhiteSmoke">
                         <h4>
-                            <img src="/img/icoSwitchBoardStudents.png" width="36" style="margin-right:10px;" title="چت گروهي"/>
+                            <img class="pulse-hover" src="/img/icoSwitchBoardStudents.png" width="36" style="margin-right:10px;" title="چت گروهي" />
                             group chats
                         </h4>
                     </button>
@@ -520,7 +520,7 @@
                                             <MudCardContent Style="background-color:whitesmoke;">
                                                 <div>
                                                     <button class="btn btn-link" style="text-decoration: none;" Title=@((_help)?"enter chatroom":"") @onclick="()=>BtnOpenThisChatroom(chatroom)">
-                                                        <img src="/img/icoSwitchBoardStudents.png" width="34" />
+                                                        <img class="pulse-animation" src="/img/icoSwitchBoardStudents.png" width="34" />
                                                         <span style="font-weight:bold;color:gray;margin-left:5px;"> @chatroom.ChatroomName </span>
                                                     </button>
                                                     <hr />
@@ -541,7 +541,7 @@
                                     }
                                 <div style="text-align:center; margin-top:15px;margin-bottom:15px;">
                                     <button class="btn btn-link" @onclick="BtnAddNewChatroom" title="create new chatroom">
-                                        <img src="/img/icoAdd0.png" width="24" />
+                                        <img class="pulse-hover" src="/img/icoAdd0.png" width="24" />
                                     </button>
                                 </div>
                                 }
@@ -559,7 +559,7 @@
                         aria-controls="CollapseId6" style="background-color:WhiteSmoke">
                         @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
                         <h4>
-                            <img src="/img/icoSwitchBoardStickyNotes.png" width="36" style="margin-right:10px;" title="دفترچه يادداشت" />
+                            <img class="pulse-hover" src="/img/icoSwitchBoardStickyNotes.png" width="36" style="margin-right:10px;" title="دفترچه يادداشت" />
                             notebook<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstNotes.Count ) </span></span>
                         </h4>
                     </button>
@@ -577,7 +577,7 @@
                         <div id="T3">
                             <div style="text-align:center">
                                 <button class="btn btn-link align-items-center" Title="add new note" @onclick="CreateNote">
-                                    <img src="/img/icoAdd0.png" width="24" />
+                                    <img class="pulse-animation" src="/img/icoAdd0.png" width="24" />
                                 </button>
                             </div>
                             @* list Notes *@
@@ -606,13 +606,13 @@
                                                     <hr />
                                                     <div class="d-flex align-items-center justify-content-center">
                                                         <button class="btn btn-link" Title=@((_help)?"نمايش يادداشت در پنجره":"") @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                            <img src="/img/icoNote2.png" width="20" />
+                                                            <img class="pulse-hover" src="/img/icoNote2.png" width="20" />
                                                         </button>
                                                         <button class="btn btn-link" Title=@((_help)?"ويرايش يادداشت":"") @onclick="()=>BtnEditNoteInDialog(notex)">
-                                                            <img src="/img/icoRename.png" width="28" />
+                                                            <img class="pulse-hover" src="/img/icoRename.png" width="28" />
                                                         </button>
                                                         <button class="btn btn-link" Title=@((_help)?"حذف يادداشت":"") @onclick="()=>BtnDeleteNote(notex.NoteId)">
-                                                            <img src="/img/icoDelete1.png" width="22"/>
+                                                            <img class="pulse-hover" src="/img/icoDelete1.png" width="22"/>
                                                         </button>
                                                     </div>                                        
                                                 </MudCardContent>
@@ -643,13 +643,13 @@
                                                     <hr />
                                                     <div class="d-flex align-items-center justify-content-center">
                                                         <button class="btn btn-link" Title=@((_help)?"show note in dialog":"") @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                            <img src="/img/icoNote2.png" width="20"/>
+                                                            <img class="pulse-hover" src="/img/icoNote2.png" width="20"/>
                                                         </button>
                                                         <button class="btn btn-link" Title=@((_help)?"edit note":"") @onclick="()=>BtnEditNoteInDialog(notex)">
-                                                            <img src="/img/icoRename.png" width="28"/>
+                                                            <img class="pulse-hover" src="/img/icoRename.png" width="28"/>
                                                         </button>
                                                         <button class="btn btn-link" Title=@((_help)?"delete note":"") @onclick="()=>BtnDeleteNote(notex.NoteId)">
-                                                            <img src="/img/icoDelete1.png" width="22"/>
+                                                            <img class="pulse-hover" src="/img/icoDelete1.png" width="22"/>
                                                         </button>
                                                     </div>
                                                 </MudCardContent>

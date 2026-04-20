@@ -38,8 +38,8 @@
                                         <MudTextField T="string" Label="new post" @bind-Value="chatroomPost.PostText" Variant="Variant.Text" Lines="5" AutoResize="true" Style="width:100%;font-family:'Courier New', Courier, monospace" />
                                             <br />
                                             <div style="text-align:center">
-                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Margin="Margin.Dense" @onclick="BtnInsertChatroomPost">Post</MudButton>
-                                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Margin="Margin.Dense" @onclick="BtnCancelNewChat">Cancel</MudButton>
+                                                <MudButton Variant="Variant.Filled" size="Size.Small" Color="Color.Primary" Margin="Margin.Dense" @onclick="BtnInsertChatroomPost">Post</MudButton>
+                                                <MudButton Variant="Variant.Filled" size="Size.Small" Color="Color.Secondary" Margin="Margin.Dense" @onclick="BtnCancelNewChat">Cancel</MudButton>
                                             </div>
                                     </MudCardContent>
                                 </MudCard>
@@ -50,7 +50,7 @@
                         {
                         <div style="text-align:center">
                             <button class="btn btn-link" @onclick="BtnCreateChatroomPost">
-                                <img src="/img/icoAdd0.png" width="22" title="new post" />
+                                <img class="pulse-animation" src="/img/icoAdd0.png" width="22" title="new post" />
                             </button>
                         </div>                        
                         }
@@ -69,8 +69,8 @@
                                                             <MudTextField T="string" Label="EDIT :" @bind-Value="chatroomPost.PostText" Variant="Variant.Text" Lines="6" AutoResize="true" Style="width:100%;font-family:'Courier New', Courier, monospace" />
                                                                 <br />
                                                                 <div style="text-align:center">
-                                                                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" Margin="Margin.Dense" @onclick="()=>BtnUpdateChatroomPost(chatroomPost)">Update</MudButton>
-                                                                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Margin="Margin.Dense" @onclick="BtnCancelNewChat">Cancel</MudButton>
+                                                                    <MudButton Variant="Variant.Outlined" size="Size.Small" Color="Color.Primary" Margin="Margin.Dense" @onclick="()=>BtnUpdateChatroomPost(chatroomPost)">Update</MudButton>
+                                                                    <MudButton Variant="Variant.Outlined" size="Size.Small" Color="Color.Secondary" Margin="Margin.Dense" @onclick="BtnCancelNewChat">Cancel</MudButton>
                                                                 </div>
                                                         </MudCardContent>
                                                     </MudCard>
