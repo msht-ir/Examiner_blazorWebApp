@@ -25,8 +25,8 @@
         <br />
         <br />
         <div class="d-flex gap-4 justify-content-center">
-            <button class="btn btn-link pulse-hover" @onclick="GotoProjects">
-                <img src="/img/icoSwitchBoardNoteBook.png" width="48" title="notebooks دفترچه يادداشت"/>
+            <button class="btn btn-link pulse-hover" @onclick="GotoNotebooks">
+                <img src="/img/icoNoteBook.png" width="48" title="notebooks دفترچه يادداشت"/>
             </button>
             <button class="btn btn-link pulse-hover" @onclick="ReportUserNotes">
                 <img src="/img/icoNoteReport.png" width="34" title="quick notes يادداشت ها"/>
@@ -39,7 +39,7 @@
         <div style="text-align: center;margin-top:50px;">
             <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Person2" Size="Size.Small" OnClick="@(() => GotoLogin())" Style="padding-left:60px;padding-right:60px">Logout</MudButton>
        </div>
-        @* <E_Projects /> *@
+        @* <E_NoteBooks /> *@
         @if (appState.Cmd == "CreateNote")
             {
             <hr style="color:red" />
@@ -54,7 +54,7 @@
     private bool _firstRender = true;
     User user = new User ();
     public int Spacing { get; set; } = 3;
-    
+
     //LifeCycleEvents
     protected override async Task OnInitializedAsync ()
         {
@@ -112,9 +112,10 @@
         {
         Navman.NavigateTo ("/T_Courses");
         }
-    public void GotoProjects ()
+    public void GotoNotebooks ()
         {
-        Navman.NavigateTo ("/E_Projects");
+        appState.SetReturnPage ("T_SwitchBoard");
+        Navman.NavigateTo("/E_NoteBooks");
         }
     public async Task BtnCreateNote ()
         {
@@ -129,12 +130,8 @@
     public void ReportUserNotes ()
         {
         user.UserId = Convert.ToInt32 (appState.UserId);
-        appState.SetReturnPage ("T_SwitchBoard");
+        appState.SetReturnPage ("/T_SwitchBoard");
         Navman.NavigateTo ($"/T_ReportNotes/1/{user.UserId}");
-        }
-    public void GotoCreateNewUser ()
-        {
-        //Navman.NavigateTo ("/E_Projects");
         }
     private void BtnChangeTeacherPassword ()
         {

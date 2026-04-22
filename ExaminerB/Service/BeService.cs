@@ -3973,13 +3973,14 @@ COMMIT TRANSACTION;
         #region P:Projects
         public async Task<int> Create_ProjectAsync (Project project)
             {
-            string sql = "INSERT INTO Projects (UserId, ProjectName, ProjectTags ) VALUES (@userid, @projectname, @projecttags)";
+            string sql = "INSERT INTO Projects (UserId, UserType, ProjectName, ProjectTags ) VALUES (@userid, @usertype, @projectname, @projecttags)";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             //Create
             await cnn.OpenAsync ();
             SqlCommand cmd2 = new SqlCommand (sql, cnn);
             cmd2.Parameters.AddWithValue ("@userid", project.UserId);
+            cmd2.Parameters.AddWithValue ("@usertype", project.UserType);
             cmd2.Parameters.AddWithValue ("@projectname", project.ProjectName);
             cmd2.Parameters.AddWithValue ("@projecttags", project.ProjectTags);
             await cmd2.ExecuteNonQueryAsync ();
@@ -3989,7 +3990,7 @@ COMMIT TRANSACTION;
         public async Task<List<Project>> Read_ProjectsAsync (int userId, string mode)
             {
             List<Project> lstProjects = new List<Project> ();
-            string sql = @"SELECT ProjectId, UserId, ProjectName, ProjectTags FROM Projects ";
+            string sql = @"SELECT ProjectId, UserId, UserType, ProjectName, ProjectTags FROM Projects ";
             switch (mode)
                 {
                 case "all":
@@ -4021,8 +4022,9 @@ COMMIT TRANSACTION;
                     {
                     ProjectId = reader.GetInt32 (0),
                     UserId = reader.GetInt32 (1),
-                    ProjectName = reader.GetString (2),
-                    ProjectTags = reader.GetInt32 (3),
+                    UserType = reader.GetInt32 (2),
+                    ProjectName = reader.GetString (3),
+                    ProjectTags = reader.GetInt32 (4),
                     Subprojects = new List<Subproject> ()
                     });
                 }
@@ -4035,7 +4037,7 @@ COMMIT TRANSACTION;
             }
         public async Task<Project> Read_ProjectAsync (int projectId)
             {
-            string sql = "SELECT ProjectId, UserId, ProjectName, ProjectTags FROM Projects WHERE ProjectId=@projectid";
+            string sql = "SELECT ProjectId, UserId, UserType, ProjectName, ProjectTags FROM Projects WHERE ProjectId=@projectid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
@@ -4047,8 +4049,9 @@ COMMIT TRANSACTION;
                 {
                 project.ProjectId = reader.GetInt32 (0);
                 project.UserId = reader.GetInt32 (1);
-                project.ProjectName = reader.GetString (2);
-                project.ProjectTags = reader.GetInt32 (3);
+                project.UserId = reader.GetInt32 (2);
+                project.ProjectName = reader.GetString (3);
+                project.ProjectTags = reader.GetInt32 (4);
                 project.Subprojects = new List<Subproject> ();
                 }
             await cnn.CloseAsync ();
@@ -4193,7 +4196,7 @@ COMMIT TRANSACTION;
             cmd2.Parameters.AddWithValue ("@parenttype", note.ParentType);
             cmd2.Parameters.AddWithValue ("@notedatum", note.NoteDatum);
             cmd2.Parameters.AddWithValue ("@notetext", note.NoteText);
-            cmd2.Parameters.AddWithValue ("@notetags", note.NoteTags); //1:rtl 2:done 4:shared 8:readonly
+            cmd2.Parameters.AddWithValue ("@notetags", note.NoteTags); //1:rtl 2:done 4:shared 8:readonly 16:S-Note?
             await cmd2.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
             return 1;

@@ -558,13 +558,13 @@ else
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
-    {
+        {
         appState.OnChange += TriggerRender;
         appState.SetMessage ("");
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
-        {
+            {
             Navman.NavigateTo ("/Login");
-        }
+            }
         user.UserId = Convert.ToInt32(appState.UserId);
         user.UserName = appState.UserName;
         user.UserPass = appState.UserPass;
@@ -577,144 +577,144 @@ else
         GroupId = appState.GroupId ?? 0;
         CourseId = appState.CourseId ?? 0;
         if(CourseId > 0)
-        {
+            {
             await BtnReadExams (CourseId);        
             ExamId = appState.ExamId ?? 0;
-        }
+            }
         MessageId = appState.MessageId ?? 0;
         _help = Convert.ToBoolean(appState.HelpOnHover);
         _hasFetched = true;
-    } 
+        } 
     protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-    }
+        {
+        }
     private void TriggerRender()
-    {
+        {
         InvokeAsync(StateHasChanged);
-    }
+        }
     public void Dispose()
-    {
+        {
         appState.OnChange -= TriggerRender;
-    }
+        }
     //student
     private async Task BtnCreateNewStudent(string usr, string pwd, string nick)
-    {
+        {
         user.UserId = Convert.ToInt32 (appState.UserId);
         User student = new User () { TeacherId= user.UserId, UserName = usr, UserPass = pwd, UserRole= "student", UserNickname= nick, UserTags= 3};
         int result = await feService.Create_Student(student);
         if (result > 1)
-        {
+            {
             Snackbar.Add($"{user.UserNickname} created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             _cmd="";
             strSearch = user.UserName;
             user.UserName = ""; //clear text-area
             user.UserPass = ""; //clear text-area
             StateHasChanged ();            
-        }
+            }
         else
-        {
+            {
             Snackbar.Add($"failed to create new student", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
         }
-    }
     public async Task BtnReadStudentsBySearch()
-    {
-        if(strSearch !="")
         {
+        if(strSearch !="")
+            {
             user.UserId = Convert.ToInt32 (appState.UserId);
             lstStudents = await feService.Read_StudentsByKeyword (user.UserId, strSearch, 0);
             Snackbar.Add($"students like '{strSearch}' listed...", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             appState.SetMessage($"search '{strSearch}'");
             StateHasChanged ();
+            }
         }
-    }
     public async Task BtnListAllStudent ()
-    {
+        {
         user.UserId = Convert.ToInt32 (appState.UserId);
         lstStudents = await feService.Read_StudentsAll (user.UserId);
         Snackbar.Add($"{lstStudents.Count} students listed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         appState.SetMessage($"all students");
         StateHasChanged ();
-    }
+        }
     public async Task BtnReadStudents(int Id, string mode)
-    {
-        if(Id > 0)
         {
+        if(Id > 0)
+            {
             lstStudents = await feService.Read_StudentsByGCEMId (Id, mode, 0);
             Snackbar.Add($"{lstStudents.Count} students listed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             string? itemx = mode.ToLower() switch
-            {
-                "s" => $"student",
-                "g" => $"group",
-                "c" => $"course",
-                "e" => $"exam",
-                "m" => $"mesage",
-                _ => null
-            };
+                {
+                    "s" => $"student",
+                    "g" => $"group",
+                    "c" => $"course",
+                    "e" => $"exam",
+                    "m" => $"mesage",
+                    _ => null
+                    };
 
             appState.SetMessage($"{itemx}");
             StateHasChanged();
-        }
+            }
         else
-        {
-            string? itemx = mode.ToLower() switch
             {
-                "s" =>  "select a Student from list",
-                "g" =>  "select a Group from list",
-                "c" =>  "select a Course from list",
-                "e" =>  "select a Course, then select an Exam",
-                "m" =>  "select a Mesage from list",
-                _ => null
-            };
+            string? itemx = mode.ToLower() switch
+                {
+                    "s" =>  "select a Student from list",
+                    "g" =>  "select a Group from list",
+                    "c" =>  "select a Course from list",
+                    "e" =>  "select a Course, then select an Exam",
+                    "m" =>  "select a Mesage from list",
+                    _ => null
+                    };
             Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
         }
-    }
     public async Task BtnSelectAllStudents()
-    {
+        {
         foreach(User student in lstStudents){
             student.IsSelected = true;
-        }
+            }
         StateHasChanged ();
-    }
+        }
     public async Task BtnInvertSelection()
-    {
+        {
         foreach(User student in lstStudents)
-        {
-            student.IsSelected = (student.IsSelected) ? false : true;
-        }
-        StateHasChanged ();
-    }   
-    public async Task BtnReportStudent(int Id, string mode)
-    {
-        if(Id > 0)
-        {
-            appState.SetReturnPage ("T_Students");
-            Navman.NavigateTo ($"/T_ReportStudents/{mode}/{Id}");           
-        }
-        else
-        {
-            string? itemx = mode.ToLower() switch
             {
-                "s" =>  "Select a Student from list",
-                "g" =>  "Select a Group from list",
-                "c" =>  "Select a Course from list",
-                "e" =>  "Select a Course, then select an Exam",
-                "m" =>  "Select a Mesage from list",
-                _ => null
-            };
+            student.IsSelected = (student.IsSelected) ? false : true;
+            }
+        StateHasChanged ();
+        }   
+    public async Task BtnReportStudent(int Id, string mode)
+        {
+        if(Id > 0)
+            {
+            appState.SetReturnPage ("/T_Students");
+            Navman.NavigateTo ($"/T_ReportStudents/{mode}/{Id}");           
+            }
+        else
+            {
+            string? itemx = mode.ToLower() switch
+                {
+                    "s" =>  "Select a Student from list",
+                    "g" =>  "Select a Group from list",
+                    "c" =>  "Select a Course from list",
+                    "e" =>  "Select a Course, then select an Exam",
+                    "m" =>  "Select a Mesage from list",
+                    _ => null
+                    };
             Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
         }
-    }
     public void BtnGotoPageReportMessages(User student)
-    {
-        appState.SetReturnPage ("T_Students");
+        {
+        appState.SetReturnPage ("/T_Students");
         appState.SetStudentId (student.UserId);
         appState.SetStudentName (student.UserName);
         appState.SetStudentNickname (student.UserNickname);
         Navman.NavigateTo ($"/T_ReportMessages/S/{student.UserId}");
-    }
+        }
     //group
     private async Task OnGroupChanged(int newValue) 
-    {
+        {
         //update GroupId from the event
         GroupId = newValue;
         group.GroupId = GroupId;
@@ -722,68 +722,68 @@ else
         group.UserId = 0;
         appState.SetGroupId (GroupId);
         StateHasChanged();
-    } 
+        } 
     private void BtnAddNewGroup()
-    {
+        {
         _cmd="AddNewGroup";
         StateHasChanged ();
-    }
+        }
     private async Task BtnCreateNewGroup(string groupName)
-    {
+        {
         user.UserId = Convert.ToInt32 (appState.UserId);
         Group group = new Group () { GroupName = groupName, UserId = user.UserId };
         bool result = await feService.Create_Group(group);        
         if (result)
-        {
+            {
             lstGroups = await feService.Read_Groups (user, false);
             Snackbar.Add($"group {groupName} created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             _cmd="";
             StateHasChanged ();            
-        }
+            }
         else
-        {
+            {
             Snackbar.Add($"failed to create {groupName}", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
         }
-    }
     private async Task BtnAddStudentsToGroup()
-    {
+        {
         List<int> lstStudentIds = new List<int>();
         int _count = 0;
         foreach (User student in lstStudents)
-        {
-            if (student.IsSelected)
             {
+            if (student.IsSelected)
+                {
                 lstStudentIds.Add(student.UserId);
                 _count++;
                 student.IsSelected = false;
+                }
             }
-        }
         bool result = await feService.Create_StudentGroups(GroupId, lstStudentIds);
         if (result)
-        {
+            {
             Snackbar.Add ($"{_count} students added to the group", Severity.Success);
-        }
+            }
         else
-        {
+            {
             Snackbar.Add ($"failed", Severity.Error);
+            }
         }
-    }
     private async Task BtnEditGroup(int groupId)
-    {
-        if(groupId > 0)
         {
+        if(groupId > 0)
+            {
             Group thisGroup = await feService.Read_Group (groupId);
             appState.SetGroupId(groupId);
             appState.SetGroupName(thisGroup.GroupName);
             strGroupName = appState.GroupName;
             _cmd="EditGroup";
             StateHasChanged ();
+            }
         }
-    }
     private async Task BtnUpdateGroup(string groupName)
-    {
-        if(groupName.Trim() != "")
         {
+        if(groupName.Trim() != "")
+            {
             group.GroupId = Convert.ToInt32 (appState.GroupId);
             group.GroupName = strGroupName;
             group.UserId = Convert.ToInt32 (appState.UserId);
@@ -793,20 +793,20 @@ else
             lstGroups = await feService.Read_Groups (user, false); //refresh list
             _cmd = "";
             StateHasChanged ();
+            }
         }
-    }
     private async Task BtnDeleteGroup(int groupId)
-    {
+        {
         //deletes a Group and all its StudentGroups
         if (groupId > 0)
-        {
+            {
             var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> the group?<br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
             bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
-            {
+                {
                 int result = await feService.Delete_Group (groupId);
                 if (result>0)
-                {
+                    {
                     Snackbar.Add("group deleted", Severity.Success);
                     GroupId = 0;
                     appState.SetGroupId(0);
@@ -814,251 +814,251 @@ else
                     lstGroups.Clear();
                     lstGroups = await feService.Read_Groups(user, false);
                     StateHasChanged();
-                }
+                    }
                 else
-                {
+                    {
                     Snackbar.Add("failed to delete group", Severity.Error);
+                    }
                 }
             }
-        }
         else
-        {
+            {
             Snackbar.Add("select a group", Severity.Warning);
+            }
         }
-    }
     //course-exam
     private async Task OnCourseChanged(int newValue) 
-    {
+        {
         //update CourseId from the event
         CourseId = newValue;
         appState.SetCourseId (CourseId);
         ExamId = 0;
         await BtnReadExams (CourseId);        
         StateHasChanged();
-    } 
+        } 
     private async Task OnExamChanged(int newValue) 
-    {
+        {
         //update ExamId from the event
         ExamId = newValue;
         appState.SetExamId (ExamId);
         StateHasChanged();
-    } 
+        } 
     private async Task BtnReadExams (int courseid)
-    {
+        {
         lstExams = await feService.Read_Exams (courseid);
         StateHasChanged ();
-    }
+        }
     private async Task BtnAddStudentsToCourse()
-    {
+        {
         List<int> lstStudentIds = new List<int>();
         int _count = 0;
         foreach (User student in lstStudents)
-        {
-            if (student.IsSelected)
             {
+            if (student.IsSelected)
+                {
                 lstStudentIds.Add(student.UserId);
                 _count++;
                 student.IsSelected = false;
+                }
             }
-        }
         bool result = await feService.Create_StudentCourses(CourseId, lstStudentIds);
         if (result)
-        {
+            {
             Snackbar.Add ($"{_count} students added to the course", Severity.Success);
-        }
+            }
         else
-        {
+            {
             Snackbar.Add ($"failed", Severity.Error);
+            }
         }
-    }
     private async Task BtnAddStudentsToExam()
-    {
+        {
         _hasFetched = false;
         List<int> lstStudentIds = new List<int>();
         int _count = 0;
         foreach (User student in lstStudents)
-        {
-            if (student.IsSelected)
             {
+            if (student.IsSelected)
+                {
                 lstStudentIds.Add(student.UserId);
                 _count++;
                 student.IsSelected = false;
+                }
             }
-        }
         int result = await feService.Create_StudentExams(ExamId, lstStudentIds);
         if (result > 0)
-        {
+            {
             Snackbar.Add ($"{_count} students added to the exam", Severity.Success);
-        }
+            }
         else
-        {
+            {
             Snackbar.Add ($"failed", Severity.Error);
-        }
+            }
         _hasFetched = true;
-    }
-    private async Task BtnChangeStudentCoursesStatus(string mode)
-    {
-        if(CourseId == 0)
-        {
-            Snackbar.Add ($"select a course", Severity.Warning);
         }
-        else
+    private async Task BtnChangeStudentCoursesStatus(string mode)
         {
+        if(CourseId == 0)
+            {
+            Snackbar.Add ($"select a course", Severity.Warning);
+            }
+        else
+            {
             _hasFetched = false;
             List<int> lstStudentIds = new List<int>();
             int _count = 0;
             foreach (User student in lstStudents)
-            {
-                if (student.IsSelected)
                 {
+                if (student.IsSelected)
+                    {
                     lstStudentIds.Add(student.UserId);
                     _count++;
                     student.IsSelected = false;
+                    }
                 }
-            }
             bool result = await feService.Update_StudentCoursesTags(lstStudentIds, CourseId, mode);
             Snackbar.Add ($"{_count} students-courses tags updated", Severity.Success);
             _hasFetched = true;            
+            }
         }
-    }
     private async Task BtnChangeStudentExamsStatus(string _status)
-    {
+        {
         if(ExamId == 0)
-        {
+            {
             Snackbar.Add ($"select an exam", Severity.Warning);
-        }
+            }
         else
-        {
+            {
             _hasFetched = false;
             List<int> lstStudentIds = new List<int>();
             int _count = 0;
             foreach (User student in lstStudents)
-            {
-                if (student.IsSelected)
                 {
+                if (student.IsSelected)
+                    {
                     lstStudentIds.Add(student.UserId);
                     _count++;
                     student.IsSelected = false;
+                    }
                 }
-            }
             bool result = await feService.Update_StudentExamsTags(lstStudentIds, ExamId, _status);
             Snackbar.Add ($"{_count} students-exams items changed", Severity.Success);
             _hasFetched = true;            
+            }
         }
-    }
     private void BtnGotoCoursesPage(int courseId)
-    {
-        if(courseId >0)
         {
+        if(courseId >0)
+            {
             appState.SetCourseId (courseId);
             Navman.NavigateTo("/T_Courses");
-        }
+            }
         else{
             Snackbar.Add($"select a course", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
         }
-    }
     private void BtnGotoExamsPage(int examId, string CourseName)
-    {
-        if((examId > 0) & (CourseName != ""))
         {
+        if((examId > 0) & (CourseName != ""))
+            {
             appState.SetCourseId (CourseId);
             appState.SetCourseName (course.CourseName);
             Navman.NavigateTo ("/T_Exams");
-        }
+            }
         else{
             Snackbar.Add($"select a course", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
         }
-    }
     //message
     private async Task BtnShowHideMessage(int messageId) 
-    {
-        if (messageId > 0)
         {
+        if (messageId > 0)
+            {
             _cmd = (_cmd == "ShowMessageBody") ? "HideMessageBody" : "ShowMessageBody";
             if (_cmd == "ShowMessageBody")
-            {
+                {
                 MessageId = messageId;
                 appState.SetMessageId (MessageId);
                 message = await feService.Read_Message (MessageId, false);
-            }
+                }
             StateHasChanged();                
-        }
+            }
         else
-        {
+            {
             _cmd = "HideMessageBody";
             Snackbar.Add($"select a message", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-        }
-    } 
+            }
+        } 
     private async Task OnMessageChanged(int newValue) 
-    {
+        {
         _cmd = "HideMessageBody";
         //update MessageId from the event
         MessageId = newValue;
         appState.SetMessageId (MessageId);
         StateHasChanged();
-    } 
+        } 
     private void BtnAddNewMessage()
-    {
+        {
         _cmd="AddNewMessage";
         strNewMessageTitle="";
         strNewMessageBody = "";
         StateHasChanged ();
-    }
+        }
     private async Task BtnCreateNewMessage(string messageTitle, string messageBody)
-    {
-        if(messageBody.Length < 4000)
         {
+        if(messageBody.Length < 4000)
+            {
             user.UserId = Convert.ToInt32(appState.UserId);
             Message message = new Message () { UserId = user.UserId, DateTimeCreated = "", MessageTitle = messageTitle, MessageBody=messageBody};
             int result = await feService.Create_Message(message);
             if(result > 0)
-            {
+                {
                 lstMessages = await feService.Read_Messages (user.UserId, false);
                 Snackbar.Add($"message {messageTitle} (len:{messageBody.Length}) created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 _cmd="";
                 StateHasChanged ();            
-            }
+                }
             else
-            {
+                {
                 Snackbar.Add($"failed to create message {messageTitle}", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
+            }
+        else
+            {
+            Snackbar.Add($"large message ({messageBody.Length}), max: 4000", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
-        else
-        {
-            Snackbar.Add($"large message ({messageBody.Length}), max: 4000", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-        }
-    }
     private async Task BtnAddStudentsToMessage()
-    {
+        {
         List<int> lstStudentIds = new List<int>();
         int _count = 0;
         foreach (User student in lstStudents)
-        {
-            if (student.IsSelected)
             {
+            if (student.IsSelected)
+                {
                 lstStudentIds.Add(student.UserId);
                 _count++;
                 student.IsSelected = false;
+                }
             }
-        }
         bool result = await feService.Create_StudentMessages(MessageId, lstStudentIds, requestFeedback);
         if (result)
-        {
+            {
             Snackbar.Add ($"message sent to {_count} students", Severity.Success);
-        }
+            }
         else
-        {
+            {
             Snackbar.Add ($"failed", Severity.Error);
+            }
         }
-    }
     private async Task BtnEditMessage(int messageId)
-    {
-        if(messageId > 0)
         {
+        if(messageId > 0)
+            {
             var message = new MarkupString($"<hr><span style='color:indianred'>Edit</span> message?<br>There may be previous Messages send using existing Title/Body.<br>Continue?<br><br><div style='text-align:center'><img src='/img/icoRename.png' width='70'/></div><br><hr>");
             bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
-            {
+                {
                 Message thisMessage = await feService.Read_Message (messageId, false);
                 appState.SetMessageId(messageId);
                 appState.SetMessageTitle(thisMessage.MessageTitle);
@@ -1068,13 +1068,13 @@ else
                 Snackbar.Add($"updated to: {strNewMessageTitle}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 _cmd="EditMessage";
                 StateHasChanged ();
+                }
             }
         }
-    }
     private async Task BtnUpdateMessage()
-    {
-        if((strNewMessageTitle.Trim() != "") & (strNewMessageBody.Trim() != ""))
         {
+        if((strNewMessageTitle.Trim() != "") & (strNewMessageBody.Trim() != ""))
+            {
             message.MessageId = Convert.ToInt32 (appState.MessageId);
             message.MessageTitle = strNewMessageTitle;
             message.MessageBody = strNewMessageBody;
@@ -1084,20 +1084,20 @@ else
             lstMessages = await feService.Read_Messages (user.UserId, false); //refresh list
             _cmd = "";
             StateHasChanged ();
+            }
         }
-    }
     private async Task BtnDeleteMessage (int messageId)
-    {
+        {
         //deletes a Message and all its StudentMessages sent to Students
         if(messageId>0)
-        {
+            {
             var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> the message and <span style='color:indianred; font-weight:bold'>all</span> instances already sent to Students?<br><br>Are you <span style='color:royalblue'>Sure</span>? <div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
             bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
-            {
+                {
                 bool result = await feService.Delete_Messages ("ByMessageId", messageId);
                 if (result)
-                {
+                    {
                     Snackbar.Add ("message deleted", Severity.Success);
                     MessageId = 0;
                     appState.SetMessageId (0);
@@ -1105,117 +1105,117 @@ else
                     lstMessages.Clear ();
                     lstMessages = await feService.Read_Messages (user.UserId, false);
                     StateHasChanged ();
-                }
+                    }
                 else
-                {
+                    {
                     Snackbar.Add ("failed to delete message", Severity.Error);
-                }                
+                    }                
+                }
+            }
+        else
+            {
+            Snackbar.Add ("select a message", Severity.Warning);
             }
         }
-        else
-        {
-            Snackbar.Add ("select a message", Severity.Warning);
-        }
-    }
     //Notes
     private async Task BtnCreateNote(int Id, string mode)
-    {
+        {
         //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
         if (Id > 0)
-        {
+            {
             int? parentType = mode.ToLower() switch
-            {
-                "u" =>  1,
-                "sp" => 2,
-                "s" =>  3,
-                "g" =>  4,
-                "c" =>  5,
-                "e" =>  6,
-                _ => null
-            };
+                {
+                    "u" =>  1,
+                    "sp" => 2,
+                    "s" =>  3,
+                    "g" =>  4,
+                    "c" =>  5,
+                    "e" =>  6,
+                    _ => null
+                    };
             if (parentType.HasValue)
-            {
+                {
                 appState.SetNoteParentId (Id);
                 appState.SetNoteParentType (parentType.Value);
                 appState.SetCmd ("CreateNote");
                 StateHasChanged ();
+                }
+            }
+        else
+            {
+            string? itemx = mode.ToLower() switch
+                {
+                    "s" =>  "select a Student from List",
+                    "g" =>  "select a Group from List",
+                    "c" =>  "select a Course from List",
+                    "e" =>  "select a Course, then select an Exam",
+                    _ => null
+                    };
+            Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        }  
+    private async Task BtnReportNotes(int Id, string mode)
+        {
+        if (Id > 0)
+            {
+            user.UserId = Convert.ToInt32 (appState.UserId);
+            appState.SetReturnPage ("/T_Students");
+            int? intMode = mode.ToLower() switch
+                {
+                    "s" =>  3,
+                    "g" =>  4,
+                    "c" =>  5,
+                    "e" =>  6,
+                    _ => null
+                    };
+            Navman.NavigateTo ($"/T_ReportNotes/{intMode.Value}/{Id}");            
+            }
+        else
+            {
+            string? itemx = mode.ToLower() switch
+                {
+                    "s" =>  "Select a Student from List",
+                    "g" =>  "Select a Group from List",
+                    "c" =>  "Select a Course from List",
+                    "e" =>  "Select a Course, then select an Exam",
+                    _ => null
+                    };
+            Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
-        else
-        {
-            string? itemx = mode.ToLower() switch
-            {
-                "s" =>  "select a Student from List",
-                "g" =>  "select a Group from List",
-                "c" =>  "select a Course from List",
-                "e" =>  "select a Course, then select an Exam",
-                _ => null
-            };
-            Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-        }
-    }  
-    private async Task BtnReportNotes(int Id, string mode)
-    {
-        if (Id > 0)
-        {
-            user.UserId = Convert.ToInt32 (appState.UserId);
-            appState.SetReturnPage ("T_Students");
-            int? intMode = mode.ToLower() switch
-            {
-                "s" =>  3,
-                "g" =>  4,
-                "c" =>  5,
-                "e" =>  6,
-                _ => null
-            };
-            Navman.NavigateTo ($"/T_ReportNotes/{intMode.Value}/{Id}");            
-        }
-        else
-        {
-            string? itemx = mode.ToLower() switch
-            {
-                "s" =>  "Select a Student from List",
-                "g" =>  "Select a Group from List",
-                "c" =>  "Select a Course from List",
-                "e" =>  "Select a Course, then select an Exam",
-                _ => null
-            };
-            Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-        }
-    }
     //excel import
     public async Task BtnAddNewStudent()
-    {
+        {
         if(_cmd == "AddnewStudent")
-        {
+            {
             _cmd = "";
-        }
+            }
         else
-        {
+            {
             user.UserName = "username";
             user.UserNickname = "nickname";
             user.UserPass = "1234";
             _cmd = "AddnewStudent";
-        }
+            }
         StateHasChanged ();
-    }
+        }
     public void BtnImportStudentsFromExcelFile()
-    {
+        {
         appState.SetCmd ("importstudentsfromexcelfile");
-    }
+        }
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
-    {
+        {
         _hasFetched = false;
         var file = e.File;
         using var memoryStream = new MemoryStream();
         await file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(memoryStream);
         memoryStream.Position = 0;
         await ParseStudentExcelAsync(memoryStream);
-    }
+        }
     private async Task ParseStudentExcelAsync(Stream stream)
-    {
-        try
         {
+        try
+            {
             user.UserId = Convert.ToInt32 (appState.UserId);
             lstStudents.Clear ();
             using var workbook = new XLWorkbook(stream);
@@ -1223,7 +1223,7 @@ else
             i = 0;
             // group.GroupId = Convert.ToInt32 (appState.GroupId);
             foreach (var row in worksheet.RowsUsed().Skip(1)) //skip header
-            {
+                {
                 i++;
                 User student = new User () {
                     TeacherId = user.UserId,
@@ -1235,20 +1235,20 @@ else
                 };
                 int result = await feService.Create_Student (student);
                 if(result > 0 )
-                {
+                    {
                     student.UserId = result; //'result' is int StudentId returned by be
                     lstStudents.Add (student);
-                }                
-            }
+                    }                
+                }
             StateHasChanged ();            
-        }
+            }
         catch (Exception ex)
-        {
+            {
             Console.WriteLine($"Error in [ImportExcel]: {ex}");
-        }
+            }
         _hasFetched = true;
         appState.SetCmd ("");
-    }
+        }
     private async Task BtnHelpImporStudentsFromtExcel ()
         {
         var message = new MarkupString(@$"<hr>To import a list of students from <span style='font-weight:bold;color:green'>Excel</span> file:<br><br>column A = UserName<br>column B = Password<br>column C = Nickname <br><br>notice: no duplicates!<hr><div style='text-align:center'><img src='/img/icoExcel1.png' width='40'/></div><br><hr>");
@@ -1256,20 +1256,20 @@ else
         }
     //cancel-back
     public void BtnCancelSearchStudent()
-    {
+        {
         lstStudents.Clear();
         Snackbar.Add($"list cleared", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         StateHasChanged ();
-    }
+        }
     public void BtnGotoPageExamPoints(int examId)
-    {
+        {
         if(ExamId == 0)
             {
             Snackbar.Add($"select an exam", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         else
             {
-            appState.SetReturnPage ("T_Students");
+            appState.SetReturnPage ("/T_Students");
             appState.SetCmd ("reportexampoints");
             appState.SetExamId (examId);
             Navman.NavigateTo ($"/T_ReportExamPoints");
@@ -1277,7 +1277,7 @@ else
         }
     public void BtnGotoPageCourses()
         {
-        appState.SetReturnPage("T_Students");
+        appState.SetReturnPage("/T_Students");
         if (CourseId > 0)
             {
             Navman.NavigateTo ("/T_Courses");        
@@ -1300,10 +1300,11 @@ else
         {
         string pg = page switch
             {
-                "S" => "T_students",
-                "C" => "T_Courses"
+                "S" => "/T_students",
+                "C" => "/T_Courses"
                 };
-        Navman.NavigateTo($"/{pg}");
+        appState.SetReturnPage ("/T_Students");
+        Navman.NavigateTo(pg);
         }
 
 }

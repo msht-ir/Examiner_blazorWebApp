@@ -198,19 +198,19 @@
         }
     public void BtnReportStudents (int examId)
         {
-        appState.SetReturnPage ("T_Exams");
+        appState.SetReturnPage ("/T_Exams");
         Navman.NavigateTo ($"/T_ReportStudents/E/{examId}");
         }
     public void BtnReportExamTests (int examId)
         {
-        appState.SetReturnPage ("T_Exams");
+        appState.SetReturnPage ("/T_Exams");
         appState.SetCmd ("examtests");
         appState.SetExamId (examId);
         Navman.NavigateTo ($"/T_ReportTests");
         }
     public void BtnReportExamPoints (int examId)
         {
-        appState.SetReturnPage ("T_Exams");
+        appState.SetReturnPage ("/T_Exams");
         appState.SetCmd ("reportexampoints");
         appState.SetExamId (examId);
         Navman.NavigateTo ($"/T_ReportExamPoints");

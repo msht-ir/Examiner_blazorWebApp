@@ -1,4 +1,4 @@
-﻿@page "/E_Projects"
+﻿@page "/E_NoteBooks"
 @using ClosedXML.Excel
 @using Microsoft.Extensions.Hosting
 @using ClosedXML
@@ -31,14 +31,17 @@ else if(appState.Cmd == "UpdateNote")
     }
 else
     {
-    @* <_eLibWelcome /> *@
+    <div style="font-size:larger; text-align:center;color:black">@appState.UserNickname</div>
     <div style="text-align:left; max-width:500px; margin: 0 auto;">
-        <button class="btn btn-link" @onclick= "()=> BtnBack()">
+        <button class="btn btn-link" @onclick= "()=> BtnBackToCallingPage()">
             <img src="/img/icoBack3.png" style="width:40px" title="back"/>
         </button>
-        <button class="btn btn-link" @onclick= "()=> BtnGotoReportUserNotes()">
-            <img src="/img/icoNoteReport.png" style="width:35px" title="goto: quick notes"/>
-        </button>
+        @if (user.UserRole == "teacher")
+            {
+            <button class="btn btn-link" @onclick= "()=> BtnGotoReportUserNotes()">
+                <img src="/img/icoNoteReport.png" style="width:35px" title="goto: quick notes"/>
+            </button>            
+            }
     </div>
     <EditForm Model="lstProjects">
         @* SEARCH BOX*@ 
@@ -46,7 +49,6 @@ else
             <MudCard Class="mx-0">
                 <MudCardContent Style="background-color:whitesmoke;">
                     <div class="mb-3" style="max-width:500px; margin:0 auto">
-                        @* <span style="font-size:larger; font-weight:bold;color:royalblue;">Search</span> *@
                         <div class="d-flex align-items-center mb-3">
                             <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:'Segoe UI';width:95%;color:black;" />
                             <button class="btn btn-link" @onclick="BtnReadNotesBySearch">
@@ -207,7 +209,7 @@ else
                                     data-bs-target="#@collapseId"
                                     aria-expanded="true"
                                     aria-controls="@collapseId">
-                                    <img class="pulse-hover" src="img/icoSwitchBoardNoteBook.png" width="38" style="margin-right:10px;"/>
+                                    <img class="pulse-hover" src="img/icoNoteBook.png" width="38" style="margin-right:10px;"/>
                                     <h4 style="color:indigo">@project.ProjectName</h4>
                             </button>
                         </h4>
@@ -310,24 +312,7 @@ else
                                                                     <div style="text-align: center;">
                                                                         @if((appState.Cmd == "EditSubprojectNote") & (subProject.SubprojectId ==appState.SubprojectId))
                                                                             {
-                                                                            @* Create a new note here /////// ABANDONED*@
-                                                                            <hr style="color:indianred"/>
-                                                                            <h5>New Note</h5>
-                                                                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
-                                                                                <MudCard Class="mx-0">
-                                                                                    <MudCardContent Style="background-color:whitesmoke;">
-                                                                                        @* <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" /> *@
-                                                                                        <MudDatePicker Label="Calendar" @bind-Date="_date" DateFormat="yyyy-MM-dd" PickerVariant="PickerVariant.Static" Variant="Variant.Outlined" Margin="Margin.Dense"/>
-                                                                                        <MudTimePicker Label="Time" @bind-Time="_time" TimeFormat="HH:mm" Variant="Variant.Outlined" Dense="true"/>
-                                                                                        <MudTextField T="string" Label="New Note" @bind-Value="note.NoteText" Variant="Variant.Filled" Lines="10" AutoResize="true" Style="width:100%;" />
-                                                                                        <div>
-                                                                                            <br />
-                                                                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="()=>BtnUpdateSubprojectNote(subProject.SubprojectId)">Update</MudButton>
-                                                                                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="BtnCancel">Cancel</MudButton>
-                                                                                        </div>
-                                                                                    </MudCardContent>
-                                                                                </MudCard>
-                                                                            </MudContainer>
+                                                                            //abandoned
                                                                             }
                                                                         else
                                                                             {
@@ -392,7 +377,7 @@ else
                                                                                                                         </button>
                                                                                                                         edit note
                                                                                                                     </MudMenuItem>
-                                                                                                                    <MudMenuItem @onclick="() => BtnCopyToNoteReport(notex)">
+                                                                                                                    <MudMenuItem @onclick="() => BtnCopyToNoteReport(notex, subProject.ProjectId)">
                                                                                                                         <button class="btn btn-link">
                                                                                                                             <img src="/img/icoCopyToNoteReport.png" width="26" title="copy to quick note" />
                                                                                                                         </button>
@@ -481,7 +466,7 @@ else
                                                                                                                         </button>
                                                                                                                         edit note
                                                                                                                     </MudMenuItem>
-                                                                                                                    <MudMenuItem @onclick="() => BtnCopyToNoteReport(notex)">
+                                                                                                                    <MudMenuItem @onclick="() => BtnCopyToNoteReport(notex, subProject.ProjectId)">
                                                                                                                         <button class="btn btn-link">
                                                                                                                             <img src="/img/icoCopyToNoteReport.png" width="26" title="copy to quick note" />
                                                                                                                         </button>
@@ -556,12 +541,15 @@ else
                     {
                         <div style="max-width:500px; margin: 0 auto;">
                             <br />
-                            <button class="btn btn-link" @onclick= "()=> BtnBack()">
+                            <button class="btn btn-link" @onclick= "()=> BtnBackToCallingPage()">
                                 <img src="/img/icoBack3.png" style="width:40px" title="back"/>
                             </button>
-                            <button class="btn btn-link" @onclick="() => BtnGotoReportUserNotes()">
-                                <img src="/img/icoNoteReport.png" style="width:35px" title="goto: quick notes" />
-                            </button>
+                            @if (user.UserRole == "teacher")
+                                {
+                                <button class="btn btn-link" @onclick="() => BtnGotoReportUserNotes()">
+                                    <img src="/img/icoNoteReport.png" style="width:35px" title="goto: quick notes" />
+                                </button>                            
+                                }
                             <button class="btn btn-link" @onclick="BtnAddNewProject">
                                 <img src="/img/icoAddNewNoteBook.png" width="44" title="add new notebook" />
                             </button>
@@ -573,9 +561,9 @@ else
         <br/>
     </EditForm>
     }
-<script>
-    window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});
-</script>
+    <script>
+        window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});
+    </script>
 
 @code {
     private MudTextField<string> refNewProject;
@@ -636,6 +624,8 @@ else
         if (user.UserId > 0)
             {
             //on second rener, user.UserId will get its value
+            appState.SetProjectId(0);
+            appState.SetNoteParentId(0);
             await GetListOfProjects (user.UserId, _ShowProjectsMode); 
             //lstSPNotes = await feService.Read_Notes (Convert.ToInt32(appState.SubprojectId), 2);
             _hasFetched = true;
@@ -674,6 +664,7 @@ else
     public async Task BtnSaveNewProject()
         {
         //project.ProjectName is bind
+        project.UserType = (user.UserRole == "teacher") ? 1 : 2; // UserTypes: 1:Teacher 2:Student
         project.ProjectTags = 1;
         project.UserId = Convert.ToInt32(appState.UserId);
         int result = await feService.Create_Project (project);
@@ -683,13 +674,13 @@ else
             appState.SetCmd("");
             // Refresh the list
             var user = new User
-            {
+                {
                 UserId = Convert.ToInt32(appState.UserId),
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
                 UserRole = appState.UserRole,
                 TeacherId = 0
-            };
+                };
             user.UserId = Convert.ToInt32 (appState.UserId);
             await GetListOfProjects (user.UserId, _ShowProjectsMode); 
             project.ProjectName = ""; //reset input text
@@ -931,44 +922,12 @@ else
         appState.SetNoteText(note.NoteText);
         appState.SetNoteIsRtl(note.IsRtl);
         appState.SetNoteParentId(note.ParentId);
-        appState.SetNoteParentType(note.ParentType);
+        appState.SetNoteParentType(2);
         appState.SetNoteParentName(note.ParentName);
         appState.SetCmd("UpdateNote");
         StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
         //to handel close event, I added in the Modal_CreateNote: [Parameter] public EventCallback OnClose 
-        }
-    public async Task BtnUpdateSubprojectNote(int subProjectId)
-        {
-        ///////////ABANDONED : now there is a modal to update note.
-        if (note.NoteText.Trim() == "")
-            {
-            Snackbar.Add("note is empty!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            return;
-            }
-        else
-            {
-            note.ParentId = Convert.ToInt32(appState.NoteParentId);
-            note.ParentType = 1;
-            DateTime _dt = _date.Value.Date + _time.Value;
-            note.NoteDatum = _dt.ToString ("yyyy-MM-dd HH:mm");
-            note.NoteTags = 0; //1:rtl 2:done 4:shared 8:readonly 16:S-Note?
-            _hasFetched = false;
-            bool result = await feService.Update_Note (note);
-            if(result)
-                {
-                Snackbar.Add("updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                user.UserId = Convert.ToInt32(appState.UserId);
-                await GetListOfProjects (user.UserId, _ShowProjectsMode);
-                appState.SetCmd("");
-                StateHasChanged();
-                }
-            else
-                {
-                Snackbar.Add("failed to update note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                }
-            _hasFetched = true;
-            }
         }
     public async Task BtnShowNoteInDialog(Note note)
         {
@@ -995,17 +954,31 @@ else
         lstNotes.Clear ();
         StateHasChanged ();
         }  
-    public async Task BtnCopyToNoteReport(Note note)
+    public async Task BtnCopyToNoteReport(Note note, int projectId)
         {
         var message = new MarkupString($"<hr><span style='color:DarkGreen'>COPY</span> this note to Quick-Notes?<br><br><div style='text-align:center'><img src='/img/icoCopyToNoteReport.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
-            note.ParentType = 1;
-            note.ParentId = Convert.ToInt32(appState.UserId);
+            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)            
+            appState.SetProjectId (projectId);
+            user.UserRole = appState.UserRole;
+            Note newNote = new Note ()
+                {
+                NoteId = 1,
+                ParentId = Convert.ToInt32(appState.UserId),
+                ParentType = 7,
+                NoteDatum = note.NoteDatum,
+                NoteText = note.NoteText,
+                NoteTags = note.NoteTags
+                };
+            newNote.ParentType = (appState.UserRole == "teacher") ? 1 : 7; //1:U, 2:SP, 3:S, 4:G, 5:C, 6:E, 7:SN
+            if (appState.UserRole == "student")
+                {
+                newNote.NoteTags |= 16; //16:Student-Note
+                }
             _hasFetched = false;
-            int result = await feService.Create_Note (note);
+            int result = await feService.Create_Note (newNote);
             if(result > 0)
                 {
                 Snackbar.Add("note copied to quick-notes", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
@@ -1166,7 +1139,7 @@ else
     public void BtnGotoReportUserNotes ()
         {
         user.UserId = Convert.ToInt32 (appState.UserId);
-        appState.SetReturnPage ("T_SwitchBoard");
+        appState.SetReturnPage ("/T_SwitchBoard");
         Navman.NavigateTo ($"/T_ReportNotes/1/{user.UserId}");
         }
     private async Task HandleModalClose() 
@@ -1182,8 +1155,8 @@ else
         appState.SetCmd("");
         _cmd = "";
         }
-    public void BtnBack()
+    public void BtnBackToCallingPage()
         {    
-        Navman.NavigateTo ("/T_SwitchBoard");
+        Navman.NavigateTo(appState.ReturnPage ?? "/Login");
         }
 }

@@ -24,7 +24,7 @@
                     <img src="/img/icoBack3.png" width="40" title="back"/>
                 </button>
                 <button class="btn btn-link" @onclick= "()=> GotoProjects()">
-                    <img src="/img/icoSwitchBoardNoteBook.png" style="width:44px" title="goto Notebooks"/>
+                    <img src="/img/icoNoteBook.png" style="width:44px" title="goto Notebooks"/>
                 </button>
                 <button class="btn btn-link" @onclick="CreateNote">
                     <img src="/img/icoAdd0.png" width="24" title="add new quick-note"/>
@@ -256,31 +256,32 @@
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
-    {
+        {
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
-        {
+            {
             Navman.NavigateTo ("/Login");
-        }
+            }
         appState.SetCmd ("");
         user.UserId = Convert.ToInt32(appState.UserId);
         user.UserName = appState.UserName;
         lstNotes = await feService.Read_Notes (Id, mode);
         await GetListOfProjects (user.UserId, _ShowProjectsMode); 
         _hasFetched = true;
-    } 
+        } 
     private void TriggerRender()
-    {
+        {
         InvokeAsync(StateHasChanged);
-    }
+        }
     public void Dispose()
-    {
+        {
         appState.OnChange -= TriggerRender;
-    }
+        }
     //btns
     public void GotoProjects ()
-    {
-        Navman.NavigateTo ("/E_Projects");
+        {
+        appState.SetReturnPage ("T_ReportNotes");
+        Navman.NavigateTo("/E_NoteBooks");
     }
     private async Task OnProjectChanged(int newValue) 
     {

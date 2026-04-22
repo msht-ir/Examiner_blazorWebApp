@@ -292,7 +292,7 @@
                     <img src="/img/icoSwitchBoardStudents.png" width="44" />
                 </button>
                 <button class="btn btn-link" @onclick='() => BtnGotoPage("N")'>
-                    <img src="/img/icoSwitchBoardNoteBook.png" width="44" />
+                    <img src="/img/icoNoteBook.png" width="44" />
                 </button>
             </div>
         </div>
@@ -559,9 +559,9 @@
         }
     public void BtnUpdateCourseFolderActiveInPlace(CourseFolder courseFolder, int flag , bool isChecked)
         {
-    
+
         }   
-//Back
+    //Back
     public void BtnCancel()
         {
         appState.SetCmd ("");
@@ -575,10 +575,10 @@
         {
         string pg = page switch
             {
-                "S" => "T_students",
-                "N" => "E_Projects"
-                };
-        Navman.NavigateTo ($"/{pg}");
+            "S" => "/T_Students",
+                "N" => "/E_NoteBooks"
+            };
+        appState.SetReturnPage ("/T-Courses");
+        Navman.NavigateTo (pg);
         }
-
 }
