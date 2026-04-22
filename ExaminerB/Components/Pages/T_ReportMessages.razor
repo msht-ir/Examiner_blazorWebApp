@@ -9,9 +9,6 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
-<h6 style="text-align:center;color:royalblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small"> Teacher</span></h6>
-<hr style="color:red"/>
-
 @if (!_hasFetched)
     {
     <_LoadingTimer />
@@ -71,15 +68,18 @@ else
                     </div>
                     <div style="color:gray;font-weight:bold; padding-left:25px;">Feedback <span style="font-weight:normal;"> @(nMessagesAnsweredYes + nMessagesAnsweredNo) /  @nMessagesTypeIsFeedback ( @((nMessagesAnsweredYes + nMessagesAnsweredNo) * 100 / @nMessagesTypeIsFeedback)% ) </span></div>
                     }
-            }
+                }
             else
                 {
                 <button class="btn btn-link" @onclick="BtnBack">
                     <img src="/img/icoBack3.png" width="40" />
                 </button>                
-                <button class="btn btn-link" @onclick="BtnCalcPercentsForStudent">
-                    <img src="/img/gifChartPie.gif" width="40" />
-                </button>
+                @if (user.UserRole == "teacher")
+                    {
+                    <button class="btn btn-link" @onclick="BtnCalcPercentsForStudent">
+                        <img src="/img/gifChartPie.gif" width="40" />
+                    </button>
+                    }
                 <button class="btn btn-link" @onclick="()=>BtnDelete_MessagesOfstudent(Id)">
                     <img src="/img/icoDelete2.png" width="35" />
                 </button>
@@ -181,7 +181,7 @@ else
             </div>
         }
     @if(lstStudentMessages.Count > 0)
-    {
+        {
         <h5 style="text-align:left; margin-top:30px">messages</h5>
         @foreach (StudentMessage message in lstStudentMessages)
                 {

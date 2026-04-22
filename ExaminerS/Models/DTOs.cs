@@ -418,6 +418,7 @@ namespace ExaminerS.Models
         {
         public int ProjectId { get; set; } = 0;
         public int UserId { get; set; } = 0;
+        public int UserType { get; set; } = 0; //1:User(Teacher) 2:Student
         public string ProjectName { get; set; } = "";
         public int ProjectTags { get; set; }
         //wrapper properties for each flag

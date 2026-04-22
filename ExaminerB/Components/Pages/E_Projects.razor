@@ -48,9 +48,9 @@ else
                     <div class="mb-3" style="max-width:500px; margin:0 auto">
                         @* <span style="font-size:larger; font-weight:bold;color:royalblue;">Search</span> *@
                         <div class="d-flex align-items-center mb-3">
-                            <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:'Segoe UI';width:90%;color:black;" />
+                            <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:'Segoe UI';width:95%;color:black;" />
                             <button class="btn btn-link" @onclick="BtnReadNotesBySearch">
-                                <img src="/img/icoSearch.png" width="24" title="Search notes"/>
+                                <img class="pulse-animation" src="/img/icoSearch.png" width="24" title="Search notes"/>
                             </button>
                             @if(lstNotes.Count > 0)
                                 {
@@ -72,7 +72,8 @@ else
                 <div>
                     @if ((note.NoteTags & 1) == 1)
                         {
-                        <div class="mt-3 text-end">
+                        @* SEARCH RESULTS -- RTL *@ 
+                        <div class="d-flex" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:whitesmoke;">
@@ -93,29 +94,28 @@ else
                                             </div>
                                             }
                                         <hr />
-                                        <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                            @if(note.NoteText.Length > 100)
-                                                {
-                                                <MudMenuItem @onclick="() => BtnShowNoteInDialog(note)">
-                                                    <button class="btn btn-link">
-                                                        <img src="/img/icoNote2.png" width="20" title="show note"/>
-                                                    </button>                                            
-                                                    show note
+                                        <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
+                                            <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                <MudMenuItem @onclick="() => BtnEditNoteInDialog(note)">
+                                                    <button class="btn btn-link pulse-animation">
+                                                        <img src="/img/icoRename.png" width="28" />
+                                                    </button>
+                                                    edit note
                                                 </MudMenuItem>
+                                                <MudMenuItem @onclick="() => BtnDeleteNote(note)">
+                                                    <button class="btn btn-link">
+                                                        <img src="/img/icoDelete1.png" width="20" title="delete note"/>
+                                                    </button>
+                                                    delete note
+                                                </MudMenuItem>
+                                            </MudMenu>
+                                            @if (note.NoteText.Length > 100)
+                                                {
+                                                <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(note)">
+                                                    <img src="/img/icoNoteReport.png" width="24" title="show note expanded" />
+                                                </button>
                                                 }
-                                            <MudMenuItem @onclick="() => BtnEditNoteInDialog(note)">
-                                                <button class="btn btn-link">
-                                                    <img src="/img/icoRename.png" width="28" />
-                                                </button>
-                                                edit note
-                                            </MudMenuItem>
-                                            <MudMenuItem @onclick="() => BtnDeleteNote(note)">
-                                                <button class="btn btn-link">
-                                                    <img src="/img/icoDelete1.png" width="20" title="delete note"/>
-                                                </button>
-                                                delete note
-                                            </MudMenuItem>
-                                        </MudMenu>
+                                        </div>
                                     </MudCardContent>
                                 </MudCard>
                             </MudContainer>
@@ -123,7 +123,8 @@ else
                         }
                     else
                         {
-                        <div class="mt-3 text-start">
+                        @* SEARCH RESULTS -- LTR *@ 
+                        <div class="d-flex" style="color:indianred; font-weight:bold;font-size:small">
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:whitesmoke;">
@@ -144,29 +145,28 @@ else
                                             </div>
                                             }
                                         <hr />
-                                        <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                            @if(note.NoteText.Length > 100)
-                                                {
-                                                <MudMenuItem @onclick="() => BtnShowNoteInDialog(note)">
-                                                    <button class="btn btn-link">
-                                                        <img src="/img/icoNote2.png" width="20" title="show note"/>
-                                                    </button>                                            
-                                                    show note
+                                        <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
+                                            <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                <MudMenuItem @onclick="() => BtnEditNoteInDialog(note)">
+                                                    <button class="btn btn-link pulse-animation">
+                                                        <img src="/img/icoRename.png" width="28" />
+                                                    </button>
+                                                    edit note
                                                 </MudMenuItem>
+                                                <MudMenuItem @onclick="() => BtnDeleteNote(note)">
+                                                    <button class="btn btn-link">
+                                                        <img src="/img/icoDelete1.png" width="20" title="delete note"/>
+                                                    </button>
+                                                    delete note
+                                                </MudMenuItem>
+                                            </MudMenu>
+                                            @if (note.NoteText.Length > 100)
+                                                {
+                                                <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(note)">
+                                                    <img src="/img/icoNoteReport.png" width="24" title="show note expanded" />
+                                                </button>
                                                 }
-                                            <MudMenuItem @onclick="() => BtnEditNoteInDialog(note)">
-                                                <button class="btn btn-link">
-                                                    <img src="/img/icoRename.png" width="28" />
-                                                </button>
-                                                edit note
-                                            </MudMenuItem>
-                                            <MudMenuItem @onclick="() => BtnDeleteNote(note)">
-                                                <button class="btn btn-link">
-                                                    <img src="/img/icoDelete1.png" width="20" title="delete note"/>
-                                                </button>
-                                                delete note
-                                            </MudMenuItem>
-                                        </MudMenu>
+                                        </div>
                                     </MudCardContent>
                                 </MudCard>
                             </MudContainer>
@@ -191,8 +191,9 @@ else
                         })
                 </span>
             </div>
-            @* 2 PROJECTS/SUBPROJECTS *@
+            @* 2 NOTEBOOKS / SECTIONS *@
             <div class="accordion" id="accordionProjects" style="max-width:500px; margin: 0 auto;">
+                @* NOTEBOOKS *@
                 @foreach (Project project in lstProjects)
                     {
                     var collapseId = $"collapse{project.ProjectId}";
@@ -259,6 +260,7 @@ else
                                             }
                                         else
                                             {
+                                            @* SECTIONS *@
                                             <div class="accordion" id="accordionSubprojects-@project.ProjectId">
                                             @foreach (Subproject subProject in project.Subprojects)
                                                 {
@@ -273,9 +275,9 @@ else
                                                                 aria-expanded="true"
                                                                 aria-controls="@collapseId2">
                                                                 <button class="btn btn-link" @onclick="() => BtnReadSubprojectNotes(subProject.SubprojectId)">
-                                                                    <img class="pulse-animation" src="img/icoBookmark1.png" width="22" style="margin-right:10px;"/>
+                                                                    <img class="pulse-animation" src="img/icoBookmark1.png" width="22" style="margin-right:5px;"/>
                                                                 </button>
-                                                                <h6 style="margin-left:15px;">@subProject.SubprojectName</h6>
+                                                                <h6 style="margin-left:5px;">@subProject.SubprojectName</h6>
                                                         </button>
                                                     </h4>
                                                     <div id="@collapseId2" class="accordion-collapse @_clpsSP" data-bs-parent="#accordionSubprojects-@project.ProjectId">
@@ -329,13 +331,14 @@ else
                                                                             }
                                                                         else
                                                                             {
+                                                                            @* NOTES *@
                                                                             if(subProject.SubprojectId == Convert.ToInt32(appState.NoteParentId))
                                                                                 {
                                                                                 @foreach (Note notex in lstSPNotes)
                                                                                     {
                                                                                     if ((notex.NoteTags & 1) == 1)
                                                                                         {
-                                                                                        @* RTL *@
+                                                                                        @* NOTES - RTL *@
                                                                                         <div class="mt-3 text-end">
                                                                                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                                                                                 <MudCard Class="mx-0">
@@ -412,7 +415,7 @@ else
                                                                                                                 @if (notex.NoteText.Length > 100)
                                                                                                                     {
                                                                                                                     <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(notex)">
-                                                                                                                        <img src="/img/icoNote2.png" width="18" title="show note expanded" />
+                                                                                                                        <img src="/img/icoNoteReport.png" width="22" title="show note expanded" />
                                                                                                                     </button>
                                                                                                                     }
                                                                                                             </div>
@@ -424,7 +427,7 @@ else
                                                                                         }
                                                                                     else
                                                                                         {
-                                                                                        @* LTR *@
+                                                                                        @* NOTES - LTR *@
                                                                                         <div class="mt-3 text-start">
                                                                                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                                                                                 <MudCard Class="mx-0">
@@ -469,43 +472,43 @@ else
                                                                                                             </div>
                                                                                                             }
                                                                                                         else
-                                                                                                        {
-                                                                                                        <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
-                                                                                                            <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                                                                                                <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
-                                                                                                                    <button class="btn btn-link pulse-animation">
-                                                                                                                        <img src="/img/icoRename.png" width="28" title="edit note"/>
+                                                                                                            {
+                                                                                                            <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
+                                                                                                                <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                                                                                    <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
+                                                                                                                        <button class="btn btn-link pulse-animation">
+                                                                                                                            <img src="/img/icoRename.png" width="28" title="edit note"/>
+                                                                                                                        </button>
+                                                                                                                        edit note
+                                                                                                                    </MudMenuItem>
+                                                                                                                    <MudMenuItem @onclick="() => BtnCopyToNoteReport(notex)">
+                                                                                                                        <button class="btn btn-link">
+                                                                                                                            <img src="/img/icoCopyToNoteReport.png" width="26" title="copy to quick note" />
+                                                                                                                        </button>
+                                                                                                                        copy to quick notes
+                                                                                                                    </MudMenuItem>
+                                                                                                                    <MudDivider/>
+                                                                                                                    <MudMenuItem @onclick="() => BtnReplaceNote(notex.NoteId)">
+                                                                                                                        <button class="btn btn-link">
+                                                                                                                            <img src="/img/icoMoveToNoteBook.png" width="32" title="انتقال يادداشت به دفترچه" />
+                                                                                                                        </button>
+                                                                                                                        replace
+                                                                                                                    </MudMenuItem>
+                                                                                                                    <MudMenuItem @onclick="() => BtnDeleteNote(notex)">
+                                                                                                                        <button class="btn btn-link">
+                                                                                                                            <img src="/img/icoDelete1.png" width="22" title="delete note"/>
+                                                                                                                        </button>
+                                                                                                                        delete note
+                                                                                                                    </MudMenuItem>
+                                                                                                                </MudMenu>                                                                                                            
+                                                                                                                @if (notex.NoteText.Length > 100)
+                                                                                                                    {
+                                                                                                                    <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(notex)">
+                                                                                                                        <img src="/img/icoNoteReport.png" width="22" title="show note expanded" />
                                                                                                                     </button>
-                                                                                                                    edit note
-                                                                                                                </MudMenuItem>
-                                                                                                                <MudMenuItem @onclick="() => BtnCopyToNoteReport(notex)">
-                                                                                                                    <button class="btn btn-link">
-                                                                                                                        <img src="/img/icoCopyToNoteReport.png" width="26" title="copy to quick note" />
-                                                                                                                    </button>
-                                                                                                                    copy to quick notes
-                                                                                                                </MudMenuItem>
-                                                                                                                <MudDivider/>
-                                                                                                                <MudMenuItem @onclick="() => BtnReplaceNote(notex.NoteId)">
-                                                                                                                    <button class="btn btn-link">
-                                                                                                                        <img src="/img/icoMoveToNoteBook.png" width="32" title="انتقال يادداشت به دفترچه" />
-                                                                                                                    </button>
-                                                                                                                    replace
-                                                                                                                </MudMenuItem>
-                                                                                                                <MudMenuItem @onclick="() => BtnDeleteNote(notex)">
-                                                                                                                    <button class="btn btn-link">
-                                                                                                                        <img src="/img/icoDelete1.png" width="22" title="delete note"/>
-                                                                                                                    </button>
-                                                                                                                    delete note
-                                                                                                                </MudMenuItem>
-                                                                                                            </MudMenu>                                                                                                            
-                                                                                                            @if (notex.NoteText.Length > 100)
-                                                                                                                {
-                                                                                                                <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(notex)">
-                                                                                                                    <img src="/img/icoNote2.png" width="18" title="show note expanded" />
-                                                                                                                </button>
-                                                                                                                }
-                                                                                                        </div>
-                                                                                                        }
+                                                                                                                    }
+                                                                                                            </div>
+                                                                                                            }
                                                                                                     </MudCardContent>
                                                                                                 </MudCard>
                                                                                             </MudContainer>

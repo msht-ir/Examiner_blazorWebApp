@@ -96,13 +96,7 @@
                                                 }
                                             else
                                                 {
-                                                <div class="d-flex align-items-center justify-content-center" style="text-align:center; margin-top:10px;">
-                                                    @if (notex.NoteText.Length > 100)
-                                                        {
-                                                        <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(notex)">
-                                                            <img src="/img/icoNote2.png" width="20" title="نمايش يادداشت در صفحه" />
-                                                        </button>
-                                                        }
+                                                <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
                                                     <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
                                                         <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
                                                             <button class="btn btn-link pulse-animation">
@@ -123,6 +117,12 @@
                                                             delete note
                                                         </MudMenuItem>
                                                     </MudMenu>
+                                                    @if (notex.NoteText.Length > 100)
+                                                        {
+                                                        <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(notex)">
+                                                            <img src="/img/icoNoteReport.png" width="22" title="نمايش يادداشت در صفحه" />
+                                                        </button>
+                                                        }
                                                 </div>
                                                 }
                                         </MudCardContent>
@@ -178,13 +178,7 @@
                                                 }
                                             else
                                                 {
-                                                <div class="d-flex justify-content-center" style="text-align:center;margin-top:10px;">
-                                                    @if (notex.NoteText.Length > 100)
-                                                        {
-                                                        <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(notex)">
-                                                            <img src="/img/icoNote2.png" width="20" title="نمايش يادداشت در صفحه" />
-                                                        </button>
-                                                        }
+                                                <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
                                                     <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
                                                         <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
                                                             <button class="btn btn-link pulse-animation">
@@ -205,6 +199,12 @@
                                                             delete note
                                                         </MudMenuItem>
                                                     </MudMenu>
+                                                    @if (notex.NoteText.Length > 100)
+                                                        {
+                                                        <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(notex)">
+                                                            <img src="/img/icoNoteReport.png" width="22" title="نمايش يادداشت در صفحه" />
+                                                        </button>
+                                                        }
                                                 </div>
                                                 }
                                         </MudCardContent>

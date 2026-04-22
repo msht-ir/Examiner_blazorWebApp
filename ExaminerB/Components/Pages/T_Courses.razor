@@ -40,7 +40,7 @@
                                 aria-expanded="false"
                                 aria-controls="@collapseId">
                                 <h5 style="color:dimgray">
-                                    <img src="/img/icoCourse.png" width="24" style="margin-right:5px;"/>
+                                    <img class="pulse-hover" src="/img/icoCourse.png" width="24" style="margin-right:5px;"/>
                                     @crs.CourseName
                                 </h5>
                             </button>
@@ -284,12 +284,18 @@
                         </button>
                         }
                     <hr style="color:red" /> 
-                    <div style="text-align:center">
-                        <button class="btn btn-link" @onclick= "BtnBack">
-                            <img src="/img/icoBack3.png" style="width:40px" />
-                        </button>
-                    </div>
-             </div>
+            <div style="text-align: center;">
+                <button class="btn btn-link" @onclick="BtnBack">
+                    <img src="/img/icoBack3.png" width="40" />
+                </button>
+                <button class="btn btn-link" @onclick='() => BtnGotoPage("S")'>
+                    <img src="/img/icoSwitchBoardStudents.png" width="44" />
+                </button>
+                <button class="btn btn-link" @onclick='() => BtnGotoPage("N")'>
+                    <img src="/img/icoSwitchBoardNoteBook.png" width="44" />
+                </button>
+            </div>
+        </div>
         </EditForm>
         }
 <script>
@@ -565,4 +571,14 @@
         appState.SetCmd ("");
         Navman.NavigateTo ("/T_SwitchBoard");
         }
+    private void BtnGotoPage(string page)
+        {
+        string pg = page switch
+            {
+                "S" => "T_students",
+                "N" => "E_Projects"
+                };
+        Navman.NavigateTo ($"/{pg}");
+        }
+
 }

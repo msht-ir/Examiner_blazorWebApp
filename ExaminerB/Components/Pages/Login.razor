@@ -71,8 +71,8 @@
         <div class="d-flex gap-4" style="margin-top:40px;margin-bottom:25px;">
             @if (user.UserRole == "teacher")
                 {
-                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Login" Size="Size.Small" OnClick="@(() => BtnLogin())" Style="width:180px;">Login</MudButton>
-                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AccountBox" Size="Size.Small" OnClick='() => user.UserRole = "student"' Style="width:180px;">I'm A Student</MudButton>
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AccountBox" Size="Size.Small" OnClick="@(() => BtnLogin())" Style="width:180px;">Login</MudButton>
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Login" Size="Size.Small" OnClick='() => user.UserRole = "student"' Style="width:180px;">I'm A Student</MudButton>
                 }
             else if (user.UserRole == "student")
                 {

@@ -496,10 +496,10 @@
                                     <h5 style="color:darkgoldenrod;text-align:center;margin-top:20px">new chatroom</h5>
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
-                                            <MudTextField @bind-Value="chatroom.ChatroomName" Label="chatroom name" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                            <MudTextField @bind-Value="chatroom.ChatroomTerms" Label="terms" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="4"/>
+                                            <MudTextField @bind-Value="chatroom.ChatroomName" Label="chatroom" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:Tahoma" />
+                                            <MudTextField @bind-Value="chatroom.ChatroomTerms" Label="terms" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="4" Style="font-family:Tahoma" />
                                             <div class="align-content-center align-items-center justify-content-center" style="text-align:center">
-                                                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCreateChatroom">
+                                                <button class="btn btn-link pulse-animation" name="btnNewCourse" @onclick="BtnCreateChatroom">
                                                     <img src="/img/icoSave2.png" width="20" />
                                                 </button>
                                                 <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
