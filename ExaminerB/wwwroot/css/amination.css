@@ -21,7 +21,7 @@
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-20px); }
     }
-.up-down  { display: inline-block; animation: moveUpDown 2s ease-in-out infinite; }
+.up-down  { display: inline-block; animation: moveUpDown 8s ease-in-out infinite; }
 
 
 @keyframes fadeInOut 

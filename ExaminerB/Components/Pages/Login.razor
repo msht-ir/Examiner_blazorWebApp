@@ -31,7 +31,8 @@
                     <hr />
                     <div style="text-align:center">
                         e<span style="font-style:italic;font-weight:bold;color:indianred">x</span>aminer developed by Majid SharifiTehrani<br />
-                        <span style="font-size:smaller">assistant prof of plant ecology and systematics</span><br />
+                        <span style="font-size:smaller">assistant prof.</span><br />
+                        <span style="font-size:smaller">floristics, collectomics and diversity informatics</span><br />
                         Mar 2026<br /><br />
                         <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AppRegistration" Size="Size.Small" OnClick="@(() => BtnSignup())" Style="margin-left:20px">SingUp (New Teacher)</MudButton>
                     </div>
@@ -60,8 +61,8 @@
                     @if(user.UserRole == "student")
                         {
                         <div class="mb-3 d-flex gap-1">
-                            <MudSelect T="int" @ref="refTeacher" Label="Your Teacher ?" Value="TeacherId" ValueChanged="OnTeacherChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                            <MudSelectItem Value="0">Your teacher?</MudSelectItem>
+                            <MudSelect T="int" @ref="refTeacher" Label="Teacher" Value="TeacherId" ValueChanged="OnTeacherChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                            <MudSelectItem Value="0">Select</MudSelectItem>
                             @foreach (var teacher in lstTeachers) { <MudSelectItem Value="@teacher.UserId">@teacher.UserNickname</MudSelectItem> }
                         </MudSelect>
                         </div>
@@ -76,7 +77,7 @@
             </MudCard>
         </MudContainer>
         <div class="d-flex gap-4" style="margin-top:30px;margin-bottom:25px;">
-            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AccountBox" Size="Size.Small" OnClick="@(() => BtnLogin())" Style="width:300px;">Login</MudButton>
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AccountBox" Size="Size.Small" OnClick="@(() => BtnLogin())" Style="width:200px;">Login</MudButton>
         </div>
         <hr style="min-width:380px;max-width:400px;" />
     </EditForm>

@@ -27,7 +27,14 @@
                             <MudCard Class="mx-0">
                                 <MudCardContent Style="background-color:whitesmoke;">
                                     @* <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Margin="Margin.Dense" /> *@
-                                    <MudDatePicker Label="Calendar YMD تقويم" @bind-Date="_date" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Elevation="12" Margin="Margin.Dense" Modal="true" />
+                                    <MudDatePicker 
+                                        Label="Calendar YMD تقويم" 
+                                        @bind-Date="_date" 
+                                        DateFormat="yyyy-MM-dd" 
+                                        Variant="Variant.Outlined" 
+                                        Elevation="12" 
+                                        Margin="Margin.Dense" 
+                                        Modal="true" />
                                     <MudTimePicker Label="Time ساعت" @bind-Time="_time" TimeFormat="HH:mm" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Dense="true"/>
                                     <MudTextField T="string" Label="Note" @bind-Value="note.NoteText" Variant="Variant.Outlined" Lines="24" AutoResize="true" Style=@($"width:100%;direction:{(note.IsRtl ? "rtl" : "ltr")};font-size:13px;font-family:{(note.IsRtl ? "'Segoe UI'" : "'Courier New', Courier, monospace")};color:black;") />
                                     <MudCheckBox @bind-Value="note.IsRtl" Label="RTL" Color="Color.Primary"></MudCheckBox>

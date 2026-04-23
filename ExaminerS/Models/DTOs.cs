@@ -236,7 +236,8 @@ namespace ExaminerS.Models
         public int ExamId { get; set; } = 0;
         public int TopicId { get; set; } = 0;
         public int TopicNTests { get; set; } = 0;
-        public int TestsLevel { get; set; } = 0;
+        public int TestsLevelFrom { get; set; } = 0;
+        public int TestsLevelTo { get; set; } = 0;
         }
     //ET
     public class ExamTest

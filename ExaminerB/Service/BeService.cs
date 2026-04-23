@@ -2192,14 +2192,15 @@ COMMIT TRANSACTION;
         #region EC:ExamCompositions
         public async Task<int> Create_ExamCompositionAsync (ExamComposition examComposition)
             {
-            string sql = "INSERT INTO ExamCompositions (ExamId, TopicId, TopicNTests, TestsLevel) VALUES (@examid, @topicid, @topicntests, @testslevel); SELECT CAST (scope_identity() AS int)"; //get ID of newly added record
+            string sql = "INSERT INTO ExamCompositions (ExamId, TopicId, TopicNTests, TestsLevelFrom, TestsLevelTo) VALUES (@examid, @topicid, @topicntests, @testslevelfrom, @testslevelto); SELECT CAST (scope_identity() AS int)"; //get ID of newly added record
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
             cmd.Parameters.AddWithValue ("@examid", examComposition.ExamId);
             cmd.Parameters.AddWithValue ("@topicid", examComposition.TopicId);
             cmd.Parameters.AddWithValue ("@topicntests", examComposition.TopicNTests);
-            cmd.Parameters.AddWithValue ("@testslevel", examComposition.TestsLevel);
+            cmd.Parameters.AddWithValue ("@testslevelfrom", examComposition.TestsLevelFrom);
+            cmd.Parameters.AddWithValue ("@testslevelto", examComposition.TestsLevelTo);
             await cnn.OpenAsync ();
             int i = (int) await cmd.ExecuteScalarAsync ();
             return i;
@@ -2209,7 +2210,7 @@ COMMIT TRANSACTION;
             List<ExamComposition> lstExamComposition = new List<ExamComposition> ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new ("SELECT ExamCompositionId, ExamId, TopicId, TopicNTests, TestsLevel FROM ExamCompositions WHERE ExamId=@examid", cnn);
+            using SqlCommand cmd = new ("SELECT ExamCompositionId, ExamId, TopicId, TopicNTests, TestsLevelFrom, TestsLevelTo FROM ExamCompositions WHERE ExamId=@examid", cnn);
             cmd.Parameters.AddWithValue ("@examid", examId);
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
@@ -2221,7 +2222,8 @@ COMMIT TRANSACTION;
                     ExamId = reader.GetInt32 (1),
                     TopicId = reader.GetInt32 (2),
                     TopicNTests = reader.GetInt32 (3),
-                    TestsLevel = reader.GetInt32 (4)
+                    TestsLevelFrom = reader.GetInt32 (4),
+                    TestsLevelTo = reader.GetInt32 (5)
                     });
                 }
             return lstExamComposition;
@@ -2231,7 +2233,7 @@ COMMIT TRANSACTION;
             ExamComposition examComposition = new ExamComposition ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new ("SELECT ExamCompositionId, ExamId, TopicId, TopicNTests, TestsLevel FROM ExamCompositions WHERE ExamCompositionId=@examcompositionid", cnn);
+            using SqlCommand cmd = new ("SELECT ExamCompositionId, ExamId, TopicId, TopicNTests, TestsLevelFrom, TestsLevelTo FROM ExamCompositions WHERE ExamCompositionId=@examcompositionid", cnn);
             cmd.Parameters.AddWithValue ("@examcompositionid", examCompositionId);
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
@@ -2241,20 +2243,22 @@ COMMIT TRANSACTION;
                 examComposition.ExamId = reader.GetInt32 (1);
                 examComposition.TopicId = reader.GetInt32 (2);
                 examComposition.TopicNTests = reader.GetInt32 (3);
-                examComposition.TestsLevel = reader.GetInt32 (4);
+                examComposition.TestsLevelFrom = reader.GetInt32 (4);
+                examComposition.TestsLevelTo = reader.GetInt32 (5);
                 }
             return examComposition;
             }
         public async Task<bool> Update_ExamCompositionAsync (ExamComposition examComposition)
             {
-            string sql = "UPDATE ExamCompositions SET ExamId=@examid, TopicId=@topicid, TopicNTests=@topicntests, TestsLevel=@testslevel WHERE ExamCompositionId=@examcompositionid";
+            string sql = "UPDATE ExamCompositions SET ExamId=@examid, TopicId=@topicid, TopicNTests=@topicntests, TestsLevelFrom=@testslevelfrom, TestsLevelTo=@testslevelto WHERE ExamCompositionId=@examcompositionid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
             cmd.Parameters.AddWithValue ("@examid", examComposition.ExamId);
             cmd.Parameters.AddWithValue ("@topicid", examComposition.TopicId);
             cmd.Parameters.AddWithValue ("@topicntests", examComposition.TopicNTests);
-            cmd.Parameters.AddWithValue ("@testslevel", examComposition.TestsLevel);
+            cmd.Parameters.AddWithValue ("@testslevelfrom", examComposition.TestsLevelFrom);
+            cmd.Parameters.AddWithValue ("@testslevelto", examComposition.TestsLevelTo);
             cmd.Parameters.AddWithValue ("@examcompositionid", examComposition.ExamCompositionId);
             await cnn.OpenAsync ();
             await cmd.ExecuteReaderAsync ();
@@ -2287,13 +2291,15 @@ COMMIT TRANSACTION;
         public async Task<int> Create_ExamTestsByExamCompositionAsync (ExamComposition examComposition)
             {
             List<int> lstTestIds = new List<int> ();
-            string sql = "SELECT Top (@ntests) TestId From Tests WHERE TopicId=@topicid ORDER BY NEWID()";
+            string sql = "SELECT Top (@ntests) TestId From Tests WHERE TopicId=@topicid AND TestLevel >= @testlevelfrom AND TestLevel <= @testlevelto ORDER BY NEWID()";
             string? connString = _config.GetConnectionString ("cnni");
             using (SqlConnection cnn = new (connString))
                 {
                 using SqlCommand cmd = new (sql, cnn);
                 cmd.Parameters.AddWithValue ("@ntests", examComposition.TopicNTests);
                 cmd.Parameters.AddWithValue ("@topicid", examComposition.TopicId);
+                cmd.Parameters.AddWithValue ("@testlevelfrom", examComposition.TestsLevelFrom);
+                cmd.Parameters.AddWithValue ("@testlevelto", examComposition.TestsLevelTo);
                 await cnn.OpenAsync ();
                 var reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())

@@ -82,7 +82,7 @@
                                                 </div>
                                                 <hr />
                                                 <button class="btn btn-link" Title=@((_help)?"get a random Test from course" + studentCourse.CourseName :"") @onclick="()=>BtnTakeATest (studentCourse.StudentCourseId)">
-                                                <img class="pulse-animation" src="/img/icoCourse.png" width="28" />
+                                                    <img class="pulse-animation" src="/img/icoSwitchBoardCourses.png" width="36" />
                                                 </button>
                                                 @if ((studentCourse.StudentCourseTags & 5) == 5)
                                                     {
@@ -122,15 +122,15 @@
                                                         <hr style="color:gray" />
                                                         <div style="color:gray">No folders for this course</div>
                                                         }
-                                                }
-                                                else
-                                                    {
-                                                    <div>
-                                                        <button class="btn btn-link" Title=@((_help)?"show links for "+studentCourse.CourseName + " folder(s) online":"") style="padding:15px;border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
-                                                            <img src="/img/icoFolderCF.png" width="28"/>
-                                                        </button>
-                                                    </div>
                                                     }
+                                                    else
+                                                        {
+                                                        <div>
+                                                            <button class="btn btn-link" Title=@((_help)?"show links for "+studentCourse.CourseName + " folder(s) online":"") style="padding:15px;border: none;" @onclick='async ()=> await BtnShowCourseFolders(studentCourse)'>
+                                                                <img src="/img/icoFolderCF.png" width="28"/>
+                                                            </button>
+                                                        </div>
+                                                        }
                                             </MudCardContent>
                                         </MudCard>
                                     </MudContainer>
