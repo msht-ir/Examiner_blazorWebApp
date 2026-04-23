@@ -41,7 +41,7 @@
             <hr style="color:red" />
             @* --- STUDENT COURSES *@
             <div class="accordion-item mb-2">
-                    <h4 class="accordion-header">
+                    <h4 class="accordion-header" >
                         <button class="accordion-button @(appState.Cmd=="ShowCourseFolders" ? "" : "collapsed")"
                             type="button"
                             data-bs-toggle="collapse"
@@ -584,7 +584,10 @@
                                 </button>
                             </div>
                             @* list Notes *@
-                            <h6 style="text-align:left;color:forestgreen;margin:10px;">quick notes</h6>
+                            @if(lstNotes.Count > 0)
+                                {
+                                <h6 style="text-align:left;color:forestgreen;margin:10px;">quick notes</h6>
+                                }
                             @foreach(Note notex in lstNotes)
                                 {
                                 @if ((notex.NoteTags & 1) == 1)

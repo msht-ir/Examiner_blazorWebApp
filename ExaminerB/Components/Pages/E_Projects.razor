@@ -224,7 +224,7 @@ else
                                         </div>
                                         <div class="d-flex mb-2">
                                             <MudCheckBox @bind-Value="project.IsActive" Label="active" Color="Color.Primary"></MudCheckBox>
-                                            <button class="btn btn-link" style="margin-left:15px;" name="@btnProjectId" @onclick="()=>BtnUpdateProject(project)">
+                                            <button class="btn btn-link pulse-animation" style="margin-left:15px;" name="@btnProjectId" @onclick="()=>BtnUpdateProject(project)">
                                                 <img src="/img/icoSave2.png" width="25" title="save notebook"/>
                                             </button>
                                             <button class="btn btn-link" style="margin-left:15px;" @onclick="()=>BtnDeleteProject(project.ProjectId)" @key="project.ProjectId">
@@ -238,11 +238,11 @@ else
                                     else
                                         {
                                         <div style="text-align: center;">
-                                            <button class="btn btn-link" type="button" @onclick="()=>BtnEditProject(project.ProjectId)">
-                                                <img src="/img/icoRename.png" width="34" title="edit notebook"/>
-                                            </button>
                                             <button class="btn btn-link" @onclick="()=>BtnAddNewSubproject(project.ProjectId)">
                                                 <img src="/img/icoAddSection1.png" width="28" title="add new section" />
+                                            </button>
+                                            <button class="btn btn-link" type="button" @onclick="()=>BtnEditProject(project.ProjectId)">
+                                                <img src="/img/icoRename.png" width="34" title="edit notebook"/>
                                             </button>
                                             <hr style="color:red" />
                                         </div>
@@ -251,7 +251,7 @@ else
                                             <div>
                                                 <div class="d-flex mb-3">
                                                     <MudTextField @ref="refNewSubproject" @bind-Value="txtNewSubprojectTitle" Label="new section" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                                    <button class="btn btn-link" @onclick="()=>BtnSaveNewSubproject(project.ProjectId)">
+                                                    <button class="btn btn-link pulse-animation" @onclick="()=>BtnSaveNewSubproject(project.ProjectId)">
                                                         <img src="/img/icoSave2.png" width="24" title="save new section"/>
                                                     </button>
                                                     <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
@@ -288,7 +288,7 @@ else
                                                                     {
                                                                     <div class="d-flex mb-1">
                                                                         <MudTextField @ref="refSubprojectName" @bind-Value="subProject.SubprojectName" Label="section" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                                                        <button class="btn btn-link" @onclick="()=>BtnUpdateSubproject(subProject)">
+                                                                        <button class="btn btn-link pulse-animation" @onclick="()=>BtnUpdateSubproject(subProject)">
                                                                             <img src="/img/icoSave2.png" width="22" title="update section name"/>
                                                                         </button>
                                                                         <button class="btn btn-link" @onclick="()=>BtnDeleteSubproject(subProject)">
@@ -301,12 +301,12 @@ else
                                                                     }
                                                                 else
                                                                     {
-                                                                    <div style="text-align:center">
-                                                                        <button class="btn btn-link" @onclick="()=>BtnCreateNewSubprojectNote(subProject)">
-                                                                            <img src="/img/icoAdd0.png" width="20" title="new note"/>
+                                                                    <div style="text-align:right">
+                                                                        <button class="btn btn-link pulse-animation" @onclick="()=>BtnCreateNewSubprojectNote(subProject)">
+                                                                            <img src="/img/icoNewNote3.png" width="24" title="new note"/>
                                                                         </button>
                                                                         <button class="btn btn-link" type="button" @onclick="()=>BtnEditSubproject(subProject.SubprojectId)">
-                                                                            <img src="/img/icoRename.png" width="30" title="edit section"/>
+                                                                            <img src="/img/icoRename.png" width="28" title="edit section"/>
                                                                         </button>
                                                                     </div>
                                                                     <div style="text-align: center;">
@@ -502,9 +502,9 @@ else
                                                                                     }
                                                                                 @if (lstSPNotes.Count > 0)
                                                                                     {
-                                                                                    <div style="text-align:center">
+                                                                                    <div style="text-align:right;margin-top:8px;">
                                                                                         <button class="btn btn-link" @onclick="()=>BtnCreateNewSubprojectNote(subProject)">
-                                                                                            <img src="/img/icoAdd0.png" width="22" title="add new note"/>
+                                                                                            <img src="/img/icoNewNote3.png" width="24" title="add new note" />
                                                                                         </button>
                                                                                     </div>                                                                            
                                                                                     }

@@ -11,9 +11,9 @@
 @inject ISnackbar Snackbar
 
 <PageTitle>Examiner Home</PageTitle>
-<br />
 <center>
-    <div class="accordion align-items-center" id="accordionIndex" style="text-align:center;min-width:380px;max-width:400px;">
+    @* ABOUT *@
+    <div class="accordion align-items-center m-2" id="accordionIndex" style="text-align:center;min-width:380px;max-width:400px;">
         <div class="accordion-item">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
@@ -40,44 +40,43 @@
         </div>
     </div>
 </center>
-<br />
-<div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+@* LOGIN *@
+<div style="display: flex; flex-direction: column; justify-content: center; align-items: center;margin-top:20px;">
     <div style="display: flex; justify-content: flex-end;">
-        <img src="/img/pngStudyGirl1.png" width="320" style="margin-right:10px" onclick="SwitchUserRole" />
+        @if(user.UserRole == "student")
+        {
+            <img src="/img/pngStudyGirl1.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />            
+        }
+        else
+        {            
+            <img src="/img/icoLoginTeacher1.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
+        }
     </div>
     <EditForm Model="user" OnValidSubmit="BtnLogin" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <MudContainer Class="mt-2 px-0">
             <MudCard Class="mx-0">
-                <MudCardContent Style="background-color:rgba(248,248,248, 1);max-width:500px;min-width:400px;padding-bottom:40px;">
-                    <div class="mb-3 d-flex gap-1">
-                        <MudSelect T="string" @ref="refRole" Label="role" Value="user.UserRole" ValueChanged="@((string role) => OnRoleChanged(role))" Class="w-auto" Variant="Variant.Outlined" Margin="Margin.Dense" Style="font-size:small;">
-                            <MudSelectItem Value=@("student")>Student</MudSelectItem>
-                            <MudSelectItem Value=@("teacher")>Teacher</MudSelectItem>
+                <MudCardContent Style="background-color:rgba(248,248,248, 1);max-width:500px;min-width:400px;min-height:220px;padding-bottom:20px;">
+                    @if(user.UserRole == "student")
+                        {
+                        <div class="mb-3 d-flex gap-1">
+                            <MudSelect T="int" @ref="refTeacher" Label="Your Teacher ?" Value="TeacherId" ValueChanged="OnTeacherChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                            <MudSelectItem Value="0">Your teacher?</MudSelectItem>
+                            @foreach (var teacher in lstTeachers) { <MudSelectItem Value="@teacher.UserId">@teacher.UserNickname</MudSelectItem> }
                         </MudSelect>
-                        @if(user.UserRole == "student")
-                            {
-                            <MudSelect T="int" @ref="refTeacher" Label="Teacher" Value="TeacherId" ValueChanged="OnTeacherChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                <MudSelectItem Value="0">Your teacher?</MudSelectItem>
-                                @foreach (var teacher in lstTeachers) { <MudSelectItem Value="@teacher.UserId">@teacher.UserNickname</MudSelectItem> }
-                            </MudSelect>
-                            }
-                    </div>
+                        </div>
+                        }
+                    else
+                    {
+                        <hr /><br />
+                    }
                     <MudTextField @ref="refUser" @bind-Value="user.UserName" Label="Username" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                     <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" InputType="InputType.Password" />
                 </MudCardContent>
             </MudCard>
         </MudContainer>
-        <div class="d-flex gap-4" style="margin-top:40px;margin-bottom:25px;">
-            @if (user.UserRole == "teacher")
-                {
-                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AccountBox" Size="Size.Small" OnClick="@(() => BtnLogin())" Style="width:180px;">Login</MudButton>
-                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Login" Size="Size.Small" OnClick='() => user.UserRole = "student"' Style="width:180px;">I'm A Student</MudButton>
-                }
-            else if (user.UserRole == "student")
-                {
-                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AccountBox" Size="Size.Small" OnClick="@(() => BtnLogin())" style="width:300px">Login</MudButton>
-                }
+        <div class="d-flex gap-4" style="margin-top:30px;margin-bottom:25px;">
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AccountBox" Size="Size.Small" OnClick="@(() => BtnLogin())" Style="width:300px;">Login</MudButton>
         </div>
         <hr style="min-width:380px;max-width:400px;" />
     </EditForm>
@@ -118,7 +117,6 @@
             {
             _firstRender = false;
             await Task.Delay (1);
-            await refRole.FocusAsync ();        
             }
         }
     private void TriggerRender()
@@ -192,6 +190,11 @@
         Navman.NavigateTo("/T_SignUp");
         }
     //methods
+    private void SwitchUserRole ()
+        {
+        user.UserRole = (user.UserRole == "student") ? "teacher" : "student";
+        StateHasChanged();
+        }
     public async Task HandleUserKeyDown (KeyboardEventArgs e)
         {
         if (e.Key == "Enter")
