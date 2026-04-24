@@ -72,8 +72,8 @@
                                             <hr />
                                             @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId)==notex.NoteId))
                                                 {
-                                        <h6 style="color:indianred;text-align:center;">move to:</h6>
-                                        @* COMBO Notebooks *@
+                                                <h6 style="color:indianred;text-align:center;">move to:</h6>
+                                                @* COMBO Notebooks *@
                                                 <div class="d-flex">
                                                     <MudSelect T="int" @ref="refProjects" Label="Notebook" Value="ProjectId" ValueChanged="OnProjectChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
                                                         <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
@@ -86,10 +86,10 @@
                                                         <MudSelectItem Value="0">Select a Section...</MudSelectItem>
                                                         @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
                                                     </MudSelect>
-                                            <button class="btn btn-link" Title="move!" @onclick='() => BtnMovetoSelectSection(SubprojectId, notex.NoteId)'>
+                                                    <button class="btn btn-link pulse-animation" Title="move!" @onclick='() => BtnMovetoSelectSection(SubprojectId, notex.NoteId)'>
                                                         <img src="/img/icoMoveToNoteBook.png" width="34" />
                                                     </button>
-                                                    <button class="btn btn-link" Title="cancel" @onclick='() => BtnCancel()'>
+                                                    <button class="btn btn-link pulse-hover" Title="cancel" @onclick='() => BtnCancel()'>
                                                         <img src="/img/icoCancel.png" width="20" />
                                                     </button>
                                                 </div>
@@ -108,7 +108,7 @@
                                                             <button class="btn btn-link">
                                                                 <img src="/img/icoMoveToNoteBook.png" width="32" title="انتقال يادداشت به دفترچه" />
                                                             </button>
-                                                            move
+                                                            move to notebook
                                                         </MudMenuItem>
                                                         <MudMenuItem @onclick="() => BtnDeleteNote(notex.NoteId)">
                                                             <button class="btn btn-link">
@@ -168,10 +168,10 @@
                                                         <MudSelectItem Value="0">Select a Section...</MudSelectItem>
                                                         @foreach (var subproject in lstSubprojects) { <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem> }
                                                     </MudSelect>
-                                                    <button class="btn btn-link" Title="move!" @onclick='() => BtnMovetoSelectSection(SubprojectId, notex.NoteId)'>
+                                                    <button class="btn btn-link pulse-animation" Title="move!" @onclick='() => BtnMovetoSelectSection(SubprojectId, notex.NoteId)'>
                                                         <img src="/img/icoMoveToNoteBook.png" width="34" />
                                                     </button>
-                                                    <button class="btn btn-link" Title="cancel" @onclick='() => BtnCancel()'>
+                                                    <button class="btn btn-link pulse-hover" Title="cancel" @onclick='() => BtnCancel()'>
                                                         <img src="/img/icoCancel.png" width="20" />
                                                     </button>
                                                 </div>
@@ -190,7 +190,7 @@
                                                             <button class="btn btn-link">
                                                                 <img src="/img/icoMoveToNoteBook.png" width="32" title="انتقال يادداشت به دفترچه" />
                                                             </button>
-                                                            move
+                                                            move to notebook
                                                         </MudMenuItem>
                                                         <MudMenuItem @onclick="() => BtnDeleteNote(notex.NoteId)">
                                                             <button class="btn btn-link">

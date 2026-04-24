@@ -40,7 +40,7 @@
                                 aria-expanded="false"
                                 aria-controls="@collapseId">
                                 <h5 style="color:dimgray">
-                                    <img class="pulse-hover" src="/img/icoCourse.png" width="24" style="margin-right:5px;"/>
+                                    <img class="pulse-hover" src="/img/icoCourse.png" width="24" style="margin-right:5px;" title="click to open course: [ @crs.CourseName ] "/>
                                     @crs.CourseName
                                 </h5>
                             </button>
@@ -110,12 +110,15 @@
                                                 <h4 class="accordion-header">
                                                     <button class="accordion-button collapsed"
                                                         type="button"
-                                                        style="background-color:gainsboro"
+                                                        style="background-color:whitesmoke"
                                                         data-bs-toggle="collapse"
                                                         data-bs-target="#topics"
                                                         aria-expanded="false"
                                                         aria-controls="topics">
-                                                        <h6>Topics</h6>
+                                                        <h5 style="color:indianred;">
+                                                        <img class="pulse-hover" src="/img/icoReport0.png" width="22" style="margin-right:10px;" title="سرفصل هاي درس" />
+                                                        Topics
+                                                        </h5>
                                                     </button>
                                                 </h4>
                                             <div id="topics" class="accordion-collapse collapse" data-bs-parent="#accordionTopics">
@@ -183,12 +186,15 @@
                                             <h4 class="accordion-header">
                                                 <button class="accordion-button collapsed"
                                                         type="button"
-                                                        style="background-color:gainsboro"
+                                                        style="background-color:whitesmoke"
                                                         data-bs-toggle="collapse"
                                                         data-bs-target="#folders"
                                                         aria-expanded="false"
                                                         aria-controls="topics">
-                                                    <h6>Folders</h6>
+                                                    <h5 style="color:indianred;">
+                                                        <img class="pulse-hover" src="/img/icoFolderSearch.png" width="24" style="margin-right:10px;" title="فولدرهاي درس" />
+                                                        Folders
+                                                    </h5>
                                                 </button>
                                             </h4>
                                             <div id="folders" class="accordion-collapse collapse" data-bs-parent="#accordionFolders">
@@ -576,7 +582,7 @@
         string pg = page switch
             {
             "S" => "/T_Students",
-                "N" => "/E_NoteBooks"
+            "N" => "/E_NoteBooks"
             };
         appState.SetReturnPage ("/T-Courses");
         Navman.NavigateTo (pg);

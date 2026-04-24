@@ -65,10 +65,12 @@ else
                 @* 3- Combo: Levels *@
                 <div style="flex: 1; color: IndianRed;">
                     <div class="d-flex align-items-center">
-                        <MudSlider T="int" @bind-Value="@test.TestLevel" Variant="Variant.Filled" Min="1" Max="5">level</MudSlider>
-                        <span style="color:indianred; font-weight:bold;">
-                            @test.TestLevel
-                        </span>
+                        <MudSlider T="int" @bind-Value="@test.TestLevel" Variant="Variant.Filled" Min="1" Max="5">
+                            level
+                            <span style="color:indianred; font-weight:bold; margin-left:10px;">
+                                @test.TestLevel
+                            </span>
+                            </MudSlider>
                     </div>
                     @if (appState.Cmd == "AddNewTest")
                         {
@@ -91,7 +93,7 @@ else
                 </div>
             </div>
         </div>
-        <hr style="color:red" />
+        <br />
         @* 4- CARD: Options *@
         <div class="accordion" id="accordionTestOptions">
             <div class="accordion-item ">
@@ -101,7 +103,10 @@ else
                             data-bs-target="#TestOptions"
                             aria-expanded="false"
                             aria-controls="TestOptions">
-                        <h4 style="color:indianred"> Options </h4>
+                        <h4 style="color:indianred">
+                            <img class="pulse-animation" src="/img/icoList.png" width="24" />
+                            Options
+                        </h4>
                     </button>
                 </h4>
                 <div id="TestOptions" class="accordion-collapse collapse" data-bs-parent="#accordionTestOptions">
@@ -158,7 +163,7 @@ else
                                             <div class="mb-3">
                                                 <input class="form-control" @ref="txtNewTestOption" @bind="strNewTestOption" placeholder="New Option..."/>
                                             </div>
-                                            <button class="btn btn-link" name="btnNewTestOption" type="submit" @onclick="()=>BtnCreateTestOption(test.TestId)">
+                                            <button class="btn btn-link pulse-animation" name="btnNewTestOption" type="submit" @onclick="()=>BtnCreateTestOption(test.TestId)">
                                                 <img src="/img/icoSave2.png" width="22" />
                                             </button>        
                                             <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
@@ -184,26 +189,32 @@ else
             </div>
         </div>
         @* End CARD Options *@
-        <hr style="color:Red" />
+        <br />
+        <br />
         <div style="text-align: center;">
             @if (appState.Cmd == "AddTestToAnExam")
                 {
-                @* Get List Of Exams (courseId) *@
-                <h6 style="color:royalblue;">add to an exam</h6>
-                <select class="form-select d-inline" id="cboExams" @bind="intExam" style="width:75%; height:35px">
-                    <option value="0"> Select an exam... </option>                    
-                    @foreach (var exm in lstExams)
-                        {
-                        <option value="@exm.ExamId"> @exm.ExamTitle </option>
-                        }
-                </select>
-                <br />
-                <button class="btn btn-link" type="submit" @onclick="()=>BtnCreateExamTest(test)">
-                    <img src="/img/icoSave2.png" width="25" />
-                </button>
-                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                    <img src="/img/icoCancel.png" width="24" />
-                </button>
+                <div style="background-color: whitesmoke; padding: 10px; border-radius: 12px;">
+                        @* Get List Of Exams (courseId) *@
+                        <hr style="color:Red" />
+                        <h6 style="color:royalblue;">add to an exam</h6>
+                        <select class="form-select d-inline" id="cboExams" @bind="intExam" style="width:75%; height:35px">
+                            <option value="0"> Select an exam... </option>                    
+                            @foreach (var exm in lstExams)
+                                {
+                                <option value="@exm.ExamId"> @exm.ExamTitle </option>
+                                }
+                        </select>
+                        <br />
+                        <br />
+                        <button class="btn btn-link pulse-animation" type="submit" @onclick="()=>BtnCreateExamTest(test)">
+                            <img src="/img/icoSave2.png" width="25" />
+                        </button>
+                        <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                            <img src="/img/icoCancel.png" width="24" />
+                        </button>
+                        <hr style="color:Red" />
+                </div>
                 }
             else
                 {

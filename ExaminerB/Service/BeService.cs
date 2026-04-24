@@ -141,7 +141,7 @@ namespace ExaminerB.Services2Backend
             var users = new List<User> ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
-            using SqlCommand cmd = new ("SELECT UsrId, UsrName, UsrPass, UsrNickname, UsrTags FROM usrs WHERE (UsrTags & 1) = 1 ORDER BY usrNickName", cnn);
+            using SqlCommand cmd = new ("SELECT UsrId, UsrName, UsrPass, UsrNickname, UsrTags FROM usrs WHERE (UsrTags & 1) = 1 ORDER BY usrNickName", cnn); // -- ORDER BY usrNickName
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             while (await reader.ReadAsync ())

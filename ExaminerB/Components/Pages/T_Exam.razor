@@ -39,12 +39,15 @@ else
                     </div>
                     <div class="d-flex justify-content-start mb-2" >
                         <MudTextField @ref="refExamDateTime" @bind-Value="exam.ExamDateTime" Label="date-time" placeholder="____-__-__ __:__" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width:200px;" />
+                        <button class="btn btn-link pulse-hover" @onclick="() => BtnUpdateExam()">
+                            <img src="/img/icoSave1.png" width="22" title="update" />
+                        </button>
                     </div>
                     <div class="d-flex justify-content-start mb-2" >
                         <MudCheckBox @bind-Value="exam.IsActive" Label="active" Color="Color.Success" title="advice: keep exam inactive until exam day!"/>
-                        <MudCheckBox @bind-Value="exam.IsTrainingMode" Label="train mode" Color="Color.Primary" title="students can get help" />
+                        <MudCheckBox @bind-Value="exam.IsTrainingMode" Label="training" Color="Color.Primary" title="students can get help" />
                     </div>
-                </MudCardContent>
+                    </MudCardContent>
             </MudCard>
         </MudContainer>
         <br />
@@ -106,7 +109,7 @@ else
                                                 @foreach (CourseTopic topic in lstCourseTopics) { <MudSelectItem Value="@topic.CourseTopicId">@topic.CourseTopicTitle</MudSelectItem> }
                                             </MudSelect>
                                             <button class="btn btn-link pulse-hover" @onclick="() => BtnUpdateExamComposition(comp)">
-                                                <img src="/img/icoSave2.png" width="22" title="update" />
+                                                <img src="/img/icoSave1.png" width="22" title="update" />
                                             </button>
                                             <button class="btn btn-link pulse-hover" @onclick="()=>BtnDeleteExamComposition(comp.ExamCompositionId)">
                                                 <img src="/img/icoDelete1.png" width="22" title="delete" />
@@ -122,7 +125,8 @@ else
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:whitesmoke;">                                         
                                         <div style="text-align: left;margin-left:20px;margin-right:10px">
-                                            <h5 style="color:indianred;font-weight:bold;text-align:center"> new exam component</h5>
+                                            <h5 style="color:indianred;font-weight:bold;text-align:center"> new component</h5>
+                                            <hr style="color:red" />
                                             @* Slider NTests *@
                                             <div class="d-flex align-items-center">
                                                 <MudSlider T="int" @bind-Value="@sliderTopicNTests" Variant="Variant.Filled" Min="1" Max="20">
@@ -147,7 +151,7 @@ else
                                                     </span>
                                                 </MudSlider>
                                             </div>
-                                            <div class="d-flex">
+                                            <div class="d-flex" style="margin-top:15px;">
                                                 <MudSelect Label="topic" @bind-Value="cboCourseTopicId" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:120px;font-size:small;">
                                                    <MudSelectItem Value="0">select an exam...</MudSelectItem>
                                                    @foreach (CourseTopic topic in lstCourseTopics) { <MudSelectItem Value="@topic.CourseTopicId">@topic.CourseTopicTitle</MudSelectItem> }
@@ -307,52 +311,56 @@ else
     public bool _hasFetched = false;
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
-    {
+        {
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
-        {
+            {
 
             Navman.NavigateTo ("/Login");
-        }
+            }
         appState.SetCmd ("");
         exam = await feService.Read_Exam (examId, false);
         lstExamCompositions = await feService.Read_ExamCompositions (examId);
         lstExamTests = await feService.Read_TestsByExamId (examId, true);
         lstCourseTopics = await feService.Read_CourseTopics (exam.CourseId);
         if (lstCourseTopics.Count > 0)
-        {
+            {
             _hasFetched = true;
+            }
         }
-    }
     private void TriggerRender()
-    {
+        {
         InvokeAsync(StateHasChanged);
-    }
+        }
     public void Dispose()
-    {
+        {
         appState.OnChange -= TriggerRender;
-    }
+        }
     //btns
     public async Task BtnUpdateExam()
-    {
+        {
         exam.ExamNTests = lstExamTests.Count;
         bool result = await feService.Update_Exam (exam);
-        //StateHasChanged ();
-        //BtnBack ();
-    }
+        Snackbar.Add("date/time and duration saved/updated", severity: Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        }
     //ExamComposition
     public async Task BtnAddNewExamComposition()
-    {
+        {
         appState.SetCmd ("AddNewExamComposition");
-    }
-    public async Task BtnCreateExamComposition()
-    {
-        if (cboCourseTopicId == 0)
-        {
-            Snackbar.Add("select a topic!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
-        else
+    public async Task BtnCreateExamComposition()
         {
+        if (cboCourseTopicId == 0)
+            {
+            Snackbar.Add("select a topic!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        else
+            {
+            if (sliderTestsLevelFrom > sliderTestsLevelTo)
+                {
+                sliderTestsLevelFrom = sliderTestsLevelTo;
+                Snackbar.Add("test levels corrected", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                            
+                }
             ExamComposition examComposition = new ExamComposition () { ExamId=exam.ExamId, TopicId=cboCourseTopicId, TopicNTests=sliderTopicNTests, TestsLevelFrom=sliderTestsLevelFrom, TestsLevelTo=sliderTestsLevelTo};
             int result = await feService.Create_ExamComposition (examComposition);
             if (result > 0)
@@ -372,8 +380,13 @@ else
             Snackbar.Add("Select a Topic!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
         else
-        {
-            bool result = await feService.Update_ExamComposition (comp);
+            {
+            if (comp.TestsLevelFrom > comp.TestsLevelTo)
+                {
+                comp.TestsLevelFrom = comp.TestsLevelTo;
+                Snackbar.Add("test levels corrected", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
+            bool result = await feService.Update_ExamComposition(comp);
             if (result)
             {
                 lstExamCompositions.Clear ();
@@ -420,7 +433,7 @@ else
             }
         else
             {
-            var message = new MarkupString($"<hr><span style='color:indianred'>Remove</span> all existing tests from <span style='color:royalblue'>Exam</span> test list<br> and DRAW RANDOM tests based on design?<br><br> <div style='text-align:center'><img src='/img/icoShuffle.png' width='40'/></div><br><hr>");
+            var message = new MarkupString($"<hr><span style='color:indianred'>Remove</span> all existing tests from <span style='color:royalblue'>Exam</span> test list<br> and <span style=color:green>DRAW RANDOM</span> tests based on design?<br><br> <div style='text-align:center'><img src='/img/icoShuffle.png' width='40'/></div><br><hr>");
             bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
                 {
@@ -501,12 +514,12 @@ else
         }
     public async Task BtnBack()
         {
-        var message = new MarkupString($"<hr><span style='color:indianred'>Save</span> Exam Changes? <br><span style='font-weight:bold;'>Notice:</span><br>Number of tests in this exam will be <span style='color:royalblue'>Updated</span> automatically<br><br> <div style='text-align:center'><img src='/img/icoSave1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
-        if (confirmResult == true)
-            {
-            await BtnUpdateExam ();            
-            }
+        // var message = new MarkupString($"<hr><span style='color:indianred'>Save</span> Exam Changes? <br><span style='font-weight:bold;'>Notice:</span><br>Number of tests in this exam will be <span style='color:royalblue'>Updated</span> automatically<br><br> <div style='text-align:center'><img src='/img/icoSave1.png' width='40'/></div><br><hr>");
+        // bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        // if (confirmResult == true)
+        //     {
+        //     await BtnUpdateExam ();            
+        //     }
         appState.SetCmd ("");
         Navman.NavigateTo ("/T_Exams");
         }
