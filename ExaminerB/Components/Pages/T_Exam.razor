@@ -37,13 +37,13 @@ else
                         <MudTextField @ref="refExamTitle" @bind-Value="exam.ExamTitle" Label="title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                         <MudNumericField T="int" @ref="refExamDuration" @bind-Value="exam.ExamDuration" Label="duration min" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width:100px;text-align:center;" />
                     </div>
-                    <div class="d-flex justify-content-start mb-2" >
+                    <div class="d-inline-flex mb-2">
                         <MudTextField @ref="refExamDateTime" @bind-Value="exam.ExamDateTime" Label="date-time" placeholder="____-__-__ __:__" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width:200px;" />
                         <button class="btn btn-link pulse-hover" @onclick="() => BtnUpdateExam()">
-                            <img src="/img/icoSave1.png" width="22" title="update" />
+                            <img src="/img/icoSave1.png" width="26" title="update" />
                         </button>
                     </div>
-                    <div class="d-flex justify-content-start mb-2" >
+                    <div class="d-flex mb-2" >
                         <MudCheckBox @bind-Value="exam.IsActive" Label="active" Color="Color.Success" title="advice: keep exam inactive until exam day!"/>
                         <MudCheckBox @bind-Value="exam.IsTrainingMode" Label="training" Color="Color.Primary" title="students can get help" />
                     </div>

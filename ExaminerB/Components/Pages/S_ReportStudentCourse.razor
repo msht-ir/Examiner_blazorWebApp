@@ -14,6 +14,11 @@ else
         <div style="text-align: center;">
             <h6 style="color:indianred">@courseName <span style="font-size:small;color:royalblue">Running Tests</span><span style="color:black;font-style:italic"> report</span></h6>
             <h3>@student.UserName </h3>
+            <div style="text-align:left">
+                <button class="btn btn-link" @onclick="() => BtnBack()">
+                    <img src="/img/icoBack3.png" style="width:40px" />
+                </button>
+            </div>
             @{
                 int i = 0;
                 string testDirection = "";

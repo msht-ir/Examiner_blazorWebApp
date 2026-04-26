@@ -276,7 +276,7 @@ else
                                                                 data-bs-target="#@collapseId2"
                                                                 aria-expanded="true"
                                                                 aria-controls="@collapseId2">
-                                                                <button class="btn btn-link" @onclick="() => BtnReadSubprojectNotes(subProject.SubprojectId)">
+                                                                <button class="btn btn-link" @onclick="() => BtnReadSubprojectNotes(subProject)">
                                                                     <img class="pulse-animation" src="img/icoBookmark1.png" width="22" style="margin-right:5px;"/>
                                                                 </button>
                                                                 <h6 style="margin-left:5px;">@subProject.SubprojectName</h6>
@@ -906,13 +906,13 @@ else
         appState.SetCmd ("CreateNote");
         StateHasChanged ();
         }
-    public async Task BtnReadSubprojectNotes(int subProjectId)
+    public async Task BtnReadSubprojectNotes(Subproject subProject)
         {
-        appState.SetProjectId (subProjectId);
+        appState.SetProjectId (subProject.ProjectId);
         //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
         appState.SetNoteParentType (2);
-        appState.SetNoteParentId (subProjectId);
-        lstSPNotes = await feService.Read_Notes (subProjectId, 2);
+        appState.SetNoteParentId (subProject.SubprojectId);
+        lstSPNotes = await feService.Read_Notes (subProject.SubprojectId, 2);
         StateHasChanged ();
         }
     public async Task BtnEditNoteInDialog(Note note)
@@ -1007,7 +1007,7 @@ else
                 _hasFetched = false;
                 await GetListOfProjects (user.UserId, _ShowProjectsMode); 
                 Subproject _subProject = new Subproject () { SubprojectId = Convert.ToInt32 (note.ParentId), ProjectId = Convert.ToInt32 (appState.ProjectId) };
-                await BtnReadSubprojectNotes (_subProject.SubprojectId);
+                await BtnReadSubprojectNotes (_subProject);
                 _hasFetched = true;
                 StateHasChanged();
                 }
@@ -1147,7 +1147,7 @@ else
         int userId = Convert.ToInt32 (appState.UserId);
         await GetListOfProjects (userId, _ShowProjectsMode);
         Subproject _subProject = new Subproject () { SubprojectId = Convert.ToInt32 (appState.NoteParentId), ProjectId = Convert.ToInt32 (appState.ProjectId) };
-        await BtnReadSubprojectNotes (_subProject.SubprojectId);
+        await BtnReadSubprojectNotes (_subProject);
         StateHasChanged ();
         }
     public void BtnCancel()
