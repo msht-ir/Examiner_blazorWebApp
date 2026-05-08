@@ -231,7 +231,7 @@
                         </div>
                     </div>
                 </div>
-            @* --- STUDENT MESSAGES *@
+            @* --- 3/6 STUDENT MESSAGES *@
             <div class="accordion-item mb-2">
                     <h4 class="accordion-header">
                         <button class="accordion-button collapsed" type="button"
@@ -361,7 +361,7 @@
                         </div>
                     </div>
                 </div>
-            @* --- STUDENT CHATS *@
+            @* --- 4/6 STUDENT CHATS *@
             <div class="accordion-item mb-2">
                 <h4 class="accordion-header">
                     <button class="accordion-button collapsed" type="button"
@@ -371,7 +371,7 @@
                         aria-controls="CollapseId4" style="background-color:WhiteSmoke">
                         @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
                         <h4>
-                            <img class="pulse-hover" src="/img/icoUser.png" width="26" style="margin-right:10px;" title="چت هاي من" />
+                            <img class="pulse-hover" src="/img/icoChat.png" width="30" style="margin-right:10px;" title="چت هاي من" />
                             my chats<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChats.Count ) </span></span>
                         </h4>
                     </button>
@@ -385,14 +385,40 @@
                     _clps = "collapse";
                     }
                 <div id="CollapseId4" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
-                    <div class="accordion-body" style="background-color:white">
+                    <div class="accordion-body" style="background-color:white;margin-bottom:20px;">
                         <div id="T3">
-                            <div style="text-align:center">
+                            @* SEARCH PEOPLE *@
+                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                <MudCard Class="mx-auto">
+                                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                                        <div class="d-flex">
+                                            <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="search people" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                                            <button class="btn btn-link" Title=@((_help)?"Search my friends":"") @onclick="()=>BtnReadStudentsBySearch()">
+                                                <img class="pulse-hover" src="/img/icoSearch.png" width="24" />
+                                            </button>
+                                        </div>
+                                        @* SHOW SEARCH RESULTS *@
+                                        @if(lstStudents.Count > 0)
+                                            {
+                                            @foreach(User stdnt in lstStudents)
+                                                {
+                                                <div class="d-flex align-items-center mb-1" style="font-size:smaller">
+                                                    <button class="btn btn-link" style="text-decoration:none;" Title=@((_help)?"Open/Start chat with this friend":"") @onclick="()=>BtnStartNewChat(stdnt.UserId)">
+                                                        <img src="/img/icoUser.png" width="20" />
+                                                        <span style="color:darkslategray">@stdnt.UserName - @stdnt.UserNickname</span>
+                                                    </button>
+                                                </div>
+                                                }
+                                            }        
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
+                            <div style="text-align:center; margin-top:15px;">
                                 <button class="btn btn-link align-items-center" Title=@((_help)?"refresh chats بروز رساني":"") @onclick="ReadChatList">
                                     <img src="/img/gifUserLogin.gif" width="30" />
                                 </button>
                             </div>
-                            @* list chats *@
+                            @* LIST OF CHATS *@
                             @foreach (Chat chat in lstChats)
                                 {
                                 <MudContainer Class="mt-2 px-0">
@@ -400,7 +426,14 @@
                                         <MudCardContent Style="background-color:whitesmoke;">
                                             <div class="d-flex align-items-center">
                                                 <button class="btn btn-link" style="text-decoration:none;" Title=@((_help)?"Show chat history with this friend":"") @onclick="()=>BtnOpenThisChat(chat)">
-                                                    <img class="pulse-hover" src="/img/icoEnvelop2.png" width="18" style="margin-right:10px;"/>
+                                                    @if (chat.IsRead)
+                                                        {
+                                                        <img class="pulse-hover" src="/img/icoEnvelopOpen.png" width="20" style="margin-right:10px;"/>                                                    
+                                                        }
+                                                    else
+                                                        {
+                                                        <img class="pulse-hover" src="/img/icoEnvelop2.png" width="18" style="margin-right:10px;"/>                                                    
+                                                        }
                                                     @if(chat.FromId == student.UserId)
                                                         {
                                                         <span style="font-size:x-small; font-weight:bold;color:gray;"> @chat.DateTimeSent </span>
@@ -423,43 +456,15 @@
                                                     <span style="font-size:small; font-weight:normal;color:black;padding-left:10px;"> @chat.ChatText</span>
                                                     }
                                             </div>
-                                            @* <div  style="color:black;font-weight:normal;padding-left:15px; text-align:left;">
-                                            </div> *@
                                         </MudCardContent>
                                     </MudCard>
                                 </MudContainer>
                                 }
-                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
-                                <MudCard Class="mx-auto">
-                                    <MudCardContent Style="background-color:rgba(249,249,249);">
-                                        @* SEARCH *@
-                                        <div class="d-flex">
-                                            <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="search people" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                            <button class="btn btn-link" Title=@((_help)?"Search my friends":"") @onclick="()=>BtnReadStudentsBySearch()">
-                                                <img class="pulse-hover" src="/img/icoSearch.png" width="24" />
-                                            </button>
-                                        </div>
-                                        @* RESULTS: LIST FRIENDS *@
-                                        @if(lstStudents.Count > 0)
-                                            {
-                                            @foreach(User stdnt in lstStudents)
-                                                {
-                                                <div class="d-flex align-items-center mb-1" style="font-size:smaller">
-                                                    <button class="btn btn-link" style="text-decoration:none;" Title=@((_help)?"Open/Start chat with this friend":"") @onclick="()=>BtnStartNewChat(stdnt.UserId)">
-                                                        <img src="/img/icoUser.png" width="20" />
-                                                        <span style="color:darkslategray">@stdnt.UserName - @stdnt.UserNickname</span>
-                                                    </button>
-                                                </div>
-                                                }
-                                            }        
-                                    </MudCardContent>
-                                </MudCard>
-                            </MudContainer>
                         </div>
                     </div>
                 </div>
             </div>
-            @* --- CHATROOMS *@
+            @* --- 5/6 CHATROOMS *@
             <div class="accordion-item mb-2">
                 <h4 class="accordion-header">
                     <button class="accordion-button collapsed" type="button"
@@ -469,7 +474,7 @@
                         aria-controls="CollapseId5" style="background-color:WhiteSmoke">
                         <h4>
                             <img class="pulse-hover" src="/img/icoSwitchBoardStudents.png" width="36" style="margin-right:10px;" title="چت گروهي" />
-                            group chats
+                            chat rooms
                         </h4>
                     </button>
                 </h4>
@@ -549,7 +554,7 @@
                     </div>
                 </div>
             </div>
-            @* --- STUDENT NOTES *@
+            @* --- 6/6 STUDENT NOTES *@
             <div class="accordion-item mb-2">
                 <h4 class="accordion-header">
                     <button class="accordion-button collapsed" type="button"
@@ -583,7 +588,7 @@
                                     <img src="/img/icoNoteBook.png" width="48" title="notebooks دفترچه يادداشت" />
                                 </button>
                             </div>
-                            @* list Notes *@
+                            @* LIST NOTES *@
                             @if(lstNotes.Count > 0)
                                 {
                                 <h6 style="text-align:left;color:forestgreen;margin:10px;">quick notes</h6>
@@ -681,7 +686,7 @@
             <br />
             <div class="d-flex gap-4 justify-content-center" style="text-align:center; margin-top:30px;max-width:500px;">
                 <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Password" Size="Size.Small" OnClick="@(() => BtnChangeStudentPassword())" FullWidth>Change Pass</MudButton>
-                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Logout" Size="Size.Small" OnClick="@(() => BtnExit())" Fullwidth>Logout</MudButton>
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Logout" Size="Size.Small" OnClick="@(() => BtnExit())" style="color:indianred" Fullwidth>Logout</MudButton>
             </div>
         </div>
         }
@@ -962,13 +967,34 @@
     public async Task BtnReadStudentsBySearch()
         {
         appState.SetClps ("CH");
-        if(strSearch !="")
+        if(strSearch.Length >= 3)
             {
             int teacherId = Convert.ToInt32(appState.TeacherId);
             lstStudents = await feService.Read_StudentsByKeyword (teacherId, strSearch, 0);
-            Snackbar.Add($"students like '{strSearch}' listed...", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            StateHasChanged ();
+            if(lstStudents.Count == 0)
+                {
+                Snackbar.Add($"students like '{strSearch}' not found", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
+            StateHasChanged ();               
             }
+        else
+            {
+            strSearch = "";
+            lstStudents.Clear ();
+            }
+        }
+    private async Task BtnOpenThisChat(Chat chat)
+        {
+        int _meId = Convert.ToInt32 (appState.UserId);
+        if (chat.ToId == _meId)
+            {
+            await BtnSetChatAsRead(chat);            
+            }
+        appState.SetClps ("CH");
+        mateId = (chat.FromId == _meId)? chat.ToId : chat.FromId;
+        appState.SetChatMateId(mateId);
+        _cmd = "OpenThisChat";
+        StateHasChanged ();
         }
     private async Task BtnSetChatAsRead(Chat chat)
         {
@@ -977,15 +1003,6 @@
         appState.SetClps ("CH");
         //modes: setOn, setOff
         await ReadChatList ();
-        StateHasChanged ();
-        }
-    private async Task BtnOpenThisChat(Chat chat)
-        {
-        await BtnSetChatAsRead(chat);
-        appState.SetClps ("CH");
-        mateId = (chat.FromId == Convert.ToInt32(appState.UserId))? chat.ToId : chat.FromId;
-        appState.SetChatMateId(mateId);
-        _cmd = "OpenThisChat";
         StateHasChanged ();
         }
     private async Task BtnStartNewChat(int mateId)

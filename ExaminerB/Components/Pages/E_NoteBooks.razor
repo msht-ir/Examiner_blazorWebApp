@@ -67,14 +67,14 @@ else
         </MudContainer>
         @if(lstNotes.Count > 0)
             {
-            @* 1 SEARCH RESULTS *@ 
+            @* 1 SEARCH-RESULTS *@ 
             <h5 style="text-align:center; margin-top:10px;">top 20 results</h5>
             foreach (Note note in lstNotes)
                 {
                 <div>
                     @if ((note.NoteTags & 1) == 1)
                         {
-                        @* SEARCH RESULTS -- RTL *@ 
+                        @* 1.1 SEARCH-RESULTS -- RTL *@ 
                         <div class="d-flex" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
                                 <MudCard Class="mx-0">
@@ -125,7 +125,7 @@ else
                         }
                     else
                         {
-                        @* SEARCH RESULTS -- LTR *@ 
+                        @* 1.2 SEARCH-RESULTS -- LTR *@ 
                         <div class="d-flex" style="color:indianred; font-weight:bold;font-size:small">
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
                                 <MudCard Class="mx-0">
@@ -193,9 +193,9 @@ else
                         })
                 </span>
             </div>
-            @* 2 NOTEBOOKS / SECTIONS *@
+            @* 2 NOTEBOOKS and SECTIONS *@
             <div class="accordion" id="accordionProjects" style="max-width:500px; margin: 0 auto;">
-                @* NOTEBOOKS *@
+                @* 2.1 NOTEBOOKS *@
                 @foreach (Project project in lstProjects)
                     {
                     var collapseId = $"collapse{project.ProjectId}";
@@ -209,8 +209,10 @@ else
                                     data-bs-target="#@collapseId"
                                     aria-expanded="true"
                                     aria-controls="@collapseId">
-                                    <img class="pulse-hover" src="img/icoNoteBook.png" width="38" style="margin-right:10px;"/>
-                                    <h4 style="color:indigo">@project.ProjectName</h4>
+                                    <button class="btn btn-link" @onclick="() => BtnReadNotebookNotes(project)">
+                                        <img class="pulse-hover" src="img/icoNoteBook.png" width="38" style="margin-right:10px;"/>
+                                    </button>
+                                    <h3 style="color:indigo">@project.ProjectName</h3>
                             </button>
                         </h4>
                         <div id="@collapseId" class="accordion-collapse @_clpsP" data-bs-parent="#accordionProjects">
@@ -262,7 +264,7 @@ else
                                             }
                                         else
                                             {
-                                            @* SECTIONS *@
+                                            @* 2.2 SECTIONS *@
                                             <div class="accordion" id="accordionSubprojects-@project.ProjectId">
                                             @foreach (Subproject subProject in project.Subprojects)
                                                 {
@@ -275,8 +277,8 @@ else
                                                                 data-bs-toggle="collapse"
                                                                 data-bs-target="#@collapseId2"
                                                                 aria-expanded="true"
-                                                                aria-controls="@collapseId2">
-                                                                <button class="btn btn-link" @onclick="() => BtnReadSubprojectNotes(subProject)">
+                                                                    aria-controls="@collapseId2" @onclick="() => BtnReadSectionNotes(subProject)">
+                                                                <button class="btn btn-link">
                                                                     <img class="pulse-animation" src="img/icoBookmark1.png" width="22" style="margin-right:5px;"/>
                                                                 </button>
                                                                 <h6 style="margin-left:5px;">@subProject.SubprojectName</h6>
@@ -316,14 +318,14 @@ else
                                                                             }
                                                                         else
                                                                             {
-                                                                            @* NOTES *@
+                                                                            @* 3 NOTES *@
                                                                             if(subProject.SubprojectId == Convert.ToInt32(appState.NoteParentId))
                                                                                 {
                                                                                 @foreach (Note notex in lstSPNotes)
                                                                                     {
                                                                                     if ((notex.NoteTags & 1) == 1)
                                                                                         {
-                                                                                        @* NOTES - RTL *@
+                                                                                        @* 3.1 NOTES - RTL *@
                                                                                         <div class="mt-3 text-end">
                                                                                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                                                                                 <MudCard Class="mx-0">
@@ -412,7 +414,7 @@ else
                                                                                         }
                                                                                     else
                                                                                         {
-                                                                                        @* NOTES - LTR *@
+                                                                                        @* 3.2 NOTES - LTR *@
                                                                                         <div class="mt-3 text-start">
                                                                                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                                                                                 <MudCard Class="mx-0">
@@ -504,7 +506,7 @@ else
                                                                                     {
                                                                                     <div style="text-align:center;margin-top:8px;">
                                                                                         <button class="btn btn-link" @onclick="()=>BtnCreateNewSubprojectNote(subProject)">
-                                                                                            <img src="/img/icoNewNote3.png" width="32" title="add new note" />
+                                                                                            <img src="/img/icoNewNote3.png" width="28" title="add new note" />
                                                                                         </button>
                                                                                     </div>                                                                            
                                                                                     }
@@ -607,12 +609,12 @@ else
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
-        {
+    {
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
-            {
+        {
             Navman.NavigateTo ("/Login");
-            }
+        }
         var user = new User
             {
             UserId = Convert.ToInt32(appState.UserId),
@@ -622,54 +624,54 @@ else
             TeacherId = 0
             };
         if (user.UserId > 0)
-            {
+        {
             //on second rener, user.UserId will get its value
             appState.SetProjectId(0);
             appState.SetNoteParentId(0);
             await GetListOfProjects (user.UserId, _ShowProjectsMode); 
             //lstSPNotes = await feService.Read_Notes (Convert.ToInt32(appState.SubprojectId), 2);
             _hasFetched = true;
-            }
-        } 
+        }
+    } 
     protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
+    {
         if (shouldFocusNewProject)
-            {
+        {
             shouldFocusNewProject = false;
             await refNewProject.FocusAsync();
-            }
-        }    
+        }
+    }    
     private void TriggerRender()
-        {
+    {
         InvokeAsync(StateHasChanged);
-        }
+    }
     public void Dispose()
-        {
+    {
         appState.OnChange -= TriggerRender;
-        }
+    }
     //Projects (NOTEBOOK)
     public void BtnAddNewProject()
-        {
+    {
         if(appState.Cmd != "AddNewProject")
-            {
+        {
             appState.SetCmd ("AddNewProject");
             shouldFocusNewProject = true; //flag to tell OnAfterRenderAsync focus on 'txtNewGroup'
-            }
+        }
         else
-            {
+        {
             appState.SetCmd ("");
             shouldFocusNewProject = false;
-            }
         }
+    }
     public async Task BtnSaveNewProject()
-        {
+    {
         //project.ProjectName is bind
         project.UserType = (user.UserRole == "teacher") ? 1 : 2; // UserTypes: 1:Teacher 2:Student
         project.ProjectTags = 1;
         project.UserId = Convert.ToInt32(appState.UserId);
         int result = await feService.Create_Project (project);
         if (result !=0)
-            {
+        {
             Console.WriteLine("Project added: " + project.ProjectName);
             appState.SetCmd("");
             // Refresh the list
@@ -685,23 +687,23 @@ else
             await GetListOfProjects (user.UserId, _ShowProjectsMode); 
             project.ProjectName = ""; //reset input text
             StateHasChanged ();
-            }
         }
+    }
     public async Task BtnEditProject(int projectId)
-        {
+    {
         appState.SetCmd ("EditProject");
         appState.SetProjectId(projectId);
         StateHasChanged ();
         await Task.Delay (1);
         await refProjectName.FocusAsync ();
-        }
+    }
     public async Task BtnUpdateProject(Project project)
-        {
+    {
         //ProjectName is bind
         project.UserId = Convert.ToInt32(appState.UserId);
         bool result = await feService.Update_Project (project);
         if (result)
-            {
+        {
             appState.SetCmd("");
             // Refresh the list
             var user = new User
@@ -716,17 +718,17 @@ else
             await GetListOfProjects (user.UserId, _ShowProjectsMode); 
             project.ProjectName = ""; //reset input text
             StateHasChanged ();            
-            }
         }
+    }
     private async Task BtnDeleteProject(int projectId)
-        {
+    {
         var message = new MarkupString ($"<hr><span style='color:indianred'>CAUTION!!!<br><br>Delete</span> notebook <span style='color:royalblue'>{project.ProjectName}</span> ?<br><br><span style='font-weight:bold'>All</span> sections and notes in this notebook<br><br>will be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-            {
+        {
             bool result = await feService.Delete_Project (projectId);
             if (result)
-                {
+            {
                 Snackbar.Add($"notebook and its sections and notes all deleted!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 appState.SetCmd("");
                 //refresh the list
@@ -740,78 +742,78 @@ else
                 };
                 await GetListOfProjects (user.UserId, _ShowProjectsMode); 
                 StateHasChanged ();            
-                }
+            }
             else
-                {
+            {
                 Snackbar.Add($"there are sections in this notebook", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                }
             }
         }
+    }
     public void BtnUpdateSubprojectTagsInPlace (User stdnt, int flag , bool isChecked)
-        {
+    {
         if (isChecked)
-            {
-            stdnt.UserTags |= flag;
-            }
-        else
-            {
-            stdnt.UserTags &= ~flag;
-            }
-        }
-    public async Task BtnToggleShowProjectsMode()
         {
+            stdnt.UserTags |= flag;
+        }
+        else
+        {
+            stdnt.UserTags &= ~flag;
+        }
+    }
+    public async Task BtnToggleShowProjectsMode()
+    {
         lstNotes.Clear ();
         switch (_ShowProjectsMode)
-            {
+        {
             case "all":
-                    {
+                {
                     _ShowProjectsMode = "active";
                     break;
-                    }
+                }
             case "active":
-                    {
+                {
                     _ShowProjectsMode = "inactive";
                     break;
-                    }
+                }
             case "inactive":
-                    {
+                {
                     _ShowProjectsMode = "all";
                     break;
-                    }
-            }
+                }
+        }
         user.UserId = Convert.ToInt32 (appState.UserId);
         await GetListOfProjects (user.UserId, _ShowProjectsMode); 
         StateHasChanged ();
-        }
+    }
     public async Task GetListOfProjects(int userId, string mode)
-        {
+    {
         _hasFetched = false;
         lstProjects.Clear();
         lstProjects = await feService.Read_Projects (userId, mode);
         _hasFetched = true;
-        }
+    }
     //SP (SECTION)
     public async Task BtnAddNewSubproject(int projectId)
-        {
+    {
         if(appState.Cmd != "AddNewSubproject")
-            {
+        {
             appState.SetCmd ("AddNewSubproject");
             appState.SetProjectId (projectId);
             await Task.Delay (1);
             await refNewSubproject.FocusAsync ();
-            }
-        else
-            {
-            appState.SetCmd ("");
-            }
-        StateHasChanged ();
         }
-    public async Task BtnSaveNewSubproject(int projectId)
+        else
         {
+            appState.SetCmd ("");
+        }
+        StateHasChanged ();
+    }
+    public async Task BtnSaveNewSubproject(int projectId)
+    {
         Subproject subProject = new Subproject () { SubprojectName = txtNewSubprojectTitle, ProjectId=projectId };
         int result = await feService.Create_Subproject (subProject);
         if (result > 0)
-            {
+        {
             Snackbar.Add($"new section : {subProject.SubprojectName} created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             // Refresh the list
             var user = new User
@@ -825,26 +827,26 @@ else
             await GetListOfProjects (user.UserId, _ShowProjectsMode); 
             appState.SetCmd ("");
             StateHasChanged ();
-            }
-        else
-            {
-            Snackbar.Add($"failed to create new section", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            }
         }
-    public async Task BtnEditSubproject (int subProjectId)
+        else
         {
+            Snackbar.Add($"failed to create new section", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        }
+    }
+    public async Task BtnEditSubproject (int subProjectId)
+    {
         appState.SetCmd("EditSubproject");
         appState.SetSubprojectId(subProjectId);
         StateHasChanged();
         await Task.Delay(1);
         await refSubprojectName.FocusAsync();
-        }
+    }
     public async Task BtnUpdateSubproject(Subproject subProject)
-        {
+    {
         appState.SetSubprojectId (subProject.ProjectId);
         bool result = await feService.Update_Subproject (subProject);
         if (result)
-            {
+        {
             appState.SetCmd("");
             // Refresh the list
             var user = new User
@@ -859,18 +861,18 @@ else
             await GetListOfProjects (user.UserId, _ShowProjectsMode); 
             project.ProjectName = ""; //reset input text
             StateHasChanged ();            
-            }
         }
+    }
     private async Task BtnDeleteSubproject(Subproject subProject)
-        {
+    {
         appState.SetProjectId (subProject.ProjectId);
         var message = new MarkupString ($"<hr><span style='color:indianred'>Delete</span> section <span style='color:royalblue'>{subProject.SubprojectName}</span> ?<br><br><span style='font-weight:bold'>All</span> notes in this section will also be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-            {
+        {
             bool result = await feService.Delete_Subproject (subProject.SubprojectId);
             if (result)
-                {
+            {
                 appState.SetCmd("");
                 // Refresh the list
                 var user = new User
@@ -884,20 +886,20 @@ else
                 await GetListOfProjects (user.UserId, _ShowProjectsMode); 
                 project.ProjectName = ""; //reset input text
                 StateHasChanged ();            
-                }
             }
+        }
         else
-            {
-            Snackbar.Add($"failed to remove section!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            }
-        }
-    public void BtnReportSubproject(Subproject subProject)
         {
-        //Navman.NavigateTo ($"/T_ReportStudents/{mode}/{stdnt.UserId}");
+            Snackbar.Add($"failed to remove section!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
+    }
+    public void BtnReportSubproject(Subproject subProject)
+    {
+        //Navman.NavigateTo ($"/T_ReportStudents/{mode}/{stdnt.UserId}");
+    }
     //SP notes
     public async Task BtnCreateNewSubprojectNote(Subproject subProject)
-        {
+    {
         //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
         appState.SetNoteParentType (2);
         appState.SetNoteParentId (subProject.SubprojectId);
@@ -905,15 +907,17 @@ else
         Console.WriteLine($"project ID = {subProject.ProjectId}");
         appState.SetCmd ("CreateNote");
         StateHasChanged ();
-        }
-    public async Task BtnReadSubprojectNotes(Subproject subProject)
+    }
+    public async Task BtnReadSectionNotes(Subproject subProject)
         {
         appState.SetProjectId (subProject.ProjectId);
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
-        appState.SetNoteParentType (2);
+        appState.SetNoteParentType (2); //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
         appState.SetNoteParentId (subProject.SubprojectId);
         lstSPNotes = await feService.Read_Notes (subProject.SubprojectId, 2);
         StateHasChanged ();
+        }
+    public async Task BtnReadNotebookNotes (Project project)
+        {
         }
     public async Task BtnEditNoteInDialog(Note note)
         {
@@ -1007,7 +1011,7 @@ else
                 _hasFetched = false;
                 await GetListOfProjects (user.UserId, _ShowProjectsMode); 
                 Subproject _subProject = new Subproject () { SubprojectId = Convert.ToInt32 (note.ParentId), ProjectId = Convert.ToInt32 (appState.ProjectId) };
-                await BtnReadSubprojectNotes (_subProject);
+                await BtnReadSectionNotes (_subProject);
                 _hasFetched = true;
                 StateHasChanged();
                 }
@@ -1147,7 +1151,7 @@ else
         int userId = Convert.ToInt32 (appState.UserId);
         await GetListOfProjects (userId, _ShowProjectsMode);
         Subproject _subProject = new Subproject () { SubprojectId = Convert.ToInt32 (appState.NoteParentId), ProjectId = Convert.ToInt32 (appState.ProjectId) };
-        await BtnReadSubprojectNotes (_subProject);
+        await BtnReadSectionNotes (_subProject);
         StateHasChanged ();
         }
     public void BtnCancel()

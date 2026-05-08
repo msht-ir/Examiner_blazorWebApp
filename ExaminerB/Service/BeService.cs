@@ -3669,15 +3669,15 @@ COMMIT TRANSACTION;
             }
         public async Task<List<Chat>> Read_ChatsAsync (int studentId)
             {
-            //1 get net-list of chatMates
+            // 1 get net-list of chatMates (a net list of ids chat to me or I chat to them)
             List<int> lstMateIds = new List<int> ();
             string sql = @"SELECT DISTINCT ch.FromId mateId
-                        FROM Chats ch INNER JOIN Students sf ON ch.FromId = sf.StudentId
-                        WHERE ch.ToId=@meId
-                        UNION
-                        SELECT DISTINCT ch.ToId mateId
-                        FROM Chats ch INNER JOIN Students st ON ch.ToId = st.StudentId
-                        WHERE ch.FromId = @meId";
+                            FROM Chats ch INNER JOIN Students sf ON ch.FromId = sf.StudentId
+                            WHERE ch.ToId=@meId
+                            UNION
+                            SELECT DISTINCT ch.ToId mateId
+                            FROM Chats ch INNER JOIN Students st ON ch.ToId = st.StudentId
+                            WHERE ch.FromId = @meId";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
@@ -3690,7 +3690,7 @@ COMMIT TRANSACTION;
                 lstMateIds.Add (reader1.GetInt32 (0));
                 }
             await reader1.CloseAsync ();
-            //2 get display data
+            // 2 get chat data
             List<Chat> lstChats = new List<Chat> ();
             lstChats.Clear ();
             foreach (int mateId in lstMateIds)

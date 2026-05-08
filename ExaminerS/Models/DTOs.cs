@@ -367,7 +367,7 @@ namespace ExaminerS.Models
         public string ToName { get; set; } = "";
         public string DateTimeSent { get; set; } = "";
         public string ChatText { get; set; } = "";
-        public int ChatTags { get; set; } = 0;
+        public int ChatTags { get; set; } = 0; //Tags: {1:IsRead 2:IsImp 4:IsBookmarked 8:IsDeleted}
         //wrapper properties for each flag
         public bool IsRead
             {
@@ -451,7 +451,7 @@ namespace ExaminerS.Models
         {
         public int NoteId { get; set; } = 0;
         public int ParentId { get; set; } = 0;
-        public int ParentType { get; set; } = 0; //1:SP 2:St 3:Gr 4:Cr 5:Ex
+        public int ParentType { get; set; } = 0; //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
         public string ParentName { get; set; } = "";
         public string NoteDatum { get; set; } = "";
         public string NoteText { get; set; } = "";
