@@ -25,6 +25,9 @@ else
         <button class="btn btn-link" type="submit" @onclick="BtnBack">
             <img src="/img/icoBack3.png" width="40" />
         </button>
+        <button class="btn btn-link" type="submit" @onclick="BtnReportPointsPlain">
+            <img src="/img/icoListP.png" width="42" />
+        </button>
         <button class="btn btn-link align-items-center" Title="refresh بروز رساني" @onclick="RefreshPageData">
             <img src="/img/gifUserLogin.gif" width="36" />
         </button>
@@ -200,6 +203,10 @@ else
         appState.SetStudentName (studentExam.StudentName);
         appState.SetStudentNickname (studentExam.StudentNickname);
         Navman.NavigateTo ("/T_ReportTests");
+        }
+    public void BtnReportPointsPlain()
+        {
+        Navman.NavigateTo ("/T_ReportExamPoints_plain");
         }
     public void BtnBack()
         {

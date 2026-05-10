@@ -1,0 +1,154 @@
+﻿@page "/T_ReportExamPoints_plain"
+@using ExaminerB.Service
+@using Microsoft.VisualBasic
+@inject FeService feService
+@inject NavigationManager Navman
+@inject AppState appState
+@inject IJSRuntime JS
+@implements IDisposable
+@inject ISnackbar Snackbar
+
+@if (!_hasFetched)
+    {
+    <_ScanSheets />
+    }
+else
+    {
+    //Page-Header
+    <div style="text-align:center; padding:10px;">
+        <h6 style="color:gray;">
+            Course: @course.CourseName - @exam.ExamDateTime  Exam: @exam.ExamDuration min  /students: @lstStudentsExam.Count
+        </h6>
+    </div>
+    <hr />
+    <div style="text-align:center">
+        <button class="btn btn-link" type="submit" @onclick="BtnBack">
+            <img src="/img/icoBack3.png" width="40" />
+        </button>
+    </div>
+    <EditForm Model = "lstStudentsExam" style="max-width:600px; margin: 0 auto;">
+        @{
+            i = 0;
+        }
+        <table class="table table-bordered">
+            <tr>
+                <th>index</th>
+                <th>Number</th>
+                <th>Name</th>
+                <th>Point /20</th>
+            </tr>
+            @foreach (var studentExam in lstStudentsExam) 
+                {
+                i++;
+                <tr>
+                    <td>@i</td>
+                    <td>@studentExam.StudentName</td>
+                    <td>@studentExam.StudentNickname</td>
+                    <td>@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</td>                    
+                </tr>
+                }
+        </table>
+    </EditForm>
+    }
+    <script>
+        window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+    </script>
+
+@code {
+    public bool _hasFetched = false;
+    public List<User> lstStudents = new List<User> ();
+    List<StudentExam> lstStudentsExam = new List<StudentExam> ();
+    User user = new User ();
+    Course course = new Course ();
+    Exam exam = new Exam ();
+    int i = 0;
+    public int nStudents = 0;
+    public int nStudentsStarted = 0;
+    public int nStudentsFinished = 0;
+    public int TotalPoints = 0;
+
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync()
+        {
+        appState.OnChange += TriggerRender;
+        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            Navman.NavigateTo ("/Login");
+            }
+        await RefreshPageData ();
+        _hasFetched = true;
+        } 
+    private void TriggerRender()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //btns
+    public void BtnShowAnswers()
+        {
+        string _appstatecmd = appState.Cmd ?? "";
+        _appstatecmd = (_appstatecmd.EndsWith ("raw")) ? (Strings.Left (_appstatecmd, _appstatecmd.Length - 3)) : (_appstatecmd + "raw");
+        appState.SetCmd (_appstatecmd);
+        i = 0;
+        }
+    public async Task BtnShowStudentExamTests(StudentExam studentExam)
+        {
+        appState.SetCmd ("studentexamtests"); //{studentexamtests|studentcoursetests}
+        appState.SetStudentExamId (studentExam.StudentExamId);
+        appState.SetStudentName (studentExam.StudentName);
+        appState.SetStudentNickname (studentExam.StudentNickname);
+        Navman.NavigateTo ("/T_ReportTests");
+        }
+    public void BtnBack()
+        {
+        Navman.NavigateTo ("/T_ReportExamPoints");
+        }
+    //method
+    public async Task BtnReportStudent(int Id, string mode)
+        {
+        if(Id > 0)
+            {
+            appState.SetReturnPage ("/T_Students");
+            Navman.NavigateTo ($"/T_ReportStudents/{mode}/{Id}");           
+            }
+        else
+            {
+            string? itemx = mode.ToLower() switch
+                {
+                    "s" =>  "select a Student from list",
+                    "g" =>  "select a Group from list",
+                    "c" =>  "select a Course from list",
+                    "e" =>  "select a Course, then select an Exam",
+                    "m" =>  "select a Mesage from list",
+                    _ => null
+                    };
+            Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        }
+    public async Task RefreshPageData()
+        {
+        exam.ExamId = Convert.ToInt32 (appState.ExamId);
+        _hasFetched = false;
+        exam = await feService.Read_Exam (exam.ExamId, true);
+        lstStudentsExam.Clear ();
+        lstStudentsExam = await feService.Read_StudentExams (Convert.ToInt32 (appState.ExamId), "ByExamId");
+        if (lstStudentsExam.Count > 0)
+            {
+            exam.ExamDateTime = lstStudentsExam[0].ExamDateTime;
+            exam.ExamTitle = lstStudentsExam[0].ExamTitle;
+            exam.ExamDuration = lstStudentsExam[0].ExamDuration;
+            course.CourseName = lstStudentsExam[0].CourseName;            
+            }
+        else
+            {
+            //needs: @inject ISnackbar Snackbar --at top of page
+            Snackbar.Add("students list is empty", Severity.Warning); //Severity.Error | Severity.Info | Severity.Success
+            //--old code was: await JS.InvokeVoidAsync ("alert", "List of Students (for this Exam) is Empty!");
+            BtnBack ();
+            }
+        _hasFetched = true;
+        }
+}
