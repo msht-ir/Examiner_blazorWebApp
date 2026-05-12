@@ -158,7 +158,7 @@
                         //navigate
                         await Task.Delay(1);
                         Navman.NavigateTo("/S_Student");
-                        Snackbar.Add($"\n\nwelcome {user.UserNickname}!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                        Snackbar.Add($"\n\nwelcome {user.UserNickname}!", Severity.Success, opt => { opt.VisibleStateDuration = 1000; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                         break;
                         }
                 case "teacher":
@@ -173,7 +173,7 @@
                         //navigate
                         await Task.Delay(1);
                         Navman.NavigateTo("/T_SwitchBoard"); 
-                        Snackbar.Add($"\n\nwelcome {user.UserNickname}!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                        Snackbar.Add($"\n\nwelcome {user.UserNickname}!", Severity.Info, opt => { opt.VisibleStateDuration = 2000; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                         break;
                         }
                 }

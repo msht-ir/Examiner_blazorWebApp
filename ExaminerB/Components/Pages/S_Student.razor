@@ -256,7 +256,13 @@
                     <div id="CollapseId3" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
                         <div class="accordion-body" style="background-color:white">
                             <div id="T3">
-                                @* List messages *@
+                            @* UPDATE *@
+                            <div style="text-align:center; margin-top:5px;">
+                                <button class="btn btn-link align-items-center" Title=@((_help) ? "refresh chats بروز رساني" : "") @onclick="ReadMessageList">
+                                    <img src="/img/gifUserLogin.gif" width="30" />
+                                </button>
+                            </div>
+                            @* List messages *@
                                 @foreach (StudentMessage studentMessage in lstStudentMessages)
                                     {
                                     <MudContainer Class="mt-2 px-0">
@@ -285,18 +291,23 @@
                                                             {
                                                             @* AnswerIsYes/No *@
                                                             <hr style="color:gray" />
-                                                            <h6 style="color:darkgoldenrod">my answer is</h6>
                                                             @if ((studentMessage.StudentMessageTags & 16) == 16)
                                                                 {
-                                                                <button class="btn btn-link" Title=@((_help)?"You answered Yes":"") @onclick="()=>BtnSetMyAnswer(studentMessage, 2)">
-                                                                    <img src="/img/icoYesNo_Yes.png" width="22" />
-                                                                </button>
+                                                                <div class="d-flex align-items-center justify-content-center">
+                                                                    <span style="color:forestgreen">my answer is </span>
+                                                                    <button class="btn btn-link" Title=@((_help) ? "You answered Yes" : "") @onclick="() => BtnSetMyAnswer(studentMessage, 2)">
+                                                                        <img src="/img/icoYesNo_Yes.png" width="22" />
+                                                                    </button>
+                                                                </div>
                                                                 }
                                                             else if ((studentMessage.StudentMessageTags & 32) == 32)
                                                                 {
-                                                                <button class="btn btn-link" Title=@((_help)?"You answered No":"") @onclick="()=>BtnSetMyAnswer(studentMessage, 2)">
-                                                                    <img src="/img/icoYesNo_No.png" width="22" />
-                                                                </button>
+                                                                <div class="d-flex align-items-center justify-content-center">
+                                                                    <span style="color:indianred">my answer is </span>
+                                                                    <button class="btn btn-link" Title=@((_help)?"You answered No":"") @onclick="()=>BtnSetMyAnswer(studentMessage, 2)">
+                                                                        <img src="/img/icoYesNo_No.png" width="22" />
+                                                                    </button>
+                                                                </div>
                                                                 }
                                                             else
                                                                 {
@@ -369,10 +380,9 @@
                         data-bs-target="#CollapseId4"
                         aria-expanded="false"
                         aria-controls="CollapseId4" style="background-color:WhiteSmoke">
-                        @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
                         <h4>
                             <img class="pulse-hover" src="/img/icoChat.png" width="30" style="margin-right:10px;" title="چت هاي من" />
-                            my chats<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChats.Count ) </span></span>
+                            chat <span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChats.Count ) </span></span>
                         </h4>
                     </button>
                 </h4>
@@ -474,7 +484,7 @@
                         aria-controls="CollapseId5" style="background-color:WhiteSmoke">
                         <h4>
                             <img class="pulse-hover" src="/img/icoSwitchBoardStudents.png" width="36" style="margin-right:10px;" title="چت گروهي" />
-                            chat rooms
+                            chat rooms <span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChatrooms.Count ) </span></span>
                         </h4>
                     </button>
                 </h4>
@@ -489,6 +499,16 @@
                 <div id="CollapseId5" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
                     <div class="accordion-body" style="background-color:white">
                         <div id="T3">
+                            @if (_help)
+                            {
+                            <div>
+                                <p style="text-align:center;font-size:x-small;">
+                                    براي گفتگو و تبادل نظر با حضور همه دانشجويان
+                                    <br />
+                                    For collaborative discussions
+                                </p>
+                            </div>
+                            }
                             <div style="text-align:center">
                                 <button class="btn btn-link align-items-center" Title=@((_help) ? "refresh chatrooms بروز رساني" : "") @onclick="ReadChatroomList">
                                     <img src="/img/gifUserLogin.gif" width="34" />
@@ -498,11 +518,11 @@
                                 {
                                 <hr />
                                 <MudContainer>
-                                    <h5 style="color:darkgoldenrod;text-align:center;margin-top:20px">new chatroom</h5>
+                                    <h5 style="color:darkgoldenrod;text-align:center;margin-top:20px">create a chatroom</h5>
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
-                                            <MudTextField @bind-Value="chatroom.ChatroomName" Label="chatroom" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:Tahoma" />
-                                            <MudTextField @bind-Value="chatroom.ChatroomTerms" Label="terms" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="4" Style="font-family:Tahoma" />
+                                            <MudTextField @bind-Value="chatroom.ChatroomName" Label="chatroom name" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:Tahoma" />
+                                            <MudTextField @bind-Value="chatroom.ChatroomTerms" Label="subject" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="4" Style="font-family:Tahoma" />
                                             <div class="align-content-center align-items-center justify-content-center" style="text-align:center">
                                                 <button class="btn btn-link pulse-animation" name="btnNewCourse" @onclick="BtnCreateChatroom">
                                                     <img src="/img/icoSave2.png" width="20" />
@@ -530,7 +550,7 @@
                                                     </button>
                                                     <hr />
                                                     <div style="font-style:italic;font-size:small; font-weight:normal;color:gray;padding-left:10px;">admin: <span style="color:royalblue;">@chatroom.ChatroomAdminName</span></div>
-                                                    <div style="font-style:italic;font-size:small; font-weight:normal;color:gray;padding-left:10px;">terms: <span style="color:indianred;">@chatroom.ChatroomTerms</span></div>
+                                                    <div style="font-style:italic;font-size:small; font-weight:normal;color:gray;padding-left:10px;">subject: <span style="color:indianred;">@chatroom.ChatroomTerms</span></div>
                                                 </div>
                                                 @if (chatroom.ChatroomAdminId == student.UserId)
                                                     {
@@ -565,7 +585,7 @@
                         @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
                         <h4>
                             <img class="pulse-hover" src="/img/icoNote1.png" width="26" style="margin-right:10px;" title="دفترچه يادداشت" />
-                            my notes<span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstNotes.Count ) </span></span>
+                            my notes <span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstNotes.Count ) </span></span>
                         </h4>
                     </button>
                 </h4>
@@ -581,7 +601,7 @@
                     <div class="accordion-body" style="background-color:white">
                         <div id="T3">
                             <div style="text-align:center">
-                                <button class="btn btn-link align-items-center" Title="add new note" @onclick="CreateNote">
+                                <button class="btn btn-link align-items-center" Title="add quick note افزودن يادداشت جديد" @onclick="CreateNote">
                                     <img class="pulse-animation" src="/img/icoNewNote3.png" width="32" />
                                 </button>
                                 <button class="btn btn-link pulse-hover" @onclick="GotoNotebooks">
@@ -620,7 +640,7 @@
                                                         @if(notex.NoteText.Length > 100)
                                                             {
                                                             <button class="btn btn-link" Title=@((_help)?"نمايش يادداشت در پنجره":"") @onclick="()=>BtnShowNoteInDialog(notex)">
-                                                                <img src="/img/icoNoteReport.png" width="22" title="نمايش يادداشت در صفحه" />
+                                                                <img class="pulse-hover" src="/img/icoNoteReport.png" width="22" title="نمايش يادداشت در صفحه" />
                                                             </button>
                                                             }
                                                         <button class="btn btn-link" Title=@((_help)?"ويرايش يادداشت":"") @onclick="()=>BtnEditNoteInDialog(notex)">
@@ -660,7 +680,7 @@
                                                         @if (notex.NoteText.Length > 100)
                                                             {
                                                             <button class="btn btn-link" Title=@((_help) ? "نمايش يادداشت در پنجره" : "") @onclick="() => BtnShowNoteInDialog(notex)">
-                                                                <img src="/img/icoNoteReport.png" width="22" title="نمايش يادداشت در صفحه" />
+                                                                <img class="pulse-hover" src="/img/icoNoteReport.png" width="22" title="نمايش يادداشت در صفحه" />
                                                             </button>
                                                             }
                                                         <button class="btn btn-link" Title=@((_help) ? "edit note" : "") @onclick="() => BtnEditNoteInDialog(notex)">
@@ -681,7 +701,7 @@
                 </div>
             </div>
             <br />
-            <MudSwitch @bind-Value="_help" Label="help on mouse hover" Color="Color.Primary" Dense="true"></MudSwitch>
+            <MudSwitch @bind-Value="_help" Label="help on mouse hover" Color="Color.Primary" Dense="true" title="هنگام عبور ماوس، راهنمايي کن"></MudSwitch>
             <hr />
             <br />
             <div class="d-flex gap-4 justify-content-center" style="text-align:center; margin-top:30px;max-width:500px;">
@@ -721,15 +741,15 @@
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
-        {
+    {
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
-            {
+        {
             Navman.NavigateTo ("/Login");
-            }
+        }
         student.UserId = appState.UserId ?? 0;
         if(student.UserId > 0)
-            {
+        {
             //on first run, student.UserId is 0
             //student.UserId = appState.UserId ?? 0;
             await ReadCourseList();
@@ -742,51 +762,51 @@
             await ReadChatroomList ();
             await ReadNoteList ();
             _hasFetched = true;
-            }
         }
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
+    {
         if (firstRender && !hasScrolled)
-            {
+        {
             hasScrolled = true;
             await JS.InvokeVoidAsync("scrollToTop");
-            }
         }
+    }
     private void TriggerRender()
-        {
+    {
         InvokeAsync(StateHasChanged);
-        }
+    }
     public void Dispose()
-        {
+    {
         appState.OnChange -= TriggerRender;
-        }    
+    }    
     //btns for StudentCourses
     private void BtnTakeATest (int studentCourseId)
-        {
+    {
         appState.SetClps ("C");
         Navman.NavigateTo ($"/S_StudentCourseTest/{student.UserId}/{studentCourseId}/new");
-        }
+    }
     private void BtnTryToCorrect (int studentCourseId)
-        {     
+    {     
         appState.SetClps ("C");
         Navman.NavigateTo ($"/S_StudentCourseTest/{student.UserId}/{studentCourseId}/edit");
-        }
+    }
     private async Task BtnShowCourseFolders (StudentCourse studentCourse)
-        {
+    {
         appState.SetClps ("C");
         _hasFetched = false;
         appState.SetCmd ("ShowCourseFolders");
         appState.SetCourseId (studentCourse.CourseId);
         lstCourseFolders = await feService.Read_CourseFolders (studentCourse.CourseId);
         _hasFetched = true;
-        }
+    }
     private void BtnReportStudentCourseTests (int studentCourseId, string courseName)
-        {
+    {
         appState.SetClps ("C");
         Navman.NavigateTo ($"/S_ReportStudentCourse/{student.UserId}/{studentCourseId}/{courseName}");
-        }
+    }
     private async Task BtnFilterStudentCourseTests (StudentCourse studentCourse, string mode)
-        {
+    {
         //this code replaced by lambda equivalent
         // switch (mode)
         //     case "filter":{message = $"Filter out correct answers in Course ( {studentCourse.CourseName} ) \n just keep incorrect ones?";break;}
@@ -794,56 +814,56 @@
         //---lambda:
         appState.SetClps ("C");
         string msg = mode switch
-            {
-                "filter" => $"<hr><span style='color:indianred'>Filter out </span>your correct answers in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoFilter.png' width='40'/></div><br><hr>",
-                "wipeout" => $"<hr><span style='color:indianred'>Clear</span> all your sample tests in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>",
-                _ => throw new ArgumentException($"Invalid mode: {mode}")
-                };        
+        {
+            "filter" => $"<hr><span style='color:indianred'>Filter out </span>your correct answers in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoFilter.png' width='40'/></div><br><hr>",
+            "wipeout" => $"<hr><span style='color:indianred'>Clear</span> all your sample tests in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>",
+            _ => throw new ArgumentException($"Invalid mode: {mode}")
+        };        
         var message = new MarkupString($"{msg}");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-            {
+        {
             var result = await feService.Delete_StudentCourseTests (mode, studentCourse);
             //refresh
             lstStudentCourses = await feService.Read_StudentCourses (student.UserId, "ByStudentIdIgnoreInactiveCourses");
-            }
         }
+    }
     //btns for StudentExams
     public async Task BtnStartExam(StudentExam studentExam)
-        {
+    {
         appState.SetClps ("E");
         //read ExamTags : is exam training? Yes:allow Help
         Exam exam = await feService.Read_Exam (studentExam.ExamId, false);
         DateTime _examDateTimeStart = DateTime.ParseExact(exam.ExamDateTime, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
         DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);
         if (_examDateTimeStart > DateTime.Now)
-            {
+        {
             Snackbar.Add($"exam will be started at {_examDateTimeStart}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            }
+        }
         else if ( DateTime.Now > _examDateTimeFinish)
-            {
+        {
             Snackbar.Add($"exam is finished at {_examDateTimeFinish}", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            }
+        }
         else
-            {
+        {
             //keep ExamTags in appState (use in S-StudentExamTest page)
             appState.SetExamTags (exam.ExamTags);
             bool result = await feService.Update_StudentExamTags(studentExam, "startedOn");
             if (result)
-                {
+            {
                 appState.SetStudentExamId (studentExam.StudentExamId);
                 Navman.NavigateTo ($"/S_StudentExamTests");
-                }
             }
         }
+    }
     private void BtnReportExam(int studentExamId)
-        {
+    {
         appState.SetClps ("E");
         Navman.NavigateTo ($"/S_ReportStudentExam/{studentExamId}/Review");
-        }    
+    }    
     //btns for StudentMessages
     private async Task BtnSetStudentMessageAsRead(StudentMessage studentMessage)
-        {
+    {
         appState.SetClps ("M");
         //modes: setOn, setOff
         studentMessage.StudentMessageTags |= 1;
@@ -851,97 +871,97 @@
         bool result = await feService.Update_StudentMessageSetAsRead (studentMessage);
         await ReadMessageList ();
         StateHasChanged ();
-        }
+    }
     private async Task BtnSetStudentMessageBookmark(StudentMessage studentMessage, int mode)
-        {
+    {
         appState.SetClps ("M");
         //modes: 0:setOff, 1:setOn
         switch (mode)
-            {
+        {
             case 0:
-                    {
+                {
                     studentMessage.StudentMessageTags &= ~2;
                     break;
-                    }
+                }
             case 1:
-                    {
+                {
                     studentMessage.StudentMessageTags |= 2;
                     break;
-                    }
-            }
+                }
+        }
         bool result = await feService.Update_StudentMessageTags (studentMessage);
         await ReadMessageList ();
 
         switch (mode)
-            {
+        {
             case 0:
-                    {
+                {
                     Snackbar.Add("bookmark removed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
                     break;
-                    }
+                }
             case 1:
-                    {
+                {
                     Snackbar.Add("message bookmarked", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
                     break;
-                    }
-            }
+                }
+        }
         appState.SetCmd ("");
         StateHasChanged ();
-        }
+    }
     private async Task BtnSetMyAnswer(StudentMessage studentMessage, int ans)
-        {
+    {
         appState.SetClps ("M");
         //ans: 0:No, 1:Yes
         switch (ans)
-            {
+        {
             case 2:
-                    {
+                {
                     studentMessage.StudentMessageTags &= ~16;
                     studentMessage.StudentMessageTags &= ~32;
                     appState.SetCmd ("");
                     break;
-                    }
+                }
             case 1:
-                    {
+                {
                     studentMessage.StudentMessageTags |= 16;
                     studentMessage.StudentMessageTags &= ~32;
                     break;
-                    }
+                }
             case 0:
-                    {
+                {
                     studentMessage.StudentMessageTags &= ~16;
                     studentMessage.StudentMessageTags |= 32;
                     break;
-                    }
-            }
+                }
+        }
         bool result = await feService.Update_StudentMessageTags (studentMessage);
         await ReadMessageList ();
         StateHasChanged ();
-        }
+    }
     private async Task BtnGetStudentAnswer(int messageId)
-        {
+    {
         appState.SetClps ("M");
         //Lets GetStudentAnswer...
         appState.SetCmd ("GetStudentAnswer");
         appState.SetMessageId (messageId);
         StateHasChanged ();
-        }
+    }
     private async Task BtnDeleteStudentMessage(StudentMessage studentMessage)
-        {
+    {
         appState.SetClps ("M");
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Message? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-            {
+        {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags (studentMessage);
             Snackbar.Add("deleted", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             await ReadMessageList ();
-            }
-        StateHasChanged ();                
         }
+        StateHasChanged ();                
+    }
     private async Task BtnGotoReportStudentMessages (StudentMessage studentMessage)
-        {
+    {
         appState.SetClps ("M");
         appState.SetReturnPage ("/S_Student");
         appState.SetStudentMessageId (studentMessage.StudentMessageId);
@@ -949,95 +969,100 @@
         appState.SetStudentName (student.UserName);
         appState.SetStudentNickname (student.UserNickname);
         Navman.NavigateTo ($"/T_ReportMessages/S/{student.UserId}");
-        }
+    }
     private void BtnCangeFont(int messageId)
-        {
+    {
         if(messageId == Convert.ToInt32(appState.MessageId))
-            {
+        {
             _cmd = (_cmd == "useCourierFont")?  "": "useCourierFont";
-            }
+        }
         else
-            {
+        {
             appState.SetMessageId (messageId);
             _cmd = "useCourierFont";
-            }
-        StateHasChanged ();
         }
+        StateHasChanged ();
+    }
     //btns for chats
     public async Task BtnReadStudentsBySearch()
-        {
+    {
         appState.SetClps ("CH");
         if(strSearch.Length >= 3)
-            {
+        {
             int teacherId = Convert.ToInt32(appState.TeacherId);
             lstStudents = await feService.Read_StudentsByKeyword (teacherId, strSearch, 0);
             if(lstStudents.Count == 0)
-                {
-                Snackbar.Add($"students like '{strSearch}' not found", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                }
-            StateHasChanged ();               
-            }
-        else
             {
+                Snackbar.Add($"students like '{strSearch}' not found", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+            StateHasChanged ();               
+        }
+        else
+        {
             strSearch = "";
             lstStudents.Clear ();
-            }
         }
+    }
     private async Task BtnOpenThisChat(Chat chat)
-        {
+    {
         int _meId = Convert.ToInt32 (appState.UserId);
         if (chat.ToId == _meId)
-            {
+        {
             await BtnSetChatAsRead(chat);            
-            }
+        }
         appState.SetClps ("CH");
         mateId = (chat.FromId == _meId)? chat.ToId : chat.FromId;
         appState.SetChatMateId(mateId);
         _cmd = "OpenThisChat";
         StateHasChanged ();
-        }
+    }
     private async Task BtnSetChatAsRead(Chat chat)
-        {
+    {
         chat.ChatTags |= 1; //set chatTags bit1(IsRead) On
         bool result = await feService.Update_ChatTags (chat);
         appState.SetClps ("CH");
         //modes: setOn, setOff
         await ReadChatList ();
         StateHasChanged ();
-        }
+    }
     private async Task BtnStartNewChat(int mateId)
-        {
+    {
         appState.SetClps ("CH");
         appState.SetChatMateId(mateId);
         _cmd = "OpenThisChat";
         StateHasChanged ();
-        }
+    }
     private async Task BtnDeleteChat(StudentMessage studentMessage)
-        {
+    {
         appState.SetClps ("CH");
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Message? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-            {
+        {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags (studentMessage);
             Snackbar.Add("deleted", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             await ReadMessageList ();
-            }
-        StateHasChanged ();                
         }
+        StateHasChanged ();                
+    }
     //btns for chatrooms
     private async Task BtnAddNewChatroom()
-        {
+    {
         chatroom.ChatroomName="";
         chatroom.ChatroomTerms="";
         appState.SetClps("CHR");
         _cmd = _cmd == "AddNewChatroom" ? "" : "AddNewChatroom";
         StateHasChanged();
-        }
+    }
     private async Task BtnCreateChatroom()
-        {
+    {
         appState.SetClps("CHR");
+        if ((chatroom.ChatroomTerms.Trim() == "") || (chatroom.ChatroomName.Trim() == ""))
+            {
+            Snackbar.Add($"Enter chatroom NAME and SUBJECT", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            return;
+        }
         student.UserId = appState.UserId ?? 0;
         chatroom.ChatroomAdminId=student.UserId;
         chatroom.ChatroomUserId = Convert.ToInt32(appState.TeacherId);

@@ -160,7 +160,7 @@ else
                                 <img src="/img/icoSave2.png" width="20" title="save to exam"/>
                             </button>
                             <button class="btn btn-link" type="submit" @onclick="BtnEditExam">
-                                <img src="/img/icoFolderE.png" width="26" title="goto exam folder"/>
+                                <img src="/img/icoFolderE.png" width="26" title="show exam page"/>
                             </button>
                         </div>
                     </MudCardContent>
@@ -234,6 +234,7 @@ else
         await BtnReadTestsPaginated (1);
         lstExams.Clear ();
         lstExams = await feService.Read_Exams (course.CourseId);
+        intExamId = (Convert.ToInt32 (appState.ExamId) > 0) ? Convert.ToInt32 (appState.ExamId) : 0; //makes combo select the exam if any
         _hasFetched = true;
         } 
     private void TriggerRender()

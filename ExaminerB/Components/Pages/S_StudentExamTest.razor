@@ -121,12 +121,12 @@
         [Parameter] public long studentExamTestId { get; set; }
         [Parameter] public int testIndex { get; set; }
         StudentExamTest studentExamTest = new StudentExamTest ();
-    private bool _firstRender = true;
-    private bool _hasFetched = false;
-    private bool hasScrolled = false;
-    bool HelpShowAnswer = false;
-    string style = "";
-    string strSelect = "";
+        private bool _firstRender = true;
+        private bool _hasFetched = false;
+        private bool hasScrolled = false;
+        bool HelpShowAnswer = false;
+        string style = "";
+        string strSelect = "";
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
         {

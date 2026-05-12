@@ -135,55 +135,67 @@ else
     int i = 0;
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
-        {
+    {
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
-            {
-
+        {
             Navman.NavigateTo ("/Login");
-            }
+        }
         //appState.StudentExamId is set in previous page and may have delay to become fetched (notice: its a void not async!). use it in if() below to make sure it has received its value
         if (!_hasFetched &&  (Convert.ToInt32(appState.StudentExamId) > 0))
-            {
+        {
             student.UserId = Convert.ToInt32(appState.UserId);
             student.UserName = appState.UserName ?? "";
             studentExam.StudentExamId = Convert.ToInt32(appState.StudentExamId);
             studentExam = await feService.Read_StudentExam(studentExam.StudentExamId, false);
             intExamAlarm = Convert.ToInt32 (appState.ExamAlarm);
             if (studentExam.StudentExamTests.Count == 0)
-                {
+            {
                 Snackbar.Add("exam not active or exam expired", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 //old code:await JS.InvokeVoidAsync ("alert", "Exam is just expired!");
                 BtnBack ();
-                }
-            _hasFetched = true;
             }
+            _hasFetched = true;
         }
+    }
     private void TriggerRender()
-        {
+    {
         Console.WriteLine("TriggerRender(): AppState triggered re-render");
         InvokeAsync(StateHasChanged);
-        }
+    }
     public void Dispose()
-        {
+    {
         appState.OnChange -= TriggerRender;
-        }
+    }
     //btns
     public async Task BtnShowTest(StudentExamTest studentExamTest, int testIndex)
-        {
+    {
         //instead of qury the exam, try get examDT from an appstate!
         Exam exam = await feService.Read_Exam(studentExam.ExamId, false);
         DateTime _examDateTimeStart = DateTime.ParseExact(exam.ExamDateTime, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
         DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);
         if (DateTime.Now > _examDateTimeFinish)
-            {
+        {
             Snackbar.Add($"time is over", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            }
+        }
         else
-            {
-            if (DateTime.Now > _examDateTimeFinish.AddMinutes(-1 * intExamAlarm))
+        {
+            TimeSpan _ts = _examDateTimeFinish - DateTime.Now;
+            if (DateTime.Now > _examDateTimeFinish.AddMinutes(-3))
                 {
-                Snackbar.Add($"... ALARM ...", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"{_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2}", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
+            else
+                {
+                if (DateTime.Now > _examDateTimeFinish.AddMinutes(-1 * intExamAlarm))
+                    {
+                    Snackbar.Add($"{_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                    Snackbar.Add($". . reminder . .", Severity.Warning, opt =>{opt.VisibleStateDuration = 1000;opt.ShowTransitionDuration = 300;opt.HideTransitionDuration = 300;});
+                    }
+                else
+                    {
+                    Snackbar.Add($"  {_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} ", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                    }
                 }
             studentExamTest.StudentExamTestTags = (studentExamTest.StudentExamTestTags | 1);
             bool result = await feService.Update_StudentExamTestTags(studentExamTest);        
@@ -236,7 +248,7 @@ else
     private void SetExamAlarm (int examAlarm)
         {
         appState.SetExamAlarm (examAlarm);
-        Snackbar.Add($"alarm: {examAlarm} min to time-out", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        Snackbar.Add($"Timeout reminer: ({examAlarm} min)", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         StateHasChanged ();
         }
     }

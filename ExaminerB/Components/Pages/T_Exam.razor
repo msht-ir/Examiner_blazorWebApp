@@ -19,7 +19,6 @@ else
     {
     <div>
     <div style="text-align: center;">
-        @* <h1 style="color:lightsteelblue">e<span style="color:lightpink">x</span>aminer<span style="font-size:small">Teacher</span></h1> *@
         @if (appState.Message != "")
             {
             <div style="text-align: center;">
@@ -32,22 +31,29 @@ else
         <MudContainer Class="mt-2 px-0">
             <MudCard Class="mx-0">
                 <MudCardContent Style="background-color:whitesmoke;">                                         
-                    <div style="font-size:130%;font-weight:bold;color:royalblue">exam </div>
+                    <div style="text-align:center;font-size:130%;font-weight:bold;color:royalblue">EXAM </div>
+                    <div class="d-flex mb-2 align-items-center" style="gap:10px; width:100%;">
+                        <MudTextField @ref="refExamTitle" @bind-Value="exam.ExamTitle" Label="title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width:100%;" />
+                    </div>
                     <div class="d-flex mb-2" style="gap:10px;">
-                        <MudTextField @ref="refExamTitle" @bind-Value="exam.ExamTitle" Label="title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                        <MudNumericField T="int" @ref="refExamDuration" @bind-Value="exam.ExamDuration" Label="duration min" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width:100px;text-align:center;" />
+                        <MudDatePicker  Label="date" @bind-Date="_date" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Margin="Margin.Dense" Modal="true" />
+                        <MudTimePicker Label="time" @bind-Time="_time" TimeFormat="HH:mm" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Margin="Margin.Dense" />
                     </div>
-                    <div class="d-inline-flex mb-2">
-                        <MudTextField @ref="refExamDateTime" @bind-Value="exam.ExamDateTime" Label="date-time" placeholder="____-__-__ __:__" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width:200px;" />
-                        <button class="btn btn-link pulse-hover" @onclick="() => BtnUpdateExam()">
-                            <img src="/img/icoSave1.png" width="26" title="update" />
-                        </button>
-                    </div>
-                    <div class="d-flex mb-2" >
+                    <div class="d-flex mb-2" style="gap:10px;">
+                        <MudNumericField T="int" @ref="refExamDuration" @bind-Value="exam.ExamDuration" Label="duration min" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width:120px;text-align:center;" />
                         <MudCheckBox @bind-Value="exam.IsActive" Label="active" Color="Color.Success" title="advice: keep exam inactive until exam day!"/>
                         <MudCheckBox @bind-Value="exam.IsTrainingMode" Label="training" Color="Color.Primary" title="students can get help" />
                     </div>
-                    </MudCardContent>
+                    <hr />
+                    <div class="d-flex justify-content-center align-items-center mb-2">
+                        <button class="btn btn-link pulse-hover"
+                                style="margin-left:2px;"
+                                @onclick="() => BtnUpdateExam()">
+
+                            <img src="/img/icoSave2.png" width="22" title="update" />
+                        </button>
+                    </div>
+                </MudCardContent>
             </MudCard>
         </MudContainer>
         <br />
@@ -289,6 +295,15 @@ else
     private MudTextField<string> txtSearchTest;
     private ElementReference cboCourseTopics;
     private ElementReference cboCourseTests;
+
+    private DateTime? _date = DateTime.Now;
+    private TimeSpan? _time = DateTime.Now.TimeOfDay;
+    int _PersianYear = 0;
+    int _PersianMonth = 0;
+    int _PersianDay = 0;
+    int _Hour = 0;
+    int _Minute = 0;
+
     int cboCourseTopicId = 0;
     int cboCourseTestId = 0;
     int sliderTopicNTests = 5;
@@ -320,6 +335,15 @@ else
             }
         appState.SetCmd ("");
         exam = await feService.Read_Exam (examId, false);
+        //PARSE DATETIME
+        _PersianYear = Convert.ToInt32(exam.ExamDateTime.Substring(0, 4));
+        _PersianMonth = Convert.ToInt32(exam.ExamDateTime.Substring(5, 2));
+        _PersianDay = Convert.ToInt32(exam.ExamDateTime.Substring(8, 2));
+        _Hour = Convert.ToInt32(exam.ExamDateTime.Substring(11, 2));
+        _Minute = Convert.ToInt32(exam.ExamDateTime.Substring(14, 2));
+        _date = Convert.ToDateTime($"{_PersianYear}/{_PersianMonth}/{_PersianDay} {_Hour}:{_Minute}");
+        _time = TimeSpan.Parse($"{_Hour}:{_Minute}");
+        //END PARSE DATETIME
         lstExamCompositions = await feService.Read_ExamCompositions (examId);
         lstExamTests = await feService.Read_TestsByExamId (examId, true);
         lstCourseTopics = await feService.Read_CourseTopics (exam.CourseId);
@@ -339,9 +363,11 @@ else
     //btns
     public async Task BtnUpdateExam()
         {
+        DateTime _dt = _date.Value.Date + _time.Value;
+        exam.ExamDateTime = _dt.ToString("yyyy-MM-dd HH:mm");
         exam.ExamNTests = lstExamTests.Count;
         bool result = await feService.Update_Exam (exam);
-        Snackbar.Add("date/time and duration saved/updated", severity: Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        Snackbar.Add("exam updated", severity: Severity.Info, opt => { opt.VisibleStateDuration = 1000; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
         }
     //ExamComposition
     public async Task BtnAddNewExamComposition()
@@ -455,6 +481,7 @@ else
         {
         appState.SetCmd ("ListCourseTests");
         appState.SetCourseId (courseId);
+        appState.SetExamId (examId);
         appState.SetReturnPage ("/T_Courses");
         //Navman.NavigateTo ("/T_ReportTests");
         Navman.NavigateTo ("/T_CourseTests");

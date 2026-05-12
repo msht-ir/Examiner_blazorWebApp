@@ -33,10 +33,74 @@
                             <div style="text-align:center">
                                 <span style="color:Black; font-weight:bold;">@exam.ExamTitle</span> <br />
                                 <span style="color:indianred; font-weight:bold;font-size:small">@exam.ExamDateTime</span>
-                                <div style="font-weight:bold;font-size:smaller;"> @exam.ExamNTests Tests, @exam.ExamDuration min</div>
+                                <span style="font-weight:bold;font-size:smaller;"> [@exam.ExamNTests Tests, @exam.ExamDuration min]</span>
                                 <hr style="color:indianred"/>
                             </div>
-                            <div style="text-align:center">
+                            @* ACTION Menu *@
+                            <div style="text-align: center;">
+                                <MudMenu Label="exam actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                    <div style="font-weight:bold;margin:10px;">@exam.ExamTitle</div>
+                                    <hr />
+                                    <MudMenuItem @onclick="() => BtnEditExam(exam)">
+                                        <button style="border:none" class="btn btn-link" title="edit exam ويرايش آزمون" >
+                                            <img class="pulse-hover" src="/img/icoRename.png" width="26" />
+                                        </button>
+                                        Edit Exam
+                                    </MudMenuItem>
+                                    <MudMenuItem @onclick="() => BtnStratStopExam(exam)">
+                                        <button style="border:none" class="btn btn-link" title="exam active / inactive آزمون فعال/غيرفعال" >
+                                            @if (exam.IsActive)
+                                                {
+                                                <img class="pulse-hover" src="/img/icoOn.png" width="24" />
+                                                }
+                                            else
+                                                {
+                                                <img class="pulse-hover" src="/img/icoOff.png" width="24" />
+                                                }
+                                        </button>
+                                        Active / Inactive
+                                    </MudMenuItem>
+                                    <MudMenuItem @onclick="() => BtnReportExamTests(exam.ExamId)">
+                                        <button style="border:none" class="btn btn-link" title="exam tests گزارش سوالات اين آزمون">
+                                            <img class="pulse-hover" src="/img/icoListT.png" width="32" />
+                                        </button>
+                                        Report Tests
+                                    </MudMenuItem>
+                                    <hr />
+                                    <MudMenuItem @onclick="() => BtnReportExamPoints(exam.ExamId)">
+                                        <button style="border:none" class="btn btn-link" title="exam status and points گزارش وضعيت و نمرات آزمون" >
+                                            <img class="pulse-hover" src="/img/icoFolderE.png" width="26" />
+                                        </button>
+                                        Exam Status 
+                                    </MudMenuItem>
+                                    <MudMenuItem @onclick="() => BtnSetExamAsFinishedForAllStudents(exam.ExamId)">
+                                        <button style="border:none" class="btn btn-link" title="ُset exam finished for all خاتمه آزمون براي همه" ">
+                                            <img class="pulse-hover" src="/img/icoClock2.png" width="22" />
+                                        </button>
+                                        Terminate Exam
+                                    </MudMenuItem>
+                                    <MudMenuItem @onclick="BtnReportPointsPlain">
+                                        <button class="btn btn-link pulse-hover" type="submit">
+                                            <img src="/img/icoListP.png" width="32" title="جدول نمرات دانشجويان" />
+                                        </button>
+                                        Exam Points
+                                    </MudMenuItem>
+                                    <hr />
+                                    <MudMenuItem @onclick="() => BtnReportStudents(exam.ExamId)">
+                                        <button style="border:none" class="btn btn-link" title="students folder فولدر دانشجويان" >
+                                            <img class="pulse-hover" src="/img/icoFolderS.png" width="26" />
+                                        </button>
+                                        Students Folder
+                                    </MudMenuItem>
+                                    <MudMenuItem @onclick="() => BtnDeleteExam(exam)">
+                                        <button style="border:none" class="btn btn-link" title="delete exam حذف آزمون" >
+                                            <img class="pulse-hover" src="/img/icoDelete1.png" width="20" />
+                                        </button>
+                                        Delete Exam
+                                    </MudMenuItem>
+                                </MudMenu>
+                            </div>
+                            @* <div style="text-align:center">
                                 <button style="border:none" class="btn btn-link" title="edit exam ويرايش آزمون" @onclick="()=>BtnEditExam(exam)" >
                                     <img class="pulse-hover" src="/img/icoRename.png" width="26" />
                                 </button>
@@ -67,7 +131,10 @@
                                 <button style="border:none" class="btn btn-link" title="exam status and points گزارش وضعيت و نمرات آزمون" @onclick="() => BtnReportExamPoints(exam.ExamId)">
                                     <img class="pulse-hover" src="/img/icoFolderE.png" width="26" />
                                 </button>
-                            </div>
+                                <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnReportPointsPlain">
+                                    <img src="/img/icoListP.png" width="32" title="جدول نمرات دانشجويان" />
+                                </button>
+                            </div> *@
                         </MudCardContent>
                     </MudCard>
                 </MudContainer>
@@ -77,7 +144,7 @@
                 <br />
                 <div style="font-weight:bold; padding-bottom:10px;">Add New Exam</div>
                     <div class="d-flex mb-3">
-                    <MudTextField  @ref="refNewExamTitle"  @bind-Value="txtNewExamTitle" Label="Exam title آزمون" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                    <MudTextField  @ref="refNewExamTitle"  @bind-Value="txtNewExamTitle" Label="exam title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                     <button class="btn btn-link" @onclick="BtnCreateExam" >
                         <img src="/img/icoSave2.png" width="22" />
                     </button>
@@ -232,7 +299,11 @@
             }
         }    
     //Exit
-    private void BtnGotoPage(string page)
+    public void BtnReportPointsPlain ()
+        {
+        Navman.NavigateTo("/T_ReportExamPoints_plain");
+        }
+    private void BtnGotoPage (string page)
         {
         string pg = page switch
             {

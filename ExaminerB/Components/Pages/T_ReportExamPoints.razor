@@ -25,11 +25,11 @@ else
         <button class="btn btn-link" type="submit" @onclick="BtnBack">
             <img src="/img/icoBack3.png" width="40" />
         </button>
-        <button class="btn btn-link" type="submit" @onclick="BtnReportPointsPlain">
-            <img src="/img/icoListP.png" width="42" />
-        </button>
         <button class="btn btn-link align-items-center" Title="refresh بروز رساني" @onclick="RefreshPageData">
             <img src="/img/gifUserLogin.gif" width="36" />
+        </button>
+        <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnReportPointsPlain">
+            <img src="/img/icoListP.png" width="42" title="جدول نمرات دانشجويان"/>
         </button>
     </div>
     <EditForm Model = "lstStudentsExam" style="max-width:600px; margin: 0 auto;">

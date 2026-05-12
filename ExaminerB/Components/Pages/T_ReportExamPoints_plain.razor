@@ -17,7 +17,11 @@ else
     //Page-Header
     <div style="text-align:center; padding:10px;">
         <h6 style="color:gray;">
-            Course: @course.CourseName - @exam.ExamDateTime  Exam: @exam.ExamDuration min  /students: @lstStudentsExam.Count
+            Course: @course.CourseName | Exam: @exam.ExamTitle
+            <br />
+            (@exam.ExamDateTime)
+            <br />
+            Duration: @exam.ExamDuration min | students: @lstStudentsExam.Count
         </h6>
     </div>
     <hr />
@@ -30,24 +34,28 @@ else
         @{
             i = 0;
         }
-        <table class="table table-bordered">
-            <tr>
-                <th>index</th>
-                <th>Number</th>
-                <th>Name</th>
-                <th>Point /20</th>
-            </tr>
-            @foreach (var studentExam in lstStudentsExam) 
-                {
-                i++;
+        <hr />
+        <div>
+            <table class="table table-primary">
                 <tr>
-                    <td>@i</td>
-                    <td>@studentExam.StudentName</td>
-                    <td>@studentExam.StudentNickname</td>
-                    <td>@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</td>                    
+                    <th>index</th>
+                    <th>User Acount</th>
+                    <th>Display Name</th>
+                    <th>Point /20</th>
                 </tr>
-                }
-        </table>
+                @foreach (var studentExam in lstStudentsExam) 
+                    {
+                    i++;
+                    <tr>
+                        <td>@i</td>
+                        <td>@studentExam.StudentName</td>
+                        <td>@studentExam.StudentNickname</td>
+                        <td>@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</td>                    
+                    </tr>
+                    }
+            </table>
+        </div>
+        <hr />
     </EditForm>
     }
     <script>
@@ -104,7 +112,7 @@ else
         }
     public void BtnBack()
         {
-        Navman.NavigateTo ("/T_ReportExamPoints");
+        Navman.NavigateTo ("/T_Exams");
         }
     //method
     public async Task BtnReportStudent(int Id, string mode)
@@ -146,7 +154,6 @@ else
             {
             //needs: @inject ISnackbar Snackbar --at top of page
             Snackbar.Add("students list is empty", Severity.Warning); //Severity.Error | Severity.Info | Severity.Success
-            //--old code was: await JS.InvokeVoidAsync ("alert", "List of Students (for this Exam) is Empty!");
             BtnBack ();
             }
         _hasFetched = true;
