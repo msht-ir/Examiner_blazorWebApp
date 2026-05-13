@@ -274,7 +274,10 @@ else
                     <div class="d-flex gap-3">
                         <MudSelect T="int" @ref="refExams" Label="exam" Value="ExamId" ValueChanged="OnExamChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;font-size:small;">
                             <MudSelectItem Value="0">select an exam</MudSelectItem>
-                            @foreach (var exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
+                            @foreach (var exam in lstExams)
+                                {
+                                <MudSelectItem Value="@exam.ExamId">@(exam.ExamTitle?.Substring(0, Math.Min(25, exam.ExamTitle.Length)))</MudSelectItem>
+                                }
                         </MudSelect>
                         <MudMenu Label="menu" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
                             <MudMenuItem @onclick='() => BtnReadStudents(ExamId, "E")'>
