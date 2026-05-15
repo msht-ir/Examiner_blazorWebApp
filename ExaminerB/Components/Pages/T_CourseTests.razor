@@ -17,6 +17,10 @@
     }
 else
     {
+    <div style="text-align:center">
+        <h3>@appState.CourseName</h3>
+        <hr />
+    </div>
     @if (appState.Message != "")
         {
         <div style="text-align: center;">
@@ -83,26 +87,33 @@ else
             <button class="btn btn-link" @onclick="BtnImportFromExcelFile">
                 <img src="/img/icoExcel1.png" width="28" title="import tests from excel"/>
             </button>
-            <p></p>
+            <button class="btn btn-link" @onclick="() => BtnAddNewTest()">
+                <img src="/img/icoAdd0.png" width="24" title="add a new test" />
+            </button>
             <hr style="border-color:red" />
             <h3>@course.CourseName</h3>
             @* SEARCH *@
-            <div class="d-flex mb-3">
+            <div class="d-flex gap-2 mb-3">
                 <MudTextField @ref="txtSearch" @bind-Value="strSearch" Label="Search tests..." Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                 <button class="btn btn-link" @onclick="()=>BtnReadTestsBySearch()">
                     <img src="/img/icoSearch.png" width="25" title="search tests"/>
                 </button>
                 @* Paginate *@
+                <div class="d-flex gap-2 mb-3" style="margin-left:5px">
                     <MudNumericField T="int" @ref="refPageNumber" @bind-Value="intPendingPageNumber" Label="Page" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="max-width:80px;padding-left:10px" Min="1" />
-                    <button class="btn btn-link  ms-2" @onclick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)">
+                    <button class="btn btn-link" @onclick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)">
                         <img src="/img/icoListT.png" width="38" title="goto page ..."/>
                     </button>
-                    <button class="btn btn-link" @onclick="()=>BtnAddNewTest()">
-                        <img src="/img/icoAdd0.png" width="24" title="add a new test"/>
-                    </button>
+                </div>
             </div>
             @* List of tests *@
             <hr style="border-color:red" />
+            <div class="d-flex gap-4 justify-content-center" style="margin-top:25px">
+                <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="Color.Primary" Size="Size.Small" OnClick="BtnSelectAllTests" Title="Select All" />
+                <MudIconButton Icon="@Icons.Material.Filled.Rule" Color="Color.Primary" Size="Size.Small" OnClick="BtnInvertSelection" Title="Invert Selection" />
+                @* <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="BtnSelectAllTests" style="width:40px;">all</MudButton>
+                <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Tertiary" OnClick="BtnInvertSelection" style="width:60px;">invert</MudButton> *@
+            </div>
             i = (intPageNumber - 1) * 20; //important: see pageSize in BackendService
             @foreach (var tst in lstxTests)
                 {
@@ -110,31 +121,31 @@ else
                 <MudContainer Class="mt-2 px-0">
                     <MudCard Class="mx-0">
                         <MudCardContent Style="background-color:whitesmoke;">
-                        @{
-                        string testRtlStatus = ((tst.TestTags & 1) == 1) ? "direction:rtl;text-align:right;" : "";
-                        string optRtlStatus = ((tst.TestTags & 2) == 2) ? "direction:rtl;text-align:right;" : "";
-                        i++;
-                        }
-                        <div style="font-weight:bold; @testRtlStatus">@i - @tst.TestTitle</div>
-                        <div style="@testRtlStatus display:flex; align-items:center; gap:2px;" >
-                            <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected" />
-                            <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst.TestId)">
-                                <img src="/img/icoEditPen.png" title="Eedit test" alt="Edit" width="18px"/>
-                            </button>
-                        </div>
-                        @* Show-TestOptions *@
-                        @foreach (var opt in tst.TestOptions)
-                            {
-                            if((opt.TestOptionId == tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
-                                {
-                                <div style="color:blue; @optRtlStatus"> - @opt.TestOptionTitle</div>
-                                }
-                            else if((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
-                                {
-                                <div style="color:black; @optRtlStatus"> - @opt.TestOptionTitle</div>
-                                }
+                            @{
+                            string testRtlStatus = ((tst.TestTags & 1) == 1) ? "direction:rtl;text-align:right;" : "";
+                            string optRtlStatus = ((tst.TestTags & 2) == 2) ? "direction:rtl;text-align:right;" : "";
+                            i++;
                             }
-                    </MudCardContent>
+                            <div style="font-weight:bold; @testRtlStatus">@i - @tst.TestTitle</div>
+                            <div style="@testRtlStatus display:flex; align-items:center; gap:2px;" >
+                                <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected" />
+                                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst.TestId)">
+                                    <img src="/img/icoEditPen.png" title="Eedit test" alt="Edit" width="18px"/>
+                                </button>
+                            </div>
+                            @* Show-TestOptions *@
+                            @foreach (var opt in tst.TestOptions)
+                                {
+                                if((opt.TestOptionId == tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
+                                    {
+                                    <div style="color:blue; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                                    }
+                                else if((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
+                                    {
+                                    <div style="color:black; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                                    }
+                                }
+                        </MudCardContent>
                     </MudCard>
                 </MudContainer>
                 }
@@ -157,7 +168,7 @@ else
                                 @foreach (Exam exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                             </MudSelect>
                             <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
-                                <img src="/img/icoSave2.png" width="20" title="save to exam"/>
+                                <img src="/img/icoListAddNew1.png" width="36" title="add selected tests to exam" />
                             </button>
                             <button class="btn btn-link" type="submit" @onclick="BtnEditExam">
                                 <img src="/img/icoFolderE.png" width="26" title="show exam page"/>
@@ -341,6 +352,23 @@ else
         appState.SetReturnPage ("/T_CourseTests");
         Navman.NavigateTo ("/T_CourseTest");
         }
+    //selection
+    public async Task BtnSelectAllTests ()
+        {
+        foreach (StudentExamTest test in lstxTests)
+            {
+            test.IsSelected = true;
+            }
+        StateHasChanged();
+        }
+    public async Task BtnInvertSelection ()
+        {
+        foreach (StudentExamTest test in lstxTests)
+            {
+            test.IsSelected = (test.IsSelected) ? false : true;
+            }
+        StateHasChanged();
+        }
     //add to exam
     public async Task BtnAddSelectedTestsToAnExam()
         {
@@ -392,7 +420,8 @@ else
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
         {
         /* method 1: Save excel file to server folder
-        mothod 2: Parse directly in memory */
+           mothod 2: Parse directly in memory
+        */
         try
             {
             _hasFetched = false;

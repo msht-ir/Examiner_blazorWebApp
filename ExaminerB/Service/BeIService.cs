@@ -36,6 +36,7 @@ namespace ExaminerB.Services2Backend
         #region SG:StudentGroups
         Task<bool> Create_StudentGroupsAsync (int groupId, List<int> lstStudentIds);
         Task<List<StudentGroup>> Read_StudentGroupsAsync (int Id, string mode);
+        Task<bool> Delete_StudentGroupsAsync (int groupId, List<int> lstStudentIds);
         #endregion
         #region C:Courses
         Task<int> Create_CourseAsync (Course course);

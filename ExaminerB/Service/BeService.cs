@@ -736,6 +736,22 @@ namespace ExaminerB.Services2Backend
                 return new List<StudentGroup> ();
                 }
             }
+        public async Task<bool> Delete_StudentGroupsAsync (int groupId, List<int> lstStudentIds)
+            {
+            string sql = "DELETE FROM StudentGroups WHERE StudentId=@studentid AND GroupId=@groupid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            foreach (int st in lstStudentIds)
+                {
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.Parameters.AddWithValue ("@studentid", st);
+                cmd.Parameters.AddWithValue ("@groupid", groupId);
+                int i = (int) cmd.ExecuteNonQuery ();
+                }
+            await cnn.CloseAsync ();
+            return true;
+            }
         //Update Tags , Delete SG
         #endregion
         #region C:Courses
@@ -1260,7 +1276,7 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Delete_StudentCourseAsync (int studentCourseId)
             {
-            string sql = "DELETE FROM StudentCourses WHERE StudentCourseId=@studentcourseid";
+            string sql = "DELETE FROM StudentCourses WHERE StudentCourseId=@studentcourseid;DELETE FROM StudentCourseTests WHERE StudentCourseId=@studentcourseid ";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();

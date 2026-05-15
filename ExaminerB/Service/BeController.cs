@@ -163,6 +163,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Read_StudentGroupsAsync (Id, mode);
             return Ok (result);
             }
+        [HttpPost ("Delete_StudentGroups")]
+        public async Task<ActionResult<bool>> Delete_StudentGroups ([FromBody] List<int> lstStudentIds, [FromQuery] int groupId)
+            {
+            var result = await _BeService.Delete_StudentGroupsAsync (groupId, lstStudentIds);
+            return Ok (result);
+            }
         #endregion
         #region C:Courses
         [HttpPost ("Create_Course")]

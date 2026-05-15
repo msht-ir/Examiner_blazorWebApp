@@ -330,7 +330,6 @@ else
         appState.OnChange += TriggerRender;
         if(Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-
             Navman.NavigateTo ("/Login");
             }
         appState.SetCmd ("");
@@ -347,6 +346,7 @@ else
         lstExamCompositions = await feService.Read_ExamCompositions (examId);
         lstExamTests = await feService.Read_TestsByExamId (examId, true);
         lstCourseTopics = await feService.Read_CourseTopics (exam.CourseId);
+        course = await feService.Read_Course (exam.CourseId, false);
         if (lstCourseTopics.Count > 0)
             {
             _hasFetched = true;
@@ -481,9 +481,9 @@ else
         {
         appState.SetCmd ("ListCourseTests");
         appState.SetCourseId (courseId);
+        appState.SetCourseName (course.CourseName);
         appState.SetExamId (examId);
         appState.SetReturnPage ("/T_Courses");
-        //Navman.NavigateTo ("/T_ReportTests");
         Navman.NavigateTo ("/T_CourseTests");
         }
     public async Task BtnAddNewExamTest()

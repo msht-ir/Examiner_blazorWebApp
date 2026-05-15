@@ -229,6 +229,11 @@ namespace ExaminerB.Service
                 return new List<StudentGroup> ();
                 }
             }
+        public async Task<bool> Delete_StudentGroups (int groupId, List<int> lstStudentIds)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Delete_StudentGroups?groupId={groupId}", lstStudentIds);
+            return response.IsSuccessStatusCode ? true : false;
+            }
         #endregion
         #region C:Courses
         public async Task<int> Create_Course (Course course)

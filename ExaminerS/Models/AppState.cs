@@ -64,8 +64,8 @@
         public void SetCourseName (string _CourseName) { CourseName = _CourseName; OnChange?.Invoke (); }
         public int? CourseTopicId { get; private set; }
         public void SetCourseTopicId (int _CourseTopicId) { CourseTopicId = _CourseTopicId; OnChange?.Invoke (); }
-        public string? CourseTopicName { get; private set; }
-        public void SetCourseTopicName (string _CourseTopicName) { CourseTopicName = _CourseTopicName; OnChange?.Invoke (); }
+        public string? CourseTopicTitle { get; private set; }
+        public void SetCourseTopicTitle (string _CourseTopicTitle) { CourseTopicTitle = _CourseTopicTitle; OnChange?.Invoke (); }
 
         //test
         public int? TestId { get; private set; }

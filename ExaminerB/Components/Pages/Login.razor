@@ -17,24 +17,30 @@
         <div class="accordion-item">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
-                    <h6 style="color:lightseagreen">about</h6>
+                    <h6 style="color:lightseagreen">e<span style="font-style:italic;font-weight:bold;color:indianred">x</span>aminer</h6>
                 </button>
             </h2>
             <div id="collapseZero" class="accordion-collapse collapse" data-bs-parent="#accordionIndex">
-                <div class="accordion-body" style="text-align:center;margin-bottom:25px;">
-                    <img src="/img/_mshtConHat.png" width="90" style="margin-left:10px;margin-right:10px;border-radius:7px;" />
+                <div class="accordion-body" style="text-align:center;margin-bottom:15px;">
                     <hr />
-                    <h6>https://www.msht.ir</h6>
-                    <a href="https://www.msht.ir/" target="_blank">
-                        <img src="/img/mshtQRCode.png" width="120" style="margin-left:10px;margin-right:10px" />
-                    </a>
-                    <hr />
+                    @* @if (user.UserRole == "teacher")
+                        {
+                        <img src="/img/_mshtConHat.png" width="90" style="margin-left:10px;margin-right:10px;border-radius:7px;" />
+                        <hr />
+                        } *@
                     <div style="text-align:center">
-                        e<span style="font-style:italic;font-weight:bold;color:indianred">x</span>aminer developed by Majid SharifiTehrani<br />
-                        <span style="font-size:smaller">assistant prof.</span><br />
-                        <span style="font-size:smaller">floristics, collectomics and diversity informatics</span><br />
-                        Mar 2026<br /><br />
-                        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AppRegistration" Size="Size.Small" OnClick="@(() => BtnSignup())" Style="margin-left:20px">SingUp (New Teacher)</MudButton>
+                        Majid SharifiTehrani, May 2026<br /><br />
+                    </div>
+                        <h6>www.msht.ir</h6>
+                    <a href="https://www.msht.ir/" target="_blank">
+                        @* <img src="/img/mshtQRCode.png" width="120" style="margin-left:10px;margin-right:10px" /> *@
+                    </a>
+                    <div style="text-align:center">
+                        @if (user.UserRole == "teacher")
+                            {
+                            <hr />
+                            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AppRegistration" Size="Size.Small" OnClick="@(() => BtnSignup())" Style="margin-left:20px">SingUp New Teacher</MudButton>
+                            }
                     </div>
                 </div>
             </div>
@@ -50,7 +56,7 @@
         }
         else
         {            
-            <img src="/img/icoLoginTeacher1.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
+            <img src="/img/icoLoginTeacher.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
         }
     </div>
     <EditForm Model="user" OnValidSubmit="BtnLogin" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">

@@ -184,6 +184,17 @@ namespace ExaminerS.Models
         public int TestType { get; set; } = 0;
         public int TestLevel { get; set; } = 0;
         public int TestTags { get; set; } = 0;      //1:TestRtl 2:OptionsRtl 4:IsSelected (select some tests in a list, to be added to an exam later)
+        public bool IsSelected
+            {
+            get => (TestTags & 4) == 4;
+            set
+                {
+                if (value)
+                    TestTags |= 4;
+                else
+                    TestTags &= ~4;
+                }
+            }
         public List<TestOption>? TestOptions { get; set; } = new List<TestOption> ();
         }
     //TO

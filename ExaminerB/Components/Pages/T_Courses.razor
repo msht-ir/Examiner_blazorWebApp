@@ -78,29 +78,31 @@
                                                     </button>
                                                     rename
                                                 </MudMenuItem>
-                                                <MudMenuItem @onclick="() => BtnListCourseTests(crs.CourseId, crs.CourseName)">
-                                                    <button class="btn btn-link" title="report tests">
-                                                        <img src="/img/icoFolderT.png" width="26" />
-                                                    </button>
-                                                    tests folder
-                                                </MudMenuItem>
-                                                <MudMenuItem @onclick="() => BtnReportCourseTests(crs.CourseId)">
-                                                    <button class="btn btn-link" title="list tests"">
-                                                        <img src="/img/icoListT.png" width="32" />
-                                                    </button>
-                                                    tests list
-                                                </MudMenuItem>
-                                                <MudMenuItem @onclick="() => BtnExams(crs)">
-                                                    <button class="btn btn-link pulse-animation" title="course exams" >
-                                                        <img src="/img/icoListE.png" width="32" />
-                                                    </button>
-                                                    exams
-                                                </MudMenuItem>
                                                 <MudMenuItem @onclick="() => BtnDeleteCourse(crs)">
                                                     <button class="btn btn-link" title="delete this course" >
                                                         <img src="/img/icoDelete1.png" width="22" />
                                                     </button>
                                                     delete
+                                                </MudMenuItem>
+                                                <hr />
+                                                <MudMenuItem @onclick="() => BtnGotoCourseTestsFolder(crs.CourseId, crs.CourseName)">
+                                                    <button class="btn btn-link" title="report tests">
+                                                        <img src="/img/icoFolderT.png" width="26" />
+                                                    </button>
+                                                    tests folder
+                                                </MudMenuItem>
+                                                <MudMenuItem @onclick="() => BtnGotoReportCourseTests(crs.CourseId, crs.CourseName)">
+                                                    <button class="btn btn-link" title="list tests"">
+                                                        <img src="/img/icoListT.png" width="32" />
+                                                    </button>
+                                                    tests list
+                                                </MudMenuItem>
+                                                <hr />
+                                                <MudMenuItem @onclick="() => BtnExams(crs)">
+                                                    <button class="btn btn-link pulse-animation" title="course exams">
+                                                        <img src="/img/icoListE.png" width="32" />
+                                                    </button>
+                                                <span style="color:royalblue">exams</span>
                                                 </MudMenuItem>
                                             </MudMenu>
                                         </div>
@@ -437,14 +439,15 @@
         appState.SetCourseName (course.CourseName);
         Navman.NavigateTo ("/T_Exams");
         }
-    public void BtnReportCourseTests(int courseId)
+    public void BtnGotoReportCourseTests (int courseId, string courseName)
         {    
         appState.SetCmd ("coursetests");
         appState.SetCourseId (courseId);
-        appState.SetReturnPage ("/T_Courses");
+        appState.SetCourseName(courseName);
+        appState.SetReturnPage("/T_Courses");
         Navman.NavigateTo ("/T_ReportTests");
         }
-    public void BtnListCourseTests(int courseId, string courseName)
+    public void BtnGotoCourseTestsFolder (int courseId, string courseName)
         {
         appState.SetCmd ("ListCourseTests");
         appState.SetCourseId (courseId);
@@ -502,7 +505,9 @@
     public void BtnReportCourseTopicTests(CourseTopic courseTopic)
         {
         appState.SetCmd ("coursetopictests");
+        appState.SetCourseId (courseTopic.CourseId);
         appState.SetCourseTopicId (courseTopic.CourseTopicId);
+        appState.SetCourseTopicTitle (courseTopic.CourseTopicTitle);
         appState.SetReturnPage ("/T_Courses");
         Navman.NavigateTo ("/T_ReportTests");
         }
