@@ -1294,6 +1294,11 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Update_Subproject", subProject);
             return response.IsSuccessStatusCode ? true : false;
             }
+        public async Task<bool> Update_SubprojectParent (Subproject subproject)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Update_SubprojectParent", subproject);
+            return response.IsSuccessStatusCode ? true : false;
+            }
         public async Task<bool> Delete_Subprojects (int projectId)
             {
             var response = await _http.PostAsJsonAsync ($"api/Delete_Subprojects", projectId);

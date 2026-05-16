@@ -1,0 +1,63 @@
+﻿@using ExaminerB.Service
+@using System.ComponentModel.DataAnnotations
+@inject ProtectedSessionStorage sessionStorage
+@inject NavigationManager Navman
+@inject AppState appState
+@inject FeService feService
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<br />
+<div style="text-align:left">
+    <h3 style="color:royalblue">Quick Guide</h3>
+    <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+        <MudCard Class="mx-auto">
+            <MudCardContent Style="background-color:rgba(249,249,249);">
+                <h5>Excel file format to <span style="color:indianred">import</span> [ STUDENTS ] <br /></h5>
+                <table class="table table-light">
+                    <tr>
+                        <th>column</th>
+                        <th>header</th>
+                        <th>content</th>
+                    </tr>
+                    <tr>
+                        <td>A</td>
+                        <td>UserName</td>
+                        <td>Username of the student by which they login<br />username cannot be changedby the user (student)</td>
+                    </tr>
+                    <tr>
+                        <td>B</td>
+                        <td>Password</td>
+                        <td>Password of the student by which they login<br />password may be changed later by the user (student)</td>
+                    </tr>
+                    <tr>
+                        <td>C</td>
+                        <td>Nickname</td>
+                        <td>this is the display name of the student <br /> set it as 'name + surname' (default) <br /> display name can be changed by the student </td>
+                    </tr>
+                </table>
+                <br />        
+            </MudCardContent>
+        </MudCard>
+    </MudContainer>
+</div>
+<div style="text-align:left">
+    <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+        <MudCard Class="mx-auto">
+            <MudCardContent Style="background-color:rgba(249,249,249);">
+                <h5>Send <span style="color:indianred">message</span> to Students <br /></h5>
+                <ul>
+                    <li>
+                        list students in a group, in a course, in an exam, recipients of a messageuse, list all students, or list by search
+                    </li>
+                    <li>
+                        select/deselect students
+                    </li>
+                    <li>
+                        click an action (in relevant menu)
+                    </li>
+                </ul>
+            </MudCardContent>
+        </MudCard>
+    </MudContainer>
+</div>

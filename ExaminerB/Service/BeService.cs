@@ -4193,6 +4193,19 @@ COMMIT TRANSACTION;
             await cnn.CloseAsync ();
             return true;
             }
+        public async Task<bool> Update_SubprojectParentAsync (Subproject subProject)
+            {
+            string sql = "UPDATE subprojects SET ProjectId=@projectid WHERE SubprojectId=@subprojectid";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@projectid", subProject.ProjectId);
+            cmd.Parameters.AddWithValue ("@subprojectid", subProject.SubprojectId);
+            await cmd.ExecuteNonQueryAsync ();
+            await cnn.CloseAsync ();
+            return true;
+            }
         public async Task<bool> Delete_SubprojectAsync (int subProjectId)
             {
             string sql = "DELETE FROM Notes WHERE ParentId=@subprojectid; DELETE FROM SubProjects WHERE SubprojectId=@subprojectid";
@@ -4292,42 +4305,42 @@ COMMIT TRANSACTION;
             {
             searchKey = "%" + searchKey + "%";
             List<Note> lstNotes = new List<Note> ();
-            string sql = @"SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags FROM Notes n";
+            string sql = @"SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags ";
             switch (mode)
                 {
                 case "U":
                         {
-                        sql += " INNER JOIN usrs u ON n.ParentId = u.UsrId WHERE u.UserId=@id ";
+                        sql += ", u.UsrName FROM Notes n INNER JOIN usrs u ON n.ParentId = u.UsrId WHERE u.UserId=@id ";
                         break;
                         }
                 case "SP":
                         {
-                        sql += " INNER JOIN Subprojects sp ON n.ParentId = sp.SubprojectId WHERE sp.ProjectId IN (SELECT ProjectId FROM Projects WHERE UserId=@id) ";
+                        sql += ", sp.SubprojectName FROM Notes n INNER JOIN Subprojects sp ON n.ParentId = sp.SubprojectId WHERE sp.ProjectId IN (SELECT ProjectId FROM Projects WHERE UserId=@id) ";
                         break;
                         }
                 case "S":
                         {
-                        sql += " INNER JOIN Students s ON n.ParentId = s.StudentId WHERE (s.StudentId=@id) AND (NoteTags & 16 = 0)";
+                        sql += ", s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE (s.StudentId=@id) AND (NoteTags & 16 = 0)";
                         break;
                         }
                 case "G":
                         {
-                        sql += " INNER JOIN Groups g ON n.ParentId = g.GroupId WHERE g.GroupId=@id ";
+                        sql += ", g.GroupName FROM Notes n INNER JOIN Groups g ON n.ParentId = g.GroupId WHERE g.GroupId=@id ";
                         break;
                         }
                 case "C":
                         {
-                        sql += " INNER JOIN Courses c ON n.ParentId = c.CourseId WHERE c.CourseId=@id ";
+                        sql += ", c.CourseName FROM Notes n INNER JOIN Courses c ON n.ParentId = c.CourseId WHERE c.CourseId=@id ";
                         break;
                         }
                 case "E":
                         {
-                        sql += " INNER JOIN Exams e ON n.ParentId = e.ExamId WHERE e.ExamId=@id ";
+                        sql += ", e.ExamTitle FROM Notes n INNER JOIN Exams e ON n.ParentId = e.ExamId WHERE e.ExamId=@id ";
                         break;
                         }
                 case "SN":
                         {
-                        sql += " INNER JOIN Students s ON n.ParentId = s.StudentId WHERE (s.StudentId=@id) AND (NoteTags & 16 = 16)";
+                        sql += ", s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE (s.StudentId=@id) AND (NoteTags & 16 = 16)";
                         break;
                         }
                 }
@@ -4351,6 +4364,7 @@ COMMIT TRANSACTION;
                 note.NoteDatum = reader.GetString (3);
                 note.NoteText = reader.GetString (4);
                 note.NoteTags = reader.GetInt32 (5);
+                note.ParentName = reader.GetString (6);
                 lstNotes.Add (note);
                 }
             await cnn.CloseAsync ();

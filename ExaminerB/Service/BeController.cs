@@ -910,6 +910,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Update_SubprojectAsync (subProject);
             return Ok (result);
             }
+        [HttpPost ("Update_SubprojectParent")]
+        public async Task<ActionResult<bool>> Update_SubprojectParent ([FromBody] Subproject subProject)
+            {
+            var result = await _BeService.Update_SubprojectParentAsync (subProject);
+            return Ok (result);
+            }
         [HttpPost ("Delete_Subproject")]
         public async Task<ActionResult<bool>> Delete_Subproject ([FromBody] int subProjectId)
             {

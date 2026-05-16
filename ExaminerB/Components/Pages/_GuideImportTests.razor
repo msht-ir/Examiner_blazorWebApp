@@ -1,0 +1,91 @@
+﻿@using ExaminerB.Service
+@using System.ComponentModel.DataAnnotations
+@inject ProtectedSessionStorage sessionStorage
+@inject NavigationManager Navman
+@inject AppState appState
+@inject FeService feService
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<br />
+<div class="d-flex flex-column align-items-center justify-content-center text-center">
+        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+            <MudCard Class="mx-auto">
+                <MudCardContent Style="background-color:rgba(249,249,249);">
+                    <div style="text-align:left">
+                        <h5>Excel file format to <span style="color:indianred">import</span> [ TESTS ]<br /></h5>
+                        <table class="table table-light">
+                            <tr><th>column</th><th>header</th><th>content</th>
+                            </tr>
+                            <tr>
+                                <td>A</td>
+                                <td>Topic</td>
+                                <td>course topic or chapter name to which the test belongs</td>
+                            </tr>
+                            <tr>
+                                <td>B</td>
+                                <td>Question</td>
+                                <td>(the Test string) <br /> can be rtl or ltr</td>
+                                </tr>
+                            <tr>
+                                <td>C</td>
+                                <td>nOpt</td>
+                                <td>number of options in this test <br /> (2 - 5) </td>
+                            </tr>
+                            <tr>
+                                <td>D</td>
+                                <td>Opt1</td>
+                                <td>Option-1 of the test</td>
+                            </tr>
+                            <tr>
+                                <td>E</td>
+                                <td>Opt2</td>
+                                <td>Option-2 of the test</td>
+                            </tr>
+                            <tr>
+                                <td>F</td>
+                                <td>Opt3</td>
+                                <td>Option-3 of the test <br/>(enter 'x' if nOpt=2)</td>
+                            </tr>
+                            <tr>
+                                <td>G</td>
+                                <td>Opt4</td>
+                            <td>Option-4 of the test <br />(enter 'x' if nOpt=3)</td>
+                            </tr>
+                            <tr>
+                                <td>H</td>
+                                <td>Opt5</td>
+                            <td>Option-5 of the test <br />(enter 'x' if nOpt=4)</td>
+                            </tr>
+                            <tr>
+                                <td>I</td>
+                                <td>Ans</td>
+                            <td>Correct option (answer)? <br />(1 - 5)</td>
+                            </tr>
+                            <tr>
+                                <td>J</td>
+                                <td>ForceLast</td>
+                                <td>Which option appears last? <br /> (1 - 5) -- if none: enter 0</td>
+                            </tr>
+                            <tr>
+                                <td>K</td>
+                                <td>TestRtl</td>
+                                <td>R : test is rtl <br />  L : test is ltr </td>
+                            </tr>
+                            <tr>
+                                <td>L</td>
+                                <td>OptRtl</td>
+                                <td>R : option is rtl <br />  L : option is ltr </td>
+                            </tr>
+                            <tr>
+                                <td>M</td>
+                                <td>Level</td>
+                                <td>test difficulty level <br/> (1 : easy - 5 : hard)</td>
+                            </tr>
+                        </table>
+                        <br />
+                    </div>
+                </MudCardContent>
+            </MudCard>
+        </MudContainer>
+    </div>

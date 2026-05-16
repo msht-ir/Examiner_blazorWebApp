@@ -21,12 +21,6 @@ else
         <h3>@appState.CourseName</h3>
         <hr />
     </div>
-    @if (appState.Message != "")
-        {
-        <div style="text-align: center;">
-            <h6 style="color:indianred">@appState.Message</h6>
-        </div>
-        }
     <EditForm Model="lstCourseTests" style="max-width:600px; margin: 0 auto;">
         @if (appState.Cmd == "readexcelworksheets")
             {
@@ -42,9 +36,11 @@ else
                         <br /><br />
                         <hr />
                         <div style="text-align:center">
-                            <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnCancel">
+                            <MudIconButton Icon="@Icons.Material.Filled.HelpCenter" Color="Color.Tertiary" Size="Size.Large" OnClick="BtnHelpSignupNewTeacher" Title="how to import tests from excel" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Cancel" Color="Color.Primary" Size="Size.Large" OnClick="BtnCancel" Title="cancel" />
+                            @* <button class="btn btn-link pulse-hover" style="margin-right:20px;" @onclick="BtnCancel">
                                 <img src="/img/icoCancel.png" width="24" />
-                            </button>
+                            </button> *@
                         </div>
                     </MudCardContent>
                 </MudCard>
@@ -109,8 +105,8 @@ else
             @* List of tests *@
             <hr style="border-color:red" />
             <div class="d-flex gap-4 justify-content-center" style="margin-top:25px">
-                <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="Color.Primary" Size="Size.Small" OnClick="BtnSelectAllTests" Title="Select All" />
-                <MudIconButton Icon="@Icons.Material.Filled.Rule" Color="Color.Primary" Size="Size.Small" OnClick="BtnInvertSelection" Title="Invert Selection" />
+                <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="Color.Primary" Size="Size.Medium" OnClick="BtnSelectAllTests" Title="Select All" />
+                <MudIconButton Icon="@Icons.Material.Filled.Rule" Color="Color.Primary" Size="Size.Medium" OnClick="BtnInvertSelection" Title="Invert Selection" />
                 @* <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="BtnSelectAllTests" style="width:40px;">all</MudButton>
                 <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Tertiary" OnClick="BtnInvertSelection" style="width:60px;">invert</MudButton> *@
             </div>
@@ -167,10 +163,10 @@ else
                                 <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
                                 @foreach (Exam exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                             </MudSelect>
-                            <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
+                            <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
                                 <img src="/img/icoListAddNew1.png" width="36" title="add selected tests to exam" />
                             </button>
-                            <button class="btn btn-link" type="submit" @onclick="BtnEditExam">
+                            <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnEditExam">
                                 <img src="/img/icoFolderE.png" width="26" title="show exam page"/>
                             </button>
                         </div>
@@ -186,6 +182,16 @@ else
             }
     </EditForm>
     }
+@if (_cmd == "guide")
+    {
+    <hr />
+    <_GuideImportTests />
+    <br />
+    <div class="d-flex justify-content-center">
+        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" OnClick="@(() => BtnCancelGuide())" Style="color:dimgray;">ok, got it</MudButton>
+    </div>
+    }
+
 <script>
     function showLoading() {
         document.getElementById("loadingOverlay").style.display = "block";
@@ -218,6 +224,7 @@ else
     public string strExcelFile = "";
     private int intExamId;
     public int i = 0;
+    string _cmd = "";
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync()
@@ -533,6 +540,17 @@ else
             _hasFetched = true;
             appState.SetCmd ("");
             }
+        }
+    //Guide
+    public void BtnHelpSignupNewTeacher ()
+        {
+        _cmd = _cmd == "guide" ? "" : "guide";
+        StateHasChanged();
+        }
+    public void BtnCancelGuide ()
+        {
+        _cmd = "";
+        StateHasChanged();
         }
     //Exit
     public void BtnCancel()

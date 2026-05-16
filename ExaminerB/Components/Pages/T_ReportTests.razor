@@ -91,8 +91,8 @@ else
             <div>
                 <hr style="border-color:red" />
                 <div class="d-flex gap-4 justify-content-center" style="margin-top:25px">
-                    <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Small" OnClick="BtnSelectAllTests" Title=" Select all" />
-                    <MudIconButton Icon="@Icons.Material.Filled.Rule" Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Small" OnClick="BtnInvertSelection" Title="Invert Selection" />
+                    <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Medium" OnClick="BtnSelectAllTests" Title=" Select all" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Rule" Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Medium" OnClick="BtnInvertSelection" Title="Invert Selection" />
                     @* <MudButton Variant="Variant.Filled" Size="MudBlazor.Size.Small" Color="MudBlazor.Color.Primary" OnClick="BtnSelectAllTests" style="width:40px;">all</MudButton>
                     <MudButton Variant="Variant.Filled" Size="MudBlazor.Size.Small" Color="MudBlazor.Color.Tertiary" OnClick="BtnInvertSelection" style="width:60px;">invert</MudButton> *@
                 </div>
@@ -211,10 +211,10 @@ else
                                     <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
                                     @foreach (Exam exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
                                 </MudSelect>
-                                <button class="btn btn-link" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
+                                <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
                                 <img src="/img/icoListAddNew1.png" width="36" title="add selected tests to the exam" />
                                 </button>
-                                <button class="btn btn-link" type="submit" @onclick="BtnEditExam">
+                                <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnEditExam">
                                     <img src="/img/icoFolderE.png" width="26" title="goto exam page" />
                                 </button>
                             </div>

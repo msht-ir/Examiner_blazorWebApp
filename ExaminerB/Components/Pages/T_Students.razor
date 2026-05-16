@@ -499,9 +499,9 @@ else
                     <MudCardContent Style="background-color:rgba(249,249,249);">
                         <h6 style="text-align:center;color:royalblue">List of Students for: <span style="color:indianred">@appState.Message</span></h6>
                         <hr style="color:indianred"/>
-                        <div class="d-flex gap-2" style="margin-top:25px;margin-bottom:25px">
-                            <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="Color.Primary" Size="Size.Small" OnClick="BtnSelectAllStudents" Title="Select all" />
-                            <MudIconButton Icon="@Icons.Material.Filled.Rule" Color="Color.Primary" Size="Size.Small" OnClick="BtnInvertSelection" Title="Invert Selection" />
+                        <div class="d-flex gap-2" style="margin-top:25px;margin-bottom:15px">
+                            <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="Color.Primary" Size="Size.Medium" OnClick="BtnSelectAllStudents" Title="Select all" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Rule" Color="Color.Primary" Size="Size.Medium" OnClick="BtnInvertSelection" Title="Invert Selection" />
                             @* <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="BtnSelectAllStudents" style="width:40px;">all</MudButton> *@
                             @* <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Tertiary" OnClick="BtnInvertSelection"  style="width:60px;">invert</MudButton> *@
                         </div>
@@ -534,14 +534,25 @@ else
                     <img src="/img/icoBack3.png" width="40" />
                 </button>
                 <button type="button" class="btn btn-link pulse-hover" @onclick='() => BtnGotoPage("N")'>
-                    <img src="/img/icoNoteBook.png" width="44" />
+                    <img src="/img/icoNoteBook.png" width="38" />
                 </button>
                 <button type="button" class="btn btn-link pulse-hover" @onclick='() => BtnGotoPage("C")'>
-                    <img src="/img/icoSwitchBoardCourses.png" width="48" />
+                    <img src="/img/icoSwitchBoardCourses.png" width="42" />
                 </button>
-            </div>
+                <MudIconButton Icon="@Icons.Material.Filled.HelpCenter" Color="Color.Tertiary" Size="Size.Large" OnClick="BtnHelpSignupNewTeacher" Title="how to import students from excel" />
+        </div>
         </EditForm>
     }
+@if (_cmd == "guide")
+    {
+    <hr />
+    <_GuideImportStudents />
+    <br />
+    <div class="d-flex justify-content-center">
+        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" OnClick="@(() => BtnCancelGuide())" Style="color:dimgray;">ok, got it</MudButton>
+    </div>
+    }
+
 <script>
     window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});
 </script>
@@ -1323,7 +1334,6 @@ else
             await BtnReadStudentsBySearch();
             return;
             }
-
         if (e.Key == "Escape")
             {
             strSearch = "";
@@ -1366,7 +1376,17 @@ else
             Snackbar.Add($"select a course", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
-    public void BtnCancel()
+    public void BtnHelpSignupNewTeacher ()
+        {
+        _cmd = _cmd == "guide" ? "" : "guide";
+        StateHasChanged();
+        }
+    public void BtnCancelGuide ()
+        {
+        _cmd = "";
+        StateHasChanged();
+        }
+    public void BtnCancel ()
         {    
         _cmd = "";
         StateHasChanged ();

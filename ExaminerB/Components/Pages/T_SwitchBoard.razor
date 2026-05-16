@@ -35,16 +35,12 @@
                 <img src="/img/icoNewNote3.png" width="34" title="new quick note يادداشت جديد" />
             </button>
         </div>
-        <hr style="color:red;margin-top:50px;" />
+        <br />
+        <br />
+        <hr style="color:red;margin-top:30px;" />
         <div style="text-align: center;margin-top:50px;">
-            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Person2" Size="Size.Small" OnClick="@(() => GotoLogin())" Style="padding-left:60px;padding-right:60px">Logout</MudButton>
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Person2" Size="Size.Small" OnClick="@(() => GotoLogin())" Style="color:indianred;padding-left:60px;padding-right:60px">Logout</MudButton>
        </div>
-        @* <E_NoteBooks /> *@
-        @if (appState.Cmd == "CreateNote")
-            {
-            <hr style="color:red" />
-            <Modal_CreateNote />
-            }
     </div>
 </div>
 
@@ -54,6 +50,7 @@
     private bool _firstRender = true;
     User user = new User ();
     public int Spacing { get; set; } = 3;
+    string _cmd = "";
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync ()

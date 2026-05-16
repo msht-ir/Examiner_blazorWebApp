@@ -75,12 +75,24 @@
                     {
                     <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.CloudUpload" Size="Size.Small" OnClick="@(() => BtnSignupNewTeacher())" Style="margin-right:20px">Sing-Up </MudButton>
                     }
-                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Help" Size="Size.Small" OnClick="@(() => BtnHelpSignupNewTeacher())" Style="margin-right:20px">Guide </MudButton>
-                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Cancel" Size="Size.Small" OnClick="@(() => BtnCancel())">Cancel </MudButton>
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Help" Size="Size.Small" OnClick="@(() => BtnHelpSignupNewTeacher())" Style="margin-right:20px;color:forestgreen">Guide </MudButton>
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Cancel" Size="Size.Small" OnClick="@(() => BtnCancel())" Style="color:indianred">Cancel </MudButton>
             </div>
         </EditForm>
-        <br />
     </div>    
+    <br />
+    @if (_cmd == "guide")
+        {
+        <hr />
+        <_GuideImportStudents />
+        <_GuideImportTests />
+        <br />
+        <div class="d-flex justify-content-center">
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" OnClick="@(() => BtnAgree(true))" Style="color:dimgray;">ok, got it</MudButton>
+        </div>
+        }
+
+
 
 @code {
     bool isShow;
@@ -173,7 +185,8 @@
         }
     public void BtnHelpSignupNewTeacher ()
         {
-        Navman.NavigateTo("/Login");
+        _cmd = "guide";
+        StateHasChanged ();
         }
     public void BtnAgree (bool agree)
         {
