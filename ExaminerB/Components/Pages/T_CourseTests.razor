@@ -89,26 +89,41 @@ else
             <hr style="border-color:red" />
             <h3>@course.CourseName</h3>
             @* SEARCH *@
-            <div class="d-flex gap-2 mb-3">
-                <MudTextField @ref="txtSearch" @bind-Value="strSearch" Label="Search tests..." Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                <button class="btn btn-link" @onclick="()=>BtnReadTestsBySearch()">
-                    <img src="/img/icoSearch.png" width="25" title="search tests"/>
-                </button>
+            <div class="d-flex gap-2 mb-3" tabindex="0">
+                <MudTextField 
+                    @ref="txtSearch" 
+                    @bind-Value="strSearch" 
+                    OnKeyDown="HandleKey_Searchbox"
+                    Label="Search"
+                    Variant="Variant.Outlined"
+                    Margin="Margin.Dense"
+                    Immediate="true"
+                    Adornment="Adornment.End"
+                    AdornmentIcon="@Icons.Material.Filled.Search"
+                    OnAdornmentClick="BtnReadTestsBySearch"
+                    Style="font-family:tahoma"
+                    Class="my-textfield" />
                 @* Paginate *@
                 <div class="d-flex gap-2 mb-3" style="margin-left:5px">
-                    <MudNumericField T="int" @ref="refPageNumber" @bind-Value="intPendingPageNumber" Label="Page" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="max-width:80px;padding-left:10px" Min="1" />
-                    <button class="btn btn-link" @onclick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)">
-                        <img src="/img/icoListT.png" width="38" title="goto page ..."/>
-                    </button>
+                    <MudNumericField T="int" 
+                        @ref="refPageNumber" 
+                        @bind-Value="intPendingPageNumber" 
+                        Label="Page" 
+                        Variant="Variant.Outlined" 
+                        Margin="Margin.Dense" Autocomplete="off" 
+                        Adornment="Adornment.End"
+                        AdornmentIcon="@Icons.Material.Filled.List"
+                        OnAdornmentClick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)"
+                        Class="my-textfield"
+                        style="max-width:120px;padding-left:10px;padding-right:20px; " 
+                        Min="1" />
                 </div>
             </div>
             @* List of tests *@
             <hr style="border-color:red" />
-            <div class="d-flex gap-4 justify-content-center" style="margin-top:25px">
+            <div class="d-flex gap-4 justify-content-center" style="margin-top:15px">
                 <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="Color.Primary" Size="Size.Medium" OnClick="BtnSelectAllTests" Title="Select All" />
                 <MudIconButton Icon="@Icons.Material.Filled.Rule" Color="Color.Primary" Size="Size.Medium" OnClick="BtnInvertSelection" Title="Invert Selection" />
-                @* <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="BtnSelectAllTests" style="width:40px;">all</MudButton>
-                <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Tertiary" OnClick="BtnInvertSelection" style="width:60px;">invert</MudButton> *@
             </div>
             i = (intPageNumber - 1) * 20; //important: see pageSize in BackendService
             @foreach (var tst in lstxTests)
@@ -263,11 +278,21 @@ else
         {
         appState.OnChange -= TriggerRender;
         }
-    //btns
-    public void BtnAddNewTest()
+    //SEARCH
+    private async Task HandleKey_Searchbox (KeyboardEventArgs e)
         {
-        appState.SetCmd ("AddNewTest");
-        Navman.NavigateTo ("/T_CourseTest");
+        if (e.Key == "Enter")
+            {
+            appState.SetMessage ("EnterKeyIsPressedForSearch");
+            await BtnReadTestsBySearch();
+            return;
+            }
+        if (e.Key == "Escape")
+            {
+            strSearch = "";
+            await InvokeAsync(StateHasChanged);
+            await txtSearch.FocusAsync();
+            }
         }
     public async Task BtnReadTestsBySearch()
         {
@@ -275,7 +300,7 @@ else
         i = 0;
         int courseId = Convert.ToInt32(appState.CourseId);
         string courseName = appState.CourseName;
-        lstCourseTests = await feService.Read_TestsBySearch (strSearch, courseId, false);
+        lstCourseTests = await feService.Read_TestsBySearch (strSearch.Trim(), courseId, false);
         lstxTests.Clear ();
         foreach(Test tst in lstCourseTests)
             {
@@ -307,12 +332,18 @@ else
                     }
                 }
             }
-        StateHasChanged ();
+        }
+    //btns
+    public void BtnAddNewTest()
+        {
+        appState.SetCmd ("AddNewTest");
+        Navman.NavigateTo ("/T_CourseTest");
         }
     public async Task BtnReadTestsPaginated(int newPage)
         {
         strSearch = "";
         intPageNumber = newPage;
+        lstCourseTests.Clear ();
         if (appState.Cmd == "ListCourseTests")
             {
             lstCourseTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), intPageNumber, true);        
@@ -427,7 +458,7 @@ else
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
         {
         /* method 1: Save excel file to server folder
-           mothod 2: Parse directly in memory
+        mothod 2: Parse directly in memory
         */
         try
             {
@@ -561,6 +592,13 @@ else
         }
     public void BtnBack()
         {
-        Navman.NavigateTo ("/T_Courses");
-        }
+        if (appState.Message == "EnterKeyIsPressedForSearch")
+            {
+            txtSearch.FocusAsync ();
+            }
+        else
+            {
+            Navman.NavigateTo ("/T_Courses");
+            }
+    }
 }

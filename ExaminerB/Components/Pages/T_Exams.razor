@@ -17,12 +17,45 @@
         <h6 style="color:indianred">@appState.Message</h6>
         }
 </div>
+<hr />
 @if (!_hasFetched)
         {
         <_Loading />
         }
     else
         {
+        @if (appState.Cmd == "AddNewExam")
+            {
+            <br />
+            <div style="font-weight:bold; padding-bottom:10px;">Add New Exam</div>
+            <div class="d-flex mb-3">
+                <MudTextField @ref="refNewExamTitle" @bind-Value="txtNewExamTitle" Label="exam title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                <button class="btn btn-link" @onclick="BtnCreateExam">
+                    <img src="/img/icoSave2.png" width="22" />
+                </button>
+                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                    <img src="/img/icoCancel.png" width="20" />
+                </button>
+            </div>
+            }
+        else
+            {
+            <div style="text-align: center; margin:15px;">
+                <button class="btn btn-link" @onclick="BtnBack">
+                    <img src="/img/icoBack3.png" width="40" />
+                </button>
+                <button class="btn btn-link" @onclick="BtnAddNewExam">
+                    <img src="/img/icoAdd0.png" width="24" />
+                </button>
+                <button class="btn btn-link" @onclick='() => BtnGotoPage("S")'>
+                    <img src="/img/icoSwitchBoardStudents.png" width="36" />
+                </button>
+                <button class="btn btn-link" @onclick='() => BtnGotoPage("C")'>
+                    <img src="/img/icoSwitchBoardCourses.png" width="36" />
+                </button>
+            </div>
+            }
+            <hr />
         <EditForm Model="lstCourseExams" style="max-width:600px; margin: 0 auto;">
             @foreach (var exam in lstCourseExams)
                 {
@@ -159,41 +192,13 @@
                     </MudCard>
                 </MudContainer>
                 }
-            @if (appState.Cmd == "AddNewExam")
-                {
                 <br />
-                <div style="font-weight:bold; padding-bottom:10px;">Add New Exam</div>
-                    <div class="d-flex mb-3">
-                    <MudTextField  @ref="refNewExamTitle"  @bind-Value="txtNewExamTitle" Label="exam title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                    <button class="btn btn-link" @onclick="BtnCreateExam" >
-                        <img src="/img/icoSave2.png" width="22" />
-                    </button>
-                    <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                        <img src="/img/icoCancel.png" width="20" />
-                    </button>
-                </div>
-                }
-            else
-                {
-                <br />
-                <div style="text-align: center;">
-                    <button class="btn btn-link" @onclick="BtnAddNewExam">
-                        <img src="/img/icoAdd0.png" width="24" />
-                    </button>
-                </div>
                 <hr />
                 <div style="text-align: center;">
                     <button class="btn btn-link" @onclick="BtnBack">
                         <img src="/img/icoBack3.png" width="40" />
                     </button>
-                    <button class="btn btn-link" @onclick='()=>BtnGotoPage("S")'>
-                        <img src="/img/icoSwitchBoardStudents.png" width="44" />
-                    </button>
-                    <button class="btn btn-link" @onclick='()=>BtnGotoPage("C")'>
-                        <img src="/img/icoSwitchBoardCourses.png" width="44" />
-                    </button>
                 </div>
-                }
         </EditForm>
         }
 

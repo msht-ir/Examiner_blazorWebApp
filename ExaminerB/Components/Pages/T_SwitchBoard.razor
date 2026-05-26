@@ -5,6 +5,13 @@
 @implements IDisposable
 @inject IDialogService DialogService
 
+
+@if (appState.Cmd == "CreateNote")
+    {
+    <Modal_CreateNote OnClose="HandleModalClose" />
+    }
+
+
 <div class="container" style="max-width:500px; margin: 0 auto;">
     <div style="text-align: center;">
         <div style="text-align: center;margin-top:50px;margin-bottom:20px;">
@@ -135,5 +142,10 @@
         appState.SetUserLoginStatus(1);
         Navman.NavigateTo("/ChangePassword");
         }
+    private async Task HandleModalClose ()
+        {
+        StateHasChanged();
+        }
+
 
 }

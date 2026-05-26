@@ -541,6 +541,7 @@ else
         await RefreshPageData ();
         StudentId = Convert.ToInt32(appState.UserId);
         stl = "";
+        intExamId = (Convert.ToInt32(appState.ExamId) > 0) ? Convert.ToInt32(appState.ExamId) : 0; //makes combo select the exam if any
         _hasFetched = true;
         } 
     private void TriggerRender()

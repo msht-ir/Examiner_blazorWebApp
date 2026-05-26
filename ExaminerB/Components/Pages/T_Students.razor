@@ -71,29 +71,23 @@ else
                                           OnAdornmentClick="BtnReadStudentsBySearch"
                                           Class="my-textfield" />
                             <MudMenu Label="menu" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                <MudMenuItem @onclick="BtnAddNewStudent">
+                                    <button class="btn btn-link pulse-hover" Title=@((_help) ? "add new student" : "") >
+                                        <img src="/img/icoAdd0.png" width="22" title="new student افزودن دانشجوي جديد" />
+                                    </button>
+                                    Add/Import
+                                </MudMenuItem> 
                                 <MudMenuItem @onclick="BtnListAllStudent">
                                     <button class="btn btn-link" Title=@((_help)?"list all students":"")>
                                         <img src="/img/icoListS.png" width="30" />
                                     </button>
                                     all students
                                 </MudMenuItem> 
-                                @* <MudMenuItem @onclick="()=>BtnReadStudentsBySearch()">
-                                    <button class="btn btn-link" Title=@((_help)?"search students":"") >
-                                        <img class="pulse-animation" src="/img/icoSearch.png" width="20" />
-                                    </button>
-                                    search
-                                </MudMenuItem>  *@
                                 <MudMenuItem @onclick="BtnCancelSearchStudent">
                                     <button class="btn btn-link" Title=@((_help)?"clear list":"")>
                                         <img src="/img/icoEraser.png" width="24" />
                                     </button>
                                     clear search
-                                </MudMenuItem> 
-                                <MudMenuItem @onclick="BtnAddNewStudent">
-                                    <button class="btn btn-link pulse-hover" Title=@((_help) ? "add new student" : "") >
-                                        <img src="/img/icoAdd0.png" width="22" title="new student افزودن دانشجوي جديد" />
-                                    </button>
-                                    Add/Import
                                 </MudMenuItem> 
                             </MudMenu>
                         </div>
@@ -1028,7 +1022,13 @@ else
         }
     private void BtnGotoExamsPage(int examId, string CourseName)
         {
-        if((examId > 0) & (CourseName != ""))
+        if(examId > 0)
+            {
+            appState.SetCourseId (CourseId);
+            appState.SetCourseName (course.CourseName);
+            Navman.NavigateTo ($"/T_Exam/{examId}"); // : /T_Exam/{examId:int}
+            }
+        else if(CourseName != "")
             {
             appState.SetCourseId (CourseId);
             appState.SetCourseName (course.CourseName);

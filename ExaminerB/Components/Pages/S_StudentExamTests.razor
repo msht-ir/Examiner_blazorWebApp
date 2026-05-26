@@ -170,7 +170,7 @@ else
     //btns
     public async Task BtnShowTest(StudentExamTest studentExamTest, int testIndex)
     {
-        //instead of qury the exam, try get examDT from an appstate!
+        //instead of query the exam, try get examDT from an appstate!
         Exam exam = await feService.Read_Exam(studentExam.ExamId, false);
         DateTime _examDateTimeStart = DateTime.ParseExact(exam.ExamDateTime, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
         DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);

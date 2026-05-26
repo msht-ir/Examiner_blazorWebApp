@@ -253,7 +253,26 @@ else
             exam.ExamDateTime = lstStudentsExam[0].ExamDateTime;
             exam.ExamTitle = lstStudentsExam[0].ExamTitle;
             exam.ExamDuration = lstStudentsExam[0].ExamDuration;
-            course.CourseName = lstStudentsExam[0].CourseName;            
+            course.CourseName = lstStudentsExam[0].CourseName;     
+            //SHOW TIME
+            DateTime _examDateTimeStart = DateTime.ParseExact(exam.ExamDateTime, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+            DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);
+            if (DateTime.Now > _examDateTimeFinish)
+                {
+                Snackbar.Add($"exam is finished", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
+            else
+                {
+                TimeSpan _ts = _examDateTimeFinish - DateTime.Now;
+                if (DateTime.Now > _examDateTimeFinish.AddMinutes(-3))
+                    {
+                    Snackbar.Add($"{_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2}", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                    }
+                else
+                    {
+                    Snackbar.Add($"  {_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} ", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                    }
+                }
             }
         else
             {
