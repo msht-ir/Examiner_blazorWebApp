@@ -10,7 +10,7 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
-<div style="text-align: center; "max-width:500px; margin: 0 auto;">
+<div style="text-align: center; max-width:500px; margin: 0 auto;">
     <h3 class="card-title text-center text-secondary">@course.CourseName exams</h3>
     @if (appState.Message != "")
         {
@@ -29,7 +29,7 @@
             <br />
             <div style="font-weight:bold; padding-bottom:10px;">Add New Exam</div>
             <div class="d-flex mb-3">
-                <MudTextField @ref="refNewExamTitle" @bind-Value="txtNewExamTitle" Label="exam title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                <MudTextField ref="refNewExamTitle" @bind-Value="txtNewExamTitle" Label="exam title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
                 <button class="btn btn-link" @onclick="BtnCreateExam">
                     <img src="/img/icoSave2.png" width="22" />
                 </button>
