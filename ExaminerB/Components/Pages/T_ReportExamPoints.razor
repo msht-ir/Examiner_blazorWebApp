@@ -15,85 +15,84 @@
 else
     {
     //Page-Header
-    <div style="text-align:center; padding:10px;">
+        <div style="text-align:center; padding:10px;">
         <h6 style="color:gray;">@course.CourseName</h6>
         <h5 style="color:royalblue"><span style="color:darkgray;font-style:italic;">Exam </span>@exam.ExamTitle</h5>
         <h6>@exam.ExamDateTime <span style="font-size:small;color:indianred"> /@exam.ExamDuration min </span><span style="font-size:small;color:gray"> /students: @lstStudentsExam.Count</span></h6>
-    </div>
+        </div>
     <hr />
-    <div style="text-align:center">
-        <button class="btn btn-link" type="submit" @onclick="BtnBack">
+        <div style="text-align:center">
+            <button class="btn btn-link" type="submit" @onclick="BtnBack">
             <img src="/img/icoBack3.png" width="40" />
-        </button>
-        <button class="btn btn-link align-items-center" Title="refresh بروز رساني" @onclick="RefreshPageData">
+            </button>
+            <button class="btn btn-link align-items-center" Title="refresh بروز رساني" @onclick="RefreshPageData">
             <img src="/img/gifUserLogin.gif" width="36" />
-        </button>
-        <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnReportPointsPlain">
-            <img src="/img/icoListP.png" width="42" title="جدول نمرات دانشجويان"/>
-        </button>
-    </div>
-    <EditForm Model = "lstStudentsExam" style="max-width:600px; margin: 0 auto;">
-        @{
+            </button>
+            <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnReportPointsPlain">
+            <img src="/img/icoListP.png" width="42" title="جدول نمرات دانشجويان" />
+            </button>
+        </div>
+        <EditForm Model="lstStudentsExam" style="max-width:600px; margin: 0 auto;">
+            @{
             i = 0;
-        }
-        @foreach (var studentExam in lstStudentsExam) 
+            }
+        @foreach (var studentExam in lstStudentsExam)
             {
             i++;
                 <div class="container mt-2">
                     <div class="card">
                         <div class="card-body" style="background-color:whitesmoke">
                             <div style="font-weight:bold;">
-                                <button class="btn btn-link" Title="student folder فولدر دانشجو" @onclick='()=>BtnReportStudent(studentExam.StudentId, "S")'>
-                                    <img src="/img/icoFolderS.png" width="22" />
+                                <button class="btn btn-link" Title="student folder فولدر دانشجو" @onclick='() => BtnReportStudent(studentExam.StudentId, "S")'>
+                                <img src="/img/icoFolderS.png" width="22" />
                                 </button>
-                                @i: @studentExam.StudentName - @studentExam.StudentNickname
-                                <hr />
+                            @i: @studentExam.StudentName - @studentExam.StudentNickname
+                            <hr />
                             </div>
                             <div style="font-weight:normal;">
-                                @* <img src="/img/icoReport0.png" width="20" /> *@
-                                <span style="color:green">Start : </span> @studentExam.StartDateTime <br />
-                                @* <img src="/img/icoClock2.png" width="18" /> *@
-                                <span style="color:royalblue">Finish: </span> @studentExam.FinishDateTime
+                            @* <img src="/img/icoReport0.png" width="20" /> *@
+                            <span style="color:green">start: </span> <span style="font-size:small">@PersianDate(studentExam.StartDateTime)</span> /
+                            <span style="color:royalblue">finish: </span> <span style="font-size:small">@PersianDate(studentExam.FinishDateTime)</span>
                             </div>
                             <div style="display:flex; align-items:center;font-weight:bold;">
-                                <button class="btn btn-link" @onclick="async ()=> await BtnShowStudentExamTests(studentExam)">
-                                    <img src="/img/icoListT.png" width="28" />
+                                <button class="btn btn-link" @onclick="async () => await BtnShowStudentExamTests(studentExam)">
+                                <img src="/img/icoListT.png" width="28" />
                                 </button>
-                                @if(studentExam.StudentExamPoint < 10)
-                                    {
-                                    <span style="color:red">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
-                                    }
-                                else if (studentExam.StudentExamPoint < 17)
-                                    {
-                                    <span style="color:royalblue">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
-                                    }
-                                else 
-                                    {
-                                    <span style="color:darkgoldenrod">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
-                                    }
-                                </div>
+                            @if (studentExam.StudentExamPoint < 10)
+                                {
+                                <span style="color:red">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
+                                }
+                            else if (studentExam.StudentExamPoint < 17)
+                                {
+                                <span style="color:royalblue">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
+                                }
+                            else
+                                {
+                                <span style="color:darkgoldenrod">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
             }
             <div style="text-align: center;">
                 <button class="btn btn-link" type="submit" @onclick="BtnBack">
-                    <img src="/img/icoBack3.png" width="40" />
+                <img src="/img/icoBack3.png" width="40" />
                 </button>
             </div>
-    </EditForm>
+        </EditForm>
     }
     <script>
-        window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+    window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
     </script>
 
 @code {
     public bool _hasFetched = false;
-    public List<User> lstStudents = new List<User> ();
-    List<StudentExam> lstStudentsExam = new List<StudentExam> ();
-    User user = new User ();
-    Course course = new Course ();
-    Exam exam = new Exam ();
+    public List<User> lstStudents = new List<User>();
+    List<StudentExam> lstStudentsExam = new List<StudentExam>();
+    User user = new User();
+    Course course = new Course();
+    Exam exam = new Exam();
     int i = 0;
     public int nStudents = 0;
     public int nStudentsStarted = 0;
@@ -101,37 +100,37 @@ else
     public int TotalPoints = 0;
 
     //LifeCycleEvents
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync ()
         {
         appState.OnChange += TriggerRender;
-        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+        if (Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            Navman.NavigateTo ("/Login");
+            Navman.NavigateTo("/Login");
             }
-        await RefreshPageData ();
+        await RefreshPageData();
         _hasFetched = true;
-        } 
-    private void TriggerRender()
+        }
+    private void TriggerRender ()
         {
         InvokeAsync(StateHasChanged);
         }
-    public void Dispose()
+    public void Dispose ()
         {
         appState.OnChange -= TriggerRender;
         }
     //btns
-    public void BtnShowAnswers()
+    public void BtnShowAnswers ()
         {
         string _appstatecmd = appState.Cmd ?? "";
-        _appstatecmd = (_appstatecmd.EndsWith ("raw")) ? (Strings.Left (_appstatecmd, _appstatecmd.Length - 3)) : (_appstatecmd + "raw");
-        appState.SetCmd (_appstatecmd);
+        _appstatecmd = (_appstatecmd.EndsWith("raw")) ? (Strings.Left(_appstatecmd, _appstatecmd.Length - 3)) : (_appstatecmd + "raw");
+        appState.SetCmd(_appstatecmd);
         i = 0;
         }
-    public async Task BtnShowCourseTestStats(StudentExamTest studentExamTest)
+    public async Task BtnShowCourseTestStats (StudentExamTest studentExamTest)
         {
         _hasFetched = false;
         //Read StudentExam and StudentExamTest Across Students
-        List<StudentExamTest> lstStudentsExamTest = await feService.Read_StudentsExamTest (studentExamTest);
+        List<StudentExamTest> lstStudentsExamTest = await feService.Read_StudentsExamTest(studentExamTest);
         //calcs ...
         nStudents = lstStudentsExamTest.Count;
         // nStudentsVisited = 0;
@@ -159,7 +158,7 @@ else
         //             }
         //         else
         //             {
-        //             nStudentsAnsweredIncorrectly++;                    
+        //             nStudentsAnsweredIncorrectly++;
         //             }
         //         }
         //     if((tst.StudentExamTestAns == studentExamTest.Opt1Id))
@@ -186,91 +185,107 @@ else
         // nStudentsNotAnswered = nStudentsVisited - nStudentsAnswered;
         if (appState.TestId == studentExamTest.TestId)
             {
-            appState.SetTestId (0);
+            appState.SetTestId(0);
             }
         else
             {
-            appState.SetTestId (studentExamTest.TestId);
+            appState.SetTestId(studentExamTest.TestId);
             }
         //appState.SetCmd ("ShowStudentExamTestStats");
         _hasFetched = true;
-        StateHasChanged ();
+        StateHasChanged();
         }
-    public async Task BtnShowStudentExamTests(StudentExam studentExam)
+    public async Task BtnShowStudentExamTests (StudentExam studentExam)
         {
-        appState.SetCmd ("studentexamtests"); //{studentexamtests|studentcoursetests}
-        appState.SetStudentExamId (studentExam.StudentExamId);
-        appState.SetStudentName (studentExam.StudentName);
-        appState.SetStudentNickname (studentExam.StudentNickname);
-        Navman.NavigateTo ("/T_ReportTests");
+        appState.SetCmd("studentexamtests"); //{studentexamtests|studentcoursetests}
+        appState.SetStudentExamId(studentExam.StudentExamId);
+        appState.SetStudentName(studentExam.StudentName);
+        appState.SetStudentNickname(studentExam.StudentNickname);
+        Navman.NavigateTo("/T_ReportTests");
         }
-    public void BtnReportPointsPlain()
+    public void BtnReportPointsPlain ()
         {
-        Navman.NavigateTo ("/T_ReportExamPoints_plain");
+        Navman.NavigateTo("/T_ReportExamPoints_plain");
         }
-    public void BtnBack()
+    public void BtnBack ()
         {
         if (appState.ReturnPage != "/T_ReportTests")
             {
-            Navman.NavigateTo (appState.ReturnPage?? "/Login");
+            Navman.NavigateTo(appState.ReturnPage ?? "/Login");
             }
         else
             {
-            Navman.NavigateTo ("/T_Courses");
+            Navman.NavigateTo("/T_Courses");
             }
         }
-    //method
-    public async Task BtnReportStudent(int Id, string mode)
+    //convert date
+    public string PersianDate (string? dt)
         {
-        if(Id > 0)
+        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
+        return feService.ToPersianDate(dt);
+        }
+    //method
+    public async Task BtnReportStudent (int Id, string mode)
+        {
+        if (Id > 0)
             {
-            appState.SetReturnPage ("/T_Students");
-            Navman.NavigateTo ($"/T_ReportStudents/{mode}/{Id}");           
+            appState.SetReturnPage("/T_Students");
+            Navman.NavigateTo($"/T_ReportStudents/{mode}/{Id}");
             }
         else
             {
             string? itemx = mode.ToLower() switch
                 {
-                    "s" =>  "select a Student from list",
-                    "g" =>  "select a Group from list",
-                    "c" =>  "select a Course from list",
-                    "e" =>  "select a Course, then select an Exam",
-                    "m" =>  "select a Mesage from list",
+                    "s" => "select a Student from list",
+                    "g" => "select a Group from list",
+                    "c" => "select a Course from list",
+                    "e" => "select a Course, then select an Exam",
+                    "m" => "select a Mesage from list",
                     _ => null
                     };
             Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
-    public async Task RefreshPageData()
+    public async Task RefreshPageData ()
         {
-        exam.ExamId = Convert.ToInt32 (appState.ExamId);
+        exam.ExamId = Convert.ToInt32(appState.ExamId);
         _hasFetched = false;
-        exam = await feService.Read_Exam (exam.ExamId, true);
-        lstStudentsExam.Clear ();
-        lstStudentsExam = await feService.Read_StudentExams (Convert.ToInt32 (appState.ExamId), "ByExamId");
+        exam = await feService.Read_Exam(exam.ExamId, true);
+        lstStudentsExam.Clear();
+        lstStudentsExam = await feService.Read_StudentExams(Convert.ToInt32(appState.ExamId), "ByExamId");
         if (lstStudentsExam.Count > 0)
             {
-            exam.ExamDateTime = lstStudentsExam[0].ExamDateTime;
-            exam.ExamTitle = lstStudentsExam[0].ExamTitle;
-            exam.ExamDuration = lstStudentsExam[0].ExamDuration;
-            course.CourseName = lstStudentsExam[0].CourseName;     
+            exam.ExamDateTime = lstStudentsExam [0].ExamDateTime;
+            exam.ExamTitle = lstStudentsExam [0].ExamTitle;
+            exam.ExamDuration = lstStudentsExam [0].ExamDuration;
+            course.CourseName = lstStudentsExam [0].CourseName;
             //SHOW TIME
             DateTime _examDateTimeStart = DateTime.ParseExact(exam.ExamDateTime, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
             DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);
             if (DateTime.Now > _examDateTimeFinish)
                 {
+                //exam has finished
                 Snackbar.Add($"exam is finished", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                }
+            else if (DateTime.Now < _examDateTimeStart)
+                {
+                //exam has not started yet
+                TimeSpan diff = _examDateTimeStart - DateTime.Now;
+                int hours = (int) diff.TotalHours;
+                int minutes = diff.Minutes;
+                Snackbar.Add($"{hours} hr  {minutes + 1} min (to start)", Severity.Success);
                 }
             else
                 {
+                //exam is running
                 TimeSpan _ts = _examDateTimeFinish - DateTime.Now;
                 if (DateTime.Now > _examDateTimeFinish.AddMinutes(-3))
                     {
-                    Snackbar.Add($"{_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2}", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                    Snackbar.Add($"{_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} (to finish)", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                     }
                 else
                     {
-                    Snackbar.Add($"  {_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} ", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                    Snackbar.Add($"  {_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} (to finish)", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                     }
                 }
             }
@@ -279,8 +294,8 @@ else
             //needs: @inject ISnackbar Snackbar --at top of page
             Snackbar.Add("students list is empty", Severity.Warning); //Severity.Error | Severity.Info | Severity.Success
             //--old code was: await JS.InvokeVoidAsync ("alert", "List of Students (for this Exam) is Empty!");
-            BtnBack ();
+            BtnBack();
             }
         _hasFetched = true;
         }
-}
+    }

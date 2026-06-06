@@ -1,4 +1,5 @@
 ﻿using ExaminerS.Models;
+using System.Globalization;
 using Group = ExaminerS.Models.Group;
 
 namespace ExaminerB.Service
@@ -1375,6 +1376,27 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ($"api/Delete_Note", noteId);
             return response.IsSuccessStatusCode ? true : false;
             }
-        #endregion        
+        #endregion
+        #region FRONTEND Methods
+        public string ToPersianDate (string? dt)
+            {
+            //this method converts miladi to shamsi just for display; actual data on db is miladi-date
+            //handle null/empty
+            if (string.IsNullOrWhiteSpace (dt))
+                return "-";
+            //TryParse: prevents error on invalid date formats
+            if (!DateTime.TryParse (dt, out DateTime datetime))
+                {
+                return "-";
+                }
+            //convert
+            PersianCalendar pc = new PersianCalendar ();
+            return $"{pc.GetYear (datetime):0000}-" +
+                       $"{pc.GetMonth (datetime):00}-" +
+                       $"{pc.GetDayOfMonth (datetime):00} " +
+                       $"{pc.GetHour (datetime):00}:{pc.GetMinute (datetime):00}";
+            }
+
+        #endregion
         }
     }

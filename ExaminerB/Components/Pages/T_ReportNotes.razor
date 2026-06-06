@@ -1,4 +1,5 @@
 ﻿@page "/T_ReportNotes/{mode:int}/{Id:int}"
+@using System.Globalization
 @using ExaminerB.Service
 @using System.Threading.Tasks
 @inject FeService feService
@@ -56,7 +57,7 @@
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
                                             <span class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold; font-size:smaller;margin:0px; ">
-                                                @notex.NoteDatum
+                                                @PersianDate(notex.NoteDatum)
                                             </span>
                                             <hr />
                                             <div style="white-space: pre-wrap; font-weight:normal; font-family:'Segoe UI';font-size:small">
@@ -138,7 +139,7 @@
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
                                             <span class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;font-size:smaller;margin:0px;">
-                                                @notex.NoteDatum
+                                                @PersianDate(notex.NoteDatum)
                                             </span>
                                             <hr />
                                             <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
@@ -241,6 +242,7 @@
 @code {
     [Parameter] public int mode { get; set; }
     [Parameter] public int Id { get; set; }
+    private CultureInfo _persianCulture = new CultureInfo("fa-IR");
     private MudSelect<int> refProjects;
     private MudSelect<int> refSubprojects;
     int ProjectId = 0;
@@ -341,6 +343,12 @@
         }
     public void BtnBack()
         {Navman.NavigateTo (appState.ReturnPage?? "/T_SwitchBoard");
+        }
+    //convert date
+    public string PersianDate (string? dt)
+        {
+        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
+        return feService.ToPersianDate(dt);
         }
     //methods
     public async Task CreateNote ()

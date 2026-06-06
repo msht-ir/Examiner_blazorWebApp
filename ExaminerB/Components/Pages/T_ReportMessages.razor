@@ -213,10 +213,10 @@ else
                                     @message.MessageBody
                                 </div>
                                 <hr style="color:royalblue" />
-                                <div>Sent: @message.DateTimeSent</div>
+                                <div>Sent: @PersianDate(message.DateTimeSent)</div>
                                 @if((message.StudentMessageTags & 1) == 1)
                                     {
-                                    <div>Read: @message.DateTimeRead</div>                    
+                                    <div>Read: @PersianDate(message.DateTimeRead)</div>                    
                                     }
                                 @if((message.StudentMessageTags & 16) == 16)
                                     {
@@ -612,9 +612,11 @@ else
             Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
-    public void BtnBack()
+    //convert date
+    public string PersianDate (string? dt)
         {
-        Navman.NavigateTo (appState.ReturnPage ?? "/Login");
+        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
+        return feService.ToPersianDate(dt);
         }
     //methods
     public async Task GetListOfMessagesAndNotes()
@@ -702,5 +704,9 @@ else
         await GetListOfMessagesAndNotes (); 
         StateHasChanged(); 
         }
-
+    //Exit
+    public void BtnBack()
+        {
+        Navman.NavigateTo (appState.ReturnPage ?? "/Login");
+        }
 }

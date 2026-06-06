@@ -2,6 +2,7 @@
 @using ExaminerB.Service
 @using Microsoft.VisualBasic
 @using System.Threading.Tasks
+@using System.Globalization
 @inject FeService feService
 @inject NavigationManager Navman
 @inject AppState appState
@@ -16,212 +17,154 @@
         {
         <h6 style="color:indianred">@appState.Message</h6>
         }
-</div>
+    </div>
 <hr />
 @if (!_hasFetched)
+    {
+    <_Loading />
+    }
+else
+    {
+    @if (appState.Cmd == "AddNewExam")
         {
-        <_Loading />
+        <h5 style="text-align:center;font-weight:bold; padding-bottom:10px;color:indianred">Add New Exam</h5>
+            <div class="d-flex mb-3" style="max-width:600px; margin: 0 auto;">
+            <MudTextField ref="refNewExamTitle"
+                          @bind-Value="txtNewExamTitle"
+                          Label="exam title"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Autocomplete="off"
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@Icons.Material.Filled.Save"
+                          OnAdornmentClick="BtnCreateExam"
+                          Style="font-family:tahoma"
+                          Class="my-textfield" />
+                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                <img src="/img/icoCancel.png" width="20" />
+                </button>
+            </div>
         }
     else
         {
-        @if (appState.Cmd == "AddNewExam")
-            {
-            <br />
-            <div style="font-weight:bold; padding-bottom:10px;">Add New Exam</div>
-            <div class="d-flex mb-3">
-                <MudTextField ref="refNewExamTitle" @bind-Value="txtNewExamTitle" Label="exam title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                <button class="btn btn-link" @onclick="BtnCreateExam">
-                    <img src="/img/icoSave2.png" width="22" />
-                </button>
-                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                    <img src="/img/icoCancel.png" width="20" />
-                </button>
-            </div>
-            }
-        else
-            {
             <div style="text-align: center; margin:15px;">
                 <button class="btn btn-link" @onclick="BtnBack">
-                    <img src="/img/icoBack3.png" width="40" />
+                <img src="/img/icoBack3.png" width="40" />
                 </button>
                 <button class="btn btn-link" @onclick="BtnAddNewExam">
-                    <img src="/img/icoAdd0.png" width="24" />
+                <img src="/img/icoAdd0.png" width="24" />
                 </button>
                 <button class="btn btn-link" @onclick='() => BtnGotoPage("S")'>
-                    <img src="/img/icoSwitchBoardStudents.png" width="36" />
+                <img src="/img/icoSwitchBoardStudents.png" width="36" />
                 </button>
                 <button class="btn btn-link" @onclick='() => BtnGotoPage("C")'>
-                    <img src="/img/icoSwitchBoardCourses.png" width="36" />
+                <img src="/img/icoSwitchBoardCourses.png" width="36" />
                 </button>
             </div>
-            }
-            <hr />
+        }
+    <hr />
         <EditForm Model="lstCourseExams" style="max-width:600px; margin: 0 auto;">
-            @foreach (var exam in lstCourseExams)
-                {
-                int examId = exam.ExamId;
+        @foreach (var exam in lstCourseExams)
+            {
+            int examId = exam.ExamId;
                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                     <MudCard Class="mx-0">
                         <MudCardContent Style="background-color:rgb(250,250,250);">
                             <div style="text-align:center">
-                                <span style="color:Black; font-weight:bold;">@exam.ExamTitle</span> <br />
-                                <span style="color:indianred; font-weight:bold;font-size:small">@exam.ExamDateTime</span>
-                                <span style="font-weight:bold;font-size:smaller;"> [@exam.ExamNTests Tests, @exam.ExamDuration min]</span>
+                            <span style="color:Black; font-weight:bold;">@exam.ExamTitle</span> <br />
+                            <span style="color:indianred; font-weight:bold;font-size:small">@PersianDate(exam.ExamDateTime)</span>
+                            <span style="font-weight:bold;font-size:smaller;"> [@exam.ExamNTests Tests, @exam.ExamDuration min]</span>
                             </div>
-                            @* ACTION MENU *@
-                            @* <div style="text-align: center;margin-top:10px;">
-                                <MudMenu Label="exam actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                    <div style="font-weight:bold;margin:10px;">@exam.ExamTitle</div>
-                                    <hr />
-                                    <MudMenuItem @onclick="() => BtnEditExam(exam)">
-                                        <button style="border:none" class="btn btn-link" title="edit exam ويرايش آزمون" >
-                                            <img class="pulse-hover" src="/img/icoRename.png" width="26" />
-                                        </button>
-                                        Edit Exam
-                                    </MudMenuItem>
-                                    <MudMenuItem @onclick="() => BtnStratStopExam(exam)">
-                                        <button style="border:none" class="btn btn-link" title="exam active / inactive آزمون فعال/غيرفعال" >
-                                            @if (exam.IsActive)
-                                                {
-                                                <img class="pulse-hover" src="/img/icoOn.png" width="24" />
-                                                }
-                                            else
-                                                {
-                                                <img class="pulse-hover" src="/img/icoOff.png" width="24" />
-                                                }
-                                        </button>
-                                        Active?
-                                    </MudMenuItem>
-                                    <MudMenuItem @onclick="() => BtnReportExamTests(exam.ExamId)">
-                                        <button style="border:none" class="btn btn-link" title="exam tests گزارش سوالات اين آزمون">
-                                            <img class="pulse-hover" src="/img/icoListT.png" width="32" />
-                                        </button>
-                                        Report Tests
-                                    </MudMenuItem>
-                                    <hr />
-                                    <MudMenuItem @onclick="() => BtnReportExamPoints(exam.ExamId)">
-                                        <button style="border:none" class="btn btn-link" title="exam status and points گزارش وضعيت و نمرات آزمون" >
-                                            <img class="pulse-hover" src="/img/icoFolderE.png" width="26" />
-                                        </button>
-                                        Exam Status 
-                                    </MudMenuItem>
-                                    <MudMenuItem @onclick="() => BtnSetExamAsFinishedForAllStudents(exam.ExamId)">
-                                        <button style="border:none" class="btn btn-link" title="ُset exam finished for all خاتمه آزمون براي همه" ">
-                                            <img class="pulse-hover" src="/img/icoClock2.png" width="22" />
-                                        </button>
-                                        Terminate
-                                    </MudMenuItem>
-                                    <MudMenuItem @onclick="()=>BtnReportPointsPlain(exam.ExamId)">
-                                        <button class="btn btn-link pulse-hover" type="submit">
-                                            <img src="/img/icoListP.png" width="32" title="جدول نمرات دانشجويان" />
-                                        </button>
-                                        Exam Points
-                                    </MudMenuItem>
-                                    <hr />
-                                    <MudMenuItem @onclick="() => BtnReportStudents(exam.ExamId)">
-                                        <button style="border:none" class="btn btn-link" title="students folder فولدر دانشجويان" >
-                                            <img class="pulse-hover" src="/img/icoFolderS.png" width="26" />
-                                        </button>
-                                        Students Folder
-                                    </MudMenuItem>
-                                    <MudMenuItem @onclick="() => BtnDeleteExam(exam)">
-                                        <button style="border:none" class="btn btn-link" title="delete exam حذف آزمون" >
-                                            <img class="pulse-hover" src="/img/icoDelete1.png" width="20" />
-                                        </button>
-                                        Delete Exam
-                                    </MudMenuItem>
-                                </MudMenu>
-                            </div> *@
-                            <hr style="color:indianred"/>
+                        <hr style="color:indianred" />
                             <table class="table table-light" style="margin:auto;max-width:300px">
                                 <tr>
                                     <td>
-                                        <button style="border:none" class="btn btn-link" title="edit exam ويرايش آزمون" @onclick="()=>BtnEditExam(exam)" >
-                                            <img class="pulse-hover" src="/img/icoRename.png" width="26" />
+                                        <button style="border:none" class="btn btn-link" title="edit exam ويرايش آزمون" @onclick="() => BtnEditExam(exam)">
+                                        <img class="pulse-hover" src="/img/icoRename.png" width="26" />
                                         </button>
                                     </td>
                                     <td>
                                         <button style="border:none" class="btn btn-link" title="exam active / inactive آزمون فعال/غيرفعال" @onclick="() => BtnStratStopExam(exam)">
-                                            @if (exam.IsActive)
-                                                {
-                                                <img class="pulse-hover" src="/img/icoOn.png" width="24" />
-                                                }
-                                            else
-                                                {
-                                                <img class="pulse-hover" src="/img/icoOff.png" width="24" />
-                                                }
+                                        @if (exam.IsActive)
+                                            {
+                                            <img class="pulse-hover" src="/img/icoOn.png" width="24" />
+                                            }
+                                        else
+                                            {
+                                            <img class="pulse-hover" src="/img/icoOff.png" width="24" />
+                                            }
                                         </button>
                                     </td>
                                     <td>
                                         <button style="border:none" class="btn btn-link" title="ُset exam finished for all خاتمه آزمون براي همه" @onclick="() => BtnSetExamAsFinishedForAllStudents(exam.ExamId)">
-                                            <img class="pulse-hover" src="/img/icoClock2.png" width="22" />
+                                        <img class="pulse-hover" src="/img/icoClock2.png" width="22" />
                                         </button>
                                     </td>
                                     <td>
                                         <button style="border:none" class="btn btn-link" title="delete exam حذف آزمون" @onclick="() => BtnDeleteExam(exam)">
-                                            <img class="pulse-hover" src="/img/icoDelete1.png" width="20" />
+                                        <img class="pulse-hover" src="/img/icoDelete1.png" width="20" />
                                         </button>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <button style="border:none" class="btn btn-link" title="exam tests گزارش سوالات اين آزمون" @onclick="() => BtnReportExamTests(exam.ExamId)">
-                                            <img class="pulse-hover" src="/img/icoListT.png" width="32" />
+                                        <img class="pulse-hover" src="/img/icoListT.png" width="32" />
                                         </button>
                                     </td>
                                     <td>
                                         <button style="border:none" class="btn btn-link" title="students folder فولدر دانشجويان" @onclick="() => BtnReportStudents(exam.ExamId)">
-                                            <img class="pulse-hover" src="/img/icoFolderS.png" width="26" />
+                                        <img class="pulse-hover" src="/img/icoFolderS.png" width="26" />
                                         </button>
                                     </td>
                                     <td>
                                         <button style="border:none" class="btn btn-link" title="exam status and points گزارش وضعيت و نمرات آزمون" @onclick="() => BtnReportExamPoints(exam.ExamId)">
-                                            <img class="pulse-hover" src="/img/icoFolderE.png" width="26" />
+                                        <img class="pulse-hover" src="/img/icoFolderE.png" width="26" />
                                         </button>
                                     </td>
                                     <td>
-                                        <button class="btn btn-link pulse-hover" type="submit" @onclick="()=>BtnReportPointsPlain(exam.ExamId)">
-                                            <img src="/img/icoListP.png" width="32" title="جدول نمرات دانشجويان" />
+                                        <button class="btn btn-link pulse-hover" type="submit" @onclick="() => BtnReportPointsPlain(exam.ExamId)">
+                                        <img src="/img/icoListP.png" width="32" title="جدول نمرات دانشجويان" />
                                         </button>
                                     </td>
                                 </tr>
                             </table>
-                        <div style="text-align:center;">
-                        </div>
+                            <div style="text-align:center;">
+                            </div>
                         </MudCardContent>
                     </MudCard>
                 </MudContainer>
-                }
-                <br />
-                <hr />
-                <div style="text-align: center;">
-                    <button class="btn btn-link" @onclick="BtnBack">
-                        <img src="/img/icoBack3.png" width="40" />
-                    </button>
-                </div>
+            }
+        <br />
+        <hr />
+            <div style="text-align: center;">
+                <button class="btn btn-link" @onclick="BtnBack">
+                <img src="/img/icoBack3.png" width="40" />
+                </button>
+            </div>
         </EditForm>
-        }
+    }
 
 @code {
     private ElementReference txtNewExamName;
-    private  MudTextField<string> refNewExamTitle;
+    private MudTextField<string> refNewExamTitle;
     public string txtNewExamTitle = "";
     public int intStudentId = 0;
     public int intGroupId = 0;
     public bool _hasFetched = false;
-    User user = new User ();
-    Course course = new Course ();
-    List<Exam> lstCourseExams = new ();
-    List<Group> lstGroups = new ();
-    List<User> lstStudents = new ();
+    User user = new User();
+    Course course = new Course();
+    List<Exam> lstCourseExams = new();
+    List<Group> lstGroups = new();
+    List<User> lstStudents = new();
 
     //LifeCycleEvents
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync ()
         {
         appState.OnChange += TriggerRender;
-        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+        if (Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            Navman.NavigateTo ("/Login");
+            Navman.NavigateTo("/Login");
             }
         //user
         user.UserId = Convert.ToInt32(appState.UserId);
@@ -233,42 +176,48 @@
         //
         course.CourseId = Convert.ToInt32(appState.CourseId);
         course.CourseName = appState.CourseName ?? "";
-        lstCourseExams = await feService.Read_Exams (course.CourseId);
+        lstCourseExams = await feService.Read_Exams(course.CourseId);
         _hasFetched = true;
-        } 
-    private void TriggerRender()
+        }
+    private void TriggerRender ()
         {
         InvokeAsync(StateHasChanged);
         }
-    public void Dispose()
+    public void Dispose ()
         {
         appState.OnChange -= TriggerRender;
+        }
+    //convert date
+    public string PersianDate (string? dt)
+        {
+        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
+        return feService.ToPersianDate(dt);
         }
     //AddNew Exam
     public async Task BtnAddNewExam ()
         {
-        appState.SetCmd ("AddNewExam");
-        StateHasChanged ();
-        await Task.Delay (1);
+        appState.SetCmd("AddNewExam");
+        StateHasChanged();
+        await Task.Delay(1);
         //await refNewExamTitle.FocusAsync ();
         }
     public async Task BtnCreateExam ()
         {
-        Exam newExam = new Exam () { CourseId = course.CourseId, ExamTitle = txtNewExamTitle, ExamDateTime=DateTime.Now.ToString("yyyy-MM-dd HH:mm"), ExamDuration=10 };
-        int result = await feService.Create_Exam (newExam);
+        Exam newExam = new Exam() { CourseId = course.CourseId, ExamTitle = txtNewExamTitle, ExamDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm"), ExamDuration = 10 };
+        int result = await feService.Create_Exam(newExam);
         if (result > 0)
             {
-            appState.SetCmd ("");
-            lstCourseExams = await feService.Read_Exams (course.CourseId);
-            StateHasChanged ();
+            appState.SetCmd("");
+            lstCourseExams = await feService.Read_Exams(course.CourseId);
+            StateHasChanged();
             }
         }
     //btns
     public async Task BtnStratStopExam (Exam exam)
         {
         exam.IsActive = (exam.IsActive) ? false : true;
-        bool result = await feService.Update_Exam (exam);
-        StateHasChanged ();
+        bool result = await feService.Update_Exam(exam);
+        StateHasChanged();
         }
     public async Task BtnSetExamAsFinishedForAllStudents (int examId)
         {
@@ -277,35 +226,35 @@
         if (confirmResult == true)
             {
             _hasFetched = false;
-            StateHasChanged ();
-            bool result = await feService.Update_StudentsExamTags ("finishedOn", examId);
+            StateHasChanged();
+            bool result = await feService.Update_StudentsExamTags("finishedOn", examId);
             Snackbar.Add("Terminated for all", Severity.Info); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             _hasFetched = true;
-            StateHasChanged ();
+            StateHasChanged();
             }
         }
     public void BtnEditExam (Exam exam)
         {
-        Navman.NavigateTo ($"/T_Exam/{exam.ExamId}");
+        Navman.NavigateTo($"/T_Exam/{exam.ExamId}");
         }
     public void BtnReportStudents (int examId)
         {
-        appState.SetReturnPage ("/T_Exams");
-        Navman.NavigateTo ($"/T_ReportStudents/E/{examId}");
+        appState.SetReturnPage("/T_Exams");
+        Navman.NavigateTo($"/T_ReportStudents/E/{examId}");
         }
     public void BtnReportExamTests (int examId)
         {
-        appState.SetReturnPage ("/T_Exams");
-        appState.SetCmd ("examtests");
-        appState.SetExamId (examId);
-        Navman.NavigateTo ($"/T_ReportTests");
+        appState.SetReturnPage("/T_Exams");
+        appState.SetCmd("examtests");
+        appState.SetExamId(examId);
+        Navman.NavigateTo($"/T_ReportTests");
         }
     public void BtnReportExamPoints (int examId)
         {
-        appState.SetReturnPage ("/T_Exams");
-        appState.SetCmd ("reportexampoints");
-        appState.SetExamId (examId);
-        Navman.NavigateTo ($"/T_ReportExamPoints");
+        appState.SetReturnPage("/T_Exams");
+        appState.SetCmd("reportexampoints");
+        appState.SetExamId(examId);
+        Navman.NavigateTo($"/T_ReportExamPoints");
         }
     public async Task BtnDeleteExam (Exam exam)
         {
@@ -313,20 +262,20 @@
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            bool result = await feService.Delete_Exam (exam.ExamId);
+            bool result = await feService.Delete_Exam(exam.ExamId);
             if (result)
                 {
-                appState.SetCmd ("");
+                appState.SetCmd("");
                 lstCourseExams = await feService.Read_Exams(course.CourseId);
                 Snackbar.Add("exam deleted", Severity.Warning); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                StateHasChanged ();
+                StateHasChanged();
                 }
             }
-        }    
+        }
     //Exit
     public void BtnReportPointsPlain (int examId)
         {
-        appState.SetExamId (examId);
+        appState.SetExamId(examId);
         Navman.NavigateTo("/T_ReportExamPoints_plain");
         }
     private void BtnGotoPage (string page)
@@ -336,15 +285,15 @@
                 "S" => "T_students",
                 "C" => "T_Courses"
                 };
-        Navman.NavigateTo ($"/{pg}");
+        Navman.NavigateTo($"/{pg}");
         }
     public void BtnCancel ()
         {
-        appState.SetCmd ("");
+        appState.SetCmd("");
         }
     public void BtnBack ()
         {
-        appState.SetCmd ("");
-        Navman.NavigateTo ("/T_SwitchBoard");
+        appState.SetCmd("");
+        Navman.NavigateTo("/T_SwitchBoard");
         }
     }

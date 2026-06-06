@@ -141,7 +141,7 @@ else
                                                         <td style="color:indianred;font-weight:bold;">
                                                             <span style="color:gray;font-weight:bold;padding:0px;">@exm.CourseName</span>
                                                             <br /> @exm.ExamTitle 
-                                                            <br /> <span style="color:black;font-weight:normal;padding:0px;">@exm.ExamDateTime</span>
+                                                            <br /> <span style="color:black;font-weight:normal;padding:0px;">@PersianDate(exm.ExamDateTime)</span>
                                                             <br />
                                                             @if((exm.StudentExamTags & 4) == 4)
                                                                 {
@@ -419,10 +419,11 @@ else
             Snackbar.Add($"failed", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
-    public void BtnBack()
+    //convert date
+    public string PersianDate (string? dt)
         {
-        //Navman.NavigateTo ("/T_Students");
-        Navman.NavigateTo (appState.ReturnPage?? "/Login");
+        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
+        return feService.ToPersianDate(dt);
         }
     //methods
     public async Task ReadPageDataLists()
@@ -462,5 +463,10 @@ else
                     break;
                     }
             }
+        }
+    public void BtnBack()
+        {
+        //Navman.NavigateTo ("/T_Students");
+        Navman.NavigateTo (appState.ReturnPage?? "/Login");
         }
 }
