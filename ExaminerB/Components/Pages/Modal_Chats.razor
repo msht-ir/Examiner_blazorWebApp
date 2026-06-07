@@ -319,7 +319,14 @@
     public string PersianDate (string? dt)
         {
         // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
-        return feService.ToPersianDate(dt);
+        if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
+            {
+            return feService.ToPersianDate(dt);
+            }
+        else
+            {
+            return dt;
+            }
         }
     //Exit
     public void BtnCancelNewChat()

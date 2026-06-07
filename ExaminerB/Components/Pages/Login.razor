@@ -13,90 +13,122 @@
 <PageTitle>Examiner Home</PageTitle>
 <center>
     @* ABOUT *@
-    <div class="accordion align-items-center m-2" id="accordionIndex" style="text-align:center;min-width:380px;max-width:400px;">
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
+        <div class="accordion align-items-center m-2" id="accordionIndex" style="text-align:center;min-width:380px;max-width:400px;">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
                     <h6 style="color:lightseagreen">e<span style="font-style:italic;font-weight:normal;color:indianred">x</span>aminer</h6>
-                </button>
-            </h2>
-            <div id="collapseZero" class="accordion-collapse collapse" data-bs-parent="#accordionIndex">
-                <div class="accordion-body" style="text-align:center;margin-bottom:15px;">
+                    </button>
+                </h2>
+                <div id="collapseZero" class="accordion-collapse collapse" data-bs-parent="#accordionIndex">
+                    <div class="accordion-body" style="text-align:center;margin-bottom:15px;">
                     <hr />
-                    @* @if (user.UserRole == "teacher")
-                        {
-                        <img src="/img/_mshtConHat.png" width="90" style="margin-left:10px;margin-right:10px;border-radius:7px;" />
-                        <hr />
-                        } *@
-                    <div style="text-align:center">
+                        <div style="text-align:center">
                         Majid SharifiTehrani, May 2026<br /><br />
-                    </div>
-                        <h6 style="color:indianred">www.msht.ir</h6>
-                    <a href="https://www.msht.ir/" target="_blank">
-                        @* <img src="/img/mshtQRCode.png" width="120" style="margin-left:10px;margin-right:10px" /> *@
-                    </a>
-                    <div style="text-align:center">
+                        </div>
+                    <h6 style="color:indianred">www.msht.ir</h6>
+                        <a href="https://www.msht.ir/" target="_blank">
+                        </a>
+                        <div style="text-align:center">
                         @if (user.UserRole == "teacher")
                             {
                             <hr />
                             <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AppRegistration" Size="Size.Small" OnClick="@(() => BtnSignup())" Style="margin-left:20px">SingUp New Teacher</MudButton>
                             }
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</center>
+    </center>
 @* LOGIN *@
-<div style="display: flex; flex-direction: column; justify-content: center; align-items: center;margin-top:20px;">
-    <div style="display: flex; justify-content: flex-end;">
-        @if(user.UserRole == "student")
-        {
-            <img src="/img/pngStudyGirl1.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />            
-        }
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;margin-top:20px;">
+        <div style="display: flex; justify-content: flex-end;">
+        @if (user.UserRole == "student")
+            {
+            <img src="/img/pngStudyGirl1.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
+            }
         else
-        {            
+            {
             <img src="/img/icoLoginTeacher.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
-        }
-    </div>
-    <EditForm Model="user" OnValidSubmit="BtnLogin" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            }
+        </div>
+        <EditForm Model="user" OnValidSubmit="BtnLogin" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <DataAnnotationsValidator></DataAnnotationsValidator>
-        <MudContainer Class="mt-2 px-0">
-            <MudCard Class="mx-0">
-                <MudCardContent Style="background-color:rgba(248,248,248, 1);max-width:500px;min-width:400px;min-height:220px;padding-bottom:20px;">
-                    @if(user.UserRole == "student")
+            <MudContainer Class="mt-2 px-0">
+                <MudCard Class="mx-0">
+                    <MudCardContent Style="background-color:rgba(248,248,248, 1);max-width:500px;min-width:400px;min-height:220px;padding-bottom:20px;">
+                    @if (user.UserRole == "student")
                         {
-                        <div class="mb-3 d-flex gap-1">
-                            <MudSelect T="int" @ref="refTeacher" Label="Teacher" Value="TeacherId" ValueChanged="OnTeacherChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                            <MudSelectItem Value="0">Select</MudSelectItem>
-                            @foreach (var teacher in lstTeachers) { <MudSelectItem Value="@teacher.UserId">@teacher.UserNickname</MudSelectItem> }
-                        </MudSelect>
-                        </div>
+                            <div class="mb-3 d-flex gap-1">
+                                <MudSelect T="int"
+                                       @ref="refTeacher"
+                                       Label="Teacher"
+                                       Value="TeacherId"
+                                       ValueChanged="OnTeacherChanged"
+                                       Class="w-auto my-select"
+                                       Variant="Variant.Filled"
+                                       Margin="Margin.Normal"
+                                       Style="color:royalblue;width:140px;font-size:small;">
+                                <MudSelectItem Value="0">Select</MudSelectItem>
+                                @foreach (var teacher in lstTeachers)
+                                    {
+                                    <MudSelectItem Value="@teacher.UserId">@teacher.UserNickname</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </div>
                         }
                     else
-                    {
+                        {
                         <hr /><br />
-                    }
-                    <MudTextField @ref="refUser" @bind-Value="user.UserName" Label="Username" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                    <MudTextField @ref="refPass" @bind-Value="user.UserPass" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" InputType="InputType.Password" />
-                </MudCardContent>
-            </MudCard>
-        </MudContainer>
-        <div class="d-flex gap-4" style="margin-top:30px;margin-bottom:25px;">
-            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AccountBox" Size="Size.Small" OnClick="@(() => BtnLogin())" Style="width:300px;">Login</MudButton>
-        </div>
+                        }
+                    <MudTextField @ref="refUser"
+                                  @bind-Value="user.UserName"
+                                  Label="Username"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@Icons.Material.Filled.PersonOutline"
+                                  Class="my-textfield" />
+                    <MudTextField @ref="refPass"
+                                  @bind-Value="user.UserPass"
+                                  Label="Password"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal"
+                                  Class="my-textfield"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@_passwordIcon"
+                                  OnAdornmentClick="TogglePasswordVisibility"
+                                  InputType="_passwordInput" />
+                    </MudCardContent>
+                </MudCard>
+            </MudContainer>
+            <div class="d-flex gap-4" style="margin-top:30px;margin-bottom:25px;">
+            <MudButton 
+                OnClick="@(() => BtnLogin())" 
+                Variant="Variant.Filled" 
+                EndIcon="@Icons.Material.Filled.AccountBox" 
+                Size="Size.Small" 
+                Style="width:300px;">
+                Login
+            </MudButton>
+            </div>
         <hr style="min-width:380px;max-width:400px;" />
-    </EditForm>
-</div>
-<script>
+        </EditForm>
+    </div>
+    <script>
     document.getElementById("txtUser").focus();
     document.getElementById("txtUser").addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
             event.preventDefault();
             document.getElementById("txtPass").focus();}});
-</script>
+    </script>
+
 
 @code {
+    private bool _passwordVisible;
+    private InputType _passwordInput = InputType.Password;
+    private string _passwordIcon = Icons.Material.Filled.VisibilityOff;
     private MudSelect<string> refRole;
     private User user = new User { UserRole = "student" };
     private MudSelect<int> refTeacher;
@@ -104,33 +136,33 @@
     private MudTextField<string> refPass; // private ElementReference refPass;
     private int TeacherId = 0;
     private int selectedTeacherId;
-    private List<User> lstTeachers = new List<User> (); 
+    private List<User> lstTeachers = new List<User>();
     private bool _firstRender = true;
 
     //LifeCycleEvents
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync ()
         {
         appState.OnChange += StateHasChanged;
         appState.OnChange += TriggerRender;
-        appState.SetUserLoginStatus (0);
-        appState.SetStudentTags (0);
-        appState.SetUserName ("");
-        StateHasChanged ();
-        lstTeachers = await feService.Read_Teachers ();
-        } 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+        appState.SetUserLoginStatus(0);
+        appState.SetStudentTags(0);
+        appState.SetUserName("");
+        StateHasChanged();
+        lstTeachers = await feService.Read_Teachers();
+        }
+    protected override async Task OnAfterRenderAsync (bool firstRender)
         {
         if (_firstRender)
             {
             _firstRender = false;
-            await Task.Delay (1);
+            await Task.Delay(1);
             }
         }
-    private void TriggerRender()
+    private void TriggerRender ()
         {
         InvokeAsync(StateHasChanged);
         }
-    public void Dispose()
+    public void Dispose ()
         {
         appState.OnChange -= TriggerRender;
         }
@@ -146,21 +178,21 @@
         user.UserId = 0;
         user.UserTags = 0;
         user.TeacherId = TeacherId;
-        appState.SetTeacherId (TeacherId);
-        user = await feService.Login(user) ?? new User { UserRole = "student" };        
+        appState.SetTeacherId(TeacherId);
+        user = await feService.Login(user) ?? new User { UserRole = "student" };
         if (user.UserId != 0)
             {
             switch (user.UserRole)
                 {
                 case "student":
                         {
-                        appState.SetUserLoginStatus (1);
-                        appState.SetUserId (user.UserId);
-                        appState.SetUserName (user.UserName);
-                        appState.SetUserPass (user.UserPass);
-                        appState.SetUserTags (user.UserTags);
-                        appState.SetUserRole (user.UserRole);
-                        appState.SetUserNickname (user.UserNickname);
+                        appState.SetUserLoginStatus(1);
+                        appState.SetUserId(user.UserId);
+                        appState.SetUserName(user.UserName);
+                        appState.SetUserPass(user.UserPass);
+                        appState.SetUserTags(user.UserTags);
+                        appState.SetUserRole(user.UserRole);
+                        appState.SetUserNickname(user.UserNickname);
                         //navigate
                         await Task.Delay(1);
                         Navman.NavigateTo("/S_Student");
@@ -169,16 +201,16 @@
                         }
                 case "teacher":
                         {
-                        appState.SetUserLoginStatus (1);
-                        appState.SetUserId (user.UserId);
-                        appState.SetUserName (user.UserName);
-                        appState.SetUserPass (user.UserPass);
-                        appState.SetUserTags (user.UserTags);
-                        appState.SetUserRole (user.UserRole);
-                        appState.SetUserNickname (user.UserNickname);
+                        appState.SetUserLoginStatus(1);
+                        appState.SetUserId(user.UserId);
+                        appState.SetUserName(user.UserName);
+                        appState.SetUserPass(user.UserPass);
+                        appState.SetUserTags(user.UserTags);
+                        appState.SetUserRole(user.UserRole);
+                        appState.SetUserNickname(user.UserNickname);
                         //navigate
                         await Task.Delay(1);
-                        Navman.NavigateTo("/T_SwitchBoard"); 
+                        Navman.NavigateTo("/T_SwitchBoard");
                         Snackbar.Add($"\n\nwelcome {user.UserNickname}!", Severity.Info, opt => { opt.VisibleStateDuration = 2000; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                         break;
                         }
@@ -191,12 +223,19 @@
             TeacherId = 0;
             return;
             }
-        } 
+        }
     public void BtnSignup ()
         {
         Navman.NavigateTo("/T_SignUp");
         }
     //methods
+    void TogglePasswordVisibility ()
+        {
+        _passwordVisible = !_passwordVisible;
+        _passwordInput = _passwordVisible ? InputType.Text : InputType.Password;
+        _passwordIcon = _passwordVisible ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff;
+        StateHasChanged();
+        }
     private void SwitchUserRole ()
         {
         user.UserRole = (user.UserRole == "student") ? "teacher" : "student";
@@ -206,26 +245,26 @@
         {
         if (e.Key == "Enter")
             {
-            await Task.Delay (1);
-            await refPass.FocusAsync ();
+            await Task.Delay(1);
+            await refPass.FocusAsync();
             }
         }
-    private async Task OnTeacherChanged(int newValue) 
+    private async Task OnTeacherChanged (int newValue)
         {
         //update TeacherId from the event
         TeacherId = newValue;
         user.UserId = TeacherId;
-        user.UserName = "-"; //just because this field is required 
-        user.UserPass = "-------";//just because this field is required
+        user.UserName = "-"; //just because this field is required
+        user.UserPass = "-";//just because this field is required
         user.UserRole = "student";
         user.UserTags = 0;
         user.TeacherId = 0;
         user.UserNickname = "";
         StateHasChanged();
-        await Task.Delay (1);
-        await refUser.FocusAsync ();
-        } 
-    private async Task OnRoleChanged(string newRole) 
+        await Task.Delay(1);
+        await refUser.FocusAsync();
+        }
+    private async Task OnRoleChanged (string newRole)
         {
         user.UserRole = newRole;
         StateHasChanged(); //render page to make elements appear on DOM
@@ -239,4 +278,4 @@
             await refTeacher.FocusAsync();
             }
         }
-}
+    }

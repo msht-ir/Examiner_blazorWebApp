@@ -40,3 +40,41 @@ table .btn-primary:hover {
 .my-select .mud-select-item {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
 }
+
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.login-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+}
+
+.role-toggle-img {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+    .role-toggle-img:hover {
+        transform: scale(1.02);
+    }
+
+.login-card {
+    background-color: #f8f8f8 !important;
+    width: 100%;
+    max-width: 400px;
+    min-width: 300px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+}

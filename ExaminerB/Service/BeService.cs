@@ -159,7 +159,7 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Update_TeacherAsync (User user)
             {
-            string sql = "UPDATE usrs SET UsrPass=@usrpass, UsrNickname=@usrnickname WHERE UsrId=@userid";
+            string sql = "UPDATE usrs SET UsrPass=@usrpass, UsrNickname=@usrnickname, UsrTags=@usertags WHERE UsrId=@userid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
@@ -168,6 +168,7 @@ namespace ExaminerB.Services2Backend
                 SqlCommand cmd3 = new SqlCommand (sql, cnn);
                 cmd3.Parameters.AddWithValue ("@usrpass", user.UserPass);
                 cmd3.Parameters.AddWithValue ("@usrnickname", user.UserNickname);
+                cmd3.Parameters.AddWithValue ("@usertags", user.UserTags);
                 cmd3.Parameters.AddWithValue ("@userid", user.UserId);
                 await cmd3.ExecuteNonQueryAsync ();
                 return true;

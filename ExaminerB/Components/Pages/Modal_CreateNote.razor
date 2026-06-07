@@ -35,21 +35,60 @@
                                                    Elevation="12"
                                                    Margin="Margin.Dense"
                                                    Modal="true" />
-                                    <MudTimePicker Label="Time ساعت" @bind-Time="_time" TimeFormat="HH:mm" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Dense="true" />
-                                    <MudTextField T="string" Label="Note" @bind-Value="note.NoteText" Variant="Variant.Outlined" Lines="24" AutoResize="true" Style=@($"width:100%;direction:{(note.IsRtl ? "rtl" : "ltr")};font-size:13px;font-family:{(note.IsRtl ? "'Segoe UI'" : "'Courier New', Courier, monospace")};color:black;") />
-                                    <MudCheckBox @bind-Value="note.IsRtl" Label="RTL" Color="Color.Primary"></MudCheckBox>
+                                    <MudTimePicker Label="Time ساعت"
+                                                   @bind-Time="_time"
+                                                   TimeFormat="HH:mm"
+                                                   Variant="Variant.Outlined"
+                                                   PickerVariant="PickerVariant.Dialog"
+                                                   Dense="true" />
+                                    <MudTextField T="string"
+                                                  Label="@($"{note.NoteText?.Length ?? 0} / 4000")"
+                                                  @bind-Value="note.NoteText"
+                                                  Immediate="true"
+                                                  Variant="Variant.Outlined"
+                                                  Lines="15"
+                                                  AutoResize="true"
+                                                  Style=@($"width:100%;direction:{(note.IsRtl ? "rtl" : "ltr")};font-size:13px;font-family:{(note.IsRtl ? "'Segoe UI'" : "'Courier New', Courier, monospace")};color:black;") />
+                                        <MudCheckBox @bind-Value="note.IsRtl"
+                                                 Label="RTL"
+                                                 Color="Color.Primary">
+                                        </MudCheckBox>
                                     @if (appState.Cmd == "CreateNote")
                                         {
                                             <div class="d-flex gap-2 justify-content-center" style="text-align:center">
-                                            <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" @onclick="BtnCreateNote">Save note</MudButton>
-                                            <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Cancel" @onclick="BtnCancel">Cancel</MudButton>
+                                                <MudButton Variant="Variant.Outlined"
+                                                       Size="Size.Small"
+                                                       Color="Color.Primary"
+                                                       StartIcon="@Icons.Material.Filled.Save"
+                                                       @onclick="BtnCreateNote">
+                                                Save note
+                                                </MudButton>
+                                                <MudButton Variant="Variant.Outlined"
+                                                       Size="Size.Small"
+                                                       Color="Color.Secondary"
+                                                       StartIcon="@Icons.Material.Filled.Cancel"
+                                                       @onclick="BtnCancel">
+                                                Cancel
+                                                </MudButton>
                                             </div>
                                         }
                                     else if (appState.Cmd == "UpdateNote")
                                         {
                                             <div class="d-flex gap-2 justify-content-center" style="text-align:center">
-                                            <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" @onclick="BtnUpdateNote">Update note</MudButton>
-                                            <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Cancel" @onclick="BtnCancel">Cancel</MudButton>
+                                                <MudButton Variant="Variant.Outlined"
+                                                       Size="Size.Small"
+                                                       Color="Color.Primary"
+                                                       StartIcon="@Icons.Material.Filled.Save"
+                                                       @onclick="BtnUpdateNote">
+                                                Update note
+                                                </MudButton>
+                                                <MudButton Variant="Variant.Outlined"
+                                                       Size="Size.Small"
+                                                       Color="Color.Secondary"
+                                                       StartIcon="@Icons.Material.Filled.Cancel"
+                                                       @onclick="BtnCancel">
+                                                Cancel
+                                                </MudButton>
                                             </div>
                                         }
                                     </MudCardContent>
@@ -119,6 +158,7 @@
             note.ParentType = Convert.ToInt32(appState.NoteParentType);
             note.ParentType = Convert.ToInt32(appState.NoteParentType);
             }
+        _persianCulture = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? new CultureInfo("fa-IR") : new CultureInfo("en-US");
         _hasFetched = true;
         }
     private void TriggerRender ()
@@ -220,34 +260,6 @@
             }
         }
     //calendar
-    public CultureInfo GetPersianCulture ()
-        {
-        var culture = new CultureInfo("fa-IR");
-        DateTimeFormatInfo formatInfo = culture.DateTimeFormat;
-        formatInfo.AbbreviatedDayNames = new [] { "ی", "د", "س", "چ", "پ", "ج", "ش" };
-        formatInfo.DayNames = new [] { "یکشنبه", "دوشنبه", "سه شنبه", "چهار شنبه", "پنجشنبه", "جمعه", "شنبه" };
-        var monthNames = new []
-        { "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند", "", };
-        formatInfo.AbbreviatedMonthNames =
-            formatInfo.MonthNames =
-                formatInfo.MonthGenitiveNames = formatInfo.AbbreviatedMonthGenitiveNames = monthNames;
-        formatInfo.AMDesignator = "ق.ظ";
-        formatInfo.PMDesignator = "ب.ظ";
-        formatInfo.ShortDatePattern = "yyyy-MM-dd";
-        formatInfo.LongDatePattern = "yyyy-MM-dd dddd";
-        formatInfo.FirstDayOfWeek = DayOfWeek.Saturday;
-        Calendar cal = new PersianCalendar();
-        FieldInfo fieldInfo = culture.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
-        if (fieldInfo != null)
-            fieldInfo.SetValue(culture, cal);
-        FieldInfo info = formatInfo.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
-        if (info != null)
-            info.SetValue(formatInfo, cal);
-        culture.NumberFormat.NumberDecimalSeparator = ".";
-        culture.NumberFormat.DigitSubstitution = DigitShapes.NativeNational;
-        culture.NumberFormat.NumberNegativePattern = 0;
-        return culture;
-        }
     public void BtnCancel ()
         {
         appState.SetCmd("");

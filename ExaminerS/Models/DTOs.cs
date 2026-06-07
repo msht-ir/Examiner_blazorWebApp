@@ -15,8 +15,21 @@ namespace ExaminerS.Models
         public string UserRole { get; set; } = "";
         public string UserNickname { get; set; } = "";
         public string UserEmail { get; set; } = "";
-        public int UserTags { get; set; } = 0;  //1:IsActive 2:CanChangePass 4:CanReviewExam 8:CanGetStudentExamTests 16:CanCorrectStudentExamTests 32:CanReviewStudentExamTests
-        //wrapper properties for each flag
+        public int UserTags { get; set; } = 0;
+        /*
+          1:  IsActive
+          2:  CanChangePass
+          4:  CanReviewExam
+          8:  CanGetStudentExamTests
+          16: CanCorrectStudentExamTests
+          32: CanReviewStudentExamTests 
+          64: IsSelected
+          128:
+          256:CalendarFa
+          -
+          wrapper properties:
+        */
+
         public bool IsActive
             {
             get => (UserTags & 1) == 1;
@@ -50,6 +63,17 @@ namespace ExaminerS.Models
                     UserTags &= ~64;
                 }
             }
+        public bool CalendarFa
+            {
+            get => (UserTags & 256) == 256;
+            set
+                {
+                if (value)
+                    UserTags |= 256;
+                else
+                    UserTags &= ~256;
+                }
+            }
         public List<StudentGroup> StudentGroups { get; set; } = new List<StudentGroup> ();
         public List<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse> ();
         public List<StudentExam> StudentExams { get; set; } = new List<StudentExam> ();
@@ -75,7 +99,7 @@ namespace ExaminerS.Models
         public string GroupName { get; set; } = "";
         public string StudentName { get; set; } = "";
         public string StudentNickname { get; set; } = "";
-        public int StudentTags { get; set; } = 0;
+        public int StudentTags { get; set; } = 0; //1:IsActive 2:CanChangePass 4: 8: 16: 32: 64:selected 128: 256:
         }  
     //C
     public class Course

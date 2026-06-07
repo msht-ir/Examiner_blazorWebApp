@@ -387,6 +387,7 @@ else
             Navman.NavigateTo("/Login");
             }
         appState.SetCmd("");
+        _persianCulture = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? new CultureInfo("fa-IR") : new CultureInfo("en-US");
         exam = await feService.Read_Exam(examId, false);
         //PARSE DATETIME
         _PersianYear = Convert.ToInt32(exam.ExamDateTime.Substring(0, 4));
