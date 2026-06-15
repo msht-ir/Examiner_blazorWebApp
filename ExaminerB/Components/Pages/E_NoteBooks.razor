@@ -50,10 +50,6 @@ else
                     <MudCardContent Style="background-color:whitesmoke;">
                         <div class="mb-3" style="max-width:500px; margin:0 auto">
                             <div class="d-flex align-items-center mb-3">
-                            @* <MudTextField @ref="refSearchNote" @bind-Value="strSearchKey" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:'Segoe UI';width:95%;color:black;" />
-                            <button class="btn btn-link" @onclick="BtnReadNotesBySearch">
-                                <img class="pulse-animation" src="/img/icoSearch.png" width="24" title="Search notes"/>
-                            </button> *@
                             <MudTextField T="string"
                                           @ref="refSearchNote"
                                           @bind-Value="strSearchKey"

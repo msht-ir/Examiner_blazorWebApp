@@ -43,18 +43,18 @@
     </center>
 @* LOGIN *@
     <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;margin-top:20px;">
-        <div style="display: flex; justify-content: flex-end;">
-        @if (user.UserRole == "student")
-            {
-            <img src="/img/pngStudyGirl1.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
-            }
-        else
-            {
-            <img src="/img/icoLoginTeacher.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
-            }
-        </div>
-        <EditForm Model="user" OnValidSubmit="BtnLogin" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <EditForm Model="user" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <DataAnnotationsValidator></DataAnnotationsValidator>
+            <div style="display: flex; justify-content: flex-end;">
+            @if (user.UserRole == "student")
+                {
+                <img src="/img/pngStudyGirl1.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
+                }
+            else
+                {
+                <img src="/img/icoLoginTeacher.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
+                }
+            </div>
             <MudContainer Class="mt-2 px-0">
                 <MudCard Class="mx-0">
                     <MudCardContent Style="background-color:rgba(248,248,248, 1);max-width:500px;min-width:400px;min-height:220px;padding-bottom:20px;">
@@ -67,7 +67,7 @@
                                        Value="TeacherId"
                                        ValueChanged="OnTeacherChanged"
                                        Class="w-auto my-select"
-                                       Variant="Variant.Filled"
+                                       Variant="Variant.Text"
                                        Margin="Margin.Normal"
                                        Style="color:royalblue;width:140px;font-size:small;">
                                 <MudSelectItem Value="0">Select</MudSelectItem>
@@ -78,52 +78,39 @@
                                 </MudSelect>
                             </div>
                         }
-                    else
-                        {
-                        <hr /><br />
-                        }
                     <MudTextField @ref="refUser"
-                                  @bind-Value="user.UserName"
+                                  @bind-Value="_username"
                                   Label="Username"
-                                  Variant="Variant.Outlined"
+                                  Variant="Variant.Text"
                                   Margin="Margin.Normal"
                                   Adornment="Adornment.End"
                                   AdornmentIcon="@Icons.Material.Filled.PersonOutline"
                                   Class="my-textfield" />
                     <MudTextField @ref="refPass"
-                                  @bind-Value="user.UserPass"
+                                  @bind-Value="_password"
                                   Label="Password"
-                                  Variant="Variant.Outlined"
+                                  Variant="Variant.Text"
                                   Margin="Margin.Normal"
                                   Class="my-textfield"
                                   Adornment="Adornment.End"
                                   AdornmentIcon="@_passwordIcon"
                                   OnAdornmentClick="TogglePasswordVisibility"
+                                  OnKeyDown="HandleKey_Passwordbox"
                                   InputType="_passwordInput" />
+                    <div style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
+                        <MudButton OnClick="@(() => BtnLogin())"
+                               Variant="Variant.Filled"
+                               EndIcon="@Icons.Material.Filled.AccountBox"
+                               Size="Size.Small"
+                               Style="text-align:center; width:320px;margin-top:60px;">
+                        Login
+                        </MudButton>
+                    </div>
                     </MudCardContent>
                 </MudCard>
             </MudContainer>
-            <div class="d-flex gap-4" style="margin-top:30px;margin-bottom:25px;">
-            <MudButton 
-                OnClick="@(() => BtnLogin())" 
-                Variant="Variant.Filled" 
-                EndIcon="@Icons.Material.Filled.AccountBox" 
-                Size="Size.Small" 
-                Style="width:300px;">
-                Login
-            </MudButton>
-            </div>
-        <hr style="min-width:380px;max-width:400px;" />
         </EditForm>
     </div>
-    <script>
-    document.getElementById("txtUser").focus();
-    document.getElementById("txtUser").addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            document.getElementById("txtPass").focus();}});
-    </script>
-
 
 @code {
     private bool _passwordVisible;
@@ -137,6 +124,8 @@
     private int TeacherId = 0;
     private int selectedTeacherId;
     private List<User> lstTeachers = new List<User>();
+    private string _username = "";
+    private string _password = "";
     private bool _firstRender = true;
 
     //LifeCycleEvents
@@ -169,17 +158,20 @@
     //btns
     public async Task BtnLogin ()
         {
-        //via 'OnValidSubmic of EditForm'
         if ((user.UserRole == "student") & (TeacherId == 0))
             {
-            Snackbar.Add("select your teacher", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select your teacher", Severity.Warning);
             return;
             }
-        user.UserId = 0;
-        user.UserTags = 0;
-        user.TeacherId = TeacherId;
         appState.SetTeacherId(TeacherId);
-        user = await feService.Login(user) ?? new User { UserRole = "student" };
+        if (user.UserRole == "student")
+            {
+            user = await feService.LoginStudent(_username, _password, TeacherId) ?? new User { UserRole = "student" };
+            }
+        else
+            {
+            user = await feService.LoginTeacher(_username, _password) ?? new User { UserRole = "student" };
+            }
         if (user.UserId != 0)
             {
             switch (user.UserRole)
@@ -241,27 +233,13 @@
         user.UserRole = (user.UserRole == "student") ? "teacher" : "student";
         StateHasChanged();
         }
-    public async Task HandleUserKeyDown (KeyboardEventArgs e)
-        {
-        if (e.Key == "Enter")
-            {
-            await Task.Delay(1);
-            await refPass.FocusAsync();
-            }
-        }
     private async Task OnTeacherChanged (int newValue)
         {
         //update TeacherId from the event
         TeacherId = newValue;
         user.UserId = TeacherId;
-        user.UserName = "-"; //just because this field is required
-        user.UserPass = "-";//just because this field is required
-        user.UserRole = "student";
-        user.UserTags = 0;
-        user.TeacherId = 0;
-        user.UserNickname = "";
         StateHasChanged();
-        await Task.Delay(1);
+        await Task.Delay(50);
         await refUser.FocusAsync();
         }
     private async Task OnRoleChanged (string newRole)
@@ -276,6 +254,18 @@
         else if (user.UserRole == "student")
             {
             await refTeacher.FocusAsync();
+            }
+        }
+    private async Task HandleKey_Passwordbox (KeyboardEventArgs e)
+        {
+        if (e.Key == "Enter")
+            {
+            await BtnLogin();
+            }
+        if (e.Key == "Escape")
+            {
+            _password = "";
+            await InvokeAsync(StateHasChanged);
             }
         }
     }

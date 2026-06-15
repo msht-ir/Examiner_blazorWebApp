@@ -16,7 +16,7 @@ namespace ExaminerB.Services2Backend
         private readonly IConfiguration _config;
         public BeService (IConfiguration config) => _config = config;
         #region Login
-        public async Task<User?> LoginTeacherAsync (User user)
+        public async Task<User?> LoginTeacherAsync (string username, string password)
             {
             string? connString = _config.GetConnectionString ("cnni");
             string sql = "SELECT UsrId, UsrName, UsrPass, UsrNickname, UsrTags FROM usrs WHERE UsrName=@usr AND UsrPass=@pwd AND ((UsrTags & 1) = 1)";
@@ -26,12 +26,12 @@ namespace ExaminerB.Services2Backend
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new (sql, cnn);
-                cmd.Parameters.AddWithValue ("@usr", user.UserName);
-                cmd.Parameters.AddWithValue ("@pwd", user.UserPass);
+                cmd.Parameters.AddWithValue ("@usr", username);
+                cmd.Parameters.AddWithValue ("@pwd", password);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
-                    if ((user.UserName.ToLower () == reader.GetString (1).ToLower ()) && (user.UserPass == reader.GetString (2)))
+                    if ((username.ToLower () == reader.GetString (1).ToLower ()) && (password == reader.GetString (2)))
                         {
                         userOut.UserId = reader.GetInt32 (0);
                         userOut.TeacherId = 0;
@@ -58,7 +58,7 @@ namespace ExaminerB.Services2Backend
                 return null;
                 }
             }
-        public async Task<User?> LoginStudentAsync (User user)
+        public async Task<User?> LoginStudentAsync (string username, string password, int teacherid)
             {
             string? connString = _config.GetConnectionString ("cnni");
             string sql = "SELECT StudentId, TeacherId, StudentName, StudentPass, StudentTags, StudentNickname FROM Students WHERE StudentName=@studentname AND StudentPass=@studentpass AND TeacherId=@teacherid AND (StudentTags & 1) = 1";
@@ -68,13 +68,13 @@ namespace ExaminerB.Services2Backend
                 {
                 await cnn.OpenAsync ();
                 using SqlCommand cmd = new (sql, cnn);
-                cmd.Parameters.AddWithValue ("@studentname", user.UserName);
-                cmd.Parameters.AddWithValue ("@studentpass", user.UserPass);
-                cmd.Parameters.AddWithValue ("@teacherid", user.TeacherId);
+                cmd.Parameters.AddWithValue ("@studentname", username);
+                cmd.Parameters.AddWithValue ("@studentpass", password);
+                cmd.Parameters.AddWithValue ("@teacherid", teacherid);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
-                    if ((user.UserName.ToLower () == reader.GetString (2).ToLower ()) && (user.UserPass == reader.GetString (3)))
+                    if ((username.ToLower () == reader.GetString (2).ToLower ()) && (password == reader.GetString (3)))
                         {
                         userOut.UserId = reader.GetInt32 (0);
                         userOut.TeacherId = reader.GetInt32 (1);

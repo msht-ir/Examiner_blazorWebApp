@@ -22,15 +22,15 @@ namespace ExaminerB.Backend
         #endregion
         #region LOGIN
         [HttpPost ("LoginTeacher")]
-        public async Task<ActionResult<User>> LoginTeacher ([FromBody] User user)
+        public async Task<ActionResult<User>> LoginTeacher ([FromQuery] string username, [FromBody] string password)
             {
-            var result = await _BeService.LoginTeacherAsync (user);
+            var result = await _BeService.LoginTeacherAsync (username, password);
             return result != null ? Ok (result) : StatusCode (500, "not found");
             }
         [HttpPost ("LoginStudent")]
-        public async Task<ActionResult<User>> LoginStudent ([FromBody] User user)
+        public async Task<ActionResult<User>> LoginStudent ([FromQuery] string username, [FromQuery] int teacherid,  [FromBody] string password)
             {
-            var result = await _BeService.LoginStudentAsync (user);
+            var result = await _BeService.LoginStudentAsync (username, password, teacherid);
             return result;
             }
         #endregion

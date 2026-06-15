@@ -12,17 +12,27 @@ namespace ExaminerB.Service
             _http = http;
             }
         #region LOGIN
-        public async Task<User?> Login (User user)
+        public async Task<User?> LoginTeacher (string username, string password)
             {
-            //api/LoginTEACHER/api / LoginSTUDENT:
-            var response = await _http.PostAsJsonAsync ("api/Login" + user.UserRole.ToUpper (), user);
+            var response = await _http.PostAsJsonAsync ($"api/LoginTeacher?username={username}", password);
             if (response.IsSuccessStatusCode)
                 {
                 return await response.Content.ReadFromJsonAsync<User> ();
                 }
             else
                 {
-                Console.WriteLine ($"FeService: Login failed:\n {response.StatusCode}");
+                return new User { UserRole = "student" };
+                }
+            }
+        public async Task<User?> LoginStudent (string username, string password, int teacherid)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/LoginStudent?username={username}&teacherid={teacherid}", password);
+            if (response.IsSuccessStatusCode)
+                {
+                return await response.Content.ReadFromJsonAsync<User> ();
+                }
+            else
+                {
                 return new User { UserRole = "student" };
                 }
             }

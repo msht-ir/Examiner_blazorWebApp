@@ -6,8 +6,8 @@ namespace ExaminerB.Services2Backend
     public interface BeIService
         {
         # region Login
-        Task<User?> LoginTeacherAsync (User user);
-        Task<User?> LoginStudentAsync (User user);
+        Task<User?> LoginTeacherAsync (string username, string password);
+        Task<User?> LoginStudentAsync (string username, string password, int teacherid);
         Task LogAsync (int userId, SqlConnection cnn);
         #endregion
         #region U:usrs
