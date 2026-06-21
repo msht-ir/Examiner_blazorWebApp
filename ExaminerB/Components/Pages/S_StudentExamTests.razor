@@ -155,7 +155,7 @@ else
             Console.WriteLine(lstExamSessionNotes.Count);
             foreach (Note _note in lstExamSessionNotes)
                 {
-                Snackbar.Add($"msg: {_note.NoteText}", Severity.Info, opt => { opt.VisibleStateDuration = 1000; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                Snackbar.Add($"msg: {_note.NoteText}", Severity.Info, opt => { opt.VisibleStateDuration = 2500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             //alarm
             intExamAlarm = Convert.ToInt32(appState.ExamAlarm);

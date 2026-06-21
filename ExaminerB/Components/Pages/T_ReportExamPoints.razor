@@ -7,6 +7,7 @@
 @inject IJSRuntime JS
 @implements IDisposable
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 @if (!_hasFetched)
     {
@@ -27,6 +28,9 @@ else
             </button>
             <button class="btn btn-link align-items-center" Title="inject a message to exam session ارسال پيام به جلسه امتحان" @onclick="SendMessageToExamStudents">
             <img src="/img/icoNewNote3.png" width="30" />
+            </button>
+            <button class="btn btn-link align-items-center" Title="delete injected messages to exam session حذف پيام هاي ارسال شده به جلسه امتحان" @onclick="ClearMessagesInjectedToExamSession">
+            <img src="/img/icoEraser.png" width="30" />
             </button>
             <button class="btn btn-link align-items-center" Title="refresh بروز رساني" @onclick="RefreshPageData">
             <img src="/img/gifUserLogin.gif" width="36" />
@@ -57,6 +61,10 @@ else
                     <img src="/img/icoCancel.png" width="20" />
                     </button>
                 </div>
+            }
+        @if (_cmd == "listexamstudentsmessages")
+            {
+
             }
             @{
             i = 0;
@@ -273,15 +281,25 @@ else
                 int result = await feService.Create_Note(note);
                 }
             Snackbar.Add($"message injected to Exam Session", Severity.Info);
+            _txtNewExamSessionNote = "";
             _cmd = "";
             await RefreshPageData(); //just to refresh page data
             StateHasChanged();
             }
         }
-    private void BtnCancel ()
+    private async Task ClearMessagesInjectedToExamSession ()
         {
-        _cmd = "";
-        StateHasChanged();
+        var message = new MarkupString($"<hr><span style='color:indianred'>Clear</span> injected messages to this exam session?<br><br><div style='text-align:center'><img src='/img/icoEraser.png' width='70'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
+            {
+            @foreach (var studentExam in lstStudentsExam)
+                {
+                bool result = await feService.Delete_Notes(studentExam.StudentExamId, 8);
+                }
+            Snackbar.Add($"injected messages cleared", Severity.Warning);
+            StateHasChanged();
+            }
         }
     public async Task RefreshPageData ()
         {
@@ -355,6 +373,11 @@ else
                     };
             Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
+        }
+    private void BtnCancel ()
+        {
+        _cmd = "";
+        StateHasChanged();
         }
     public void BtnBack ()
         {

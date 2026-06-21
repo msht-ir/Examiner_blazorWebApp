@@ -4467,7 +4467,7 @@ namespace ExaminerB.Services2Backend
         public async Task<bool> Delete_NotesAsync (int parentId, int parentType)
             {
             //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
-            string sql = "DELETE FROM Notes WHERE Parent_ID=@parentid";
+            string sql = "DELETE FROM Notes WHERE ParentId=@parentid";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
