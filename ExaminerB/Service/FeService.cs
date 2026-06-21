@@ -818,6 +818,16 @@ namespace ExaminerB.Service
                 }
             return new StudentExam ();
             }
+        public async Task<List<Note>> Read_ExamSessionNotes (int studentExamId, bool excludeReadNotes)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_ExamSessionNotes?excludeReadNotes={excludeReadNotes}", studentExamId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Note> lstExamSessionNotes = await response.Content.ReadFromJsonAsync<List<Note>> ();
+                return lstExamSessionNotes;
+                }
+            return new List<Note> ();
+            }
         public async Task<bool> Update_StudentExam (StudentExam studentExam)
             {
             var response = await _http.PostAsJsonAsync ($"api/Update_StudentExam", studentExam);

@@ -25,6 +25,9 @@ else
             <button class="btn btn-link" type="submit" @onclick="BtnBack">
             <img src="/img/icoBack3.png" width="40" />
             </button>
+            <button class="btn btn-link align-items-center" Title="inject a message to exam session ارسال پيام به جلسه امتحان" @onclick="SendMessageToExamStudents">
+            <img src="/img/icoNewNote3.png" width="30" />
+            </button>
             <button class="btn btn-link align-items-center" Title="refresh بروز رساني" @onclick="RefreshPageData">
             <img src="/img/gifUserLogin.gif" width="36" />
             </button>
@@ -33,6 +36,28 @@ else
             </button>
         </div>
         <EditForm Model="lstStudentsExam" style="max-width:600px; margin: 0 auto;">
+        @if (_cmd == "sendmessagetoexamstudents")
+            {
+            <hr />
+            <h6 style="text-align:center;font-weight:bold; padding-bottom:10px;color:indianred">Send a short message ارسال پيام به جلسه امتحان</h6>
+                <div class="d-flex mb-3" style="max-width:600px; margin: 0 auto;">
+                <MudTextField ref="refNewExamTitle"
+                              @bind-Value="_txtNewExamSessionNote"
+                              Label=""
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
+                              Autocomplete="off"
+                              Adornment="Adornment.End"
+                              AdornmentIcon="@Icons.Material.Filled.Send"
+                              OnAdornmentClick="BtnInjectMessageToExamSession"
+                              Style="font-family:tahoma;margin-left:20px;margin-right:20px;"
+                              Lines="2"
+                              Class="my-textfield" />
+                    <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                    <img src="/img/icoCancel.png" width="20" />
+                    </button>
+                </div>
+            }
             @{
             i = 0;
             }
@@ -98,6 +123,8 @@ else
     public int nStudentsStarted = 0;
     public int nStudentsFinished = 0;
     public int TotalPoints = 0;
+    private string _cmd = "";
+    private string _txtNewExamSessionNote = "";
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync ()
@@ -207,17 +234,6 @@ else
         {
         Navman.NavigateTo("/T_ReportExamPoints_plain");
         }
-    public void BtnBack ()
-        {
-        if (appState.ReturnPage != "/T_ReportTests")
-            {
-            Navman.NavigateTo(appState.ReturnPage ?? "/Login");
-            }
-        else
-            {
-            Navman.NavigateTo("/T_Courses");
-            }
-        }
     //convert date
     public string PersianDate (string? dt)
         {
@@ -232,26 +248,40 @@ else
             }
         }
     //method
-    public async Task BtnReportStudent (int Id, string mode)
+    private void SendMessageToExamStudents ()
         {
-        if (Id > 0)
+        _cmd = "sendmessagetoexamstudents";
+        StateHasChanged();
+        }
+    public async Task BtnInjectMessageToExamSession ()
+        {
+        exam.ExamId = Convert.ToInt32(appState.ExamId);
+        if (_txtNewExamSessionNote.Trim().Length < 5)
             {
-            appState.SetReturnPage("/T_Students");
-            Navman.NavigateTo($"/T_ReportStudents/{mode}/{Id}");
+            Snackbar.Add($"type a message of at least 5 chars", Severity.Warning);
             }
         else
             {
-            string? itemx = mode.ToLower() switch
+            @foreach (var studentExam in lstStudentsExam)
                 {
-                    "s" => "select a Student from list",
-                    "g" => "select a Group from list",
-                    "c" => "select a Course from list",
-                    "e" => "select a Course, then select an Exam",
-                    "m" => "select a Mesage from list",
-                    _ => null
-                    };
-            Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                //create note (parentType=8)  //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
+                Note note = new Note();
+                note.ParentId = studentExam.StudentExamId;
+                note.ParentType = 8;
+                note.NoteDatum = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+                note.NoteText = _txtNewExamSessionNote;
+                int result = await feService.Create_Note(note);
+                }
+            Snackbar.Add($"message injected to Exam Session", Severity.Info);
+            _cmd = "";
+            await RefreshPageData(); //just to refresh page data
+            StateHasChanged();
             }
+        }
+    private void BtnCancel ()
+        {
+        _cmd = "";
+        StateHasChanged();
         }
     public async Task RefreshPageData ()
         {
@@ -304,5 +334,37 @@ else
             BtnBack();
             }
         _hasFetched = true;
+        }
+    public async Task BtnReportStudent (int Id, string mode)
+        {
+        if (Id > 0)
+            {
+            appState.SetReturnPage("/T_ReportExamPoints");
+            Navman.NavigateTo($"/T_ReportStudents/{mode}/{Id}");
+            }
+        else
+            {
+            string? itemx = mode.ToLower() switch
+                {
+                    "s" => "select a Student from list",
+                    "g" => "select a Group from list",
+                    "c" => "select a Course from list",
+                    "e" => "select a Course, then select an Exam",
+                    "m" => "select a Mesage from list",
+                    _ => null
+                    };
+            Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+        }
+    public void BtnBack ()
+        {
+        if (appState.ReturnPage != "/T_ReportTests")
+            {
+            Navman.NavigateTo(appState.ReturnPage ?? "/Login");
+            }
+        else
+            {
+            Navman.NavigateTo("/T_Courses");
+            }
         }
     }

@@ -19,7 +19,7 @@ else
         <h6 style="color:gray;">
             Course: @course.CourseName | Exam: @exam.ExamTitle
             <br />
-            (@exam.ExamDateTime)
+            (@PersianDate(exam.ExamDateTime))
             <br />
             Duration: @exam.ExamDuration min | students: @lstStudentsExam.Count
         </h6>
@@ -119,7 +119,7 @@ else
         {
         if(Id > 0)
             {
-            appState.SetReturnPage ("/T_Students");
+            appState.SetReturnPage("/T_ReportExamPoints_plain");
             Navman.NavigateTo ($"/T_ReportStudents/{mode}/{Id}");           
             }
         else
@@ -152,10 +152,22 @@ else
             }
         else
             {
-            //needs: @inject ISnackbar Snackbar --at top of page
             Snackbar.Add("students list is empty", Severity.Warning); //Severity.Error | Severity.Info | Severity.Success
             BtnBack ();
             }
         _hasFetched = true;
         }
-}
+    //convert date
+    public string PersianDate (string? dt)
+        {
+        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
+        if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
+            {
+            return feService.ToPersianDate(dt);
+            }
+        else
+            {
+            return dt;
+            }
+        }
+    }

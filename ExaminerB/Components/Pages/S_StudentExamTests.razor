@@ -14,172 +14,181 @@
     }
 else
     {
-    <div style="text-align: center; max-width:500px; margin: 0 auto;">
-    <EditForm Model="studentExam">
-        <div class="container primary mt-5">
-            <div class="card">
-                <h5 style="color:RoyalBlue">@appState.UserName</h5>
-                <div class="card-body">
-                    <div class="accordion" id="accordionIndex">
-                        <div class="accordion-item">
-                                <h4 class="accordion-header">
-                                <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
-                                    <h5>exam info</h5>
-                                </button>
-                            </h4>
-                            <div id="collapseZero" class="accordion-collapse collapse" data-bs-parent="#accordionIndex">
-                                <div class="accordion-body">
-                                    <MudContainer Class="mt-2 px-0">
-                                        <MudCard Class="mx-0" elevation="2">
-                                            <MudCardContent Style="background-color: rgba(248,248,248);">
-                                                course: <span style="color:indianred">@studentExam.CourseName </span><br />
-                                                exam: <span style="color:indianred">@studentExam.ExamTitle </span><br />
-                                                <hr style="color:red"/>
-                                                @studentExam.ExamDateTime <br />
-                                                Tests: @studentExam.ExamNTests <br />
-                                                Time: @studentExam.ExamDuration min<br />
-                                                @if ((@studentExam.ExamTags & 1) == 1)
-                                                    {
-                                                    <h6 style="color:blue">Exam is active</h6>
-                                                    }
-                                                @if ((@studentExam.ExamTags & 2) == 2)
-                                                    {
-                                                    <h6 style="color:green">Sample Tests mode</h6>
-                                                    }
-                                                @if ((@studentExam.ExamTags & 4) == 4)
-                                                    {
-                                                    <h6 style="color:green">Training mode</h6>
-                                                    }
-                                                <hr style="color:red" />
-                                                <div class="d-flex align-items-center">
-                                                    <span style="font-weight:bold; margin-right:10px;">Alarm: </span>
-                                                    <MudNumericField T="int" @ref="refExamAlarm" @bind-Value="intExamAlarm" Label="min to timeout" Variant="Variant.Outlined" Min="0" Max="15" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width: 150px;padding-left:10px" />
-                                                    <button class="btn btn-link  ms-2" style="margin-right:10px;" @onclick="() => SetExamAlarm(intExamAlarm)">
-                                                        <img src="/img/icoSave2.png" width="24" />
-                                                    </button>
-                                                </div>
-                                            </MudCardContent>
-                                        </MudCard>
-                                    </MudContainer>
+        <div style="text-align: center; max-width:500px; margin: 0 auto;">
+            <EditForm Model="studentExam">
+                <div class="container primary mt-5">
+                    <div class="card">
+                    <h5 style="color:RoyalBlue">@appState.UserName</h5>
+                        <div class="card-body">
+                            <div class="accordion" id="accordionIndex">
+                                <div class="accordion-item">
+                                    <h4 class="accordion-header">
+                                        <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
+                                        <h5>exam info</h5>
+                                        </button>
+                                    </h4>
+                                    <div id="collapseZero" class="accordion-collapse collapse" data-bs-parent="#accordionIndex">
+                                        <div class="accordion-body">
+                                            <MudContainer Class="mt-2 px-0">
+                                                <MudCard Class="mx-0" elevation="2">
+                                                    <MudCardContent Style="background-color: rgba(248,248,248);">
+                                                    course: <span style="color:indianred">@studentExam.CourseName </span><br />
+                                                    exam: <span style="color:indianred">@studentExam.ExamTitle </span><br />
+                                                    <hr style="color:red" />
+                                                    @studentExam.ExamDateTime <br />
+                                                    Tests: @studentExam.ExamNTests <br />
+                                                    Time: @studentExam.ExamDuration min<br />
+                                                    @if ((@studentExam.ExamTags & 1) == 1)
+                                                        {
+                                                        <h6 style="color:blue">Exam is active</h6>
+                                                        }
+                                                    @if ((@studentExam.ExamTags & 2) == 2)
+                                                        {
+                                                        <h6 style="color:green">Sample Tests mode</h6>
+                                                        }
+                                                    @if ((@studentExam.ExamTags & 4) == 4)
+                                                        {
+                                                        <h6 style="color:green">Training mode</h6>
+                                                        }
+                                                    <hr style="color:red" />
+                                                        <div class="d-flex align-items-center">
+                                                        <span style="font-weight:bold; margin-right:10px;">Alarm: </span>
+                                                        <MudNumericField T="int" @ref="refExamAlarm" @bind-Value="intExamAlarm" Label="min to timeout" Variant="Variant.Outlined" Min="0" Max="15" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width: 150px;padding-left:10px" />
+                                                            <button class="btn btn-link  ms-2" style="margin-right:10px;" @onclick="() => SetExamAlarm(intExamAlarm)">
+                                                            <img src="/img/icoSave2.png" width="24" />
+                                                            </button>
+                                                        </div>
+                                                    </MudCardContent>
+                                                </MudCard>
+                                            </MudContainer>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <table class="table table-borderless">
+                                <thead>
+                                    <tr style="font-weight:bold">
+                                    <td></td>
+                                    <td></td>
+                                    </tr>
+                                </thead>
+                                @{
+                                i = 0;
+                                }
+                            @foreach (var tst in studentExam.StudentExamTests)
+                                {
+                                i++;
+                                var localTst = tst;
+                                var localIndex = i;
+                                    <tr>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm w-100" style="margin-bottom:5px;" @onclick="async () => await BtnShowTest(localTst, localIndex)">
+                                            Test @i
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <div style="display:flex; gap:5px; align-items:center;">
+                                            @if ((tst.StudentExamTestTags & 1) == 1)
+                                                {
+                                                <img src="/img/icoCourse.png" style="width:25px" />
+                                                }
+                                            @if ((tst.StudentExamTestTags & 4) == 4)
+                                                {
+                                                    <button class="btn btn-link" @onclick="() => BtnClearTagTestIsAnswered(localTst)">
+                                                    <img src="/img/icoGo1.png" style="width:25px" />
+                                                    </button>
+                                                }
+                                            @if ((tst.StudentExamTestTags & 2) == 2)
+                                                {
+                                                    <button class="btn btn-link" @onclick="() => BtnClearTagTestIsBookmarked(localTst)">
+                                                    <img src="/img/icoBookmark1.png" style="width:22px" />
+                                                    </button>
+                                                }
+                                            @if ((tst.StudentExamTestTags & 8) == 8)
+                                                {
+                                                <img src="/img/icoInfo1.png" style="width:25px" />
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
                         </div>
                     </div>
-                    <table class="table table-borderless">
-                        <thead>
-                            <tr style="font-weight:bold">
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </thead>
-                        @{i=0;}
-                        @foreach (var tst in studentExam.StudentExamTests)
-                            {
-                            i++;
-                            var localTst = tst;
-                            var localIndex = i;
-                            <tr>
-                                <td>
-                                    <button class="btn btn-primary btn-sm w-100" style="margin-bottom:5px;" @onclick="async ()=> await BtnShowTest(localTst, localIndex)">
-                                        Test @i
-                                    </button>
-                                </td>
-                                <td>
-                                    <div style="display:flex; gap:5px; align-items:center;">
-                                        @if ((tst.StudentExamTestTags & 1) == 1)
-                                            {
-                                            <img src="/img/icoCourse.png" style="width:25px" />
-                                            }
-                                        @if ((tst.StudentExamTestTags & 4) == 4)
-                                            {
-                                            <button class="btn btn-link" @onclick= "()=> BtnClearTagTestIsAnswered(localTst) ">
-                                                <img src="/img/icoGo1.png" style="width:25px" />
-                                            </button>
-                                            }
-                                        @if ((tst.StudentExamTestTags & 2) == 2)
-                                            {
-                                            <button class="btn btn-link" @onclick="()=>BtnClearTagTestIsBookmarked(localTst)">
-                                                <img src="/img/icoBookmark1.png" style="width:22px" />
-                                           </button>
-                                            }
-                                        @if ((tst.StudentExamTestTags & 8) == 8)
-                                            {
-                                            <img src="/img/icoInfo1.png" style="width:25px" />
-                                            }
-                                    </div>
-                                </td>
-                            </tr>
-                            }
-                    </table>
                 </div>
-            </div>
+            <br />
+                <button class="btn btn-link" @onclick="() => BtnBack()">
+                <img src="/img/icoBack3.png" style="width:40px" />
+                </button>
+                <button class="btn btn-link" @onclick="() => BtnFinishExam(studentExam)">
+                <img src="img/icoClock2.png" alt="icon" style="width:35px; margin-right:8px;" />
+                </button>
+            </EditForm>
         </div>
-        <br />
-        <button class="btn btn-link" @onclick= "()=> BtnBack()">
-            <img src="/img/icoBack3.png" style="width:40px" />
-        </button>
-        <button class="btn btn-link" @onclick= "()=> BtnFinishExam(studentExam)">
-            <img src="img/icoClock2.png" alt="icon" style="width:35px; margin-right:8px;" />
-        </button>
-    </EditForm>
-    </div>
     }
 
 @code {
     private MudNumericField<int> refExamAlarm;
     private int intExamAlarm;
     private bool _hasFetched = false;
-    public User student = new User ();
-    public Course course = new Course ();
-    public StudentExam studentExam = new StudentExam ();
+    public User student = new User();
+    public Course course = new Course();
+    public StudentExam studentExam = new StudentExam();
     int i = 0;
     //LifeCycleEvents
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync ()
     {
         appState.OnChange += TriggerRender;
-        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+        if (Convert.ToInt32(appState.UserLoginStatus) != 1)
         {
-            Navman.NavigateTo ("/Login");
+            Navman.NavigateTo("/Login");
         }
         //appState.StudentExamId is set in previous page and may have delay to become fetched (notice: its a void not async!). use it in if() below to make sure it has received its value
-        if (!_hasFetched &&  (Convert.ToInt32(appState.StudentExamId) > 0))
+        if (!_hasFetched && (Convert.ToInt32(appState.StudentExamId) > 0))
         {
             student.UserId = Convert.ToInt32(appState.UserId);
             student.UserName = appState.UserName ?? "";
             studentExam.StudentExamId = Convert.ToInt32(appState.StudentExamId);
             studentExam = await feService.Read_StudentExam(studentExam.StudentExamId, false);
-            intExamAlarm = Convert.ToInt32 (appState.ExamAlarm);
+            //exam session notes ------> this may slow down the app during the exam
+            List<Note> lstExamSessionNotes = await feService.Read_Notes(studentExam.StudentExamId, 8);
+            Console.WriteLine(lstExamSessionNotes.Count);
+            foreach (Note _note in lstExamSessionNotes)
+                {
+                Snackbar.Add($"msg: {_note.NoteText}", Severity.Info, opt => { opt.VisibleStateDuration = 1000; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                }
+            //alarm
+            intExamAlarm = Convert.ToInt32(appState.ExamAlarm);
             if (studentExam.StudentExamTests.Count == 0)
-            {
-                Snackbar.Add("exam not active or exam expired", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                //old code:await JS.InvokeVoidAsync ("alert", "Exam is just expired!");
-                BtnBack ();
-            }
+                {
+                Snackbar.Add("exam not active or exam expired", Severity.Warning);
+                BtnBack();
+                }
             _hasFetched = true;
+            }
         }
-    }
-    private void TriggerRender()
-    {
+    private void TriggerRender ()
+        {
         Console.WriteLine("TriggerRender(): AppState triggered re-render");
         InvokeAsync(StateHasChanged);
-    }
-    public void Dispose()
-    {
+        }
+    public void Dispose ()
+        {
         appState.OnChange -= TriggerRender;
-    }
+        }
     //btns
-    public async Task BtnShowTest(StudentExamTest studentExamTest, int testIndex)
-    {
+    public async Task BtnShowTest (StudentExamTest studentExamTest, int testIndex)
+        {
         //instead of query the exam, try get examDT from an appstate!
         Exam exam = await feService.Read_Exam(studentExam.ExamId, false);
         DateTime _examDateTimeStart = DateTime.ParseExact(exam.ExamDateTime, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
         DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);
         if (DateTime.Now > _examDateTimeFinish)
-        {
+            {
             Snackbar.Add($"time is over", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-        }
+            }
         else
-        {
+            {
             TimeSpan _ts = _examDateTimeFinish - DateTime.Now;
             if (DateTime.Now > _examDateTimeFinish.AddMinutes(-3))
                 {
@@ -190,7 +199,7 @@ else
                 if (DateTime.Now > _examDateTimeFinish.AddMinutes(-1 * intExamAlarm))
                     {
                     Snackbar.Add($"{_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                    Snackbar.Add($". . reminder . .", Severity.Warning, opt =>{opt.VisibleStateDuration = 1000;opt.ShowTransitionDuration = 300;opt.HideTransitionDuration = 300;});
+                    Snackbar.Add($". . reminder . .", Severity.Warning, opt => { opt.VisibleStateDuration = 1000; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     }
                 else
                     {
@@ -198,44 +207,44 @@ else
                     }
                 }
             studentExamTest.StudentExamTestTags = (studentExamTest.StudentExamTestTags | 1);
-            bool result = await feService.Update_StudentExamTestTags(studentExamTest);        
-            Navman.NavigateTo ($"/S_StudentExamTest/{studentExamTest.StudentExamTestId}/{testIndex}");
+            bool result = await feService.Update_StudentExamTestTags(studentExamTest);
+            Navman.NavigateTo($"/S_StudentExamTest/{studentExamTest.StudentExamTestId}/{testIndex}");
             }
         }
-    public async Task BtnFinishExam(StudentExam studentExam)
+    public async Task BtnFinishExam (StudentExam studentExam)
         {
         var message = new MarkupString($"<hr><span style='font-weight:bold;color:indianred'>Finish</span> exam <strong>({studentExam.ExamTitle})</strong>?<br/><br/>Sure?<div style='text-align:center'><img src='/img/icoClock2.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            bool result = await feService.Update_StudentExamTags(studentExam, "finishedOn");        
+            bool result = await feService.Update_StudentExamTags(studentExam, "finishedOn");
             Snackbar.Add("exam terminated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            Navman.NavigateTo ("/S_Student");
+            Navman.NavigateTo("/S_Student");
             }
         //old code: if(await JS.InvokeAsync<bool>("confirm",$"Finish exam ( {studentExam.ExamTitle} ) ?\n\n Sure?")){}
         }
-    public void BtnBack()
+    public void BtnBack ()
         {
-        Navman.NavigateTo ("/S_Student");
+        Navman.NavigateTo("/S_Student");
         }
     //methods
-    public async Task BtnClearTagTestIsAnswered(StudentExamTest studentExamTest)
+    public async Task BtnClearTagTestIsAnswered (StudentExamTest studentExamTest)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Clear</span>  your answer for this Test?<div style='text-align:center'><img src='/img/icoEraser.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            await feService.Update_StudentExamTestAnswer (studentExamTest.StudentExamTestId, 0);
+            await feService.Update_StudentExamTestAnswer(studentExamTest.StudentExamTestId, 0);
             studentExamTest.StudentExamTestTags = (studentExamTest.StudentExamTestTags & ~4);
             bool result = await feService.Update_StudentExamTestTags(studentExamTest);
             if (result)
                 {
                 studentExam = await feService.Read_StudentExam(studentExam.StudentExamId, false);
                 StateHasChanged();
-                }            
+                }
             }
         }
-    public async Task BtnClearTagTestIsBookmarked(StudentExamTest studentExamTest)
+    public async Task BtnClearTagTestIsBookmarked (StudentExamTest studentExamTest)
         {
         studentExamTest.StudentExamTestTags = (studentExamTest.StudentExamTestTags & ~2);
         bool result = await feService.Update_StudentExamTestTags(studentExamTest);
@@ -247,8 +256,8 @@ else
         }
     private void SetExamAlarm (int examAlarm)
         {
-        appState.SetExamAlarm (examAlarm);
+        appState.SetExamAlarm(examAlarm);
         Snackbar.Add($"Timeout reminer: ({examAlarm} min)", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-        StateHasChanged ();
+        StateHasChanged();
         }
     }

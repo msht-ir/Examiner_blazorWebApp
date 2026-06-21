@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Office.Word;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using ExaminerS.Models;
@@ -273,7 +274,7 @@ namespace ExaminerB.Services2Backend
                     StudentNotes = new List<Note> ()
                     });
                 }
-                return lstStudents;
+            return lstStudents;
             }
         public async Task<List<User>> Read_StudentsByKeywordAsync (int userId, string keyword, int readStudentGCEM)
             {
@@ -1919,16 +1920,16 @@ namespace ExaminerB.Services2Backend
                                 lstOptions.Add (new TestOption { TestOptionTitle = WS0.Cell (iRow, col).Value.ToString () });
                                 }
                             int answ = Convert.ToInt32 (WS0.Cell (iRow, 10).Value.ToString () ?? "0");
-                            lstOptions[answ - 1].TestOptionTags = 2; //IsAns
+                            lstOptions [answ - 1].TestOptionTags = 2; //IsAns
                             int forceLast = Convert.ToInt32 (WS0.Cell (iRow, 11).Value.ToString () ?? "0");
                             if (forceLast != 0)
                                 {
-                                lstOptions[forceLast - 1].TestOptionTags += 1; //ForceLast
+                                lstOptions [forceLast - 1].TestOptionTags += 1; //ForceLast
                                 }
                             //Save options
                             for (int i = 0; i < test.TestType; i++)
                                 {
-                                int addOpt = await Create_TestOptionAsync (lstOptions[i]);
+                                int addOpt = await Create_TestOptionAsync (lstOptions [i]);
                                 if (addOpt != 0)
                                     {
                                     //Console.WriteLine ("testOption " + i + " was not added to db :: " + lstOptions[i].TestOptionTitle);
@@ -1988,13 +1989,13 @@ namespace ExaminerB.Services2Backend
                 TestOption tmp1 = new TestOption ();
                 for (int p = 0; p < lstTestOptions.Count; p++)
                     {
-                    if ((lstTestOptions[p].TestOptionTags & 1) == 1)
+                    if ((lstTestOptions [p].TestOptionTags & 1) == 1)
                         {
-                        tmpx = lstTestOptions[p];
+                        tmpx = lstTestOptions [p];
                         //send ForceLast to last position
-                        tmp1 = lstTestOptions[lstTestOptions.Count - 1];
-                        lstTestOptions[lstTestOptions.Count - 1] = tmpx;
-                        lstTestOptions[p] = tmp1;
+                        tmp1 = lstTestOptions [lstTestOptions.Count - 1];
+                        lstTestOptions [lstTestOptions.Count - 1] = tmpx;
+                        lstTestOptions [p] = tmp1;
                         Nshuffle = lstTestOptions.Count - 1;
                         break;
                         }
@@ -2004,9 +2005,9 @@ namespace ExaminerB.Services2Backend
                 for (int i = Nshuffle - 1; i > 0; i--)
                     {
                     int j = random.Next (0, i + 1);
-                    var temp = lstTestOptions[i];
-                    lstTestOptions[i] = lstTestOptions[j];
-                    lstTestOptions[j] = temp;
+                    var temp = lstTestOptions [i];
+                    lstTestOptions [i] = lstTestOptions [j];
+                    lstTestOptions [j] = temp;
                     }
                 return lstTestOptions;
                 }
@@ -2171,14 +2172,13 @@ namespace ExaminerB.Services2Backend
         public async Task<bool> Delete_ExamsAsync (int courseId)
             {
             string sql = @"BEGIN TRANSACTION;
-WITH ExamIds AS (SELECT ExamId FROM Exams WHERE CourseId=@courseid)
-DELETE FROM ExamCompositions WHERE ExamId IN (SELECT ExamId FROM ExamIds); 
-DELETE FROM ExamTests WHERE ExamId IN (SELECT ExamId FROM ExamIds);
-DELETE FROM StudentExamTests WHERE StudentExamId IN (SELECT StudentExamId FROM StudentExams WHERE ExamId IN (SELECT ExamId FROM ExamIds)); 
-DELETE FROM StudentExams WHERE ExamId IN (SELECT ExamId FROM ExamIds); 
-DELETE FROM Exams WHERE ExamId IN (SELECT ExamId From ExamIds);
-COMMIT TRANSACTION;
-";
+                            WITH ExamIds AS (SELECT ExamId FROM Exams WHERE CourseId=@courseid)
+                            DELETE FROM ExamCompositions WHERE ExamId IN (SELECT ExamId FROM ExamIds); 
+                            DELETE FROM ExamTests WHERE ExamId IN (SELECT ExamId FROM ExamIds);
+                            DELETE FROM StudentExamTests WHERE StudentExamId IN (SELECT StudentExamId FROM StudentExams WHERE ExamId IN (SELECT ExamId FROM ExamIds)); 
+                            DELETE FROM StudentExams WHERE ExamId IN (SELECT ExamId FROM ExamIds); 
+                            DELETE FROM Exams WHERE ExamId IN (SELECT ExamId From ExamIds);
+                            COMMIT TRANSACTION;";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
@@ -2190,13 +2190,13 @@ COMMIT TRANSACTION;
         public async Task<bool> Delete_ExamAsync (int examId)
             {
             string sql = @"BEGIN TRANSACTION;
-DELETE FROM Exams WHERE ExamId=@examid;
-DELETE FROM ExamCompositions WHERE ExamId=@examid; 
-DELETE FROM ExamTests WHERE ExamId=@examid; 
-DELETE FROM StudentExamTests WHERE StudentExamId IN (SELECT StudentExamId FROM StudentExams WHERE ExamId=@examid); 
-DELETE FROM StudentExams WHERE ExamId=@examid; 
-COMMIT TRANSACTION;
-";
+                            DELETE FROM Exams WHERE ExamId=@examid;
+                            DELETE FROM ExamCompositions WHERE ExamId=@examid; 
+                            DELETE FROM ExamTests WHERE ExamId=@examid; 
+                            DELETE FROM StudentExamTests WHERE StudentExamId IN (SELECT StudentExamId FROM StudentExams WHERE ExamId=@examid); 
+                            DELETE FROM StudentExams WHERE ExamId=@examid; 
+                            DELETE FROM Notes WHERE ParentId IN (SELECT studentExamId FROM StudentExams WHERE ExamId=@examid); 
+                            COMMIT TRANSACTION;";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
@@ -2468,9 +2468,9 @@ COMMIT TRANSACTION;
                 for (int k = 0; k < lstExamTests.Count; k++)
                     {
                     rnd = random.Next (k, (lstExamTests.Count));
-                    Test tmpTest = lstExamTests[rnd];
-                    lstExamTests[rnd] = lstExamTests[k];
-                    lstExamTests[k] = tmpTest;
+                    Test tmpTest = lstExamTests [rnd];
+                    lstExamTests [rnd] = lstExamTests [k];
+                    lstExamTests [k] = tmpTest;
                     }
                 //4 options
                 foreach (Test tst in lstExamTests)
@@ -2486,11 +2486,11 @@ COMMIT TRANSACTION;
                     est.StudentId = studentId;
                     est.StudentExamId = newStudentExamId;
                     est.TestId = tst.TestId;
-                    est.Opt1Id = (tst.TestOptions.Count > 0) ? (tst.TestOptions[0].TestOptionId) : 0;
-                    est.Opt2Id = (tst.TestOptions.Count > 1) ? (tst.TestOptions[1].TestOptionId) : 0;
-                    est.Opt3Id = (tst.TestOptions.Count > 2) ? (tst.TestOptions[2].TestOptionId) : 0;
-                    est.Opt4Id = (tst.TestOptions.Count > 3) ? (tst.TestOptions[3].TestOptionId) : 0;
-                    est.Opt5Id = (tst.TestOptions.Count > 4) ? (tst.TestOptions[4].TestOptionId) : 0;
+                    est.Opt1Id = (tst.TestOptions.Count > 0) ? (tst.TestOptions [0].TestOptionId) : 0;
+                    est.Opt2Id = (tst.TestOptions.Count > 1) ? (tst.TestOptions [1].TestOptionId) : 0;
+                    est.Opt3Id = (tst.TestOptions.Count > 2) ? (tst.TestOptions [2].TestOptionId) : 0;
+                    est.Opt4Id = (tst.TestOptions.Count > 3) ? (tst.TestOptions [3].TestOptionId) : 0;
+                    est.Opt5Id = (tst.TestOptions.Count > 4) ? (tst.TestOptions [4].TestOptionId) : 0;
                     foreach (TestOption opt in tst.TestOptions)
                         {
                         if ((opt.TestOptionTags & 2) == 2)
@@ -2539,7 +2539,7 @@ COMMIT TRANSACTION;
                 case "ByExamId":
                         {
                         //sort order be: notEntered, justEntered, ..., firstEntered
-                        sql += " WHERE se.ExamId=@id ORDER BY (se.StudentExamTags & 2), se.StartDateTime DESC"; 
+                        sql += " WHERE se.ExamId=@id ORDER BY (se.StudentExamTags & 2), se.StartDateTime DESC";
                         break;
                         }
                 }
@@ -2635,6 +2635,41 @@ COMMIT TRANSACTION;
                 Console.WriteLine ("BeService: Read_StudentExam ERROR: \n" + ex.ToString ());
                 }
             return new StudentExam ();
+            }
+        public async Task<List<Note>> Read_ExamSessionNotesAsync (int studentExamId, bool excludeReadNotes)
+            {
+            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
+            List<Note> lstNotes = new List<Note> ();
+            string sql = @"SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, s.StudentName 
+                            FROM Notes n 
+                            INNER JOIN Students s ON n.ParentId = s.StudentId 
+                            WHERE n.ParentId=8 ";
+            if (excludeReadNotes)
+                {
+                sql += " AND (n.NoteTags & 2) = 0 ";
+                }
+            sql += " ORDER BY NoteDatum DESC, NoteId DESC ";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new SqlConnection (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.Parameters.AddWithValue ("@parentid", studentExamId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            lstNotes.Clear ();
+            while (await reader.ReadAsync ())
+                {
+                Note note = new Note ();
+                note.NoteId = reader.GetInt32 (0);
+                note.ParentId = reader.GetInt32 (1);
+                note.ParentType = reader.GetInt32 (2);
+                note.NoteDatum = reader.GetString (3);
+                note.NoteText = reader.GetString (4);
+                note.NoteTags = reader.GetInt32 (5);
+                note.ParentName = reader.GetString (6);
+                lstNotes.Add (note);
+                }
+            await cnn.CloseAsync ();
+            return lstNotes;
             }
         public async Task<bool> Update_StudentExamAsync (StudentExam studentExam)
             {
@@ -2881,7 +2916,7 @@ COMMIT TRANSACTION;
                 cmd3.Parameters.AddWithValue ("@studentexamid", studentexamid);
                 int x = cmd3.ExecuteNonQuery ();
                 await cnn.CloseAsync ();
-                Console.WriteLine ("n / c / p :" + n + "  -  " + c + "  -  " + p);
+                //Console.WriteLine ("n / c / p :" + n + "  -  " + c + "  -  " + p);
                 return true;
                 }
             catch (Exception ex)
@@ -2968,10 +3003,10 @@ COMMIT TRANSACTION;
                     {
                     foreach (StudentExamTest t in lstStudentExamTests)
                         {
-                        int[] optIds = { t.Opt1Id, t.Opt2Id, t.Opt3Id, t.Opt4Id, t.Opt5Id };
+                        int [] optIds = { t.Opt1Id, t.Opt2Id, t.Opt3Id, t.Opt4Id, t.Opt5Id };
                         for (int j = 0; j < t.TestType && j < 5; j++)
                             {
-                            t.TestOptions.Add (await Read_TestOptionAsync (optIds[j], cnn));
+                            t.TestOptions.Add (await Read_TestOptionAsync (optIds [j], cnn));
                             }
                         }
                     }
@@ -3035,10 +3070,10 @@ COMMIT TRANSACTION;
                     {
                     foreach (StudentExamTest t in lstStudentExamTests)
                         {
-                        int[] optIds = { t.Opt1Id, t.Opt2Id, t.Opt3Id, t.Opt4Id, t.Opt5Id };
+                        int [] optIds = { t.Opt1Id, t.Opt2Id, t.Opt3Id, t.Opt4Id, t.Opt5Id };
                         for (int j = 0; j < t.TestType && j < 5; j++)
                             {
-                            t.TestOptions.Add (await Read_TestOptionAsync (optIds[j], cnn));
+                            t.TestOptions.Add (await Read_TestOptionAsync (optIds [j], cnn));
                             }
                         }
                     }
@@ -3098,10 +3133,10 @@ COMMIT TRANSACTION;
                     }
                 if (readOptions)
                     {
-                    int[] optIds = { studentExamTest.Opt1Id, studentExamTest.Opt2Id, studentExamTest.Opt3Id, studentExamTest.Opt4Id, studentExamTest.Opt5Id };
+                    int [] optIds = { studentExamTest.Opt1Id, studentExamTest.Opt2Id, studentExamTest.Opt3Id, studentExamTest.Opt4Id, studentExamTest.Opt5Id };
                     for (int j = 0; j < studentExamTest.TestType && j < 5; j++)
                         {
-                        studentExamTest.TestOptions.Add (await Read_TestOptionAsync (optIds[j], cnn));
+                        studentExamTest.TestOptions.Add (await Read_TestOptionAsync (optIds [j], cnn));
                         }
                     }
                 return studentExamTest;
@@ -3342,7 +3377,7 @@ COMMIT TRANSACTION;
         #region M:Messages
         public async Task<int> Create_MessageAsync (Message message)
             {
-            if(message.MessageBody.Length < 4000)
+            if (message.MessageBody.Length < 4000)
                 {
                 try
                     {
@@ -3841,7 +3876,7 @@ COMMIT TRANSACTION;
         public async Task<List<Chatroom>> Read_ChatroomsAsync (int userId, string mode)
             {
             string sql = "";
-            List <Chatroom> lstChatrooms = new List<Chatroom> ();
+            List<Chatroom> lstChatrooms = new List<Chatroom> ();
             switch (mode)
                 {
                 case "teacher":
@@ -3932,7 +3967,7 @@ COMMIT TRANSACTION;
                 }
             catch (Exception ex)
                 {
-                Console.WriteLine (ex.ToString());
+                Console.WriteLine (ex.ToString ());
                 throw;
                 }
             }
@@ -4277,6 +4312,11 @@ COMMIT TRANSACTION;
                 case 7:
                         {
                         sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, s.StudentName FROM Notes n INNER JOIN Students s ON n.ParentId = s.StudentId WHERE (n.ParentId=@parentid) AND (NoteTags & 16 = 16) ORDER BY NoteDatum DESC, NoteId DESC ";
+                        break;
+                        }
+                case 8:
+                        {
+                        sql = "SELECT n.NoteId, n.ParentId, n.ParentType, n.NoteDatum, n.NoteText, n.NoteTags, '-' StudentName FROM Notes n WHERE (n.ParentId=@parentid) ORDER BY n.NoteDatum DESC, n.NoteId DESC ";
                         break;
                         }
                 }

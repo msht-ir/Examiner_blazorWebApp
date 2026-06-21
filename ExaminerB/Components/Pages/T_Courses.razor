@@ -91,13 +91,6 @@
                                                     </button>
                                                     tests folder
                                                 </MudMenuItem>
-                                                <MudMenuItem @onclick="() => BtnGotoReportCourseTests(crs.CourseId, crs.CourseName)">
-                                                    <button class="btn btn-link" title="list tests">
-                                                        <img src="/img/icoListT.png" width="32" />
-                                                    </button>
-                                                    tests list
-                                                </MudMenuItem>
-                                                <hr />
                                                 <MudMenuItem @onclick="() => BtnExams(crs)">
                                                     <button class="btn btn-link pulse-animation" title="course exams">
                                                         <img src="/img/icoListE.png" width="32" />
@@ -439,14 +432,6 @@
         appState.SetCourseName (course.CourseName);
         Navman.NavigateTo ("/T_Exams");
         }
-    public void BtnGotoReportCourseTests (int courseId, string courseName)
-        {    
-        appState.SetCmd ("coursetests");
-        appState.SetCourseId (courseId);
-        appState.SetCourseName(courseName);
-        appState.SetReturnPage("/T_Courses");
-        Navman.NavigateTo ("/T_ReportTests");
-        }
     public void BtnGotoCourseTestsFolder (int courseId, string courseName)
         {
         appState.SetCmd ("ListCourseTests");
@@ -589,7 +574,7 @@
             "S" => "/T_Students",
             "N" => "/E_NoteBooks"
             };
-        appState.SetReturnPage ("/T-Courses");
+        appState.SetReturnPage ("/T_Courses");
         Navman.NavigateTo (pg);
         }
 }

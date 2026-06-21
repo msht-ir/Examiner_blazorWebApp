@@ -486,7 +486,7 @@ namespace ExaminerS.Models
         {
         public int NoteId { get; set; } = 0;
         public int ParentId { get; set; } = 0;
-        public int ParentType { get; set; } = 0; //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
+        public int ParentType { get; set; } = 0; //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:examstudents(ES)
         public string ParentName { get; set; } = "";
         public string NoteDatum { get; set; } = "";
         public string NoteText { get; set; } = "";

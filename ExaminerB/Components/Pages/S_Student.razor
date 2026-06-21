@@ -849,7 +849,7 @@
             }
         else if (DateTime.Now > _examDateTimeFinish)
             {
-            Snackbar.Add($"exam is finished at {_examDateTimeFinish}", Severity.Error);
+            Snackbar.Add($"exam is finished", Severity.Error);
             }
         else
             {
@@ -1246,8 +1246,8 @@
         }
     public void GotoNotebooks ()
         {
-        appState.SetReturnPage("S_Student");
-        Navman.NavigateTo("/E_NoteBooks");
+        appState.SetReturnPage("/S_Student");
+        Navman.NavigateTo ("/E_NoteBooks");
         }
     private void BtnCancel ()
         {

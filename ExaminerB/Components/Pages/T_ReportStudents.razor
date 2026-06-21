@@ -259,8 +259,9 @@ else
             case "studentexamtests":{appState.SetStudentExamId (Id); break; }
             case "studentcoursetests":{appState.SetStudentCourseId (Id); break; }
             }
-        //moved to pageInit -- appState.SetReturnPage ($"/T_ReportStudents/{mode}/{Id}");
-        Navman.NavigateTo ("/T_ReportTests");
+        //moved to pageInit -- 
+        appState.SetReturnPage ($"/T_ReportStudents/{mode}/{Id}");
+        Navman.NavigateTo("/T_ReportTests");
         }
     public async Task BtnDeleteStudentCourse (int studentCourseId)
         {
