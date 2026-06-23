@@ -41,6 +41,9 @@ else
                 <button class="btn btn-link" @onclick="() => BtnGotoReportUserNotes()">
                 <img src="/img/icoNoteReport.png" style="width:35px" title="goto: quick notes" />
                 </button>
+                <button class="btn btn-link pulse-animation" @onclick="CreateQuickNote">
+                <img src="/img/icoNewNote3.png" width="28" title="add new quick-note" />
+                </button>
             }
         </div>
         <EditForm Model="lstProjects">
@@ -688,6 +691,18 @@ else
         {
         appState.OnChange -= TriggerRender;
         }
+    //QuickNote
+    public async Task CreateQuickNote ()
+        {
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
+        appState.SetNoteParentType(1);
+        appState.SetNoteParentId(Convert.ToInt32(appState.UserId));
+        appState.SetCmd("CreateNote");
+        StateHasChanged();
+        //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
+        //to handel close event, I added in the Modal_CreateNote: [Parameter] public EventCallback OnClose
+        }
+
     //Projects (NOTEBOOK)
     public void BtnAddNewProject ()
         {
@@ -1219,9 +1234,10 @@ else
     //back
     public void BtnGotoReportUserNotes ()
         {
+        //if: UserRole is teacher
         //needs: /mode/id
         user.UserId = Convert.ToInt32(appState.UserId);
-        Navman.NavigateTo ($"/T_ReportNotes/{1}/{user.UserId}");
+        Navman.NavigateTo($"/T_ReportNotes/{1}/{user.UserId}");
         }
     private async Task HandleModalClose ()
         {

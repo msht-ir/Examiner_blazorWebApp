@@ -6,7 +6,6 @@ using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
 using System.Data;
-using static OpenCvSharp.Stitcher;
 using Chat = ExaminerS.Models.Chat;
 using Group = ExaminerS.Models.Group;
 
@@ -3721,6 +3720,82 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<List<Chat>> Read_ChatsAsync (int studentId)
             {
+            // 1 Get list of chat mates
+            List<int> lstMateIds = new List<int> ();
+            string sql = @"
+        SELECT DISTINCT 
+            CASE 
+                WHEN ch.FromId = @meId THEN ch.ToId 
+                ELSE ch.FromId 
+            END AS mateId
+        FROM Chats ch
+        WHERE ch.FromId = @meId OR ch.ToId = @meId";
+
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+
+            using SqlCommand cmd1 = new (sql, cnn);
+            cmd1.Parameters.AddWithValue ("@meId", studentId);
+
+            using SqlDataReader reader1 = await cmd1.ExecuteReaderAsync ();
+            while (await reader1.ReadAsync ())
+                {
+                lstMateIds.Add (reader1.GetInt32 (0));
+                }
+            await reader1.CloseAsync ();
+
+            // 2 Get last message for each chat mate
+            List<Chat> lstChats = new List<Chat> ();
+
+            foreach (int mateId in lstMateIds)
+                {
+                sql = @"
+            SELECT TOP 1 
+                ch.ChatId, ch.FromId, ch.ToId, ch.DateTimeSent, 
+                LEFT(ch.ChatText, 20) AS ChatText, ch.ChatTags, 
+                sf.StudentNickname AS FromName, st.StudentNickname AS ToName
+            FROM Chats ch 
+            INNER JOIN Students sf ON ch.FromId = sf.StudentId
+            INNER JOIN Students st ON ch.ToId = st.StudentId
+            WHERE (FromId = @mateId AND ToId = @meId) 
+               OR (FromId = @meId AND ToId = @mateId)
+            ORDER BY ch.DateTimeSent DESC";
+
+                using SqlCommand cmd2 = new (sql, cnn);
+                cmd2.Parameters.AddWithValue ("@meId", studentId);
+                cmd2.Parameters.AddWithValue ("@mateId", mateId);
+
+                using SqlDataReader reader2 = await cmd2.ExecuteReaderAsync ();
+                while (await reader2.ReadAsync ())
+                    {
+                    lstChats.Add (new Chat
+                        {
+                        ChatId = reader2.GetInt32 (0),
+                        FromId = reader2.GetInt32 (1),
+                        ToId = reader2.GetInt32 (2),
+                        DateTimeSent = reader2.GetString (3),
+                        ChatText = reader2.GetString (4),
+                        ChatTags = reader2.GetInt32 (5),
+                        FromName = reader2.GetString (6),
+                        ToName = reader2.GetString (7)
+                        });
+                    }
+                await reader2.CloseAsync ();
+                }
+
+            await cnn.CloseAsync ();
+
+            // Sort: Unread first (bit 0 = 0), then read (bit 0 = 1), then by date
+            lstChats = lstChats
+                .OrderBy (chat => (chat.ChatTags & 1) == 0 ? 0 : 1)  // Unread first
+                .ThenByDescending (chat => chat.DateTimeSent)
+                .ToList ();
+
+            return lstChats;
+            }
+        public async Task<List<Chat>> Read_ChatsAsync_xx_delme (int studentId)
+            {
             // 1 get net-list of chatMates (a net list of ids chat to me or I chat to them)
             List<int> lstMateIds = new List<int> ();
             string sql = @"SELECT DISTINCT ch.FromId mateId
@@ -3747,7 +3822,8 @@ namespace ExaminerB.Services2Backend
             lstChats.Clear ();
             foreach (int mateId in lstMateIds)
                 {
-                sql = @$"SELECT TOP 1 ch.ChatId, ch.FromId, ch.ToId, ch.DateTimeSent, Left(ch.ChatText, 10), ch.ChatTags, sf.StudentNickname, st.StudentNickname
+                sql = @$"SELECT TOP 1 
+                    ch.ChatId, ch.FromId, ch.ToId, ch.DateTimeSent, Left(ch.ChatText, 20), ch.ChatTags, sf.StudentNickname, st.StudentNickname
                     FROM Chats ch 
                     INNER JOIN Students sf ON ch.FromId = sf.StudentId
                     INNER JOIN Students st ON ch.ToId = st.StudentId

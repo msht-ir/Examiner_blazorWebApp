@@ -301,7 +301,7 @@ else
     //btns
     public void GotoProjects ()
         {
-        appState.SetReturnPage("T_ReportNotes");
+        appState.SetReturnPage($"T_ReportNotes/{mode}/{Id}");
         Navman.NavigateTo("/E_NoteBooks");
         }
     private async Task OnProjectChanged (int newValue)
@@ -362,7 +362,7 @@ else
         }
     public void BtnBack ()
         {
-        Navman.NavigateTo(appState.ReturnPage ?? "/T_SwitchBoard");
+        Navman.NavigateTo("/T_SwitchBoard");
         }
     //convert date
     public string PersianDate (string? dt)

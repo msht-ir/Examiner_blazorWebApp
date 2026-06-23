@@ -8,28 +8,28 @@
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
-    <div style="text-align: center;">
-        <h2 style="color:royalblue">Courses</h2>
+<div style="text-align: center;">
+    <h2 style="color:royalblue">Courses</h2>
     </div>
 @if (!_hasFetched)
-        {
-        <_Loading />
-        }
-    else
-        {
+    {
+    <_Loading />
+    }
+else
+    {
         <EditForm Model="lstCourses">
             <div class="accordion" style="max-width:600px; margin: 0 auto;" id="accordionCourses">
-                 @foreach (Course crs in lstCourses)
+            @foreach (Course crs in lstCourses)
+                {
+                var collapseId = $"collapse{crs.CourseId}";
+                if ((appState.CourseId ?? 0) != crs.CourseId)
                     {
-                    var collapseId = $"collapse{crs.CourseId}";
-                    if ((appState.CourseId ?? 0) != crs.CourseId)
-                        {
-                        clps = "collapse";
-                        }
-                    else
-                        {
-                        clps = "collapse show";
-                        }
+                    clps = "collapse";
+                    }
+                else
+                    {
+                    clps = "collapse show";
+                    }
                     <div class="accordion-item mb-2">
                         <h6 class="accordion-header">
                             <button class="accordion-button collapsed"
@@ -40,66 +40,58 @@
                                 aria-expanded="false"
                                 aria-controls="@collapseId">
                                 <h5 style="color:dimgray">
-                                    <img class="pulse-hover" src="/img/icoCourse.png" width="24" style="margin-right:5px;" title="click to open course: [ @crs.CourseName ] "/>
-                                    @crs.CourseName
+                                <img class="pulse-hover" src="/img/icoCourse.png" width="24" style="margin-right:5px;" title="click to open course: [ @crs.CourseName ] " />
+                                @crs.CourseName
                                 </h5>
                             </button>
                         </h6>
                         <div id="@collapseId" class="accordion-collapse @clps" data-bs-parent="#accordionCourses">
                             <div class="accordion-body" style="background-color:white">
                                 <div id="T1">
-                                    @if ((appState.Cmd == "EditCourse") && ((appState.CourseId) == crs.CourseId))
-                                        {
+                                @if ((appState.Cmd == "EditCourse") && ((appState.CourseId) == crs.CourseId))
+                                    {
                                         <MudContainer Class="mt-2 px-0">
                                             <MudCard Class="mx-0">
                                                 <MudCardContent Style="background-color:whitesmoke;">
-                                                    <div class="mb-3">
-                                                        <MudTextField @ref="txtNewCourseName" @bind-Value="crs.CourseName" Label="Course name" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                                    </div>
-                                                    <div style="text-align:center">
-                                                        <button class="btn btn-link" name="btnCourseId" @onclick="()=>BtnUpdateCourse(crs)" >
-                                                            <img class="pulse-animation" src="/img/icoSave2.png" width="22" />
-                                                        </button>
-                                                        <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                            <img src="/img/icoCancel.png" width="20" />
-                                                        </button>
+                                                    <div class="d-flex gap-5 mb-3  align-items-center align-content-center">
+                                                    <MudTextField @ref="txtNewCourseName"
+                                                                  @bind-Value="crs.CourseName"
+                                                                  Label="course name"
+                                                                  Variant="Variant.Text"
+                                                                  Margin="Margin.Dense"
+                                                                  Autocomplete="off"
+                                                                  Immediate="true"
+                                                                  Adornment="Adornment.End"
+                                                                  AdornmentIcon="@Icons.Material.Filled.Save"
+                                                                  OnAdornmentClick="() => BtnUpdateCourse(crs)"
+                                                                  Class="my-textfield" />
+                                                        <MudButton class="btn btn-link"
+                                                               name="btnNewCourse"
+                                                               @onclick="BtnCancel">
+                                                        <img src="/img/icoCancel.png" width="20" />
+                                                        </MudButton>
                                                     </div>
                                                 </MudCardContent>
                                             </MudCard>
                                         </MudContainer>
-                                        }
-                                    else
-                                        {
-                                         <div style="text-align: center;">
-                                            <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                                <MudMenuItem @onclick="() => BtnEditCourse(crs.CourseId)">
-                                                     <button class="btn btn-link" title="rename course">
-                                                        <img src="/img/icoRename.png" width="28" />
-                                                    </button>
-                                                    rename
-                                                </MudMenuItem>
-                                                <MudMenuItem @onclick="() => BtnDeleteCourse(crs)">
-                                                    <button class="btn btn-link" title="delete this course" >
-                                                        <img src="/img/icoDelete1.png" width="22" />
-                                                    </button>
-                                                    delete
-                                                </MudMenuItem>
-                                                <hr />
-                                                <MudMenuItem @onclick="() => BtnGotoCourseTestsFolder(crs.CourseId, crs.CourseName)">
-                                                    <button class="btn btn-link" title="report tests">
-                                                        <img src="/img/icoFolderT.png" width="26" />
-                                                    </button>
-                                                    tests folder
-                                                </MudMenuItem>
-                                                <MudMenuItem @onclick="() => BtnExams(crs)">
-                                                    <button class="btn btn-link pulse-animation" title="course exams">
-                                                        <img src="/img/icoListE.png" width="32" />
-                                                    </button>
-                                                <span style="color:royalblue">exams</span>
-                                                </MudMenuItem>
-                                            </MudMenu>
+                                    }
+                                else
+                                    {
+                                        <div class="d-flex gap-1 align-items-center align-content-center justify-content-center" style="text-align: center;">
+                                            <button class="btn btn-link" title="report tests" style="margin-left:20px;" @onclick="() => BtnGotoCourseTestsFolder(crs.CourseId, crs.CourseName)">
+                                            <img src="/img/icoFolderT.png" width="26" />
+                                            </button>
+                                            <button class="btn btn-link pulse-animation" title="course exams" style="margin-left:20px;" @onclick="() => BtnExams(crs)">
+                                            <img src="/img/icoListE.png" width="32" />
+                                            </button>
+                                            <button class="btn btn-link" title="rename course" @onclick="() => BtnEditCourse(crs.CourseId)">
+                                            <img src="/img/icoRename.png" width="28" />
+                                            </button>
+                                            <button class="btn btn-link" title="delete this course" style="margin-left:20px;" @onclick="() => BtnDeleteCourse(crs)">
+                                            <img src="/img/icoDelete1.png" width="22" />
+                                            </button>
                                         </div>
-                                        //CourseTopics
+                                    //CourseTopics
                                         <div class="accordion" id="accordionTopicss" style="margin-top:20px;">
                                             <div class="accordion-item mb-2">
                                                 <h4 class="accordion-header">
@@ -111,234 +103,282 @@
                                                         aria-expanded="false"
                                                         aria-controls="topics">
                                                         <h5 style="color:indianred;">
-                                                        <img class="pulse-hover" src="/img/icoReport0.png" width="22" style="margin-right:10px;" title="سرفصل هاي درس" />
+                                                        <img class="pulse-hover" src="/img/icoListT.png" width="34" style="margin-right:10px;" title="سرفصل هاي درس" />
                                                         Topics
                                                         </h5>
                                                     </button>
                                                 </h4>
-                                            <div id="topics" class="accordion-collapse collapse" data-bs-parent="#accordionTopics">
-                                                <div class="accordion-body" style="background-color:white">
+                                                <div id="topics" class="accordion-collapse collapse" data-bs-parent="#accordionTopics">
+                                                    <div class="accordion-body" style="background-color:white">
                                                     @foreach (CourseTopic ct in crs.CourseTopics)
                                                         {
-                                                        <MudContainer Class="mt-2 px-0">
-                                                            <MudCard Class="mx-0">
-                                                                <MudCardContent Style="background-color:whitesmoke;">
-                                                                    <div class="mb-2">
-                                                                    <MudTextField @bind-Value="ct.CourseTopicTitle" Label="topic" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family: 'Segoe UI';" />
-                                                                        <button class="btn btn-link" title="tests" @onclick="()=>BtnListCourseTopicTests (ct)" >
-                                                                            <img src="/img/icoFolderT.png" width="26" />
-                                                                        </button>
-                                                                        <button class="btn btn-link" title="Report Tests" @onclick="()=>BtnReportCourseTopicTests(ct)">
-                                                                            <img src="/img/icoListT.png" width="34" />
-                                                                        </button>
-                                                                        <button class="btn btn-link" title="save topic title" @onclick="()=>BtnUpdateCourseTopic (ct)">
-                                                                            <img src="/img/icoSave2.png" width="22" />
-                                                                        </button>
-                                                                        <button class="btn btn-link" title="delete this topic" @onclick="() => BtnDeleteCourseTopic(ct.CourseTopicId)">
-                                                                            <img src="/img/icoDelete1.png" width="22" />
-                                                                        </button>
-                                                                    </div>
-                                                                </MudCardContent>
-                                                            </MudCard>
-                                                        </MudContainer>
+                                                            <MudContainer Class="mt-2 px-0">
+                                                                <MudCard Class="mx-0">
+                                                                    <MudCardContent Style="background-color:whitesmoke;">
+                                                                        <div class="mb-2">
+                                                                        <MudTextField @bind-Value="ct.CourseTopicTitle"
+                                                                                      Label="topic"
+                                                                                      Variant="Variant.Text"
+                                                                                      Margin="Margin.Dense"
+                                                                                      Autocomplete="off"
+                                                                                      Immediate="true"
+                                                                                      Adornment="Adornment.End"
+                                                                                      AdornmentIcon="@Icons.Material.Filled.Save"
+                                                                                      OnAdornmentClick="() => BtnUpdateCourseTopic(ct)"
+                                                                                      Class="my-textfield"
+                                                                                      Style="font-family: 'Segoe UI';" />
+                                                                            <div class="d-flex mt-4">
+                                                                                <button class="btn btn-link" title="tests" @onclick="() => BtnListCourseTopicTests(ct)">
+                                                                                <img src="/img/icoFolderT.png" width="26" />
+                                                                                </button>
+                                                                                <button class="btn btn-link" title="delete this topic" @onclick="() => BtnDeleteCourseTopic(ct.CourseTopicId)" style="margin-left:25px;">
+                                                                                <img src="/img/icoDelete1.png" width="22" />
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </MudCardContent>
+                                                                </MudCard>
+                                                            </MudContainer>
                                                         }
-                                                @if ((appState.Cmd == "AddNewCourseTopic") && ((appState.CourseId) == crs.CourseId))
-                                                    {
-                                                    <MudContainer Class="mt-2 px-0">
-                                                        <MudCard Class="mx-0">
-                                                            <MudCardContent Style="background-color:whitesmoke;">
-                                                                @* <h5 style="text-align:center;color:royalblue">Add New Course Topic</h5> *@
-                                                                <div class="mb-3">
-                                                                    <MudTextField @ref="txtNewCourseTopicTitle" @bind-Value="courseTopic.CourseTopicTitle" Label="new topic" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                                                </div>
-                                                                <div style="text-align:center">
-                                                                    <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseTopic(crs.CourseId)">
-                                                                        <img src="/img/icoSave2.png" width="22" />
-                                                                    </button>
-                                                                    <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                                        <img src="/img/icoCancel.png" width="20" />
-                                                                    </button>
-                                                                </div>
-                                                            </MudCardContent>
-                                                        </MudCard>
-                                                    </MudContainer>
-                                                    }
-                                                else
-                                                    {
-                                                    <div style="text-align:center; margin-top:10px;">
-                                                        <button class="btn btn-link btn-sm" @onclick="()=>BtnAddNewCourseTopic(crs.CourseId)">
-                                                            <img src="/img/icoAdd0.png" width="22" />
-                                                        </button>
+                                                    @if ((appState.Cmd == "AddNewCourseTopic") && ((appState.CourseId) == crs.CourseId))
+                                                        {
+                                                            <MudContainer Class="mt-2 px-0">
+                                                                <MudCard Class="mx-0">
+                                                                    <MudCardContent Style="background-color:whitesmoke;">
+                                                                    @* <h5 style="text-align:center;color:royalblue">Add New Course Topic</h5> *@
+                                                                        <div class="mb-3">
+                                                                        <MudTextField @ref="txtNewCourseTopicTitle"
+                                                                                      @bind-Value="courseTopic.CourseTopicTitle"
+                                                                                      Label="new topic"
+                                                                                      Variant="Variant.Text"
+                                                                                      Margin="Margin.Dense"
+                                                                                      Autocomplete="off"
+                                                                                      Immediate="true"
+                                                                                      Adornment="Adornment.End"
+                                                                                      AdornmentIcon="@Icons.Material.Filled.Save"
+                                                                                      OnAdornmentClick="() => BtnSaveNewCourseTopic(crs.CourseId)"
+                                                                                      Class="my-textfield" />
+                                                                        </div>
+                                                                        <div style="text-align:center">
+                                                                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                                                            <img src="/img/icoCancel.png" width="20" />
+                                                                            </button>
+                                                                        </div>
+                                                                    </MudCardContent>
+                                                                </MudCard>
+                                                            </MudContainer>
+                                                        }
+                                                    else
+                                                        {
+                                                            <div style="text-align:center; margin-top:10px;">
+                                                                <button class="btn btn-link btn-sm" @onclick="() => BtnAddNewCourseTopic(crs.CourseId)">
+                                                                <img src="/img/icoAdd0.png" width="22" />
+                                                                </button>
+                                                            </div>
+                                                        }
                                                     </div>
-                                                    }
-            			                        </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
                                     //CourseFolders
-                                    <div class="accordion" id="accordionFolders">
-                                        <div class="accordion-item mb-2">
-                                            <h4 class="accordion-header">
-                                                <button class="accordion-button collapsed"
+                                        <div class="accordion" id="accordionFolders">
+                                            <div class="accordion-item mb-2">
+                                                <h4 class="accordion-header">
+                                                    <button class="accordion-button collapsed"
                                                         type="button"
                                                         style="background-color:whitesmoke"
                                                         data-bs-toggle="collapse"
                                                         data-bs-target="#folders"
                                                         aria-expanded="false"
                                                         aria-controls="topics">
-                                                    <h5 style="color:indianred;">
+                                                        <h5 style="color:indianred;">
                                                         <img class="pulse-hover" src="/img/icoFolderSearch.png" width="24" style="margin-right:10px;" title="فولدرهاي درس" />
                                                         Folders
-                                                    </h5>
-                                                </button>
-                                            </h4>
-                                            <div id="folders" class="accordion-collapse collapse" data-bs-parent="#accordionFolders">
-                                                <div class="accordion-body" style="background-color:white">
+                                                        </h5>
+                                                    </button>
+                                                </h4>
+                                                <div id="folders" class="accordion-collapse collapse" data-bs-parent="#accordionFolders">
+                                                    <div class="accordion-body" style="background-color:white">
                                                     @foreach (CourseFolder cf in crs.CourseFolders)
                                                         {
-                                                        <MudContainer Class="mt-2 px-0">
-                                                            <MudCard Class="mx-0">
-                                                                <MudCardContent Style="background-color:whitesmoke;">
-                                                                    <div class="mb-2">
-                                                                        <MudTextField @ref="txtNewCourseFolderTitle" @bind-Value="cf.CourseFolderTitle" Label="title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <MudTextField @ref="txtNewCourseFolderUrl" @bind-Value="cf.CourseFolderUrl" Label="url" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                                                    </div>
+                                                            <MudContainer Class="mt-2 px-0">
+                                                                <MudCard Class="mx-0">
+                                                                    <MudCardContent Style="background-color:whitesmoke;">
+                                                                        <div class="mb-2">
+                                                                        <MudTextField @ref="txtNewCourseFolderTitle"
+                                                                                      @bind-Value="cf.CourseFolderTitle"
+                                                                                      Label="title"
+                                                                                      Variant="Variant.Text"
+                                                                                      Margin="Margin.Dense"
+                                                                                      Autocomplete="off"
+                                                                                      Class="my-textfield" />
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                        <MudTextField @ref="txtNewCourseFolderUrl"
+                                                                                      @bind-Value="cf.CourseFolderUrl"
+                                                                                      Label="url"
+                                                                                      Variant="Variant.Text"
+                                                                                      Margin="Margin.Dense"
+                                                                                      Autocomplete="off"
+                                                                                      Class="my-textfield" />
+                                                                        </div>
                                                                     <input class="form-inline border" @bind="cf.CourseFolderActive" type="checkbox" />
                                                                     <label style="padding-right:5px;">Active</label>
-                                                                    <button class="btn btn-link" @onclick="()=>BtnUpdateCourseFolder (cf)">
+                                                                        <button class="btn btn-link" @onclick="() => BtnUpdateCourseFolder(cf)">
                                                                         <img src="/img/icoSave2.png" width="25" />
-                                                                    </button>
-                                                                    <button class="btn btn-link" @onclick="()=>BtnDeleteCourseFolder (cf.CourseFolderId)">
+                                                                        </button>
+                                                                        <button class="btn btn-link" @onclick="() => BtnDeleteCourseFolder(cf.CourseFolderId)">
                                                                         <img src="/img/icoDelete1.png" width="25" />
-                                                                    </button>
-                                                                </MudCardContent>
-                                                            </MudCard>
-                                                        </MudContainer>
+                                                                        </button>
+                                                                    </MudCardContent>
+                                                                </MudCard>
+                                                            </MudContainer>
                                                         }
                                                     @if ((appState.Cmd == "AddNewCourseFolder") && ((appState.CourseId) == crs.CourseId))
                                                         {
-                                                        <MudContainer Class="mt-2 px-0">
-                                                            <MudCard Class="mx-0">
-                                                                <MudCardContent Style="background-color:whitesmoke;">
+                                                            <MudContainer Class="mt-2 px-0">
+                                                                <MudCard Class="mx-0">
+                                                                    <MudCardContent Style="background-color:whitesmoke;">
                                                                     <h6 style="color:royalblue;text-align:center">add new folder</h6>
-                                                                    <div class="mb-2">
-                                                                        <MudTextField @ref="txtNewCourseFolderTitle" @bind-Value="courseFolder.CourseFolderTitle" Label="title" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <MudTextField @ref="txtNewCourseFolderUrl" @bind-Value="courseFolder.CourseFolderUrl" Label="url" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                                                    </div>
-                                                                    <div style="text-align:center">
+                                                                        <div class="mb-2">
+                                                                        <MudTextField @ref="txtNewCourseFolderTitle"
+                                                                                      @bind-Value="courseFolder.CourseFolderTitle"
+                                                                                      Label="title"
+                                                                                      Variant="Variant.Text"
+                                                                                      Margin="Margin.Dense"
+                                                                                      Autocomplete="off"
+                                                                                      Class="my-textfield" />
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                        <MudTextField @ref="txtNewCourseFolderUrl"
+                                                                                      @bind-Value="courseFolder.CourseFolderUrl"
+                                                                                      Label="url"
+                                                                                      Variant="Variant.Text"
+                                                                                      Margin="Margin.Dense"
+                                                                                      Autocomplete="off"
+                                                                                      Class="my-textfield" />
+                                                                        </div>
+                                                                        <div style="text-align:center">
                                                                         <input class="form-inline border" @bind="courseFolder.CourseFolderActive" type="checkbox" />
                                                                         <label style="padding-right:5px;">Active</label>
-                                                                        <button class="btn btn-link" @onclick="()=>BtnSaveNewCourseFolder(crs.CourseId)">
+                                                                            <button class="btn btn-link" @onclick="() => BtnSaveNewCourseFolder(crs.CourseId)">
                                                                             <img src="/img/icoSave2.png" width="22" />
-                                                                        </button>
-                                                                        <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                                                            </button>
+                                                                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
                                                                             <img src="/img/icoCancel.png" width="20" />
-                                                                        </button>
-                                                                    </div>
-                                                                </MudCardContent>
-                                                            </MudCard>
-                                                        </MudContainer>
+                                                                            </button>
+                                                                        </div>
+                                                                    </MudCardContent>
+                                                                </MudCard>
+                                                            </MudContainer>
                                                         }
                                                     else
                                                         {
-                                                        <div style="text-align:center; margin-top:10px;">
-                                                            <button class="btn btn-link btn-sm" @onclick="()=>BtnAddNewCourseFolder(crs.CourseId)">
+                                                            <div style="text-align:center; margin-top:10px;">
+                                                                <button class="btn btn-link btn-sm" @onclick="() => BtnAddNewCourseFolder(crs.CourseId)">
                                                                 <img src="/img/icoAdd0.png" width="22" />
-                                                            </button>
-                                                        </div>
+                                                                </button>
+                                                            </div>
                                                         }
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
                                     }
                                 </div>
                             </div>
                         </div>
                     </div>
-                    }
-                    @if (appState.Cmd == "AddNewCourse")
-                        {
-                        <MudContainer>
-                            <h5 style="color:royalblue">Add New Course</h5>
-                            <MudCard Class="mx-0">
-                                <MudCardContent Class="d-flex" Style="background-color:whitesmoke;">
-                                    <MudTextField @ref="txtNewCourseName" @bind-Value="course.CourseName" Label="Cousre name" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                        <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewCourse">
-                                            <img class="pulse-animation" src="/img/icoSave2.png" width="24" />
-                                        </button>
-                                        <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                            <img src="/img/icoCancel.png" width="24" />
-                                        </button>
-                                </MudCardContent>
-                            </MudCard>
-                        </MudContainer>
-                        }
-                    else
-                        {
-                        <button class="btn btn-link" @onclick="BtnAddNewCourse">
-                            <img src="/img/icoAdd1.png" width="22" />
-                        </button>
-                        }
-                    <hr style="color:red" /> 
-            <div style="text-align: center;">
-                <button class="btn btn-link" @onclick="BtnBack">
+                }
+            @if (appState.Cmd == "AddNewCourse")
+                {
+                    <MudContainer>
+                    <h6 style="color:royalblue">Add New Course</h6>
+                        <MudCard Class="mx-0">
+                            <MudCardContent Style="background-color:whitesmoke;">
+                                <div Class="mb-3" style="text-align:center">
+                                <MudTextField @ref="txtNewCourseName"
+                                              @bind-Value="course.CourseName"
+                                              Label="Cousre name"
+                                              Variant="Variant.Text"
+                                              Margin="Margin.Dense"
+                                              Autocomplete="off"
+                                              Immediate="true"
+                                              Adornment="Adornment.End"
+                                              AdornmentIcon="@Icons.Material.Filled.Save"
+                                              OnAdornmentClick=BtnSaveNewCourse"
+                                              Class="my-textfield" />
+                                </div>
+                                <div style="text-align:center">
+                                    <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                    <img src="/img/icoCancel.png" width="20" />
+                                    </button>
+                                </div>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudContainer>
+                }
+            else
+                {
+                    <button class="btn btn-link" @onclick="BtnAddNewCourse">
+                    <img src="/img/icoAdd1.png" width="22" />
+                    </button>
+                }
+            <hr style="color:red" />
+                <div style="text-align: center;">
+                    <button class="btn btn-link" @onclick="BtnBack">
                     <img src="/img/icoBack3.png" width="40" />
-                </button>
-                <button class="btn btn-link" @onclick='() => BtnGotoPage("S")'>
+                    </button>
+                    <button class="btn btn-link" @onclick='() => BtnGotoPage("S")'>
                     <img src="/img/icoSwitchBoardStudents.png" width="44" />
-                </button>
-                <button class="btn btn-link" @onclick='() => BtnGotoPage("N")'>
+                    </button>
+                    <button class="btn btn-link" @onclick='() => BtnGotoPage("N")'>
                     <img src="/img/icoNoteBook.png" width="44" />
-                </button>
+                    </button>
+                </div>
             </div>
-        </div>
         </EditForm>
-        }
-<script>
+    }
+    <script>
     window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});
-</script>
+    </script>
 
 @code {
     private Dictionary<int, ElementReference> inputRefs = new Dictionary<int, ElementReference>();
-    private ElementReference btnCourseId; 
-    //private ElementReference txtNewCourseName; 
+    private ElementReference btnCourseId;
+    //private ElementReference txtNewCourseName;
     private MudTextField<string> txtNewCourseName;
-    private MudTextField<string> txtNewCourseTopicTitle; 
-    private MudTextField<string> txtNewCourseFolderTitle; 
-    private MudTextField<string> txtNewCourseFolderUrl; 
-    public User user = new User ();
-    public Course course = new Course ();
-    public CourseTopic courseTopic = new CourseTopic ();
-    public CourseFolder courseFolder = new CourseFolder ();
-    public List<Course> lstCourses = new ();
-    public List<CourseTopic> lstCourseTopics = new ();
+    private MudTextField<string> txtNewCourseTopicTitle;
+    private MudTextField<string> txtNewCourseFolderTitle;
+    private MudTextField<string> txtNewCourseFolderUrl;
+    public User user = new User();
+    public Course course = new Course();
+    public CourseTopic courseTopic = new CourseTopic();
+    public CourseFolder courseFolder = new CourseFolder();
+    public List<Course> lstCourses = new();
+    public List<CourseTopic> lstCourseTopics = new();
     public string cmd = "";
     public string clps = "";
     public bool _hasFetched = false;
 
     //LifeCycleEvents
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync ()
         {
         appState.OnChange += TriggerRender;
-        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+        if (Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
 
-            Navman.NavigateTo ("/Login");
+            Navman.NavigateTo("/Login");
             }
         user.UserId = Convert.ToInt32(appState.UserId);
         cmd = appState.Cmd ?? "";
-        if( user.UserId >0)
+        if (user.UserId > 0)
             {
-            lstCourses = await feService.Read_Courses (user.UserId);
+            lstCourses = await feService.Read_Courses(user.UserId);
             _hasFetched = true;
             }
-        } 
-    private async Task OnAfterRenderAsync(bool firstRender)
+        }
+    private async Task OnAfterRenderAsync (bool firstRender)
         {
         if (firstRender && course?.CourseTopics?.Any() == true)
             {
@@ -347,60 +387,59 @@
                 {
                 if (!inputRefs.ContainsKey(ct.CourseTopicId))
                     {
-                    inputRefs[ct.CourseTopicId] = inputRefs.GetValueOrDefault(ct.CourseTopicId);
+                    inputRefs [ct.CourseTopicId] = inputRefs.GetValueOrDefault(ct.CourseTopicId);
                     }
                 }
             }
         }
-    private void TriggerRender()
+    private void TriggerRender ()
         {
         InvokeAsync(StateHasChanged);
         }
-    public void Dispose()
+    public void Dispose ()
         {
         appState.OnChange -= TriggerRender;
         }
     //Course
-    public async Task BtnAddNewCourse()
+    public async Task BtnAddNewCourse ()
         {
-        appState.SetCmd ("AddNewCourse");
-        StateHasChanged ();
+        appState.SetCmd("AddNewCourse");
+        StateHasChanged();
         await Task.Delay(1); //let element be available, then focus on it.
-        await txtNewCourseName.FocusAsync ();
+        await txtNewCourseName.FocusAsync();
         }
-    public async Task BtnSaveNewCourse()
-        {  
+    public async Task BtnSaveNewCourse ()
+        {
         course.UserId = user.UserId;
         course.CourseUnits = 2;
         course.CourseRtl = true;
-        int result = await feService.Create_Course (course);
-        if (result>0)
+        int result = await feService.Create_Course(course);
+        if (result > 0)
             {
-            //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
             //refresh list then refresh page
-            lstCourses = await feService.Read_Courses (user.UserId);
-            appState.SetCmd ("");
-            StateHasChanged ();
+            lstCourses = await feService.Read_Courses(user.UserId);
+            appState.SetCmd("");
+            StateHasChanged();
             }
         else
             {
             Snackbar.Add($"failed to create course", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
-    public void BtnEditCourse(int courseId)
+    public void BtnEditCourse (int courseId)
         {
-        appState.SetCmd ("EditCourse");
-        appState.SetCourseId (courseId);
-        StateHasChanged ();
+        appState.SetCmd("EditCourse");
+        appState.SetCourseId(courseId);
+        StateHasChanged();
         }
-    public async Task BtnUpdateCourse(Course course)
+    public async Task BtnUpdateCourse (Course course)
         {
-        bool result = await feService.Update_Course (course);
+        bool result = await feService.Update_Course(course);
         if (result)
             {
             //await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
-            appState.SetCmd ("");
-            StateHasChanged ();
+            appState.SetCmd("");
+            StateHasChanged();
             }
         else
             {
@@ -408,173 +447,175 @@
             //await JS.InvokeVoidAsync ("alert", "Course name did not changed --- process failed");
             }
         }
-    public async Task BtnDeleteCourse(Course course)
+    public async Task BtnDeleteCourse (Course course)
         {
         var message = new MarkupString($"<span style='color:indianred'>Warning:</span> Several related data may be deleted! <br><ul><li> Tests</li><li>Exams</li><li>Student Exams</li><li>...</li><br>Continue? <hr style=color:blue><span style='color:indianred'>Delete </span> <strong>( {course.CourseName} )</strong>?<hr style=color:blue>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            if(await JS.InvokeAsync<bool>("confirm", "Last warning: \n\nAre you sure? Delete?"))
+            if (await JS.InvokeAsync<bool>("confirm", "Last warning: \n\nAre you sure? Delete?"))
                 {
-                bool result = await feService.Delete_Course (course.CourseId);
+                bool result = await feService.Delete_Course(course.CourseId);
                 if (result)
                     {
-                    lstCourses = await feService.Read_Courses (user.UserId);
-                    appState.SetCmd ("");
-                    StateHasChanged ();
+                    lstCourses = await feService.Read_Courses(user.UserId);
+                    appState.SetCmd("");
+                    StateHasChanged();
                     }
-                }                        
+                }
             }
         }
-    public void BtnExams(Course course)
+    public void BtnExams (Course course)
         {
-        appState.SetCourseId (course.CourseId);
-        appState.SetCourseName (course.CourseName);
-        Navman.NavigateTo ("/T_Exams");
+        appState.SetCourseId(course.CourseId);
+        appState.SetCourseName(course.CourseName);
+        appState.SetReturnPage("/T_Courses");
+        Navman.NavigateTo("/T_Exams");
         }
     public void BtnGotoCourseTestsFolder (int courseId, string courseName)
         {
-        appState.SetCmd ("ListCourseTests");
-        appState.SetCourseId (courseId);
-        appState.SetCourseName (courseName);
-        Navman.NavigateTo ("/T_CourseTests");
+        appState.SetCmd("ListCourseTests");
+        appState.SetCourseId(courseId);
+        appState.SetCourseName(courseName);
+        Navman.NavigateTo("/T_CourseTests");
         }
     //CourseTopic
-    public void BtnAddNewCourseTopic(int courseId)
+    public void BtnAddNewCourseTopic (int courseId)
         {
-        appState.SetCmd ("AddNewCourseTopic");
-        appState.SetCourseId (courseId);
-        StateHasChanged ();
+        appState.SetCmd("AddNewCourseTopic");
+        appState.SetCourseId(courseId);
+        StateHasChanged();
         }
-    public async Task BtnSaveNewCourseTopic(int courseId)
+    public async Task BtnSaveNewCourseTopic (int courseId)
         {
         courseTopic.CourseId = courseId;
         courseTopic.CourseTopicTitle = courseTopic.CourseTopicTitle;
-        int result = await feService.Create_CourseTopic (courseTopic);
-        if (result>0)
+        int result = await feService.Create_CourseTopic(courseTopic);
+        if (result > 0)
             {
             Snackbar.Add("course topic created", Severity.Success); //Severity.Warning .Error | .Info | .Success
             //old code: await JS.InvokeVoidAsync ("alert", "\nCourse name chnaged!");
-            lstCourses = await feService.Read_Courses (user.UserId);
-            appState.SetCmd ("");
-            StateHasChanged ();
+            lstCourses = await feService.Read_Courses(user.UserId);
+            appState.SetCmd("");
+            StateHasChanged();
             }
         else
             {
             Snackbar.Add($"failed to create course topic", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            }        
+            }
         }
-    public async Task BtnUpdateCourseTopic(CourseTopic courseTopic)
+    public async Task BtnUpdateCourseTopic (CourseTopic courseTopic)
         {
-        bool result = await feService.Update_CourseTopic (courseTopic);
+        bool result = await feService.Update_CourseTopic(courseTopic);
         if (result)
             {
-            //await inputRefs[courseTopic.CourseTopicId].FocusAsync(); //this line throws an error 
-            StateHasChanged ();
+            //await inputRefs[courseTopic.CourseTopicId].FocusAsync(); //this line throws an error
+            StateHasChanged();
             Snackbar.Add("course topic updated", Severity.Success); //Severity.Warning .Error | .Info | .Success
             }
         }
-    public async Task BtnDeleteCourseTopic(int courseTopicId)
+    public async Task BtnDeleteCourseTopic (int courseTopicId)
         {
         //needs: @inject ISnackbar Snackbar
         Snackbar.Add("not available in this version", Severity.Warning); //Severity.Warning .Error | .Info | .Success
         //old code: await JS.InvokeVoidAsync ("alert", "Topics can not be Deleted \n\n-- This feature is not available at this time.");
         }
-    public void BtnListCourseTopicTests(CourseTopic courseTopic)
+    public void BtnListCourseTopicTests (CourseTopic courseTopic)
         {
-        appState.SetCmd ("ListCourseTopicTests");
-        appState.SetCourseId (courseTopic.CourseId);
-        appState.SetCourseTopicId (courseTopic.CourseTopicId);
-        Navman.NavigateTo ("/T_CourseTests");
+        appState.SetCmd("ListCourseTopicTests");
+        appState.SetCourseId(courseTopic.CourseId);
+        appState.SetCourseTopicId(courseTopic.CourseTopicId);
+        Navman.NavigateTo("/T_CourseTests");
         }
-    public void BtnReportCourseTopicTests(CourseTopic courseTopic)
+    public void BtnReportCourseTopicTests (CourseTopic courseTopic)
         {
-        appState.SetCmd ("coursetopictests");
-        appState.SetCourseId (courseTopic.CourseId);
-        appState.SetCourseTopicId (courseTopic.CourseTopicId);
-        appState.SetCourseTopicTitle (courseTopic.CourseTopicTitle);
-        appState.SetReturnPage ("/T_Courses");
-        Navman.NavigateTo ("/T_ReportTests");
+        appState.SetCmd("coursetopictests");
+        appState.SetCourseId(courseTopic.CourseId);
+        appState.SetCourseTopicId(courseTopic.CourseTopicId);
+        appState.SetCourseTopicTitle(courseTopic.CourseTopicTitle);
+        appState.SetReturnPage("/T_Courses");
+        Navman.NavigateTo("/T_ReportTests");
         }
     //CourseFolder
-    public void BtnAddNewCourseFolder(int courseId)
+    public void BtnAddNewCourseFolder (int courseId)
         {
-        appState.SetCmd ("AddNewCourseFolder");
+        appState.SetCmd("AddNewCourseFolder");
         courseFolder.CourseFolderTitle = "new folder";
         courseFolder.CourseFolderUrl = "https://";
-        appState.SetCourseId (courseId);
-        StateHasChanged ();
+        appState.SetCourseId(courseId);
+        StateHasChanged();
         }
-    public async Task BtnSaveNewCourseFolder(int courseId)
+    public async Task BtnSaveNewCourseFolder (int courseId)
         {
         _hasFetched = false;
         courseFolder.CourseId = courseId;
-        int result = await feService.Create_CourseFolder (courseFolder);
-        if (result>0)
+        int result = await feService.Create_CourseFolder(courseFolder);
+        if (result > 0)
             {
-            lstCourses = await feService.Read_Courses (user.UserId);
-            appState.SetCmd ("");
-            appState.SetCourseId (courseId);
-            StateHasChanged ();
+            lstCourses = await feService.Read_Courses(user.UserId);
+            appState.SetCmd("");
+            appState.SetCourseId(courseId);
+            StateHasChanged();
             }
         else
             {
             Snackbar.Add($"failed to save course folder", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            }        
-        appState.SetCourseId (courseId);
+            }
+        appState.SetCourseId(courseId);
         _hasFetched = true;
         }
-    public async Task BtnUpdateCourseFolder(CourseFolder courseFolder)
+    public async Task BtnUpdateCourseFolder (CourseFolder courseFolder)
         {
         _hasFetched = false;
-        bool result = await feService.Update_CourseFolder (courseFolder);
+        bool result = await feService.Update_CourseFolder(courseFolder);
         if (result)
             {
             //await inputRefs[courseFolder.CourseFolderId].FocusAsync();
-            lstCourses = await feService.Read_Courses (user.UserId);
-            appState.SetCmd ("");
-            StateHasChanged ();
+            lstCourses = await feService.Read_Courses(user.UserId);
+            appState.SetCmd("");
+            StateHasChanged();
             }
         _hasFetched = true;
         }
-    public async Task BtnDeleteCourseFolder(int courseFolderId)
-        {var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> <strong>(Course Folder Link: {courseFolderId})</strong>?<br>Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
+    public async Task BtnDeleteCourseFolder (int courseFolderId)
+        {
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> <strong>(Course Folder Link: {courseFolderId})</strong>?<br>Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             _hasFetched = false;
-            bool result = await feService.Delete_CourseFolder (courseFolderId);
+            bool result = await feService.Delete_CourseFolder(courseFolderId);
             if (result)
                 {
-                lstCourses = await feService.Read_Courses (user.UserId);
-                appState.SetCmd ("");
-                StateHasChanged ();
+                lstCourses = await feService.Read_Courses(user.UserId);
+                appState.SetCmd("");
+                StateHasChanged();
                 }
-            _hasFetched = true;            
+            _hasFetched = true;
             }
         }
-    public void BtnUpdateCourseFolderActiveInPlace(CourseFolder courseFolder, int flag , bool isChecked)
+    public void BtnUpdateCourseFolderActiveInPlace (CourseFolder courseFolder, int flag, bool isChecked)
         {
 
-        }   
+        }
     //Back
-    public void BtnCancel()
+    public void BtnCancel ()
         {
-        appState.SetCmd ("");
+        appState.SetCmd("");
         }
-    public void BtnBack()
+    public void BtnBack ()
         {
-        appState.SetCmd ("");
-        Navman.NavigateTo ("/T_SwitchBoard");
+        appState.SetCmd("");
+        Navman.NavigateTo("/T_SwitchBoard");
         }
-    private void BtnGotoPage(string page)
+    private void BtnGotoPage (string page)
         {
         string pg = page switch
             {
-            "S" => "/T_Students",
-            "N" => "/E_NoteBooks"
-            };
-        appState.SetReturnPage ("/T_Courses");
-        Navman.NavigateTo (pg);
+                "S" => "/T_Students",
+                "N" => "/E_NoteBooks"
+                };
+        appState.SetReturnPage("/T_Courses");
+        Navman.NavigateTo(pg);
         }
-}
+    }

@@ -301,6 +301,6 @@ else
     public void BtnBack ()
         {
         appState.SetCmd("");
-        Navman.NavigateTo("/T_SwitchBoard");
+        Navman.NavigateTo($"{appState.ReturnPage}");
         }
     }

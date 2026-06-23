@@ -404,10 +404,18 @@
                                     <MudCard Class="mx-auto">
                                         <MudCardContent Style="background-color:rgba(249,249,249);">
                                             <div class="d-flex">
-                                            <MudTextField @ref="reftxtSearch" @bind-Value="strSearch" Label="search people" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                                <button class="btn btn-link" Title=@((_help) ? "Search my friends" : "") @onclick="() => BtnReadStudentsBySearch()">
-                                                <img class="pulse-hover" src="/img/icoSearch.png" width="24" />
-                                                </button>
+                                            <MudTextField @ref="reftxtSearch"
+                                                          @bind-Value="strSearch"
+                                                          OnKeyDown="HandleKey_Searchbox"
+                                                          Label="search people"
+                                                          Variant="Variant.Outlined"
+                                                          Margin="Margin.Dense"
+                                                          Immediate="true"
+                                                          Autocomplete="off"
+                                                          Adornment="Adornment.End"
+                                                          AdornmentIcon="@Icons.Material.Filled.Search"
+                                                          OnAdornmentClick="BtnReadStudentsBySearch"
+                                                          Class="my-textfield" />
                                             </div>
                                         @* SHOW SEARCH RESULTS *@
                                         @if (lstStudents.Count > 0)
@@ -415,7 +423,10 @@
                                             @foreach (User stdnt in lstStudents)
                                                 {
                                                     <div class="d-flex align-items-center mb-1" style="font-size:smaller">
-                                                        <button class="btn btn-link" style="text-decoration:none;" Title=@((_help) ? "Open/Start chat with this friend" : "") @onclick="() => BtnStartNewChat(stdnt.UserId)">
+                                                        <button class="btn btn-link"
+                                                            style="text-decoration:none;"
+                                                            Title=@((_help) ? "Open/Start chat with this friend" : "")
+                                                            @onclick="() => BtnStartNewChat(stdnt.UserId)">
                                                         <img src="/img/icoUser.png" width="20" />
                                                         <span style="color:darkslategray">@stdnt.UserName - @stdnt.UserNickname</span>
                                                         </button>
@@ -426,7 +437,9 @@
                                     </MudCard>
                                 </MudContainer>
                                 <div style="text-align:center; margin-top:15px;">
-                                    <button class="btn btn-link align-items-center" Title=@((_help) ? "refresh chats بروز رساني" : "") @onclick="ReadChatList">
+                                    <button class="btn btn-link align-items-center"
+                                        Title=@((_help) ? "refresh chats بروز رساني" : "")
+                                        @onclick="ReadChatList">
                                     <img src="/img/gifUserLogin.gif" width="30" />
                                     </button>
                                 </div>
@@ -437,7 +450,10 @@
                                         <MudCard Class="mx-0">
                                             <MudCardContent Style="background-color:whitesmoke;">
                                                 <div class="d-flex align-items-center">
-                                                    <button class="btn btn-link" style="text-decoration:none;" Title=@((_help) ? "Show chat history with this friend" : "") @onclick="() => BtnOpenThisChat(chat)">
+                                                    <button class="btn btn-link"
+                                                        style="text-decoration:none;"
+                                                        Title=@((_help) ? "Show chat history with this friend" : "")
+                                                        @onclick="() => BtnOpenThisChat(chat)">
                                                     @if (chat.IsRead)
                                                         {
                                                         <img class="pulse-hover" src="/img/icoEnvelopOpen.png" width="20" style="margin-right:10px;" />
@@ -459,7 +475,7 @@
                                                     </button>
                                                 </div>
                                                 <div>
-                                                @if (chat.ChatText.Length == 10)
+                                                @if (chat.ChatText.Length == 20)
                                                     {
                                                     <span style="font-size:small; font-weight:normal;color:black;padding-left:10px;"> @chat.ChatText<span>...</span></span>
                                                     }
@@ -764,6 +780,47 @@
             await ReadChatList();
             await ReadChatroomList();
             await ReadNoteList();
+            if (appState.Cmd == "showAlertsOnExamsAndNewChats")
+                {
+                //show alerts on first pageLoad (after Login)
+                //1-show alert on new chats
+                int _newchat = 0;
+                foreach (Chat ch in lstChats)
+                    {
+                    //unread chat
+                    if (((ch.ChatTags & 1) == 0) && (ch.ToId == student.UserId))
+                        {
+                        _newchat++;
+                        }
+                    }
+                if (_newchat > 1)
+                    {
+                    Snackbar.Add($"{_newchat} new chats", Severity.Info);
+                    }
+                else if (_newchat == 1)
+                    {
+                    Snackbar.Add($"new chat", Severity.Info);
+                    }
+                //2-show alert on not finished exams ahead
+                int _newexam = 0;
+                foreach (StudentExam se in lstStudentExams)
+                    {
+                    //not started exam
+                    if ((se.StudentExamTags & 4) == 0)
+                        {
+                        _newexam++;
+                        }
+                    }
+                if (_newexam > 1)
+                    {
+                    Snackbar.Add($"{_newexam} exams", Severity.Warning);
+                    }
+                else if (_newexam == 1)
+                    {
+                    Snackbar.Add($"1 exam", Severity.Warning);
+                    }
+                appState.SetCmd(""); //dont repeat alerts
+                }
             _hasFetched = true;
             }
         }
@@ -845,7 +902,7 @@
             TimeSpan diff = _examDateTimeStart - DateTime.Now;
             int hours = (int) diff.TotalHours;
             int minutes = diff.Minutes;
-            Snackbar.Add($"{hours} hr  {minutes + 1} min", Severity.Success); 
+            Snackbar.Add($"{hours} hr  {minutes + 1} min", Severity.Success);
             }
         else if (DateTime.Now > _examDateTimeFinish)
             {
@@ -1000,7 +1057,7 @@
             lstStudents = await feService.Read_StudentsByKeyword(teacherId, strSearch, 0);
             if (lstStudents.Count == 0)
                 {
-                Snackbar.Add($"students like '{strSearch}' not found", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"students like '{strSearch}' not found", Severity.Info);
                 }
             StateHasChanged();
             }
@@ -1206,14 +1263,13 @@
         student.UserId = appState.UserId ?? 0;
         lstStudentExams.Clear();
         lstStudentExams = await feService.Read_StudentExams(student.UserId, "ByStudentId") ?? new List<StudentExam>();
-        //Snackbar.Add("refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
     private async Task ReadMessageList ()
         {
         lstStudentMessages = await feService.Read_StudentMessages(student.UserId, "ByStudentIdIgnoreDeletedMessages");
         //first bit: 0 = unread, 1 = read
         unreadMessageCount = lstStudentMessages.Count(m => (m.StudentMessageTags & (1 << 1)) == 0);
-        //Snackbar.Add("refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        //Snackbar.Add("refreshed", Severity.Info);
         }
     private async Task ReadChatList ()
         {
@@ -1234,6 +1290,20 @@
         lstNotes = await feService.Read_Notes(student.UserId, 7);
         //Snackbar.Add("refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         }
+    private async Task HandleKey_Searchbox (KeyboardEventArgs e)
+        {
+        if (e.Key == "Enter")
+            {
+            await BtnReadStudentsBySearch();
+            }
+        if (e.Key == "Escape")
+            {
+            strSearch = "";
+            await InvokeAsync(StateHasChanged);
+            await reftxtSearch.FocusAsync();
+            StateHasChanged();
+            }
+        }
     private async Task HandleModalClose ()
         {
         _hasFetched = false;
@@ -1247,7 +1317,7 @@
     public void GotoNotebooks ()
         {
         appState.SetReturnPage("/S_Student");
-        Navman.NavigateTo ("/E_NoteBooks");
+        Navman.NavigateTo("/E_NoteBooks");
         }
     private void BtnCancel ()
         {

@@ -24,7 +24,7 @@ else
     {
         <EditForm Model="lstGroups" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <h2 style="color:royalblue; font-style:italic">Students</h2>
-        @* SECTION 1 ---- SOURSES *@
+        @* SECTION 1 ---- SOURCES *@
         @* SEARCH - NEW.STUDENT - IMPORT *@
             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                 <MudCard Class="mx-auto">
@@ -131,7 +131,13 @@ else
                     @if (_cmd == "AddNewGroup")
                         {
                             <div class="d-flex">
-                            <MudTextField @ref="reftxtNewGroup" @bind-Value="strNewGroupName" Label="new group" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                            <MudTextField @ref="reftxtNewGroup"
+                                          @bind-Value="strNewGroupName"
+                                          Label="new group"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense"
+                                          Autocomplete="off"
+                                          Class="my-textfield" />
                                 <button class="btn btn-link" Title=@((_help) ? "save group" : "") @onclick="() => BtnCreateNewGroup(strNewGroupName)">
                                 <img src="/img/icoSave2.png" width="24" />
                                 </button>
@@ -554,23 +560,23 @@ else
                                     <button type="button"
                                         class="btn btn-link"
                                         style="margin-left:1px"
-                                        Title=@((_help) ? "report students courses and exams" : "")
+                                        Title=@((_help) ? "show courses and exams درس ها و آزمون ها" : "")
                                         @onclick='() => BtnReportStudent(student.UserId, "S")'>
                                     <img src="/img/icoFolderS.png" width="22" />
                                     </button>
                                     <button type="button"
                                         class="btn btn-link"
                                         style="margin-left:1px"
-                                        Title=@((_help) ? "report notes and messages" : "")
+                                        Title=@((_help) ? "show notes and messages يادداشت ها و پيام ها" : "")
                                         @onclick='() => BtnGotoPageReportMessages(student)'>
                                     <img src="/img/icoListM.png" width="30" />
                                     </button>
                                     <button type="button"
                                         class="btn btn-link"
                                         style="margin-left:1px"
-                                        Title=@((_help) ? "add note about this student" : "")
+                                        Title=@((_help) ? "add note about this student ايجاد يادداشت براي اين دانشجو" : "")
                                         @onclick='() => BtnCreateNote(student.UserId, "S")'>
-                                    <img src="/img/icoNewNote1.png" width="20" />
+                                    <img src="/img/icoNewNote3.png" width="20" />
                                     </button>
                                 <span style="font-size:x-small">@student.UserName - @student.UserNickname</span>
                                 </div>

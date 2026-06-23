@@ -185,6 +185,7 @@
                         appState.SetUserTags(user.UserTags);
                         appState.SetUserRole(user.UserRole);
                         appState.SetUserNickname(user.UserNickname);
+                        appState.SetCmd("showAlertsOnExamsAndNewChats");
                         //navigate
                         await Task.Delay(1);
                         Navman.NavigateTo("/S_Student");
