@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>سایت در حال تعمیرات</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f9fafc 0%, #eef2f7 100%);
+            font-family: 'Segoe UI', 'Tahoma', 'Roboto', 'Vazir', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        /* کانتینر اصلی با افکت شیشه‌ای و سایه نرم */
+        .maintenance-card {
+            max-width: 680px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(2px);
+            border-radius: 3rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.05);
+            padding: 2.2rem 2rem 2.8rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        @media (max-width: 550px) {
+            .maintenance-card {
+                padding: 1.8rem 1.2rem 2.2rem;
+                border-radius: 2rem;
+            }
+        }
+
+        /* آیکون بزرگ تعمیرات با انیمیشن خفیف */
+        .icon-tools {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            animation: subtleWrench 2.2s infinite ease-in-out;
+        }
+
+        @keyframes subtleWrench {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(8deg) scale(1.08); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+
+        /* عنوان اصلی */
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e2a3e, #0f2b3d);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1.2rem;
+            letter-spacing: -0.3px;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* متن پیام اصلی */
+        .message {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #2c3e44;
+            background: #ecf9ff80;
+            padding: 0.8rem 1rem;
+            border-radius: 2rem;
+            margin-bottom: 1.8rem;
+            font-weight: 500;
+            backdrop-filter: blur(2px);
+        }
+
+        /* باکس تایمر و روزهای باقیمانده */
+        .timer-box {
+            background: #ffffffdd;
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            padding: 1.2rem 1rem;
+            margin: 1.8rem 0;
+            border: 1px solid #ffffffaa;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+        }
+
+        .days-remaining {
+            font-size: 2.6rem;
+            font-weight: 800;
+            background: linear-gradient(120deg, #1f6392, #0e4b6e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+            letter-spacing: 2px;
+        }
+
+        .days-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c5a6e;
+            background: #cbe5f1;
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            margin-top: 0.5rem;
+        }
+
+        .countdown-row {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .countdown-item {
+            background: #f0f6fa;
+            border-radius: 1.5rem;
+            padding: 0.5rem 0.9rem;
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .countdown-number {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #1a5d7a;
+            line-height: 1;
+        }
+
+        .countdown-text {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #3e6b7e;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* توضیحات تکمیلی */
+        .info-text {
+            color: #4a6272;
+            margin: 1.5rem 0 1rem;
+            font-size: 0.95rem;
+            background: #fef7e0;
+            padding: 0.7rem 1rem;
+            border-radius: 2rem;
+            display: inline-block;
+            width: auto;
+            border-right: 3px solid #ffb347;
+        }
+
+        /* آیکون سوشال یا تماس */
+        .contact-hint {
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: #3b6e8b;
+            background: #eef3fc;
+            padding: 0.6rem 1.2rem;
+            border-radius: 3rem;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-hint span {
+            font-weight: 500;
+        }
+
+        hr {
+            margin: 1.2rem 0;
+            border: none;
+            height: 1px;
+            background: radial-gradient(circle, #bdd4e2, transparent);
+        }
+
+        footer {
+            font-size: 0.7rem;
+            color: #7e95a3;
+            margin-top: 1.2rem;
+        }
+
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .maintenance-card > * {
+            animation: fadeSlide 0.45s ease forwards;
+        }
+    </style>
+</head>
+<body>
+
+<div class="maintenance-card">
+    <!-- نماد ابزارها -->
+    <div class="icon-tools">
+        🛠️
+    </div>
+
+    <h1>⚠️ سایت اگزمينر در دسترس نیست ⚠️</h1>
+
+    <div class="message">
+        🌐 درحال بروزرسانی و توسعه مي باشد.<br>
+        لطفاً صبر کنيد، سایت اگزمينر به زودی بازمی‌گردد.
+    </div>
+    <div class="message">
+        🌐  مهم ترين تغيير:
+        <br>
+        هر دانشجو فقط يک اکانت، و بتواند درس ها و آزمون ها و پيام هاي مرتبط با اساتيد مختلف در سيستم اگزمينر را در صفحه خود ببيند
+        <br>
+        ساير تغييرات - مربوط به صفحه اساتيد 
+        <br>
+    </div>
+
+    <div class="timer-box">
+        <div class="days-remaining" id="daysCount">2</div>
+        <div class="days-label">روز باقیمانده از تعمیرات</div>
+        
+        <!-- نمایش جزئی ساعت، دقیقه و ثانیه برای شفافیت بیشتر -->
+        <div class="countdown-row" id="countdownDetail">
+            <div class="countdown-item">
+                <div class="countdown-number" id="hoursRemain">00</div>
+                <div class="countdown-text">ساعت</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="minutesRemain">00</div>
+                <div class="countdown-text">دقیقه</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="secondsRemain">00</div>
+                <div class="countdown-text">ثانیه</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-text">
+        📅 تاریخ بازگشت پیش‌بینی شده: <span id="returnDate"></span>
+    </div>
+
+    <div class="contact-hint">
+        <span>📞</span> تماس و اطلاعات بيشتر: 09133112733 &nbsp;|&nbsp;
+        <span>✉️</span> msht.ir@gmail.com
+    </div>
+    <hr>
+    <footer>
+        بروز رساني و توسعه سامانه اگزمينر - برای بهبود عملکرد و ارايه خدمات آمورشي.
+    </footer>
+</div>
+
+<script>
+    (function() {
+        // --- تنظیمات زمان: 2 روز از لحظه بارگذاری صفحه ---
+        // ما یک تاریخ هدف را طوری تنظیم می‌کنیم که دقیقاً 2 روز از اکنون باشد
+        // این روش باعث می‌شود هر کاربری که صفحه را باز می‌کند، 2 روز تعمیر برایش محاسبه شود.
+        // اما برای حفظ ثبات در بازدیدهای مکرر در همان جلسه، از new Date استفاده می‌کنیم.
+        // اگر می‌خواهید برای همه کاربران یکسان باشد (مثلاً از تاریخ ثابت), می‌توانید تغییر دهید.
+        // در اینجا فرض می‌کنیم تعمیرات از هم‌اکنون شروع شده و 2 روز به طول می‌انجامد.
+        
+        let targetDate;    // هدف پایان تعمیرات
+        
+        function initTimer() {
+            // تنظیم تاریخ پایان = اکنون + 2 روز (48 ساعت)
+            const now = new Date();
+            targetDate = new Date(now.getTime() + (2 * 24 * 60 * 60 * 1000));
+            // برای نمایش تاریخ بازگشت پیش‌بینی شده به شکل محلی
+            updateReturnDateDisplay(targetDate);
+            // شروع به‌روزرسانی شمارش معکوس
+            updateCountdown();
+        }
+
+        // نمایش تاریخ بازگشت در فرمت فارسی / عددی
+        function updateReturnDateDisplay(dateObj) {
+            const returnDateSpan = document.getElementById('returnDate');
+            if (returnDateSpan) {
+                const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+                const formatted = dateObj.toLocaleDateString('fa-IR', options);
+                returnDateSpan.innerText = formatted;
+            }
+        }
+
+        // محاسبه اختلاف زمانی و بروزرسانی DOM
+        function updateCountdown() {
+            if (!targetDate) return;
+            
+            const now = new Date().getTime();
+            const distance = targetDate.getTime() - now;
+            
+            // روزهای کامل باقیمانده (حداکثر 2 روز)
+            let daysLeft = Math.floor(distance / (1000 * 60 * 60 * 24));
+            let hoursLeft = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutesLeft = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            let secondsLeft = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // اگر زمان به پایان رسید یا منفی شد، همه چیز را صفر نشان بده و پیام "هم اکنون بازگشایی"
+            if (distance < 0) {
+                daysLeft = 0;
+                hoursLeft = 0;
+                minutesLeft = 0;
+                secondsLeft = 0;
+                // در صورت اتمام زمان، می‌توان متن روزها و تایمر را تغییر داد
+                const daysSpan = document.getElementById('daysCount');
+                if (daysSpan) daysSpan.innerText = "۰";
+                const hoursSpan = document.getElementById('hoursRemain');
+                const minutesSpan = document.getElementById('minutesRemain');
+                const secondsSpan = document.getElementById('secondsRemain');
+                if (hoursSpan) hoursSpan.innerText = "۰۰";
+                if (minutesSpan) minutesSpan.innerText = "۰۰";
+                if (secondsSpan) secondsSpan.innerText = "۰۰";
+                
+                // همچنین یک پیام جدید اضافه کنیم که سایت آماده است اما با احتیاط (اختیاری)
+                const timerBox = document.querySelector('.timer-box');
+                if (timerBox && !timerBox.querySelector('.finished-msg')) {
+                    const finishMsg = document.createElement('div');
+                    finishMsg.className = 'info-text';
+                    finishMsg.style.background = "#d4edc9";
+                    finishMsg.style.marginTop = "12px";
+                    finishMsg.innerText = "✅ تعمیرات به پایان رسیده! سایت در حال بازگشایی است.";
+                    timerBox.parentNode.insertBefore(finishMsg, timerBox.nextSibling);
+                }
+                return;
+            }
+            
+            // نمایش روزها
+            const daysElement = document.getElementById('daysCount');
+            if (daysElement) {
+                daysElement.innerText = daysLeft;
+            }
+            
+            // نمایش ساعت، دقیقه، ثانیه با فرمت دو رقم
+            const hoursElement = document.getElementById('hoursRemain');
+            const minutesElement = document.getElementById('minutesRemain');
+            const secondsElement = document.getElementById('secondsRemain');
+            
+            if (hoursElement) hoursElement.innerText = hoursLeft < 10 ? '0' + hoursLeft : hoursLeft;
+            if (minutesElement) minutesElement.innerText = minutesLeft < 10 ? '0' + minutesLeft : minutesLeft;
+            if (secondsElement) secondsElement.innerText = secondsLeft < 10 ? '0' + secondsLeft : secondsLeft;
+        }
+        
+        // اجرای تایمر هر 1 ثانیه
+        let intervalId = null;
+        
+        function startTimerInterval() {
+            if (intervalId) clearInterval(intervalId);
+            // اولین بروزرسانی فوری
+            updateCountdown();
+            intervalId = setInterval(() => {
+                updateCountdown();
+                // اگر زمان به اتمام رسید، اینتروال را پاک کنیم (اختیاری)
+                if (targetDate && new Date().getTime() >= targetDate.getTime()) {
+                    // پس از اتمام دقت کنیم که پیام نهایی را نمایش دهد، اما اینتروال را می‌توان نگه داشت ولی خطایی ندارد
+                    // فقط برای بهینه‌سازی متوقف می‌کنیم تا اجرای بی‌فایده نباشد
+                    if (intervalId) {
+                        clearInterval(intervalId);
+                        intervalId = null;
+                    }
+                }
+            }, 1000);
+        }
+        
+        // مقداردهی اولیه و شروع
+        initTimer();
+        startTimerInterval();
+        
+        // همچنین برای اطمینان از تطابق صفحه در فوکوس مجدد (optional)
+        window.addEventListener('focus', () => {
+            if (targetDate) updateCountdown();
+        });
+        
+        // در صورت نیاز به تنظیم مجدد (مثل تغییرات کنسول) اما نیازی نیست
+    })();
+</script>
+</body>
+</html>

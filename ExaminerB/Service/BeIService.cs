@@ -7,7 +7,7 @@ namespace ExaminerB.Services2Backend
         {
         # region Login
         Task<User?> LoginTeacherAsync (string username, string password);
-        Task<User?> LoginStudentAsync (string username, string password, int teacherid);
+        Task<User?> LoginStudentAsync (string username, string password);
         Task LogAsync (int userId, SqlConnection cnn);
         #endregion
         #region U:usrs
@@ -18,7 +18,7 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region S:Students
         Task<int> Create_StudentAsync (User student);
-        Task<List<User>> Read_StudentsAllAsync (int userId);
+        Task<List<User>> Read_StudentsAllAsync ();
         Task<List<User>> Read_StudentsByKeywordAsync (int userId, string keyword, int readStudentGCEM);
         Task<List<User>> Read_StudentsByGCEMSIdAsync (int Id, string mode, int readStudentGCEM);
         Task<bool> Update_StudentAsync (User student);

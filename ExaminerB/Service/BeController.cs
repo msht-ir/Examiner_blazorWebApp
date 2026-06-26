@@ -28,9 +28,9 @@ namespace ExaminerB.Backend
             return result != null ? Ok (result) : StatusCode (500, "not found");
             }
         [HttpPost ("LoginStudent")]
-        public async Task<ActionResult<User>> LoginStudent ([FromQuery] string username, [FromQuery] int teacherid,  [FromBody] string password)
+        public async Task<ActionResult<User>> LoginStudent ([FromQuery] string username, [FromBody] string password)
             {
-            var result = await _BeService.LoginStudentAsync (username, password, teacherid);
+            var result = await _BeService.LoginStudentAsync (username, password);
             return result;
             }
         #endregion
@@ -76,9 +76,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_StudentsAll")]
-        public async Task<ActionResult<List<User>>> Read_StudentsAll ([FromBody] int userId)
+        public async Task<ActionResult<List<User>>> Read_StudentsAll ()
             {
-            var result = await _BeService.Read_StudentsAllAsync (userId);
+            var result = await _BeService.Read_StudentsAllAsync ();
             return Ok (result);
             }
         [HttpPost ("Read_StudentsByKeyword")]

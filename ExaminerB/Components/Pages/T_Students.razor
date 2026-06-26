@@ -687,7 +687,6 @@ else
         user.UserName = appState.UserName;
         user.UserPass = appState.UserPass;
         user.UserRole = appState.UserRole;
-        user.TeacherId = Convert.ToInt32(appState.GroupId);
         //on second rener, user.UserId will get its value
         lstGroups = await feService.Read_Groups(user, false);
         lstCourses = await feService.Read_Courses(user.UserId);
@@ -718,7 +717,7 @@ else
     private async Task BtnCreateNewStudent (string usr, string pwd, string nick)
         {
         user.UserId = Convert.ToInt32(appState.UserId);
-        User student = new User() { TeacherId = user.UserId, UserName = usr, UserPass = pwd, UserRole = "student", UserNickname = nick, UserTags = 3 };
+        User student = new User() { UserName = usr, UserPass = pwd, UserRole = "student", UserNickname = nick, UserTags = 3 };
         int result = await feService.Create_Student(student);
         if (result > 1)
             {
@@ -748,7 +747,7 @@ else
     public async Task BtnListAllStudent ()
         {
         user.UserId = Convert.ToInt32(appState.UserId);
-        lstStudents = await feService.Read_StudentsAll(user.UserId);
+        lstStudents = await feService.Read_StudentsAll();
         Snackbar.Add($"{lstStudents.Count} students listed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
         appState.SetMessage($"all students");
         StateHasChanged();
@@ -1384,7 +1383,6 @@ else
                 i++;
                 User student = new User()
                     {
-                    TeacherId = user.UserId,
                     UserName = row.Cell(1).GetString(),
                     UserPass = row.Cell(2).GetString(),
                     UserNickname = row.Cell(3).GetString(),

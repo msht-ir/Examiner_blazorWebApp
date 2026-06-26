@@ -6,7 +6,6 @@ namespace ExaminerS.Models
     public class User
         {
         public int UserId { get; set; } = 0;
-        public int TeacherId { get; set; } = 0;
         [Required (ErrorMessage = "Username is required")]
         public string UserName { get; set; } = "";
         [Required (ErrorMessage = "Password is required")]

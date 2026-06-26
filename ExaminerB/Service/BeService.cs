@@ -34,7 +34,6 @@ namespace ExaminerB.Services2Backend
                     if ((username.ToLower () == reader.GetString (1).ToLower ()) && (password == reader.GetString (2)))
                         {
                         userOut.UserId = reader.GetInt32 (0);
-                        userOut.TeacherId = 0;
                         userOut.UserName = reader.GetString (1);
                         userOut.UserPass = reader.GetString (2);
                         userOut.UserNickname = reader.GetString (3);
@@ -58,10 +57,10 @@ namespace ExaminerB.Services2Backend
                 return null;
                 }
             }
-        public async Task<User?> LoginStudentAsync (string username, string password, int teacherid)
+        public async Task<User?> LoginStudentAsync (string username, string password)
             {
             string? connString = _config.GetConnectionString ("cnni");
-            string sql = "SELECT StudentId, TeacherId, StudentName, StudentPass, StudentTags, StudentNickname FROM Students WHERE StudentName=@studentname AND StudentPass=@studentpass AND TeacherId=@teacherid AND (StudentTags & 1) = 1";
+            string sql = "SELECT StudentId, StudentName, StudentPass, StudentTags, StudentNickname FROM Students WHERE StudentName=@studentname AND StudentPass=@studentpass AND (StudentTags & 1) = 1";
             using SqlConnection cnn = new (connString);
             User userOut = new ();
             try
@@ -70,19 +69,17 @@ namespace ExaminerB.Services2Backend
                 using SqlCommand cmd = new (sql, cnn);
                 cmd.Parameters.AddWithValue ("@studentname", username);
                 cmd.Parameters.AddWithValue ("@studentpass", password);
-                cmd.Parameters.AddWithValue ("@teacherid", teacherid);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
                     if ((username.ToLower () == reader.GetString (2).ToLower ()) && (password == reader.GetString (3)))
                         {
                         userOut.UserId = reader.GetInt32 (0);
-                        userOut.TeacherId = reader.GetInt32 (1);
-                        userOut.UserName = reader.GetString (2);
-                        userOut.UserPass = reader.GetString (3);
+                        userOut.UserName = reader.GetString (1);
+                        userOut.UserPass = reader.GetString (2);
                         userOut.UserRole = "student";
-                        userOut.UserTags = reader.GetInt32 (4);
-                        userOut.UserNickname = reader.GetString (5);
+                        userOut.UserTags = reader.GetInt32 (3);
+                        userOut.UserNickname = reader.GetString (4);
                         }
                     }
                 if (userOut.UserId > 0)
@@ -141,7 +138,8 @@ namespace ExaminerB.Services2Backend
             var users = new List<User> ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
-            using SqlCommand cmd = new ("SELECT UsrId, UsrName, UsrPass, UsrNickname, UsrTags FROM usrs WHERE (UsrTags & 1) = 1 ORDER BY usrNickName", cnn); // -- ORDER BY usrNickName
+            using SqlCommand cmd = new ("dbo.sp_ReadTeachers", cnn); // -- ORDER BY usrNickName
+            cmd.CommandType = CommandType.StoredProcedure;
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             while (await reader.ReadAsync ())
@@ -159,7 +157,7 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Update_TeacherAsync (User user)
             {
-            string sql = "UPDATE usrs SET UsrPass=@usrpass, UsrNickname=@usrnickname, UsrTags=@usertags WHERE UsrId=@userid";
+            string sql = "dbo.sp_UpdateTeacher";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
@@ -180,36 +178,11 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Delete_TeacherAsync (int userId)
             {
-            string sql = @"
-                        BEGIN TRANSACTION;
-                        BEGIN TRY
-                        DELETE FROM TestOptions WHERE TestId IN (SELECT TestId FROM Tests WHERE CourseId IN (SELECT CourseId FROM Courses UserId=@teacherid));
-                        DELETE FROM Tests WHERE CourseId IN (SELECT CourseId FROM Courses WHERE UserId=@teacherid);
-                        DELETE FROM StudentExamTests WHERE StudentExamId IN (SELECT StudentExamId FROM StudentExams WHERE StudentId IN (SELECT StudentId FROM Students WHERE UserId=@teacherid));
-                        DELETE FROM StudentExams WHERE ExamId IN (SELECT ExamId FROM Courses WHERE UserId=@teacherid);
-                        DELETE FROM ExamTests WHERE ExamId IN (SELECT ExamId FROM Courses WHERE UserId=@teacherid);
-                        DELETE FROM ExamCompositions WHERE ExamId IN (SELECT ExamId FROM Courses WHERE UserId=@teacherid);
-                        DELETE FROM Exams WHERE CourseId IN (SELECT CourseId FROM Courses WHERE UserId=@teacherid);
-                        DELETE FROM CourseTopics WHERE CourseId IN (SELECT CourseId FROM Courses WHERE UserId=@teacherid);
-                        DELETE FROM CourseFolders WHERE CourseId IN (SELECT CourseId FROM Courses WHERE UserId=@teacherid);
-                        DELETE FROM StudentCourseTests WHERE StudentCourseId IN (SELECT StudentCourseId FROM StudentCourses WHERE CourseId IN (SELECT CourseId FROM Courses UserId=@teacherid));
-                        DELETE FROM StudentCourses WHERE CourseId IN (SELECT CourseId FROM Courses WHERE UserId=@teacherid);
-                        DELETE FROM Coueses WHERE UserId=@teacherid;
-                        DELETE FROM StudentGroups WHERE GroupId IN (SELECT GroupId FROM Groups WHERE UserId=@teacherid);
-                        DELETE FROM Groups WHERE UserId=@teacherid;
-                        DELETE FROM StudentMessages WHERE MessageId IN (SELECT MessageId FROM messages WHERE UserId=@teacherid);
-                        DELETE FROM Messages WHERE UserId=@teacherid;
-                        DELETE FROM Students WHERE TeacherId=@teacherid;
-                        DELETE FROM usrs WHERE ID=@id;
-                        COMMIT TRANSACTION;
-                        END TRY
-                        BEGIN CATCH
-                        ROLLBACK TRANSACTION
-                        END CATCH;
-                        ";
+            string sql = "dbo.sp_DeleteTeacher";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@teacherid", userId);
             await cmd.ExecuteNonQueryAsync ();
             return true;
@@ -218,16 +191,14 @@ namespace ExaminerB.Services2Backend
         #region S:Students
         public async Task<int> Create_StudentAsync (User student)
             {
-            string sql = @"INSERT INTO Students (TeacherId, StudentName, StudentPass, StudentNickname, StudentTags) 
-                        VALUES (@teacherid, @studentname, @studentpass, @studentnickname, @studenttags); 
-                        SELECT CAST (scope_identity() AS int) ";
+            string sql = @"dbo.sp_Create_Student";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.Parameters.Add ("@teacherid", SqlDbType.Int).Value = student.TeacherId;
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add ("@studentname", SqlDbType.NVarChar, 50).Value = student.UserName;
                 cmd.Parameters.Add ("@studentpass", SqlDbType.NVarChar, 50).Value = student.UserPass;
                 cmd.Parameters.Add ("@studentnickname", SqlDbType.NVarChar, 50).Value = student.UserNickname;
@@ -242,17 +213,14 @@ namespace ExaminerB.Services2Backend
                 return 0;
                 }
             }
-        public async Task<List<User>> Read_StudentsAllAsync (int userId)
+        public async Task<List<User>> Read_StudentsAllAsync ()
             {
-            //read list of all Students
             List<User> lstStudents = new List<User> ();
-            string sql = @"SELECT s.StudentId, s.TeacherId, s.StudentName, s.StudentPass, s.StudentNickname, s.StudentTags 
-                    FROM Students s 
-                    WHERE s.TeacherId=@userid ORDER BY s.StudentName";
+            string sql = @"dbo.sp_ReadStudentsAll";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
-            cmd.Parameters.AddWithValue ("@userid", userId);
+            cmd.CommandType = CommandType.StoredProcedure;
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             while (await reader.ReadAsync ())
@@ -260,11 +228,10 @@ namespace ExaminerB.Services2Backend
                 lstStudents.Add (new User
                     {
                     UserId = reader.GetInt32 (0),
-                    TeacherId = reader.GetInt32 (1),
-                    UserName = reader.GetString (2),
-                    UserPass = reader.GetString (3),
-                    UserNickname = reader.GetString (4),
-                    UserTags = reader.GetInt32 (5),
+                    UserName = reader.GetString (1),
+                    UserPass = reader.GetString (2),
+                    UserNickname = reader.GetString (3),
+                    UserTags = reader.GetInt32 (4),
                     UserRole = "-",
                     StudentGroups = new List<StudentGroup> (),
                     StudentCourses = new List<StudentCourse> (),
@@ -277,19 +244,15 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<List<User>> Read_StudentsByKeywordAsync (int userId, string keyword, int readStudentGCEM)
             {
-            //read list of Students by search
-            List<User> lstStudents = new List<User> ();
             keyword = "%" + keyword + "%";
-            string sql = @"SELECT s.StudentId, s.TeacherId, s.StudentName, s.StudentPass, s.StudentNickname, s.StudentTags 
-                    FROM Students s 
-                    WHERE s.TeacherId=@userid AND ((s.StudentName LIKE @keyword) OR (s.StudentNickname LIKE @keyword))
-                    ORDER BY s.StudentName";
+            List<User> lstStudents = new List<User> ();
+            string sql = "dbo.sp_ReadStudentsByKeyword";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@userid", userId);
             cmd.Parameters.Add ("@keyword", SqlDbType.NVarChar, 200).Value = keyword;
-
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             while (await reader.ReadAsync ())
@@ -297,11 +260,10 @@ namespace ExaminerB.Services2Backend
                 lstStudents.Add (new User
                     {
                     UserId = reader.GetInt32 (0),
-                    TeacherId = reader.GetInt32 (1),
-                    UserName = reader.GetString (2),
-                    UserPass = reader.GetString (3),
-                    UserNickname = reader.GetString (4),
-                    UserTags = reader.GetInt32 (5),
+                    UserName = reader.GetString (1),
+                    UserPass = reader.GetString (2),
+                    UserNickname = reader.GetString (3),
+                    UserTags = reader.GetInt32 (4),
                     UserRole = "-",
                     StudentGroups = new List<StudentGroup> (),
                     StudentCourses = new List<StudentCourse> (),
@@ -344,53 +306,26 @@ namespace ExaminerB.Services2Backend
             {
             //read list of Students by {G/C/E/M}Id
             List<User> lstStudents = new List<User> ();
-            string sql = @"SELECT s.StudentId, s.TeacherId, s.StudentName, s.StudentPass, s.StudentNickname, s.StudentTags FROM Students s ";
-            switch (mode)
-                {
-                case "G":
-                        {
-                        sql += @"INNER JOIN StudentGroups sg ON s.StudentId = sg.StudentId WHERE sg.GroupId=@id ORDER BY s.StudentName";
-                        break;
-                        }
-                case "C":
-                        {
-                        sql += @"INNER JOIN StudentCourses sc ON s.StudentId = sc.StudentId WHERE sc.CourseId=@id ORDER BY s.StudentName";
-                        break;
-                        }
-                case "E":
-                        {
-                        sql += @"INNER JOIN StudentExams se ON s.StudentId = se.StudentId WHERE se.ExamId=@id ORDER BY s.StudentName";
-                        break;
-                        }
-                case "M":
-                        {
-                        sql += @"INNER JOIN StudentMessages sm ON s.StudentId = sm.StudentId WHERE sm.MessageId=@id ORDER BY s.StudentName";
-                        break;
-                        }
-                case "S":
-                        {
-                        sql += @"WHERE s.StudentId=@id ORDER BY s.StudentName";
-                        break;
-                        }
-                }
+            string sql = "dbo.sp_ReadStudentsByGCEMSId";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@id", Id);
+                cmd.Parameters.AddWithValue ("@mode", mode);
                 var reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
                     var student = new User
                         {
                         UserId = reader.GetInt32 (0),
-                        TeacherId = reader.GetInt32 (1),
-                        UserName = reader.GetString (2),
-                        UserPass = reader.GetString (3),
-                        UserNickname = reader.GetString (4),
-                        UserTags = reader.GetInt32 (5),
+                        UserName = reader.GetString (1),
+                        UserPass = reader.GetString (2),
+                        UserNickname = reader.GetString (3),
+                        UserTags = reader.GetInt32 (4),
                         UserRole = "-",
                         StudentGroups = new List<StudentGroup> (),
                         StudentCourses = new List<StudentCourse> (),
@@ -429,7 +364,7 @@ namespace ExaminerB.Services2Backend
                     //read studentMessages records
                     foreach (User student in lstStudents)
                         {
-                        student.StudentMessages = await Read_StudentMessagesAsync (student.UserId, "ByStudentId");
+                            student.StudentMessages = await Read_StudentMessagesAsync (student.UserId, "ByStudentId");
                         }
                     }
                 return lstStudents;
@@ -445,20 +380,15 @@ namespace ExaminerB.Services2Backend
             //tags: 1:Active 2:ChangePass            
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            string sql = "";
-            sql = @"Update Students SET 
-                StudentName=@studentname, 
-                StudentPass=@studentpass, 
-                StudentNickname=@studentnickname, 
-                StudentTags=@studenttags 
-                WHERE StudentId=@studentid";
+            string sql = "dbo.sp_UpdateStudent";
             await cnn.OpenAsync ();
             var cmd = new SqlCommand (sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue ("@studentid", student.UserId);
             cmd.Parameters.AddWithValue ("@studentname", student.UserName);
             cmd.Parameters.AddWithValue ("@studentpass", student.UserPass);
             cmd.Parameters.AddWithValue ("@studentnickname", student.UserNickname);
             cmd.Parameters.AddWithValue ("@studenttags", student.UserTags);
-            cmd.Parameters.AddWithValue ("@studentid", student.UserId);
             await cmd.ExecuteNonQueryAsync ();
             return true;
             }
@@ -467,12 +397,10 @@ namespace ExaminerB.Services2Backend
             //tags: 1:Active 2:ChangePass            
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            string sql = "";
-            sql = @"Update Students SET 
-                StudentTags=@studenttags 
-                WHERE StudentId=@studentid";
+            string sql = "dbo.sp_UpdateStudentTags";
             await cnn.OpenAsync ();
             var cmd = new SqlCommand (sql, cnn);
+            cmd.CommandType= CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@studenttags", student.UserTags);
             cmd.Parameters.AddWithValue ("@studentid", student.UserId);
             await cmd.ExecuteNonQueryAsync ();
@@ -484,34 +412,11 @@ namespace ExaminerB.Services2Backend
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
-            string sql = "";
-            switch (mode)
-                {
-                case "G":
-                        {
-                        sql = "DELETE FROM StudentGroups WHERE StudentId=@studentid";
-                        break;
-                        }
-                case "C":
-                        {
-                        sql = @"DELETE FROM StudentCourseTests WHERE StudentCourseId IN (SELECT StudentCourseId FROM StudentCourses WHERE StudentId=@studentid);
-                                DELETE FROM StudentCourses WHERE StudentId=@studentid";
-                        break;
-                        }
-                case "E":
-                        {
-                        sql = @"DELETE FROM StudentExamTests WHERE StudentExamId IN (SELECT StudentExamId FROM StudentExams WHERE StudentId=@studentid);
-                                DELETE FROM StudentExams WHERE StudentId=@studentid";
-                        break;
-                        }
-                case "M":
-                        {
-                        sql = "DELETE FROM StudentMessages WHERE StudentId=@studentid";
-                        break;
-                        }
-                }
+            string sql = "dbo.sp_RemoveStudentFromList";
             var cmd = new SqlCommand (sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@studentid", studentId);
+            cmd.Parameters.AddWithValue ("@mode", mode);
             await cmd.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
             return true;
@@ -520,25 +425,10 @@ namespace ExaminerB.Services2Backend
             {
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            string sql = "";
+            string sql = "dbo.sp_DeleteStudent";
             await cnn.OpenAsync ();
-            sql = @"
-                BEGIN TRANSACTION;
-                BEGIN TRY
-                DELETE FROM StudentGroups WHERE StudentId=@studentid;
-                DELETE FROM StudentCourseTests WHERE StudentCourseId IN (SELECT StudentCourseId FROM StudentCourses WHERE StudentId=@studentid);
-                DELETE FROM StudentCourses WHERE StudentId=@studentid;
-                DELETE FROM StudentExamTests WHERE StudentExamId IN (SELECT StudentExamId FROM StudentExams WHERE StudentId=@studentid);
-                DELETE FROM StudentExams WHERE StudentId=@studentid;
-                DELETE FROM StudentMessages WHERE StudentId=@studentid;
-                DELETE FROM Students WHERE StudentId=@studentid; 
-                COMMIT TRANSACTION;
-                END TRY
-                BEGIN CATCH
-                ROLLBACK TRANSACTION;
-                END CATCH; 
-                ";
             SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@studentid", studentId);
             cmd.ExecuteNonQuery ();
             return true;
@@ -547,12 +437,12 @@ namespace ExaminerB.Services2Backend
         #region G:Groups
         public async Task<int> Create_GroupAsync (Group group)
             {
-            string sql = @"INSERT INTO Groups (GroupName, UserId) VALUES (@groupname, @userid); 
-                        SELECT CAST (scope_identity() AS int)";
+            string sql = "dbo.sp_CreateGroup";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.CommandType= CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@groupname", group.GroupName);
             cmd.Parameters.AddWithValue ("@userid", group.UserId);
             int i = (int) await cmd.ExecuteScalarAsync ();
@@ -562,13 +452,14 @@ namespace ExaminerB.Services2Backend
         public async Task<List<Group>> Read_GroupsAsync (User user, bool getGroupStudents)
             {
             List<Group> lstGroups = new List<Group> ();
-            string sql = "SELECT g.GroupId, g.GroupName, g.UserId FROM Groups g WHERE g.UserId=@userid ORDER BY g.GroupName";
+            string sql = "dbo.sp_ReadGroups";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@userid", user.UserId);
                 using (var reader = await cmd.ExecuteReaderAsync ())
                     {
@@ -603,13 +494,14 @@ namespace ExaminerB.Services2Backend
             {
             //ModelState.Clear (); // disables auto validation
             Group group = new Group ();
-            string sql = "SELECT g.GroupId, g.GroupName, g.UserId FROM Groups g WHERE g.GroupId=@groupid";
+            string sql = "dbo.sp_ReadGroup";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@groupid", groupId);
                 using (var reader = await cmd.ExecuteReaderAsync ())
                     {
@@ -652,12 +544,12 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<int> Delete_GroupAsync (int groupId)
             {
-            string sql = @"DELETE FROM StudentGroups WHERE GroupId=@groupid;
-                        DELETE FROM Groups WHERE GroupId=@groupid ";
+            string sql = "dbo.sp_DeleteGroup";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@groupid", groupId);
             int i = (int) cmd.ExecuteNonQuery ();
             return i;
@@ -686,30 +578,16 @@ namespace ExaminerB.Services2Backend
             {
             //read SG records
             List<StudentGroup> lstStudentGroups = new List<StudentGroup> ();
-            string sql = @"SELECT sg.StudentGroupId, sg.StudentId, sg.GroupId, sg.DateTimeJoined, sg.StudentGroupTags, g.GroupName, s.StudentName, s.StudentNickname, s.StudentTags 
-                        FROM StudentGroups sg 
-                        INNER JOIN Groups g ON sg.GroupId = g.GroupId
-                        INNER JOIN Students s ON sg.StudentId = s.StudentId ";
-            switch (mode)
-                {
-                case "ByStudentId":
-                        {
-                        sql += " WHERE sg.StudentId=@id ORDER BY s.StudentNickname";
-                        break;
-                        }
-                case "ByGroupId":
-                        {
-                        sql += " WHERE sg.GroupId=@id ORDER BY s.StudentNickname";
-                        break;
-                        }
-                }
+            string sql = "dbo.sp_ReadStudentGroups";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@id", Id);
+                cmd.Parameters.AddWithValue ("@mode", mode);
                 using (var reader = await cmd.ExecuteReaderAsync ())
                     {
                     while (await reader.ReadAsync ())
@@ -1081,35 +959,16 @@ namespace ExaminerB.Services2Backend
             {
             //read SC records for one Student
             List<StudentCourse> lstStudentCourses = new List<StudentCourse> ();
-            string sql = @"SELECT sc.StudentCourseId, sc.StudentId, sc.CourseId, c.CourseName, s.StudentName, s.StudentNickname, sc.NumberOfTests, sc.CorrectAnswers, sc.StudentCourseTags 
-                        FROM StudentCourses sc 
-                        INNER JOIN Courses c ON sc.CourseId = c.CourseId 
-                        INNER JOIN Students s ON sc.StudentId = s.StudentId ";
-            switch (mode)
-                {
-                case "ByStudentIdIgnoreInactiveCourses":
-                        {
-                        sql += " WHERE sc.StudentId=@id AND (StudentCourseTags & 1) = 1 ORDER BY s.StudentNickname";
-                        break;
-                        }
-                case "ByStudentId":
-                        {
-                        sql += " WHERE sc.StudentId=@id ORDER BY s.StudentNickname";
-                        break;
-                        }
-                case "ByCourseId":
-                        {
-                        sql += " WHERE sc.CourseId=@id ORDER BY s.StudentNickname";
-                        break;
-                        }
-                }
+            string sql = "dbo.sp_ReadStudentCourses";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@id", Id);
+                cmd.Parameters.AddWithValue ("@mode", mode);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
@@ -2521,32 +2380,14 @@ namespace ExaminerB.Services2Backend
             List<StudentExam> lstStudentsExam = new ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            string sql = @"SELECT se.StudentExamId, se.StudentId, s.StudentName, s.StudentNickname, c.CourseId, c.CourseName,
-                e.ExamId, e.ExamTitle, e.ExamDateTime, e.ExamDuration, e.ExamNTests, e.ExamTags,
-                se.StartDateTime, se.FinishDateTime, se.StudentExamTags, se.StudentExamPoint
-                FROM StudentExams se 
-                INNER JOIN Exams e ON se.ExamId = e.ExamId
-                INNER JOIN Courses c ON e.CourseId = c.CourseId
-                INNER JOIN Students s ON se.StudentId = s.StudentId ";
-            switch (mode)
-                {
-                case "ByStudentId":
-                        {
-                        sql += " WHERE se.StudentId=@id ORDER BY e.ExamDateTime DESC";
-                        break;
-                        }
-                case "ByExamId":
-                        {
-                        //sort order be: notEntered, justEntered, ..., firstEntered
-                        sql += " WHERE se.ExamId=@id ORDER BY (se.StudentExamTags & 2), se.StartDateTime DESC";
-                        break;
-                        }
-                }
+            string sql = "dbo.sp_ReadStudentExams";
             try
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@id", Id);
+                cmd.Parameters.AddWithValue ("@mode", mode);
                 var reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
@@ -3561,38 +3402,16 @@ namespace ExaminerB.Services2Backend
             {
             List<StudentMessage> lstStudentMessages = new List<StudentMessage> ();
             Message message = new Message ();
-            string sql = @"SELECT sm.StudentMessageId, sm.MessageId, sm.StudentId, s.StudentName, s.StudentNickname, m.MessageTitle, m.MessageBody, m.DateTimeCreated, sm.DateTimeSent, sm.DateTimeRead, sm.StudentMessageTags
-                        FROM StudentMessages sm 
-                        INNER JOIN Messages m ON sm.MessageId = m.MessageId 
-                        INNER JOIN Students s ON sm.StudentId = s.StudentId";
-            switch (mode)
-                {
-                case "ByStudentIdIgnoreDeletedMessages":
-                        {
-                        //sort: put new messages at top, FeddbackMessages in mid and simple already-read messages at buttom, finally sorted by date-sent:
-                        //sql += " WHERE (sm.StudentId=@id) AND ((sm.StudentMessageTags & 4) = 0) ORDER BY (sm.StudentMessageTags & 1), (sm.StudentMessageTags & 8) DESC, (sm.StudentMessageTags & 48), sm.DateTimeSent DESC"; //48=(16:AnsY+32:AnsN)
-                        //sort: by date-sent:
-                        sql += " WHERE (sm.StudentId=@id) AND ((sm.StudentMessageTags & 4) = 0) ORDER BY sm.DateTimeSent DESC"; //48=(16:AnsY+32:AnsN)
-                        break;
-                        }
-                case "ByStudentId":
-                        {
-                        sql += " WHERE sm.StudentId=@id ORDER BY sm.DateTimeSent DESC";
-                        break;
-                        }
-                case "ByMessageId":
-                        {
-                        sql += " WHERE sm.MessageId=@id ORDER BY m.DateTimeCreated, sm.DateTimeSent ";
-                        break;
-                        }
-                }
+            string sql = "dbo.sp_ReadStudentMessages";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@id", Id);
+                cmd.Parameters.AddWithValue ("@mode", mode);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 lstStudentMessages.Clear ();
                 while (await reader.ReadAsync ())

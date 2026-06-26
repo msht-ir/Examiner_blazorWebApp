@@ -24,9 +24,9 @@ namespace ExaminerB.Service
                 return new User { UserRole = "student" };
                 }
             }
-        public async Task<User?> LoginStudent (string username, string password, int teacherid)
+        public async Task<User?> LoginStudent (string username, string password)
             {
-            var response = await _http.PostAsJsonAsync ($"api/LoginStudent?username={username}&teacherid={teacherid}", password);
+            var response = await _http.PostAsJsonAsync ($"api/LoginStudent?username={username}", password);
             if (response.IsSuccessStatusCode)
                 {
                 return await response.Content.ReadFromJsonAsync<User> ();
@@ -101,9 +101,9 @@ namespace ExaminerB.Service
                 return 0;
                 }
             }
-        public async Task<List<User>> Read_StudentsAll (int userId)
+        public async Task<List<User>> Read_StudentsAll ()
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsAll", userId);
+            var response = await _http.PostAsync ($"api/Read_StudentsAll", null);
             if (response.IsSuccessStatusCode)
                 {
                 List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();

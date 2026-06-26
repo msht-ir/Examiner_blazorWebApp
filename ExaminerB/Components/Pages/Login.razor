@@ -58,26 +58,6 @@
             <MudContainer Class="mt-2 px-0">
                 <MudCard Class="mx-0">
                     <MudCardContent Style="background-color:rgba(248,248,248, 1);max-width:500px;min-width:400px;min-height:220px;padding-bottom:20px;">
-                    @if (user.UserRole == "student")
-                        {
-                            <div class="mb-3 d-flex gap-1">
-                                <MudSelect T="int"
-                                       @ref="refTeacher"
-                                       Label="Teacher"
-                                       Value="TeacherId"
-                                       ValueChanged="OnTeacherChanged"
-                                       Class="w-auto my-select"
-                                       Variant="Variant.Text"
-                                       Margin="Margin.Normal"
-                                       Style="color:royalblue;width:140px;font-size:small;">
-                                <MudSelectItem Value="0">Select</MudSelectItem>
-                                @foreach (var teacher in lstTeachers)
-                                    {
-                                    <MudSelectItem Value="@teacher.UserId">@teacher.UserNickname</MudSelectItem>
-                                    }
-                                </MudSelect>
-                            </div>
-                        }
                     <MudTextField @ref="refUser"
                                   @bind-Value="_username"
                                   Label="Username"
@@ -97,15 +77,15 @@
                                   OnAdornmentClick="TogglePasswordVisibility"
                                   OnKeyDown="HandleKey_Passwordbox"
                                   InputType="_passwordInput" />
-                    <div style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
-                        <MudButton OnClick="@(() => BtnLogin())"
-                               Variant="Variant.Filled"
-                               EndIcon="@Icons.Material.Filled.AccountBox"
-                               Size="Size.Small"
-                               Style="text-align:center; width:320px;margin-top:60px;">
-                        Login
-                        </MudButton>
-                    </div>
+                        <div style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
+                            <MudButton OnClick="@(() => BtnLogin())"
+                                   Variant="Variant.Filled"
+                                   EndIcon="@Icons.Material.Filled.AccountBox"
+                                   Size="Size.Small"
+                                   Style="text-align:center; width:320px;margin-top:60px;">
+                            Login
+                            </MudButton>
+                        </div>
                     </MudCardContent>
                 </MudCard>
             </MudContainer>
@@ -116,14 +96,9 @@
     private bool _passwordVisible;
     private InputType _passwordInput = InputType.Password;
     private string _passwordIcon = Icons.Material.Filled.VisibilityOff;
-    private MudSelect<string> refRole;
     private User user = new User { UserRole = "student" };
-    private MudSelect<int> refTeacher;
     private MudTextField<string> refUser;
     private MudTextField<string> refPass; // private ElementReference refPass;
-    private int TeacherId = 0;
-    private int selectedTeacherId;
-    private List<User> lstTeachers = new List<User>();
     private string _username = "";
     private string _password = "";
     private bool _firstRender = true;
@@ -137,7 +112,6 @@
         appState.SetStudentTags(0);
         appState.SetUserName("");
         StateHasChanged();
-        lstTeachers = await feService.Read_Teachers();
         }
     protected override async Task OnAfterRenderAsync (bool firstRender)
         {
@@ -158,15 +132,10 @@
     //btns
     public async Task BtnLogin ()
         {
-        if ((user.UserRole == "student") & (TeacherId == 0))
-            {
-            Snackbar.Add("select your teacher", Severity.Warning);
-            return;
-            }
-        appState.SetTeacherId(TeacherId);
+        // appState.SetTeacherId(TeacherId);
         if (user.UserRole == "student")
             {
-            user = await feService.LoginStudent(_username, _password, TeacherId) ?? new User { UserRole = "student" };
+            user = await feService.LoginStudent(_username, _password) ?? new User { UserRole = "student" };
             }
         else
             {
@@ -213,7 +182,6 @@
             {
             Snackbar.Add("incorrect username or password!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             user.UserRole = "student";
-            TeacherId = 0;
             return;
             }
         }
@@ -233,29 +201,6 @@
         {
         user.UserRole = (user.UserRole == "student") ? "teacher" : "student";
         StateHasChanged();
-        }
-    private async Task OnTeacherChanged (int newValue)
-        {
-        //update TeacherId from the event
-        TeacherId = newValue;
-        user.UserId = TeacherId;
-        StateHasChanged();
-        await Task.Delay(50);
-        await refUser.FocusAsync();
-        }
-    private async Task OnRoleChanged (string newRole)
-        {
-        user.UserRole = newRole;
-        StateHasChanged(); //render page to make elements appear on DOM
-        await Task.Yield(); //wait until render is completed
-        if (user.UserRole == "teacher")
-            {
-            await refUser.FocusAsync();
-            }
-        else if (user.UserRole == "student")
-            {
-            await refTeacher.FocusAsync();
-            }
         }
     private async Task HandleKey_Passwordbox (KeyboardEventArgs e)
         {
