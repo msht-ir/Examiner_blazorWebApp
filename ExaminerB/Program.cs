@@ -12,13 +12,13 @@ builder.Services.AddMudServices ();
 builder.Services.AddScoped<BeIService, BeService> ();
 // Configure HttpClient with base address from configuration or environment
 builder.Services.AddHttpClient<FeService> (client =>
-    {
-        //var baseAddress = builder.Configuration["BaseAddress"] ?? "http://localhost:5232";  //local server: for Linux (http ONLY)
-        var baseAddress = builder.Configuration["BaseAddress"] ?? "https://localhost:7139";  //local server: for Windows
-        //var baseAddress = builder.Configuration["BaseAddress"] ?? "https://x.msht.ir";       //remote server: [x].msht.ir
-        client.BaseAddress = new Uri (baseAddress);
-        client.Timeout = TimeSpan.FromSeconds (120);
-    });
+{
+    //var baseAddress = builder.Configuration["BaseAddress"] ?? "http://localhost:5232";  //local server: for Linux (http ONLY)
+    var baseAddress = builder.Configuration["BaseAddress"] ?? "https://localhost:7139";  //local server: for Windows
+    //var baseAddress = builder.Configuration ["BaseAddress"] ?? "https://x.msht.ir";       //remote server: [x].msht.ir
+    client.BaseAddress = new Uri (baseAddress);
+    client.Timeout = TimeSpan.FromSeconds (120);
+});
 builder.Services.AddServerSideBlazor ();
 builder.Services.AddControllers ();
 var app = builder.Build ();
