@@ -58,7 +58,7 @@ else
                                           @bind-Value="strSearchKey"
                                           OnKeyDown="HandleKey_Searchbox"
                                           Label="Search"
-                                          Variant="Variant.Outlined"
+                                          Variant="Variant.Text"
                                           Margin="Margin.Dense"
                                           Immediate="true"
                                           Adornment="Adornment.End"
@@ -231,13 +231,20 @@ else
                                         {
                                         string btnProjectId = "btnProjectName";
                                             <div class="d-flex mb-3">
-                                            <MudTextField @ref="refProjectName" @bind-Value="project.ProjectName" Label="notebook" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
+                                            <MudTextField @ref="refProjectName"
+                                                          @bind-Value="project.ProjectName"
+                                                          Label="notebook"
+                                                          Variant="Variant.Text"
+                                                          Margin="Margin.Dense"
+                                                          Autocomplete="off"
+                                                          Adornment="Adornment.End"
+                                                          AdornmentIcon="@Icons.Material.Filled.Save"
+                                                          OnAdornmentClick="() => BtnUpdateProject(project)"
+                                                          Style="font-family:tahoma;"
+                                                          Class="my-textfield" />
                                             </div>
                                             <div class="d-flex mb-2">
                                             <MudCheckBox @bind-Value="project.IsActive" Label="active" Color="Color.Primary"></MudCheckBox>
-                                                <button class="btn btn-link pulse-animation" style="margin-left:15px;" name="@btnProjectId" @onclick="() => BtnUpdateProject(project)">
-                                                <img src="/img/icoSave2.png" width="25" title="save notebook" />
-                                                </button>
                                                 <button class="btn btn-link" style="margin-left:15px;" @onclick="() => BtnDeleteProject(project.ProjectId)" @key="project.ProjectId">
                                                 <img src="/img/icoDelete1.png" width="25" title="delete notebook" />
                                                 </button>
@@ -261,12 +268,19 @@ else
                                             {
                                                 <div>
                                                     <div class="d-flex mb-3">
-                                                    <MudTextField @ref="refNewSubproject" @bind-Value="txtNewSubprojectTitle" Label="new section" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                                        <button class="btn btn-link pulse-animation" @onclick="() => BtnSaveNewSubproject(project.ProjectId)">
-                                                        <img src="/img/icoSave2.png" width="24" title="save new section" />
-                                                        </button>
-                                                        <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                        <img src="/img/icoCancel.png" width="24" title="cancel" />
+                                                    <MudTextField @ref="refNewSubproject"
+                                                                  @bind-Value="txtNewSubprojectTitle"
+                                                                  Label="new section"
+                                                                  Variant="Variant.Text"
+                                                                  Margin="Margin.Dense"
+                                                                  Autocomplete="off"
+                                                                  Adornment="Adornment.End"
+                                                                  AdornmentIcon="@Icons.Material.Filled.Save"
+                                                                  OnAdornmentClick="() => BtnSaveNewSubproject(project.ProjectId)"
+                                                                  Style="font-family:tahoma;"
+                                                                  Class="my-textfield" />
+                                                        <button class="btn btn-link" name="btnNewCourse" style="margin-left:20px;" @onclick="BtnCancel">
+                                                        <img src="/img/icoCancel.png" width="20" title="cancel" />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -299,12 +313,19 @@ else
                                                                     {
                                                                     @* EDIT SECTION *@
                                                                         <div class="d-flex mb-1">
-                                                                        <MudTextField @ref="refSubprojectName" @bind-Value="subProject.SubprojectName" Label="section" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                                                                            <button class="btn btn-link pulse-animation" @onclick="() => BtnUpdateSubproject(subProject)">
-                                                                            <img src="/img/icoSave2.png" width="22" title="update section name" />
-                                                                            </button>
+                                                                        <MudTextField @ref="refSubprojectName"
+                                                                                      @bind-Value="subProject.SubprojectName"
+                                                                                      Label="section"
+                                                                                      Variant="Variant.Text"
+                                                                                      Margin="Margin.Dense"
+                                                                                      Autocomplete="off"
+                                                                                      Adornment="Adornment.End"
+                                                                                      AdornmentIcon="@Icons.Material.Filled.Save"
+                                                                                      OnAdornmentClick="() => BtnUpdateSubproject(subProject)"
+                                                                                      Style="font-family:tahoma;"
+                                                                                      Class="my-textfield" />
                                                                             <button class="btn btn-link" @onclick="() => BtnDeleteSubproject(subProject)">
-                                                                            <img src="/img/icoDelete1.png" width="22" title="delete section" />
+                                                                            <img src="/img/icoDelete1.png" width="22" style="margin-left:20px; " title="delete section" />
                                                                             </button>
                                                                             <button class="btn btn-link" @onclick="() => BtnCancel()">
                                                                             <img src="/img/icoCancel.png" width="20" title="cancel" />
@@ -315,17 +336,25 @@ else
                                                                     {
                                                                     @* MOVE SECTION To A NOTEBOOK *@
                                                                         <div class="d-flex justyfy-content-center align-items-center" style="text-align: left;margin-bottom:15px;">
-                                                                            <MudSelect T="int" @ref="refProjects" Label="move to" Value="NotebookId" ValueChanged="OnNotebookChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                                            <MudSelect T="int"
+                                                                                   @ref="refProjects"
+                                                                                   Label="move to"
+                                                                                   Value="NotebookId"
+                                                                                   ValueChanged="OnNotebookChanged"
+                                                                                   Class="w-auto my-select"
+                                                                                   Variant="Variant.Text"
+                                                                                   Margin="Margin.Dense"
+                                                                                   Adornment="Adornment.End"
+                                                                                   AdornmentIcon="@Icons.Material.Filled.FolderCopy"
+                                                                                   OnAdornmentClick="() => BtnSectionMoveToSelectedNotebook(NotebookId, subProject)"
+                                                                                   Style="color:royalblue;width:140px;font-size:small;font-family:tahoma;">
                                                                             <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
                                                                             @foreach (var project in lstProjects)
                                                                                 {
                                                                                 <MudSelectItem Value="@project.ProjectId">@project.ProjectName</MudSelectItem>
                                                                                 }
                                                                             </MudSelect>
-                                                                            <button class="btn btn-link" Title="move!" @onclick='() => BtnSectionMoveToSelectedNotebook(NotebookId, subProject)'>
-                                                                            <img src="/img/icoMoveToNoteBook.png" width="34" />
-                                                                            </button>
-                                                                            <button class="btn btn-link" Title="cancel" @onclick='() => BtnCancel()'>
+                                                                            <button class="btn btn-link" Title="cancel" style="margin-left:20px;" @onclick='() => BtnCancel()'>
                                                                             <img src="/img/icoCancel.png" width="20" />
                                                                             </button>
                                                                         </div>
@@ -365,7 +394,15 @@ else
                                                                                                     <h6 style="color:indianred;text-align:center;">replace to:</h6>
                                                                                                     @* COMBO Notebooks *@
                                                                                                         <div class="d-flex">
-                                                                                                            <MudSelect T="int" @ref="refProjects" Label="Notebook" Value="NotebookId" ValueChanged="OnNotebookChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                                                                            <MudSelect T="int"
+                                                                                                                   @ref="refProjects"
+                                                                                                                   Label="Notebook"
+                                                                                                                   Value="NotebookId"
+                                                                                                                   ValueChanged="OnNotebookChanged"
+                                                                                                                   Class="w-auto my-select"
+                                                                                                                   Variant="Variant.Text"
+                                                                                                                   Margin="Margin.Dense"
+                                                                                                                   Style="color:royalblue;width:140px;font-size:small;">
                                                                                                             <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
                                                                                                             @foreach (var project in lstProjects)
                                                                                                                 {
@@ -375,17 +412,25 @@ else
                                                                                                         </div>
                                                                                                     @* COMBO Sections *@
                                                                                                         <div class="d-flex align-content-center align-items-center align-content-md-center">
-                                                                                                            <MudSelect T="int" @ref="refSubprojects" Label="Section" Value="SectionId" ValueChanged="OnSectionChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                                                                            <MudSelect T="int"
+                                                                                                                   @ref="refSubprojects"
+                                                                                                                   Label="Section"
+                                                                                                                   Value="SectionId"
+                                                                                                                   ValueChanged="OnSectionChanged"
+                                                                                                                   Class="w-auto my-select"
+                                                                                                                   Variant="Variant.Text"
+                                                                                                                   Margin="Margin.Dense"
+                                                                                                                   Adornment="Adornment.End"
+                                                                                                                   AdornmentIcon="@Icons.Material.Filled.FolderCopy"
+                                                                                                                   OnAdornmentClick="() => BtnMoveToSelectSection(SectionId, notex.NoteId)"
+                                                                                                                   Style="color:royalblue;width:140px;font-size:small;">
                                                                                                             <MudSelectItem Value="0">Select a Section...</MudSelectItem>
                                                                                                             @foreach (var subproject in lstSubprojects)
                                                                                                                 {
                                                                                                                 <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem>
                                                                                                                 }
                                                                                                             </MudSelect>
-                                                                                                            <button class="btn btn-link" Title="move!" @onclick='() => BtnMoveToSelectSection(SectionId, notex.NoteId)'>
-                                                                                                            <img src="/img/icoMoveToNoteBook.png" width="34" />
-                                                                                                            </button>
-                                                                                                            <button class="btn btn-link" Title="cancel" @onclick='() => BtnCancel()'>
+                                                                                                            <button class="btn btn-link" Title="cancel" style="margin-left:20px;" @onclick='() => BtnCancel()'>
                                                                                                             <img src="/img/icoCancel.png" width="20" />
                                                                                                             </button>
                                                                                                         </div>
@@ -474,7 +519,15 @@ else
                                                                                                     <h6 style="color:indianred;text-align:center;">replace to:</h6>
                                                                                                     @* COMBO Notebooks *@
                                                                                                         <div class="d-flex">
-                                                                                                            <MudSelect T="int" @ref="refProjects" Label="Notebook" Value="NotebookId" ValueChanged="OnNotebookChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                                                                            <MudSelect T="int"
+                                                                                                                   @ref="refProjects"
+                                                                                                                   Label="Notebook"
+                                                                                                                   Value="NotebookId"
+                                                                                                                   ValueChanged="OnNotebookChanged"
+                                                                                                                   Class="w-auto my-select"
+                                                                                                                   Variant="Variant.Text"
+                                                                                                                   Margin="Margin.Dense"
+                                                                                                                   Style="color:royalblue;width:140px;font-size:small;">
                                                                                                             <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
                                                                                                             @foreach (var project in lstProjects)
                                                                                                                 {
@@ -484,17 +537,25 @@ else
                                                                                                         </div>
                                                                                                     @* COMBO Sections *@
                                                                                                         <div class="d-flex align-content-center align-items-center align-content-md-center">
-                                                                                                            <MudSelect T="int" @ref="refSubprojects" Label="Section" Value="SectionId" ValueChanged="OnSectionChanged" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                                                                                                            <MudSelect T="int"
+                                                                                                                   @ref="refSubprojects"
+                                                                                                                   Label="Section"
+                                                                                                                   Value="SectionId"
+                                                                                                                   ValueChanged="OnSectionChanged"
+                                                                                                                   Class="w-auto my-select"
+                                                                                                                   Variant="Variant.Text"
+                                                                                                                   Margin="Margin.Dense"
+                                                                                                                   Adornment="Adornment.End"
+                                                                                                                   AdornmentIcon="@Icons.Material.Filled.FolderCopy"
+                                                                                                                   OnAdornmentClick="() => BtnMoveToSelectSection(SectionId, notex.NoteId)"
+                                                                                                                   Style="color:royalblue;width:140px;font-size:small;">
                                                                                                             <MudSelectItem Value="0">Select a Section...</MudSelectItem>
                                                                                                             @foreach (var subproject in lstSubprojects)
                                                                                                                 {
                                                                                                                 <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem>
                                                                                                                 }
                                                                                                             </MudSelect>
-                                                                                                            <button class="btn btn-link" Title="move!" @onclick='() => BtnMoveToSelectSection(SectionId, notex.NoteId)'>
-                                                                                                            <img src="/img/icoMoveToNoteBook.png" width="34" />
-                                                                                                            </button>
-                                                                                                            <button class="btn btn-link" Title="cancel" @onclick='() => BtnCancel()'>
+                                                                                                            <button class="btn btn-link" Title="cancel" style="margin-left:20px;" @onclick='() => BtnCancel()'>
                                                                                                             <img src="/img/icoCancel.png" width="20" />
                                                                                                             </button>
                                                                                                         </div>
@@ -571,13 +632,20 @@ else
                 @if (appState.Cmd == "AddNewProject")
                     {
                     <hr style="color:red" />
-                        <div class="d-flex gap-2 mb-3 align-content-center align-items-center">
-                        <MudTextField @ref="refNewProject" @bind-Value="project.ProjectName" Label="new Notebook" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" />
-                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnSaveNewProject">
-                            <img src="/img/icoSave2.png" width="22" title="save notebook" />
-                            </button>
-                            <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                            <img src="/img/icoCancel.png" width="24" title="cancel" />
+                        <div class="d-flex gap-2 m-3 align-content-center align-items-center">
+                        <MudTextField @ref="refNewProject"
+                                      @bind-Value="project.ProjectName"
+                                      Label="new Notebook"
+                                      Variant="Variant.Text"
+                                      Margin="Margin.Dense"
+                                      Autocomplete="off"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.Save"
+                                      OnAdornmentClick="BtnSaveNewProject"
+                                      Style="font-family:tahoma;"
+                                      Class="my-textfield" />
+                            <button class="btn btn-link" name="btnNewCourse" style="margin-left:30px;" @onclick="BtnCancel">
+                            <img src="/img/icoCancel.png" width="20" title="cancel" />
                             </button>
                         </div>
                     }
@@ -662,8 +730,7 @@ else
             UserId = Convert.ToInt32(appState.UserId),
             UserName = appState.UserName,
             UserPass = appState.UserPass,
-            UserRole = appState.UserRole,
-            TeacherId = 0
+            UserRole = appState.UserRole
             };
         if (user.UserId > 0)
             {
@@ -694,7 +761,7 @@ else
     //QuickNote
     public async Task CreateQuickNote ()
         {
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
         appState.SetNoteParentType(1);
         appState.SetNoteParentId(Convert.ToInt32(appState.UserId));
         appState.SetCmd("CreateNote");
@@ -734,8 +801,7 @@ else
                 UserId = Convert.ToInt32(appState.UserId),
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
-                UserRole = appState.UserRole,
-                TeacherId = 0
+                UserRole = appState.UserRole
                 };
             user.UserId = Convert.ToInt32(appState.UserId);
             await GetListOfProjects(user.UserId, _ShowProjectsMode);
@@ -765,8 +831,7 @@ else
                 UserId = Convert.ToInt32(appState.UserId),
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
-                UserRole = appState.UserRole,
-                TeacherId = 0
+                UserRole = appState.UserRole
                 };
             user.UserId = Convert.ToInt32(appState.UserId);
             await GetListOfProjects(user.UserId, _ShowProjectsMode);
@@ -791,8 +856,7 @@ else
                     UserId = Convert.ToInt32(appState.UserId),
                     UserName = appState.UserName,
                     UserPass = appState.UserPass,
-                    UserRole = appState.UserRole,
-                    TeacherId = 0
+                    UserRole = appState.UserRole
                     };
                 await GetListOfProjects(user.UserId, _ShowProjectsMode);
                 StateHasChanged();
@@ -875,8 +939,7 @@ else
                 UserId = Convert.ToInt32(appState.UserId),
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
-                UserRole = appState.UserRole,
-                TeacherId = 0
+                UserRole = appState.UserRole
                 };
             await GetListOfProjects(user.UserId, _ShowProjectsMode);
             appState.SetCmd("");
@@ -908,8 +971,7 @@ else
                 UserId = Convert.ToInt32(appState.UserId),
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
-                UserRole = appState.UserRole,
-                TeacherId = 0
+                UserRole = appState.UserRole
                 };
             user.UserId = Convert.ToInt32(appState.UserId);
             await GetListOfProjects(user.UserId, _ShowProjectsMode);
@@ -934,8 +996,7 @@ else
                     UserId = Convert.ToInt32(appState.UserId),
                     UserName = appState.UserName,
                     UserPass = appState.UserPass,
-                    UserRole = appState.UserRole,
-                    TeacherId = 0
+                    UserRole = appState.UserRole
                     };
                 await GetListOfProjects(user.UserId, _ShowProjectsMode);
                 project.ProjectName = ""; //reset input text
@@ -993,7 +1054,7 @@ else
     //SP notes
     public async Task BtnCreateNewSubprojectNote (Subproject subProject)
         {
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
         appState.SetNoteParentType(2);
         appState.SetNoteParentId(subProject.SubprojectId);
         appState.SetProjectId(subProject.ProjectId);
@@ -1057,7 +1118,7 @@ else
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
+            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
             appState.SetProjectId(projectId);
             user.UserRole = appState.UserRole;
             Note newNote = new Note()

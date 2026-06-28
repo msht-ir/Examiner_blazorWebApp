@@ -19,7 +19,7 @@ namespace ExaminerB.Services2Backend
         #region S:Students
         Task<int> Create_StudentAsync (User student);
         Task<List<User>> Read_StudentsAllAsync ();
-        Task<List<User>> Read_StudentsByKeywordAsync (int userId, string keyword, int readStudentGCEM);
+        Task<List<User>> Read_StudentsByKeywordAsync (string keyword, int readStudentGCEM);
         Task<List<User>> Read_StudentsByGCEMSIdAsync (int Id, string mode, int readStudentGCEM);
         Task<bool> Update_StudentAsync (User student);
         Task<bool> Update_StudentTagsAsync (User student);
@@ -66,7 +66,6 @@ namespace ExaminerB.Services2Backend
         Task<bool> Update_StudentCoursesTagsAsync (List<int> lstStudentIds, int courseId, string mode);
         Task<bool> Delete_StudentCoursesAsync (int Id, string mode);
         Task<bool> Delete_StudentCourseAsync (int studentCourseId);
-        Task<bool> CalculatePoints_StudentCourseAsync (StudentCourse studentCourse);
         #endregion
         #region SCT:StudentCourseTests
         Task<bool> Create_StudentCourseTestAsync (StudentCourseTest studentCourseTest);
@@ -146,7 +145,6 @@ namespace ExaminerB.Services2Backend
         Task<bool> Update_StudentExamTestAnswerAsync (StudentExamTest tempStudentExamTest);
         Task<bool> Delete_StudentExamTestsAsync (int studentExamId);
         Task<bool> Delete_StudentExamTestAsync (long studentExamTestId);
-        Task<string> CalculateStats_StudentExamTestsAsync (int examId, int testId);
         #endregion
         #region M:Messages
         Task<int> Create_MessageAsync (Message message);

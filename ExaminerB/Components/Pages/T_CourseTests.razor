@@ -120,10 +120,10 @@ else
                                  ToStringFunc="GetCourseTopicName"
                                  Variant="Variant.Text"
                                  Margin="Margin.Dense"
-                                 OnAdornmentClick="ReadCourseTopicTests"
-                                 style="font-family:tahoma;text-align:right;font-size:small;color:royalblue;"
                                  Adornment="Adornment.End"
-                                 AdornmentIcon="@Icons.Material.Filled.List">
+                                 AdornmentIcon="@Icons.Material.Filled.List"
+                                 OnAdornmentClick="ReadCourseTopicTests"
+                                 style="font-family:tahoma;text-align:right;font-size:small;color:royalblue;">
                         <ItemTemplate Context="courseTopicId">
                             <span style="font-family:tahoma; font-size:small; text-align:right; display:block;">
                             @GetCourseTopicName(courseTopicId)
@@ -200,21 +200,31 @@ else
                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                     <MudCard Class="mx-0">
                         <MudCardContent Style="background-color:whitesmoke;">
-                        <div style="font-weight:bold;color:royalblue;padding-bottom:5px;">Add tests to:</div>
-                            <div class="d-flex">
-                                <MudSelect T="int" Label="Exam آزمون" @bind-Value="intExamId" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                        <div style="font-weight:bold;color:royalblue;padding-bottom:5px;">Add selected tests to:</div>
+                            <div class="d-flex mb-3 align-content-center align-items-center justify-content-center"">
+                                <MudSelect T="int"
+                                       Label="Exam"
+                                       @bind-Value="intExamId"
+                                       Class="w-auto my-select"
+                                       Variant="Variant.Text"
+                                       Margin="Margin.Dense"
+                                       Adornment="Adornment.End"
+                                       AdornmentIcon="@Icons.Material.Filled.Add"
+                                       OnAdornmentClick="BtnAddSelectedTestsToAnExam"
+                                       Style="color:royalblue;width:140px;font-size:small;padding-top:10px;">
                                 <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
                                 @foreach (Exam exam in lstExams)
                                     {
                                     <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem>
                                     }
                                 </MudSelect>
-                                <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
-                                <img src="/img/icoListAddNew1.png" width="36" title="add selected tests to exam" />
-                                </button>
-                                <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnEditExam">
-                                <img src="/img/icoFolderE.png" width="26" title="show exam page" />
-                                </button>
+                                <div class="mt-4" style="font-weight:bold;color:indianred;">
+                                    <h6>
+                                        <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnEditExam">
+                                        <img src="/img/icoFolderE.png" width="26" title="show exam page" />
+                                        </button>
+                                    </h6>
+                                </div>
                             </div>
                         </MudCardContent>
                     </MudCard>
@@ -234,7 +244,13 @@ else
     <_GuideImportTests />
     <br />
         <div class="d-flex justify-content-center">
-        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" OnClick="@(() => BtnCancelGuide())" Style="color:dimgray;">ok, got it</MudButton>
+            <MudButton Variant="Variant.Filled"
+                   EndIcon="@Icons.Material.Filled.CheckCircle"
+                   Size="Size.Small"
+                   OnClick="@(() => BtnCancelGuide())"
+                   Style="color:dimgray;">
+            ok, got it
+            </MudButton>
         </div>
     }
 

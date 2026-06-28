@@ -1054,7 +1054,7 @@
         if (strSearch.Length >= 3)
             {
             int teacherId = Convert.ToInt32(appState.TeacherId);
-            lstStudents = await feService.Read_StudentsByKeyword(teacherId, strSearch, 0);
+            lstStudents = await feService.Read_StudentsByKeyword(strSearch, 0);
             if (lstStudents.Count == 0)
                 {
                 Snackbar.Add($"students like '{strSearch}' not found", Severity.Info);
@@ -1173,7 +1173,7 @@
     public async Task CreateNote ()
         {
         appState.SetClps("SN");
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
         appState.SetNoteParentType(7);
         student.UserId = appState.UserId ?? 0;
         appState.SetNoteParentId(Convert.ToInt32(student.UserId));

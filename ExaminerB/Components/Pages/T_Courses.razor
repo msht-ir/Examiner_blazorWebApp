@@ -115,7 +115,7 @@ else
                                                             <MudContainer Class="mt-2 px-0">
                                                                 <MudCard Class="mx-0">
                                                                     <MudCardContent Style="background-color:whitesmoke;">
-                                                                        <div class="mb-2">
+                                                                        <div class="d-flex mb-2">
                                                                         <MudTextField @bind-Value="ct.CourseTopicTitle"
                                                                                       Label="topic"
                                                                                       Variant="Variant.Text"
@@ -127,11 +127,11 @@ else
                                                                                       OnAdornmentClick="() => BtnUpdateCourseTopic(ct)"
                                                                                       Class="my-textfield"
                                                                                       Style="font-family: 'Segoe UI';" />
-                                                                            <div class="d-flex mt-4">
+                                                                            <div class="d-flex ml-3 mt-4">
                                                                                 <button class="btn btn-link" title="tests" @onclick="() => BtnListCourseTopicTests(ct)">
                                                                                 <img src="/img/icoFolderT.png" width="26" />
                                                                                 </button>
-                                                                                <button class="btn btn-link" title="delete this topic" @onclick="() => BtnDeleteCourseTopic(ct.CourseTopicId)" style="margin-left:25px;">
+                                                                                <button class="btn btn-link" title="delete this topic" @onclick="() => BtnDeleteCourseTopic(ct.CourseTopicId)"">
                                                                                 <img src="/img/icoDelete1.png" width="22" />
                                                                                 </button>
                                                                             </div>

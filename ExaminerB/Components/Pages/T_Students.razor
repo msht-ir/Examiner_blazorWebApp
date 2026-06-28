@@ -738,7 +738,7 @@ else
         if (strSearch != "")
             {
             user.UserId = Convert.ToInt32(appState.UserId);
-            lstStudents = await feService.Read_StudentsByKeyword(user.UserId, strSearch, 0);
+            lstStudents = await feService.Read_StudentsByKeyword(strSearch, 0);
             Snackbar.Add($"students like '{strSearch}' listed...", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             appState.SetMessage($"search '{strSearch}'");
             StateHasChanged();
@@ -1275,7 +1275,7 @@ else
     //Notes
     private async Task BtnCreateNote (int Id, string mode)
         {
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
         if (Id > 0)
             {
             int? parentType = mode.ToLower() switch

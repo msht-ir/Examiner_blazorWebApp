@@ -27,26 +27,29 @@
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:whitesmoke;">
                                     @* <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Margin="Margin.Dense" /> *@
-                                    <MudDatePicker Label="Calendar YMD تقويم"
-                                                   @bind-Date="_date"
-                                                   Culture="@_persianCulture"
-                                                   DateFormat="yyyy-MM-dd"
-                                                   Variant="Variant.Outlined"
-                                                   Elevation="12"
-                                                   Margin="Margin.Dense"
-                                                   Modal="true" />
-                                    <MudTimePicker Label="Time ساعت"
-                                                   @bind-Time="_time"
-                                                   TimeFormat="HH:mm"
-                                                   Variant="Variant.Outlined"
-                                                   PickerVariant="PickerVariant.Dialog"
-                                                   Dense="true" />
+                                    <div class="d-flex gap-4 mb-3">
+                                        <MudDatePicker Label="Calendar"
+                                                       @bind-Date="_date"
+                                                       Culture="@_persianCulture"
+                                                       DateFormat="yyyy-MM-dd"
+                                                       Variant="Variant.Text"
+                                                       Elevation="12"
+                                                       Margin="Margin.Dense"
+                                                       Modal="true" />
+                                        <MudTimePicker Label="Time"
+                                                       @bind-Time="_time"
+                                                       TimeFormat="HH:mm"
+                                                       Variant="Variant.Text"
+                                                       PickerVariant="PickerVariant.Dialog"
+                                                       Dense="true" />
+                                    </div>
+
                                     <MudTextField T="string"
                                                   Label="@($"{note.NoteText?.Length ?? 0} / 4000")"
                                                   @bind-Value="note.NoteText"
                                                   Immediate="true"
-                                                  Variant="Variant.Outlined"
-                                                  Lines="15"
+                                                  Variant="Variant.Text"
+                                                  Lines="18"
                                                   AutoResize="true"
                                                   Style=@($"width:100%;direction:{(note.IsRtl ? "rtl" : "ltr")};font-size:13px;font-family:{(note.IsRtl ? "'Segoe UI'" : "'Courier New', Courier, monospace")};color:black;") />
                                         <MudCheckBox @bind-Value="note.IsRtl"
@@ -232,7 +235,7 @@
             }
         else
             {
-            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
+            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
             note.NoteId = Convert.ToInt32(appState.SelectedNoteId);
             note.ParentId = Convert.ToInt32(appState.NoteParentId);
             note.ParentType = Convert.ToInt32(appState.NoteParentType);

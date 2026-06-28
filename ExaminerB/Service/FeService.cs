@@ -114,9 +114,9 @@ namespace ExaminerB.Service
                 return new List<User> ();
                 }
             }
-        public async Task<List<User>> Read_StudentsByKeyword (int userId, string keyword, int getGCEM)
+        public async Task<List<User>> Read_StudentsByKeyword (string keyword, int getGCEM)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByKeyword?keyword={keyword}&getGCEM={getGCEM}", userId);
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByKeyword?getGCEM={getGCEM}", keyword);
             if (response.IsSuccessStatusCode)
                 {
                 List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
@@ -424,11 +424,6 @@ namespace ExaminerB.Service
             {
             var response = await _http.PostAsJsonAsync ($"api/Delete_StudentCourse", studentCourseId);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> CalculatePoints_StudentCourse (StudentCourse studentCourse)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/CalculatePoints_StudentCourse", studentCourse);
-            return (response.IsSuccessStatusCode) ? true : false;
             }
         #endregion
         #region SCT:StudentCourseTests

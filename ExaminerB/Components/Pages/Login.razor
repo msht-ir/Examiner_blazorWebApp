@@ -81,7 +81,7 @@
                             <MudButton OnClick="@(() => BtnLogin())"
                                    Variant="Variant.Filled"
                                    EndIcon="@Icons.Material.Filled.AccountBox"
-                                   Size="Size.Small"
+                                   Size="Size.Large"
                                    Style="text-align:center; width:320px;margin-top:60px;">
                             Login
                             </MudButton>
@@ -132,7 +132,6 @@
     //btns
     public async Task BtnLogin ()
         {
-        // appState.SetTeacherId(TeacherId);
         if (user.UserRole == "student")
             {
             user = await feService.LoginStudent(_username, _password) ?? new User { UserRole = "student" };

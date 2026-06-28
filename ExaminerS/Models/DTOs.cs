@@ -501,6 +501,7 @@ namespace ExaminerS.Models
                     NoteTags &= ~1;
                 }
             }
+        public int CreatorId { get; set; } = 0;
         }
     //NN
     public class NoteNet

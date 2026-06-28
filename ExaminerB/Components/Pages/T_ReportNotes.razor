@@ -380,7 +380,7 @@ else
     //methods
     public async Task CreateNote ()
         {
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
+        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
         appState.SetNoteParentType(1);
         appState.SetNoteParentId(Convert.ToInt32(appState.UserId));
         appState.SetCmd("CreateNote");

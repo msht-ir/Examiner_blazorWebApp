@@ -82,9 +82,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_StudentsByKeyword")]
-        public async Task<ActionResult<List<User>>> Read_StudentsByKeyword ([FromBody] int userId, [FromQuery] string keyword, [FromQuery] int getGCEM)
+        public async Task<ActionResult<List<User>>> Read_StudentsByKeyword ([FromBody] string keyword, [FromQuery] int getGCEM)
             {
-            var result = await _BeService.Read_StudentsByKeywordAsync (userId, keyword, getGCEM);
+            var result = await _BeService.Read_StudentsByKeywordAsync (keyword, getGCEM);
             return Ok (result);
             }
         [HttpPost ("Read_StudentsByGCEMSId")]
@@ -301,12 +301,6 @@ namespace ExaminerB.Backend
         public async Task<ActionResult<bool>> Delete_StudentCourse ([FromBody] int studentCourseId)
             {
             var result = await _BeService.Delete_StudentCourseAsync (studentCourseId);
-            return Ok (result);
-            }
-        [HttpPost ("CalculatePoints_StudentCourse")]
-        public async Task<ActionResult<bool>> CalculatePoints_StudentCourse ([FromBody] StudentCourse studentCourse)
-            {
-            var result = await _BeService.CalculatePoints_StudentCourseAsync (studentCourse);
             return Ok (result);
             }
         #endregion
