@@ -1282,7 +1282,7 @@ namespace ExaminerB.Services2Backend
         public async Task<Test> Read_TestByTestIdAsync (int testId, bool readOptions)
             {
             Test test = new Test ();
-            string sql = "ReadTestByTestId";
+            string sql = "sp_ReadTestByTestId";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();

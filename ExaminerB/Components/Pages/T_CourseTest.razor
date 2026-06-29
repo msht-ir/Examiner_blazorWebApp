@@ -8,109 +8,115 @@
 @inject IDialogService DialogService
 
 @if (!_hasFetched)
-        {
+    {
     <_ScanSheets />
     }
 else
     {
-    <EditForm Model="test" style="max-width:600px; margin: 0 auto;">
-        <div style="text-align: center;">
+        <EditForm Model="test" style="max-width:600px; margin: 0 auto;">
+            <div style="text-align: center;">
             <h2 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole : @courseName  </span></h2>
             @* <h5 style="color:IndianRed">@courseName</h5> *@
-        </div>
+            </div>
         @if (appState.Message != "")
             {
-            <div style="text-align: center;">
+                <div style="text-align: center;">
                 <h4 style="color:indianred">@appState.Message</h4>
-            </div>
+                </div>
             }
         <hr style="color:indianRed" />
         @* <h5>TEST # @test.TestId</h5> *@
         @* 1-Test title *@
         @if ((test.TestTags & 1) == 1)
             {
-            <textarea class="form-control form-text" @ref="txtTestTitle" @bind = "test.TestTitle" placeholder="test title..." style="font-weight:bold; width:100%; height:60px; text-align: right;" dir="rtl">@test.TestTitle</textarea>
+            <textarea class="form-control form-text" @ref="txtTestTitle" @bind="test.TestTitle" placeholder="test title..." style="font-weight:bold; width:100%; height:60px; text-align: right;" dir="rtl">@test.TestTitle</textarea>
             }
         else
             {
-            <textarea class="form-control form-text" @ref="txtTestTitle" @bind = "test.TestTitle" placeholder="test title..." style="font-weight:bold; width:100%;height:60px;">@test.TestTitle</textarea>
+            <textarea class="form-control form-text" @ref="txtTestTitle" @bind="test.TestTitle" placeholder="test title..." style="font-weight:bold; width:100%;height:60px;">@test.TestTitle</textarea>
             }
         <br />
-        <div>
-            <div id="selectTopicComboBox" style="display: flex; gap: 20px; align-items: flex-start; background-color: whitesmoke; padding: 10px; border-radius: 12px;">  
+            <div>
+                <div id="selectTopicComboBox" style="display: flex; gap: 20px; align-items: flex-start; background-color: whitesmoke; padding: 10px; border-radius: 12px;">
                 @* 2- Combo: Topics *@
-                <div style="flex: 1; color: IndianRed;">
-                    <MudSelect T="int" Label="topic" @bind-Value="@test.TopicId" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
+                    <div style="flex: 1; color: IndianRed;">
+                        <MudSelect T="int"
+                               Label="topic"
+                               @bind-Value="@test.TopicId"
+                               Class="w-auto my-select"
+                               Variant="Variant.Text"
+                               Margin="Margin.Dense"
+                               Style="color:royalblue;width:140px;font-size:small;">
                         @foreach (var topic in lstCourseTopics)
                             {
                             if (topic.CourseTopicId == test.TopicId)
                                 {
-                               <MudSelectItem Value="@topic.CourseTopicId" selected>@topic.CourseTopicTitle</MudSelectItem> 
+                                <MudSelectItem Value="@topic.CourseTopicId" selected>@topic.CourseTopicTitle</MudSelectItem>
                                 }
                             else
                                 {
-                               <MudSelectItem Value="@topic.CourseTopicId">@topic.CourseTopicTitle</MudSelectItem> 
+                                <MudSelectItem Value="@topic.CourseTopicId">@topic.CourseTopicTitle</MudSelectItem>
                                 }
                             }
-                    </MudSelect>
-                    <div class="form-check form-check-inline" style="padding-top:8px;">
-                        <input class="form-check-input" type="checkbox" checked="@((test.TestTags & 1) == 1)" @onchange="e=>BtnUpdateTestTagsInPlace(test, 1, (bool)e.Value)"/>
+                        </MudSelect>
+                        <div class="form-check form-check-inline" style="padding-top:8px;">
+                        <input class="form-check-input" type="checkbox" checked="@((test.TestTags & 1) == 1)" @onchange="e => BtnUpdateTestTagsInPlace(test, 1, (bool) e.Value)" />
                         <label class="form-check-label" style="font-size: small; color: RoyalBlue;padding-right:15px;">Test RTL </label>
-                    </div>
-                    <div class="form-check form-check-inline" style="padding-top:8px;">
-                        <input class="form-check-input" type="checkbox" checked="@((test.TestTags & 2) == 2)" @onchange="e=>BtnUpdateTestTagsInPlace(test, 2, (bool)e.Value)"/>
+                        </div>
+                        <div class="form-check form-check-inline" style="padding-top:8px;">
+                        <input class="form-check-input" type="checkbox" checked="@((test.TestTags & 2) == 2)" @onchange="e => BtnUpdateTestTagsInPlace(test, 2, (bool) e.Value)" />
                         <label class="form-check-label" style="font-size: small; color: RoyalBlue;">Opts RTL</label>
+                        </div>
                     </div>
-                </div>
                 @* 3- Combo: Levels *@
-                <div style="flex: 1; color: IndianRed;">
-                    <div class="d-flex align-items-center">
-                        <MudSlider T="int" @bind-Value="@test.TestLevel" Variant="Variant.Filled" Min="1" Max="5">
+                    <div style="flex: 1; color: IndianRed;">
+                        <div class="d-flex align-items-center">
+                            <MudSlider T="int" @bind-Value="@test.TestLevel" Variant="Variant.Filled" Min="1" Max="5">
                             level
-                            <span style="color:indianred; font-weight:bold; margin-left:10px;">
+                                <span style="color:indianred; font-weight:bold; margin-left:10px;">
                                 @test.TestLevel
-                            </span>
+                                </span>
                             </MudSlider>
-                    </div>
+                        </div>
                     @if (appState.Cmd == "AddNewTest")
                         {
-                        <button class="btn btn-link" @onclick="BtnCreateTest">
+                            <button class="btn btn-link" @onclick="BtnCreateTest">
                             <img src="/img/icoSave2.png" width="22" />
-                        </button>
+                            </button>
                         }
                     else
                         {
-                        <button class="btn btn-link" @onclick="BtnUpdateTest">
+                            <button class="btn btn-link" @onclick="BtnUpdateTest">
                             <img src="/img/icoSave2.png" width="22" />
-                        </button>
-                        <button class="btn btn-link" @onclick="BtnDeleteTest">
+                            </button>
+                            <button class="btn btn-link" @onclick="BtnDeleteTest">
                             <img src="/img/icoDelete1.png" width="22" />
-                        </button>
-                        <button class="btn btn-link" type="submit" @onclick="BtnBack">
+                            </button>
+                            <button class="btn btn-link" type="submit" @onclick="BtnBack">
                             <img src="/img/icoBack2.png" width="22" />
-                        </button>
+                            </button>
                         }
+                    </div>
                 </div>
             </div>
-        </div>
         <br />
         @* 4- CARD: Options *@
-        <div class="accordion" id="accordionTestOptions">
-            <div class="accordion-item ">
-                <h4 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button"
+            <div class="accordion" id="accordionTestOptions">
+                <div class="accordion-item ">
+                    <h4 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button"
                             data-bs-toggle="collapse"
                             data-bs-target="#TestOptions"
                             aria-expanded="false"
                             aria-controls="TestOptions">
-                        <h4 style="color:indianred">
+                            <h4 style="color:indianred">
                             <img class="pulse-animation" src="/img/icoList.png" width="24" />
                             Options
-                        </h4>
-                    </button>
-                </h4>
-                <div id="TestOptions" class="accordion-collapse collapse" data-bs-parent="#accordionTestOptions">
-                    <div class="accordion-body" style="background-color:white">
+                            </h4>
+                        </button>
+                    </h4>
+                    <div id="TestOptions" class="accordion-collapse collapse" data-bs-parent="#accordionTestOptions">
+                        <div class="accordion-body" style="background-color:white">
                         @if (appState.Cmd != "AddNewTest")
                             {
                             @* 5- Optionn *@
@@ -118,161 +124,173 @@ else
                             foreach (TestOption opt in test.TestOptions)
                                 {
                                 i++;
-                                <div class="container mt-2">
-                                    <div class="card">
-                                        <div class="card-body bg-light">
-                                            <div style="flex: 1; color: IndianRed;">
+                                    <div class="container mt-2">
+                                        <div class="card">
+                                            <div class="card-body bg-light">
+                                                <div style="flex: 1; color: IndianRed;">
                                                 <h6 style="color:indianRed">Option @i<span style="font-size:0.5em; color: gray"> / @test.TestOptions.Count</span></h6>
-                                            </div>
+                                                </div>
                                             @* OptionTitle *@
                                             @if ((@test.TestTags & 2) == 2)
                                                 {
-                                                <textarea class="form-control form-text" @bind="opt.TestOptionTitle" placeholder="Option title..." style="width:100%;height:35px;text-align: right;" dir="rtl"></textarea>
+                                                <textarea class="form-control form-text"
+                                                          @bind="opt.TestOptionTitle"
+                                                          placeholder="Option title..."
+                                                          style="width:100%;height:35px;text-align: right;"
+                                                          dir="rtl">
+                                                </textarea>
                                                 }
                                             else
                                                 {
-                                                <textarea class="form-control form-text" @bind="opt.TestOptionTitle" placeholder="Option title..." style="width:100%;height:35px"></textarea>
+                                                <textarea class="form-control form-text"
+                                                          @bind="opt.TestOptionTitle"
+                                                          placeholder="Option title..."
+                                                          style="width:100%;height:35px">
+                                                </textarea>
                                                 }
                                             @* Checks: Tags {Ans, ForceLast} *@
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="checkbox" checked="@((opt.TestOptionTags & 2) == 2)" @onchange="e=>BtnUpdateTestOptionTagsInPlace(opt, 2, (bool)e.Value)"/>
+                                                <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" checked="@((opt.TestOptionTags & 2) == 2)" @onchange="e => BtnUpdateTestOptionTagsInPlace(opt, 2, (bool) e.Value)" />
                                                 <label class="form-check-label" style="font-size: small; color: RoyalBlue;padding-right:15px;">Ans </label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="checkbox" checked="@((opt.TestOptionTags & 1) == 1)" @onchange="e=>BtnUpdateTestOptionTagsInPlace(opt, 1, (bool)e.Value)"/>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" checked="@((opt.TestOptionTags & 1) == 1)" @onchange="e => BtnUpdateTestOptionTagsInPlace(opt, 1, (bool) e.Value)" />
                                                 <label class="form-check-label" style="font-size: small; color: RoyalBlue;padding-right:15px;">ForceLast </label>
-                                            </div>
-                                            <button class="btn btn-link" type="submit" @onclick="()=>BtnUpdateTestOption(opt)">
+                                                </div>
+                                                <button class="btn btn-link" type="submit" @onclick="() => BtnUpdateTestOption(opt)">
                                                 <img src="/img/icoSave2.png" width="22" />
-                                            </button>
-                                            <button class="btn btn-link" type="submit" @onclick="()=>BtnDeleteTestOption(opt.TestOptionId)">
+                                                </button>
+                                                <button class="btn btn-link" type="submit" @onclick="() => BtnDeleteTestOption(opt.TestOptionId)">
                                                 <img src="/img/icoDelete1.png" width="22" />
-                                            </button>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
                                 }
                             }
-                            @* Add NewTestOption *@        
-                            @if (appState.Cmd == "AddNewTestOption")
-                                {
+                        @* Add NewTestOption *@
+                        @if (appState.Cmd == "AddNewTestOption")
+                            {
                                 <div class="container mt-2">
                                     <div class="card">
                                         <div class="card-body bg-light">
-                                            <h5 style="color:royalblue">Add New Option</h5>
+                                        <h6 style="color:royalblue">Add New Option</h6>
                                             <div class="mb-3">
-                                                <input class="form-control" @ref="txtNewTestOption" @bind="strNewTestOption" placeholder="New Option..."/>
+                                            <input class="form-control"
+                                                   @ref="txtNewTestOption"
+                                                   @bind="strNewTestOption"
+                                                   placeholder="New Option..." />
                                             </div>
-                                            <button class="btn btn-link pulse-animation" name="btnNewTestOption" type="submit" @onclick="()=>BtnCreateTestOption(test.TestId)">
-                                                <img src="/img/icoSave2.png" width="22" />
-                                            </button>        
+                                            <button class="btn btn-link pulse-animation" name="btnNewTestOption" type="submit" @onclick="() => BtnCreateTestOption(test.TestId)">
+                                            <img src="/img/icoSave2.png" width="22" />
+                                            </button>
                                             <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                                                <img src="/img/icoCancel.png" width="24" />
+                                            <img src="/img/icoCancel.png" width="24" />
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                                }
-                            else
+                            }
+                        else
+                            {
+                            if (test.TestOptions?.Count < 5)
                                 {
-                                if (test.TestOptions?.Count < 5)
-                                    {
                                     <div style="text-align:center;">
                                         <button class="btn btn-link" type="submit" @onclick="BtnAddNewTestOption">
-                                            <img src="/img/icoAdd0.png" width="25" />
+                                        <img src="/img/icoAdd0.png" width="25" />
                                         </button>
                                     </div>
-                                    }
                                 }
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         @* End CARD Options *@
         <br />
         <br />
-        <div style="text-align: center;">
+            <div style="text-align: center;">
             @if (appState.Cmd == "AddTestToAnExam")
                 {
-                <div style="background-color: whitesmoke; padding: 10px; border-radius: 12px;">
-                        @* Get List Of Exams (courseId) *@
-                        <hr style="color:Red" />
-                        <h6 style="color:royalblue;">add to an exam</h6>
+                    <div style="background-color: whitesmoke; padding: 10px; border-radius: 12px;">
+                    @* Get List Of Exams (courseId) *@
+                    <hr style="color:Red" />
+                    <h6 style="color:royalblue;">add to an exam</h6>
                         <select class="form-select d-inline" id="cboExams" @bind="intExam" style="width:75%; height:35px">
-                            <option value="0"> Select an exam... </option>                    
-                            @foreach (var exm in lstExams)
-                                {
-                                <option value="@exm.ExamId"> @exm.ExamTitle </option>
-                                }
+                        <option value="0"> Select an exam... </option>
+                        @foreach (var exm in lstExams)
+                            {
+                            <option value="@exm.ExamId"> @exm.ExamTitle </option>
+                            }
                         </select>
-                        <br />
-                        <br />
-                        <button class="btn btn-link pulse-animation" type="submit" @onclick="()=>BtnCreateExamTest(test)">
-                            <img src="/img/icoSave2.png" width="25" />
+                    <br />
+                    <br />
+                        <button class="btn btn-link pulse-animation" type="submit" @onclick="() => BtnCreateExamTest(test)">
+                        <img src="/img/icoSave2.png" width="25" />
                         </button>
                         <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                            <img src="/img/icoCancel.png" width="24" />
+                        <img src="/img/icoCancel.png" width="24" />
                         </button>
-                        <hr style="color:Red" />
-                </div>
+                    <hr style="color:Red" />
+                    </div>
                 }
             else
                 {
-                <button class="btn btn-link" type="submit" @onclick="BtnBack">
+                    <button class="btn btn-link" type="submit" @onclick="BtnBack">
                     <img src="/img/icoBack3.png" width="40" />
-                </button>
-                <button class="btn btn-link" type="submit" @onclick="BtnAddExamTest">
+                    </button>
+                    <button class="btn btn-link" type="submit" @onclick="BtnAddExamTest">
                     <img src="/img/icoListE.png" width="42" />
-                </button>
+                    </button>
                 }
-        </div>
-    </EditForm>
+            </div>
+        </EditForm>
     }
-<script>
+    <script>
     window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});
-</script>
+    </script>
 
 @code {
     private ElementReference txtTestTitle;
     private ElementReference txtNewTestOption;
     public string strNewTestOption = "";
-    bool isTestRtlChecked ;
-    bool isTestOptionsRtlChecked ;
+    bool isTestRtlChecked;
+    bool isTestOptionsRtlChecked;
     public int i = 0;
     public int courseId = 0;
     public int intExam = 0;
     public string courseName = "";
     public bool _hasFetched = false;
-    User user = new User ();
-    Test test = new Test ();
-    List<CourseTopic> lstCourseTopics = new ();
+    User user = new User();
+    Test test = new Test();
+    List<CourseTopic> lstCourseTopics = new();
     List<Exam> lstExams = new List<Exam>();
 
     //LifeCycleEvents
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync ()
         {
         appState.OnChange += TriggerRender;
-        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+        if (Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
 
-            Navman.NavigateTo ("/Login");
+            Navman.NavigateTo("/Login");
             }
         //Get CourseId using ?TestId
         if (appState.Cmd != "AddNewTest")
             {
-            test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
-            appState.SetCourseId (test.CourseId);
+            test = await feService.Read_TestByTestId(Convert.ToInt32(appState.TestId), true);
+            appState.SetCourseId(test.CourseId);
             }
         courseId = Convert.ToInt32(appState.CourseId);
         courseName = appState.CourseName ?? "";
-        lstCourseTopics = await feService.Read_CourseTopics (courseId);            
+        lstCourseTopics = await feService.Read_CourseTopics(courseId);
         _hasFetched = true;
         }
-    private void TriggerRender()
+    private void TriggerRender ()
         {
         InvokeAsync(StateHasChanged);
         }
-    public void Dispose()
+    public void Dispose ()
         {
         appState.OnChange -= TriggerRender;
         }
@@ -280,16 +298,16 @@ else
     public async Task BtnCreateTest ()
         {
         test.CourseId = courseId;
-        int result = await feService.Create_Test (test);
+        int result = await feService.Create_Test(test);
         if (result > 0)
             {
-            appState.SetTestId (result);
-            test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
-            appState.SetCmd ("");
-            StateHasChanged ();
+            appState.SetTestId(result);
+            test = await feService.Read_TestByTestId(Convert.ToInt32(appState.TestId), true);
+            appState.SetCmd("");
+            StateHasChanged();
             }
         }
-    public void BtnUpdateTestTagsInPlace (Test test, int flag , bool isChecked)
+    public void BtnUpdateTestTagsInPlace (Test test, int flag, bool isChecked)
         {
         if (isChecked)
             {
@@ -302,11 +320,11 @@ else
         }
     public async Task BtnUpdateTest ()
         {
-        bool results = await feService.Update_Test (test);
+        bool results = await feService.Update_Test(test);
         if (results)
             {
-            Snackbar.Add("test updated", Severity.Success); 
-            StateHasChanged ();
+            Snackbar.Add("test updated", Severity.Success);
+            StateHasChanged();
             }
         }
     public async Task BtnDeleteTest ()
@@ -315,27 +333,27 @@ else
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            Snackbar.Add("updated", Severity.Success); 
-            BtnBack ();            
+            Snackbar.Add("updated", Severity.Success);
+            BtnBack();
             }
         }
     //TestOption
     public void BtnAddNewTestOption ()
         {
-        appState.SetCmd ("AddNewTestOption");
+        appState.SetCmd("AddNewTestOption");
         }
     public async Task BtnCreateTestOption (int testId)
         {
-        TestOption testOption = new TestOption () { TestId = testId, TestOptionTitle = strNewTestOption, TestOptionTags = 0 };
-        int result = await feService.Create_TestOption (testOption);
+        TestOption testOption = new TestOption() { TestId = testId, TestOptionTitle = strNewTestOption, TestOptionTags = 0 };
+        int result = await feService.Create_TestOption(testOption);
         if (result > 0)
             {
-            test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
-            appState.SetCmd ("");
-            StateHasChanged ();
+            test = await feService.Read_TestByTestId(Convert.ToInt32(appState.TestId), true);
+            appState.SetCmd("");
+            StateHasChanged();
             }
         }
-    public void BtnUpdateTestOptionTagsInPlace (TestOption opt, int flag , bool isChecked)
+    public void BtnUpdateTestOptionTagsInPlace (TestOption opt, int flag, bool isChecked)
         {
         if (isChecked)
             {
@@ -348,13 +366,13 @@ else
         }
     public async Task BtnUpdateTestOption (TestOption testOption)
         {
-        bool result = await feService.Update_TestOption (testOption);
+        bool result = await feService.Update_TestOption(testOption);
         if (result)
             {
-            test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
+            test = await feService.Read_TestByTestId(Convert.ToInt32(appState.TestId), true);
             Snackbar.Add("updated", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-            appState.SetCmd ("");
-            StateHasChanged ();
+            appState.SetCmd("");
+            StateHasChanged();
             }
         else
             {
@@ -367,46 +385,46 @@ else
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            bool result = await feService.Delete_TestOption (testOptionId);
-            Snackbar.Add("deleted", Severity.Warning); 
-            test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
-            appState.SetCmd ("");
-            StateHasChanged ();            
+            bool result = await feService.Delete_TestOption(testOptionId);
+            Snackbar.Add("deleted", Severity.Warning);
+            test = await feService.Read_TestByTestId(Convert.ToInt32(appState.TestId), true);
+            appState.SetCmd("");
+            StateHasChanged();
             }
         }
     //Add Test2Exam
     public async Task BtnAddExamTest ()
         {
-        lstExams = await feService.Read_Exams (courseId);
-        appState.SetCmd ("AddTestToAnExam");
+        lstExams = await feService.Read_Exams(courseId);
+        appState.SetCmd("AddTestToAnExam");
         }
     public async Task BtnCreateExamTest (Test tst)
         {
-        if(intExam > 0)
+        if (intExam > 0)
             {
-            ExamTest examTest = new ExamTest () {ExamId = intExam, TestId= tst.TestId };
-            int result = await feService.Create_ExamTest (examTest);
+            ExamTest examTest = new ExamTest() { ExamId = intExam, TestId = tst.TestId };
+            int result = await feService.Create_ExamTest(examTest);
             if (result > 0)
                 {
-                Snackbar.Add("test added to the exam", Severity.Success); 
+                Snackbar.Add("test added to the exam", Severity.Success);
                 //await JS.InvokeVoidAsync ("alert", "");
-                test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
-                appState.SetCmd ("");
-                StateHasChanged ();
+                test = await feService.Read_TestByTestId(Convert.ToInt32(appState.TestId), true);
+                appState.SetCmd("");
+                StateHasChanged();
                 }
             }
         else
             {
-            Snackbar.Add("select an exam", Severity.Info); 
+            Snackbar.Add("select an exam", Severity.Info);
             }
         }
     //Exit
     public void BtnCancel ()
         {
-        appState.SetCmd ("");
+        appState.SetCmd("");
         }
     public void BtnBack ()
         {
-        Navman.NavigateTo (appState.ReturnPage?? "/T_SwitchBoard");
+        Navman.NavigateTo(appState.ReturnPage ?? "/T_SwitchBoard");
         }
-}
+    }

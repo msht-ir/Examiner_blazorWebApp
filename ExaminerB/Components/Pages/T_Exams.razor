@@ -27,12 +27,12 @@ else
     {
     @if (appState.Cmd == "AddNewExam")
         {
-        <h5 style="text-align:center;font-weight:bold; padding-bottom:10px;color:indianred">Add New Exam</h5>
+        <h6 style="text-align:center;font-weight:bold; padding-bottom:10px;color:indianred">Add New Exam</h6>
             <div class="d-flex mb-3" style="max-width:600px; margin: 0 auto;">
             <MudTextField ref="refNewExamTitle"
                           @bind-Value="txtNewExamTitle"
                           Label="exam title"
-                          Variant="Variant.Outlined"
+                          Variant="Variant.Text"
                           Margin="Margin.Dense"
                           Autocomplete="off"
                           Adornment="Adornment.End"
@@ -40,19 +40,17 @@ else
                           OnAdornmentClick="BtnCreateExam"
                           Style="font-family:tahoma"
                           Class="my-textfield" />
-                <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                <button class="btn btn-link" name="btnNewCourse" style="margin-left:20px;margin-top:15px;" @onclick="BtnCancel">
                 <img src="/img/icoCancel.png" width="20" />
                 </button>
             </div>
+        <br />
         }
     else
         {
             <div style="text-align: center; margin:15px;">
                 <button class="btn btn-link" @onclick="BtnBack">
                 <img src="/img/icoBack3.png" width="40" />
-                </button>
-                <button class="btn btn-link" @onclick="BtnAddNewExam">
-                <img src="/img/icoAdd0.png" width="24" />
                 </button>
                 <button class="btn btn-link" @onclick='() => BtnGotoPage("S")'>
                 <img src="/img/icoSwitchBoardStudents.png" width="36" />
@@ -61,8 +59,13 @@ else
                 <img src="/img/icoSwitchBoardCourses.png" width="36" />
                 </button>
             </div>
+        <hr />
+            <div style="text-align: center; margin:15px;">
+                <button class="btn btn-link" @onclick="BtnAddNewExam">
+                <img src="/img/icoAdd0.png" width="24" title="add new exam افزودن آزمون جديد"/>
+                </button>
+            </div>
         }
-    <hr />
         <EditForm Model="lstCourseExams" style="max-width:600px; margin: 0 auto;">
         @foreach (var exam in lstCourseExams)
             {

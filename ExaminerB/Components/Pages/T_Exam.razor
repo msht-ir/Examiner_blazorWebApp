@@ -31,30 +31,29 @@ else
                 <MudContainer Class="mt-2 px-0">
                     <MudCard Class="mx-0">
                         <MudCardContent Style="background-color:whitesmoke;">
-                        <div style="text-align:center;font-size:130%;font-weight:bold;color:royalblue">EXAM </div>
+                        <div style="text-align:center;font-size:110%;font-weight:bold;color:royalblue">EXAM </div>
                             <div class="d-flex mb-2 align-items-center" style="gap:10px; width:100%;">
-                            <MudTextField 
-                                @ref="refExamTitle" 
-                                @bind-Value="exam.ExamTitle" 
-                                Label="title"
-                                Variant="Variant.Outlined" 
-                                Margin="Margin.Dense" 
-                                Autocomplete="off" 
-                                Class="my-textfield" 
-                                style="width:100%;" />
+                            <MudTextField @ref="refExamTitle"
+                                          @bind-Value="exam.ExamTitle"
+                                          Label="title"
+                                          Variant="Variant.Text"
+                                          Margin="Margin.Dense"
+                                          Autocomplete="off"
+                                          Class="my-textfield"
+                                          style="width:100%;" />
                             </div>
-                            <div class="d-flex mb-2" style="gap:10px;">
+                            <div class="d-flex gap-4 mb-2" style="gap:10px;">
                             <MudDatePicker Label="date"
                                            @bind-Date="_date"
-                                           Culture="@_persianCulture" 
+                                           Culture="@_persianCulture"
                                            DateFormat="yyyy-MM-dd"
-                                           Variant="Variant.Outlined"
+                                           Variant="Variant.Text"
                                            Margin="Margin.Dense"
                                            Modal="true" />
                             <MudTimePicker Label="time"
                                            @bind-Time="_time"
                                            TimeFormat="HH:mm"
-                                           Variant="Variant.Outlined"
+                                           Variant="Variant.Text"
                                            PickerVariant="PickerVariant.Dialog"
                                            Margin="Margin.Dense" />
                             </div>
@@ -63,7 +62,7 @@ else
                                              @ref="refExamDuration"
                                              @bind-Value="exam.ExamDuration"
                                              Label="duration min"
-                                             Variant="Variant.Outlined"
+                                             Variant="Variant.Text"
                                              Margin="Margin.Dense"
                                              Autocomplete="off"
                                              Class="my-textfield"
@@ -252,87 +251,103 @@ else
                         </h4>
                         <div id="ExamTestList" class="accordion-collapse @clps" data-bs-parent="#accordionCourses">
                             <div class="accordion-body" style="background-color:whitesmoke">
-                            @* SEARCH *@
-                                <div class="mb-3" style="background-color:WhiteSmoke">
-                                <span style="font-size:large; font-weight:bold;color:royalblue;">search</span>
-                                    <div class="d-flex align-items-center mb-3">
-                                    <MudTextField @ref="txtSearchTest" @bind-Value="strSearch" Label="keyword" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:'Segoe UI';max-width:90%" />
-                                        <button class="btn btn-link" @onclick="BtnReadTestsBySearch">
-                                        <img class="pulse-hover" src="/img/icoSearch.png" width="24" />
-                                        </button>
-                                    </div>
-                                    <div class="d-flex align-atems-center mb-3">
-                                        <MudSelect T="int" Label="result" @bind-Value="cboCourseTestId" Class="w-auto my-select d-inline" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;max-width:90%;font-size:small; font-family:'Segoe UI';text-overflow: ellipsis;">
-                                        <MudSelectItem Value="0">select from results</MudSelectItem>
-                                        @foreach (var ct in lstCourseTests)
-                                            {
-                                            <MudSelectItem Value="@ct.TestId" Style="font-family:'Segoe UI';text-overflow: ellipsis;"> @ct.TestId - @(ct.TestTitle.Length > 50 ? ct.TestTitle.Substring(0, 50) : ct.TestTitle)</MudSelectItem>
-                                            }
-                                        </MudSelect>
-                                        <button class="btn btn-link" @onclick="BtnCreateExamTest">
-                                        <img src="/img/icoAdd0.png" width="20" />
-                                        </button>
-                                        <button class="btn btn-link" @onclick="() => BtnGotoReportCourseTests(exam.CourseId)">
-                                        <img class="pulse-animation" src="/img/icoFolderT.png" width="24" title="add tests using tests folder" />
-                                        </button>
-                                    </div>
+                            <div style="text-align:center;font-size:130%;font-weight:bold;color:royalblue">
+                                <button class="btn btn-link" @onclick="() => BtnGotoReportCourseTests(exam.CourseId)">
+                                <img class="pulse-animation" src="/img/icoFolderT.png" width="24" title="add tests using tests folder" />
+                                </button>
+                                <hr />
+                            </div>
+                        @* SEARCH *@
+                            <div class="mb-3" style="background-color:WhiteSmoke">
+                            <span style="font-size:large; font-weight:bold;color:royalblue;">search</span>
+                                <div class="d-flex align-items-center mb-3">
+                                <MudTextField @ref="txtSearchTest"
+                                              @bind-Value="strSearch"
+                                              Label="keyword"
+                                              Variant="Variant.Text"
+                                              Margin="Margin.Dense"
+                                              Autocomplete="off"
+                                              Class="my-textfield"
+                                              Adornment="Adornment.End"
+                                              AdornmentIcon="@Icons.Material.Filled.Search"
+                                              OnAdornmentClick="BtnReadTestsBySearch"
+                                              Style="font-family:'Segoe UI';max-width:90%" />
                                 </div>
-                            <hr style="color:indianred" />
-                            @* END SEARCH *@
-                                @{
-                                i = 0;
-                                }
-                            @foreach (Test tst in lstExamTests)
-                                {
-                                    <MudContainer Class="mt-2 px-0">
-                                        <MudCard Class="mx-0">
-                                            <MudCardContent Style="background-color:ghostwhite;">
-                                            @* List of tests *@
-                                                @{
-                                                i++;
-                                                int localTestId = tst.TestId;
-                                                }
+                                <div class="d-flex align-atems-center mb-3">
+                                    <MudSelect T="int"
+                                           Label="result"
+                                           @bind-Value="cboCourseTestId"
+                                           Class="w-auto my-select d-inline"
+                                           Variant="Variant.Text"
+                                           Margin="Margin.Dense"
+                                           Adornment="Adornment.End"
+                                           AdornmentIcon="@Icons.Material.Filled.Add"
+                                           OnAdornmentClick="BtnCreateExamTest"
+                                           Style="color:royalblue;max-width:90%;font-size:small; font-family:'Segoe UI';text-overflow: ellipsis;">
+                                    <MudSelectItem Value="0">select from results</MudSelectItem>
+                                    @foreach (var ct in lstCourseTests)
+                                        {
+                                        <MudSelectItem Value="@ct.TestId" Style="font-family:'Segoe UI';text-overflow: ellipsis;"> @ct.TestId - @(ct.TestTitle.Length > 50 ? ct.TestTitle.Substring(0, 50) : ct.TestTitle)</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </div>
+                            </div>
+                        <hr style="color:indianred" />
+                        @* END SEARCH *@
+                            @{
+                            i = 0;
+                            }
+                        @foreach (Test tst in lstExamTests)
+                            {
+                                <MudContainer Class="mt-2 px-0">
+                                    <MudCard Class="mx-0">
+                                        <MudCardContent Style="background-color:ghostwhite;">
+                                        @* List of tests *@
+                                            @{
+                                            i++;
+                                            int localTestId = tst.TestId;
+                                            }
+                                        @if ((tst.TestTags & 1) == 1)
+                                            {
+                                            <p style="text-align:right;" dir="rtl">@i - @tst.TestTitle</p>
+                                            }
+                                        else
+                                            {
+                                            <p style="text-align:left;">- @tst.TestTitle</p>
+                                            }
+                                        @foreach (TestOption opt in tst.TestOptions)
+                                            {
                                             @if ((tst.TestTags & 1) == 1)
                                                 {
-                                                <p style="text-align:right;" dir="rtl">@i - @tst.TestTitle</p>
+                                                <div style="font-size:small;text-align:right;" dir="rtl"> - @opt.TestOptionTitle</div>
                                                 }
                                             else
                                                 {
-                                                <p style="text-align:left;">- @tst.TestTitle</p>
+                                                <div style="font-size:small;text-align:left;"> - @opt.TestOptionTitle</div>
                                                 }
-                                            @foreach (TestOption opt in tst.TestOptions)
-                                                {
-                                                @if ((tst.TestTags & 1) == 1)
-                                                    {
-                                                    <div style="font-size:small;text-align:right;" dir="rtl"> - @opt.TestOptionTitle</div>
-                                                    }
-                                                else
-                                                    {
-                                                    <div style="font-size:small;text-align:left;"> - @opt.TestOptionTitle</div>
-                                                    }
-                                                }
-                                                <button class="btn btn-link" style="text-align:right;" dir="rtl" @onclick="() => BtnDeleteExamTest(localTestId)">
-                                                <img src="img/icoDelete1.png" title="delete test" alt="delete test" width="22" />
-                                                </button>
-                                            </MudCardContent>
-                                        </MudCard>
-                                    </MudContainer>
-                                }
-                            </div>
+                                            }
+                                            <button class="btn btn-link" style="text-align:right;" dir="rtl" @onclick="() => BtnDeleteExamTest(localTestId)">
+                                            <img src="img/icoDelete1.png" title="delete test" alt="delete test" width="22" />
+                                            </button>
+                                        </MudCardContent>
+                                    </MudCard>
+                                </MudContainer>
+                            }
                         </div>
                     </div>
                 </div>
-            <br>
-                <div style="text-align: center;">
-                    <button class="btn btn-link" @onclick="BtnBack">
-                    <img src="/img/icoBack3.png" width="40" />
-                    </button>
-                </div>
-            </EditForm>
-            <script>
-                document.getElementById("txtExamDuration").focus();
-            </script>
-        </div>
+            </div>
+        <br>
+            <div style="text-align: center;">
+                <button class="btn btn-link" @onclick="BtnBack">
+                <img src="/img/icoBack3.png" width="40" />
+                </button>
+            </div>
+        </EditForm>
+        <script>
+        document.getElementById("txtExamDuration").focus();
+        </script>
+    </div>
     }
 
 @code {
@@ -433,14 +448,14 @@ else
         {
         if (cboCourseTopicId == 0)
             {
-            Snackbar.Add("select a topic!", Severity.Info); 
+            Snackbar.Add("select a topic!", Severity.Info);
             }
         else
             {
             if (sliderTestsLevelFrom > sliderTestsLevelTo)
                 {
                 sliderTestsLevelFrom = sliderTestsLevelTo;
-                Snackbar.Add("test levels corrected", Severity.Warning); 
+                Snackbar.Add("test levels corrected", Severity.Warning);
                 }
             ExamComposition examComposition = new ExamComposition() { ExamId = exam.ExamId, TopicId = cboCourseTopicId, TopicNTests = sliderTopicNTests, TestsLevelFrom = sliderTestsLevelFrom, TestsLevelTo = sliderTestsLevelTo };
             int result = await feService.Create_ExamComposition(examComposition);
@@ -448,7 +463,7 @@ else
                 {
                 lstExamCompositions.Clear();
                 lstExamCompositions = await feService.Read_ExamCompositions(examId);
-                Snackbar.Add("exam composition added", Severity.Success); 
+                Snackbar.Add("exam composition added", Severity.Success);
                 appState.SetCmd("");
                 StateHasChanged();
                 }
@@ -458,21 +473,21 @@ else
         {
         if (comp.TopicId == 0)
             {
-            Snackbar.Add("Select a Topic!", Severity.Info); 
+            Snackbar.Add("Select a Topic!", Severity.Info);
             }
         else
             {
             if (comp.TestsLevelFrom > comp.TestsLevelTo)
                 {
                 comp.TestsLevelFrom = comp.TestsLevelTo;
-                Snackbar.Add("test levels corrected", Severity.Warning); 
+                Snackbar.Add("test levels corrected", Severity.Warning);
                 }
             bool result = await feService.Update_ExamComposition(comp);
             if (result)
                 {
                 lstExamCompositions.Clear();
                 lstExamCompositions = await feService.Read_ExamCompositions(examId);
-                Snackbar.Add("Exam composition Updated!", Severity.Success); 
+                Snackbar.Add("Exam composition Updated!", Severity.Success);
                 appState.SetCmd("");
                 StateHasChanged();
                 }
@@ -485,12 +500,12 @@ else
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            Snackbar.Add("Exam composition Removed!", Severity.Warning); 
+            Snackbar.Add("Exam composition Removed!", Severity.Warning);
             lstExamCompositions.Clear();
             bool result = await feService.Delete_ExamComposition(examCompositionId);
             if (result)
                 {
-                Snackbar.Add("exam composition deleted", Severity.Success); 
+                Snackbar.Add("exam composition deleted", Severity.Success);
                 }
             lstExamCompositions = await feService.Read_ExamCompositions(examId);
             appState.SetCmd("");
@@ -498,7 +513,7 @@ else
             }
         else
             {
-            Snackbar.Add("Exam Composition was not Deleted! --- operation Canceled", Severity.Error); 
+            Snackbar.Add("Exam Composition was not Deleted! --- operation Canceled", Severity.Error);
             }
         }
     private void BtnReadTestsBySearch (MouseEventArgs args)
@@ -525,7 +540,7 @@ else
                     var result2 = await feService.Create_ExamTestsByExamComposition(ec);
                     }
                 lstExamTests = await feService.Read_TestsByExamId(examId, true);
-                Snackbar.Add("Random tests added to the exam list.", Severity.Success); 
+                Snackbar.Add("Random tests added to the exam list.", Severity.Success);
                 _hasFetched = true;
                 StateHasChanged();
                 }
@@ -553,7 +568,7 @@ else
         {
         if (cboCourseTestId == 0)
             {
-            Snackbar.Add("Select a Test", severity: Severity.Info); 
+            Snackbar.Add("Select a Test", severity: Severity.Info);
             //await JS.InvokeVoidAsync ("alert", "\n");
             }
         else
@@ -562,7 +577,7 @@ else
             int result = await feService.Create_ExamTest(examTest);
             lstExamTests.Clear();
             lstExamTests = await feService.Read_TestsByExamId(examId, true);
-            Snackbar.Add("Test added to the exam list", severity: Severity.Success); 
+            Snackbar.Add("Test added to the exam list", severity: Severity.Success);
             appState.SetCmd("");
             StateHasChanged();
             }
@@ -582,7 +597,7 @@ else
             bool result = await feService.Delete_ExamTest(examTest);
             if (result)
                 {
-                Snackbar.Add("Test removed from the exam list", Severity.Warning); 
+                Snackbar.Add("Test removed from the exam list", Severity.Warning);
                 lstExamTests.Clear();
                 lstExamTests = await feService.Read_TestsByExamId(examId, true);
                 appState.SetCmd("");

@@ -583,12 +583,12 @@ else
             {
             int? referenceType = mode.ToLower() switch
                 {
-                    "u" => 1,
-                    "sp" => 2,
-                    "s" => 3,
-                    "g" => 4,
-                    "c" => 5,
-                    "e" => 6,
+                    "u" => 11,
+                    "sp" => 12,
+                    "s" => 13,
+                    "g" => 14,
+                    "c" => 15,
+                    "e" => 16,
                     _ => null
                     };
             if (referenceType.HasValue)
@@ -642,12 +642,12 @@ else
             }
         int referenceType = mode switch
             {
-            "U" => 1,
-            "SP" => 2,
-            "S" => 3,
-            "G" => 4,
-            "C" => 5,
-            "E" => 6,
+            "U" => 11,
+            "SP" => 12,
+            "S" => 13,
+            "G" => 14,
+            "C" => 15,
+            "E" => 16,
             _ => 0
             };
         if ((referenceType > 0) & (user.UserRole == "teacher"))
