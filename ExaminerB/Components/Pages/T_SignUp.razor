@@ -148,7 +148,7 @@
         {
         if ((!checkAgree))
             { 
-            Snackbar.Add("read terms of use", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("read terms of use", Severity.Info); 
             return;
             }
         if ((teacher.Password == teacher.RepeatPass) && (teacher.Password.Length > 3))
@@ -168,18 +168,18 @@
                 if (confirmResult == true)
                     {
                     Navman.NavigateTo ("/Login");
-                    Snackbar.Add("account created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+                    Snackbar.Add("account created", Severity.Success);                     
                     BtnCancel ();
                     }
                 }
             else
                 {
-                Snackbar.Add($"failed to create account for: '{user.UserName}'", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"failed to create account for: '{user.UserName}'", Severity.Error); 
                 }
             }
         else
             {
-            Snackbar.Add("password error", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar                    
+            Snackbar.Add("password error", Severity.Warning);                     
             }
         }
     public void BtnHelpSignupNewTeacher ()

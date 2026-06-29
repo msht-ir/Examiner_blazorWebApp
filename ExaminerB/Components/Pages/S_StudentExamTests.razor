@@ -185,25 +185,25 @@ else
         DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);
         if (DateTime.Now > _examDateTimeFinish)
             {
-            Snackbar.Add($"time is over", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"time is over", Severity.Error); 
             }
         else
             {
             TimeSpan _ts = _examDateTimeFinish - DateTime.Now;
             if (DateTime.Now > _examDateTimeFinish.AddMinutes(-3))
                 {
-                Snackbar.Add($"{_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2}", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"{_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2}", Severity.Warning); 
                 }
             else
                 {
                 if (DateTime.Now > _examDateTimeFinish.AddMinutes(-1 * intExamAlarm))
                     {
-                    Snackbar.Add($"{_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                    Snackbar.Add($"{_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2}", Severity.Info); 
                     Snackbar.Add($". . reminder . .", Severity.Warning, opt => { opt.VisibleStateDuration = 1000; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     }
                 else
                     {
-                    Snackbar.Add($"  {_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} ", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                    Snackbar.Add($"  {_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} ", Severity.Success); 
                     }
                 }
             studentExamTest.StudentExamTestTags = (studentExamTest.StudentExamTestTags | 1);
@@ -218,7 +218,7 @@ else
         if (confirmResult == true)
             {
             bool result = await feService.Update_StudentExamTags(studentExam, "finishedOn");
-            Snackbar.Add("exam terminated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("exam terminated", Severity.Success); 
             Navman.NavigateTo("/S_Student");
             }
         //old code: if(await JS.InvokeAsync<bool>("confirm",$"Finish exam ( {studentExam.ExamTitle} ) ?\n\n Sure?")){}
@@ -257,7 +257,7 @@ else
     private void SetExamAlarm (int examAlarm)
         {
         appState.SetExamAlarm(examAlarm);
-        Snackbar.Add($"Timeout reminer: ({examAlarm} min)", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        Snackbar.Add($"Timeout reminer: ({examAlarm} min)", Severity.Success); 
         StateHasChanged();
         }
     }

@@ -171,7 +171,7 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region CHR:Chatrooms
         Task<int> Create_ChatroomAsync (Chatroom chatroom);
-        Task<List<Chatroom>> Read_ChatroomsAsync (int userId, string mode);
+        Task<List<Chatroom>> Read_ChatroomsAsync ();
         Task<bool> Update_ChatroomAsync (Chatroom chatroom);
         Task<bool> Delete_ChatroomAsync (int chatroomId);
         #endregion
@@ -198,12 +198,12 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region N:Notes
         Task<int> Create_NoteAsync (Note note);
-        Task<List<Note>> Read_NotesAsync (int parentId, int parentType);
-        Task<List<Note>> Read_NotesBySearchKeyAsync (string searchKey, int parentId, string mode);
-        Task<Note> Read_NoteAsync (int parentId);
+        Task<List<Note>> Read_NotesAsync (int referenceId, int referenceType);
+        Task<List<Note>> Read_NotesBySearchKeyAsync (string searchKey, int referenceId, int mode);
+        Task<Note> Read_NoteAsync (int referenceId);
         Task<bool> Update_NoteAsync (Note note);
         Task<bool> Update_NoteParentAsync (Note note);
-        Task<bool> Delete_NotesAsync (int parentId, int parentType);
+        Task<bool> Delete_NotesAsync (int referenceId, int referenceType);
         Task<bool> Delete_NoteAsync (int noteId);
         #endregion
         }

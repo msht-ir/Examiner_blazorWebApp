@@ -408,7 +408,7 @@
                                                           @bind-Value="strSearch"
                                                           OnKeyDown="HandleKey_Searchbox"
                                                           Label="search people"
-                                                          Variant="Variant.Outlined"
+                                                          Variant="Variant.Text"
                                                           Margin="Margin.Dense"
                                                           Immediate="true"
                                                           Autocomplete="off"
@@ -536,16 +536,29 @@
                                 {
                                 <hr />
                                     <MudContainer>
-                                    <h5 style="color:darkgoldenrod;text-align:center;margin-top:20px">create a chatroom</h5>
+                                    <h5 style="color:darkgoldenrod;text-align:center;margin-top:20px">new chatroom</h5>
                                         <MudCard Class="mx-0">
                                             <MudCardContent Style="background-color:whitesmoke;">
-                                            <MudTextField @bind-Value="chatroom.ChatroomName" Label="chatroom name" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Style="font-family:Tahoma" />
-                                            <MudTextField @bind-Value="chatroom.ChatroomTerms" Label="subject" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" Lines="4" Style="font-family:Tahoma" />
+                                            <MudTextField @bind-Value="chatroom.ChatroomName"
+                                                          Label="chatroom name"
+                                                          Variant="Variant.Text"
+                                                          Margin="Margin.Dense"
+                                                          Autocomplete="off"
+                                                          Class="my-textfield"
+                                                          Adornment="Adornment.End"
+                                                          AdornmentIcon="@Icons.Material.Filled.Save"
+                                                          OnAdornmentClick="BtnCreateChatroom"
+                                                          Style="font-family:Tahoma" />
+                                            <MudTextField @bind-Value="chatroom.ChatroomTerms"
+                                                          Label="about chatroom"
+                                                          Variant="Variant.Text"
+                                                          Margin="Margin.Dense"
+                                                          Autocomplete="off"
+                                                          Class="my-textfield"
+                                                          Lines="4"
+                                                          Style="font-family:Tahoma" />
                                                 <div class="align-content-center align-items-center justify-content-center" style="text-align:center">
-                                                    <button class="btn btn-link pulse-animation" name="btnNewCourse" @onclick="BtnCreateChatroom">
-                                                    <img src="/img/icoSave2.png" width="20" />
-                                                    </button>
-                                                    <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
+                                                    <button class="btn btn-link" name="btnNewCourse" title="Cancel انصراف" @onclick="BtnCancel">
                                                     <img src="/img/icoCancel.png" width="20" />
                                                     </button>
                                                 </div>
@@ -641,7 +654,7 @@
                                                 <MudCard Class="mx-0">
                                                     <MudCardContent Style="background-color:whitesmoke;">
                                                         <span class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold; font-size:smaller;margin:0px; ">
-                                                        @PersianDate(notex.NoteDatum)
+                                                        @PersianDate(notex.NoteDateTime)
                                                         </span>
                                                     <hr />
                                                         <div style="white-space: pre-wrap; font-weight:normal; font-family:'Segoe UI';font-size:small">
@@ -681,7 +694,7 @@
                                                 <MudCard Class="mx-0">
                                                     <MudCardContent Style="background-color:whitesmoke;">
                                                         <span class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;font-size:smaller;margin:0px;">
-                                                        @PersianDate(notex.NoteDatum)
+                                                        @PersianDate(notex.NoteDateTime)
                                                         </span>
                                                     <hr />
                                                         <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
@@ -960,12 +973,12 @@
             {
             case 0:
                     {
-                    Snackbar.Add("bookmark removed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                    Snackbar.Add("bookmark removed", Severity.Info); 
                     break;
                     }
             case 1:
                     {
-                    Snackbar.Add("message bookmarked", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                    Snackbar.Add("message bookmarked", Severity.Success); 
                     break;
                     }
             }
@@ -1019,7 +1032,7 @@
             {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags(studentMessage);
-            Snackbar.Add("deleted", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("deleted", Severity.Success); 
             await ReadMessageList();
             }
         StateHasChanged();
@@ -1105,7 +1118,7 @@
             {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags(studentMessage);
-            Snackbar.Add("deleted", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("deleted", Severity.Success); 
             await ReadMessageList();
             }
         StateHasChanged();
@@ -1124,7 +1137,7 @@
         appState.SetClps("CHR");
         if ((chatroom.ChatroomTerms.Trim() == "") || (chatroom.ChatroomName.Trim() == ""))
             {
-            Snackbar.Add($"Enter chatroom NAME and SUBJECT", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"Enter chatroom NAME and SUBJECT", Severity.Info); 
             return;
             }
         student.UserId = appState.UserId ?? 0;
@@ -1156,7 +1169,7 @@
             bool result = await feService.Delete_Chatroom(chatroomId);
             if (result)
                 {
-                Snackbar.Add($"deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"deleted", Severity.Warning); 
                 _cmd = "";
                 StateHasChanged();
                 appState.SetCmd("");
@@ -1165,7 +1178,7 @@
                 }
             else
                 {
-                Snackbar.Add($"failed to delete chatroom", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"failed to delete chatroom", Severity.Error); 
                 }
             }
         }
@@ -1173,10 +1186,11 @@
     public async Task CreateNote ()
         {
         appState.SetClps("SN");
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
-        appState.SetNoteParentType(7);
-        student.UserId = appState.UserId ?? 0;
-        appState.SetNoteParentId(Convert.ToInt32(student.UserId));
+        //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
+        student.UserId = Convert.ToInt32(appState.UserId);
+        appState.SetNoteReferenceId(Convert.ToInt32(appState.UserId));
+        appState.SetNoteReferenceType(1);
+        appState.SetNoteCreatorId(Convert.ToInt32(appState.UserId));
         appState.SetCmd("CreateNote");
         StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
@@ -1186,12 +1200,13 @@
         {
         appState.SetClps("SN");
         appState.SetSelectedNoteId(note.NoteId);
-        appState.SetNoteDatum(note.NoteDatum);
+        appState.SetNoteReferenceId(note.ReferenceId);
+        appState.SetNoteReferenceType(note.ReferenceType);
+        appState.SetNoteReferenceName(note.ReferenceName);
+        appState.SetNoteDateTime(note.NoteDateTime);
         appState.SetNoteText(note.NoteText);
+        appState.SetNoteCreatorId(note.CreatorId);
         appState.SetNoteIsRtl(note.IsRtl);
-        appState.SetNoteParentId(note.ParentId);
-        appState.SetNoteParentType(note.ParentType);
-        appState.SetNoteParentName(note.ParentName);
         appState.SetCmd("ShowNoteInDialog");
         StateHasChanged();
         //After the Modal_ShowNote is closed, HandleModalClose will refresh the list
@@ -1201,12 +1216,13 @@
         {
         appState.SetClps("SN");
         appState.SetSelectedNoteId(note.NoteId);
-        appState.SetNoteDatum(note.NoteDatum);
+        appState.SetNoteReferenceId(note.ReferenceId);
+        appState.SetNoteReferenceType(note.ReferenceType);
+        appState.SetNoteReferenceName(note.ReferenceName);
+        appState.SetNoteDateTime(note.NoteDateTime);
         appState.SetNoteText(note.NoteText);
+        appState.SetNoteCreatorId(note.CreatorId);
         appState.SetNoteIsRtl(note.IsRtl);
-        appState.SetNoteParentId(note.ParentId);
-        appState.SetNoteParentType(note.ParentType);
-        appState.SetNoteParentName(note.ParentName);
         appState.SetCmd("UpdateNote");
         StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
@@ -1222,18 +1238,18 @@
             bool result = await feService.Delete_Note(noteId);
             if (result)
                 {
-                Snackbar.Add($"deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"deleted", Severity.Warning); 
                 student.UserId = Convert.ToInt32(appState.UserId);
                 _hasFetched = false;
                 lstNotes.Clear();
-                lstNotes = await feService.Read_Notes(student.UserId, 7);
+                lstNotes = await feService.Read_Notes(student.UserId, 1);
                 _hasFetched = true;
                 appState.SetCmd("");
                 StateHasChanged();
                 }
             else
                 {
-                Snackbar.Add($"failed to delete note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"failed to delete note", Severity.Error); 
                 }
             }
         }
@@ -1256,7 +1272,7 @@
         student.UserId = appState.UserId ?? 0;
         lstStudentCourses.Clear();
         lstStudentCourses = await feService.Read_StudentCourses(student.UserId, "ByStudentIdIgnoreInactiveCourses");
-        //Snackbar.Add("refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        //Snackbar.Add("refreshed", Severity.Info); 
         }
     private async Task ReadExamList ()
         {
@@ -1281,14 +1297,14 @@
         {
         student.UserId = appState.UserId ?? 0;
         lstChatrooms.Clear();
-        lstChatrooms = await feService.Read_Chatrooms(Convert.ToInt32(appState.TeacherId), "teacher");
+        lstChatrooms = await feService.Read_Chatrooms();
         }
     private async Task ReadNoteList ()
         {
         student.UserId = appState.UserId ?? 0;
         lstNotes.Clear();
-        lstNotes = await feService.Read_Notes(student.UserId, 7);
-        //Snackbar.Add("refreshed", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        lstNotes = await feService.Read_Notes(student.UserId, 1);
+        //Snackbar.Add("refreshed", Severity.Info); 
         }
     private async Task HandleKey_Searchbox (KeyboardEventArgs e)
         {

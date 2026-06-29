@@ -12,50 +12,56 @@
     }
 
 
-<div class="container" style="max-width:500px; margin: 0 auto;">
-    <div style="text-align: center;">
-        <div style="text-align: center;margin-top:50px;margin-bottom:20px;">
+    <div class="container" style="max-width:500px; margin: 0 auto;">
+        <div style="text-align: center;">
+            <div style="text-align: center;margin-top:50px;margin-bottom:20px;">
             <p style="font-size:large;font-style:italic;color:royalblue">@appState.UserNickname</p>
-        </div>
+            </div>
         <hr style="color:red;margin-bottom:50px;" />
-        <div class="d-flex gap-4 justify-content-center">
-            <button class="btn btn-link pulse-animation" @onclick="GotoGroupsStudents">
+            <div class="d-flex gap-4 justify-content-center">
+                <button class="btn btn-link pulse-animation" @onclick="GotoGroupsStudents">
                 <img src="/img/icoSwitchBoardStudents.png" width="44" title="students دانشجويان" />
-            </button>
-            <button class="btn btn-link pulse-hover" @onclick="GotoCourses">
+                </button>
+                <button class="btn btn-link pulse-hover" @onclick="GotoCourses">
                 <img src="/img/icoSwitchBoardCourses.png" width="46" title="courses درس ها" />
-            </button>
-            <button class="btn btn-link pulse-hover" @onclick="BtnChangeTeacherPassword">
+                </button>
+                <button class="btn btn-link pulse-hover" @onclick="BtnChangeTeacherPassword">
                 <img src="/img/icoKeys.png" width="30" title="courses پسورد" />
-            </button>
-        </div>
+                </button>
+            </div>
         <br />
         <br />
-        <div class="d-flex gap-4 justify-content-center">
-            <button class="btn btn-link pulse-hover" @onclick="GotoNotebooks">
-                <img src="/img/icoNoteBook.png" width="48" title="notebooks دفترچه يادداشت"/>
-            </button>
-            <button class="btn btn-link pulse-hover" @onclick="ReportUserNotes">
-                <img src="/img/icoNoteReport.png" width="34" title="quick notes يادداشت ها"/>
-            </button>
-            <button class="btn btn-link pulse-hover" @onclick="BtnCreateNote">
+            <div class="d-flex gap-4 justify-content-center">
+                <button class="btn btn-link pulse-hover" @onclick="GotoNotebooks">
+                <img src="/img/icoNoteBook.png" width="48" title="notebooks دفترچه يادداشت" />
+                </button>
+                <button class="btn btn-link pulse-hover" @onclick="ReportUserNotes">
+                <img src="/img/icoNoteReport.png" width="34" title="quick notes يادداشت ها" />
+                </button>
+                <button class="btn btn-link pulse-hover" @onclick="BtnCreateNote">
                 <img src="/img/icoNewNote3.png" width="34" title="new quick note يادداشت جديد" />
-            </button>
-        </div>
+                </button>
+            </div>
         <br />
         <br />
         <hr style="color:red;margin-top:30px;" />
-        <div style="text-align: center;margin-top:50px;">
-            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Person2" Size="Size.Small" OnClick="@(() => GotoLogin())" Style="color:indianred;padding-left:60px;padding-right:60px">Logout</MudButton>
-       </div>
+            <div style="text-align: center;margin-top:50px;">
+                <MudButton Variant="Variant.Filled"
+                       EndIcon="@Icons.Material.Filled.ArrowBack"
+                       Size="Size.Small"
+                       OnClick="@(() => GotoLogin())"
+                       Style="color:indianred;padding-left:60px;padding-right:60px">
+                Logout
+                </MudButton>
+            </div>
+        </div>
     </div>
-</div>
 
 
-@code 
+@code
 {
     private bool _firstRender = true;
-    User user = new User ();
+    User user = new User();
     public int Spacing { get; set; } = 3;
     string _cmd = "";
 
@@ -63,79 +69,78 @@
     protected override async Task OnInitializedAsync ()
         {
         appState.OnChange += TriggerRender;
-        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+        if (Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-
-            Navman.NavigateTo ("/Login");
+            Navman.NavigateTo("/Login");
             }
-        } 
-    protected async Task OnAfterRenderAsync()
+        }
+    protected async Task OnAfterRenderAsync ()
         {
-        var result1 = await sessionStorage.GetAsync<string> ("UserName");
-        Console.WriteLine ("result1.Value: " + result1.Value);
+        var result1 = await sessionStorage.GetAsync<string>("UserName");
+        Console.WriteLine("result1.Value: " + result1.Value);
         if (result1.Success)
             {
-            appState.SetUserName (result1.Value);
+            appState.SetUserName(result1.Value);
             user.UserName = appState.UserName;
-            StateHasChanged ();
+            StateHasChanged();
             }
         if (_firstRender)
             {
             _firstRender = false;
-            var result = await sessionStorage.GetAsync<int> ("UserLoginStatus");
+            var result = await sessionStorage.GetAsync<int>("UserLoginStatus");
             if (result.Success && result.Value == 1)
                 {
-                appState.SetUserLoginStatus (1);
-                Console.WriteLine ("T_SwitchBoard: UserLoginStatus= " + appState.UserLoginStatus);
-                appState.SetUserLoginStatus (result.Value);
+                appState.SetUserLoginStatus(1);
+                Console.WriteLine("T_SwitchBoard: UserLoginStatus= " + appState.UserLoginStatus);
+                appState.SetUserLoginStatus(result.Value);
                 }
             else
                 {
-                Navman.NavigateTo ("/Login");
+                Navman.NavigateTo("/Login");
                 }
             }
         }
-    private void TriggerRender() 
+    private void TriggerRender ()
         {
-        InvokeAsync(StateHasChanged); 
-        } 
-    public void Dispose() 
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose ()
         {
         appState.OnChange -= TriggerRender;
         }
     //methods
-    public void GotoLogin()
+    public void GotoLogin ()
         {
-        Navman.NavigateTo ("/Login");
+        Navman.NavigateTo("/Login");
         }
     public void GotoGroupsStudents ()
         {
-        Navman.NavigateTo ("/T_Students");
+        Navman.NavigateTo("/T_Students");
         }
     public void GotoCourses ()
         {
-        Navman.NavigateTo ("/T_Courses");
+        Navman.NavigateTo("/T_Courses");
         }
     public void GotoNotebooks ()
         {
-        appState.SetReturnPage ("/T_SwitchBoard");
+        appState.SetReturnPage("/T_SwitchBoard");
         Navman.NavigateTo("/E_NoteBooks");
         }
     public async Task BtnCreateNote ()
         {
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
-        appState.SetNoteParentType (1);
-        appState.SetNoteParentId (Convert.ToInt32(appState.UserId));
-        appState.SetCmd ("CreateNote");
-        StateHasChanged ();
+        //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
+        appState.SetNoteReferenceType(11);
+        appState.SetNoteReferenceId(Convert.ToInt32(appState.UserId)); //for quickNote(t): NoteReferenceId = UserId
+        appState.SetCmd("CreateNote");
+        StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
-        //to handel close event, I added in the Modal_CreateNote: [Parameter] public EventCallback OnClose 
+        //to handel close event, I added in the Modal_CreateNote: [Parameter] public EventCallback OnClose
         }
     public void ReportUserNotes ()
         {
-        user.UserId = Convert.ToInt32 (appState.UserId);
-        appState.SetReturnPage ("/T_SwitchBoard");
-        Navman.NavigateTo ($"/T_ReportNotes/1/{user.UserId}");
+        user.UserId = Convert.ToInt32(appState.UserId);
+        appState.SetReturnPage("/T_SwitchBoard");
+        Navman.NavigateTo($"/T_ReportNotes/11/{user.UserId}");
         }
     private void BtnChangeTeacherPassword ()
         {
@@ -146,6 +151,4 @@
         {
         StateHasChanged();
         }
-
-
-}
+    }

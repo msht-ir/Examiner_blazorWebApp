@@ -146,21 +146,23 @@
         public string? SubprojectName { get; private set; }
         public void SetSubprojectName (string _SubprojectName) { SubprojectName = _SubprojectName; OnChange?.Invoke (); }
         //Note
-        public int? NoteId { get; private set; }
-        public void SetNoteId (int _NoteId) { NoteId = _NoteId; OnChange?.Invoke (); }
-        public bool NoteIsRtl { get; private set; }
-        public void SetNoteIsRtl (bool _NoteIsRtl) { NoteIsRtl = _NoteIsRtl; OnChange?.Invoke (); }
-        public string? NoteText { get; private set; }
-        public void SetNoteText (string _NoteText) { NoteText = _NoteText; OnChange?.Invoke (); }
-        public int? NoteParentType { get; private set; }
-        public void SetNoteParentType (int _NoteParentType) { NoteParentType = _NoteParentType; OnChange?.Invoke (); }
-        public int? NoteParentId { get; private set; }
-        public void SetNoteParentId (int _NoteParentId) { NoteParentId = _NoteParentId; OnChange?.Invoke (); }
-        public string? NoteParentName { get; private set; }
-        public void SetNoteParentName (string _NoteParentName) { NoteParentName = _NoteParentName; OnChange?.Invoke (); }
-        public string? NoteDatum { get; private set; }
-        public void SetNoteDatum (string _NoteDatum) { NoteDatum = _NoteDatum; OnChange?.Invoke (); }
         public int? SelectedNoteId { get; private set; }
         public void SetSelectedNoteId (int _SelectedNoteId) { SelectedNoteId = _SelectedNoteId; OnChange?.Invoke (); }
+        public int? NoteId { get; private set; }
+        public void SetNoteId (int _NoteId) { NoteId = _NoteId; OnChange?.Invoke (); }
+        public int? NoteReferenceId { get; private set; }
+        public void SetNoteReferenceId (int _NoteReferenceId) { NoteReferenceId = _NoteReferenceId; OnChange?.Invoke (); }
+        public int? NoteReferenceType { get; private set; }
+        public void SetNoteReferenceType (int _NoteReferenceType) { NoteReferenceType = _NoteReferenceType; OnChange?.Invoke (); }
+        public string? NoteReferenceName { get; private set; }
+        public void SetNoteReferenceName (string _NoteReferenceName) { NoteReferenceName = _NoteReferenceName; OnChange?.Invoke (); }
+        public string? NoteDateTime { get; private set; }
+        public void SetNoteDateTime (string _NoteDateTime) { NoteDateTime = _NoteDateTime; OnChange?.Invoke (); }
+        public string? NoteText { get; private set; }
+        public void SetNoteText (string _NoteText) { NoteText = _NoteText; OnChange?.Invoke (); }
+        public int? NoteCreatorId {get; private set;}
+        public void SetNoteCreatorId (int _NoteCreatorId) { NoteCreatorId = _NoteCreatorId; OnChange?.Invoke (); }
+        public bool NoteIsRtl { get; private set; }
+        public void SetNoteIsRtl (bool _NoteIsRtl) { NoteIsRtl = _NoteIsRtl; OnChange?.Invoke (); }
         }
     }

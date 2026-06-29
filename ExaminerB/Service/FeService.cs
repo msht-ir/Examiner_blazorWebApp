@@ -1171,9 +1171,9 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ($"api/Create_Chatroom", chatroom);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<List<Chatroom>> Read_Chatrooms (int userId, string mode)
+        public async Task<List<Chatroom>> Read_Chatrooms ()
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Chatrooms?mode={mode}", userId);
+            var response = await _http.PostAsync ($"api/Read_Chatrooms", null);
             if (response.IsSuccessStatusCode)
                 {
                 List<Chatroom>? lstChatrooms = await response.Content.ReadFromJsonAsync<List<Chatroom>> ();
@@ -1332,9 +1332,9 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ($"api/Create_Note", note);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<List<Note>> Read_Notes (int parentId, int parentType)
+        public async Task<List<Note>> Read_Notes (int referenceId, int referenceType)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Notes?parentType={parentType}", parentId);
+            var response = await _http.PostAsJsonAsync ($"api/Read_Notes?referenceType={referenceType}", referenceId);
             if (response.IsSuccessStatusCode)
                 {
                 List<Note>? lstNotes = await response.Content.ReadFromJsonAsync<List<Note>> ();
@@ -1345,7 +1345,7 @@ namespace ExaminerB.Service
                 return new List<Note> ();
                 }
             }
-        public async Task<List<Note>> Read_NotesBySearchKey (string searchKey, int parentId, string mode)
+        public async Task<List<Note>> Read_NotesBySearchKey (string searchKey, int parentId, int mode)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_NotesBySearchKey?mode={mode}&searchKey={searchKey}", parentId);
             if (response.IsSuccessStatusCode)

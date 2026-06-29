@@ -13,11 +13,11 @@
             {
             <NavMenuLogin />
             }
-        else if (Navman.Uri.Contains ("/T_") )
-            {
+        else if (Navman.Uri.Contains ("/T_") && (appState.UserRole == "teacher"))
+        {
             <NavMenuT_TeacherPages />
             }
-        else if (Navman.Uri.Contains ("/E_") )
+        else if (Navman.Uri.Contains("/E_") && (appState.UserRole == "teacher"))
             {
             <NavMenuT_TeacherPages />
             }

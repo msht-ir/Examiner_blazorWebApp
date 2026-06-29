@@ -90,8 +90,8 @@ else
                                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
-                                        <span style="color:indianred; font-weight:bold;">@note.NoteDatum</span>
-                                        <p style="color:gray;font-weight:normal;font-style:italic">@note.ParentName</p>
+                                        <span style="color:indianred; font-weight:bold;">@note.NoteDateTime</span>
+                                        <p style="color:gray;font-weight:normal;font-style:italic">@note.ReferenceName</p>
                                         <hr />
                                         @if (note.NoteText.Length > 100)
                                             {
@@ -140,8 +140,8 @@ else
                                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
-                                        <span style="color:indianred; font-weight:bold;">@note.NoteDatum</span>
-                                        <p style="color:gray;font-weight:normal;font-style:italic">@note.ParentName</p>
+                                        <span style="color:indianred; font-weight:bold;">@note.NoteDateTime</span>
+                                        <p style="color:gray;font-weight:normal;font-style:italic">@note.ReferenceName</p>
                                         <hr />
                                         @if (note.NoteText.Length > 100)
                                             {
@@ -292,7 +292,7 @@ else
                                                 @foreach (Subproject subProject in project.Subprojects)
                                                     {
                                                     var collapseId2 = $"collapse{subProject.SubprojectId}";
-                                                    _clpsSP = (appState.NoteParentId != subProject.SubprojectId) ? "collapse" : "collapse show";
+                                                    _clpsSP = (appState.NoteReferenceId != subProject.SubprojectId) ? "collapse" : "collapse show";
                                                         <div class="accordion-item mb-1">
                                                             <h4 class="accordion-header">
                                                                 <button class="accordion-button collapsed"
@@ -374,7 +374,7 @@ else
                                                                             </button>
                                                                         </div>
                                                                     @* 3 NOTES *@
-                                                                    if (subProject.SubprojectId == Convert.ToInt32(appState.NoteParentId))
+                                                                    if (subProject.SubprojectId == Convert.ToInt32(appState.NoteReferenceId))
                                                                         {
                                                                         @foreach (Note notex in lstSPNotes)
                                                                             {
@@ -386,7 +386,7 @@ else
                                                                                             <MudCard Class="mx-0">
                                                                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                                                                     <div class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
-                                                                                                    @PersianDate(notex.NoteDatum)
+                                                                                                    @PersianDate(notex.NoteDateTime)
                                                                                                     </div>
                                                                                                 <hr />
                                                                                                 @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId) == notex.NoteId))
@@ -450,13 +450,7 @@ else
                                                                                                     <hr>
                                                                                                         <div class="d-flex align-items-center text-start" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
                                                                                                             <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                                                                                            @* <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
-                                                                                                                    <button class="btn btn-link pulse-animation">
-                                                                                                                    <img src="/img/icoRename.png" width="28" title="edit note" />
-                                                                                                                    </button>
-                                                                                                                edit note
-                                                                                                                </MudMenuItem> *@
-                                                                                                                <MudMenuItem @onclick="() => BtnCopyToNoteReport(notex, subProject.ProjectId)">
+                                                                                                                <MudMenuItem @onclick="() => BtnCopyToQuickNotes(notex, subProject.ProjectId)">
                                                                                                                     <button class="btn btn-link">
                                                                                                                     <img src="/img/icoCopyToNoteReport.png" width="26" title="copy to quick note" />
                                                                                                                     </button>
@@ -500,7 +494,7 @@ else
                                                                                             <MudCard Class="mx-0">
                                                                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                                                                     <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
-                                                                                                    @PersianDate(notex.NoteDatum)
+                                                                                                    @PersianDate(notex.NoteDateTime)
                                                                                                     </div>
                                                                                                 <hr />
                                                                                                     <span class="d-flex align-items-center mt-1" style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
@@ -564,13 +558,7 @@ else
                                                                                                     {
                                                                                                         <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
                                                                                                             <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                                                                                            @* <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
-                                                                                                                    <button class="btn btn-link pulse-animation">
-                                                                                                                    <img src="/img/icoRename.png" width="28" title="edit note" />
-                                                                                                                    </button>
-                                                                                                                edit note
-                                                                                                                </MudMenuItem> *@
-                                                                                                                <MudMenuItem @onclick="() => BtnCopyToNoteReport(notex, subProject.ProjectId)">
+                                                                                                                <MudMenuItem @onclick="() => BtnCopyToQuickNotes(notex, subProject.ProjectId)">
                                                                                                                     <button class="btn btn-link">
                                                                                                                     <img src="/img/icoCopyToNoteReport.png" width="26" title="copy to quick note" />
                                                                                                                     </button>
@@ -736,7 +724,7 @@ else
             {
             //on second rener, user.UserId will get its value
             appState.SetProjectId(0);
-            appState.SetNoteParentId(0);
+            appState.SetNoteReferenceId(0);
             await GetListOfProjects(user.UserId, _ShowProjectsMode);
             //lstSPNotes = await feService.Read_Notes (Convert.ToInt32(appState.SubprojectId), 2);
             _hasFetched = true;
@@ -761,9 +749,20 @@ else
     //QuickNote
     public async Task CreateQuickNote ()
         {
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
-        appState.SetNoteParentType(1);
-        appState.SetNoteParentId(Convert.ToInt32(appState.UserId));
+        //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
+        appState.SetNoteReferenceId(Convert.ToInt32(appState.UserId)); //for quicknote, NoteReferenceId=UserId
+        if (appState.UserRole == "teacher")
+            {
+            appState.SetNoteReferenceType(11);
+            }
+        else if (appState.UserRole == "student")
+            {
+            appState.SetNoteReferenceType(1);
+            }
+        else
+            {
+            appState.SetNoteReferenceType(0);
+            }
         appState.SetCmd("CreateNote");
         StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
@@ -848,7 +847,7 @@ else
             bool result = await feService.Delete_Project(projectId);
             if (result)
                 {
-                Snackbar.Add($"notebook and its sections and notes all deleted!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"notebook and its sections and notes all deleted!", Severity.Info);
                 appState.SetCmd("");
                 //refresh the list
                 var user = new User
@@ -863,7 +862,7 @@ else
                 }
             else
                 {
-                Snackbar.Add($"there are sections in this notebook", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"there are sections in this notebook", Severity.Warning);
                 }
             }
         }
@@ -932,7 +931,7 @@ else
         int result = await feService.Create_Subproject(subProject);
         if (result > 0)
             {
-            Snackbar.Add($"new section : {subProject.SubprojectName} created", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"new section : {subProject.SubprojectName} created", Severity.Success);
             // Refresh the list
             var user = new User
                 {
@@ -947,7 +946,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to create new section", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed to create new section", Severity.Error);
             }
         }
     public async Task BtnEditSubproject (int subProjectId)
@@ -1005,7 +1004,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to remove section!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed to remove section!", Severity.Error);
             }
         }
     public void BtnReportSubproject (Subproject subProject)
@@ -1034,7 +1033,7 @@ else
             bool result = await feService.Update_SubprojectParent(section);
             if (result)
                 {
-                Snackbar.Add("section replaced", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("section replaced", Severity.Success);
                 _cmd = "";
                 NotebookId = 0;
                 SectionId = 0;
@@ -1043,20 +1042,31 @@ else
                 }
             else
                 {
-                Snackbar.Add("failed", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed", Severity.Warning);
                 }
             }
         else
             {
-            Snackbar.Add("select notebook", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select notebook", Severity.Info);
             }
         }
     //SP notes
     public async Task BtnCreateNewSubprojectNote (Subproject subProject)
         {
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
-        appState.SetNoteParentType(2);
-        appState.SetNoteParentId(subProject.SubprojectId);
+        //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
+        if (appState.UserRole == "teacher")
+            {
+            appState.SetNoteReferenceType(12);
+            }
+        else if (appState.UserRole == "student")
+            {
+            appState.SetNoteReferenceType(2);
+            }
+        else
+            {
+            appState.SetNoteReferenceType(0);
+            }
+        appState.SetNoteReferenceId(subProject.SubprojectId);
         appState.SetProjectId(subProject.ProjectId);
         Console.WriteLine($"project ID = {subProject.ProjectId}");
         appState.SetCmd("CreateNote");
@@ -1065,8 +1075,19 @@ else
     public async Task BtnReadSectionNotes (Subproject subProject)
         {
         appState.SetProjectId(subProject.ProjectId);
-        appState.SetNoteParentType(2); //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN)
-        appState.SetNoteParentId(subProject.SubprojectId);
+        if (appState.UserRole == "teacher")
+            {
+            appState.SetNoteReferenceType(12);
+            }
+        if (appState.UserRole == "student")
+            {
+            appState.SetNoteReferenceType(2);
+            }
+        if (appState.UserRole == "teacher")
+            {
+            appState.SetNoteReferenceType(0);
+            }
+        appState.SetNoteReferenceId(subProject.SubprojectId);
         lstSPNotes = await feService.Read_Notes(subProject.SubprojectId, 2);
         StateHasChanged();
         }
@@ -1076,12 +1097,24 @@ else
     public async Task BtnEditNoteInDialog (Note note)
         {
         appState.SetSelectedNoteId(note.NoteId);
-        appState.SetNoteDatum(note.NoteDatum);
+        appState.SetNoteReferenceId(note.ReferenceId);
+        appState.SetNoteReferenceName(note.ReferenceName);
+        if (appState.UserRole == "teacher")
+            {
+            appState.SetNoteReferenceType(12);
+            }
+        else if (appState.UserRole == "student")
+            {
+            appState.SetNoteReferenceType(2);
+            }
+        else
+            {
+            appState.SetNoteReferenceType(2);
+            }
+        appState.SetNoteDateTime(note.NoteDateTime);
         appState.SetNoteText(note.NoteText);
+        appState.SetNoteCreatorId(note.CreatorId);
         appState.SetNoteIsRtl(note.IsRtl);
-        appState.SetNoteParentId(note.ParentId);
-        appState.SetNoteParentType(2);
-        appState.SetNoteParentName(note.ParentName);
         appState.SetCmd("UpdateNote");
         StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
@@ -1090,47 +1123,55 @@ else
     public async Task BtnShowNoteInDialog (Note note)
         {
         appState.SetSelectedNoteId(note.NoteId);
-        appState.SetNoteDatum(note.NoteDatum);
+        appState.SetNoteReferenceId(note.ReferenceId);
+        appState.SetNoteReferenceType(note.ReferenceType);
+        appState.SetNoteReferenceName(note.ReferenceName);
+        appState.SetNoteDateTime(note.NoteDateTime);
         appState.SetNoteText(note.NoteText);
+        appState.SetNoteCreatorId(note.CreatorId);
         appState.SetNoteIsRtl(note.IsRtl);
-        appState.SetNoteParentId(note.ParentId);
-        appState.SetNoteParentType(note.ParentType);
-        appState.SetNoteParentName(note.ParentName);
         appState.SetCmd("ShowNoteInDialog");
         StateHasChanged();
-
-
         }
     public async Task BtnReadNotesBySearch ()
         {
         user.UserId = Convert.ToInt32(appState.UserId);
-        lstSearchedtNotes = await feService.Read_NotesBySearchKey(strSearchKey, user.UserId, "SP");
+        if (appState.UserRole == "teacher")
+            {
+            lstSearchedtNotes = await feService.Read_NotesBySearchKey(strSearchKey, user.UserId, 12);
+            }
+        if (appState.UserRole == "student")
+            {
+            lstSearchedtNotes = await feService.Read_NotesBySearchKey(strSearchKey, user.UserId, 2);
+            }
         StateHasChanged();
         }
     public async Task BtnCancelSearch ()
         {
+        strSearchKey = "";
         lstSearchedtNotes.Clear();
         StateHasChanged();
         }
-    public async Task BtnCopyToNoteReport (Note note, int projectId)
+    public async Task BtnCopyToQuickNotes (Note note, int projectId)
         {
         var message = new MarkupString($"<hr><span style='color:DarkGreen'>COPY</span> this note to Quick-Notes?<br><br><div style='text-align:center'><img src='/img/icoCopyToNoteReport.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
+            //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
             appState.SetProjectId(projectId);
             user.UserRole = appState.UserRole;
             Note newNote = new Note()
                 {
                 NoteId = 1,
-                ParentId = Convert.ToInt32(appState.UserId),
-                ParentType = 7,
-                NoteDatum = note.NoteDatum,
+                ReferenceId = Convert.ToInt32(appState.UserId),
+                ReferenceType = 1,
+                NoteDateTime = note.NoteDateTime,
                 NoteText = note.NoteText,
-                NoteTags = note.NoteTags
+                NoteTags = note.NoteTags,
+                CreatorId = Convert.ToInt32(appState.UserId)
                 };
-            newNote.ParentType = (appState.UserRole == "teacher") ? 1 : 7; //1:U, 2:SP, 3:S, 4:G, 5:C, 6:E, 7:SN
+            newNote.ReferenceType = (appState.UserRole == "teacher") ? 11 : 1;
             if (appState.UserRole == "student")
                 {
                 newNote.NoteTags |= 16; //16:Student-Note
@@ -1139,13 +1180,13 @@ else
             int result = await feService.Create_Note(newNote);
             if (result > 0)
                 {
-                Snackbar.Add("note copied to quick-notes", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("note copied to quick-notes", Severity.Info);
                 user.UserId = Convert.ToInt32(appState.UserId);
                 appState.SetCmd("");
                 }
             else
                 {
-                Snackbar.Add("failed to copy note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed to copy note", Severity.Error);
                 }
             _hasFetched = true;
             }
@@ -1156,22 +1197,22 @@ else
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            appState.SetNoteParentId(note.ParentId);
+            appState.SetNoteReferenceId(note.ReferenceId);
             bool result = await feService.Delete_Note(note.NoteId);
             if (result)
                 {
-                Snackbar.Add($"deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"deleted", Severity.Warning);
                 user.UserId = Convert.ToInt32(appState.UserId);
                 _hasFetched = false;
                 await GetListOfProjects(user.UserId, _ShowProjectsMode);
-                Subproject _subProject = new Subproject() { SubprojectId = Convert.ToInt32(note.ParentId), ProjectId = Convert.ToInt32(appState.ProjectId) };
+                Subproject _subProject = new Subproject() { SubprojectId = Convert.ToInt32(note.ReferenceId), ProjectId = Convert.ToInt32(appState.ProjectId) };
                 await BtnReadSectionNotes(_subProject);
                 _hasFetched = true;
                 StateHasChanged();
                 }
             else
                 {
-                Snackbar.Add($"failed to delete note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"failed to delete note", Severity.Error);
                 }
             }
         }
@@ -1180,7 +1221,7 @@ else
         //delete all subprojects of a Project
         if (0 == 0)
             {
-            Snackbar.Add($"select a course", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"select a course", Severity.Success);
             return;
             }
         else
@@ -1188,13 +1229,13 @@ else
             //bool result = await feService.Delete_SubprojectNote (0, groupId);
             if (0 == 0)
                 {
-                Snackbar.Add($"all sections in this notebook are removed from the course.", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"all sections in this notebook are removed from the course.", Severity.Info);
                 appState.SetCmd("");
                 StateHasChanged();
                 }
             else
                 {
-                Snackbar.Add($"students did not removed from the course", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"students did not removed from the course", Severity.Error);
                 }
             }
         }
@@ -1243,11 +1284,11 @@ else
         {
         if (subprojectId > 0)
             {
-            Note _note = new Note { NoteId = noteid, ParentType = 3, ParentId = subprojectId };
+            Note _note = new Note { NoteId = noteid, ReferenceType = (appState.UserRole == "teacher" ? 12 : 2), ReferenceId = subprojectId };
             bool result = await feService.Update_NoteParent(_note);
             if (result)
                 {
-                Snackbar.Add("note replaced", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("note replaced", Severity.Success);
                 _cmd = "";
                 NotebookId = 0;
                 SectionId = 0;
@@ -1256,12 +1297,12 @@ else
                 }
             else
                 {
-                Snackbar.Add("failed", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed", Severity.Warning);
                 }
             }
         else
             {
-            Snackbar.Add("select notebook and section", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select notebook and section", Severity.Info);
             }
         }
     //handle Keys
@@ -1298,13 +1339,13 @@ else
         //if: UserRole is teacher
         //needs: /mode/id
         user.UserId = Convert.ToInt32(appState.UserId);
-        Navman.NavigateTo($"/T_ReportNotes/{1}/{user.UserId}");
+        Navman.NavigateTo($"/T_ReportNotes/{11}/{user.UserId}");
         }
     private async Task HandleModalClose ()
         {
         int userId = Convert.ToInt32(appState.UserId);
         await GetListOfProjects(userId, _ShowProjectsMode);
-        Subproject _subProject = new Subproject() { SubprojectId = Convert.ToInt32(appState.NoteParentId), ProjectId = Convert.ToInt32(appState.ProjectId) };
+        Subproject _subProject = new Subproject() { SubprojectId = Convert.ToInt32(appState.NoteReferenceId), ProjectId = Convert.ToInt32(appState.ProjectId) };
         await BtnReadSectionNotes(_subProject);
         if (lstSearchedtNotes.Count > 0)
             {

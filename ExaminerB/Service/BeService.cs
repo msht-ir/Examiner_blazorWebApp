@@ -372,7 +372,7 @@ namespace ExaminerB.Services2Backend
                 }
             catch (Exception ex)
                 {
-                Console.WriteLine ("****C10 : \n" + ex.ToString ());
+                Console.WriteLine ("****BE: Read_StudentsByGCEMSIdAsync : \n" + ex.ToString ());
                 return new List<User> ();
                 }
             }
@@ -2334,7 +2334,7 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<List<Note>> Read_ExamSessionNotesAsync (int studentExamId, bool excludeReadNotes)
             {
-            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
+            //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
             List<Note> lstNotes = new List<Note> ();
             string sql = "dbo.sp_ReadExamSessionNotes";
             string? connString = _config.GetConnectionString ("cnni");
@@ -2349,12 +2349,12 @@ namespace ExaminerB.Services2Backend
                 {
                 Note note = new Note ();
                 note.NoteId = reader.GetInt32 (0);
-                note.ParentId = reader.GetInt32 (1);
-                note.ParentType = reader.GetInt32 (2);
-                note.NoteDatum = reader.GetString (3);
+                note.ReferenceId = reader.GetInt32 (1);
+                note.ReferenceType = reader.GetInt32 (2);
+                note.NoteDateTime = reader.GetString (3);
                 note.NoteText = reader.GetString (4);
                 note.NoteTags = reader.GetInt32 (5);
-                note.ParentName = reader.GetString (6);
+                note.ReferenceName = reader.GetString (6);
                 lstNotes.Add (note);
                 }
             await cnn.CloseAsync ();
@@ -3214,9 +3214,9 @@ namespace ExaminerB.Services2Backend
                 {
                 sql = "dbo.sp_ReadChats";
                 using SqlCommand cmd2 = new (sql, cnn);
-                cmd1.CommandType = CommandType.StoredProcedure;
-                cmd2.Parameters.AddWithValue ("@meId", studentId);
-                cmd2.Parameters.AddWithValue ("@mateId", mateId);
+                cmd2.CommandType = CommandType.StoredProcedure;
+                cmd2.Parameters.AddWithValue ("@meid", studentId);
+                cmd2.Parameters.AddWithValue ("@mateid", mateId);
                 using SqlDataReader reader2 = await cmd2.ExecuteReaderAsync ();
                 while (await reader2.ReadAsync ())
                     {
@@ -3336,7 +3336,7 @@ namespace ExaminerB.Services2Backend
             await cnn.CloseAsync ();
             return i;
             }
-        public async Task<List<Chatroom>> Read_ChatroomsAsync (int userId, string mode)
+        public async Task<List<Chatroom>> Read_ChatroomsAsync ()
             {
             string sql = "dbo.sp_ReadChatrooms";
             List<Chatroom> lstChatrooms = new List<Chatroom> ();
@@ -3345,7 +3345,6 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@userid", userId);
             SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             while (await reader.ReadAsync ())
                 {
@@ -3622,7 +3621,7 @@ namespace ExaminerB.Services2Backend
                 {
                 foreach (Subproject subprj in lstSubprojects)
                     {
-                    subprj.Notes = await Read_NotesAsync (subprj.SubprojectId, 2); //2:read SP notes (parentTypes> 1:U 2:SP 3:S 4:G 5:C 6:E)
+                    subprj.Notes = await Read_NotesAsync (subprj.SubprojectId, 2); //2(s) or 12(t) ? 
                     }
                 }
             return lstSubprojects;
@@ -3704,18 +3703,19 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             SqlCommand cmd2 = new SqlCommand (sql, cnn);
             cmd2.CommandType = CommandType.StoredProcedure;
-            cmd2.Parameters.AddWithValue ("@parentid", note.ParentId);
-            cmd2.Parameters.AddWithValue ("@parenttype", note.ParentType);
-            cmd2.Parameters.AddWithValue ("@notedatum", note.NoteDatum);
+            cmd2.Parameters.AddWithValue ("@referenceid", note.ReferenceId);
+            cmd2.Parameters.AddWithValue ("@referencetype", note.ReferenceType);
+            cmd2.Parameters.AddWithValue ("@NoteDateTime", note.NoteDateTime);
             cmd2.Parameters.AddWithValue ("@notetext", note.NoteText);
-            cmd2.Parameters.AddWithValue ("@notetags", note.NoteTags); //1:rtl 2:done 4:shared 8:readonly 16:S-Note?
+            cmd2.Parameters.AddWithValue ("@notetags", note.NoteTags); //1:rtl 2:done 4:shared 8:readonly
+            cmd2.Parameters.AddWithValue ("@creatorid", note.CreatorId);
             await cmd2.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
             return 1;
             }
-        public async Task<List<Note>> Read_NotesAsync (int parentId, int parentType)
+        public async Task<List<Note>> Read_NotesAsync (int referenceId, int referenceType)
             {
-            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
+            //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
             string sql = "dbo.sp_ReadNotes";
             List<Note> lstNotes = new List<Note> ();
             string? connString = _config.GetConnectionString ("cnni");
@@ -3723,26 +3723,27 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@parenttype", parentType);
-            cmd.Parameters.AddWithValue ("@parentid", parentId);
+            cmd.Parameters.AddWithValue ("@referenceid", referenceId);
+            cmd.Parameters.AddWithValue ("@referencetype", referenceType);
             SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             lstNotes.Clear ();
             while (await reader.ReadAsync ())
                 {
                 Note note = new Note ();
                 note.NoteId = reader.GetInt32 (0);
-                note.ParentId = reader.GetInt32 (1);
-                note.ParentType = reader.GetInt32 (2);
-                note.NoteDatum = reader.GetString (3);
+                note.ReferenceId = reader.GetInt32 (1);
+                note.ReferenceType = reader.GetInt32 (2);
+                note.NoteDateTime = reader.GetString (3);
                 note.NoteText = reader.GetString (4);
-                note.NoteTags = reader.GetInt32 (5);
-                note.ParentName = reader.GetString (6);
+                note.CreatorId = reader.GetInt32 (5);
+                note.NoteTags = reader.GetInt32 (6);
+                note.ReferenceName = reader.GetString (7);
                 lstNotes.Add (note);
                 }
             await cnn.CloseAsync ();
             return lstNotes;
             }
-        public async Task<List<Note>> Read_NotesBySearchKeyAsync (string searchKey, int parentId, string mode)
+        public async Task<List<Note>> Read_NotesBySearchKeyAsync (string searchKey, int parentId, int mode)
             {
             searchKey = "%" + searchKey + "%";
             List<Note> lstNotes = new List<Note> ();
@@ -3753,20 +3754,21 @@ namespace ExaminerB.Services2Backend
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@keyword", searchKey);
-            cmd.Parameters.AddWithValue ("@parentid", parentId);
-            cmd.Parameters.AddWithValue ("@mode", mode);
+            cmd.Parameters.AddWithValue ("@referenceid", parentId);
+            cmd.Parameters.AddWithValue ("@referencetype", mode);
             SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             lstNotes.Clear ();
             while (await reader.ReadAsync ())
                 {
                 Note note = new Note ();
                 note.NoteId = reader.GetInt32 (0);
-                note.ParentId = reader.GetInt32 (1);
-                note.ParentType = reader.GetInt32 (2);
-                note.NoteDatum = reader.GetString (3);
+                note.ReferenceId = reader.GetInt32 (1);
+                note.ReferenceType = reader.GetInt32 (2);
+                note.NoteDateTime = reader.GetString (3);
                 note.NoteText = reader.GetString (4);
-                note.NoteTags = reader.GetInt32 (5);
-                note.ParentName = reader.GetString (6);
+                note.CreatorId = reader.GetInt32 (5);
+                note.NoteTags = reader.GetInt32 (6);
+                note.ReferenceName = reader.GetString (7);
                 lstNotes.Add (note);
                 }
             await cnn.CloseAsync ();
@@ -3786,12 +3788,13 @@ namespace ExaminerB.Services2Backend
             while (await reader.ReadAsync ())
                 {
                 note.NoteId = reader.GetInt32 (0);
-                note.ParentId = reader.GetInt32 (1);
-                note.ParentType = reader.GetInt32 (2);
-                note.NoteDatum = reader.GetString (3);
+                note.ReferenceId = reader.GetInt32 (1);
+                note.ReferenceType = reader.GetInt32 (2);
+                note.NoteDateTime = reader.GetString (3);
                 note.NoteText = reader.GetString (4);
-                note.NoteTags = reader.GetInt32 (5);
-                note.CreatorId = reader.GetInt32 (6);
+                note.CreatorId = reader.GetInt32 (5);
+                note.NoteTags = reader.GetInt32 (6);
+                note.ReferenceName = reader.GetString (7);
                 }
             await cnn.CloseAsync ();
             return note;
@@ -3804,9 +3807,9 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@parentid", note.ParentId);
-            cmd.Parameters.AddWithValue ("@parenttype", note.ParentType);
-            cmd.Parameters.AddWithValue ("@notedatum", note.NoteDatum);
+            cmd.Parameters.AddWithValue ("@referenceid", note.ReferenceId);
+            cmd.Parameters.AddWithValue ("@referencetype", note.ReferenceType);
+            cmd.Parameters.AddWithValue ("@NoteDateTime", note.NoteDateTime);
             cmd.Parameters.AddWithValue ("@notetext", note.NoteText);
             cmd.Parameters.AddWithValue ("@notetags", note.NoteTags); //1:rtl 2:done 4:shared 8:readonly
             cmd.Parameters.AddWithValue ("@noteid", note.NoteId);
@@ -3822,8 +3825,8 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@parentid", note.ParentId);
-            cmd.Parameters.AddWithValue ("@parenttype", note.ParentType);
+            cmd.Parameters.AddWithValue ("@referenceid", note.ReferenceId);
+            cmd.Parameters.AddWithValue ("@referencetype", note.ReferenceType);
             cmd.Parameters.AddWithValue ("@noteid", note.NoteId);
             await cmd.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
@@ -3831,15 +3834,15 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Delete_NotesAsync (int parentId, int parentType)
             {
-            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
+            //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
             string sql = "dbo.sp_DeleteNotes";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@parenttype", parentType);
-            cmd.Parameters.AddWithValue ("@parentid", parentId);
+            cmd.Parameters.AddWithValue ("@referenceid", parentId);
+            cmd.Parameters.AddWithValue ("@referencetype", parentType);
             int i = await cmd.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
             return true;

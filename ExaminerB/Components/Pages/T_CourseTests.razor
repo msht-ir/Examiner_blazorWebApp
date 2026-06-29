@@ -471,7 +471,7 @@ else
         {
         if (intExamId <= 0)
             {
-            Snackbar.Add("select an exam", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select an exam", Severity.Info); 
                                                            //await JS.InvokeVoidAsync ("alert", "");
             }
         else
@@ -505,7 +505,7 @@ else
             }
         else
             {
-            Snackbar.Add("select an exam", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select an exam", Severity.Info); 
                                                            //await JS.InvokeVoidAsync ("alert", "");
             }
         }
@@ -557,7 +557,7 @@ else
         {
         if (WorksheetName == "")
             {
-            Snackbar.Add("select a worksheet", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select a worksheet", Severity.Warning); 
             return;
             }
         else
@@ -633,7 +633,7 @@ else
                 lstWorksheets.Clear();
                 lstCourseTests.Clear();
                 lstCourseTests = await feService.Read_TestsByCourseId(Convert.ToInt32(appState.CourseId), intPageNumber, false);
-                Snackbar.Add("data imported", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("data imported", Severity.Success); 
                 _hasFetched = true;
                 appState.SetCmd("");
                 }

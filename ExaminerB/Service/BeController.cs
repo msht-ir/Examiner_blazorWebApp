@@ -2,6 +2,7 @@
 using ExaminerS.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using static QRCoder.PayloadGenerator.SwissQrCode.Reference;
 using Chat = ExaminerS.Models.Chat;
 using Group = ExaminerS.Models.Group;
 
@@ -809,9 +810,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_Chatrooms")]
-        public async Task<ActionResult<List<Chatroom>>> Read_Chatrooms ([FromBody] int userId, [FromQuery] string mode)
+        public async Task<ActionResult<List<Chatroom>>> Read_Chatrooms ()
             {
-            var result = await _BeService.Read_ChatroomsAsync (userId, mode);
+            var result = await _BeService.Read_ChatroomsAsync ();
             return Ok (result);
             }
         [HttpPost ("Update_Chatroom")]
@@ -931,15 +932,15 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_Notes")]
-        public async Task<ActionResult<List<Note>>> Read_Notes ([FromBody] int parentId, int parentType)
+        public async Task<ActionResult<List<Note>>> Read_Notes ([FromBody] int referenceId, int referenceType)
             {
-            var result = await _BeService.Read_NotesAsync (parentId, parentType);
+            var result = await _BeService.Read_NotesAsync (referenceId, referenceType);
             return Ok (result);
             }
         [HttpPost ("Read_NotesBySearchKey")]
-        public async Task<ActionResult<List<Note>>> Read_NotesBySearchKey ([FromBody] int parentId, [FromQuery] string searchKey, [FromQuery] string mode)
+        public async Task<ActionResult<List<Note>>> Read_NotesBySearchKey ([FromBody] int referenceId, [FromQuery] string searchKey, [FromQuery] int mode)
             {
-            var result = await _BeService.Read_NotesBySearchKeyAsync (searchKey, parentId, mode);
+            var result = await _BeService.Read_NotesBySearchKeyAsync (searchKey, referenceId, mode);
             return Ok (result);
             }
         [HttpPost ("Read_Note")]
@@ -961,9 +962,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Delete_Notes")]
-        public async Task<ActionResult<bool>> Delete_Notes ([FromBody] int parentId, [FromQuery] int parentType)
+        public async Task<ActionResult<bool>> Delete_Notes ([FromBody] int referenceId, [FromQuery] int referenceType)
             {
-            var result = await _BeService.Delete_NotesAsync (parentId, parentType);
+            var result = await _BeService.Delete_NotesAsync (referenceId, referenceType);
             return Ok (result);
             }
         [HttpPost ("Delete_Note")]

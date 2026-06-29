@@ -721,7 +721,7 @@ else
         {
         if (intExamId <= 0)
             {
-            Snackbar.Add("select an exam", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select an exam", Severity.Info); 
             //await JS.InvokeVoidAsync ("alert", "");            
             }
         else
@@ -755,7 +755,7 @@ else
             }
         else
             {
-            Snackbar.Add("select an exam", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select an exam", Severity.Info); 
             //await JS.InvokeVoidAsync ("alert", "");            
             }
         }
@@ -763,17 +763,17 @@ else
         {
         BtnShowAnswers ();
         appState.SetCmd ("studentexamtestsraw");
-        Snackbar.Add("raw sheet", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        Snackbar.Add("raw sheet", Severity.Info); 
         }
     public async Task BtnShowStudentAnswers()
         {
         appState.SetCmd ("studentexamtestsanswers");
-        Snackbar.Add("student sheet", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        Snackbar.Add("student sheet", Severity.Info); 
         }
     public async Task BtnShowTestKeys()
         {
         appState.SetCmd ("studentexamtests");
-        Snackbar.Add("keys", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+        Snackbar.Add("keys", Severity.Info); 
         }
     public void BtnBack()
         {

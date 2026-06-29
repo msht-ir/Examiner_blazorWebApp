@@ -57,7 +57,7 @@ else
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:whitesmoke;">
                                         <span class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold; font-size:smaller;margin:0px; ">
-                                        @PersianDate(notex.NoteDatum)
+                                        @PersianDate(notex.NoteDateTime)
                                         </span>
                                     <hr />
                                         <div style="white-space: pre-wrap; font-weight:normal; font-family:'Segoe UI';font-size:small">
@@ -145,7 +145,7 @@ else
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:whitesmoke;">
                                         <span class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;font-size:smaller;margin:0px;">
-                                        @PersianDate(notex.NoteDatum)
+                                        @PersianDate(notex.NoteDateTime)
                                         </span>
                                     <hr />
                                         <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
@@ -335,11 +335,11 @@ else
         {
         if (subprojectId > 0)
             {
-            Note _note = new Note { NoteId = noteid, ParentType = 3, ParentId = subprojectId };
+            Note _note = new Note { NoteId = noteid, ReferenceType = 3, ReferenceId = subprojectId };
             bool result = await feService.Update_NoteParent(_note);
             if (result)
                 {
-                Snackbar.Add("note moved to notebook", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("note moved to notebook", Severity.Success); 
                 _cmd = "";
                 appState.SetCmd("");
                 lstNotes = await feService.Read_Notes(Id, mode);
@@ -347,12 +347,12 @@ else
                 }
             else
                 {
-                Snackbar.Add("failed", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed", Severity.Warning); 
                 }
             }
         else
             {
-            Snackbar.Add("select notebook and section", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select notebook and section", Severity.Info); 
             }
         }
     private void BtnCancel ()
@@ -380,9 +380,9 @@ else
     //methods
     public async Task CreateNote ()
         {
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
-        appState.SetNoteParentType(1);
-        appState.SetNoteParentId(Convert.ToInt32(appState.UserId));
+        //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
+        appState.SetNoteReferenceType(1);
+        appState.SetNoteReferenceId(Convert.ToInt32(appState.UserId));
         appState.SetCmd("CreateNote");
         StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
@@ -391,12 +391,12 @@ else
     public async Task BtnShowNoteInDialog (Note note)
         {
         appState.SetSelectedNoteId(note.NoteId);
-        appState.SetNoteDatum(note.NoteDatum);
+        appState.SetNoteDateTime(note.NoteDateTime);
         appState.SetNoteText(note.NoteText);
         appState.SetNoteIsRtl(note.IsRtl);
-        appState.SetNoteParentId(note.ParentId);
-        appState.SetNoteParentType(note.ParentType);
-        appState.SetNoteParentName(note.ParentName);
+        appState.SetNoteReferenceId(note.ReferenceId);
+        appState.SetNoteReferenceType(note.ReferenceType);
+        appState.SetNoteReferenceName(note.ReferenceName);
         appState.SetCmd("ShowNoteInDialog");
         StateHasChanged();
         //After the Modal_ShowNote is closed, HandleModalClose will refresh the list
@@ -405,12 +405,12 @@ else
     public async Task BtnEditNoteInDialog (Note note)
         {
         appState.SetSelectedNoteId(note.NoteId);
-        appState.SetNoteDatum(note.NoteDatum);
+        appState.SetNoteDateTime(note.NoteDateTime);
         appState.SetNoteText(note.NoteText);
         appState.SetNoteIsRtl(note.IsRtl);
-        appState.SetNoteParentId(note.ParentId);
-        appState.SetNoteParentType(note.ParentType);
-        appState.SetNoteParentName(note.ParentName);
+        appState.SetNoteReferenceId(note.ReferenceId);
+        appState.SetNoteReferenceType(note.ReferenceType);
+        appState.SetNoteReferenceName(note.ReferenceName);
         appState.SetCmd("UpdateNote");
         StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
@@ -425,7 +425,7 @@ else
             bool result = await feService.Delete_Note(noteId);
             if (result)
                 {
-                Snackbar.Add($"deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"deleted", Severity.Warning); 
                 user.UserId = Convert.ToInt32(appState.UserId);
                 _hasFetched = false;
                 lstNotes.Clear();
@@ -436,7 +436,7 @@ else
                 }
             else
                 {
-                Snackbar.Add($"Failed to delete note!", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"Failed to delete note!", Severity.Error); 
                 }
             }
         }

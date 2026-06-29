@@ -484,10 +484,10 @@ namespace ExaminerS.Models
     public class Note
         {
         public int NoteId { get; set; } = 0;
-        public int ParentId { get; set; } = 0;
-        public int ParentType { get; set; } = 0; //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:examstudents(ES)
-        public string ParentName { get; set; } = "";
-        public string NoteDatum { get; set; } = "";
+        public int ReferenceId { get; set; } = 0;
+        public int ReferenceType { get; set; } = 0; //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
+        public string ReferenceName { get; set; } = "";
+        public string NoteDateTime { get; set; } = "";
         public string NoteText { get; set; } = "";
         public int NoteTags { get; set; } = 0; //1:rtl 2:done 3:shared 4:readonly 
         public bool IsRtl
@@ -499,6 +499,39 @@ namespace ExaminerS.Models
                     NoteTags |= 1;
                 else
                     NoteTags &= ~1;
+                }
+            }
+        public bool IsDone
+            {
+            get => (NoteTags & 2) == 2;
+            set
+                {
+                if (value)
+                    NoteTags |= 2;
+                else
+                    NoteTags &= ~2;
+                }
+            }
+        public bool IsShared
+            {
+            get => (NoteTags & 4) == 4;
+            set
+                {
+                if (value)
+                    NoteTags |= 4;
+                else
+                    NoteTags &= ~4;
+                }
+            }
+        public bool IsReadonly
+            {
+            get => (NoteTags & 8) == 8;
+            set
+                {
+                if (value)
+                    NoteTags |= 8;
+                else
+                    NoteTags &= ~8;
                 }
             }
         public int CreatorId { get; set; } = 0;

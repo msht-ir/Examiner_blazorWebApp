@@ -92,7 +92,7 @@ else
     @if (user.UserRole == "teacher")
         {
         <div class="accordion" id="accordionStudent" style="margin: 0 auto;">
-            @* --- STUDENT Messages *@
+            @* --- STUDENT Notes *@
             <div class="accordion-item mb-2">
                     <h4 class="accordion-header">
                         <button class="accordion-button @(appState.Cmd=="ShowCourseFolders" ? "" : "collapsed")"
@@ -107,7 +107,7 @@ else
                 <div id="CollapseId2" class="accordion-collapse collapse" data-bs-parent="#accordionStudent" style="text-align:center;">
                         <div class="accordion-body" style="background-color:white">
                         <button class="btn btn-link" style="margin-left:1px; text-align:center;" Title="add note about this student" @onclick='() => BtnCreateNote(Id, "S")'>
-                            <img src="/img/icoNewNote1.png" width="28" />
+                            <img src="/img/icoNewNote3.png" width="32" />
                         </button>
 
                             @foreach (Note notex in lstNotes)
@@ -119,7 +119,7 @@ else
                                             <MudCard Class="mx-0">
                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                     <span style="color:indianred; font-weight:bold;">
-                                                        @notex.NoteDatum
+                                                        @PersianDate(notex.NoteDateTime)
                                                     </span>
                                                     <hr />
                                                     <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
@@ -133,7 +133,7 @@ else
                                                             }
                                                     </div>
                                                     <button class="btn btn-link" @onclick="() => BtnShowNoteInDialog(notex)">
-                                                        <img src="/img/icoNote2.png" width="24" />
+                                                    <img src="/img/icoNoteReport.png" width="24" />
                                                     </button>
                                                     <button class="btn btn-link" @onclick="() => BtnDeleteNote(notex.NoteId)">
                                                         <img src="/img/icoDelete1.png" width="24" />
@@ -150,7 +150,7 @@ else
                                             <MudCard Class="mx-0">
                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                     <span style="color:indianred; font-weight:bold;">
-                                                        @notex.NoteDatum
+                                                        @PersianDate(notex.NoteDateTime)
                                                     </span>
                                                     <hr />
                                                     <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
@@ -164,7 +164,7 @@ else
                                                             }
                                                     </div>
                                                     <button class="btn btn-link" @onclick="() => BtnShowNoteInDialog(notex)">
-                                                        <img src="/img/icoNote2.png" width="24" />
+                                                    <img src="/img/icoNoteReport.png" width="24" />
                                                     </button>
                                                     <button class="btn btn-link" @onclick="() => BtnDeleteNote(notex.NoteId)">
                                                         <img src="/img/icoDelete1.png" width="24" />
@@ -578,10 +578,10 @@ else
         }
     private async Task BtnCreateNote (int Id, string mode)
         {
-        //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
+        //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
         if (Id > 0)
             {
-            int? parentType = mode.ToLower() switch
+            int? referenceType = mode.ToLower() switch
                 {
                     "u" => 1,
                     "sp" => 2,
@@ -591,10 +591,10 @@ else
                     "e" => 6,
                     _ => null
                     };
-            if (parentType.HasValue)
+            if (referenceType.HasValue)
                 {
-                appState.SetNoteParentId(Id);
-                appState.SetNoteParentType(parentType.Value);
+                appState.SetNoteReferenceId(Id);
+                appState.SetNoteReferenceType(referenceType.Value);
                 appState.SetCmd("CreateNote");
                 StateHasChanged();
                 }
@@ -609,7 +609,7 @@ else
                     "e" => "select a Course, then select an Exam",
                     _ => null
                     };
-            Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"{itemx}", Severity.Info); 
             }
         }
     //convert date
@@ -635,13 +635,12 @@ else
         else
             {
             lstStudentMessages.Clear();
-            //old code (reads all student messages): lstStudentMessages = await feService.Read_StudentMessages (Id, "ByStudentIdIgnoreDeletedMessages");
             StudentMessage studentMessage = await feService.Read_StudentMessage (Convert.ToInt32(appState.StudentMessageId));
             lstStudentMessages.Add (studentMessage);
             //if role=student: automatically call BtnCalcPercentsForMessage() for that one message!
             await BtnCalcPercentsForMessage(studentMessage);
             }
-        int parentType = mode switch
+        int referenceType = mode switch
             {
             "U" => 1,
             "SP" => 2,
@@ -651,29 +650,29 @@ else
             "E" => 6,
             _ => 0
             };
-        if ((parentType > 0) & (user.UserRole == "teacher"))
+        if ((referenceType > 0) & (user.UserRole == "teacher"))
             {
-            lstNotes = await feService.Read_Notes (Id, parentType);
+            lstNotes = await feService.Read_Notes(Id, referenceType);
             }
         }
     public async Task BtnShowNoteInDialog(Note note)
         {
         appState.SetCmd("ShowNoteInDialog");
         appState.SetSelectedNoteId (note.NoteId);
-        appState.SetNoteDatum (note.NoteDatum);
+        appState.SetNoteDateTime (note.NoteDateTime);
         appState.SetNoteText (note.NoteText);
         appState.SetNoteIsRtl (note.IsRtl);
-        appState.SetNoteParentType (note.ParentType);
-        appState.SetNoteParentId (note.ParentId);
-        appState.SetNoteParentName (note.ParentName);
+        appState.SetNoteReferenceType(note.ReferenceType);
+        appState.SetNoteReferenceId (note.ReferenceId);
+        appState.SetNoteReferenceName(note.ReferenceName);
         StateHasChanged ();
         }
     public async Task BtnEditNoteInDialog(Note note)
         {
         appState.SetSelectedNoteId (note.NoteId);
-        appState.SetNoteParentId (note.ParentId);
-        appState.SetNoteParentType (note.ParentType);
-        appState.SetNoteDatum (note.NoteDatum);
+        appState.SetNoteReferenceId (note.ReferenceId);
+        appState.SetNoteReferenceType(note.ReferenceType);
+        appState.SetNoteDateTime (note.NoteDateTime);
         appState.SetNoteText (note.NoteText);
         appState.SetNoteIsRtl (note.IsRtl);
         appState.SetCmd ("UpdateNote");
@@ -685,13 +684,13 @@ else
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> note permanently?<br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
 
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "confirm", markupMessage: message, yesText: "Delete!", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "confirm", markupMessage: message, yesText: "Delete", cancelText: "No");
         if (confirmResult == true)
             {
             bool result = await feService.Delete_Note (noteId);
             if(result)
                 {
-                Snackbar.Add($"deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"deleted", Severity.Warning); 
                 user.UserId = Convert.ToInt32(appState.UserId);
                 _hasFetched = false;
                 await GetListOfMessagesAndNotes ();
@@ -701,7 +700,7 @@ else
                 }
             else
                 {
-                Snackbar.Add($"failed to delete note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"failed to delete note", Severity.Error); 
                 }
             }
         }

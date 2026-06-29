@@ -21,14 +21,14 @@
                     @ChildContent
                         <div class="mt-3">
                             <span style="color:royalblue; font-weight:bold;">
-                            @appState.NoteParentName
+                            @appState.NoteReferenceName
                             </span>
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:whitesmoke;">
                                     @* <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Margin="Margin.Dense" /> *@
-                                    <div class="d-flex gap-4 mb-3">
-                                        <MudDatePicker Label="Calendar"
+                                        <div class="d-flex gap-4 mb-3">
+                                        <MudDatePicker Label="date"
                                                        @bind-Date="_date"
                                                        Culture="@_persianCulture"
                                                        DateFormat="yyyy-MM-dd"
@@ -36,13 +36,13 @@
                                                        Elevation="12"
                                                        Margin="Margin.Dense"
                                                        Modal="true" />
-                                        <MudTimePicker Label="Time"
+                                        <MudTimePicker Label="time"
                                                        @bind-Time="_time"
                                                        TimeFormat="HH:mm"
                                                        Variant="Variant.Text"
                                                        PickerVariant="PickerVariant.Dialog"
                                                        Dense="true" />
-                                    </div>
+                                        </div>
 
                                     <MudTextField T="string"
                                                   Label="@($"{note.NoteText?.Length ?? 0} / 4000")"
@@ -146,20 +146,23 @@
             {
             Navman.NavigateTo("/Login");
             }
+        //share edit and new modes
+        note.ReferenceId = Convert.ToInt32(appState.NoteReferenceId);
+        note.ReferenceType = Convert.ToInt32(appState.NoteReferenceType);
+        note.CreatorId = Convert.ToInt32(appState.UserId);
+        //for edit mode
         if (appState.Cmd == "UpdateNote")
             {
-            _PersianYear = Convert.ToInt32(appState.NoteDatum.Substring(0, 4));
-            _PersianMonth = Convert.ToInt32(appState.NoteDatum.Substring(5, 2));
-            _PersianDay = Convert.ToInt32(appState.NoteDatum.Substring(8, 2));
-            _Hour = Convert.ToInt32(appState.NoteDatum.Substring(11, 2));
-            _Minute = Convert.ToInt32(appState.NoteDatum.Substring(14, 2));
+            //DT
+            _PersianYear = Convert.ToInt32(appState.NoteDateTime.Substring(0, 4));
+            _PersianMonth = Convert.ToInt32(appState.NoteDateTime.Substring(5, 2));
+            _PersianDay = Convert.ToInt32(appState.NoteDateTime.Substring(8, 2));
+            _Hour = Convert.ToInt32(appState.NoteDateTime.Substring(11, 2));
+            _Minute = Convert.ToInt32(appState.NoteDateTime.Substring(14, 2));
             _date = Convert.ToDateTime($"{_PersianYear}/{_PersianMonth}/{_PersianDay} {_Hour}:{_Minute}");
             _time = TimeSpan.Parse($"{_Hour}:{_Minute}");
             note.NoteText = appState.NoteText ?? "";
             note.IsRtl = Convert.ToBoolean(appState.NoteIsRtl);
-            note.ParentId = Convert.ToInt32(appState.NoteParentId);
-            note.ParentType = Convert.ToInt32(appState.NoteParentType);
-            note.ParentType = Convert.ToInt32(appState.NoteParentType);
             }
         _persianCulture = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? new CultureInfo("fa-IR") : new CultureInfo("en-US");
         _hasFetched = true;
@@ -191,73 +194,63 @@
         {
         if (note.NoteText.Trim() == "")
             {
-            Snackbar.Add("note is empty!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("note is empty!", Severity.Info);
             return;
             }
         else
             {
-            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
-            note.ParentId = Convert.ToInt32(appState.NoteParentId);
-            note.ParentType = Convert.ToInt32(appState.NoteParentType);
+            //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
             DateTime _dt = _date.Value.Date + _time.Value;
-            note.NoteDatum = _dt.ToString("yyyy-MM-dd HH:mm");
-            if (note.ParentType == 7)
-                {
-                note.NoteTags |= 16;
-                }
+            note.NoteDateTime = _dt.ToString("yyyy-MM-dd HH:mm");
             _hasFetched = false;
             int result = await feService.Create_Note(note);
             if (result > 0)
                 {
-                Snackbar.Add("saved", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("saved", Severity.Success);
                 user.UserId = Convert.ToInt32(appState.UserId);
                 appState.SetCmd("");
                 await Close();
                 }
             else
                 {
-                Snackbar.Add("failed to save note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed to save note", Severity.Error);
                 }
             _hasFetched = true;
             }
         }
     public async Task BtnUpdateNote ()
         {
-        if (note.ParentId == 0)
+        if (note.ReferenceId == 0)
             {
-            Snackbar.Add("failed... try again", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("failed... try again", Severity.Error);
             return;
             }
         if (note.NoteText.Trim() == "")
             {
-            Snackbar.Add("note is empty", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("note is empty", Severity.Info);
             return;
             }
         else
             {
-            //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
+            //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
             note.NoteId = Convert.ToInt32(appState.SelectedNoteId);
-            note.ParentId = Convert.ToInt32(appState.NoteParentId);
-            note.ParentType = Convert.ToInt32(appState.NoteParentType);
+            note.ReferenceId = Convert.ToInt32(appState.NoteReferenceId);
+            note.ReferenceType = Convert.ToInt32(appState.NoteReferenceType);
             DateTime _dt = _date.Value.Date + _time.Value;
-            note.NoteDatum = _dt.ToString("yyyy-MM-dd HH:mm");
+            note.NoteDateTime = _dt.ToString("yyyy-MM-dd HH:mm");
             //not neccessary, but just to ensure everything is ok:
-            if (note.ParentType == 7)
-                {
-                note.NoteTags |= 16;
-                }
             _hasFetched = false;
             bool result = await feService.Update_Note(note);
             if (result)
                 {
-                Snackbar.Add("updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("updated", Severity.Success);
                 user.UserId = Convert.ToInt32(appState.UserId);
                 appState.SetCmd("");
                 await Close();
                 }
             else
                 {
-                Snackbar.Add("failed to update note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed to update note", Severity.Error);
                 }
             _hasFetched = true;
             }

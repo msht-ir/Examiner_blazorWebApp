@@ -6,7 +6,7 @@
 
 @if (IsOpen)
 {
-    noteDatum = appState.NoteDatum;
+    NoteDateTime = appState.NoteDateTime;
     noteText = appState.NoteText;
     Title = "notes";
     <div class="modal-backdrop fade show"></div>
@@ -15,9 +15,9 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h6 class="modal-title">
-                        <span style="text-align:center;color:royalblue; font-weight:normal;">@appState.NoteParentName</span>
+                        <span style="text-align:center;color:royalblue; font-weight:normal;">@appState.NoteReferenceName</span>
                         <br />
-                        <span style="text-align:center; color:indianred; font-weight:normal;">@noteDatum</span>
+                        <span style="text-align:center; color:indianred; font-weight:normal;">@NoteDateTime</span>
                     </h6>
                 </div>
                 <div class="modal-body">
@@ -90,7 +90,7 @@
     [Parameter] public EventCallback OnClose { get; set; }
     string _cmd = "";
     public bool IsOpen { get; set; } = true;
-    string noteDatum = "";
+    string NoteDateTime = "";
     string noteText = "";
     bool needEdit = false;
     public void Open() => IsOpen = true;
@@ -129,12 +129,12 @@
             bool result = await feService.Delete_Note (noteId);
             if(result)
                 {
-                Snackbar.Add($"deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"deleted", Severity.Warning); 
                 Close ();
                 }
             else
                 {
-                Snackbar.Add($"failed to delete note", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"failed to delete note", Severity.Error); 
                 }
             }
         }

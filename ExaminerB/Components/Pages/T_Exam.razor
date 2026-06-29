@@ -433,14 +433,14 @@ else
         {
         if (cboCourseTopicId == 0)
             {
-            Snackbar.Add("select a topic!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select a topic!", Severity.Info); 
             }
         else
             {
             if (sliderTestsLevelFrom > sliderTestsLevelTo)
                 {
                 sliderTestsLevelFrom = sliderTestsLevelTo;
-                Snackbar.Add("test levels corrected", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("test levels corrected", Severity.Warning); 
                 }
             ExamComposition examComposition = new ExamComposition() { ExamId = exam.ExamId, TopicId = cboCourseTopicId, TopicNTests = sliderTopicNTests, TestsLevelFrom = sliderTestsLevelFrom, TestsLevelTo = sliderTestsLevelTo };
             int result = await feService.Create_ExamComposition(examComposition);
@@ -448,7 +448,7 @@ else
                 {
                 lstExamCompositions.Clear();
                 lstExamCompositions = await feService.Read_ExamCompositions(examId);
-                Snackbar.Add("exam composition added", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("exam composition added", Severity.Success); 
                 appState.SetCmd("");
                 StateHasChanged();
                 }
@@ -458,21 +458,21 @@ else
         {
         if (comp.TopicId == 0)
             {
-            Snackbar.Add("Select a Topic!", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("Select a Topic!", Severity.Info); 
             }
         else
             {
             if (comp.TestsLevelFrom > comp.TestsLevelTo)
                 {
                 comp.TestsLevelFrom = comp.TestsLevelTo;
-                Snackbar.Add("test levels corrected", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("test levels corrected", Severity.Warning); 
                 }
             bool result = await feService.Update_ExamComposition(comp);
             if (result)
                 {
                 lstExamCompositions.Clear();
                 lstExamCompositions = await feService.Read_ExamCompositions(examId);
-                Snackbar.Add("Exam composition Updated!", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("Exam composition Updated!", Severity.Success); 
                 appState.SetCmd("");
                 StateHasChanged();
                 }
@@ -485,12 +485,12 @@ else
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            Snackbar.Add("Exam composition Removed!", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("Exam composition Removed!", Severity.Warning); 
             lstExamCompositions.Clear();
             bool result = await feService.Delete_ExamComposition(examCompositionId);
             if (result)
                 {
-                Snackbar.Add("exam composition deleted", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("exam composition deleted", Severity.Success); 
                 }
             lstExamCompositions = await feService.Read_ExamCompositions(examId);
             appState.SetCmd("");
@@ -498,7 +498,7 @@ else
             }
         else
             {
-            Snackbar.Add("Exam Composition was not Deleted! --- operation Canceled", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("Exam Composition was not Deleted! --- operation Canceled", Severity.Error); 
             }
         }
     private void BtnReadTestsBySearch (MouseEventArgs args)
@@ -525,7 +525,7 @@ else
                     var result2 = await feService.Create_ExamTestsByExamComposition(ec);
                     }
                 lstExamTests = await feService.Read_TestsByExamId(examId, true);
-                Snackbar.Add("Random tests added to the exam list.", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("Random tests added to the exam list.", Severity.Success); 
                 _hasFetched = true;
                 StateHasChanged();
                 }
@@ -553,7 +553,7 @@ else
         {
         if (cboCourseTestId == 0)
             {
-            Snackbar.Add("Select a Test", severity: Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("Select a Test", severity: Severity.Info); 
             //await JS.InvokeVoidAsync ("alert", "\n");
             }
         else
@@ -562,7 +562,7 @@ else
             int result = await feService.Create_ExamTest(examTest);
             lstExamTests.Clear();
             lstExamTests = await feService.Read_TestsByExamId(examId, true);
-            Snackbar.Add("Test added to the exam list", severity: Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("Test added to the exam list", severity: Severity.Success); 
             appState.SetCmd("");
             StateHasChanged();
             }
@@ -582,7 +582,7 @@ else
             bool result = await feService.Delete_ExamTest(examTest);
             if (result)
                 {
-                Snackbar.Add("Test removed from the exam list", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("Test removed from the exam list", Severity.Warning); 
                 lstExamTests.Clear();
                 lstExamTests = await feService.Read_TestsByExamId(examId, true);
                 appState.SetCmd("");

@@ -272,12 +272,13 @@ else
             {
             @foreach (var studentExam in lstStudentsExam)
                 {
-                //create note (parentType=8)  //parentTypes 1:user(U) 2:subprojects(SP) 3:students(S) 4:groups(G) 5:courses(C) 6:exams(E) 7:studentnotes(SN) 8:studentexam(SE)
+                //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
                 Note note = new Note();
-                note.ParentId = studentExam.StudentExamId;
-                note.ParentType = 8;
-                note.NoteDatum = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+                note.ReferenceId = studentExam.StudentExamId;
+                note.ReferenceType = 8;
+                note.NoteDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
                 note.NoteText = _txtNewExamSessionNote;
+                note.CreatorId = Convert.ToInt32 (appState.UserId);
                 int result = await feService.Create_Note(note);
                 }
             Snackbar.Add($"message injected to Exam Session", Severity.Info);
@@ -320,7 +321,7 @@ else
             if (DateTime.Now > _examDateTimeFinish)
                 {
                 //exam has finished
-                Snackbar.Add($"exam is finished", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"exam is finished", Severity.Error); 
                 }
             else if (DateTime.Now < _examDateTimeStart)
                 {
@@ -336,11 +337,11 @@ else
                 TimeSpan _ts = _examDateTimeFinish - DateTime.Now;
                 if (DateTime.Now > _examDateTimeFinish.AddMinutes(-3))
                     {
-                    Snackbar.Add($"{_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} (to finish)", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                    Snackbar.Add($"{_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} (to finish)", Severity.Warning); 
                     }
                 else
                     {
-                    Snackbar.Add($"  {_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} (to finish)", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                    Snackbar.Add($"  {_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} (to finish)", Severity.Info); 
                     }
                 }
             }
@@ -371,7 +372,7 @@ else
                     "m" => "select a Mesage from list",
                     _ => null
                     };
-            Snackbar.Add($"{itemx}", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"{itemx}", Severity.Info); 
             }
         }
     private void BtnCancel ()

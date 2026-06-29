@@ -423,7 +423,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to create course", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed to create course", Severity.Error); 
             }
         }
     public void BtnEditCourse (int courseId)
@@ -443,7 +443,7 @@ else
             }
         else
             {
-            Snackbar.Add("failed to update course name", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("failed to update course name", Severity.Warning); 
             //await JS.InvokeVoidAsync ("alert", "Course name did not changed --- process failed");
             }
         }
@@ -501,7 +501,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to create course topic", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed to create course topic", Severity.Error); 
             }
         }
     public async Task BtnUpdateCourseTopic (CourseTopic courseTopic)
@@ -559,7 +559,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to save course folder", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"failed to save course folder", Severity.Error); 
             }
         appState.SetCourseId(courseId);
         _hasFetched = true;

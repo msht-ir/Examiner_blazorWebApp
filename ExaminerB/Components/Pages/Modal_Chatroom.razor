@@ -250,7 +250,7 @@
             bool result = await feService.Delete_ChatroomPost(chatroomPostId);
             if (result)
                 {
-                Snackbar.Add($"deleted", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"deleted", Severity.Info); 
                 _hasFetched = false;
                 await ReadChatroomPosts();
                 StateHasChanged();
@@ -258,7 +258,7 @@
                 }
             else
                 {
-                Snackbar.Add($"failed to delete chat", Severity.Error); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add($"failed to delete chat", Severity.Error); 
                 }
             }
         }

@@ -305,7 +305,7 @@ else
         bool results = await feService.Update_Test (test);
         if (results)
             {
-            Snackbar.Add("test updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("test updated", Severity.Success); 
             StateHasChanged ();
             }
         }
@@ -315,7 +315,7 @@ else
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            Snackbar.Add("updated", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("updated", Severity.Success); 
             BtnBack ();            
             }
         }
@@ -368,7 +368,7 @@ else
         if (confirmResult == true)
             {
             bool result = await feService.Delete_TestOption (testOptionId);
-            Snackbar.Add("deleted", Severity.Warning); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("deleted", Severity.Warning); 
             test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
             appState.SetCmd ("");
             StateHasChanged ();            
@@ -388,7 +388,7 @@ else
             int result = await feService.Create_ExamTest (examTest);
             if (result > 0)
                 {
-                Snackbar.Add("test added to the exam", Severity.Success); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("test added to the exam", Severity.Success); 
                 //await JS.InvokeVoidAsync ("alert", "");
                 test = await feService.Read_TestByTestId (Convert.ToInt32 (appState.TestId), true);
                 appState.SetCmd ("");
@@ -397,7 +397,7 @@ else
             }
         else
             {
-            Snackbar.Add("select an exam", Severity.Info); //Severity.Warning .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("select an exam", Severity.Info); 
             }
         }
     //Exit
