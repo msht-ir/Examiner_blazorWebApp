@@ -23,8 +23,12 @@ else
                             <div class="accordion" id="accordionIndex">
                                 <div class="accordion-item">
                                     <h4 class="accordion-header">
-                                        <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
-                                        <h5>exam info</h5>
+                                        <button class="accordion-button collapsed"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapseZero"
+                                            aria-expanded="false"
+                                            aria-controls="collapseZero">
+                                        <h6>@studentExam.ExamTitle</h6>
                                         </button>
                                     </h4>
                                     <div id="collapseZero" class="accordion-collapse collapse" data-bs-parent="#accordionIndex">
@@ -51,12 +55,21 @@ else
                                                         <h6 style="color:green">Training mode</h6>
                                                         }
                                                     <hr style="color:red" />
-                                                        <div class="d-flex align-items-center">
-                                                        <span style="font-weight:bold; margin-right:10px;">Alarm: </span>
-                                                        <MudNumericField T="int" @ref="refExamAlarm" @bind-Value="intExamAlarm" Label="min to timeout" Variant="Variant.Outlined" Min="0" Max="15" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width: 150px;padding-left:10px" />
-                                                            <button class="btn btn-link  ms-2" style="margin-right:10px;" @onclick="() => SetExamAlarm(intExamAlarm)">
-                                                            <img src="/img/icoSave2.png" width="24" />
-                                                            </button>
+                                                        <div class="flex align-content-center align-items-center justify-content-center">
+                                                        <MudNumericField T="int"
+                                                                         @ref="refExamAlarm"
+                                                                         @bind-Value="intExamAlarm"
+                                                                         Label="time-out alarm (min)"
+                                                                         Variant="Variant.Text"
+                                                                         Min="0"
+                                                                         Max="15"
+                                                                         Margin="Margin.Dense" Autocomplete="off"
+                                                                         Class="my-textfield"
+                                                                         Immediate="true"
+                                                                         Adornment="Adornment.End"
+                                                                         AdornmentIcon="@Icons.Material.Filled.Alarm"
+                                                                         OnAdornmentClick="() => SetExamAlarm(intExamAlarm)"
+                                                                         style="width: 260px;padding-left:10px;padding-right:20px" />
                                                         </div>
                                                     </MudCardContent>
                                                 </MudCard>

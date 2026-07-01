@@ -1381,9 +1381,9 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Update_NoteParent", note);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<bool> Delete_Notes (int parentId, int parentType)
+        public async Task<bool> Delete_Notes (int referenceId, int referenceType)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_Notes?parentType={parentType}", parentId);
+            var response = await _http.PostAsJsonAsync ($"api/Delete_Notes?referenceType={referenceType}", referenceId);
             return response.IsSuccessStatusCode ? true : false;
             }
         public async Task<bool> Delete_Note (int noteId)

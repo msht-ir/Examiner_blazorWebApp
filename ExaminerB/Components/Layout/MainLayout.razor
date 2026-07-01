@@ -5,7 +5,19 @@
 
 <div class="page">
     <div class="sidebar"> 
-        @if (Navman.Uri.Contains ("/S_Student"))
+        @if (Navman.Uri.Contains("/S_StudentExamTests"))
+            {
+            <NavMenuS_StudentExamTests />
+            }
+        else if (Navman.Uri.Contains("/S_StudentExamTest"))
+            {
+            <NavMenuS_StudentExamTest />
+            }
+        else if (Navman.Uri.Contains("/S_StudentCourseTest"))
+            {
+            <NavMenuS_Back2S_Student />
+            }
+        else if (Navman.Uri.Contains ("/S_Student"))
             {
             <NavMenuS_Student />
             }
@@ -20,10 +32,6 @@
         else if (Navman.Uri.Contains("/E_") && (appState.UserRole == "teacher"))
             {
             <NavMenuT_TeacherPages />
-            }
-        else if (Navman.Uri.Contains ("/S_"))
-            {
-            <NavMenuS_Back2S_Student />
             }
         else
             {

@@ -190,7 +190,7 @@ else
                                        AdornmentIcon="@Icons.Material.Filled.List"
                                        OnAdornmentClick='() => BtnReadStudents(GroupId, "G")'
                                        Style="color:royalblue;width:140px;font-size:small;">
-                                <MudSelectItem Value="0">select a group</MudSelectItem>
+                                <MudSelectItem Value="0">select</MudSelectItem>
                                 @foreach (var group in lstGroups)
                                     {
                                     <MudSelectItem Value="@group.GroupId"><span style="font-size:small;font-family:Tahoma;">@group.GroupName</span></MudSelectItem>
@@ -278,7 +278,7 @@ else
                                    AdornmentIcon="@Icons.Material.Filled.List"
                                    OnAdornmentClick='() => BtnReadStudents(CourseId, "C")'
                                    Style="color:royalblue;width:140px;font-size:small;">
-                            <MudSelectItem Value="0">select a course</MudSelectItem>
+                            <MudSelectItem Value="0">select</MudSelectItem>
                             @foreach (var course in lstCourses)
                                 {
                                 <MudSelectItem Value="@course.CourseId"><span style="font-size:small;font-family:Tahoma;">@course.CourseName</span></MudSelectItem>
@@ -382,7 +382,7 @@ else
                                    AdornmentIcon="@Icons.Material.Filled.List"
                                    OnAdornmentClick='() => BtnReadStudents(ExamId, "E")'
                                    Style="color:royalblue;font-size:small;">
-                            <MudSelectItem Value="0">select an exam</MudSelectItem>
+                            <MudSelectItem Value="0">select</MudSelectItem>
                             @foreach (var exam in lstExams)
                                 {
                                 <MudSelectItem Value="@exam.ExamId"><span style="font-size:small;font-family:Tahoma;">@(exam.ExamTitle?.Substring(0, Math.Min(25, exam.ExamTitle.Length)))</span></MudSelectItem>
@@ -543,7 +543,7 @@ else
                                            AdornmentIcon="@Icons.Material.Filled.List"
                                            OnAdornmentClick='() => BtnReadStudents(MessageId, "M")'
                                            Style="color:royalblue;width:140px;font-size:smaller;">
-                                    <MudSelectItem Value="0">select message</MudSelectItem>
+                                    <MudSelectItem Value="0">select</MudSelectItem>
                                     @foreach (var message in lstMessages)
                                         {
                                         <MudSelectItem Value="@message.MessageId"><span style="font-size:small;font-size:small;font-family:tahoma">@message.MessageTitle</span></MudSelectItem>

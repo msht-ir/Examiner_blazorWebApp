@@ -516,9 +516,11 @@
                                 } *@
                                 <div>
                                     <p style="text-align:center;font-size:x-small;">
-                                    هر دانشجو مي تواند با ايجاد يک چت روم، موضوعي را براي تبادل نظر مطرح کند
+                                    با ايجاد يک چت روم، موضوعي را براي تبادل نظر و گفتگو مطرح کنيد
                                     <br />
-                                    همه دانشجويان در همه کلاس هاي سامانه مي توانند براي تبادل نظر وارد چت روم شوند و پست بگذارند 
+                                    همه دانشجويان مي توانند براي مطالعه نظرات و تبادل نظر به چت روم وارد شوند 
+                                    <br />
+                                    توچه: 1- افراد مي توانند پست هاي خود را حذف کنند. 2- ادمين مي تواند چت روم را حذف کند
                                     <br />
                                     For collaborative discussions
                                     </p>
@@ -824,11 +826,11 @@
                     }
                 if (_newexam > 1)
                     {
-                    Snackbar.Add($"{_newexam} exams", Severity.Warning);
+                    Snackbar.Add($"{_newexam} exams", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     }
                 else if (_newexam == 1)
                     {
-                    Snackbar.Add($"1 exam", Severity.Warning);
+                    Snackbar.Add($"1 exam", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     }
                 appState.SetCmd(""); //dont repeat alerts
                 }
