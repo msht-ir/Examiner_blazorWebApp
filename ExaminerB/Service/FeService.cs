@@ -127,9 +127,9 @@ namespace ExaminerB.Service
                 return new List<User> ();
                 }
             }
-        public async Task<List<User>> Read_StudentsByGCEMId (int Id, string mode, int readStudentGCEM)
+        public async Task<List<User>> Read_StudentsByGCEMSId (string mode, int Id, int teacherId, int readStudentGCEM)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByGCEMSId?mode={mode}&readStudentGCEM={readStudentGCEM}", Id);
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByGCEMSId?mode={mode}&readStudentGCEM={readStudentGCEM}&teacherId={teacherId}", Id);
             if (response.IsSuccessStatusCode)
                 {
                 List<User>? lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
@@ -370,9 +370,9 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ($"api/Create_StudentCourse?courseId={courseId}", studentId);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<List<StudentCourse>> Read_StudentCourses (int Id, string mode)
+        public async Task<List<StudentCourse>> Read_StudentCourses (string mode, int Id, int teacherId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentCourses?mode={mode}", Id);
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentCourses?mode={mode}&teacherId={teacherId}", Id);
             if (response.IsSuccessStatusCode)
                 {
                 var lstStudentCourses = await response.Content.ReadFromJsonAsync<List<StudentCourse>> ();
@@ -1074,9 +1074,9 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ($"api/Create_StudentMessages?messageId={messageId}&requestFeedback={requestFeedback}", lstStudentIds);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<List<StudentMessage>> Read_StudentMessages (int Id, string mode)
+        public async Task<List<StudentMessage>> Read_StudentMessages (string mode, int Id, int teacherId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentMessages?mode={mode}", Id);
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentMessages?mode={mode}&teacherId={teacherId}", Id);
             if (response.IsSuccessStatusCode)
                 {
                 List<StudentMessage>? lstMessages = await response.Content.ReadFromJsonAsync<List<StudentMessage>> ();
@@ -1332,9 +1332,9 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ($"api/Create_Note", note);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<List<Note>> Read_Notes (int referenceId, int referenceType)
+        public async Task<List<Note>> Read_Notes (int referenceId, int referenceType, int teacherId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Notes?referenceType={referenceType}", referenceId);
+            var response = await _http.PostAsJsonAsync ($"api/Read_Notes?referenceType={referenceType}&teacherid={teacherId}", referenceId);
             if (response.IsSuccessStatusCode)
                 {
                 List<Note>? lstNotes = await response.Content.ReadFromJsonAsync<List<Note>> ();

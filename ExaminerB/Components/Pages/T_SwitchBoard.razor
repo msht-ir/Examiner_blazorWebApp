@@ -77,7 +77,6 @@
     protected async Task OnAfterRenderAsync ()
         {
         var result1 = await sessionStorage.GetAsync<string>("UserName");
-        Console.WriteLine("result1.Value: " + result1.Value);
         if (result1.Success)
             {
             appState.SetUserName(result1.Value);
@@ -91,7 +90,6 @@
             if (result.Success && result.Value == 1)
                 {
                 appState.SetUserLoginStatus(1);
-                Console.WriteLine("T_SwitchBoard: UserLoginStatus= " + appState.UserLoginStatus);
                 appState.SetUserLoginStatus(result.Value);
                 }
             else
@@ -129,8 +127,8 @@
     public async Task BtnCreateNote ()
         {
         //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
-        appState.SetNoteReferenceType(11);
         appState.SetNoteReferenceId(Convert.ToInt32(appState.UserId)); //for quickNote(t): NoteReferenceId = UserId
+        appState.SetNoteReferenceType(11);
         appState.SetCmd("CreateNote");
         StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list

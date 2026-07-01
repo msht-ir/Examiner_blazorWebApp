@@ -20,7 +20,7 @@ namespace ExaminerB.Services2Backend
         Task<int> Create_StudentAsync (User student);
         Task<List<User>> Read_StudentsAllAsync ();
         Task<List<User>> Read_StudentsByKeywordAsync (string keyword, int readStudentGCEM);
-        Task<List<User>> Read_StudentsByGCEMSIdAsync (int Id, string mode, int readStudentGCEM);
+        Task<List<User>> Read_StudentsByGCEMSIdAsync (string mode, int Id, int teacherId, int readStudentGCEM);
         Task<bool> Update_StudentAsync (User student);
         Task<bool> Update_StudentTagsAsync (User student);
         Task<bool> Remove_StudentFromListAsync (int studentId, string mode);
@@ -60,7 +60,7 @@ namespace ExaminerB.Services2Backend
         #region SC:StudentCourses
         Task<bool> Create_StudentCoursesAsync (int courseId, List<int> lstStudentIds);
         Task<bool> Create_StudentCourseAsync (int studentId, int courseId);
-        Task<List<StudentCourse>> Read_StudentCoursesAsync (int Id, string mode);
+        Task<List<StudentCourse>> Read_StudentCoursesAsync (string mode, int Id, int teacherId);
         Task<StudentCourse> Read_StudentCourseAsync (int studentCourseId);
         Task<bool> Update_StudentCourseAsync (StudentCourse studentCourse);
         Task<bool> Update_StudentCoursesTagsAsync (List<int> lstStudentIds, int courseId, string mode);
@@ -155,7 +155,7 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region SM:StudentMessages
         Task<bool> Create_StudentMessagesAsync (int messageId, List<int> lstStudentIds, bool requestFeedback);
-        Task<List<StudentMessage>> Read_StudentMessagesAsync (int Id, string mode);
+        Task<List<StudentMessage>> Read_StudentMessagesAsync (string mode, int Id, int teacherId);
         Task<StudentMessage> Read_StudentMessageAsync (int studentMessageId);
         Task<bool> Update_StudentMessageTagsAsync (StudentMessage studentMessage);
         Task<bool> Update_StudentMessageSetAsReadAsync (StudentMessage studentMessage);
@@ -198,7 +198,7 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region N:Notes
         Task<int> Create_NoteAsync (Note note);
-        Task<List<Note>> Read_NotesAsync (int referenceId, int referenceType);
+        Task<List<Note>> Read_NotesAsync (int referenceId, int referenceType, int teacherId);
         Task<List<Note>> Read_NotesBySearchKeyAsync (string searchKey, int referenceId, int mode);
         Task<Note> Read_NoteAsync (int referenceId);
         Task<bool> Update_NoteAsync (Note note);

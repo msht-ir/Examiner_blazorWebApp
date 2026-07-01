@@ -237,13 +237,13 @@ else
                                 <hr />
                                     <MudMenuItem @onclick='() => BtnCreateNote(GroupId, 14)'>
                                         <button class="btn btn-link" Title=@((_help) ? "add note about this group" : "")>
-                                        <img src="/img/icoNewNote1.png" width="22" />
+                                        <img src="/img/icoNewNote3.png" width="22" />
                                         </button>
                                     note on group
                                     </MudMenuItem>
                                     <MudMenuItem @onclick='() => BtnReportNotes(GroupId, "G")'>
                                         <button class="btn btn-link" Title=@((_help) ? "report notes about this group" : "")>
-                                        <img src="/img/icoNote2.png" width="20" />
+                                        <img src="/img/icoNoteReport.png" width="20" />
                                         </button>
                                     show notes
                                     </MudMenuItem>
@@ -340,13 +340,13 @@ else
                             @* /END SUBMENU *@
                                 <MudMenuItem @onclick='() => BtnCreateNote(CourseId, 15)'>
                                     <button class="btn btn-link" Title=@((_help) ? "add note about this course" : "")>
-                                    <img src="/img/icoNewNote1.png" width="22" />
+                                    <img src="/img/icoNewNote3.png" width="22" />
                                     </button>
                                 note on course
                                 </MudMenuItem>
                                 <MudMenuItem @onclick='() => BtnReportNotes(CourseId, "C")'>
                                     <button class="btn btn-link" Title=@((_help) ? "report notes about this course" : "")>
-                                    <img src="/img/icoNote2.png" width="20" />
+                                    <img src="/img/icoNoteReport.png" width="20" />
                                     </button>
                                 show notes
                                 </MudMenuItem>
@@ -438,13 +438,13 @@ else
                             @* END SUBMENU *@
                                 <MudMenuItem @onclick='() => BtnCreateNote(ExamId, 16)'>
                                     <button class="btn btn-link" Title=@((_help) ? "add note about this exam" : "")>
-                                    <img src="/img/icoNewNote1.png" width="22" />
+                                    <img src="/img/icoNewNote3.png" width="22" />
                                     </button>
                                 add note to exam
                                 </MudMenuItem>
                                 <MudMenuItem @onclick='() => BtnReportNotes(ExamId, "E")'>
                                     <button class="btn btn-link" Title=@((_help) ? "report notes on this exam" : "")>
-                                    <img src="/img/icoNote2.png" width="20" />
+                                    <img src="/img/icoNoteReport.png" width="20" />
                                     </button>
                                 show exam notes
                                 </MudMenuItem>
@@ -845,7 +845,7 @@ else
         {
         if (Id > 0)
             {
-            lstStudents = await feService.Read_StudentsByGCEMId(Id, mode, 0);
+            lstStudents = await feService.Read_StudentsByGCEMSId(mode, Id, Convert.ToInt32(appState.UserId), 0);
             Snackbar.Add($"{lstStudents.Count} students listed", Severity.Info);
             string? itemx = mode.ToLower() switch
                 {
@@ -857,7 +857,7 @@ else
                     _ => null
                     };
 
-            appState.SetMessage($"{itemx}");
+            appState.SetMessage($"{itemx}"); //show title above list
             StateHasChanged();
             }
         else
@@ -1391,15 +1391,15 @@ else
         if (Id > 0)
             {
             user.UserId = Convert.ToInt32(appState.UserId);
-            appState.SetReturnPage("/T_Students");
             int? intMode = mode.ToLower() switch
                 {
-                    "s" => 3,
-                    "g" => 4,
-                    "c" => 5,
-                    "e" => 6,
+                    "s" => 13,
+                    "g" => 14,
+                    "c" => 15,
+                    "e" => 16,
                     _ => null
                     };
+            appState.SetReturnPage("/T_Students");
             Navman.NavigateTo($"/T_ReportNotes/{intMode.Value}/{Id}");
             }
         else
@@ -1461,8 +1461,8 @@ else
                 User student = new User()
                     {
                     UserName = row.Cell(1).GetString(),
-                    UserPass = row.Cell(2).GetString(),
-                    UserNickname = row.Cell(3).GetString(),
+                    UserPass = row.Cell(1).GetString(),
+                    UserNickname = row.Cell(2).GetString(),
                     UserRole = "student",
                     UserTags = 1
                     };

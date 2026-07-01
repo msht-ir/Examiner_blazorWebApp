@@ -115,25 +115,13 @@ else
         Navman.NavigateTo ("/T_Exams");
         }
     //method
-    public async Task BtnReportStudent(int Id, string mode)
+    public async Task BtnReportStudent(int studentId)
         {
-        if(Id > 0)
+        //to use this method: add buttons for each student in the list, then point to this method 
+        if(studentId > 0)
             {
             appState.SetReturnPage("/T_ReportExamPoints_plain");
-            Navman.NavigateTo ($"/T_ReportStudents/{mode}/{Id}");           
-            }
-        else
-            {
-            string? itemx = mode.ToLower() switch
-                {
-                    "s" =>  "select a Student from list",
-                    "g" =>  "select a Group from list",
-                    "c" =>  "select a Course from list",
-                    "e" =>  "select a Course, then select an Exam",
-                    "m" =>  "select a Mesage from list",
-                    _ => null
-                    };
-            Snackbar.Add($"{itemx}", Severity.Info); 
+            Navman.NavigateTo ($"/T_ReportStudents/S/{studentId}");           
             }
         }
     public async Task RefreshPageData()

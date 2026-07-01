@@ -898,7 +898,7 @@
             {
             var result = await feService.Delete_StudentCourseTests(mode, studentCourse);
             //refresh
-            lstStudentCourses = await feService.Read_StudentCourses(student.UserId, "ByStudentIdIgnoreInactiveCourses");
+            lstStudentCourses = await feService.Read_StudentCourses("Si", student.UserId, 0);
             }
         }
     //btns for StudentExams
@@ -1242,7 +1242,7 @@
                 student.UserId = Convert.ToInt32(appState.UserId);
                 _hasFetched = false;
                 lstNotes.Clear();
-                lstNotes = await feService.Read_Notes(student.UserId, 1);
+                lstNotes = await feService.Read_Notes(student.UserId, 1, 0);
                 _hasFetched = true;
                 appState.SetCmd("");
                 StateHasChanged();
@@ -1271,8 +1271,7 @@
         {
         student.UserId = appState.UserId ?? 0;
         lstStudentCourses.Clear();
-        lstStudentCourses = await feService.Read_StudentCourses(student.UserId, "ByStudentIdIgnoreInactiveCourses");
-        //Snackbar.Add("refreshed", Severity.Info); 
+        lstStudentCourses = await feService.Read_StudentCourses("Si",student.UserId, 0);
         }
     private async Task ReadExamList ()
         {
@@ -1282,10 +1281,9 @@
         }
     private async Task ReadMessageList ()
         {
-        lstStudentMessages = await feService.Read_StudentMessages(student.UserId, "ByStudentIdIgnoreDeletedMessages");
+        lstStudentMessages = await feService.Read_StudentMessages("Si", student.UserId, 0);
         //first bit: 0 = unread, 1 = read
         unreadMessageCount = lstStudentMessages.Count(m => (m.StudentMessageTags & (1 << 1)) == 0);
-        //Snackbar.Add("refreshed", Severity.Info);
         }
     private async Task ReadChatList ()
         {
@@ -1303,8 +1301,7 @@
         {
         student.UserId = appState.UserId ?? 0;
         lstNotes.Clear();
-        lstNotes = await feService.Read_Notes(student.UserId, 1);
-        //Snackbar.Add("refreshed", Severity.Info); 
+        lstNotes = await feService.Read_Notes (student.UserId, 1, 0);
         }
     private async Task HandleKey_Searchbox (KeyboardEventArgs e)
         {

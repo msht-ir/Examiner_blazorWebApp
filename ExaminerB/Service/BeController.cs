@@ -89,9 +89,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_StudentsByGCEMSId")]
-        public async Task<ActionResult<List<User>>> Read_StudentsByGCEMSId ([FromBody] int Id, [FromQuery] string mode, [FromQuery] int readStudentGCEM)
+        public async Task<ActionResult<List<User>>> Read_StudentsByGCEMSId ([FromBody] int Id, [FromQuery] string mode, [FromQuery] int teacherId, [FromQuery] int readStudentGCEM)
             {
-            var result = await _BeService.Read_StudentsByGCEMSIdAsync (Id, mode, readStudentGCEM);
+            var result = await _BeService.Read_StudentsByGCEMSIdAsync (mode, Id, teacherId, readStudentGCEM);
             return Ok (result);
             }
         [HttpPost ("Update_Student")]
@@ -269,9 +269,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_StudentCourses")]
-        public async Task<ActionResult<List<StudentCourse>>> Read_StudentCourses ([FromBody] int Id, [FromQuery] string mode)
+        public async Task<ActionResult<List<StudentCourse>>> Read_StudentCourses ([FromBody] int Id, [FromQuery] string mode, [FromQuery] int teacherId)
             {
-            var result = await _BeService.Read_StudentCoursesAsync (Id, mode);
+            var result = await _BeService.Read_StudentCoursesAsync (mode, Id, teacherId);
             return Ok (result);
             }
         [HttpPost ("Read_StudentCourse")]
@@ -734,9 +734,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_StudentMessages")]
-        public async Task<ActionResult<List<StudentMessage>>> Read_StudentMessages ([FromBody] int Id, [FromQuery] string mode)
+        public async Task<ActionResult<List<StudentMessage>>> Read_StudentMessages ([FromBody] int Id, [FromQuery] string mode, [FromQuery] int teacherId)
             {
-            var result = await _BeService.Read_StudentMessagesAsync (Id, mode);
+            var result = await _BeService.Read_StudentMessagesAsync (mode, Id, teacherId);
             return Ok (result);
             }
         [HttpPost ("Read_StudentMessage")]
@@ -932,9 +932,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_Notes")]
-        public async Task<ActionResult<List<Note>>> Read_Notes ([FromBody] int referenceId, int referenceType)
+        public async Task<ActionResult<List<Note>>> Read_Notes ([FromBody] int referenceId, [FromQuery] int referenceType, [FromQuery] int teacherid)
             {
-            var result = await _BeService.Read_NotesAsync (referenceId, referenceType);
+            var result = await _BeService.Read_NotesAsync (referenceId, referenceType, teacherid);
             return Ok (result);
             }
         [HttpPost ("Read_NotesBySearchKey")]

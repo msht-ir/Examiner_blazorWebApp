@@ -286,7 +286,7 @@ else
         appState.SetCmd("");
         user.UserId = Convert.ToInt32(appState.UserId);
         user.UserName = appState.UserName;
-        lstNotes = await feService.Read_Notes(Id, mode);
+        lstNotes = await feService.Read_Notes(Id, mode, user.UserId);
         await GetListOfProjects(user.UserId, _ShowProjectsMode);
         _hasFetched = true;
         }
@@ -342,7 +342,7 @@ else
                 Snackbar.Add("note moved to notebook", Severity.Success); 
                 _cmd = "";
                 appState.SetCmd("");
-                lstNotes = await feService.Read_Notes(Id, mode);
+                lstNotes = await feService.Read_Notes(Id, mode, user.UserId);
                 StateHasChanged();
                 }
             else
@@ -429,7 +429,7 @@ else
                 user.UserId = Convert.ToInt32(appState.UserId);
                 _hasFetched = false;
                 lstNotes.Clear();
-                lstNotes = await feService.Read_Notes(Id, mode);
+                lstNotes = await feService.Read_Notes(Id, mode, user.UserId);
                 _hasFetched = true;
                 appState.SetCmd("");
                 StateHasChanged();
@@ -444,7 +444,7 @@ else
         {
         _hasFetched = false;
         lstNotes.Clear();
-        lstNotes = await feService.Read_Notes(Id, mode);
+        lstNotes = await feService.Read_Notes(Id, mode, 0);
         _hasFetched = true;
         StateHasChanged();
         }

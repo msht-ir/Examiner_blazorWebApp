@@ -792,7 +792,6 @@ else
         int result = await feService.Create_Project(project);
         if (result != 0)
             {
-            Console.WriteLine("Project added: " + project.ProjectName);
             appState.SetCmd("");
             // Refresh the list
             var user = new User
@@ -1068,7 +1067,6 @@ else
             }
         appState.SetNoteReferenceId(subProject.SubprojectId);
         appState.SetProjectId(subProject.ProjectId);
-        Console.WriteLine($"project ID = {subProject.ProjectId}");
         appState.SetCmd("CreateNote");
         StateHasChanged();
         }
@@ -1088,7 +1086,7 @@ else
             appState.SetNoteReferenceType(0);
             }
         appState.SetNoteReferenceId(subProject.SubprojectId);
-        lstSPNotes = await feService.Read_Notes(subProject.SubprojectId, 2);
+        lstSPNotes = await feService.Read_Notes(subProject.SubprojectId, 2, 0);
         StateHasChanged();
         }
     public async Task BtnReadNotebookNotes (Project project)
@@ -1109,7 +1107,7 @@ else
             }
         else
             {
-            appState.SetNoteReferenceType(2);
+            appState.SetNoteReferenceType(0);
             }
         appState.SetNoteDateTime(note.NoteDateTime);
         appState.SetNoteText(note.NoteText);

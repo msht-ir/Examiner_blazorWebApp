@@ -262,249 +262,244 @@ else
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync ()
-        {
+    {
         appState.OnChange += TriggerRender;
         if (Convert.ToInt32(appState.UserLoginStatus) != 1)
-            {
+        {
             Navman.NavigateTo("/Login");
-            }
+        }
         await ReadPageDataLists();
         _hasFetched = true;
-        }
+    }
     private void TriggerRender ()
-        {
+    {
         InvokeAsync(StateHasChanged);
-        }
+    }
     public void Dispose ()
-        {
+    {
         appState.OnChange -= TriggerRender;
-        }
+    }
     //btns
     public void BtnReviewStudentTestsSheet (int Id, string mode)
-        {
+    {
         appState.SetCmd(mode); //{studentexamtests|studentcoursetests}
         switch (mode)
-            {
+        {
             case "studentexamtests":
-                    {
+                {
                     appState.SetStudentExamId(Id);
                     break;
-                    }
+                }
             case "studentcoursetests":
-                    {
+                {
                     appState.SetStudentCourseId(Id);
                     break;
-                    }
-            }
+                }
+        }
         //moved to pageInit --
         appState.SetReturnPage($"/T_ReportStudents/{mode}/{Id}");
         Navman.NavigateTo("/T_ReportTests");
-        }
+    }
     public async Task BtnDeleteStudentCourse (int studentCourseId)
-        {
+    {
         var message = new MarkupString($"<hr><span style='color:indianred'>Remove</span> student from this course<br>and <span style='color:indianred'>delete</span> student tests in this course?<hr><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-            {
+        {
             bool result = await feService.Delete_StudentCourse(studentCourseId);
             if (result)
-                {
+            {
                 int id = Convert.ToInt32(Id);
                 lstStudents.Clear();
                 switch (mode)
-                    {
+                {
                     case "S":
-                            {
-                            List<User> student = await feService.Read_StudentsByGCEMId(id, "S", 15);
+                        {
+                            List<User> student = await feService.Read_StudentsByGCEMSId("S", id, 0, 15);
+                            student [0].StudentCourses = await feService.Read_StudentCourses("S", id, 0);
                             student [0].StudentExams = await feService.Read_StudentExams(id, "ByStudentId");
-                            student [0].StudentCourses = await feService.Read_StudentCourses(id, "ByStudentId");
                             lstStudents.Add(student [0]);
                             break;
-                            }
+                        }
                     default:
-                            {
+                        {
                             //modes: GCEM (not S)
-                            var resultx = await feService.Read_StudentsByGCEMId(id, mode, 15);
+                            var resultx = await feService.Read_StudentsByGCEMSId(mode, id, 0, 15);
                             lstStudents = resultx;
                             break;
-                            }
-                    }
+                        }
+                }
                 Snackbar.Add("Deleted", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 appState.SetCmd("");
                 StateHasChanged();
-                }
+            }
             else
-                {
+            {
                 Snackbar.Add("Failed!", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                }
             }
         }
+    }
     public async Task BtnDeleteStudentExam (int studentExamId)
-        {
+    {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Exam (for this Student)?<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-            {
+        {
             _hasFetched = false;
             bool result = await feService.Delete_StudentExam(studentExamId);
             if (result)
-                {
+            {
                 int id = Convert.ToInt32(Id);
                 Snackbar.Add("deleted", Severity.Info); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 lstStudents.Clear();
                 switch (mode)
-                    {
+                {
                     case "S":
-                            {
-                            List<User> students = await feService.Read_StudentsByGCEMId(id, "S", 15); //15 = all GCEM
+                        {
+                            List<User> students = await feService.Read_StudentsByGCEMSId("S", id, 0, 15); //15 = all GCEM
                             students [0].StudentExams = await feService.Read_StudentExams(id, "ByStudentId");
-                            students [0].StudentCourses = await feService.Read_StudentCourses(id, "ByStudentId");
+                            students [0].StudentCourses = await feService.Read_StudentCourses("S",id, 0);
                             //lstStudents.Add (student);
                             break;
-                            }
+                        }
                     default:
-                            {
-                            var resultx = await feService.Read_StudentsByGCEMId(id, "mode", 15);
+                        {
+                            var resultx = await feService.Read_StudentsByGCEMSId("mode", id, 0, 15);
                             lstStudents = resultx;
                             break;
-                            }
-                    }
+                        }
+                }
                 await ReadPageDataLists();
                 appState.SetCmd("");
                 StateHasChanged();
-                }
-            else
-                {
-                Snackbar.Add("failed", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                }
-            _hasFetched = true;
             }
+            else
+            {
+                Snackbar.Add("failed", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            }
+            _hasFetched = true;
         }
+    }
     //updateTags
     public async Task BtnSetStudentExamAsFinished (StudentExam studentExam)
-        {
+    {
         //if(await JS.InvokeAsync<bool>("confirm", "\n Set Exam  @exm.ExamTitle  as Finished for this Student?"))
         var message = new MarkupString(@$"<hr>Set <span style='color:indianred'>{studentExam.ExamTitle}</span> as Finished?<br><br><div style='text-align:center'><img src='/img/icoClock2.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-            {
+        {
             bool result = await feService.Update_StudentExamTags(studentExam, "finishedOn");
             if (result)
-                {
+            {
                 Snackbar.Add("set as finished", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 appState.SetCmd("");
                 StateHasChanged();
-                }
+            }
             else
-                {
+            {
                 Snackbar.Add("failed", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                }
             }
         }
+    }
     public async Task BtnResetStudentExam (StudentExam studentExam)
-        {
+    {
         var message = new MarkupString(@$"<hr>Activate <span style='color:indianred'>{studentExam.ExamTitle}</span> for this Student?<div style='text-align:center'><img src='/img/icoGo1.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-            {
+        {
             bool result = await feService.Update_StudentExamTags(studentExam, "finishedOff");
             if (result)
-                {
+            {
                 Snackbar.Add("activated", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 appState.SetCmd("");
                 StateHasChanged();
-                }
+            }
             else
-                {
+            {
                 Snackbar.Add("failed", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                }
             }
         }
+    }
     private async Task BtnUpdateStudent (User student)
-        {
+    {
         bool result = await feService.Update_Student(student);
         if (result)
-            {
-            Snackbar.Add($"saved", Severity.Success); 
-            }
-        else
-            {
-            Snackbar.Add($"failed", Severity.Error); 
-            }
-        }
-    private async Task BtnUpdateStudentCourseTags (StudentCourse studentCourse)
         {
+            Snackbar.Add($"saved", Severity.Success); 
+        }
+        else
+        {
+            Snackbar.Add($"failed", Severity.Error); 
+        }
+    }
+    private async Task BtnUpdateStudentCourseTags (StudentCourse studentCourse)
+    {
         bool result = await feService.Update_StudentCourse(studentCourse);
         if (result)
-            {
-            Snackbar.Add($"saved", Severity.Success); 
-            }
-        else
-            {
-            Snackbar.Add($"failed", Severity.Error); 
-            }
-
-        }
-    private async Task BtnUpdateStudentExam (StudentExam studentExam)
         {
+            Snackbar.Add($"saved", Severity.Success); 
+        }
+        else
+        {
+            Snackbar.Add($"failed", Severity.Error); 
+        }
+
+    }
+    private async Task BtnUpdateStudentExam (StudentExam studentExam)
+    {
         bool result = await feService.Update_StudentExam(studentExam);
         if (result)
-            {
+        {
             Snackbar.Add($"saved", Severity.Success); 
-            }
-        else
-            {
-            Snackbar.Add($"failed", Severity.Error); 
-            }
         }
+        else
+        {
+            Snackbar.Add($"failed", Severity.Error); 
+        }
+    }
     //convert date
     public string PersianDate (string? dt)
-        {
+    {
         // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
         if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
-            {
+        {
             return feService.ToPersianDate(dt);
-            }
-        else
-            {
-            return dt;
-            }
         }
+        else
+        {
+            return dt;
+        }
+    }
     //methods
     public async Task ReadPageDataLists ()
-        {
+    {
         int id = Convert.ToInt32(Id);
         switch (mode)
-            {
+        {
             case "G":
-                    {
-                    appState.SetReturnPage($"/T_Students");
-                    var result = await feService.Read_StudentsByGCEMId(id, "G", 15);
+                {
+                    var result = await feService.Read_StudentsByGCEMSId("G", id, Convert.ToInt32(appState.UserId), 15);
                     lstStudents = result;
                     break;
-                    }
+                }
             case "C":
-                    {
-                    appState.SetReturnPage($"/T_Students");
-                    lstStudents = await feService.Read_StudentsByGCEMId(id, "C", 15);
+                {
+                    lstStudents = await feService.Read_StudentsByGCEMSId("C", id, Convert.ToInt32(appState.UserId), 15);
                     break;
-                    }
+                }
             case "E":
-                    {
-                    appState.SetReturnPage($"/T_Exams");
-                    lstStudents = await feService.Read_StudentsByGCEMId(id, "E", 15);
+                {
+                    lstStudents = await feService.Read_StudentsByGCEMSId("E", id, Convert.ToInt32(appState.UserId), 15);
                     break;
-                    }
+                }
             case "M":
-                    {
-                    appState.SetReturnPage($"/T_Students");
-                    lstStudents = await feService.Read_StudentsByGCEMId(id, "M", 15);
+                {
+                    lstStudents = await feService.Read_StudentsByGCEMSId("M", id, Convert.ToInt32(appState.UserId), 15);
                     break;
-                    }
+                }
             case "S":
-                    {
-                    appState.SetReturnPage($"/T_Students");
-                    lstStudents = await feService.Read_StudentsByGCEMId(id, "S", 15);
+                {
+                    lstStudents = await feService.Read_StudentsByGCEMSId("S", id, Convert.ToInt32(appState.UserId), 15);
                     break;
                     }
             }

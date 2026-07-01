@@ -193,7 +193,7 @@ namespace ExaminerB.Services2Backend
         #region S:Students
         public async Task<int> Create_StudentAsync (User student)
             {
-            string sql = @"dbo.sp_Create_Student";
+            string sql = @"dbo.sp_CreateStudent";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             try
@@ -284,7 +284,7 @@ namespace ExaminerB.Services2Backend
                 {
                 foreach (User student in lstStudents)
                     {
-                    student.StudentCourses = await Read_StudentCoursesAsync (student.UserId, "ByStudentId");
+                    student.StudentCourses = await Read_StudentCoursesAsync ("S", student.UserId, 0);
                     }
                 }
             if ((readStudentGCEM & 4) == 4)
@@ -298,12 +298,12 @@ namespace ExaminerB.Services2Backend
                 {
                 foreach (User student in lstStudents)
                     {
-                    student.StudentMessages = await Read_StudentMessagesAsync (student.UserId, "ByStudentIdByStudentId");
+                    student.StudentMessages = await Read_StudentMessagesAsync ("S", student.UserId, 0);
                     }
                 }
             return lstStudents;
             }
-        public async Task<List<User>> Read_StudentsByGCEMSIdAsync (int Id, string mode, int readStudentGCEM)
+        public async Task<List<User>> Read_StudentsByGCEMSIdAsync (string mode, int Id, int teacherId, int readStudentGCEM)
             {
             //read list of Students by {G/C/E/M}Id
             List<User> lstStudents = new List<User> ();
@@ -338,7 +338,7 @@ namespace ExaminerB.Services2Backend
                     }
                 if ((readStudentGCEM & 1) == 1)
                     {
-                    //read studentGroups records
+                    //read studentGroups 
                     foreach (User student in lstStudents)
                         {
                         student.StudentGroups = await Read_StudentGroupsAsync (student.UserId, "ByStudentId");
@@ -346,15 +346,15 @@ namespace ExaminerB.Services2Backend
                     }
                 if ((readStudentGCEM & 2) == 2)
                     {
-                    //read studentCourses records
+                    //read studentCourses 
                     foreach (User student in lstStudents)
                         {
-                        student.StudentCourses = await Read_StudentCoursesAsync (student.UserId, "ByStudentId");
+                        student.StudentCourses = await Read_StudentCoursesAsync ("X", student.UserId, teacherId);
                         }
                     }
                 if ((readStudentGCEM & 4) == 4)
                     {
-                    //read studentExams records
+                    //read studentExams 
                     foreach (User student in lstStudents)
                         {
                         student.StudentExams = await Read_StudentExamsAsync (student.UserId, "ByStudentId"); //1:getActives
@@ -362,17 +362,17 @@ namespace ExaminerB.Services2Backend
                     }
                 if ((readStudentGCEM & 8) == 8)
                     {
-                    //read studentMessages records
+                    //read studentMessages 
                     foreach (User student in lstStudents)
                         {
-                            student.StudentMessages = await Read_StudentMessagesAsync (student.UserId, "ByStudentId");
+                            student.StudentMessages = await Read_StudentMessagesAsync ("S", student.UserId, 0);
                         }
                     }
                 return lstStudents;
                 }
             catch (Exception ex)
                 {
-                Console.WriteLine ("****BE: Read_StudentsByGCEMSIdAsync : \n" + ex.ToString ());
+                Console.WriteLine ("----- BE: Read_StudentsByGCEMSIdAsync : \n" + ex.ToString ());
                 return new List<User> ();
                 }
             }
@@ -487,7 +487,7 @@ namespace ExaminerB.Services2Backend
                 }
             catch (Exception ex)
                 {
-                Console.WriteLine ("C10 : \n" + ex.ToString ());
+                Console.WriteLine (ex.ToString ());
                 return new List<Group> ();
                 }
             }
@@ -519,7 +519,7 @@ namespace ExaminerB.Services2Backend
                 }
             catch (Exception ex)
                 {
-                Console.WriteLine ("C10 : \n" + ex.ToString ());
+                Console.WriteLine (ex.ToString ());
                 return new Group ();
                 }
             }
@@ -735,7 +735,7 @@ namespace ExaminerB.Services2Backend
                     }
                 if (getStudentCourses)
                     {
-                    var crsStudents = await Read_StudentCoursesAsync (course.CourseId, "ByCourseId");
+                    var crsStudents = await Read_StudentCoursesAsync ("C", course.CourseId, 0);
                     if (crsStudents != null)
                         {
                         course.Students = crsStudents;
@@ -960,7 +960,7 @@ namespace ExaminerB.Services2Backend
             int i = await cmd.ExecuteNonQueryAsync ();
             return true;
             }
-        public async Task<List<StudentCourse>> Read_StudentCoursesAsync (int Id, string mode)
+        public async Task<List<StudentCourse>> Read_StudentCoursesAsync (string mode, int Id, int teachetId)
             {
             //read SC records for one Student
             List<StudentCourse> lstStudentCourses = new List<StudentCourse> ();
@@ -972,8 +972,9 @@ namespace ExaminerB.Services2Backend
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@id", Id);
                 cmd.Parameters.AddWithValue ("@mode", mode);
+                cmd.Parameters.AddWithValue ("@id", Id);
+                cmd.Parameters.AddWithValue ("@teacherid", Id);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
@@ -1026,7 +1027,7 @@ namespace ExaminerB.Services2Backend
                 }
             catch (Exception ex)
                 {
-                Console.WriteLine ("Error in C14 - GetStudentCouses: " + ex);
+                Console.WriteLine (ex);
                 await cnn.CloseAsync ();
                 }
             return studentCourse;
@@ -1634,7 +1635,6 @@ namespace ExaminerB.Services2Backend
                                 {
                                 test.TopicId = await Create_CourseTopicAsync (topic);
                                 }
-                            //Console.WriteLine ("-----\niRow= " + iRow + "\ntest.CourseId= " + test.CourseId + "\ntopic.CourseTopicTitle= " + topic.CourseTopicTitle + "\ntest.TopicId= " + test.TopicId);
                             //save Test
                             test.TestId = await Create_TestAsync (test);
                             //Options
@@ -1656,7 +1656,6 @@ namespace ExaminerB.Services2Backend
                                 int addOpt = await Create_TestOptionAsync (lstOptions [i]);
                                 if (addOpt != 0)
                                     {
-                                    //Console.WriteLine ("testOption " + i + " was not added to db :: " + lstOptions[i].TestOptionTitle);
                                     }
                                 }
                             }
@@ -2513,7 +2512,7 @@ namespace ExaminerB.Services2Backend
             catch (Exception ex)
                 {
                 await cnn.CloseAsync ();
-                Console.WriteLine ("CALAC ERROR: \n" + ex.ToString ());
+                Console.WriteLine (ex.ToString ());
                 return false;
                 }
             }
@@ -2944,7 +2943,7 @@ namespace ExaminerB.Services2Backend
                 await cnn.CloseAsync ();
                 if (getStudentMessages)
                     {
-                    lstStudentMessages = await Read_StudentMessagesAsync (message.MessageId, "ByMessageId");
+                    lstStudentMessages = await Read_StudentMessagesAsync ("M", message.MessageId, 0);
                     message.Students = lstStudentMessages;
                     }
                 return message;
@@ -2987,7 +2986,7 @@ namespace ExaminerB.Services2Backend
                     {
                     foreach (Message msg in lstMessages)
                         {
-                        msg.Students = await Read_StudentMessagesAsync (msg.MessageId, "ByMessageId");
+                        msg.Students = await Read_StudentMessagesAsync ("M", msg.MessageId, 0);
                         }
                     }
                 return lstMessages;
@@ -3051,8 +3050,16 @@ namespace ExaminerB.Services2Backend
             await cnn.CloseAsync ();
             return true;
             }
-        public async Task<List<StudentMessage>> Read_StudentMessagesAsync (int Id, string mode)
+        public async Task<List<StudentMessage>> Read_StudentMessagesAsync (string mode, int Id, int teacherId)
             {
+            /* 
+             (see _sp for updates)      -   +Bk    -Del    +Del   Unread  Recent  Feedback       
+             ByStudentId                S    Sb     Si      Sd     Su      Sr      Sf     
+             ByStudentIdAndTeacherId    X    Xb     Xi      Xd     Xu      Xr      Xf     
+             ByTeacherId                T    Tb     Ti      Td     Tu      Tr      Tf       
+             ByMessageId                M                     
+
+             */
             List<StudentMessage> lstStudentMessages = new List<StudentMessage> ();
             Message message = new Message ();
             string sql = "dbo.sp_ReadStudentMessages";
@@ -3063,8 +3070,9 @@ namespace ExaminerB.Services2Backend
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@id", Id);
                 cmd.Parameters.AddWithValue ("@mode", mode);
+                cmd.Parameters.AddWithValue ("@id", Id);
+                cmd.Parameters.AddWithValue ("@teacherid", teacherId);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 lstStudentMessages.Clear ();
                 while (await reader.ReadAsync ())
@@ -3621,7 +3629,7 @@ namespace ExaminerB.Services2Backend
                 {
                 foreach (Subproject subprj in lstSubprojects)
                     {
-                    subprj.Notes = await Read_NotesAsync (subprj.SubprojectId, 2); //2(s) or 12(t) ? 
+                    subprj.Notes = await Read_NotesAsync (subprj.SubprojectId, 2, 0);
                     }
                 }
             return lstSubprojects;
@@ -3647,7 +3655,7 @@ namespace ExaminerB.Services2Backend
             await cnn.CloseAsync ();
             if (readNotes)
                 {
-                subProject.Notes = await Read_NotesAsync (subProject.SubprojectId, 1); //1:read sp notes --parentTypes 1:subprojects 2:students 3:groups 4:courses 5:exams
+                subProject.Notes = await Read_NotesAsync (subProject.SubprojectId, 1, 0);
                 }
             return subProject;
             }
@@ -3713,7 +3721,7 @@ namespace ExaminerB.Services2Backend
             await cnn.CloseAsync ();
             return 1;
             }
-        public async Task<List<Note>> Read_NotesAsync (int referenceId, int referenceType)
+        public async Task<List<Note>> Read_NotesAsync (int referenceId, int referenceType, int teacherId)
             {
             //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
             string sql = "dbo.sp_ReadNotes";
@@ -3725,6 +3733,7 @@ namespace ExaminerB.Services2Backend
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@referenceid", referenceId);
             cmd.Parameters.AddWithValue ("@referencetype", referenceType);
+            cmd.Parameters.AddWithValue ("@teacherid", teacherId);
             SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             lstNotes.Clear ();
             while (await reader.ReadAsync ())

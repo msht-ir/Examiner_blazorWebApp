@@ -151,8 +151,7 @@ else
             studentExam.StudentExamId = Convert.ToInt32(appState.StudentExamId);
             studentExam = await feService.Read_StudentExam(studentExam.StudentExamId, false);
             //exam session notes ------> this may slow down the app during the exam
-            List<Note> lstExamSessionNotes = await feService.Read_Notes(studentExam.StudentExamId, 8);
-            Console.WriteLine(lstExamSessionNotes.Count);
+            List<Note> lstExamSessionNotes = await feService.Read_Notes(studentExam.StudentExamId, 17, 0);
             foreach (Note _note in lstExamSessionNotes)
                 {
                 Snackbar.Add($"msg: {_note.NoteText}", Severity.Info, opt => { opt.VisibleStateDuration = 2500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
@@ -169,7 +168,6 @@ else
         }
     private void TriggerRender ()
         {
-        Console.WriteLine("TriggerRender(): AppState triggered re-render");
         InvokeAsync(StateHasChanged);
         }
     public void Dispose ()

@@ -114,6 +114,7 @@
     public async Task BtnEditNote()
         {
         int noteId = Convert.ToInt32(appState.SelectedNoteId);
+        //add codes here to fetch: referenceId, refrenceType and CreatorId ...
         needEdit = true;
         //force page T_ReportNotes call Modal_CreateNote to edit/update this note            
         appState.SetCmd ("UpdateNote");

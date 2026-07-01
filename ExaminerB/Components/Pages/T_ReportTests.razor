@@ -738,12 +738,11 @@ else
                 if (result > 0)
                     {
                     testCount++;
-                    Console.WriteLine($"Test {testCount} added to Exam");
                     }
                 }
             //appState.SetCmd ("coursetests");
             StateHasChanged ();            
-            Snackbar.Add($"\n\n{testCount} tests added to exam", Severity.Success); //{Severity.Warning .Error | .Info | .Success} --needs: @inject ISnackbar Snackbar
+            Snackbar.Add($"\n\n{testCount} tests added to exam", Severity.Success); 
             //old code: await JS.InvokeVoidAsync ("alert", $"\n\n{testCount} Tests was added to the Exam Successfully")
             }
         }
