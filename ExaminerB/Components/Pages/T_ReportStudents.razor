@@ -316,8 +316,8 @@ else
                     case "S":
                         {
                             List<User> student = await feService.Read_StudentsByGCEMSId("S", id, 0, 15);
-                            student [0].StudentCourses = await feService.Read_StudentCourses("S", id, 0);
-                            student [0].StudentExams = await feService.Read_StudentExams(id, "ByStudentId");
+                            student [0].StudentCourses = await feService.Read_StudentCourses("S", id, Convert.ToInt32(appState.UserId));
+                            student [0].StudentExams = await feService.Read_StudentExams("ByStudentIdAndTeacherId", id, Convert.ToInt32(appState.UserId));
                             lstStudents.Add(student [0]);
                             break;
                         }
@@ -357,7 +357,7 @@ else
                     case "S":
                         {
                             List<User> students = await feService.Read_StudentsByGCEMSId("S", id, 0, 15); //15 = all GCEM
-                            students [0].StudentExams = await feService.Read_StudentExams(id, "ByStudentId");
+                            students [0].StudentExams = await feService.Read_StudentExams("ByStudentIdAndTeacherId", id, Convert.ToInt32(appState.UserId));
                             students [0].StudentCourses = await feService.Read_StudentCourses("S",id, 0);
                             //lstStudents.Add (student);
                             break;

@@ -6,6 +6,7 @@ using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
 using System.Data;
+using static QRCoder.PayloadGenerator.SwissQrCode.Reference;
 using Chat = ExaminerS.Models.Chat;
 using Group = ExaminerS.Models.Group;
 
@@ -291,7 +292,7 @@ namespace ExaminerB.Services2Backend
                 {
                 foreach (User student in lstStudents)
                     {
-                    student.StudentExams = await Read_StudentExamsAsync (Id: student.UserId, mode: "ByStudentExam"); //3: get {1:inactives + 2:testOptions} 
+                    student.StudentExams = await Read_StudentExamsAsync ( "ByStudentIdAndTeacherId", student.UserId, 0); 
                     }
                 }
             if ((readStudentGCEM & 8) == 8)
@@ -315,8 +316,8 @@ namespace ExaminerB.Services2Backend
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@id", Id);
                 cmd.Parameters.AddWithValue ("@mode", mode);
+                cmd.Parameters.AddWithValue ("@id", Id);
                 var reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
@@ -357,7 +358,7 @@ namespace ExaminerB.Services2Backend
                     //read studentExams 
                     foreach (User student in lstStudents)
                         {
-                        student.StudentExams = await Read_StudentExamsAsync (student.UserId, "ByStudentId"); //1:getActives
+                        student.StudentExams = await Read_StudentExamsAsync ("ByStudentIdAndTeacherId", student.UserId, teacherId);
                         }
                     }
                 if ((readStudentGCEM & 8) == 8)
@@ -365,7 +366,7 @@ namespace ExaminerB.Services2Backend
                     //read studentMessages 
                     foreach (User student in lstStudents)
                         {
-                            student.StudentMessages = await Read_StudentMessagesAsync ("S", student.UserId, 0);
+                            student.StudentMessages = await Read_StudentMessagesAsync ("S", student.UserId, teacherId);
                         }
                     }
                 return lstStudents;
@@ -589,8 +590,8 @@ namespace ExaminerB.Services2Backend
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@id", Id);
                 cmd.Parameters.AddWithValue ("@mode", mode);
+                cmd.Parameters.AddWithValue ("@id", Id);
                 using (var reader = await cmd.ExecuteReaderAsync ())
                     {
                     while (await reader.ReadAsync ())
@@ -960,7 +961,7 @@ namespace ExaminerB.Services2Backend
             int i = await cmd.ExecuteNonQueryAsync ();
             return true;
             }
-        public async Task<List<StudentCourse>> Read_StudentCoursesAsync (string mode, int Id, int teachetId)
+        public async Task<List<StudentCourse>> Read_StudentCoursesAsync (string mode, int Id, int teacherId)
             {
             //read SC records for one Student
             List<StudentCourse> lstStudentCourses = new List<StudentCourse> ();
@@ -974,7 +975,7 @@ namespace ExaminerB.Services2Backend
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@mode", mode);
                 cmd.Parameters.AddWithValue ("@id", Id);
-                cmd.Parameters.AddWithValue ("@teacherid", Id);
+                cmd.Parameters.AddWithValue ("@teacherid", teacherId);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
@@ -1874,7 +1875,7 @@ namespace ExaminerB.Services2Backend
                 //get students
                 if (getStudentsList)
                     {
-                    var lstStudents = await Read_StudentExamsAsync (exam.ExamId, "ByExamId");
+                    var lstStudents = await Read_StudentExamsAsync ("ByExamId", exam.ExamId, 0);
                     if (lstStudents != null)
                         {
                         exam.Students = lstStudents;
@@ -2239,7 +2240,7 @@ namespace ExaminerB.Services2Backend
             await cnn.CloseAsync ();
             return true;
             }
-        public async Task<List<StudentExam>> Read_StudentExamsAsync (int Id, string mode)
+        public async Task<List<StudentExam>> Read_StudentExamsAsync (string mode, int Id, int teacherId)
             {
             int i = 0;
             List<StudentExam> lstStudentsExam = new ();
@@ -2251,8 +2252,9 @@ namespace ExaminerB.Services2Backend
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@id", Id);
                 cmd.Parameters.AddWithValue ("@mode", mode);
+                cmd.Parameters.AddWithValue ("@id", Id);
+                cmd.Parameters.AddWithValue ("@teacherid", teacherId);
                 var reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
@@ -2395,7 +2397,7 @@ namespace ExaminerB.Services2Backend
                 int c = cmd.ExecuteNonQuery ();
                 await cnn.CloseAsync ();
                 //get list of students have this exam
-                List<StudentExam> lstStudentsExams = await Read_StudentExamsAsync (examId, "ByExamid");
+                List<StudentExam> lstStudentsExams = await Read_StudentExamsAsync ("ByExamid", examId, 0);
                 foreach (StudentExam stdntex in lstStudentsExams)
                     {
                     if (stdntex.FinishDateTime.Length > 0)
@@ -2605,7 +2607,7 @@ namespace ExaminerB.Services2Backend
             {
             //this [overload] is called from another method with an open cnn (see method parameters)
             List<StudentExamTest> lstStudentExamTests = new ();
-            string sql = "Read_StudentExamTests";
+            string sql = "sp_ReadStudentExamTests";
             using SqlCommand cmd = new (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
@@ -3058,7 +3060,6 @@ namespace ExaminerB.Services2Backend
              ByStudentIdAndTeacherId    X    Xb     Xi      Xd     Xu      Xr      Xf     
              ByTeacherId                T    Tb     Ti      Td     Tu      Tr      Tf       
              ByMessageId                M                     
-
              */
             List<StudentMessage> lstStudentMessages = new List<StudentMessage> ();
             Message message = new Message ();
@@ -3841,7 +3842,7 @@ namespace ExaminerB.Services2Backend
             await cnn.CloseAsync ();
             return true;
             }
-        public async Task<bool> Delete_NotesAsync (int parentId, int parentType)
+        public async Task<bool> Delete_NotesAsync (int referenceId, int referenceType)
             {
             //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
             string sql = "dbo.sp_DeleteNotes";
@@ -3850,8 +3851,8 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@referenceid", parentId);
-            cmd.Parameters.AddWithValue ("@referencetype", parentType);
+            cmd.Parameters.AddWithValue ("@referenceid", referenceId);
+            cmd.Parameters.AddWithValue ("@referencetype", referenceType);
             int i = await cmd.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
             return true;

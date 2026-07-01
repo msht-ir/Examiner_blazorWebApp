@@ -113,25 +113,18 @@
                                                 if ((lstCourseFolders.Count > 0))
                                                     {
                                                     <hr style="color:indianred" />
-                                                    <h6 style="padding-left:10px;">web folders: </h6>
+                                                    <h6 style="padding-left:10px;font-size:small;">folders: </h6>
                                                     @foreach (CourseFolder cf in lstCourseFolders)
                                                         {
                                                         <div style="color:indianred;font-size:small;padding-left:15px;"><a href="@cf.CourseFolderUrl" target="_blank" style="color:indianred;text-decoration:none;">@cf.CourseFolderTitle</a></div>
                                                         }
                                                     }
-                                                else
-                                                    {
-                                                    <hr style="color:gray" />
-                                                    <div style="color:gray">No folders for this course</div>
-                                                    }
                                                 }
                                             else
                                                 {
-                                                    <div>
-                                                        <button class="btn btn-link" Title=@((_help) ? "show links for " + studentCourse.CourseName + " folder(s) online" : "") style="padding:15px;border: none;" @onclick='async () => await BtnShowCourseFolders(studentCourse)'>
-                                                        <img src="/img/icoFolderCF.png" width="28" />
-                                                        </button>
-                                                    </div>
+                                                    <button class="btn btn-link" Title=@((_help) ? "show links for " + studentCourse.CourseName + " folder(s) online" : "") style="padding:15px;border: none;" @onclick='async () => await BtnShowCourseFolders(studentCourse)'>
+                                                    <img src="/img/icoFolderCF.png" width="28" />
+                                                    </button>
                                                 }
                                             </MudCardContent>
                                         </MudCard>
@@ -415,6 +408,7 @@
                                                           Adornment="Adornment.End"
                                                           AdornmentIcon="@Icons.Material.Filled.Search"
                                                           OnAdornmentClick="BtnReadStudentsBySearch"
+                                                          Style="font-family:Tahoma;"
                                                           Class="my-textfield" />
                                             </div>
                                         @* SHOW SEARCH RESULTS *@
@@ -502,7 +496,7 @@
                             aria-controls="CollapseId5" style="background-color:WhiteSmoke">
                             <h4>
                             <img class="pulse-hover" src="/img/icoSwitchBoardStudents.png" width="36" style="margin-right:10px;" title="چت گروهي" />
-                            chat rooms <span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChatrooms.Count ) </span></span>
+                            chatrooms <span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChatrooms.Count ) </span></span>
                             </h4>
                         </button>
                     </h4>
@@ -517,16 +511,18 @@
                     <div id="CollapseId5" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
                         <div class="accordion-body" style="background-color:white">
                             <div id="T3">
-                            @if (_help)
+                            @* @if (_help)
                                 {
-                                    <div>
-                                        <p style="text-align:center;font-size:x-small;">
-                                        براي گفتگو و تبادل نظر با حضور همه دانشجويان
-                                        <br />
-                                        For collaborative discussions
-                                        </p>
-                                    </div>
-                                }
+                                } *@
+                                <div>
+                                    <p style="text-align:center;font-size:x-small;">
+                                    هر دانشجو مي تواند با ايجاد يک چت روم، موضوعي را براي تبادل نظر مطرح کند
+                                    <br />
+                                    همه دانشجويان در همه کلاس هاي سامانه مي توانند براي تبادل نظر وارد چت روم شوند و پست بگذارند 
+                                    <br />
+                                    For collaborative discussions
+                                    </p>
+                                </div>
                                 <div style="text-align:center">
                                     <button class="btn btn-link align-items-center" Title=@((_help) ? "refresh chatrooms بروز رساني" : "") @onclick="ReadChatroomList">
                                     <img src="/img/gifUserLogin.gif" width="34" />
@@ -773,15 +769,15 @@
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync ()
-        {
+    {
         appState.OnChange += TriggerRender;
         if (Convert.ToInt32(appState.UserLoginStatus) != 1)
-            {
+        {
             Navman.NavigateTo("/Login");
-            }
+        }
         student.UserId = appState.UserId ?? 0;
         if (student.UserId > 0)
-            {
+        {
             //on first run, student.UserId is 0
             //student.UserId = appState.UserId ?? 0;
             await ReadCourseList();
@@ -794,32 +790,34 @@
             await ReadChatroomList();
             await ReadNoteList();
             if (appState.Cmd == "showAlertsOnExamsAndNewChats")
-                {
+            {
                 //show alerts on first pageLoad (after Login)
                 //1-show alert on new chats
                 int _newchat = 0;
                 foreach (Chat ch in lstChats)
-                    {
+                {
                     //unread chat
                     if (((ch.ChatTags & 1) == 0) && (ch.ToId == student.UserId))
-                        {
+                    {
                         _newchat++;
-                        }
                     }
+                }
                 if (_newchat > 1)
-                    {
+                {
                     Snackbar.Add($"{_newchat} new chats", Severity.Info);
-                    }
+                }
                 else if (_newchat == 1)
-                    {
+                {
                     Snackbar.Add($"new chat", Severity.Info);
-                    }
+                }
                 //2-show alert on not finished exams ahead
                 int _newexam = 0;
                 foreach (StudentExam se in lstStudentExams)
-                    {
+                {
                     //not started exam
-                    if ((se.StudentExamTags & 4) == 0)
+                    DateTime _examDateTimeStart = DateTime.ParseExact(se.ExamDateTime, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+                    TimeSpan diff = (_examDateTimeStart.AddMinutes(se.ExamDuration) - DateTime.Now);
+                    if (((se.StudentExamTags & 4) == 0) && (diff > TimeSpan.Zero))
                         {
                         _newexam++;
                         }
@@ -871,6 +869,10 @@
         appState.SetCmd("ShowCourseFolders");
         appState.SetCourseId(studentCourse.CourseId);
         lstCourseFolders = await feService.Read_CourseFolders(studentCourse.CourseId);
+        if (lstCourseFolders.Count == 0)
+            {
+            Snackbar.Add($"no folder for: {studentCourse.CourseName}", severity: Severity.Normal, opt => { opt.VisibleStateDuration = 2000; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            }
         _hasFetched = true;
         }
     private void BtnReportStudentCourseTests (int studentCourseId, string courseName)
@@ -973,12 +975,12 @@
             {
             case 0:
                     {
-                    Snackbar.Add("bookmark removed", Severity.Info); 
+                    Snackbar.Add("bookmark removed", Severity.Info);
                     break;
                     }
             case 1:
                     {
-                    Snackbar.Add("message bookmarked", Severity.Success); 
+                    Snackbar.Add("message bookmarked", Severity.Success);
                     break;
                     }
             }
@@ -1032,7 +1034,7 @@
             {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags(studentMessage);
-            Snackbar.Add("deleted", Severity.Success); 
+            Snackbar.Add("deleted", Severity.Success);
             await ReadMessageList();
             }
         StateHasChanged();
@@ -1118,7 +1120,7 @@
             {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags(studentMessage);
-            Snackbar.Add("deleted", Severity.Success); 
+            Snackbar.Add("deleted", Severity.Success);
             await ReadMessageList();
             }
         StateHasChanged();
@@ -1137,7 +1139,7 @@
         appState.SetClps("CHR");
         if ((chatroom.ChatroomTerms.Trim() == "") || (chatroom.ChatroomName.Trim() == ""))
             {
-            Snackbar.Add($"Enter chatroom NAME and SUBJECT", Severity.Info); 
+            Snackbar.Add($"Enter chatroom NAME and SUBJECT", Severity.Info);
             return;
             }
         student.UserId = appState.UserId ?? 0;
@@ -1169,7 +1171,7 @@
             bool result = await feService.Delete_Chatroom(chatroomId);
             if (result)
                 {
-                Snackbar.Add($"deleted", Severity.Warning); 
+                Snackbar.Add($"deleted", Severity.Warning);
                 _cmd = "";
                 StateHasChanged();
                 appState.SetCmd("");
@@ -1178,7 +1180,7 @@
                 }
             else
                 {
-                Snackbar.Add($"failed to delete chatroom", Severity.Error); 
+                Snackbar.Add($"failed to delete chatroom", Severity.Error);
                 }
             }
         }
@@ -1238,7 +1240,7 @@
             bool result = await feService.Delete_Note(noteId);
             if (result)
                 {
-                Snackbar.Add($"deleted", Severity.Warning); 
+                Snackbar.Add($"deleted", Severity.Warning);
                 student.UserId = Convert.ToInt32(appState.UserId);
                 _hasFetched = false;
                 lstNotes.Clear();
@@ -1249,7 +1251,7 @@
                 }
             else
                 {
-                Snackbar.Add($"failed to delete note", Severity.Error); 
+                Snackbar.Add($"failed to delete note", Severity.Error);
                 }
             }
         }
@@ -1271,13 +1273,13 @@
         {
         student.UserId = appState.UserId ?? 0;
         lstStudentCourses.Clear();
-        lstStudentCourses = await feService.Read_StudentCourses("Si",student.UserId, 0);
+        lstStudentCourses = await feService.Read_StudentCourses("Si", student.UserId, 0);
         }
     private async Task ReadExamList ()
         {
         student.UserId = appState.UserId ?? 0;
         lstStudentExams.Clear();
-        lstStudentExams = await feService.Read_StudentExams(student.UserId, "ByStudentId") ?? new List<StudentExam>();
+        lstStudentExams = await feService.Read_StudentExams("ByStudentId", student.UserId, 0) ?? new List<StudentExam>();
         }
     private async Task ReadMessageList ()
         {
@@ -1301,7 +1303,7 @@
         {
         student.UserId = appState.UserId ?? 0;
         lstNotes.Clear();
-        lstNotes = await feService.Read_Notes (student.UserId, 1, 0);
+        lstNotes = await feService.Read_Notes(student.UserId, 1, 0);
         }
     private async Task HandleKey_Searchbox (KeyboardEventArgs e)
         {

@@ -566,9 +566,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_StudentExams")]
-        public async Task<ActionResult<List<StudentExam>>> Read_StudentExams ([FromBody] int Id, [FromQuery] string mode)
+        public async Task<ActionResult<List<StudentExam>>> Read_StudentExams ([FromBody] int Id, [FromQuery] string mode, [FromQuery] int teacherId)
             {
-            var result = await _BeService.Read_StudentExamsAsync (Id, mode);
+            var result = await _BeService.Read_StudentExamsAsync (mode, Id, teacherId);
             return Ok (result);
             }
         [HttpPost ("Read_StudentExam")]
