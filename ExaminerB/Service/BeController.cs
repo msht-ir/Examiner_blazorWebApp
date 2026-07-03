@@ -77,21 +77,21 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_StudentsAll")]
-        public async Task<ActionResult<List<User>>> Read_StudentsAll ()
+        public async Task<ActionResult<List<User>>> Read_StudentsAll ([FromBody] int departmentId)
             {
-            var result = await _BeService.Read_StudentsAllAsync ();
+            var result = await _BeService.Read_StudentsAllAsync (departmentId);
             return Ok (result);
             }
         [HttpPost ("Read_StudentsByKeyword")]
-        public async Task<ActionResult<List<User>>> Read_StudentsByKeyword ([FromBody] string keyword, [FromQuery] int getGCEM)
+        public async Task<ActionResult<List<User>>> Read_StudentsByKeyword ([FromBody] string keyword, [FromQuery] int departmentId, [FromQuery] int getGCEM)
             {
-            var result = await _BeService.Read_StudentsByKeywordAsync (keyword, getGCEM);
+            var result = await _BeService.Read_StudentsByKeywordAsync (departmentId, keyword, getGCEM);
             return Ok (result);
             }
         [HttpPost ("Read_StudentsByGCEMSId")]
-        public async Task<ActionResult<List<User>>> Read_StudentsByGCEMSId ([FromBody] int Id, [FromQuery] string mode, [FromQuery] int teacherId, [FromQuery] int readStudentGCEM)
+        public async Task<ActionResult<List<User>>> Read_StudentsByGCEMSId ([FromBody] int Id, [FromQuery] int departmentId , [FromQuery] string mode, [FromQuery] int teacherId, [FromQuery] int readStudentGCEM)
             {
-            var result = await _BeService.Read_StudentsByGCEMSIdAsync (mode, Id, teacherId, readStudentGCEM);
+            var result = await _BeService.Read_StudentsByGCEMSIdAsync (departmentId, mode, Id, teacherId, readStudentGCEM);
             return Ok (result);
             }
         [HttpPost ("Update_Student")]
@@ -810,9 +810,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_Chatrooms")]
-        public async Task<ActionResult<List<Chatroom>>> Read_Chatrooms ()
+        public async Task<ActionResult<List<Chatroom>>> Read_Chatrooms ([FromBody] int departmentId)
             {
-            var result = await _BeService.Read_ChatroomsAsync ();
+            var result = await _BeService.Read_ChatroomsAsync (departmentId);
             return Ok (result);
             }
         [HttpPost ("Update_Chatroom")]

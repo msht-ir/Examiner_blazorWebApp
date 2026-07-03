@@ -33,14 +33,15 @@ namespace ExaminerB.Services2Backend
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
-                    if ((username.ToLower () == reader.GetString (1).ToLower ()) && (password == reader.GetString (2)))
+                    if ((username.ToLower () == reader.GetString (2).ToLower ()) && (password == reader.GetString (3)))
                         {
                         userOut.UserId = reader.GetInt32 (0);
-                        userOut.UserName = reader.GetString (1);
-                        userOut.UserPass = reader.GetString (2);
-                        userOut.UserNickname = reader.GetString (3);
+                        userOut.DepartmentId = reader.GetInt32 (1);
+                        userOut.UserName = reader.GetString (2);
+                        userOut.UserPass = reader.GetString (3);
+                        userOut.UserNickname = reader.GetString (4);
                         userOut.UserRole = "teacher";
-                        userOut.UserTags = reader.GetInt32 (4);
+                        userOut.UserTags = reader.GetInt32 (5);
                         }
                     }
                 await cnn.CloseAsync ();
@@ -75,14 +76,15 @@ namespace ExaminerB.Services2Backend
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
-                    if ((username.ToLower () == reader.GetString (1).ToLower ()) && (password == reader.GetString (2)))
+                    if ((username.ToLower () == reader.GetString (2).ToLower ()) && (password == reader.GetString (3)))
                         {
                         userOut.UserId = reader.GetInt32 (0);
-                        userOut.UserName = reader.GetString (1);
-                        userOut.UserPass = reader.GetString (2);
+                        userOut.DepartmentId = reader.GetInt32 (1);
+                        userOut.UserName = reader.GetString (2);
+                        userOut.UserPass = reader.GetString (3);
                         userOut.UserRole = "student";
-                        userOut.UserTags = reader.GetInt32 (3);
-                        userOut.UserNickname = reader.GetString (4);
+                        userOut.UserTags = reader.GetInt32 (4);
+                        userOut.UserNickname = reader.GetString (5);
                         }
                     }
                 if (userOut.UserId > 0)
@@ -216,14 +218,15 @@ namespace ExaminerB.Services2Backend
                 return 0;
                 }
             }
-        public async Task<List<User>> Read_StudentsAllAsync ()
+        public async Task<List<User>> Read_StudentsAllAsync (int departmentId)
             {
             List<User> lstStudents = new List<User> ();
-            string sql = @"dbo.sp_ReadStudentsAll";
+            string sql = "dbo.sp_ReadStudentsAll";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue ("@departmentid", departmentId);
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             while (await reader.ReadAsync ())
@@ -231,10 +234,11 @@ namespace ExaminerB.Services2Backend
                 lstStudents.Add (new User
                     {
                     UserId = reader.GetInt32 (0),
-                    UserName = reader.GetString (1),
-                    UserPass = reader.GetString (2),
-                    UserNickname = reader.GetString (3),
-                    UserTags = reader.GetInt32 (4),
+                    DepartmentId = reader.GetInt32 (1),
+                    UserName = reader.GetString (2),
+                    UserPass = reader.GetString (3),
+                    UserNickname = reader.GetString (4),
+                    UserTags = reader.GetInt32 (5),
                     UserRole = "-",
                     StudentGroups = new List<StudentGroup> (),
                     StudentCourses = new List<StudentCourse> (),
@@ -245,7 +249,7 @@ namespace ExaminerB.Services2Backend
                 }
             return lstStudents;
             }
-        public async Task<List<User>> Read_StudentsByKeywordAsync (string keyword, int readStudentGCEM)
+        public async Task<List<User>> Read_StudentsByKeywordAsync (int departmentId, string keyword, int readStudentGCEM)
             {
             keyword = "%" + keyword + "%";
             List<User> lstStudents = new List<User> ();
@@ -254,6 +258,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue ("@departmentid", departmentId);
             cmd.Parameters.Add ("@keyword", SqlDbType.NVarChar, 200).Value = keyword;
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
@@ -262,10 +267,11 @@ namespace ExaminerB.Services2Backend
                 lstStudents.Add (new User
                     {
                     UserId = reader.GetInt32 (0),
-                    UserName = reader.GetString (1),
-                    UserPass = reader.GetString (2),
-                    UserNickname = reader.GetString (3),
-                    UserTags = reader.GetInt32 (4),
+                    DepartmentId = reader.GetInt32 (1),
+                    UserName = reader.GetString (2),
+                    UserPass = reader.GetString (3),
+                    UserNickname = reader.GetString (4),
+                    UserTags = reader.GetInt32 (5),
                     UserRole = "-",
                     StudentGroups = new List<StudentGroup> (),
                     StudentCourses = new List<StudentCourse> (),
@@ -304,7 +310,7 @@ namespace ExaminerB.Services2Backend
                 }
             return lstStudents;
             }
-        public async Task<List<User>> Read_StudentsByGCEMSIdAsync (string mode, int Id, int teacherId, int readStudentGCEM)
+        public async Task<List<User>> Read_StudentsByGCEMSIdAsync (int departmentId, string mode, int Id, int teacherId, int readStudentGCEM)
             {
             //read list of Students by {G/C/E/M}Id
             List<User> lstStudents = new List<User> ();
@@ -316,6 +322,7 @@ namespace ExaminerB.Services2Backend
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue ("@departmentid", departmentId);
                 cmd.Parameters.AddWithValue ("@mode", mode);
                 cmd.Parameters.AddWithValue ("@id", Id);
                 var reader = await cmd.ExecuteReaderAsync ();
@@ -3337,7 +3344,7 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.CommandType= CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@chatroomuserid", chatroom.ChatroomUserId);
+            cmd.Parameters.AddWithValue ("@chatroomdepartmentid", chatroom.ChatroomDepartmentId);
             cmd.Parameters.AddWithValue ("@chatroomadminid", chatroom.ChatroomAdminId);
             cmd.Parameters.AddWithValue ("@chatroomname", chatroom.ChatroomName);
             cmd.Parameters.AddWithValue ("@chatroomterms", chatroom.ChatroomTerms);
@@ -3345,7 +3352,7 @@ namespace ExaminerB.Services2Backend
             await cnn.CloseAsync ();
             return i;
             }
-        public async Task<List<Chatroom>> Read_ChatroomsAsync ()
+        public async Task<List<Chatroom>> Read_ChatroomsAsync (int departmentId)
             {
             string sql = "dbo.sp_ReadChatrooms";
             List<Chatroom> lstChatrooms = new List<Chatroom> ();
@@ -3354,13 +3361,14 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue ("@departmentid", departmentId);
             SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             while (await reader.ReadAsync ())
                 {
                 lstChatrooms.Add (new Chatroom
                     {
                     ChatroomId = reader.GetInt32 (0),
-                    ChatroomUserId = reader.GetInt32 (1),
+                    ChatroomDepartmentId = reader.GetInt32 (1),
                     ChatroomAdminId = reader.GetInt32 (2),
                     ChatroomName = reader.GetString (3),
                     ChatroomTerms = reader.GetString (4),
@@ -3379,7 +3387,7 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.CommandType= CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@chatroomuserid", chatroom.ChatroomUserId);
+            cmd.Parameters.AddWithValue ("@chatroomdepartmentid", chatroom.ChatroomDepartmentId);
             cmd.Parameters.AddWithValue ("@chatroomadminid", chatroom.ChatroomAdminId);
             cmd.Parameters.AddWithValue ("@chatroomname", chatroom.ChatroomName);
             cmd.Parameters.AddWithValue ("@chatroomterms", chatroom.ChatroomTerms);

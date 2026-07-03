@@ -2,10 +2,18 @@
 
 namespace ExaminerS.Models
     {
+    //D
+    public class Department
+        {
+        public int DepartmentId { get; set; } = 0;
+        public string DepartmentName { get; set; } = "";
+        public string DepartmentInfo { get; set; } = "";
+        }
     //U
     public class User
         {
         public int UserId { get; set; } = 0;
+        public int DepartmentId { get; set; } = 0;
         [Required (ErrorMessage = "Username is required")]
         public string UserName { get; set; } = "";
         [Required (ErrorMessage = "Password is required")]
@@ -87,7 +95,7 @@ namespace ExaminerS.Models
         public int UserId { get; set; } = 0;
         public List<StudentGroup> Students { get; set; } = new List<StudentGroup> ();
         }
-     //SG
+    //SG
     public class StudentGroup
         {
         public int StudentGroupId { get; set; } = 0;
@@ -546,7 +554,7 @@ namespace ExaminerS.Models
     public class Chatroom
         {
         public int ChatroomId { get; set; } = 0;
-        public int ChatroomUserId { get; set; } = 0;
+        public int ChatroomDepartmentId { get; set; } = 0;
         public int ChatroomAdminId { get; set; } = 0;
         public string ChatroomAdminName { get; set; } = "";
         public string ChatroomName { get; set; } = "";

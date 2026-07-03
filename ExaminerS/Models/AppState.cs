@@ -24,6 +24,8 @@
         public void SetExamAlarm (int _ExamAlarm) { ExamAlarm = _ExamAlarm; OnChange?.Invoke (); }
 
         //user (teacher|student)
+        public int? DepartmentId { get; private set; }
+        public void SetDepartmentId (int _DepartmentId) { DepartmentId=_DepartmentId; OnChange?.Invoke(); }
         public int? TeacherId { get; private set; }
         public void SetTeacherId (int _TeacherId) { TeacherId = _TeacherId; OnChange?.Invoke (); }
         public int? UserId { get; private set; }

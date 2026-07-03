@@ -197,7 +197,7 @@ else
         exam.ExamId = Convert.ToInt32(appState.ExamId);
         if (_txtNewExamSessionNote.Trim().Length < 5)
             {
-            Snackbar.Add($"type a message of at least 5 chars", Severity.Warning);
+            Snackbar.Add($"type a message of at least 5 chars", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         else
             {
@@ -212,7 +212,7 @@ else
                 note.CreatorId = Convert.ToInt32 (appState.UserId);
                 int result = await feService.Create_Note(note);
                 }
-            Snackbar.Add($"message injected to Exam Session", Severity.Info);
+            Snackbar.Add($"message injected to Exam Session", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             _txtNewExamSessionNote = "";
             _cmd = "";
             await RefreshPageData(); //just to refresh page data
@@ -229,7 +229,7 @@ else
                 {
                 bool result = await feService.Delete_Notes(studentExam.StudentExamId, 17);
                 }
-            Snackbar.Add($"injected messages cleared", Severity.Warning);
+            Snackbar.Add($"injected messages cleared", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             StateHasChanged();
             }
         }
@@ -252,7 +252,7 @@ else
             if (DateTime.Now > _examDateTimeFinish)
                 {
                 //exam has finished
-                Snackbar.Add($"exam is finished", Severity.Error); 
+                Snackbar.Add($"exam is finished", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             else if (DateTime.Now < _examDateTimeStart)
                 {
@@ -260,7 +260,7 @@ else
                 TimeSpan diff = _examDateTimeStart - DateTime.Now;
                 int hours = (int) diff.TotalHours;
                 int minutes = diff.Minutes;
-                Snackbar.Add($"{hours} hr  {minutes + 1} min (to start)", Severity.Success);
+                Snackbar.Add($"{hours} hr  {minutes + 1} min (to start)", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             else
                 {
@@ -268,18 +268,18 @@ else
                 TimeSpan _ts = _examDateTimeFinish - DateTime.Now;
                 if (DateTime.Now > _examDateTimeFinish.AddMinutes(-3))
                     {
-                    Snackbar.Add($"{_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} (to finish)", Severity.Warning); 
+                    Snackbar.Add($"{_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} (to finish)", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     }
                 else
                     {
-                    Snackbar.Add($"  {_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} (to finish)", Severity.Info); 
+                    Snackbar.Add($"  {_ts.Hours:D2} : {_ts.Minutes:D2} : {_ts.Seconds:D2} (to finish)", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     }
                 }
             }
         else
             {
             //needs: @inject ISnackbar Snackbar --at top of page
-            Snackbar.Add("students list is empty", Severity.Warning); //Severity.Error | Severity.Info | Severity.Success
+            Snackbar.Add("students list is empty", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             //--old code was: await JS.InvokeVoidAsync ("alert", "List of Students (for this Exam) is Empty!");
             BtnBack();
             }

@@ -201,7 +201,7 @@ else
         DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);
         if (DateTime.Now > _examDateTimeFinish)
             {
-            Snackbar.Add($"time is over", Severity.Error);
+            Snackbar.Add($"time is over", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         else
             {

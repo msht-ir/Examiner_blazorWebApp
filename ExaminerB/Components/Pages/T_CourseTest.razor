@@ -376,7 +376,7 @@ else
             }
         else
             {
-            Snackbar.Add("update failed", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            Snackbar.Add("update failed", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             }
         }
     public async Task BtnDeleteTestOption (int testOptionId)

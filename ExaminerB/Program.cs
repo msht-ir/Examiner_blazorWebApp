@@ -3,10 +3,12 @@ using ExaminerB.Service;
 using ExaminerB.Services2Backend;
 using ExaminerS.Models;
 using MudBlazor.Services;
+using PSC.Blazor.Components.BrowserDetect;
 var builder = WebApplication.CreateBuilder (args);
 // Add services to the container.
 builder.Services.AddRazorComponents ().AddInteractiveServerComponents ();
 builder.Services.AddScoped<AppState> ();
+builder.Services.AddScoped<BrowserDetect> ();
 builder.Services.AddMudServices ();
 //add backend services
 builder.Services.AddScoped<BeIService, BeService> ();

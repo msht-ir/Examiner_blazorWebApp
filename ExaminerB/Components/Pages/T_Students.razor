@@ -820,7 +820,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to create new student", Severity.Error);
+            Snackbar.Add($"failed to create new student", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     public async Task BtnReadStudentsBySearch ()
@@ -828,7 +828,7 @@ else
         if (strSearch != "")
             {
             user.UserId = Convert.ToInt32(appState.UserId);
-            lstStudents = await feService.Read_StudentsByKeyword(strSearch, 0);
+            lstStudents = await feService.Read_StudentsByKeyword(Convert.ToInt32(appState.DepartmentId), strSearch, 0);
             Snackbar.Add($"students like '{strSearch}' listed...", Severity.Info);
             appState.SetMessage($"search '{strSearch}'");
             StateHasChanged();
@@ -837,7 +837,7 @@ else
     public async Task BtnListAllStudent ()
         {
         user.UserId = Convert.ToInt32(appState.UserId);
-        lstStudents = await feService.Read_StudentsAll();
+        lstStudents = await feService.Read_StudentsAll(Convert.ToInt32(appState.DepartmentId));
         Snackbar.Add($"{lstStudents.Count} students listed", Severity.Info);
         appState.SetMessage($"all students");
         StateHasChanged();
@@ -846,7 +846,7 @@ else
         {
         if (Id > 0)
             {
-            lstStudents = await feService.Read_StudentsByGCEMSId(mode, Id, Convert.ToInt32(appState.UserId), 0);
+            lstStudents = await feService.Read_StudentsByGCEMSId (Convert.ToInt32 (appState.DepartmentId), mode, Id, Convert.ToInt32 (appState.UserId), 0);
             Snackbar.Add($"{lstStudents.Count} students listed", Severity.Info);
             string? itemx = mode.ToLower() switch
                 {
@@ -951,7 +951,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to create {groupName}", Severity.Error);
+            Snackbar.Add($"failed to create {groupName}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     private async Task BtnAddStudentsToGroup ()
@@ -974,7 +974,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed", Severity.Error);
+            Snackbar.Add($"failed", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     private async Task BtnRemoveStudentsFromGroup ()
@@ -999,7 +999,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed", Severity.Error);
+            Snackbar.Add($"failed", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     private async Task BtnEditGroup (int groupId)
@@ -1052,7 +1052,7 @@ else
                     }
                 else
                     {
-                    Snackbar.Add("failed to delete group", Severity.Error);
+                    Snackbar.Add("failed to delete group", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     }
                 }
             }
@@ -1103,7 +1103,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed", Severity.Error);
+            Snackbar.Add($"failed", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     private async Task BtnAddStudentsToExam ()
@@ -1127,7 +1127,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed", Severity.Error);
+            Snackbar.Add($"failed", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         _hasFetched = true;
         }
@@ -1264,12 +1264,12 @@ else
                 }
             else
                 {
-                Snackbar.Add($"failed to create message {messageTitle}", Severity.Error);
+                Snackbar.Add($"failed to create message {messageTitle}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             }
         else
             {
-            Snackbar.Add($"large message ({messageBody.Length}), max: 4000", Severity.Error);
+            Snackbar.Add($"large message ({messageBody.Length}), max: 4000", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     private async Task BtnAddStudentsToMessage ()
@@ -1292,7 +1292,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed", Severity.Error);
+            Snackbar.Add($"failed", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     private async Task BtnEditMessage (int messageId)
@@ -1343,7 +1343,7 @@ else
                 bool result = await feService.Delete_Messages("ByMessageId", messageId);
                 if (result)
                     {
-                    Snackbar.Add("message deleted", Severity.Success);
+                    Snackbar.Add("message deleted", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     MessageId = 0;
                     appState.SetMessageId(0);
                     _cmd = "HideMessageBody";
@@ -1353,13 +1353,13 @@ else
                     }
                 else
                     {
-                    Snackbar.Add("failed to delete message", Severity.Error);
+                    Snackbar.Add("failed to delete message", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     }
                 }
             }
         else
             {
-            Snackbar.Add("select a message", Severity.Warning);
+            Snackbar.Add("select a message", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     //Notes
@@ -1456,11 +1456,13 @@ else
             var worksheet = workbook.Worksheet(1); //1:first sheet
             i = 0;
             // group.GroupId = Convert.ToInt32 (appState.GroupId);
+            int _departmentId = Convert.ToInt32 (appState.DepartmentId); //ie teacher'd departmentId
             foreach (var row in worksheet.RowsUsed().Skip(1)) //skip header
                 {
                 i++;
                 User student = new User()
                     {
+                    DepartmentId = _departmentId,
                     UserName = row.Cell(1).GetString(),
                     UserPass = row.Cell(1).GetString(),
                     UserNickname = row.Cell(2).GetString(),
@@ -1508,7 +1510,6 @@ else
         {
         lstStudents.Clear();
         strSearch = "";
-        // Snackbar.Add($"list cleared", Severity.Info);
         StateHasChanged();
         reftxtSearch.FocusAsync();
         }
@@ -1516,7 +1517,7 @@ else
         {
         if (ExamId == 0)
             {
-            Snackbar.Add($"select an exam", Severity.Warning);
+            Snackbar.Add($"select an exam", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         else
             {
@@ -1535,7 +1536,7 @@ else
             }
         else
             {
-            Snackbar.Add($"select a course", Severity.Warning);
+            Snackbar.Add($"select a course", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     public void BtnHelpSignupNewTeacher ()

@@ -1,4 +1,5 @@
-﻿using ExaminerS.Models;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using ExaminerS.Models;
 using System.Globalization;
 using Group = ExaminerS.Models.Group;
 
@@ -101,9 +102,9 @@ namespace ExaminerB.Service
                 return 0;
                 }
             }
-        public async Task<List<User>> Read_StudentsAll ()
+        public async Task<List<User>> Read_StudentsAll (int departmentId)
             {
-            var response = await _http.PostAsync ($"api/Read_StudentsAll", null);
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsAll", departmentId);
             if (response.IsSuccessStatusCode)
                 {
                 List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
@@ -114,9 +115,9 @@ namespace ExaminerB.Service
                 return new List<User> ();
                 }
             }
-        public async Task<List<User>> Read_StudentsByKeyword (string keyword, int getGCEM)
+        public async Task<List<User>> Read_StudentsByKeyword (int departmentId, string keyword, int getGCEM)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByKeyword?getGCEM={getGCEM}", keyword);
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByKeyword?departmentId={departmentId}&getGCEM={getGCEM}", keyword);
             if (response.IsSuccessStatusCode)
                 {
                 List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
@@ -127,9 +128,9 @@ namespace ExaminerB.Service
                 return new List<User> ();
                 }
             }
-        public async Task<List<User>> Read_StudentsByGCEMSId (string mode, int Id, int teacherId, int readStudentGCEM)
+        public async Task<List<User>> Read_StudentsByGCEMSId (int departmentId, string mode, int Id, int teacherId, int readStudentGCEM)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByGCEMSId?mode={mode}&readStudentGCEM={readStudentGCEM}&teacherId={teacherId}", Id);
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByGCEMSId?departmentId={departmentId}&mode={mode}&readStudentGCEM={readStudentGCEM}&teacherId={teacherId}", Id);
             if (response.IsSuccessStatusCode)
                 {
                 List<User>? lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
@@ -1171,9 +1172,9 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ($"api/Create_Chatroom", chatroom);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<List<Chatroom>> Read_Chatrooms ()
+        public async Task<List<Chatroom>> Read_Chatrooms (int departmentId)
             {
-            var response = await _http.PostAsync ($"api/Read_Chatrooms", null);
+            var response = await _http.PostAsJsonAsync ($"api/Read_Chatrooms", departmentId);
             if (response.IsSuccessStatusCode)
                 {
                 List<Chatroom>? lstChatrooms = await response.Content.ReadFromJsonAsync<List<Chatroom>> ();

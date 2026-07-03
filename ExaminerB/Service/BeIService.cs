@@ -18,9 +18,9 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region S:Students
         Task<int> Create_StudentAsync (User student);
-        Task<List<User>> Read_StudentsAllAsync ();
-        Task<List<User>> Read_StudentsByKeywordAsync (string keyword, int readStudentGCEM);
-        Task<List<User>> Read_StudentsByGCEMSIdAsync (string mode, int Id, int teacherId, int readStudentGCEM);
+        Task<List<User>> Read_StudentsAllAsync (int departmentId);
+        Task<List<User>> Read_StudentsByKeywordAsync (int departmentId, string keyword, int readStudentGCEM);
+        Task<List<User>> Read_StudentsByGCEMSIdAsync (int departmentId, string mode, int Id, int teacherId, int readStudentGCEM);
         Task<bool> Update_StudentAsync (User student);
         Task<bool> Update_StudentTagsAsync (User student);
         Task<bool> Remove_StudentFromListAsync (int studentId, string mode);
@@ -171,7 +171,7 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region CHR:Chatrooms
         Task<int> Create_ChatroomAsync (Chatroom chatroom);
-        Task<List<Chatroom>> Read_ChatroomsAsync ();
+        Task<List<Chatroom>> Read_ChatroomsAsync (int departmentId);
         Task<bool> Update_ChatroomAsync (Chatroom chatroom);
         Task<bool> Delete_ChatroomAsync (int chatroomId);
         #endregion

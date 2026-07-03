@@ -258,7 +258,7 @@
                 }
             else
                 {
-                Snackbar.Add($"failed to delete chat", Severity.Error); 
+                Snackbar.Add($"failed to delete chat", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); 
                 }
             }
         }

@@ -436,7 +436,7 @@ else
                 }
             else
                 {
-                Snackbar.Add($"Failed to delete note!", Severity.Error); 
+                Snackbar.Add($"Failed to delete note!", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); 
                 }
             }
         }

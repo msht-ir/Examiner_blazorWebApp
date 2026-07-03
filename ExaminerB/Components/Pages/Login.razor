@@ -9,6 +9,8 @@
 @inject IJSRuntime JS
 @implements IDisposable
 @inject ISnackbar Snackbar
+@using PSC.Blazor.Components.BrowserDetect
+@inject BrowserDetect browserDetector
 
 <PageTitle>Examiner Home</PageTitle>
 <center>
@@ -35,6 +37,32 @@
                             <hr />
                             <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AppRegistration" Size="Size.Small" OnClick="@(() => BtnSignup())" Style="margin-left:20px">SingUp New Teacher</MudButton>
                             }
+                        <hr />
+                        <BrowserDetect @bind-BrowserInfo="browserInfo" />
+                        @if (browserInfo != null)
+                            {
+                                <div class="flex align-content-center align-items-center justify-content-center" style="font-size:smaller; color:cadetblue; margin-top:20px">
+                                <span style="color:blue">Your device info:</span>
+                                <br />
+                                @browserInfo.BrowserName / @browserInfo.OSName @browserInfo.OSVersion
+                                <br />
+                                display: @browserInfo.ScreenResolution<br />
+                                @* CPU:           @browserInfo.CPUArchitect
+                                   Device Model:  @browserInfo.DeviceModel
+                                   Device Type:   @browserInfo.DeviceType
+                                   Browser major: @browserInfo.BrowserMajor
+                                   Is Android:    @browserInfo.IsAndroid
+                                   Is Desktop:    @browserInfo.IsDesktop
+                                   Is Mobile:     @browserInfo.IsMobile
+                                   Is Tablet:     @browserInfo.IsTablet
+                                   Is PadPro:     @browserInfo.IsIPadPro*@
+                                </div>
+                            }
+                        else
+                            {
+                            <p>Detecting browser...</p>
+                            }
+
                         </div>
                     </div>
                 </div>
@@ -95,6 +123,10 @@
     </div>
 
 @code {
+    private BrowserInfo? browserInfo
+        {
+        get; set;
+        }
     private bool _passwordVisible;
     private InputType _passwordInput = InputType.Password;
     private string _passwordIcon = Icons.Material.Filled.VisibilityOff;
@@ -144,14 +176,16 @@
             }
         if (user.UserId != 0)
             {
-            appState.SetCourseId (0);
-            appState.SetExamId (0);
+            appState.SetCourseId(0);
+            appState.SetExamId(0);
+            appState.SetDepartmentId(0);
             switch (user.UserRole)
                 {
                 case "student":
                         {
                         appState.SetUserLoginStatus(1);
                         appState.SetUserId(user.UserId);
+                        appState.SetDepartmentId(user.DepartmentId);
                         appState.SetUserName(user.UserName);
                         appState.SetUserPass(user.UserPass);
                         appState.SetUserTags(user.UserTags);
@@ -168,6 +202,7 @@
                         {
                         appState.SetUserLoginStatus(1);
                         appState.SetUserId(user.UserId);
+                        appState.SetDepartmentId(user.DepartmentId);
                         appState.SetUserName(user.UserName);
                         appState.SetUserPass(user.UserPass);
                         appState.SetUserTags(user.UserTags);
@@ -183,7 +218,7 @@
             }
         else
             {
-            Snackbar.Add("incorrect username or password!", Severity.Warning); 
+            Snackbar.Add("incorrect username or password!", Severity.Warning);
             user.UserRole = "student";
             return;
             }

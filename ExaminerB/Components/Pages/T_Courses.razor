@@ -423,7 +423,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to create course", Severity.Error); 
+            Snackbar.Add($"failed to create course", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); 
             }
         }
     public void BtnEditCourse (int courseId)
@@ -501,7 +501,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to create course topic", Severity.Error); 
+            Snackbar.Add($"failed to create course topic", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); 
             }
         }
     public async Task BtnUpdateCourseTopic (CourseTopic courseTopic)
@@ -559,7 +559,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to save course folder", Severity.Error); 
+            Snackbar.Add($"failed to save course folder", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); 
             }
         appState.SetCourseId(courseId);
         _hasFetched = true;

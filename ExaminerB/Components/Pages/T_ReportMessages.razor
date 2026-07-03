@@ -452,7 +452,7 @@ else
                 }
             else
                 {
-                Snackbar.Add("failed to delete message", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed to delete message", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }            
             }
         }
@@ -536,7 +536,7 @@ else
                 }
             else
                 {
-                Snackbar.Add("failed to delete message", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed to delete message", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }
             }
         }
@@ -559,7 +559,7 @@ else
                 }
             else
                 {
-                Snackbar.Add("failed to delete message", Severity.Error); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("failed to delete message", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 }            
             }
         }    
@@ -702,7 +702,7 @@ else
                 }
             else
                 {
-                Snackbar.Add($"failed to delete note", Severity.Error); 
+                Snackbar.Add($"failed to delete note", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); 
                 }
             }
         }

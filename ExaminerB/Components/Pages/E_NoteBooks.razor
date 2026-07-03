@@ -861,7 +861,7 @@ else
                 }
             else
                 {
-                Snackbar.Add($"there are sections in this notebook", Severity.Warning);
+                Snackbar.Add($"there are sections in this notebook", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             }
         }
@@ -945,7 +945,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to create new section", Severity.Error);
+            Snackbar.Add($"failed to create new section", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     public async Task BtnEditSubproject (int subProjectId)
@@ -1003,7 +1003,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to remove section!", Severity.Error);
+            Snackbar.Add($"failed to remove section!", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     public void BtnReportSubproject (Subproject subProject)
@@ -1184,7 +1184,7 @@ else
                 }
             else
                 {
-                Snackbar.Add("failed to copy note", Severity.Error);
+                Snackbar.Add("failed to copy note", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             _hasFetched = true;
             }
@@ -1210,7 +1210,7 @@ else
                 }
             else
                 {
-                Snackbar.Add($"failed to delete note", Severity.Error);
+                Snackbar.Add($"failed to delete note", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             }
         }
@@ -1233,7 +1233,7 @@ else
                 }
             else
                 {
-                Snackbar.Add($"students did not removed from the course", Severity.Error);
+                Snackbar.Add($"students did not removed from the course", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             }
         }
@@ -1300,7 +1300,7 @@ else
             }
         else
             {
-            Snackbar.Add("select notebook and section", Severity.Info);
+            Snackbar.Add("select notebook and section", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     //handle Keys

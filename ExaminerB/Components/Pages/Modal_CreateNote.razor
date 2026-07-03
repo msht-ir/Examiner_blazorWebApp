@@ -194,7 +194,7 @@
         {
         if (note.NoteText.Trim() == "")
             {
-            Snackbar.Add("note is empty!", Severity.Info);
+            Snackbar.Add("note is empty!", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             return;
             }
         else
@@ -206,14 +206,14 @@
             int result = await feService.Create_Note(note);
             if (result > 0)
                 {
-                Snackbar.Add("saved", Severity.Success);
+                Snackbar.Add("saved", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 user.UserId = Convert.ToInt32(appState.UserId);
                 appState.SetCmd("");
                 await Close();
                 }
             else
                 {
-                Snackbar.Add("failed to save note", Severity.Error);
+                Snackbar.Add("failed to save note", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             _hasFetched = true;
             }
@@ -222,7 +222,7 @@
         {
         if (note.ReferenceId == 0)
             {
-            Snackbar.Add("failed... try again", Severity.Error);
+            Snackbar.Add("failed... try again", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             return;
             }
         if (note.NoteText.Trim() == "")
@@ -250,7 +250,7 @@
                 }
             else
                 {
-                Snackbar.Add("failed to update note", Severity.Error);
+                Snackbar.Add("failed to update note", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             _hasFetched = true;
             }
