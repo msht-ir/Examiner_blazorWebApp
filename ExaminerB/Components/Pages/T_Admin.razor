@@ -1,0 +1,834 @@
+﻿@page "/T_Admin"
+@using ClosedXML.Excel
+@using Microsoft.Extensions.Hosting
+@using ClosedXML
+@using ExaminerB.Service
+@using System.Threading.Tasks
+@inject NavigationManager Navman
+@inject AppState appState
+@inject FeService feService
+@inject IJSRuntime JS
+@implements IDisposable
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+@if (!_hasFetched)
+    {
+    <_Loading />
+    }
+else
+    {
+        <EditForm Model="lstDepartments" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <img src="/img/icoAdmin2.png" width="70" title="admin page صفحه ادمين" />
+        <h4 style="color:royalblue; font-style:italic">Administrative</h4>
+            <div style="text-align: center;">
+                <button type="button"
+                    class="btn btn-link pulse-hover"
+                    @onclick='() => BtnAddNewDepartment()'>
+                <img src="/img/icoAdd0.png" width="22" />
+                </button>
+                <button type="button"
+                    class="btn btn-link pulse-hover"
+                    @onclick='() => BtnListDepartments()'>
+                <img src="/img/icoList.png" width="24" />
+                </button>
+            </div>
+        @* COMBO D *@
+            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 mb-4 px-0">
+                <MudCard Class="mx-auto">
+                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                    @if (_cmd == "addnewdepartment")
+                        {
+                        @* NEW Department *@
+                            <div class="d-flex" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <h6 style="color:indianred;">add new Department</h6>
+                            </div>
+                            <div class="d-flex">
+                            <MudTextField @ref="refNewDepartmentName"
+                                          @bind-Value="strNewDepartmentName"
+                                          Label="new department"
+                                          Variant="Variant.Text"
+                                          Margin="Margin.Dense"
+                                          Autocomplete="off"
+                                          Adornment="Adornment.End"
+                                          AdornmentIcon="@Icons.Material.Filled.Save"
+                                          OnAdornmentClick="() => BtnCreateNewDepartment()"
+                                          Class="my-textfield" />
+                            </div>
+                            <div class="d-flex">
+                            <MudTextField @ref="refNewDepartmentInfo"
+                                          @bind-Value="strNewDepartmentInfo"
+                                          Label="info"
+                                          Variant="Variant.Text"
+                                          Margin="Margin.Dense"
+                                          Autocomplete="off"
+                                          Adornment="Adornment.End"
+                                          AdornmentIcon="@Icons.Material.Filled.NoteAlt"
+                                          Class="my-textfield" />
+                            </div>
+                            <div class="d-flex" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <button class="btn btn-link" style="margin-left:20px;" Title="cancel" @onclick="BtnCancel">
+                                <img src="/img/icoCancel.png" width="20" />
+                                </button>
+                            </div>
+                        }
+                    else if (_cmd == "editdepartment")
+                        {
+                        @* EDIT Department *@
+                            <div class="d-flex">
+                            <MudTextField @ref="refDepartmentName"
+                                          @bind-Value="strDepartmentName"
+                                          Label="edit department"
+                                          Variant="Variant.Text"
+                                          Margin="Margin.Dense"
+                                          Autocomplete="off"
+                                          Adornment="Adornment.End"
+                                          AdornmentIcon="@Icons.Material.Filled.Save"
+                                          OnAdornmentClick="() => BtnUpdateDepartment()"
+                                          Class="my-textfield" />
+                            </div>
+                            <div class="d-flex">
+                            <MudTextField @ref="refDepartmentInfo"
+                                          @bind-Value="strDepartmentInfo"
+                                          Label="edit department"
+                                          Variant="Variant.Text"
+                                          Margin="Margin.Dense"
+                                          Autocomplete="off"
+                                          Adornment="Adornment.End"
+                                          AdornmentIcon="@Icons.Material.Filled.NoteAlt"
+                                          Class="my-textfield" />
+                            </div>
+                            <div class="d-flex" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <button class="btn btn-link" style="margin-left:20px;" Title="cancel" @onclick="BtnCancel">
+                                <img src="/img/icoCancel.png" width="20" />
+                                </button>
+                            </div>
+                        }
+                    else
+                        {
+                        @* ComboBox Departments *@
+                            <div class="d-flex gap-3">
+                                <MudSelect T="int"
+                                       @ref="refDepartments"
+                                       Label="department"
+                                       Value="DepartmentId"
+                                       ValueChanged="OnDepartmentChanged"
+                                       Class="w-auto my-select"
+                                       Variant="Variant.Text"
+                                       Margin="Margin.Dense"
+                                       Adornment="Adornment.End"
+                                       AdornmentIcon="@Icons.Material.Filled.List"
+                                       OnAdornmentClick='() => BtnListTeachers(DepartmentId)'
+                                       Style="color:royalblue;width:140px;font-size:small;">
+                                <MudSelectItem Value="0">select</MudSelectItem>
+                                @foreach (var department in lstDepartments)
+                                    {
+                                    <MudSelectItem Value="@department.DepartmentId"><span style="font-size:small;font-family:Tahoma;">@department.DepartmentName</span></MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </div>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudContainer>
+        @* SECTION 2 ---- LIST RESULTS *@
+        @switch (_cmd)
+            {
+            case "listdepartments":
+                    {
+                    @if (lstDepartments.Count > 0)
+                        {
+                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                <MudCard Class="mx-0">
+                                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                                    <h6 style="text-align:center;color:royalblue">departments</h6>
+                                    <hr style="color:indianred" />
+                                    @foreach (Department department in lstDepartments)
+                                        {
+                                            <div class="d-flex align-items-center mb-1">
+                                                <button type="button"
+                                                    class="btn btn-link"
+                                                    style="margin-left:1px"
+                                                    Title="delete حذف"
+                                                    @onclick='() => BtnDeleteDepartment(department.DepartmentId)'>
+                                                <img src="/img/icoDelete1.png" width="20" />
+                                                </button>
+                                                <button type="button"
+                                                    class="btn btn-link"
+                                                    style="margin-left:1px"
+                                                    Title="edit ويرايش"
+                                                    @onclick='() => BtnEditDepartment(department.DepartmentId)'>
+                                                <img src="/img/icoRename.png" width="26" />
+                                                </button>
+                                                <button type="button"
+                                                    class="btn btn-link"
+                                                    style="margin-left:1px"
+                                                    Title="list ليست"
+                                                    @onclick='() => BtnListTeachers(department.DepartmentId)'>
+                                                <img src="/img/icoListT.png" width="30" />
+                                                </button>
+                                            <span style="font-size:smaller">@department.DepartmentName</span>
+                                            </div>
+                                        }
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
+                        }
+                    break;
+                    }
+            case "addnewteacher":
+                    {
+                        <div class="d-flex" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <h6 style="color:indianred;">add new Teacher</h6>
+                        </div>
+                        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 mb-4 px-0">
+                            <MudCard Class="mx-auto">
+                                <MudCardContent Style="background-color:rgba(249,249,249);">
+                                    <div class="d-flex">
+                                    <MudTextField @ref="refTeacherUsername"
+                                                  @bind-Value="strTeacherUsername"
+                                                  Label="username"
+                                                  Variant="Variant.Text"
+                                                  Margin="Margin.Dense"
+                                                  Autocomplete="off"
+                                                  Adornment="Adornment.End"
+                                                  AdornmentIcon="@Icons.Material.Filled.Save"
+                                                  OnAdornmentClick="() => BtnCreateNewTeacher()"
+                                                  Class="my-textfield" />
+                                    </div>
+                                    <div class="d-flex">
+                                    <MudTextField @ref="refTeacherPassword"
+                                                  @bind-Value="strTeacherPassword"
+                                                  Label="password"
+                                                  Variant="Variant.Text"
+                                                  Margin="Margin.Dense"
+                                                  Autocomplete="off"
+                                                  Class="my-textfield" />
+                                    </div>
+                                    <div class="d-flex">
+                                    <MudTextField @ref="refTeacherNickname"
+                                                  @bind-Value="strTeacherNickname"
+                                                  Label="nickname"
+                                                  Variant="Variant.Text"
+                                                  Margin="Margin.Dense"
+                                                  Autocomplete="off"
+                                                  Style="font-family:tahoma"
+                                                  Class="my-textfield" />
+                                    </div>
+                                    <div class="d-flex">
+                                    <MudTextField @ref="refTeacherEmail"
+                                                  @bind-Value="strTeacherEmail"
+                                                  Label="email"
+                                                  Variant="Variant.Text"
+                                                  Margin="Margin.Dense"
+                                                  Autocomplete="off"
+                                                  Class="my-textfield" />
+                                    </div>
+                                    <div class="d-flex" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                        <button class="btn btn-link" style="margin-top:30px;" Title="cancel" @onclick="BtnCancel">
+                                        <img src="/img/icoCancel.png" width="20" />
+                                        </button>
+                                    </div>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudContainer>
+
+                    break;
+                    }
+            case "editteacher":
+                    {
+                        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 mb-4 px-0">
+                            <MudCard Class="mx-auto">
+                                <MudCardContent Style="background-color:rgba(249,249,249);">
+                                    <div class="d-flex">
+                                    <MudTextField @ref="refTeacherUsername"
+                                                  @bind-Value="strTeacherUsername"
+                                                  Label="username"
+                                                  Variant="Variant.Text"
+                                                  Margin="Margin.Dense"
+                                                  Autocomplete="off"
+                                                  Adornment="Adornment.End"
+                                                  AdornmentIcon="@Icons.Material.Filled.Save"
+                                                  OnAdornmentClick="() => BtnUpdateTeacher()"
+                                                  Class="my-textfield" />
+                                    </div>
+                                    <div class="d-flex">
+                                    <MudTextField @ref="refTeacherPassword"
+                                                  @bind-Value="strTeacherPassword"
+                                                  Label="password"
+                                                  Variant="Variant.Text"
+                                                  Margin="Margin.Dense"
+                                                  Autocomplete="off"
+                                                  Class="my-textfield" />
+                                    </div>
+                                    <div class="d-flex">
+                                    <MudTextField @ref="refTeacherNickname"
+                                                  @bind-Value="strTeacherNickname"
+                                                  Label="nickname"
+                                                  Variant="Variant.Text"
+                                                  Margin="Margin.Dense"
+                                                  Autocomplete="off"
+                                                  Style="font-family:tahoma"
+                                                  Class="my-textfield" />
+                                    </div>
+                                    <div class="d-flex">
+                                    <MudTextField @ref="refTeacherEmail"
+                                                  @bind-Value="strTeacherEmail"
+                                                  Label="email"
+                                                  Variant="Variant.Text"
+                                                  Margin="Margin.Dense"
+                                                  Autocomplete="off"
+                                                  Class="my-textfield" />
+                                    </div>
+                                    <div class="d-flex" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                        <button class="btn btn-link" style="margin-top:30px;" Title="cancel" @onclick="BtnCancel">
+                                        <img src="/img/icoCancel.png" width="20" />
+                                        </button>
+                                    </div>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudContainer>
+
+                    break;
+                    }
+            case "listteachers":
+                    {
+                        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                            <MudCard Class="mx-0">
+                                <MudCardContent Style="background-color:rgba(249,249,249);">
+                                <h6 style="text-align:center;color:royalblue">teachers</h6>
+                                    <div style="text-align: center;">
+                                        <button type="button"
+                                            class="btn btn-link pulse-hover"
+                                            @onclick='() => BtnAddNewTeacher()'>
+                                        <img src="/img/icoAdd0.png" width="22" />
+                                        </button>
+                                    </div>
+                                <hr style="color:indianred" />
+                                @foreach (User user in lstTeachers)
+                                    {
+                                        <div class="d-flex align-items-center mb-1">
+                                            <button type="button"
+                                                class="btn btn-link"
+                                                style="margin-left:1px"
+                                                Title="delete حذف"
+                                                @onclick='() => BtnDeleteTeacher(user)'>
+                                            <img src="/img/icoDelete1.png" width="20" />
+                                            </button>
+                                            <button type="button"
+                                                class="btn btn-link"
+                                                style="margin-left:1px"
+                                                Title="edit ويرايش"
+                                                @onclick='() => BtnEditTeacher(user)'>
+                                            <img src="/img/icoRename.png" width="26" />
+                                            </button>
+                                            <button type="button"
+                                                class="btn btn-link"
+                                                style="margin-left:1px"
+                                                Title="list ليست"
+                                                @onclick='() => BtnListCourses(user.UserId)'>
+                                            <img src="/img/icoListC.png" width="30" />
+                                            </button>
+                                        <span style='font-size:smaller; @((user.UserTags & 1) == 1 ? "color:black" : "color:indianred;font-style:italic")'>@user.UserNickname - @user.UserName </span>
+                                        </div>
+                                    }
+                                </MudCardContent>
+                            </MudCard>
+                        </MudContainer>
+                    break;
+                    }
+            case "listcourses":
+                    {
+                    @if (lstCourses.Count > 0)
+                        {
+                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                <MudCard Class="mx-0">
+                                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                                    <h6 style="text-align:center;color:royalblue">courses</h6>
+                                    <hr style="color:indianred" />
+                                    @foreach (Course course in lstCourses)
+                                        {
+                                            <div class="d-flex align-items-center mb-1">
+                                                <button type="button"
+                                                    class="btn btn-link"
+                                                    style="margin-left:1px"
+                                                    Title="list ليست"
+                                                    @onclick='() => BtnListExams(course.CourseId)'>
+                                                <img src="/img/icoListE.png" width="30" />
+                                                </button>
+                                                <button type="button"
+                                                    class="btn btn-link"
+                                                    style="margin-left:1px"
+                                                    Title="delete حذف"
+                                                    @onclick='() => BtnExportTests(course.CourseId)'>
+                                                <img src="/img/icoListT.png" width="30" />
+                                                </button>
+                                                <button type="button"
+                                                    class="btn btn-link"
+                                                    style="margin-left:1px"
+                                                    Title="delete حذف"
+                                                    @onclick='() => BtnExportTests(course.CourseId)'>
+                                                <img src="/img/icoChartPie.png" width="20" />
+                                                </button>
+                                            <span style="font-size:smaller">@course.CourseName</span>
+                                            </div>
+                                        }
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
+                        }
+                    break;
+                    }
+            case "listexams":
+                    {
+                    @if (lstExams.Count > 0)
+                        {
+                            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                <MudCard Class="mx-0">
+                                    <MudCardContent Style="background-color:rgba(249,249,249);">
+                                    <h6 style="text-align:center;color:royalblue">List of Students for: <span style="color:indianred">@appState.Message</span></h6>
+                                    <hr style="color:indianred" />
+                                    @foreach (Exam exam in lstExams)
+                                        {
+                                            <div class="d-flex align-items-center mb-1">
+                                            <span style="font-size:x-small">@exam.ExamTitle</span>
+                                            </div>
+                                        }
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudContainer>
+                        }
+                    break;
+                    }
+            }
+        @* FOOTER *@
+        <br />
+        <hr />
+            <div style="text-align: center;">
+                <button type="button"
+                    class="btn btn-link"
+                    @onclick="BtnBack">
+                <img src="/img/icoBack3.png" width="40" />
+                </button>
+                <button type="button"
+                    class="btn btn-link pulse-hover"
+                    @onclick='() => BtnGotoPage("S")'>
+                <img src="/img/icoSwitchBoardStudents.png" width="42" />
+                </button>
+                <button type="button"
+                    class="btn btn-link pulse-hover"
+                    @onclick='() => BtnGotoPage("C")'>
+                <img src="/img/icoSwitchBoardCourses.png" width="42" />
+                </button>
+                <button type="button"
+                    class="btn btn-link pulse-hover"
+                    @onclick='() => BtnGotoPage("N")'>
+                <img src="/img/icoNoteBook.png" width="38" />
+                </button>
+            </div>
+        </EditForm>
+    }
+    <script>
+    window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});
+    </script>
+
+@code {
+    User user = new User();
+    private MudTextField<string> refTeacherUsername;
+    private MudTextField<string> refTeacherPassword;
+    private MudTextField<string> refTeacherNickname;
+    private MudTextField<string> refTeacherEmail;
+    string strTeacherUsername = "";
+    string strTeacherPassword = "";
+    string strTeacherNickname = "";
+    string strTeacherEmail = "";
+
+    private MudTextField<string> refDepartmentName;
+    private MudTextField<string> refDepartmentInfo;
+    string strDepartmentName = "";
+    string strDepartmentInfo = "";
+
+    private MudTextField<string> refNewDepartmentName;
+    private MudTextField<string> refNewDepartmentInfo;
+    string strNewDepartmentName = "";
+    string strNewDepartmentInfo = "";
+
+    private MudSelect<int> refDepartments;
+    private MudSelect<int> refTeachers;
+    private MudSelect<int> refCourses;
+    private MudSelect<int> refExams;
+
+    int DepartmentId = 0;
+    int TeacherId = 0;
+    int CourseId = 0;
+    int ExamId = 0;
+    List<Department> lstDepartments = new List<Department>();
+    List<User> lstTeachers = new List<User>();
+    List<Course> lstCourses = new List<Course>();
+    List<Exam> lstExams = new List<Exam>();
+    Department department = new Department();
+    Course course = new Course();
+    Exam exam = new Exam();
+    int i = 0;
+    string _cmd = "";
+    public bool _hasFetched = false;
+    public bool requestFeedback { get; set; } = false;
+
+    //LifeCycleEvents
+    protected override async Task OnInitializedAsync ()
+        {
+        appState.OnChange += TriggerRender;
+        appState.SetMessage("");
+        if (Convert.ToInt32(appState.UserLoginStatus) != 1)
+            {
+            Navman.NavigateTo("/Login");
+            }
+        user.UserId = Convert.ToInt32(appState.UserId);
+        user.UserName = appState.UserName;
+        user.UserPass = appState.UserPass;
+        user.UserRole = appState.UserRole;
+        //on second rener, user.UserId will get its value
+        lstDepartments = await feService.Read_Departments();
+        _cmd = "listdepartments";
+        _hasFetched = true;
+        }
+    protected override async Task OnAfterRenderAsync (bool firstRender)
+        {
+        }
+    private void TriggerRender ()
+        {
+        InvokeAsync(StateHasChanged);
+        }
+    public void Dispose ()
+        {
+        appState.OnChange -= TriggerRender;
+        }
+    //SELECTION
+    public async Task BtnSelectAll ()
+        {
+        // foreach (User student in lstStudents)
+        //     {
+        //     student.IsSelected = true;
+        //     }
+        // StateHasChanged();
+        }
+    public async Task BtnInvertSelection ()
+        {
+        // foreach (User student in lstStudents)
+        //     {
+        //     student.IsSelected = (student.IsSelected) ? false : true;
+        //     }
+        // StateHasChanged();
+        }
+    //Department
+    private async Task BtnListDepartments ()
+        {
+        _cmd = "listdepartments";
+        StateHasChanged();
+        }
+    private async Task OnDepartmentChanged (int newValue)
+        {
+        //update DepartmentId from the event
+        DepartmentId = newValue;
+        department.DepartmentId = DepartmentId;
+        department.DepartmentName = "-"; //just because this field is required
+        appState.SetDepartmentId(DepartmentId);
+        StateHasChanged();
+        }
+    private void BtnAddNewDepartment ()
+        {
+        strDepartmentName = "";
+        strDepartmentInfo = "";
+        _cmd = "addnewdepartment";
+        StateHasChanged();
+        // refNewDepartmentName.FocusAsync();
+        }
+    private async Task BtnCreateNewDepartment ()
+        {
+        Department department = new Department() { DepartmentName = strNewDepartmentName, DepartmentInfo = strNewDepartmentInfo };
+        bool result = await feService.Create_Department(department);
+        if (result)
+            {
+            lstDepartments = await feService.Read_Departments();
+            Snackbar.Add($"department {strNewDepartmentName} created", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            _cmd = "";
+            StateHasChanged();
+            }
+        else
+            {
+            Snackbar.Add($"failed to create {strNewDepartmentName}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            }
+        }
+    private async Task BtnEditDepartment (int departmentId)
+        {
+        if (departmentId > 0)
+            {
+            Department thisDepartment = await feService.Read_Department(departmentId);
+            appState.SetDepartmentId(departmentId);
+            strDepartmentName = thisDepartment.DepartmentName;
+            strDepartmentInfo = thisDepartment.DepartmentInfo;
+            _cmd = "editdepartment";
+            StateHasChanged();
+            refDepartmentName.FocusAsync();
+            }
+        }
+    private async Task BtnUpdateDepartment ()
+        {
+        if (strDepartmentName.Trim() != "")
+            {
+            department.DepartmentId = Convert.ToInt32(appState.DepartmentId);
+            department.DepartmentName = strDepartmentName;
+            department.DepartmentInfo = strDepartmentInfo;
+            bool Result = await feService.Update_Department(department);
+            Snackbar.Add($"updated to: {department.DepartmentName}", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            lstDepartments.Clear();
+            lstDepartments = await feService.Read_Departments(); //refresh list
+            _cmd = "";
+            StateHasChanged();
+            }
+        }
+    private async Task BtnDeleteDepartment (int departmentId)
+        {
+        if (departmentId > 0)
+            {
+            var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> the department?<br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
+            bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+            if (confirmResult == true)
+                {
+                int result = await feService.Delete_Department(departmentId);
+                if (result > 0)
+                    {
+                    Snackbar.Add("department deleted", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                    DepartmentId = 0;
+                    appState.SetDepartmentId(0);
+                    _cmd = "listdepartments";
+                    lstDepartments.Clear();
+                    lstDepartments = await feService.Read_Departments();
+                    StateHasChanged();
+                    }
+                else
+                    {
+                    Snackbar.Add("failed to delete department", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                    }
+                }
+            }
+        else
+            {
+            Snackbar.Add("select a department", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            }
+        }
+    //Teachers
+    private async Task OnTeacherChanged (int newValue)
+        {
+        //update CourseId from the event
+        TeacherId = newValue;
+        appState.SetUserId(TeacherId);
+        TeacherId = 0;
+        await BtnListCourses(TeacherId);
+        StateHasChanged();
+        }
+    private async Task BtnListTeachers (int departmentId)
+        {
+        if (departmentId > 0)
+            {
+            DepartmentId = departmentId;
+            lstTeachers = await feService.Read_Teachers(departmentId);
+            _cmd = "listteachers";
+            StateHasChanged();
+            }
+        }
+    private void BtnAddNewTeacher ()
+        {
+        strTeacherUsername = "";
+        strTeacherPassword = "";
+        strTeacherNickname = "";
+        strTeacherEmail = "";
+        _cmd = "addnewteacher";
+        StateHasChanged();
+        }
+    private async Task BtnCreateNewTeacher ()
+        {
+        if ((strTeacherUsername.Trim() == "") || (strTeacherPassword.Trim() == "") || (strTeacherNickname.Trim() == "") || (strTeacherEmail.Trim() == ""))
+            {
+            Snackbar.Add($"fill in blanks", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            return;
+            }
+        else
+            {
+            int _departmentId = DepartmentId;
+            User teacher = new User()
+                {
+                DepartmentId = _departmentId,
+                UserName = strTeacherUsername,
+                UserPass = strTeacherPassword,
+                UserNickname = strTeacherNickname,
+                UserEmail = strTeacherEmail,
+                UserTags = 1,
+                UserRole = "teacher"
+                };
+            bool result = await feService.Create_Teacher(teacher);
+            if (result)
+                {
+                lstTeachers = await feService.Read_Teachers(DepartmentId);
+                Snackbar.Add($"teacher {strTeacherUsername} - {strTeacherNickname} created", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                _cmd = "";
+                StateHasChanged();
+                }
+            else
+                {
+                Snackbar.Add($"failed to create {strTeacherUsername}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                }
+            }
+        }
+    private async Task BtnEditTeacher (User teacher)
+        {
+        appState.SetTeacherId(teacher.UserId);
+        appState.SetCmd(teacher.UserTags.ToString()); //I used cmd here because 'appstate.UserTags' value must be preserved for the admin (who has login)
+        strTeacherUsername = teacher.UserName;
+        strTeacherPassword = teacher.UserPass;
+        strTeacherNickname = teacher.UserNickname;
+        strTeacherEmail = teacher.UserEmail;
+        _cmd = "editteacher";
+        StateHasChanged();
+        }
+    private async Task BtnUpdateTeacher ()
+        {
+        if ((strTeacherUsername.Trim() == "") || (strTeacherPassword.Trim() == "") || (strTeacherNickname.Trim() == "") || (strTeacherEmail.Trim() == ""))
+            {
+            Snackbar.Add($"fill in blanks", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            return;
+            }
+        else
+            {
+            User teacher = new User()
+                {
+                UserId = Convert.ToInt32(appState.TeacherId),
+                DepartmentId = DepartmentId,
+                UserName = strTeacherUsername,
+                UserPass = strTeacherPassword,
+                UserNickname = strTeacherNickname,
+                UserEmail = strTeacherEmail,
+                UserTags = Convert.ToInt32(appState.Cmd),
+                UserRole = "teacher"
+                };
+            bool result = await feService.Update_User(teacher);
+            if (result)
+                {
+                lstTeachers = await feService.Read_Teachers(DepartmentId);
+                Snackbar.Add($"teacher {strTeacherUsername} - {strTeacherNickname} updated", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                _cmd = "listteachers";
+                StateHasChanged();
+                }
+            else
+                {
+                Snackbar.Add($"failed to update {strTeacherUsername}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                }
+            }
+        }
+    private async Task BtnDeleteTeacher (User teacher)
+        {
+        if ((teacher.UserTags & 1) == 1)
+            {
+            teacher.UserTags &= ~1;
+            }
+        else
+            {
+            teacher.UserTags |= 1;
+            }
+        teacher.UserRole = "teacher";
+        bool result = await feService.Update_User(teacher);
+        if (result)
+            {
+            lstTeachers = await feService.Read_Teachers(DepartmentId);
+            Snackbar.Add($"teacher {strTeacherUsername} account updated", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            _cmd = "listteachers";
+            StateHasChanged();
+            }
+        else
+            {
+            Snackbar.Add($"failed to update {strTeacherUsername}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            }
+        }
+    //course-exam
+    private async Task OnCourseChanged (int newValue)
+        {
+        //update CourseId from the event
+        CourseId = newValue;
+        appState.SetCourseId(CourseId);
+        ExamId = 0;
+        await BtnListExams(CourseId);
+        StateHasChanged();
+        }
+    private async Task OnExamChanged (int newValue)
+        {
+        //update ExamId from the event
+        ExamId = newValue;
+        appState.SetExamId(ExamId);
+        StateHasChanged();
+        }
+    private async Task BtnListCourses (int teacherId)
+        {
+        if (teacherId > 0)
+            {
+            TeacherId = teacherId;
+            }
+        lstCourses = await feService.Read_Courses(teacherId);
+        _cmd = "listcourses";
+        StateHasChanged();
+        }
+    private async Task BtnListExams (int courseid)
+        {
+        lstExams.Clear();
+        lstExams = await feService.Read_Exams(courseid);
+        StateHasChanged();
+        }
+    private async Task BtnExportTests (int courseid)
+        {
+        //do export
+        StateHasChanged();
+        }
+    //handle Keys
+    public void BtnGotoPageCourses ()
+        {
+        appState.SetReturnPage("/T_Students");
+        if (CourseId > 0)
+            {
+            Navman.NavigateTo("/T_Courses");
+            }
+        else
+            {
+            Snackbar.Add($"select a course", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            }
+        }
+    public void BtnHelpSignupNewTeacher ()
+        {
+        _cmd = _cmd == "guide" ? "" : "guide";
+        StateHasChanged();
+        }
+    public void BtnCancelGuide ()
+        {
+        _cmd = "";
+        StateHasChanged();
+        }
+    public void BtnCancel ()
+        {
+        _cmd = "listdepartments";
+        StateHasChanged();
+        }
+    public void BtnBack ()
+        {
+        Navman.NavigateTo("/T_SwitchBoard");
+        }
+    private void BtnGotoPage (string page)
+        {
+        string pg = page switch
+            {
+                "S" => "/T_Students",
+                "N" => "/E_NoteBooks",
+                "C" => "/T_Courses"
+                };
+        appState.SetReturnPage("/T_Students");
+        Navman.NavigateTo(pg);
+        }
+
+    }

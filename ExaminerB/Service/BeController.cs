@@ -1,9 +1,8 @@
 ﻿using ExaminerB.Services2Backend;
 using ExaminerS.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using static QRCoder.PayloadGenerator.SwissQrCode.Reference;
 using Chat = ExaminerS.Models.Chat;
+using Department = ExaminerS.Models.Department;
 using Group = ExaminerS.Models.Group;
 
 namespace ExaminerB.Backend
@@ -51,9 +50,9 @@ namespace ExaminerB.Backend
                 }
             }
         [HttpPost ("Read_Teachers")]
-        public async Task<ActionResult<List<User>>> Read_Teachers ()
+        public async Task<ActionResult<List<User>>> Read_Teachers ([FromBody] int departmentId)
             {
-            var result = await _BeService.Read_TeachersAsync ();
+            var result = await _BeService.Read_TeachersAsync (departmentId);
             return Ok (result);
             }
         [HttpPost ("Update_Teacher")]
@@ -89,7 +88,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_StudentsByGCEMSId")]
-        public async Task<ActionResult<List<User>>> Read_StudentsByGCEMSId ([FromBody] int Id, [FromQuery] int departmentId , [FromQuery] string mode, [FromQuery] int teacherId, [FromQuery] int readStudentGCEM)
+        public async Task<ActionResult<List<User>>> Read_StudentsByGCEMSId ([FromBody] int Id, [FromQuery] int departmentId, [FromQuery] string mode, [FromQuery] int teacherId, [FromQuery] int readStudentGCEM)
             {
             var result = await _BeService.Read_StudentsByGCEMSIdAsync (departmentId, mode, Id, teacherId, readStudentGCEM);
             return Ok (result);
@@ -116,6 +115,38 @@ namespace ExaminerB.Backend
         public async Task<ActionResult<bool>> Delete_Student ([FromBody] int studentId)
             {
             var result = await _BeService.Delete_StudentAsync (studentId);
+            return Ok (result);
+            }
+        #endregion
+        #region D:Department
+        [HttpPost ("Create_Department")]
+        public async Task<ActionResult<int>> Create_Department ([FromBody] Department department)
+            {
+            var result = await _BeService.Create_DepartmentAsync (department);
+            return Ok (result);
+            }
+        [HttpPost ("Read_Departments")]
+        public async Task<ActionResult<List<Department>>> Read_Departments ()
+            {
+            var result = await _BeService.Read_DepartmentsAsync ();
+            return Ok (result);
+            }
+        [HttpPost ("Read_Department")]
+        public async Task<ActionResult<Department>> Read_Department ([FromBody] int departmentId)
+            {
+            var result = await _BeService.Read_DepartmentAsync (departmentId);
+            return Ok (result);
+            }
+        [HttpPost ("Update_Department")]
+        public async Task<ActionResult<bool>> Update_Department ([FromBody] Department department)
+            {
+            var result = await _BeService.Update_DepartmentAsync (department);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_Department")]
+        public async Task<ActionResult<int>> Delete_Department ([FromBody] int departmentId)
+            {
+            var result = await _BeService.Delete_DepartmentAsync (departmentId);
             return Ok (result);
             }
         #endregion

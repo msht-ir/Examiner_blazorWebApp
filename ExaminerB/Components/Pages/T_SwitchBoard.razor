@@ -25,9 +25,18 @@
                 <button class="btn btn-link pulse-hover" @onclick="GotoCourses">
                 <img src="/img/icoSwitchBoardCourses.png" width="46" title="courses درس ها" />
                 </button>
-                <button class="btn btn-link pulse-hover" @onclick="BtnChangeTeacherPassword">
-                <img src="/img/icoKeys.png" width="30" title="courses پسورد" />
-                </button>
+            @if (Convert.ToInt32(appState.UserTags & 128) == 128)
+                {
+                    <button class="btn btn-link pulse-hover" @onclick="BtnGotoAdminPage">
+                    <img src="/img/icoAdmin2.png" width="40" title="admin page صفحه ادمين" />
+                    </button>
+                }
+            else
+                {
+                    <button class="btn btn-link pulse-hover" @onclick="BtnChangeTeacherPassword">
+                    <img src="/img/icoKeys.png" width="30" title="courses پسورد" />
+                    </button>
+                }
             </div>
         <br />
         <br />
@@ -123,6 +132,11 @@
         {
         appState.SetReturnPage("/T_SwitchBoard");
         Navman.NavigateTo("/E_NoteBooks");
+        }
+    public void BtnGotoAdminPage ()
+        {
+        appState.SetReturnPage("/T_SwitchBoard");
+        Navman.NavigateTo("/T_Admin");
         }
     public async Task BtnCreateNote ()
         {

@@ -1,13 +1,10 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.Office.Word;
-using DocumentFormat.OpenXml.Office2010.Excel;
 using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
 using System.Data;
-using static QRCoder.PayloadGenerator.SwissQrCode.Reference;
 using Chat = ExaminerS.Models.Chat;
+using Department = ExaminerS.Models.Department;
 using Group = ExaminerS.Models.Group;
 
 namespace ExaminerB.Services2Backend
@@ -70,7 +67,7 @@ namespace ExaminerB.Services2Backend
                 {
                 await cnn.OpenAsync ();
                 using SqlCommand cmd = new (sql, cnn);
-                cmd.CommandType= CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@studentname", username);
                 cmd.Parameters.AddWithValue ("@studentpass", password);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
@@ -122,7 +119,7 @@ namespace ExaminerB.Services2Backend
             try
                 {
                 using SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType= CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@usrname", teacher.UserName);
                 cmd.Parameters.AddWithValue ("@usrpass", teacher.UserPass);
                 cmd.Parameters.AddWithValue ("@usrnickname", teacher.UserNickname);
@@ -138,13 +135,14 @@ namespace ExaminerB.Services2Backend
                 return false;
                 }
             }
-        public async Task<List<User>> Read_TeachersAsync ()
+        public async Task<List<User>> Read_TeachersAsync (int departmentId)
             {
             var users = new List<User> ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new SqlConnection (connString);
             using SqlCommand cmd = new ("dbo.sp_ReadTeachers", cnn); // -- ORDER BY usrNickName
             cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue ("departmentid", departmentId);
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             while (await reader.ReadAsync ())
@@ -152,10 +150,12 @@ namespace ExaminerB.Services2Backend
                 users.Add (new User
                     {
                     UserId = reader.GetInt32 (0),
-                    UserName = reader.GetString (1),
-                    UserPass = reader.GetString (2),
-                    UserNickname = reader.GetString (3),
-                    UserTags = Convert.ToInt32 (reader.GetInt32 (4))
+                    DepartmentId = reader.GetInt32 (1),
+                    UserName = reader.GetString (2),
+                    UserPass = reader.GetString (3),
+                    UserNickname = reader.GetString (4),
+                    UserEmail = reader.GetString (5),
+                    UserTags = Convert.ToInt32 (reader.GetInt32 (6))
                     });
                 }
             return users;
@@ -168,12 +168,15 @@ namespace ExaminerB.Services2Backend
             try
                 {
                 await cnn.OpenAsync ();
-                SqlCommand cmd3 = new SqlCommand (sql, cnn);
-                cmd3.Parameters.AddWithValue ("@usrpass", user.UserPass);
-                cmd3.Parameters.AddWithValue ("@usrnickname", user.UserNickname);
-                cmd3.Parameters.AddWithValue ("@usertags", user.UserTags);
-                cmd3.Parameters.AddWithValue ("@userid", user.UserId);
-                await cmd3.ExecuteNonQueryAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue ("@usrname", user.UserName);
+                cmd.Parameters.AddWithValue ("@usrpass", user.UserPass);
+                cmd.Parameters.AddWithValue ("@usrnickname", user.UserNickname);
+                cmd.Parameters.AddWithValue ("@usremail", user.UserEmail);
+                cmd.Parameters.AddWithValue ("@usertags", user.UserTags);
+                cmd.Parameters.AddWithValue ("@userid", user.UserId);
+                await cmd.ExecuteNonQueryAsync ();
                 return true;
                 }
             catch (Exception ex)
@@ -204,6 +207,7 @@ namespace ExaminerB.Services2Backend
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add ("@departmentid", SqlDbType.Int).Value = student.DepartmentId;
                 cmd.Parameters.Add ("@studentname", SqlDbType.NVarChar, 50).Value = student.UserName;
                 cmd.Parameters.Add ("@studentpass", SqlDbType.NVarChar, 50).Value = student.UserPass;
                 cmd.Parameters.Add ("@studentnickname", SqlDbType.NVarChar, 50).Value = student.UserNickname;
@@ -298,7 +302,7 @@ namespace ExaminerB.Services2Backend
                 {
                 foreach (User student in lstStudents)
                     {
-                    student.StudentExams = await Read_StudentExamsAsync ( "ByStudentIdAndTeacherId", student.UserId, 0); 
+                    student.StudentExams = await Read_StudentExamsAsync ("ByStudentIdAndTeacherId", student.UserId, 0);
                     }
                 }
             if ((readStudentGCEM & 8) == 8)
@@ -373,7 +377,7 @@ namespace ExaminerB.Services2Backend
                     //read studentMessages 
                     foreach (User student in lstStudents)
                         {
-                            student.StudentMessages = await Read_StudentMessagesAsync ("S", student.UserId, teacherId);
+                        student.StudentMessages = await Read_StudentMessagesAsync ("S", student.UserId, teacherId);
                         }
                     }
                 return lstStudents;
@@ -409,7 +413,7 @@ namespace ExaminerB.Services2Backend
             string sql = "dbo.sp_UpdateStudentTags";
             await cnn.OpenAsync ();
             var cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@studenttags", student.UserTags);
             cmd.Parameters.AddWithValue ("@studentid", student.UserId);
             await cmd.ExecuteNonQueryAsync ();
@@ -443,6 +447,118 @@ namespace ExaminerB.Services2Backend
             return true;
             }
         #endregion
+        #region D:Departments
+        public async Task<int> Create_DepartmentAsync (Department department)
+            {
+            string sql = "dbo.sp_CreateDepartment";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue ("@departmentname", department.DepartmentName);
+            cmd.Parameters.AddWithValue ("@departmentinfo", department.DepartmentInfo);
+            int i = (int) await cmd.ExecuteScalarAsync ();
+            await cnn.CloseAsync ();
+            return i;
+            }
+        public async Task<List<Department>> Read_DepartmentsAsync ()
+            {
+            List<Department> lstDepartments = new List<Department> ();
+            string sql = "dbo.sp_ReadDepartments";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                using (var reader = await cmd.ExecuteReaderAsync ())
+                    {
+                    while (await reader.ReadAsync ())
+                        {
+                        var department = new Department
+                            {
+                            DepartmentId = reader.GetInt32 (0),
+                            DepartmentName = reader.GetString (1),
+                            DepartmentInfo = reader.GetString (2)
+                            };
+                        lstDepartments.Add (department);
+                        }
+                    }
+                return lstDepartments;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine (ex.ToString ());
+                return new List<Department> ();
+                }
+            }
+        public async Task<Department> Read_DepartmentAsync (int departmentId)
+            {
+            //ModelState.Clear (); // disables auto validation
+            Department department = new Department ();
+            string sql = "dbo.sp_ReadDepartment";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue ("@departmentid", departmentId);
+                using (var reader = await cmd.ExecuteReaderAsync ())
+                    {
+                    while (await reader.ReadAsync ())
+                        {
+                        department.DepartmentId = reader.GetInt32 (0);
+                        department.DepartmentName = reader.GetString (1);
+                        department.DepartmentInfo = reader.GetString (2);
+                        }
+                    }
+                return department;
+                }
+            catch (Exception ex)
+                {
+                Console.WriteLine (ex.ToString ());
+                return new Department ();
+                }
+            }
+        public async Task<bool> Update_DepartmentAsync (Department department)
+            {
+            string sql = "dbo.sp_UpdateDepartment";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            try
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue ("@departmentid", department.DepartmentId);
+                cmd.Parameters.AddWithValue ("@departmentname", department.DepartmentName);
+                cmd.Parameters.AddWithValue ("@departmentinfo", department.DepartmentInfo);
+                await cmd.ExecuteNonQueryAsync ();
+                return true;
+                }
+            catch
+                {
+                await cnn.CloseAsync ();
+                return false;
+                }
+            }
+        public async Task<int> Delete_DepartmentAsync (int departmentId)
+            {
+            string sql = "dbo.sp_DeleteDepartment";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue ("@departmentid", departmentId);
+            int i = (int) cmd.ExecuteNonQuery ();
+            return i;
+            }
+        #endregion
         #region G:Groups
         public async Task<int> Create_GroupAsync (Group group)
             {
@@ -451,7 +567,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@groupname", group.GroupName);
             cmd.Parameters.AddWithValue ("@userid", group.UserId);
             int i = (int) await cmd.ExecuteScalarAsync ();
@@ -540,7 +656,7 @@ namespace ExaminerB.Services2Backend
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType= CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@groupname", group.GroupName);
                 cmd.Parameters.AddWithValue ("@groupid", group.GroupId);
                 await cmd.ExecuteNonQueryAsync ();
@@ -575,7 +691,7 @@ namespace ExaminerB.Services2Backend
             foreach (int st in lstStudentIds)
                 {
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType= CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@studentid", st);
                 cmd.Parameters.AddWithValue ("@groupid", groupId);
                 cmd.Parameters.AddWithValue ("@datetimejoined", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
@@ -635,7 +751,7 @@ namespace ExaminerB.Services2Backend
             foreach (int st in lstStudentIds)
                 {
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType= CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@studentid", st);
                 cmd.Parameters.AddWithValue ("@groupid", groupId);
                 int i = (int) cmd.ExecuteNonQuery ();
@@ -669,7 +785,7 @@ namespace ExaminerB.Services2Backend
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType= CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@userid", userId);
                 var reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
@@ -791,7 +907,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@courseid", courseFolder.CourseId);
             cmd.Parameters.AddWithValue ("@coursefoldertitle", courseFolder.CourseFolderTitle);
             cmd.Parameters.AddWithValue ("@coursefolderurl", courseFolder.CourseFolderUrl);
@@ -857,7 +973,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@coursefolderid", courseFolderId);
             int i = cmd.ExecuteNonQuery ();
             return (i > 0) ? true : false;
@@ -887,7 +1003,7 @@ namespace ExaminerB.Services2Backend
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType= CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@courseid", courseId);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 int i = 0;
@@ -946,7 +1062,7 @@ namespace ExaminerB.Services2Backend
             foreach (int st in lstStudentIds)
                 {
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType= CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@studentid", st);
                 cmd.Parameters.AddWithValue ("@courseid", courseId);
                 cmd.Parameters.AddWithValue ("@studentcoursetags", 3);
@@ -1084,7 +1200,7 @@ namespace ExaminerB.Services2Backend
             try
                 {
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType= CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@id", id);
                 cmd.Parameters.AddWithValue ("@mode", mode);
                 int i = cmd.ExecuteNonQuery ();
@@ -1121,7 +1237,7 @@ namespace ExaminerB.Services2Backend
             string sql = "dbo.sp_CreateStudentCourseTest";
             await cnn.OpenAsync ();
             var cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType=CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@userans", studentCourseTest.UserAns.ToString ());
             cmd.Parameters.AddWithValue ("@datetime", studentCourseTest.DateTime);
             cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId.ToString ());
@@ -1138,7 +1254,7 @@ namespace ExaminerB.Services2Backend
             string sql = "dbo.sp_ReadStudentCourseTests";
             await cnn.OpenAsync ();
             using SqlCommand cmd = new (sql, cnn);
-            cmd.CommandType=CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@studentcourseid", studentCourse.StudentCourseId);
             try
                 {
@@ -1272,7 +1388,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             using SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@courseid", test.CourseId);
             cmd.Parameters.AddWithValue ("@topicid", test.TopicId);
             cmd.Parameters.AddWithValue ("@testtitle", test.TestTitle);
@@ -1810,7 +1926,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             using SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@testoptionid", testOptionId);
             int i = await cmd.ExecuteNonQueryAsync ();
             return true;
@@ -1940,7 +2056,7 @@ namespace ExaminerB.Services2Backend
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@examid", examComposition.ExamId);
             cmd.Parameters.AddWithValue ("@topicid", examComposition.TopicId);
             cmd.Parameters.AddWithValue ("@topicntests", examComposition.TopicNTests);
@@ -2001,7 +2117,7 @@ namespace ExaminerB.Services2Backend
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@examid", examComposition.ExamId);
             cmd.Parameters.AddWithValue ("@topicid", examComposition.TopicId);
             cmd.Parameters.AddWithValue ("@topicntests", examComposition.TopicNTests);
@@ -2030,7 +2146,7 @@ namespace ExaminerB.Services2Backend
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@examcompositionid", examCompositionId);
             await cnn.OpenAsync ();
             await cmd.ExecuteReaderAsync ();
@@ -2089,7 +2205,7 @@ namespace ExaminerB.Services2Backend
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new ("dbo.sp_ReadExamTests", cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@examid", examId);
             await cnn.OpenAsync ();
             using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
@@ -2134,7 +2250,7 @@ namespace ExaminerB.Services2Backend
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@examid", examTest.ExamId);
             cmd.Parameters.AddWithValue ("@testid", examTest.TestId);
             cmd.Parameters.AddWithValue ("@percentcorrect", examTest.PercentCorrect);
@@ -2163,7 +2279,7 @@ namespace ExaminerB.Services2Backend
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@testid", examTest.TestId);
             await cnn.OpenAsync ();
             await cmd.ExecuteReaderAsync ();
@@ -2353,7 +2469,7 @@ namespace ExaminerB.Services2Backend
             cmd.Parameters.AddWithValue ("@excludereadnotes", excludeReadNotes);
             SqlDataReader reader = await cmd.ExecuteReaderAsync ();
             lstNotes.Clear ();
-            while (await reader.ReadAsync ()) 
+            while (await reader.ReadAsync ())
                 {
                 Note note = new Note ();
                 note.NoteId = reader.GetInt32 (0);
@@ -2452,7 +2568,7 @@ namespace ExaminerB.Services2Backend
                 {
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType= CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@studentexamtags", tempStudentExam.StudentExamTags);
                 cmd.Parameters.AddWithValue ("@startdatetime", tempStudentExam.StartDateTime);
                 cmd.Parameters.AddWithValue ("@finishdatetime", tempStudentExam.FinishDateTime);
@@ -2491,7 +2607,7 @@ namespace ExaminerB.Services2Backend
             string sql = "dbo.sp_DeleteStudentExamsByExamId";
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@examid", examId);
             cmd.ExecuteNonQuery ();
             return true;
@@ -2503,7 +2619,7 @@ namespace ExaminerB.Services2Backend
             string sql = "dbo.sp_DeleteStudentExam";
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType=CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
             cmd.ExecuteNonQuery ();
             return true;
@@ -2831,7 +2947,7 @@ namespace ExaminerB.Services2Backend
                 {
                 await cnn.OpenAsync ();
                 var cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType= CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@studentExamTestTags", tempStudentExamTest.StudentExamTestTags);
                 cmd.Parameters.AddWithValue ("@StudentExamTestid", tempStudentExamTest.StudentExamTestId);
                 await cmd.ExecuteNonQueryAsync ();
@@ -2875,7 +2991,7 @@ namespace ExaminerB.Services2Backend
             string sql = "dbo.sp_DeleteStudentExamTests";
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType = CommandType.StoredProcedure;   
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
             cmd.ExecuteNonQuery ();
             return true;
@@ -2887,7 +3003,7 @@ namespace ExaminerB.Services2Backend
             string sql = "dbo.sp_DeleteStudentExamTest";
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@studentexamtestid", studentExamTestId);
             cmd.ExecuteNonQuery ();
             return true;
@@ -2905,7 +3021,7 @@ namespace ExaminerB.Services2Backend
                     string sql = "dbo.sp_CreateMessage";
                     await cnn.OpenAsync ();
                     SqlCommand cmd = new SqlCommand (sql, cnn);
-                    cmd.CommandType=CommandType.StoredProcedure;
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue ("@userid", message.UserId);
                     cmd.Parameters.AddWithValue ("@datetimecreated", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
                     cmd.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
@@ -3030,7 +3146,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@mode", mode);
             cmd.Parameters.AddWithValue ("@recipientid", recipientId);
             int i = cmd.ExecuteNonQuery ();
@@ -3168,7 +3284,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@datetimeread", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
             cmd.Parameters.AddWithValue ("@studentmessageid", studentMessage.StudentMessageId);
             int i = cmd.ExecuteNonQuery ();
@@ -3197,7 +3313,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@fromid", chat.FromId);
             cmd.Parameters.AddWithValue ("@toid", chat.ToId);
             cmd.Parameters.AddWithValue ("@datetimesent", chat.DateTimeSent);
@@ -3216,7 +3332,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             using SqlCommand cmd1 = new (sql, cnn);
-            cmd1.CommandType= CommandType.StoredProcedure;
+            cmd1.CommandType = CommandType.StoredProcedure;
             cmd1.Parameters.AddWithValue ("@meId", studentId);
             using SqlDataReader reader1 = await cmd1.ExecuteReaderAsync ();
             while (await reader1.ReadAsync ())
@@ -3314,7 +3430,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@chattags", chat.ChatTags);
             cmd.Parameters.AddWithValue ("@chatid", chat.ChatId);
             await cmd.ExecuteNonQueryAsync ();
@@ -3343,7 +3459,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@chatroomdepartmentid", chatroom.ChatroomDepartmentId);
             cmd.Parameters.AddWithValue ("@chatroomadminid", chatroom.ChatroomAdminId);
             cmd.Parameters.AddWithValue ("@chatroomname", chatroom.ChatroomName);
@@ -3386,7 +3502,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@chatroomdepartmentid", chatroom.ChatroomDepartmentId);
             cmd.Parameters.AddWithValue ("@chatroomadminid", chatroom.ChatroomAdminId);
             cmd.Parameters.AddWithValue ("@chatroomname", chatroom.ChatroomName);
@@ -3420,7 +3536,7 @@ namespace ExaminerB.Services2Backend
                 using SqlConnection cnn = new (connString);
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType= CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@chatroomid", chatroomPost.ChatroomId);
                 cmd.Parameters.AddWithValue ("@senderid", chatroomPost.SenderId);
                 cmd.Parameters.AddWithValue ("@postdatetime", chatroomPost.PostDateTime);
@@ -3485,7 +3601,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@chatroompostid", chatroomPostId);
             await cmd.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
@@ -3501,7 +3617,7 @@ namespace ExaminerB.Services2Backend
             //Create
             await cnn.OpenAsync ();
             SqlCommand cmd2 = new SqlCommand (sql, cnn);
-            cmd2.CommandType= CommandType.StoredProcedure;
+            cmd2.CommandType = CommandType.StoredProcedure;
             cmd2.Parameters.AddWithValue ("@userid", project.UserId);
             cmd2.Parameters.AddWithValue ("@usertype", project.UserType);
             cmd2.Parameters.AddWithValue ("@projectname", project.ProjectName);
@@ -3573,7 +3689,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@projectname", project.ProjectName);
             cmd.Parameters.AddWithValue ("@projecttags", project.ProjectTags);
             cmd.Parameters.AddWithValue ("@projectid", project.ProjectId);
@@ -3704,7 +3820,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType=CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@subprojectid", subProjectId);
             int i = await cmd.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
@@ -3872,7 +3988,7 @@ namespace ExaminerB.Services2Backend
             using SqlConnection cnn = new SqlConnection (connString);
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType= CommandType.StoredProcedure;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@noteid", noteId);
             int i = await cmd.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();

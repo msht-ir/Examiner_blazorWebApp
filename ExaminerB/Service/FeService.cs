@@ -1,6 +1,6 @@
-﻿using DocumentFormat.OpenXml.Bibliography;
-using ExaminerS.Models;
+﻿using ExaminerS.Models;
 using System.Globalization;
+using Department = ExaminerS.Models.Department;
 using Group = ExaminerS.Models.Group;
 
 namespace ExaminerB.Service
@@ -51,9 +51,9 @@ namespace ExaminerB.Service
                 return false;
                 }
             }
-        public async Task<List<User>> Read_Teachers ()
+        public async Task<List<User>> Read_Teachers (int departmentId)
             {
-            var response = await _http.PostAsync ("api/Read_Teachers", null);
+            var response = await _http.PostAsJsonAsync ("api/Read_Teachers", departmentId);
             if (response.IsSuccessStatusCode)
                 {
                 List<User> lstTeachers = await response.Content.ReadFromJsonAsync<List<User>> ();
@@ -162,6 +162,66 @@ namespace ExaminerB.Service
             return response.IsSuccessStatusCode ? true : false;
             }
         #endregion
+        #region D:Departments
+        public async Task<bool> Create_Department (Department department)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Create_Department", department);
+            if (response.IsSuccessStatusCode)
+                {
+                return true;
+                }
+            else
+                {
+                return false;
+                }
+            }
+        public async Task<List<Department>> Read_Departments ()
+            {
+            var response = await _http.PostAsync ($"api/Read_departments", null);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Department>? departments = await response.Content.ReadFromJsonAsync<List<Department>> ();
+                return departments ?? new List<Department> ();
+                }
+            else
+                {
+                var errorContent = await response.Content.ReadAsStringAsync ();
+                return new List<Department> ();
+                }
+            }
+        public async Task<Department> Read_Department (int departmentId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_Department", departmentId);
+            if (response.IsSuccessStatusCode)
+                {
+                Department? department = await response.Content.ReadFromJsonAsync<Department> ();
+                return department ?? new Department ();
+                }
+            else
+                {
+                var errorContent = await response.Content.ReadAsStringAsync ();
+                return new Department ();
+                }
+            }
+        public async Task<bool> Update_Department (Department department)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Update_Department", department);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<int> Delete_Department (int departmentId)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Delete_Department", departmentId);
+            if (response.IsSuccessStatusCode)
+                {
+                int i = await response.Content.ReadFromJsonAsync<int> ();
+                return i;
+                }
+            else
+                {
+                return 0;
+                }
+            }
+        #endregion        
         #region G:Groups
         public async Task<bool> Create_Group (Group group)
             {

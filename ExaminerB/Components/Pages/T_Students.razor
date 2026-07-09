@@ -31,8 +31,7 @@ else
                     <MudCardContent Style="background-color:rgba(249,249,249);">
                     @if (_cmd == "AddnewStudent")
                         {
-                        #region ADD NEW STUDENT
-
+                        <h6 style="text-align:center; color:indianred">method A: add a student</h6>
                             <div tabindex="0" style="text-align:center;margin-left:30px;margin-right:30px;">
                             <MudTextField @ref="refNewUser"
                                           @bind-Value="user.UserName"
@@ -60,11 +59,6 @@ else
                                           OnAdornmentClick="() => BtnCreateNewStudent(user.UserName, user.UserPass, user.UserNickname)"
                                           InputType="InputType.Password" />
                             <br />
-                            @* <button class="btn btn-link pulse-animation"
-                                    Title=@((_help) ? "save new student" : "")
-                                    @onclick="() => BtnCreateNewStudent(user.UserName, user.UserPass, user.UserNickname)">
-                                <img src="/img/icoSave2.png" width="22" />
-                                </button> *@
                                 <button class="btn btn-link pulse-hover"
                                     Title=@((_help) ? "cancel" : "")
                                     @onclick="BtnCancel">
@@ -72,23 +66,24 @@ else
                                 </button>
                             </div>
                         <hr style="color:slateblue" />
-                        #endregion
-                        #region IMPORT EXCEL
-
-
+                        <h6 style="text-align:center; color:indianred">method B: Import from Excel file</h6>
                             <div class="d-flex align-items-center" style="gap:10px;margin-top:20px;margin-left:20px;">
                                 <button class="btn btn-link" Title=@((_help) ? "cancel" : "") @onclick="BtnHelpImporStudentsFromtExcel">
                                 <img src="/img/icoExcel1.png" width="28" height="28" />
                                 </button>
                             <InputFile Title=@((_help) ? "import from excel" : "") OnChange="HandleFileSelected" />
                             </div>
-                        #endregion
+                            <div tabindex="0" style="text-align:center;margin-left:30px;margin-right:30px;">
+                            <br />
+                                <button class="btn btn-link pulse-hover"
+                                    Title=@((_help) ? "cancel" : "")
+                                    @onclick="BtnCancel">
+                                <img src="/img/icoCancel.png" width="20" />
+                                </button>
+                            </div>
                         }
                     else
                         {
-                        #region SEARCH
-
-
                             <div class="d-flex gap-3" style="padding:0;" tabindex="0">
                             <MudTextField T="string"
                                           @ref="reftxtSearch"
@@ -130,7 +125,6 @@ else
                                     </MudMenuItem>
                                 </MudMenu>
                             </div>
-                        #endregion
                         }
                     </MudCardContent>
                 </MudCard>
@@ -807,7 +801,15 @@ else
     private async Task BtnCreateNewStudent (string usr, string pwd, string nick)
         {
         user.UserId = Convert.ToInt32(appState.UserId);
-        User student = new User() { UserName = usr, UserPass = pwd, UserRole = "student", UserNickname = nick, UserTags = 3 };
+        User student = new User()
+            {
+            DepartmentId = Convert.ToInt32(appState.DepartmentId),
+            UserName = usr,
+            UserPass = pwd,
+            UserRole = "student",
+            UserNickname = nick,
+            UserTags = 3
+            };
         int result = await feService.Create_Student(student);
         if (result > 1)
             {
@@ -846,7 +848,7 @@ else
         {
         if (Id > 0)
             {
-            lstStudents = await feService.Read_StudentsByGCEMSId (Convert.ToInt32 (appState.DepartmentId), mode, Id, Convert.ToInt32 (appState.UserId), 0);
+            lstStudents = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.DepartmentId), mode, Id, Convert.ToInt32(appState.UserId), 0);
             Snackbar.Add($"{lstStudents.Count} students listed", Severity.Info);
             string? itemx = mode.ToLower() switch
                 {
@@ -1456,7 +1458,7 @@ else
             var worksheet = workbook.Worksheet(1); //1:first sheet
             i = 0;
             // group.GroupId = Convert.ToInt32 (appState.GroupId);
-            int _departmentId = Convert.ToInt32 (appState.DepartmentId); //ie teacher'd departmentId
+            int _departmentId = Convert.ToInt32(appState.DepartmentId); //ie teacher'd departmentId
             foreach (var row in worksheet.RowsUsed().Skip(1)) //skip header
                 {
                 i++;

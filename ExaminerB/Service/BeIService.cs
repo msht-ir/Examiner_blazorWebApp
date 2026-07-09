@@ -1,5 +1,6 @@
 ﻿using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
+using Department = ExaminerS.Models.Department;
 
 namespace ExaminerB.Services2Backend
     {
@@ -12,7 +13,7 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region U:usrs
         Task<bool> Create_TeacherAsync (User teacher);
-        Task<List<User>> Read_TeachersAsync ();
+        Task<List<User>> Read_TeachersAsync (int departmentId);
         Task<bool> Update_TeacherAsync (User user);
         Task<bool> Delete_TeacherAsync (int userId);
         #endregion
@@ -25,6 +26,13 @@ namespace ExaminerB.Services2Backend
         Task<bool> Update_StudentTagsAsync (User student);
         Task<bool> Remove_StudentFromListAsync (int studentId, string mode);
         Task<bool> Delete_StudentAsync (int studentId);
+        #endregion
+        #region D:Departments
+        Task<int> Create_DepartmentAsync (Department department);
+        Task<List<Department>> Read_DepartmentsAsync ();
+        Task<Department> Read_DepartmentAsync (int departmentId);
+        Task<bool> Update_DepartmentAsync (Department department);
+        Task<int> Delete_DepartmentAsync (int departmentId);
         #endregion
         #region G:Groups
         Task<int> Create_GroupAsync (Group group);
