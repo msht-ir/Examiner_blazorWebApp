@@ -25,7 +25,7 @@ else
                 <button type="button"
                     class="btn btn-link pulse-hover"
                     @onclick='() => BtnAddNewDepartment()'>
-                <img src="/img/icoAdd0.png" width="22" />
+                <img src="/img/icoAdd1.png" width="22" />
                 </button>
                 <button type="button"
                     class="btn btn-link pulse-hover"
@@ -149,25 +149,25 @@ else
                                                 <button type="button"
                                                     class="btn btn-link"
                                                     style="margin-left:1px"
-                                                    Title="delete حذف"
+                                                    Title="delete depatment حذف دپارتمان"
                                                     @onclick='() => BtnDeleteDepartment(department.DepartmentId)'>
                                                 <img src="/img/icoDelete1.png" width="20" />
                                                 </button>
                                                 <button type="button"
                                                     class="btn btn-link"
                                                     style="margin-left:1px"
-                                                    Title="edit ويرايش"
+                                                    Title="edit depatment ويرايش دپارتمان"
                                                     @onclick='() => BtnEditDepartment(department.DepartmentId)'>
                                                 <img src="/img/icoRename.png" width="26" />
                                                 </button>
                                                 <button type="button"
                                                     class="btn btn-link"
                                                     style="margin-left:1px"
-                                                    Title="list ليست"
+                                                    Title="list teachers ليست اساتيد"
                                                     @onclick='() => BtnListTeachers(department.DepartmentId)'>
-                                                <img src="/img/icoListT.png" width="30" />
+                                                <img src="/img/icoSwitchBoardStudents.png" width="32" />
                                                 </button>
-                                            <span style="font-size:smaller">@department.DepartmentName</span>
+                                            <span style="font-size:small;color:seagreen">@department.DepartmentName</span>
                                             </div>
                                         }
                                     </MudCardContent>
@@ -311,25 +311,29 @@ else
                                             <button type="button"
                                                 class="btn btn-link"
                                                 style="margin-left:1px"
-                                                Title="delete حذف"
+                                                Title="delete teacher حذف استاد"
                                                 @onclick='() => BtnDeleteTeacher(user)'>
                                             <img src="/img/icoDelete1.png" width="20" />
                                             </button>
                                             <button type="button"
                                                 class="btn btn-link"
                                                 style="margin-left:1px"
-                                                Title="edit ويرايش"
+                                                Title="edit teacher ويرايش اکانت استاد"
                                                 @onclick='() => BtnEditTeacher(user)'>
-                                            <img src="/img/icoRename.png" width="26" />
+                                            <img src="/img/icoKeys.png" width="22" />
                                             </button>
                                             <button type="button"
                                                 class="btn btn-link"
                                                 style="margin-left:1px"
-                                                Title="list ليست"
+                                                Title="list courses ليست درس ها"
                                                 @onclick='() => BtnListCourses(user.UserId)'>
                                             <img src="/img/icoListC.png" width="30" />
                                             </button>
                                         <span style='font-size:smaller; @((user.UserTags & 1) == 1 ? "color:black" : "color:indianred;font-style:italic")'>@user.UserNickname - @user.UserName </span>
+                                        @if ((user.UserTags & 128) == 128)
+                                            {
+                                            <span style="font-style:italic; font-weight:bold;font-size:x-small;color:darkgoldenrod;margin-left:10px;">ADMINISTRATOR</span>
+                                            }
                                         </div>
                                     }
                                 </MudCardContent>
@@ -352,23 +356,16 @@ else
                                                 <button type="button"
                                                     class="btn btn-link"
                                                     style="margin-left:1px"
-                                                    Title="list ليست"
-                                                    @onclick='() => BtnListExams(course.CourseId)'>
-                                                <img src="/img/icoListE.png" width="30" />
-                                                </button>
-                                                <button type="button"
-                                                    class="btn btn-link"
-                                                    style="margin-left:1px"
-                                                    Title="delete حذف"
+                                                    Title="list tests ليست تست ها"
                                                     @onclick='() => BtnExportTests(course.CourseId)'>
                                                 <img src="/img/icoListT.png" width="30" />
                                                 </button>
                                                 <button type="button"
                                                     class="btn btn-link"
                                                     style="margin-left:1px"
-                                                    Title="delete حذف"
-                                                    @onclick='() => BtnExportTests(course.CourseId)'>
-                                                <img src="/img/icoChartPie.png" width="20" />
+                                                    Title="list exams ليست"
+                                                    @onclick='() => BtnListExams(course.CourseId)'>
+                                                <img src="/img/icoListE.png" width="30" />
                                                 </button>
                                             <span style="font-size:smaller">@course.CourseName</span>
                                             </div>
@@ -386,14 +383,42 @@ else
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                    <h6 style="text-align:center;color:royalblue">List of Students for: <span style="color:indianred">@appState.Message</span></h6>
+                                    <h6 style="text-align:center;color:royalblue">list of Exams <span style="color:indianred">@appState.Message</span></h6>
                                     <hr style="color:indianred" />
-                                    @foreach (Exam exam in lstExams)
-                                        {
-                                            <div class="d-flex align-items-center mb-1">
-                                            <span style="font-size:x-small">@exam.ExamTitle</span>
-                                            </div>
+                                        @{
+                                        i = 0;
                                         }
+                                        <table class="table table-borderless d-xl-table-row">
+                                            <thead>
+                                            <td>#</td>
+                                            <td>date</td>
+                                            <td>title</td>
+                                            <td>T(m)</td>
+                                            <td>tests</td>
+                                            </thead>
+                                        @foreach (Exam exam in lstExams)
+                                            {
+                                            i++;
+                                                <tr>
+                                                    <td>
+                                                    <span style="font-size:smaller;font-weight:bold;">@i</span><br />
+                                                    </td>
+                                                    <td>
+                                                    <span style="font-size:smaller;">@PersianDate(exam.ExamDateTime)</span><br />
+                                                    </td>
+                                                    <td>
+                                                    <span style="font-size:smaller; color:indianred;margin-left:20px;">@exam.ExamTitle</span><br />
+                                                    </td>
+                                                    <td>
+                                                    <span style="font-size:smaller; color:gray;margin-left:20px;">@exam.ExamDuration</span>
+                                                    </td>
+                                                    <td>
+                                                    <span style="font-size:smaller; color:gray;margin-left:20px;">@exam.ExamNTests</span>
+                                                    </td>
+                                                </tr>
+                                            }
+
+                                        </table>
                                     </MudCardContent>
                                 </MudCard>
                             </MudContainer>
@@ -631,9 +656,11 @@ else
         {
         if (departmentId > 0)
             {
+            _hasFetched =false;
             DepartmentId = departmentId;
             lstTeachers = await feService.Read_Teachers(departmentId);
             _cmd = "listteachers";
+            _hasFetched =true;
             StateHasChanged();
             }
         }
@@ -768,18 +795,23 @@ else
         }
     private async Task BtnListCourses (int teacherId)
         {
+        _hasFetched = false;
         if (teacherId > 0)
             {
             TeacherId = teacherId;
             }
         lstCourses = await feService.Read_Courses(teacherId);
         _cmd = "listcourses";
+        _hasFetched = true;
         StateHasChanged();
         }
     private async Task BtnListExams (int courseid)
         {
+        _hasFetched = false;
         lstExams.Clear();
         lstExams = await feService.Read_Exams(courseid);
+        _cmd = "listexams";
+        _hasFetched = true;
         StateHasChanged();
         }
     private async Task BtnExportTests (int courseid)
@@ -829,6 +861,19 @@ else
                 };
         appState.SetReturnPage("/T_Students");
         Navman.NavigateTo(pg);
+        }
+    //convert date
+    public string PersianDate (string? dt)
+        {
+        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
+        if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
+            {
+            return feService.ToPersianDate(dt);
+            }
+        else
+            {
+            return dt;
+            }
         }
 
     }
