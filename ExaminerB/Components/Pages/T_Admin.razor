@@ -19,20 +19,9 @@
 else
     {
         <EditForm Model="lstDepartments" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <img src="/img/icoAdmin2.png" width="70" title="admin page صفحه ادمين" />
+        <img src="/img/icoAdmin.png" width="70" title="admin page صفحه ادمين" />
         <h4 style="color:royalblue; font-style:italic">Administrative</h4>
-            <div style="text-align: center;">
-                <button type="button"
-                    class="btn btn-link pulse-hover"
-                    @onclick='() => BtnAddNewDepartment()'>
-                <img src="/img/icoAdd1.png" width="22" />
-                </button>
-                <button type="button"
-                    class="btn btn-link pulse-hover"
-                    @onclick='() => BtnListDepartments()'>
-                <img src="/img/icoList.png" width="24" />
-                </button>
-            </div>
+        <hr />
         @* COMBO D *@
             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 mb-4 px-0">
                 <MudCard Class="mx-auto">
@@ -62,11 +51,9 @@ else
                                           Variant="Variant.Text"
                                           Margin="Margin.Dense"
                                           Autocomplete="off"
-                                          Adornment="Adornment.End"
-                                          AdornmentIcon="@Icons.Material.Filled.NoteAlt"
                                           Class="my-textfield" />
                             </div>
-                            <div class="d-flex" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <div class="d-flex mt-4" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                                 <button class="btn btn-link" style="margin-left:20px;" Title="cancel" @onclick="BtnCancel">
                                 <img src="/img/icoCancel.png" width="20" />
                                 </button>
@@ -94,11 +81,9 @@ else
                                           Variant="Variant.Text"
                                           Margin="Margin.Dense"
                                           Autocomplete="off"
-                                          Adornment="Adornment.End"
-                                          AdornmentIcon="@Icons.Material.Filled.NoteAlt"
                                           Class="my-textfield" />
                             </div>
-                            <div class="d-flex" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <div class="d-flex  mt-4" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                                 <button class="btn btn-link" style="margin-left:20px;" Title="cancel" @onclick="BtnCancel">
                                 <img src="/img/icoCancel.png" width="20" />
                                 </button>
@@ -107,6 +92,18 @@ else
                     else
                         {
                         @* ComboBox Departments *@
+                            <div style="text-align: center;">
+                                <button type="button"
+                                    class="btn btn-link pulse-hover"
+                                    @onclick='() => BtnAddNewDepartment()'>
+                                <img src="/img/icoAdd1.png" width="22" />
+                                </button>
+                                <button type="button"
+                                    class="btn btn-link pulse-hover"
+                                    @onclick='() => BtnListDepartments()'>
+                                <img src="/img/icoList.png" width="24" />
+                                </button>
+                            </div>
                             <div class="d-flex gap-3">
                                 <MudSelect T="int"
                                        @ref="refDepartments"
@@ -428,6 +425,8 @@ else
             }
         @* FOOTER *@
         <br />
+        <br />
+        <br />
         <hr />
             <div style="text-align: center;">
                 <button type="button"
@@ -437,8 +436,8 @@ else
                 </button>
                 <button type="button"
                     class="btn btn-link pulse-hover"
-                    @onclick='() => BtnGotoPage("S")'>
-                <img src="/img/icoSwitchBoardStudents.png" width="42" />
+                    @onclick='() => BtnGotoPage("N")'>
+                <img src="/img/icoNoteBook.png" width="38" />
                 </button>
                 <button type="button"
                     class="btn btn-link pulse-hover"
@@ -447,8 +446,8 @@ else
                 </button>
                 <button type="button"
                     class="btn btn-link pulse-hover"
-                    @onclick='() => BtnGotoPage("N")'>
-                <img src="/img/icoNoteBook.png" width="38" />
+                    @onclick='() => BtnGotoPage("S")'>
+                <img src="/img/icoSwitchBoardStudents.png" width="42" />
                 </button>
             </div>
         </EditForm>
@@ -656,11 +655,11 @@ else
         {
         if (departmentId > 0)
             {
-            _hasFetched =false;
+            _hasFetched = false;
             DepartmentId = departmentId;
             lstTeachers = await feService.Read_Teachers(departmentId);
             _cmd = "listteachers";
-            _hasFetched =true;
+            _hasFetched = true;
             StateHasChanged();
             }
         }
