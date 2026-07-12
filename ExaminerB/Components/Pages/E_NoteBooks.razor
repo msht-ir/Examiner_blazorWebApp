@@ -421,7 +421,7 @@ else
                                                                                                                    Variant="Variant.Text"
                                                                                                                    Margin="Margin.Dense"
                                                                                                                    Adornment="Adornment.End"
-                                                                                                                   AdornmentIcon="@Icons.Material.Filled.FolderCopy"
+                                                                                                                   AdornmentIcon="@Icons.Material.Filled.MoveDown"
                                                                                                                    OnAdornmentClick="() => BtnMoveToSelectSection(SectionId, notex.NoteId)"
                                                                                                                    Style="color:royalblue;width:140px;font-size:small;">
                                                                                                             <MudSelectItem Value="0">Select a Section...</MudSelectItem>
@@ -540,7 +540,7 @@ else
                                                                                                                    Variant="Variant.Text"
                                                                                                                    Margin="Margin.Dense"
                                                                                                                    Adornment="Adornment.End"
-                                                                                                                   AdornmentIcon="@Icons.Material.Filled.FolderCopy"
+                                                                                                                   AdornmentIcon="@Icons.Material.Filled.MoveDown"
                                                                                                                    OnAdornmentClick="() => BtnMoveToSelectSection(SectionId, notex.NoteId)"
                                                                                                                    Style="color:royalblue;width:140px;font-size:small;">
                                                                                                             <MudSelectItem Value="0">Select a Section...</MudSelectItem>
@@ -1291,6 +1291,15 @@ else
                 NotebookId = 0;
                 SectionId = 0;
                 await GetListOfProjects(Convert.ToInt32(appState.UserId), _ShowProjectsMode);
+                Subproject _subproj = new Subproject ()
+                        {
+                        SubprojectId = subprojectId,
+                        ProjectId = 0,
+                        SubprojectName = "",
+                        SubprojectTags = 0,
+                        Notes = new List<Note> ()
+                        };
+                await BtnReadSectionNotes (_subproj);
                 StateHasChanged();
                 }
             else
