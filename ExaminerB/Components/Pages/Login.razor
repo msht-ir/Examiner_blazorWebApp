@@ -46,7 +46,7 @@
                                 <br />
                                 @browserInfo.BrowserName / @browserInfo.OSName @browserInfo.OSVersion
                                 <br />
-                                display: @browserInfo.ScreenResolution<br />
+                                display: @browserInfo.ScreenResolution, cpu: @browserInfo.CPUArchitect<br />
                                 @* CPU:           @browserInfo.CPUArchitect
                                    Device Model:  @browserInfo.DeviceModel
                                    Device Type:   @browserInfo.DeviceType
@@ -73,14 +73,14 @@
     <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;margin-top:20px;">
         <EditForm Model="user" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <DataAnnotationsValidator></DataAnnotationsValidator>
-            <div style="display: flex; justify-content: flex-end;">
+            <div style="display: flex; justify-content: flex-end;margin-bottom:20px;">
             @if (user.UserRole == "student")
                 {
-                <img src="/img/icoLoginStudent.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
+                <img src="/img/icoLogin_S.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
                 }
             else
                 {
-                <img src="/img/icoLoginTeacher.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
+                <img src="/img/icoLogin_T.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
                 }
             </div>
             <MudContainer Class="mt-2 px-0">
