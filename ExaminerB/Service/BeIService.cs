@@ -55,7 +55,7 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region CF:CourseFolders
         Task<int> Create_CourseFolderAsync (CourseFolder courseFolder);
-        Task<List<CourseFolder>> Read_CourseFoldersAsync (int courseId);
+        Task<List<CourseFolder>> Read_CourseFoldersAsync (int courseId, string mode);
         Task<bool> Update_CourseFolderAsync (CourseFolder courseFolder);
         Task<bool> Delete_CourseFolderAsync (int courseFolderId);
         #endregion

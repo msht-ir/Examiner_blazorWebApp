@@ -80,7 +80,7 @@
                                 <MudCard Class="mx-0" elevation="2">
                                     <MudCardContent Style="background-color: rgba(250,250,250);">
                                     <div class="d-flex align-items-center" style="font-size:smaller; font-weight:bold;color:indianred;">
-                                        @PersianDate(chat.DateTimeSent) 
+                                            @PersianDate(chat.DateTimeSent.ToString())
                                     </div>
                                     @if(chat.FromId == Convert.ToInt32(appState.UserId))
                                         {
@@ -295,7 +295,7 @@
             chatMateId = Convert.ToInt32 (appState.ChatMateId);
             chat.FromId = studentId;
             chat.ToId = chatMateId;
-            chat.DateTimeSent = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
+            chat.DateTimeSent = DateTime.UtcNow;
             chat.ChatTags = 0;
             _hasFetched = false;
             int result = await feService.Create_Chat (chat);

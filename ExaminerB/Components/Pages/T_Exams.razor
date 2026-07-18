@@ -75,7 +75,7 @@ else
                         <MudCardContent Style="background-color:rgb(250,250,250);">
                             <div style="text-align:center">
                             <span style="color:Black; font-weight:bold;">@exam.ExamTitle</span> <br />
-                            <span style="color:indianred; font-weight:bold;font-size:small">@PersianDate(exam.ExamDateTime)</span>
+                            <span style="color:indianred; font-weight:bold;font-size:small">@PersianDate(exam.ExamDateTime.ToString())</span>
                             <span style="font-weight:bold;font-size:smaller;"> [@exam.ExamNTests Tests, @exam.ExamDuration min]</span>
                             </div>
                         <hr style="color:indianred" />
@@ -212,7 +212,7 @@ else
         }
     public async Task BtnCreateExam ()
         {
-        Exam newExam = new Exam() { CourseId = course.CourseId, ExamTitle = txtNewExamTitle, ExamDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm"), ExamDuration = 10 };
+        Exam newExam = new Exam() { CourseId = course.CourseId, ExamTitle = txtNewExamTitle, ExamDateTime = DateTime.UtcNow, ExamDuration = 10 };
         int result = await feService.Create_Exam(newExam);
         if (result > 0)
             {
@@ -276,7 +276,7 @@ else
                 {
                 appState.SetCmd("");
                 lstCourseExams = await feService.Read_Exams(course.CourseId);
-                Snackbar.Add("exam deleted", Severity.Warning); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                Snackbar.Add("exam deleted", Severity.Warning, opt => { opt.VisibleStateDuration = 1000; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 StateHasChanged();
                 }
             }

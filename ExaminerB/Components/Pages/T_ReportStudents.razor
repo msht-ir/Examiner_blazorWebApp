@@ -176,7 +176,7 @@ else
                                                                             <td style="color:indianred;font-weight:bold;">
                                                                             <span style="color:gray;font-weight:bold;padding:0px;">@exm.CourseName</span>
                                                                             <br /> @exm.ExamTitle
-                                                                            <br /> <span style="color:black;font-weight:normal;padding:0px;">@PersianDate(exm.ExamDateTime)</span>
+                                                                            <br /> <span style="color:black;font-weight:normal;padding:0px;">@PersianDate(exm.ExamDateTime.ToString())</span>
                                                                             <br />
                                                                             @if ((exm.StudentExamTags & 4) == 4)
                                                                                 {

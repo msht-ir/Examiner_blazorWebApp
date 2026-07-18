@@ -57,7 +57,7 @@ else
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:whitesmoke;">
                                         <span class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold; font-size:smaller;margin:0px; ">
-                                        @PersianDate(notex.NoteDateTime)
+                                        @PersianDate(notex.NoteDateTime.ToString())
                                         </span>
                                     <hr />
                                         <div style="white-space: pre-wrap; font-weight:normal; font-family:'Segoe UI';font-size:small">
@@ -145,7 +145,7 @@ else
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:whitesmoke;">
                                         <span class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;font-size:smaller;margin:0px;">
-                                        @PersianDate(notex.NoteDateTime)
+                                        @PersianDate(notex.NoteDateTime.ToString())
                                         </span>
                                     <hr />
                                         <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
@@ -391,7 +391,7 @@ else
     public async Task BtnShowNoteInDialog (Note note)
         {
         appState.SetSelectedNoteId(note.NoteId);
-        appState.SetNoteDateTime(note.NoteDateTime);
+        appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
         appState.SetNoteText(note.NoteText);
         appState.SetNoteIsRtl(note.IsRtl);
         appState.SetNoteReferenceId(note.ReferenceId);
@@ -405,7 +405,7 @@ else
     public async Task BtnEditNoteInDialog (Note note)
         {
         appState.SetSelectedNoteId(note.NoteId);
-        appState.SetNoteDateTime(note.NoteDateTime);
+        appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
         appState.SetNoteText(note.NoteText);
         appState.SetNoteIsRtl(note.IsRtl);
         appState.SetNoteReferenceId(note.ReferenceId);

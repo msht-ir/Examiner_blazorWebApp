@@ -106,7 +106,6 @@ namespace ExaminerB.Services2Backend
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@userid", userId);
             cmd.Parameters.AddWithValue ("@userlogtext", 21);
-            cmd.Parameters.AddWithValue ("@datetime", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
             await cmd.ExecuteNonQueryAsync ();
             }
         #endregion
@@ -694,7 +693,6 @@ namespace ExaminerB.Services2Backend
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@studentid", st);
                 cmd.Parameters.AddWithValue ("@groupid", groupId);
-                cmd.Parameters.AddWithValue ("@datetimejoined", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
                 cmd.Parameters.AddWithValue ("@studentgrouptags", 1);
                 int i = (int) cmd.ExecuteNonQuery ();
                 }
@@ -724,7 +722,7 @@ namespace ExaminerB.Services2Backend
                             StudentGroupId = reader.GetInt32 (0),
                             StudentId = reader.GetInt32 (1),
                             GroupId = reader.GetInt32 (2),
-                            DateTimeJoined = reader.GetString (3),
+                            DateTimeJoined = reader.GetDateTimeOffset (3),
                             StudentGroupTags = reader.GetInt32 (4),
                             StudentName = reader.GetString (5),
                             GroupName = reader.GetString (6),
@@ -809,7 +807,7 @@ namespace ExaminerB.Services2Backend
                         {
                         crs.CourseTopics = crsTopic;
                         }
-                    var crsFolder = await Read_CourseFoldersAsync (crs.CourseId);
+                    var crsFolder = await Read_CourseFoldersAsync (crs.CourseId, "all");
                     if (crsFolder != null)
                         {
                         crs.CourseFolders = crsFolder;
@@ -852,7 +850,7 @@ namespace ExaminerB.Services2Backend
                     {
                     course.CourseTopics = crsTopic;
                     }
-                var crsFolder = await Read_CourseFoldersAsync (course.CourseId);
+                var crsFolder = await Read_CourseFoldersAsync (course.CourseId, "all");
                 if (crsFolder != null)
                     {
                     course.CourseFolders = crsFolder;
@@ -915,10 +913,9 @@ namespace ExaminerB.Services2Backend
             int i = (int) cmd.ExecuteScalar ();
             return i;
             }
-        public async Task<List<CourseFolder>> Read_CourseFoldersAsync (int courseId)
+        public async Task<List<CourseFolder>> Read_CourseFoldersAsync (int courseId, string mode)
             {
             List<CourseFolder> lstCourseFolders = new ();
-
             string sql = "dbo.sp_ReadCourseFolders";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
@@ -928,6 +925,7 @@ namespace ExaminerB.Services2Backend
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@courseId", courseId);
+                cmd.Parameters.AddWithValue ("@mode", mode);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 int i = 0;
                 lstCourseFolders.Clear ();
@@ -1239,7 +1237,6 @@ namespace ExaminerB.Services2Backend
             var cmd = new SqlCommand (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@userans", studentCourseTest.UserAns.ToString ());
-            cmd.Parameters.AddWithValue ("@datetime", studentCourseTest.DateTime);
             cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId.ToString ());
             cmd.Parameters.AddWithValue ("@testid", studentCourseTest.TestId.ToString ());
             cmd.Parameters.AddWithValue ("@testkey", studentCourseTest.TestKey.ToString ());
@@ -1275,7 +1272,7 @@ namespace ExaminerB.Services2Backend
                             TestLevel = reader.GetInt32 (7),
                             TestKey = reader.GetInt32 (8),
                             UserAns = reader.GetInt32 (9),
-                            DateTime = reader.GetString (10),
+                            DateTime = reader.GetDateTimeOffset (10),
                             TestIndex = ++index,
                             TestOptions = new List<TestOption> ()
                             };
@@ -1351,7 +1348,6 @@ namespace ExaminerB.Services2Backend
             cmd.Parameters.AddWithValue ("@testid", studentCourseTest.TestId);
             cmd.Parameters.AddWithValue ("@testkey", studentCourseTest.TestKey);
             cmd.Parameters.AddWithValue ("@userans", studentCourseTest.UserAns);
-            cmd.Parameters.AddWithValue ("@datetime", studentCourseTest.DateTime);
             cmd.Parameters.AddWithValue ("@mode", mode);
             await cmd.ExecuteNonQueryAsync ();
             return true;
@@ -1967,7 +1963,7 @@ namespace ExaminerB.Services2Backend
                     ExamId = reader.GetInt32 (0),
                     CourseId = reader.GetInt32 (1),
                     ExamTitle = reader.GetString (2),
-                    ExamDateTime = reader.GetString (3),
+                    ExamDateTime = reader.GetDateTimeOffset (3),
                     ExamDuration = reader.GetInt32 (4),
                     ExamNTests = reader.GetInt32 (5),
                     ExamTags = reader.GetInt32 (6)
@@ -1990,7 +1986,7 @@ namespace ExaminerB.Services2Backend
                 exam.ExamId = reader.GetInt32 (0);
                 exam.CourseId = reader.GetInt32 (1);
                 exam.ExamTitle = reader.GetString (2);
-                exam.ExamDateTime = reader.GetString (3);
+                exam.ExamDateTime = reader.GetDateTimeOffset (3);
                 exam.ExamDuration = reader.GetInt32 (4);
                 exam.ExamNTests = reader.GetInt32 (5);
                 exam.ExamTags = reader.GetInt32 (6);
@@ -2031,6 +2027,7 @@ namespace ExaminerB.Services2Backend
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@courseid", courseId);
             await cnn.OpenAsync ();
             await cmd.ExecuteReaderAsync ();
@@ -2038,7 +2035,7 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Delete_ExamAsync (int examId)
             {
-            string sql = "dbo.sp_DeleteExams";
+            string sql = "dbo.sp_DeleteExam";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             using SqlCommand cmd = new (sql, cnn);
@@ -2296,14 +2293,12 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             foreach (int studentId in lstStudentIds)
                 {
-                //1 Add record to: StudentExams
+                //1 Add a record to: StudentExams
                 sql = "dbo.sp_CreateStudentExams";
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@studentid", studentId);
                 cmd.Parameters.AddWithValue ("@examid", examId);
-                cmd.Parameters.AddWithValue ("@startdatetime", "");
-                cmd.Parameters.AddWithValue ("@finishdatetime", "");
                 cmd.Parameters.AddWithValue ("@studentexamtags", 1);
                 cmd.Parameters.AddWithValue ("@studentexampoint", 0);
                 int newStudentExamId = (int) await cmd.ExecuteScalarAsync ();
@@ -2392,14 +2387,14 @@ namespace ExaminerB.Services2Backend
                     exam.ExamId = reader.GetInt32 (6);
                     exam.ExamIndex = i;
                     exam.ExamTitle = reader.GetString (7);
-                    exam.ExamDateTime = reader.GetString (8);
+                    exam.ExamDateTime = reader.GetDateTimeOffset (8);
                     exam.ExamDuration = reader.GetInt32 (9);
                     exam.ExamNTests = reader.GetInt32 (10);
                     exam.ExamTags = reader.GetInt32 (11);
-                    exam.StartDateTime = reader.GetString (12);
-                    exam.FinishDateTime = reader.GetString (13);
+                    exam.DateTimeStart = reader.GetDateTimeOffset (12);
+                    exam.DateTimeFinish = reader.GetDateTimeOffset (13);
                     exam.StudentExamTags = reader.GetInt32 (14);
-                    exam.StudentExamPoint = reader.GetDouble (15);
+                    exam.StudentExamPoint = reader.GetDecimal (15);
                     lstStudentsExam.Add (exam);
                     }
                 }
@@ -2436,14 +2431,14 @@ namespace ExaminerB.Services2Backend
                         exam.ExamId = reader.GetInt32 (6);
                         exam.ExamIndex = 0;
                         exam.ExamTitle = reader.GetString (7);
-                        exam.ExamDateTime = reader.GetString (8);
+                        exam.ExamDateTime = reader.GetDateTimeOffset (8);
                         exam.ExamDuration = reader.GetInt32 (9);
                         exam.ExamNTests = reader.GetInt32 (10);
                         exam.ExamTags = reader.GetInt32 (11);
-                        exam.StartDateTime = reader.GetString (12);
-                        exam.FinishDateTime = reader.GetString (13);
+                        exam.DateTimeStart = reader.GetDateTimeOffset (12);
+                        exam.DateTimeFinish = reader.GetDateTimeOffset (13);
                         exam.StudentExamTags = reader.GetInt32 (14);
-                        exam.StudentExamPoint = reader.GetDouble (15);
+                        exam.StudentExamPoint = reader.GetDecimal (15);
                         exam.StudentExamTests = new List<StudentExamTest> ();
                         }
                     }
@@ -2475,7 +2470,7 @@ namespace ExaminerB.Services2Backend
                 note.NoteId = reader.GetInt32 (0);
                 note.ReferenceId = reader.GetInt32 (1);
                 note.ReferenceType = reader.GetInt32 (2);
-                note.NoteDateTime = reader.GetString (3);
+                note.NoteDateTime = reader.GetDateTimeOffset (3);
                 note.NoteText = reader.GetString (4);
                 note.NoteTags = reader.GetInt32 (5);
                 note.ReferenceName = reader.GetString (6);
@@ -2494,8 +2489,8 @@ namespace ExaminerB.Services2Backend
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@studentid", studentExam.StudentId);
             cmd.Parameters.AddWithValue ("@examid", studentExam.ExamId);
-            cmd.Parameters.AddWithValue ("@startdatetime", studentExam.StartDateTime);
-            cmd.Parameters.AddWithValue ("@finishdatetime", studentExam.FinishDateTime);
+            cmd.Parameters.AddWithValue ("@datetimestart", studentExam.DateTimeStart);
+            cmd.Parameters.AddWithValue ("@datetimefinish", studentExam.DateTimeFinish);
             cmd.Parameters.AddWithValue ("@studentexamtags", studentExam.StudentExamTags);
             cmd.Parameters.AddWithValue ("@studentexampoint", studentExam.StudentExamPoint);
             cmd.Parameters.AddWithValue ("@studentexamid", studentExam.StudentExamId);
@@ -2505,7 +2500,6 @@ namespace ExaminerB.Services2Backend
         public async Task<bool> Update_StudentsExamTagsAsync (string mode, int examId)
             {
             //Update tags of StudentExams for all student having this ExamId
-            string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
             string sql = "dbo.sp_UpdateStudentsExamTags";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
@@ -2515,7 +2509,6 @@ namespace ExaminerB.Services2Backend
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@examid", examId);
-                cmd.Parameters.AddWithValue ("@currentdatetime", currentDateTime);
                 cmd.Parameters.AddWithValue ("@mode", mode);
                 int c = cmd.ExecuteNonQuery ();
                 await cnn.CloseAsync ();
@@ -2523,7 +2516,7 @@ namespace ExaminerB.Services2Backend
                 List<StudentExam> lstStudentsExams = await Read_StudentExamsAsync ("ByExamid", examId, 0);
                 foreach (StudentExam stdntex in lstStudentsExams)
                     {
-                    if (stdntex.FinishDateTime.Length > 0)
+                    if (stdntex.DateTimeFinish.ToString().Length > 0)
                         {
                         bool result = await CalculatePoints_StudentExamsAsync (stdntex.StudentExamId);
                         }
@@ -2570,12 +2563,12 @@ namespace ExaminerB.Services2Backend
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@studentexamtags", tempStudentExam.StudentExamTags);
-                cmd.Parameters.AddWithValue ("@startdatetime", tempStudentExam.StartDateTime);
-                cmd.Parameters.AddWithValue ("@finishdatetime", tempStudentExam.FinishDateTime);
+                cmd.Parameters.AddWithValue ("@datetimestart", tempStudentExam.DateTimeStart);
+                cmd.Parameters.AddWithValue ("@datetimefinish", tempStudentExam.DateTimeFinish);
                 cmd.Parameters.AddWithValue ("@studentexamid", tempStudentExam.StudentExamId);
                 int c = cmd.ExecuteNonQuery ();
                 await cnn.CloseAsync ();
-                if (tempStudentExam.FinishDateTime.Length > 0)
+                if (tempStudentExam.DateTimeFinish.ToString().Length > 0)
                     {
                     bool result = await CalculatePoints_StudentExamsAsync (tempStudentExam.StudentExamId);
                     }
@@ -2631,7 +2624,11 @@ namespace ExaminerB.Services2Backend
             try
                 {
                 string sql = "dbo.sp_CalculatePointsStudentExams";
-                await cnn.CloseAsync ();
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue ("@studentexamid", studentexamid);
+                cmd.ExecuteNonQuery ();
                 return true;
                 }
             catch (Exception ex)
@@ -2658,9 +2655,10 @@ namespace ExaminerB.Services2Backend
             cmd.Parameters.AddWithValue ("@opt3id", studentExamTest.Opt3Id);
             cmd.Parameters.AddWithValue ("@opt4id", studentExamTest.Opt4Id);
             cmd.Parameters.AddWithValue ("@opt5id", studentExamTest.Opt5Id);
-            cmd.Parameters.AddWithValue ("@StudentExamTestkey", studentExamTest.StudentExamTestKey);
-            cmd.Parameters.AddWithValue ("@StudentExamTestans", studentExamTest.StudentExamTestAns);
-            cmd.Parameters.AddWithValue ("@StudentExamTesttags", studentExamTest.StudentExamTestTags);
+            cmd.Parameters.AddWithValue ("@Studentexamtestkey", studentExamTest.StudentExamTestKey);
+            cmd.Parameters.AddWithValue ("@Studentexamtestans", studentExamTest.StudentExamTestAns);
+            cmd.Parameters.AddWithValue ("@Studentexamtestanstext", studentExamTest.StudentExamTestAns);
+            cmd.Parameters.AddWithValue ("@Studentexamtesttags", studentExamTest.StudentExamTestTags);
             int i = (int) await cmd.ExecuteScalarAsync ();
             return i;
             }
@@ -2701,7 +2699,8 @@ namespace ExaminerB.Services2Backend
                             Opt5Id = reader.GetInt32 (14),
                             StudentExamTestKey = reader.GetInt32 (15),
                             StudentExamTestAns = reader.GetInt32 (16),
-                            StudentExamTestTags = reader.GetInt32 (17),
+                            StudentExamTestAnsText = reader.GetString (17),
+                            StudentExamTestTags = reader.GetInt32 (18),
                             TestIndex = ++index,
                             TestOptions = new List<TestOption> ()
                             });
@@ -2760,7 +2759,8 @@ namespace ExaminerB.Services2Backend
                             Opt5Id = reader.GetInt32 (14),
                             StudentExamTestKey = reader.GetInt32 (15),
                             StudentExamTestAns = reader.GetInt32 (16),
-                            StudentExamTestTags = reader.GetInt32 (17),
+                            StudentExamTestAnsText = reader.GetString (17),
+                            StudentExamTestTags = reader.GetInt32 (18),
                             TestIndex = ++index,
                             TestOptions = new List<TestOption> ()
                             };
@@ -2820,7 +2820,8 @@ namespace ExaminerB.Services2Backend
                         studentExamTest.Opt5Id = reader.GetInt32 (14);
                         studentExamTest.StudentExamTestKey = reader.GetInt32 (15);
                         studentExamTest.StudentExamTestAns = reader.GetInt32 (16);
-                        studentExamTest.StudentExamTestTags = reader.GetInt32 (17);
+                        studentExamTest.StudentExamTestAnsText = reader.GetString (17);
+                        studentExamTest.StudentExamTestTags = reader.GetInt32 (18);
                         studentExamTest.TestIndex = ++index;
                         studentExamTest.TestOptions = new List<TestOption> ();
                         }
@@ -2879,7 +2880,8 @@ namespace ExaminerB.Services2Backend
                             Opt5Id = reader.GetInt32 (14),
                             StudentExamTestKey = reader.GetInt32 (15),
                             StudentExamTestAns = reader.GetInt32 (16),
-                            StudentExamTestTags = reader.GetInt32 (17),
+                            StudentExamTestAnsText = reader.GetString (17),
+                            StudentExamTestTags = reader.GetInt32 (18),
                             TestIndex = ++index,
                             TestOptions = new List<TestOption> ()
                             });
@@ -2909,9 +2911,10 @@ namespace ExaminerB.Services2Backend
             cmd.Parameters.AddWithValue ("@opt3id", studentExamTest.Opt3Id);
             cmd.Parameters.AddWithValue ("@opt4id", studentExamTest.Opt4Id);
             cmd.Parameters.AddWithValue ("@opt5id", studentExamTest.Opt5Id);
-            cmd.Parameters.AddWithValue ("@StudentExamTestkey", studentExamTest.StudentExamTestKey);
-            cmd.Parameters.AddWithValue ("@StudentExamTestans", studentExamTest.StudentExamTestAns);
-            cmd.Parameters.AddWithValue ("@StudentExamTesttags", studentExamTest.StudentExamTestTags);
+            cmd.Parameters.AddWithValue ("@studentexamtestkey", studentExamTest.StudentExamTestKey);
+            cmd.Parameters.AddWithValue ("@studentexamtestans", studentExamTest.StudentExamTestAns);
+            cmd.Parameters.AddWithValue ("@studentexamtestanstext", studentExamTest.StudentExamTestAnsText);
+            cmd.Parameters.AddWithValue ("@studentexamtesttags", studentExamTest.StudentExamTestTags);
             cmd.ExecuteNonQuery ();
             return true;
             }
@@ -2963,7 +2966,7 @@ namespace ExaminerB.Services2Backend
             {
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            string sql = "dbo.sp_Update_StudentExamTestAnswer";
+            string sql = "dbo.sp_UpdateStudentExamTestAnswer";
             int mode = 0;
             mode = (tempStudentExamTest.StudentExamTestAns == 0) ? 0 : 1;
             try
@@ -2971,7 +2974,8 @@ namespace ExaminerB.Services2Backend
                 await cnn.OpenAsync ();
                 var cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@answ", tempStudentExamTest.StudentExamTestAns);
+                cmd.Parameters.AddWithValue ("@answid", tempStudentExamTest.StudentExamTestAns);
+                cmd.Parameters.AddWithValue ("@answtext", tempStudentExamTest.StudentExamTestAnsText);
                 cmd.Parameters.AddWithValue ("@studentexamtestid", tempStudentExamTest.StudentExamTestId);
                 cmd.Parameters.AddWithValue ("@mode", mode);
                 await cmd.ExecuteNonQueryAsync ();
@@ -3023,7 +3027,6 @@ namespace ExaminerB.Services2Backend
                     SqlCommand cmd = new SqlCommand (sql, cnn);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue ("@userid", message.UserId);
-                    cmd.Parameters.AddWithValue ("@datetimecreated", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
                     cmd.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
                     cmd.Parameters.AddWithValue ("@messagebody", message.MessageBody);
                     int newMessageId = (int) await cmd.ExecuteScalarAsync ();
@@ -3060,7 +3063,7 @@ namespace ExaminerB.Services2Backend
                     {
                     message.MessageId = reader.GetInt32 (0);
                     message.UserId = reader.GetInt32 (1);
-                    message.DateTimeCreated = reader.GetString (2);
+                    message.DateTimeCreated = reader.GetDateTimeOffset (2);
                     message.MessageTitle = reader.GetString (3);
                     message.MessageBody = reader.GetString (4);
                     message.Students = new List<StudentMessage> ();
@@ -3100,7 +3103,7 @@ namespace ExaminerB.Services2Backend
                         {
                         MessageId = reader.GetInt32 (0),
                         UserId = reader.GetInt32 (1),
-                        DateTimeCreated = reader.GetString (2),
+                        DateTimeCreated = reader.GetDateTimeOffset (2),
                         MessageTitle = reader.GetString (3),
                         MessageBody = reader.GetString (4),
                         Students = new List<StudentMessage> ()
@@ -3168,7 +3171,6 @@ namespace ExaminerB.Services2Backend
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@studentid", st);
                 cmd.Parameters.AddWithValue ("@messageid", messageId);
-                cmd.Parameters.AddWithValue ("@datetimesent", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
                 cmd.Parameters.AddWithValue ("@studentmessagetags", _tags);
                 int i = (int) cmd.ExecuteNonQuery ();
                 }
@@ -3210,9 +3212,9 @@ namespace ExaminerB.Services2Backend
                         StudentNickname = reader.GetString (4),
                         MessageTitle = reader.GetString (5),
                         MessageBody = reader.GetString (6),
-                        DateTimeCreated = reader.GetString (7),
-                        DateTimeSent = reader.GetString (8),
-                        DateTimeRead = reader.GetString (9),
+                        DateTimeCreated = reader.GetDateTimeOffset (7),
+                        DateTimeSent = reader.GetDateTimeOffset (8),
+                        DateTimeRead = reader.GetDateTimeOffset (9),
                         StudentMessageTags = reader.GetInt32 (10)
                         });
                     }
@@ -3248,9 +3250,9 @@ namespace ExaminerB.Services2Backend
                     studentMessage.StudentNickname = reader.GetString (4);
                     studentMessage.MessageTitle = reader.GetString (5);
                     studentMessage.MessageBody = reader.GetString (6);
-                    studentMessage.DateTimeCreated = reader.GetString (7);
-                    studentMessage.DateTimeSent = reader.GetString (8);
-                    studentMessage.DateTimeRead = reader.GetString (9);
+                    studentMessage.DateTimeCreated = reader.GetDateTimeOffset (7);
+                    studentMessage.DateTimeSent = reader.GetDateTimeOffset (8);
+                    studentMessage.DateTimeRead = reader.GetDateTimeOffset (9);
                     studentMessage.StudentMessageTags = reader.GetInt32 (10);
                     }
                 await cnn.CloseAsync ();
@@ -3285,7 +3287,6 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@datetimeread", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
             cmd.Parameters.AddWithValue ("@studentmessageid", studentMessage.StudentMessageId);
             int i = cmd.ExecuteNonQuery ();
             await cnn.CloseAsync ();
@@ -3316,7 +3317,6 @@ namespace ExaminerB.Services2Backend
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@fromid", chat.FromId);
             cmd.Parameters.AddWithValue ("@toid", chat.ToId);
-            cmd.Parameters.AddWithValue ("@datetimesent", chat.DateTimeSent);
             cmd.Parameters.AddWithValue ("@chattext", chat.ChatText);
             cmd.Parameters.AddWithValue ("@chattags", chat.ChatTags);
             int i = (int) await cmd.ExecuteScalarAsync ();
@@ -3357,7 +3357,7 @@ namespace ExaminerB.Services2Backend
                         ChatId = reader2.GetInt32 (0),
                         FromId = reader2.GetInt32 (1),
                         ToId = reader2.GetInt32 (2),
-                        DateTimeSent = reader2.GetString (3),
+                        DateTimeSent = reader2.GetDateTimeOffset (3),
                         ChatText = reader2.GetString (4),
                         ChatTags = reader2.GetInt32 (5),
                         FromName = reader2.GetString (6),
@@ -3394,7 +3394,7 @@ namespace ExaminerB.Services2Backend
                     ChatId = reader.GetInt32 (0),
                     FromId = reader.GetInt32 (1),
                     ToId = reader.GetInt32 (2),
-                    DateTimeSent = reader.GetString (3),
+                    DateTimeSent = reader.GetDateTimeOffset (3),
                     ChatText = reader.GetString (4),
                     ChatTags = reader.GetInt32 (5),
                     FromName = reader.GetString (6),
@@ -3539,7 +3539,6 @@ namespace ExaminerB.Services2Backend
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@chatroomid", chatroomPost.ChatroomId);
                 cmd.Parameters.AddWithValue ("@senderid", chatroomPost.SenderId);
-                cmd.Parameters.AddWithValue ("@postdatetime", chatroomPost.PostDateTime);
                 cmd.Parameters.AddWithValue ("@posttext", chatroomPost.PostText);
                 int i = (int) await cmd.ExecuteScalarAsync ();
                 await cnn.CloseAsync ();
@@ -3571,7 +3570,7 @@ namespace ExaminerB.Services2Backend
                     ChatroomId = reader.GetInt32 (1),
                     SenderId = reader.GetInt32 (2),
                     SenderName = reader.GetString (3),
-                    PostDateTime = reader.GetString (4),
+                    PostDateTime = reader.GetDateTimeOffset (4),
                     PostText = reader.GetString (5),
                     PostTags = reader.GetInt32 (6)
                     });
@@ -3838,7 +3837,6 @@ namespace ExaminerB.Services2Backend
             cmd2.CommandType = CommandType.StoredProcedure;
             cmd2.Parameters.AddWithValue ("@referenceid", note.ReferenceId);
             cmd2.Parameters.AddWithValue ("@referencetype", note.ReferenceType);
-            cmd2.Parameters.AddWithValue ("@NoteDateTime", note.NoteDateTime);
             cmd2.Parameters.AddWithValue ("@notetext", note.NoteText);
             cmd2.Parameters.AddWithValue ("@notetags", note.NoteTags); //1:rtl 2:done 4:shared 8:readonly
             cmd2.Parameters.AddWithValue ("@creatorid", note.CreatorId);
@@ -3867,7 +3865,7 @@ namespace ExaminerB.Services2Backend
                 note.NoteId = reader.GetInt32 (0);
                 note.ReferenceId = reader.GetInt32 (1);
                 note.ReferenceType = reader.GetInt32 (2);
-                note.NoteDateTime = reader.GetString (3);
+                note.NoteDateTime = reader.GetDateTimeOffset (3);
                 note.NoteText = reader.GetString (4);
                 note.CreatorId = reader.GetInt32 (5);
                 note.NoteTags = reader.GetInt32 (6);
@@ -3898,7 +3896,7 @@ namespace ExaminerB.Services2Backend
                 note.NoteId = reader.GetInt32 (0);
                 note.ReferenceId = reader.GetInt32 (1);
                 note.ReferenceType = reader.GetInt32 (2);
-                note.NoteDateTime = reader.GetString (3);
+                note.NoteDateTime = reader.GetDateTimeOffset (3);
                 note.NoteText = reader.GetString (4);
                 note.CreatorId = reader.GetInt32 (5);
                 note.NoteTags = reader.GetInt32 (6);
@@ -3924,7 +3922,7 @@ namespace ExaminerB.Services2Backend
                 note.NoteId = reader.GetInt32 (0);
                 note.ReferenceId = reader.GetInt32 (1);
                 note.ReferenceType = reader.GetInt32 (2);
-                note.NoteDateTime = reader.GetString (3);
+                note.NoteDateTime = reader.GetDateTimeOffset (3);
                 note.NoteText = reader.GetString (4);
                 note.CreatorId = reader.GetInt32 (5);
                 note.NoteTags = reader.GetInt32 (6);

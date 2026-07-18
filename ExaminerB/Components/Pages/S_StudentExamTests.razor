@@ -197,7 +197,7 @@ else
         {
         //instead of query the exam, try get examDT from an appstate!
         Exam exam = await feService.Read_Exam(studentExam.ExamId, false);
-        DateTime _examDateTimeStart = DateTime.ParseExact(exam.ExamDateTime, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+        DateTime _examDateTimeStart = exam.ExamDateTime.LocalDateTime;
         DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);
         if (DateTime.Now > _examDateTimeFinish)
             {

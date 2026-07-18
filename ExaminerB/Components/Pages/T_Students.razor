@@ -1255,7 +1255,7 @@ else
         if (messageBody.Length < 4000)
             {
             user.UserId = Convert.ToInt32(appState.UserId);
-            Message message = new Message() { UserId = user.UserId, DateTimeCreated = "", MessageTitle = messageTitle, MessageBody = messageBody };
+            Message message = new Message() { UserId = user.UserId, DateTimeCreated = new DateTimeOffset(), MessageTitle = messageTitle, MessageBody = messageBody };
             int result = await feService.Create_Message(message);
             if (result > 0)
                 {

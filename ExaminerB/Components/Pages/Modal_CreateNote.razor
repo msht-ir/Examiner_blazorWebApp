@@ -130,13 +130,13 @@
     bool _hasFetched;
     string textDirection = "ltr";
     private DateTime? _date = DateTime.Now;
+
     private TimeSpan? _time = DateTime.Now.TimeOfDay;
     int _PersianYear = 0;
     int _PersianMonth = 0;
     int _PersianDay = 0;
     int _Hour = 0;
     int _Minute = 0;
-    //PersianCalendar persianCalendar = new PersianCalendar();
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync ()
@@ -154,13 +154,14 @@
         if (appState.Cmd == "UpdateNote")
             {
             //DT
-            _PersianYear = Convert.ToInt32(appState.NoteDateTime.Substring(0, 4));
-            _PersianMonth = Convert.ToInt32(appState.NoteDateTime.Substring(5, 2));
-            _PersianDay = Convert.ToInt32(appState.NoteDateTime.Substring(8, 2));
-            _Hour = Convert.ToInt32(appState.NoteDateTime.Substring(11, 2));
-            _Minute = Convert.ToInt32(appState.NoteDateTime.Substring(14, 2));
-            _date = Convert.ToDateTime($"{_PersianYear}/{_PersianMonth}/{_PersianDay} {_Hour}:{_Minute}");
-            _time = TimeSpan.Parse($"{_Hour}:{_Minute}");
+            DateTimeOffset dTOffset = DateTimeOffset.Parse(appState.NoteDateTime);
+            //PARSE DATETIME
+            _PersianYear = dTOffset.Year;
+            _PersianMonth = dTOffset.Month;
+            _PersianDay = dTOffset.Day;
+            _date = dTOffset.LocalDateTime;
+            _time = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? dTOffset.TimeOfDay.Add(new TimeSpan(3, 30, 0)) : dTOffset.TimeOfDay;
+            //END PARSE DATETIME
             note.NoteText = appState.NoteText ?? "";
             note.IsRtl = Convert.ToBoolean(appState.NoteIsRtl);
             }
@@ -201,7 +202,7 @@
             {
             //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
             DateTime _dt = _date.Value.Date + _time.Value;
-            note.NoteDateTime = _dt.ToString("yyyy-MM-dd HH:mm");
+            note.NoteDateTime = _dt;
             _hasFetched = false;
             int result = await feService.Create_Note(note);
             if (result > 0)
@@ -237,7 +238,7 @@
             note.ReferenceId = Convert.ToInt32(appState.NoteReferenceId);
             note.ReferenceType = Convert.ToInt32(appState.NoteReferenceType);
             DateTime _dt = _date.Value.Date + _time.Value;
-            note.NoteDateTime = _dt.ToString("yyyy-MM-dd HH:mm");
+            note.NoteDateTime = _dt;
             //not neccessary, but just to ensure everything is ok:
             _hasFetched = false;
             bool result = await feService.Update_Note(note);

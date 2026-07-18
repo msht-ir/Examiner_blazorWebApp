@@ -19,7 +19,7 @@ else
         <h6 style="color:gray;">
             Course: @course.CourseName | Exam: @exam.ExamTitle
             <br />
-            (@PersianDate(exam.ExamDateTime))
+            (@PersianDate(exam.ExamDateTime.ToString()))
             <br />
             Duration: @exam.ExamDuration min | students: @lstStudentsExam.Count
         </h6>

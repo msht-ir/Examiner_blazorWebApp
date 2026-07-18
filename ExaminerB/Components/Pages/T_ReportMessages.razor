@@ -119,7 +119,7 @@ else
                                             <MudCard Class="mx-0">
                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                     <span style="color:indianred; font-weight:bold;">
-                                                        @PersianDate(notex.NoteDateTime)
+                                                    @PersianDate(notex.NoteDateTime.ToString())
                                                     </span>
                                                     <hr />
                                                     <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
@@ -150,7 +150,7 @@ else
                                             <MudCard Class="mx-0">
                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                     <span style="color:indianred; font-weight:bold;">
-                                                        @PersianDate(notex.NoteDateTime)
+                                                    @PersianDate(notex.NoteDateTime.ToString())
                                                     </span>
                                                     <hr />
                                                     <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
@@ -213,10 +213,10 @@ else
                                     @message.MessageBody
                                 </div>
                                 <hr style="color:royalblue" />
-                                <div>Sent: @PersianDate(message.DateTimeSent)</div>
+                            <div>Sent: @PersianDate(message.DateTimeSent.ToString())</div>
                                 @if((message.StudentMessageTags & 1) == 1)
                                     {
-                                    <div>Read: @PersianDate(message.DateTimeRead)</div>                    
+                                <div>Read: @PersianDate(message.DateTimeRead.ToString())</div>
                                     }
                                 @if((message.StudentMessageTags & 16) == 16)
                                     {
@@ -658,7 +658,7 @@ else
     public async Task BtnShowNoteInDialog(Note note)
         {
         appState.SetSelectedNoteId (note.NoteId);
-        appState.SetNoteDateTime (note.NoteDateTime);
+        appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
         appState.SetNoteText (note.NoteText);
         appState.SetNoteIsRtl (note.IsRtl);
         appState.SetNoteReferenceType(note.ReferenceType);
@@ -673,7 +673,7 @@ else
         appState.SetSelectedNoteId (note.NoteId);
         appState.SetNoteReferenceId (note.ReferenceId);
         appState.SetNoteReferenceType(note.ReferenceType);
-        appState.SetNoteDateTime (note.NoteDateTime);
+        appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
         appState.SetNoteText (note.NoteText);
         appState.SetNoteIsRtl (note.IsRtl);
         appState.SetNoteCreatorId(note.CreatorId);

@@ -386,7 +386,7 @@ else
                                                                                             <MudCard Class="mx-0">
                                                                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                                                                     <div class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
-                                                                                                    @PersianDate(notex.NoteDateTime)
+                                                                                                    @PersianDate(notex.NoteDateTime.ToString())
                                                                                                     </div>
                                                                                                 <hr />
                                                                                                 @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId) == notex.NoteId))
@@ -494,7 +494,7 @@ else
                                                                                             <MudCard Class="mx-0">
                                                                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                                                                     <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
-                                                                                                    @PersianDate(notex.NoteDateTime)
+                                                                                                    @PersianDate(notex.NoteDateTime.ToString())
                                                                                                     </div>
                                                                                                 <hr />
                                                                                                     <span class="d-flex align-items-center mt-1" style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
@@ -1109,7 +1109,7 @@ else
             {
             appState.SetNoteReferenceType(0);
             }
-        appState.SetNoteDateTime(note.NoteDateTime);
+        appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
         appState.SetNoteText(note.NoteText);
         appState.SetNoteCreatorId(note.CreatorId);
         appState.SetNoteIsRtl(note.IsRtl);
@@ -1124,7 +1124,7 @@ else
         appState.SetNoteReferenceId(note.ReferenceId);
         appState.SetNoteReferenceType(note.ReferenceType);
         appState.SetNoteReferenceName(note.ReferenceName);
-        appState.SetNoteDateTime(note.NoteDateTime);
+        appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
         appState.SetNoteText(note.NoteText);
         appState.SetNoteCreatorId(note.CreatorId);
         appState.SetNoteIsRtl(note.IsRtl);
@@ -1164,7 +1164,7 @@ else
                 NoteId = 1,
                 ReferenceId = Convert.ToInt32(appState.UserId),
                 ReferenceType = 1,
-                NoteDateTime = note.NoteDateTime,
+                NoteDateTime = new DateTimeOffset(), // note.NoteDateTime,
                 NoteText = note.NoteText,
                 NoteTags = note.NoteTags,
                 CreatorId = Convert.ToInt32(appState.UserId)

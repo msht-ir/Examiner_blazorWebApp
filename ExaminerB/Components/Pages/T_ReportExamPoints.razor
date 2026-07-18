@@ -84,8 +84,8 @@ else
                             </div>
                             <div style="font-weight:normal;">
                             @* <img src="/img/icoReport0.png" width="20" /> *@
-                            <span style="color:green">start: </span> <span style="font-size:small">@PersianDate(studentExam.StartDateTime)</span> /
-                            <span style="color:royalblue">finish: </span> <span style="font-size:small">@PersianDate(studentExam.FinishDateTime)</span>
+                            <span style="color:green">start: </span> <span style="font-size:small">@PersianDate(studentExam.DateTimeStart.ToString())</span> /
+                            <span style="color:royalblue">finish: </span> <span style="font-size:small">@PersianDate(studentExam.DateTimeFinish.ToString())</span>
                             </div>
                             <div style="display:flex; align-items:center;font-weight:bold;">
                                 <button class="btn btn-link" @onclick="async () => await BtnShowStudentExamTests(studentExam)">
@@ -207,7 +207,7 @@ else
                 Note note = new Note();
                 note.ReferenceId = studentExam.StudentExamId;
                 note.ReferenceType = 17;
-                note.NoteDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+                note.NoteDateTime = DateTime.UtcNow;
                 note.NoteText = _txtNewExamSessionNote;
                 note.CreatorId = Convert.ToInt32 (appState.UserId);
                 int result = await feService.Create_Note(note);
@@ -247,7 +247,7 @@ else
             exam.ExamDuration = lstStudentsExams [0].ExamDuration;
             course.CourseName = lstStudentsExams [0].CourseName;
             //SHOW TIME
-            DateTime _examDateTimeStart = DateTime.ParseExact(exam.ExamDateTime, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+            DateTime _examDateTimeStart = exam.ExamDateTime.LocalDateTime;
             DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);
             if (DateTime.Now > _examDateTimeFinish)
                 {

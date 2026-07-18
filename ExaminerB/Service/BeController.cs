@@ -242,9 +242,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_CourseFolders")]
-        public async Task<ActionResult<List<CourseFolder>>> Read_CourseFolders ([FromBody] int courseId)
+        public async Task<ActionResult<List<CourseFolder>>> Read_CourseFolders ([FromBody] int courseId, [FromQuery]string mode)
             {
-            var result = await _BeService.Read_CourseFoldersAsync (courseId);
+            var result = await _BeService.Read_CourseFoldersAsync (courseId, mode);
             return Ok (result);
             }
         [HttpPost ("Update_CourseFolder")]

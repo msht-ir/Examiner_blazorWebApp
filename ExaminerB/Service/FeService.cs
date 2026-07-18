@@ -359,9 +359,9 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Create_CourseFolder", courseFolder);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
-        public async Task<List<CourseFolder>> Read_CourseFolders (int courseId)
+        public async Task<List<CourseFolder>> Read_CourseFolders (int courseId, string mode)
             {
-            var response = await _http.PostAsJsonAsync ("api/Read_CourseFolders", courseId);
+            var response = await _http.PostAsJsonAsync ($"api/Read_CourseFolders?mode={mode}", courseId);
 
             if (response.IsSuccessStatusCode)
                 {
@@ -839,7 +839,7 @@ namespace ExaminerB.Service
         #region SE:StudentExams
         public async Task<int> Create_StudentExams (int examId, List<int> lstStudentIds)
             {
-            StudentExam studentExam = new StudentExam () { StudentId = 0, ExamId = examId, StartDateTime = "-", FinishDateTime = "-", StudentExamTags = 0, StudentExamPoint = 0 };
+            StudentExam studentExam = new StudentExam () { StudentId = 0, ExamId = examId, DateTimeStart = new DateTimeOffset(), DateTimeFinish = new DateTimeOffset(), StudentExamTags = 0, StudentExamPoint = 0 };
             var response = await _http.PostAsJsonAsync ($"api/Create_StudentExams?examId={examId}", lstStudentIds);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
@@ -926,43 +926,43 @@ namespace ExaminerB.Service
             }
         public async Task<bool> Update_StudentExamTags (StudentExam studentExam, string strNewStudentExamTags)
             {
-            string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
+            DateTimeOffset currentDateTime = DateTimeOffset.UtcNow;
             switch (strNewStudentExamTags)
                 {
                 case "startedOn":
                         {
                         studentExam.StudentExamTags = (studentExam.StudentExamTags | 2);
-                        studentExam.StartDateTime = currentDateTime;
+                        studentExam.DateTimeStart = currentDateTime;
                         break;
                         }
                 case "startedOff":
                         {
                         studentExam.StudentExamTags = (studentExam.StudentExamTags & ~2);
-                        studentExam.StartDateTime = "";
+                        studentExam.DateTimeStart = new DateTimeOffset();
                         break;
                         }
                 case "finishedOn":
                         {
                         studentExam.StudentExamTags = (studentExam.StudentExamTags | 4);
-                        studentExam.FinishDateTime = currentDateTime;
+                        studentExam.DateTimeFinish = currentDateTime;
                         break;
                         }
                 case "finishedOff":
                         {
                         studentExam.StudentExamTags = (studentExam.StudentExamTags & ~4);
-                        studentExam.StartDateTime = "";
+                        studentExam.DateTimeStart = new DateTimeOffset ();
                         break;
                         }
                 case "reviewOn":
                         {
                         studentExam.StudentExamTags = (studentExam.StudentExamTags | 8);
-                        studentExam.FinishDateTime = currentDateTime;
+                        studentExam.DateTimeFinish = currentDateTime;
                         break;
                         }
                 case "reviewOff":
                         {
                         studentExam.StudentExamTags = (studentExam.StudentExamTags & ~8);
-                        studentExam.StartDateTime = "";
+                        studentExam.DateTimeStart = new DateTimeOffset ();
                         break;
                         }
                 }

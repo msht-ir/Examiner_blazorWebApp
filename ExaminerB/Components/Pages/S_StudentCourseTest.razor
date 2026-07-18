@@ -12,7 +12,7 @@
         {
         <hr />
         <br />
-        <img src="/img/pngStudyGirl1.png" style="width:280px" />
+        <img src="/img/icoLogin_S.png" style="width:380px" />
         <br />
         <br />
         <br />
@@ -162,7 +162,7 @@
                 }
             }
         studentCourseTest.UserAns = _selectedOpt;
-        studentCourseTest.DateTime = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
+        studentCourseTest.DateTime = DateTime.UtcNow;
         //update: save both ans and key (mode = new|edit)
         var result = await feService.Update_StudentCourseTest (studentCourseTest, mode);
         BtnBack ();
