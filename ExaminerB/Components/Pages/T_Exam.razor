@@ -613,6 +613,7 @@ else
         //     await BtnUpdateExam ();
         //     }
         appState.SetCmd("");
+        appState.SetReturnPage($"/T_Exam/{examId}");
         Navman.NavigateTo("/T_Exams");
         }
     }

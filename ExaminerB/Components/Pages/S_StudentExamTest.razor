@@ -7,23 +7,74 @@
 @implements IDisposable
 @inject ISnackbar Snackbar
 
-    <div style="text-align: center; max-width:600px; margin: 0 auto;">
-        <h1 style="font-weight:bold;">@testIndex</h1>
-        <hr />
-        @if ((studentExamTest.TestTags & 1) == 1)
-            {
-            <h5 style="direction:rtl;text-align:right;"> @studentExamTest.TestTitle</h5>
-            }
-        else
-            {
-            <h5> @studentExamTest.TestTitle</h5>        
-            }
-        <hr />
+<div style="text-align: center; max-width:600px; margin: 0 auto;">
+    <h1 style="font-weight:bold;">@testIndex</h1>
+    <hr />
+    @if ((studentExamTest.TestTags & 1) == 1)
+        {
+        <h5 style="direction:rtl;text-align:right;"> @studentExamTest.TestTitle</h5>
+        }
+    else
+        {
+        <h5> @studentExamTest.TestTitle</h5>
+        }
+    <hr />
         <EditForm Model="studentExamTest">
-            <table class="table table-borderless">
-                <thead style="color:green">
-                    <tr style="font-weight:bold">
-                        @if((studentExamTest.TestTags & 2) == 2)
+        @if (studentExamTest.TestOptions.Count < 2)
+            {
+                <MudContainer>
+                <h6 style="color:royalblue">Answer /  پاسخ</h6>
+                    <MudCard Class="mx-0">
+                        <MudCardContent Style="background-color:whitesmoke;">
+                            <div Class="mb-3" style="text-align:center">
+                            @if ((studentExamTest.TestTags & 2) == 2)
+                                {
+                                    <div dir="rtl" style="width:100%;margin-bottom:20px">
+                                    <MudTextField @ref="refAnswerText"
+                                                  @bind-Value="_answerText"
+                                                  Label="فا"
+                                                  Variant="Variant.Text"
+                                                  Margin="Margin.Dense"
+                                                  Lines="5"
+                                                  Autocomplete="off"
+                                                  Immediate="true"
+                                                  Adornment="Adornment.End"
+                                                  AdornmentIcon="@Icons.Material.Filled.Save"
+                                                  OnAdornmentClick="()=>BtnSaveAnswerText(studentExamTest.StudentExamTestId)"
+                                                  TextAlign="TextAlign.Right"
+                                                  Rtl="true"
+                                                  style="font-family:Tahoma;color:royalblue"
+                                                  Class="my-textfield" />
+                                                  <br />
+                                    </div>
+                                }
+                            else
+                                {
+                                <MudTextField @ref="refAnswerText"
+                                              @bind-Value="_answerText"
+                                              Label="En"
+                                              Variant="Variant.Text"
+                                              Margin="Margin.Dense"
+                                              Lines="5"
+                                              Autocomplete="off"
+                                              Immediate="true"
+                                              Adornment="Adornment.End"
+                                              AdornmentIcon="@Icons.Material.Filled.Save"
+                                              OnAdornmentClick="()=>BtnSaveAnswerText(studentExamTest.StudentExamTestId)"
+                                              style="color:royalblue"
+                                              Class="my-textfield" />
+                                }
+                            </div>
+                        </MudCardContent>
+                    </MudCard>
+                </MudContainer>
+            }
+        else if (studentExamTest.TestOptions.Count >= 2)
+            {
+                <table class="table table-borderless">
+                    <thead style="color:green">
+                        <tr style="font-weight:bold">
+                        @if ((studentExamTest.TestTags & 2) == 2)
                             {
                             <td style="color:darkred">گزينه ها</td>
                             <td></td>
@@ -32,28 +83,28 @@
                             {
                             <td style="color:darkred">Options</td>
                             <td></td>
-                            }                
-                    </tr>
-                </thead>
-                @if((studentExamTest.TestTags & 2) == 2)
+                            }
+                        </tr>
+                    </thead>
+                @if ((studentExamTest.TestTags & 2) == 2)
                     {
                     style = "direction:rtl;text-align:right;";
                     strSelect = "انتخاب";
                     }
                 else
                     {
-                    style="direction:ltr;text-align:left;";                        
+                    style = "direction:ltr;text-align:left;";
                     strSelect = "Select";
-                    }                
-                @foreach(TestOption opt in studentExamTest.TestOptions)
+                    }
+                @foreach (TestOption opt in studentExamTest.TestOptions)
                     {
-                    <MudContainer Class="mt-2 px-0">
-                        <MudCard Class="mx-0">
-                            <MudCardContent Style="background-color:whitesmoke;">
-                                <MudGrid Style="@style">
+                        <MudContainer Class="mt-2 px-0">
+                            <MudCard Class="mx-0">
+                                <MudCardContent Style="background-color:whitesmoke;">
+                                    <MudGrid Style="@style">
                                     <!-- Left column -->
-                                    <MudItem xs="10">
-                                        @if ((HelpShowAnswer) && (opt.TestOptionId==studentExamTest.StudentExamTestKey))
+                                        <MudItem xs="10">
+                                        @if ((HelpShowAnswer) && (opt.TestOptionId == studentExamTest.StudentExamTestKey))
                                             {
                                             <td class="mb-2" style="color:IndianRed; padding:10px;">@opt.TestOptionTitle</td>
                                             }
@@ -61,94 +112,105 @@
                                             {
                                             <td class="mb-2" style="color:Black; padding:10px;">@opt.TestOptionTitle</td>
                                             }
-                                    </MudItem>
+                                        </MudItem>
                                     <!-- Right column -->
-                                    <MudItem xs="2">
-                                        @if(opt.TestOptionId==studentExamTest.StudentExamTestAns)
+                                        <MudItem xs="2">
+                                        @if (opt.TestOptionId == studentExamTest.StudentExamTestAns)
                                             {
-                                            <button class="btn btn-success btn-sm mb-2 col-auto" style="margin-bottom:10px;" @onclick= "()=> BtnChooseOptionAsAnswer(studentExamTest.StudentExamTestId, opt.TestOptionId) ">@strSelect</button>
+                                            <button class="btn btn-success btn-sm mb-2 col-auto" style="margin-bottom:10px;" @onclick="() => BtnChooseOptionAsAnswer(studentExamTest.StudentExamTestId, opt.TestOptionId)">@strSelect</button>
                                             }
                                         else
                                             {
-                                            <button class="btn btn-primary btn-sm mb-2 col-auto" style="margin-bottom:10px;" @onclick= "()=> BtnChooseOptionAsAnswer(studentExamTest.StudentExamTestId, opt.TestOptionId) ">@strSelect</button>
+                                            <button class="btn btn-primary btn-sm mb-2 col-auto" style="margin-bottom:10px;" @onclick="() => BtnChooseOptionAsAnswer(studentExamTest.StudentExamTestId, opt.TestOptionId)">@strSelect</button>
                                             }
-                                    </MudItem>
-                                </MudGrid>
-                            </MudCardContent>
-                        </MudCard>
-                    </MudContainer>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudContainer>
                     }
-            </table>
-            <hr style="color:red"/>
+                </table>
+            }
+        <hr style="color:red" />
             <table class="table table-borderless">
                 <tr>
                     <td style="text-align:center;">
                         <button class="btn btn-link" @onclick="BtnBack">
-                            <img src="/img/icoBack3.png" width="40" />
+                        <img src="/img/icoBack3.png" width="40" />
                         </button>
-                        @if ((appState.ExamTags & 2) == 2)
-                            {
-                            <button class="btn btn-link" @onclick="()=>BtnHelpShowAnswer(studentExamTest)">
-                                <img src="/img/icoInfo1.png" width="30" />
-                            </button>                            
-                            }
-                        @if ((studentExamTest.StudentExamTestTags & 2) == 2)
-                            {
-                            <button class="btn btn-link" @onclick="()=>BtnBookmarkTest(studentExamTest, false)">
-                                <img src="/img/icoBookmark1.png" width="28" />
+                    @if ((appState.ExamTags & 2) == 2)
+                        {
+                            <button class="btn btn-link" @onclick="() => BtnHelpShowAnswer(studentExamTest)">
+                            <img src="/img/icoInfo1.png" width="30" />
                             </button>
-                            }
-                        else
-                            {
-                            <button class="btn btn-link" @onclick="()=>BtnBookmarkTest(studentExamTest, true)">
-                                <img src="/img/icoBookmark0.png" width="28" />
-                           </button>
-                            }
-                        <button class="btn btn-link" @onclick= "()=> BtnClearAnswer(studentExamTest)">
-                            <img src="/img/icoEraser.png" width="30" />
+                        }
+                    @if ((studentExamTest.StudentExamTestTags & 2) == 2)
+                        {
+                            <button class="btn btn-link" @onclick="() => BtnBookmarkTest(studentExamTest, false)">
+                            <img src="/img/icoBookmark1.png" width="28" />
+                            </button>
+                        }
+                    else
+                        {
+                            <button class="btn btn-link" @onclick="() => BtnBookmarkTest(studentExamTest, true)">
+                            <img src="/img/icoBookmark0.png" width="28" />
+                            </button>
+                        }
+                        <button class="btn btn-link" @onclick="() => BtnClearAnswer(studentExamTest)">
+                        <img src="/img/icoEraser.png" width="30" />
                         </button>
                     </td>
                 </tr>
             </table>
-            <hr style="color:red"/>
+        <hr style="color:red" />
         </EditForm>
     </div>
     <script>
-        window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+    window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
     </script>
 
 @code {
-        [Parameter] public long studentExamTestId { get; set; }
-        [Parameter] public int testIndex { get; set; }
-        StudentExamTest studentExamTest = new StudentExamTest ();
-        private bool _firstRender = true;
-        private bool _hasFetched = false;
-        private bool hasScrolled = false;
-        bool HelpShowAnswer = false;
-        string style = "";
-        string strSelect = "";
+    [Parameter]
+    public long studentExamTestId
+        {
+        get; set;
+        }
+    [Parameter]
+    public int testIndex
+        {
+        get; set;
+        }
+    StudentExamTest studentExamTest = new StudentExamTest();
+    private bool _firstRender = true;
+    private bool _hasFetched = false;
+    private bool hasScrolled = false;
+    bool HelpShowAnswer = false;
+    string style = "";
+    string strSelect = "";
+    private MudTextField<string> refAnswerText;
+    string _answerText = "";
     //LifeCycleEvents
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync ()
         {
         appState.OnChange += TriggerRender;
-        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+        if (Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-
-            Navman.NavigateTo ("/Login");
+            Navman.NavigateTo("/Login");
             }
         if (_firstRender)
             {
             _firstRender = false;
             int studentTags = Convert.ToInt32(appState.StudentTags);
             }
-        } 
+        }
     protected override async Task OnAfterRenderAsync (bool firstRender)
         {
         if (!_hasFetched)
             {
-            _hasFetched = true;            
-            studentExamTest = await feService.Read_StudentExamTest (studentExamTestId, true);
-            StateHasChanged ();
+            _hasFetched = true;
+            studentExamTest = await feService.Read_StudentExamTest(studentExamTestId, true);
+            _answerText = studentExamTest.StudentExamTestAnsText;
+            StateHasChanged();
             }
         if (firstRender && !hasScrolled)
             {
@@ -156,46 +218,60 @@
             await JS.InvokeVoidAsync("scrollToTop");
             }
         }
-    private void TriggerRender()
+    private void TriggerRender ()
         {
         InvokeAsync(StateHasChanged);
         }
-    public void Dispose()
+    public void Dispose ()
         {
         appState.OnChange -= TriggerRender;
         }
     //btns
+    public async Task BtnSaveAnswerText (long studentExamTestId)
+        {
+        if (_answerText.Trim().Length >= 80)
+            {
+            Snackbar.Add("answer is long (>80 chars)!", Severity.Warning);
+            }
+        else
+            {
+            await feService.Update_StudentExamTestAnswerText(studentExamTestId, _answerText);
+            BtnBack();
+
+            }
+        }
     public async Task BtnChooseOptionAsAnswer (long _stdExamTestId, int testOptionId)
         {
-        //save|clear answer and set/unser Tag(answered) in: api C12 via a service
-        await feService.Update_StudentExamTestAnswer (_stdExamTestId, testOptionId);
-        if(testOptionId != 0)
+        //save|clear answer and set/unset Tag(answered) in: api C12 via a service
+        await feService.Update_StudentExamTestAnswer(_stdExamTestId, testOptionId);
+        if (testOptionId != 0)
             {
-            BtnBack ();            
+            BtnBack();
             }
         else
             {
             //refresh:
             var studentExamTest = await feService.Read_TestByStudentExamTestId(studentExamTestId, true);
+            _answerText = studentExamTest.StudentExamTestAnsText;
             StateHasChanged(); // trigger UI update
             }
         }
     public async Task BtnHelpShowAnswer (StudentExamTest stdntExamTest)
         {
         stdntExamTest.StudentExamTestTags = (stdntExamTest.StudentExamTestTags | 8);
-        bool result = await feService.Update_StudentExamTestTags (stdntExamTest);
+        bool result = await feService.Update_StudentExamTestTags(stdntExamTest);
         if (result)
             {
             studentExamTest.StudentExamTestTags = (studentExamTest.StudentExamTestTags | 8);
             HelpShowAnswer = true;
             StateHasChanged();
-            } 
+            }
         }
     public async Task BtnBookmarkTest (StudentExamTest studentExamtest, bool status)
         {
         studentExamtest.StudentExamTestTags = status ? (studentExamtest.StudentExamTestTags | 2) : (studentExamtest.StudentExamTestTags & ~2);
         bool result = false;
-        result = await feService.Update_StudentExamTestTags (studentExamTest);
+        result = await feService.Update_StudentExamTestTags(studentExamTest);
         if (result)
             {
             studentExamTest.StudentExamTestTags = status ? (studentExamTest.StudentExamTestTags | 2) : (studentExamTest.StudentExamTestTags & ~2);
@@ -206,19 +282,19 @@
         }
     public async Task BtnClearAnswer (StudentExamTest stdntExamTest)
         {
-        await feService.Update_StudentExamTestAnswer (studentExamTest.StudentExamTestId, 0);
+        await feService.Update_StudentExamTestAnswer(studentExamTest.StudentExamTestId, 0);
         stdntExamTest.StudentExamTestTags = (stdntExamTest.StudentExamTestTags & ~4);
-        bool result = await feService.Update_StudentExamTestTags (stdntExamTest);
+        bool result = await feService.Update_StudentExamTestTags(stdntExamTest);
         if (result)
             {
             studentExamTest = await feService.Read_StudentExamTest(studentExamTestId, true);
             StateHasChanged();
-            } 
-        }    
+            }
+        }
     public void BtnBack ()
         {
         int studentExamId = Convert.ToInt32(appState.StudentExamId);
-        Navman.NavigateTo ("/S_StudentExamTests");
+        Navman.NavigateTo("/S_StudentExamTests");
         }
 
-}
+    }

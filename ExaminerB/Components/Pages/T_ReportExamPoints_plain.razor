@@ -112,7 +112,8 @@ else
         }
     public void BtnBack()
         {
-        Navman.NavigateTo ("/T_Exams");
+        appState.SetReturnPage($"/T_ReportExamPoints_plain");
+        Navman.NavigateTo("/T_Exams");
         }
     //method
     public async Task BtnReportStudent(int studentId)

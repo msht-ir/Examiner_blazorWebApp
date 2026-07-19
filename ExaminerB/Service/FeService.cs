@@ -1059,6 +1059,16 @@ namespace ExaminerB.Service
                 return false;
                 }
             }
+        public async Task<bool> Update_StudentExamTestAnswerText (long studentExamTestId, string answerText)
+            {
+            StudentExamTest tempTest = new ()
+                {
+                StudentExamTestId = studentExamTestId,
+                StudentExamTestAnsText = answerText
+                };
+            var response = await _http.PostAsJsonAsync ($"api/Update_StudentExamTestAnswer", tempTest);
+            return response.IsSuccessStatusCode ? true : false;
+            }
         public async Task<bool> Update_StudentExamTestAnswer (long studentExamTestId, int answerOptionId)
             {
             StudentExamTest tempTest = new ()

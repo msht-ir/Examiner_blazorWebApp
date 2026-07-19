@@ -486,7 +486,7 @@
                         </div>
                     </div>
                 </div>
-            @* --- 5/6 CHATROOMS *@
+            @* --- 5/6 CHATROOMS (Forum)*@
                 <div class="accordion-item mb-2">
                     <h4 class="accordion-header">
                         <button class="accordion-button collapsed" type="button"
@@ -496,7 +496,7 @@
                             aria-controls="CollapseId5" style="background-color:WhiteSmoke">
                             <h4>
                             <img class="pulse-hover" src="/img/icoSwitchBoardStudents.png" width="36" style="margin-right:10px;" title="چت گروهي" />
-                            chatrooms <span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChatrooms.Count ) </span></span>
+                            forums <span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChatrooms.Count ) </span></span>
                             </h4>
                         </button>
                     </h4>
@@ -516,13 +516,15 @@
                                 } *@
                                 <div>
                                     <p style="text-align:center;font-size:x-small;">
-                                    با ايجاد يک چت روم، موضوعي را براي تبادل نظر و گفتگو مطرح کنيد
+                                    با ايجاد يک انجمن، موضوعي را براي تبادل نظر و گفتگو مطرح کنيد
+                                    <br />                                    
+                                    قوانين: ورود همه دانشجويان به انجمن براي آگاهي و تبادل نظر آزاد است
                                     <br />
-                                    همه دانشجويان مي توانند براي مطالعه نظرات و تبادل نظر به چت روم وارد شوند
+                                    شما مي توانيد انجمن خودتان را حذف کنيد
                                     <br />
-                                    توچه: 1- افراد مي توانند پست هاي خود را حذف کنند. 2- ادمين مي تواند چت روم را حذف کند
+                                    هر دانشجو مي تواند پست هاي خودش را حذف کند
                                     <br />
-                                    For collaborative discussions
+                                    Forums for discussion and exchange of ideas
                                     </p>
                                 </div>
                                 <div style="text-align:center">
@@ -595,7 +597,7 @@
                                         </MudContainer>
                                     }
                                     <div style="text-align:center; margin-top:15px;margin-bottom:15px;">
-                                        <button class="btn btn-link" @onclick="BtnAddNewChatroom" title="create new chatroom">
+                                        <button class="btn btn-link" @onclick="BtnAddNewChatroom" title="create new forum">
                                         <img class="pulse-hover" src="/img/icoAdd0.png" width="24" />
                                         </button>
                                     </div>
@@ -615,7 +617,7 @@
                         @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
                             <h4>
                             <img class="pulse-hover" src="/img/icoNote1.png" width="26" style="margin-right:10px;" title="دفترچه يادداشت" />
-                            my notes <span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstNotes.Count ) </span></span>
+                            notebook <span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstNotes.Count ) </span></span>
                             </h4>
                         </button>
                     </h4>
@@ -641,7 +643,7 @@
                             @* LIST NOTES *@
                             @if (lstNotes.Count > 0)
                                 {
-                                <h6 style="text-align:left;color:forestgreen;margin:10px;">quick notes</h6>
+                                <h6 style="text-align:left;color:forestgreen;margin:10px;">sticky notes</h6>
                                 }
                             @foreach (Note notex in lstNotes)
                                 {
@@ -731,7 +733,7 @@
                     </div>
                 </div>
             <br />
-            <MudSwitch @bind-Value="_help" Label="help on mouse hover" Color="Color.Primary" Dense="true" title="هنگام عبور ماوس، راهنمايي کن"></MudSwitch>
+            <MudSwitch @bind-Value="_help" Label="help" Color="Color.Primary" Dense="true" title="هنگام عبور ماوس، راهنمايي کن"></MudSwitch>
             <hr />
             <br />
                 <div class="d-flex gap-4 justify-content-center" style="text-align:center; margin-top:30px;max-width:500px;">

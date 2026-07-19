@@ -11,7 +11,7 @@
 @implements IDisposable
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
-
+@using OfficeOpenXml;
 
 @if (!_hasFetched)
     {
@@ -491,7 +491,7 @@ else
             //appState.SetCmd ("coursetests");
             StateHasChanged();
             Snackbar.Add($"\n\n{testCount} tests added to the exam", Severity.Success); //{Severity.Warning .Error | .Info | .Success} --needs: @inject ISnackbar Snackbar
-                                                                                        //old code: await JS.InvokeVoidAsync ("alert", $"\n\n{testCount} Tests was added to the Exam Successfully")
+            //old code: await JS.InvokeVoidAsync ("alert", $"\n\n{testCount} Tests was added to the Exam Successfully")
             }
         }
     public async Task BtnEditExam ()
@@ -516,7 +516,38 @@ else
         /*
         method 1: Save excel file to server folder
         mothod 2: Parse directly in memory
+        method 3: EPPlus package (fast!)
         */
+        try
+            {
+            _hasFetched = false;
+            excelFile = e.File;
+            ExcelPackage.License.SetNonCommercialPersonal("Majid SharifiTehrani"); //for non commertial use of package EPPlus
+            // Copy stream (same as before)
+            await excelFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(stream);
+            stream.Position = 0;
+
+            // Use EPPlus to read worksheet names
+            using var package = new ExcelPackage(stream);
+            lstWorksheets = package.Workbook.Worksheets
+                .Select(ws => ws.Name)
+                .ToList();
+
+            StateHasChanged();
+            Snackbar.Add("Excel worksheets listed", Severity.Success);
+            appState.SetCmd("importexcelworksheets");
+            _hasFetched = true;
+            }
+        catch (Exception ex)
+            {
+            Console.WriteLine($"--------Error\n{ex}");
+            appState.SetCmd("");
+            _hasFetched = true;
+            return;
+            }
+
+
+/*
         try
             {
             _hasFetched = false;
@@ -542,6 +573,7 @@ else
             _hasFetched = true;
             return;
             }
+ */
         }
     private async Task OnWorksheetChanged (string newValue)
         {
@@ -578,6 +610,7 @@ else
                         test.TopicId = 0;
                         test.TestTitle = row.Cell(2).GetString();
                         test.TestType = row.Cell(3).GetValue<int>();
+                        test.TestType = (test.TestType == 1) ? 0 : test.TestType;
                         test.TestType = (test.TestType > 5) ? 5 : test.TestType;
                         test.TestLevel = row.Cell(13).GetValue<int>();
                         test.TestTags = 0;
