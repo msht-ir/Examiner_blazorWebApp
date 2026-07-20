@@ -78,7 +78,16 @@ else
             @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
                 {
                     <div class="d-flex align-items-center ms-5">
-                    <MudNumericField T="int" @ref="refPageNumber" @bind-Value="intPendingPageNumber" Label="Page" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width: 100px;padding-left:10px" />
+                    <MudNumericField 
+                        T="int" 
+                        @ref="refPageNumber" 
+                        @bind-Value="intPendingPageNumber" 
+                        Label="Page" 
+                        Variant="Variant.Outlined" 
+                        Margin="Margin.Dense" 
+                        Autocomplete="off" 
+                        Class="my-textfield" 
+                        style="width: 100px;padding-left:10px" />
                         <button class="btn btn-link  ms-2" @onclick="async () => await BtnReadTestsPaginated(intPendingPageNumber)">
                         <img src="/img/icoListT.png" width="38" />
                         </button>
@@ -91,10 +100,16 @@ else
                 <div>
                 <hr style="border-color:red" />
                     <div class="d-flex gap-4 justify-content-center" style="margin-top:25px">
-                    <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Medium" OnClick="BtnSelectAllTests" Title=" Select all" />
-                    <MudIconButton Icon="@Icons.Material.Filled.Rule" Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Medium" OnClick="BtnInvertSelection" Title="Invert Selection" />
-                    @* <MudButton Variant="Variant.Filled" Size="MudBlazor.Size.Small" Color="MudBlazor.Color.Primary" OnClick="BtnSelectAllTests" style="width:40px;">all</MudButton>
-                    <MudButton Variant="Variant.Filled" Size="MudBlazor.Size.Small" Color="MudBlazor.Color.Tertiary" OnClick="BtnInvertSelection" style="width:60px;">invert</MudButton> *@
+                    <MudIconButton Icon="@Icons.Material.Filled.DoneAll"
+                                   Color="MudBlazor.Color.Primary"
+                                   Size="MudBlazor.Size.Medium"
+                                   OnClick="BtnSelectAllTests"
+                                   Title=" Select all" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Rule"
+                                   Color="MudBlazor.Color.Primary"
+                                   Size="MudBlazor.Size.Medium"
+                                   OnClick="BtnInvertSelection"
+                                   Title="Invert Selection" />
                     </div>
                 </div>
             }

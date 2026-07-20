@@ -32,7 +32,7 @@
                                     <div dir="rtl" style="width:100%;margin-bottom:20px">
                                     <MudTextField @ref="refAnswerText"
                                                   @bind-Value="_answerText"
-                                                  Label="فا"
+                                                  Label="@($"80 / {_answerText?.Length ?? 0}")"
                                                   Variant="Variant.Text"
                                                   Margin="Margin.Dense"
                                                   Lines="5"
@@ -52,7 +52,7 @@
                                 {
                                 <MudTextField @ref="refAnswerText"
                                               @bind-Value="_answerText"
-                                              Label="En"
+                                              Label="@($"{_answerText?.Length ?? 0} / 80")"
                                               Variant="Variant.Text"
                                               Margin="Margin.Dense"
                                               Lines="5"
@@ -138,7 +138,7 @@
                         <button class="btn btn-link" @onclick="BtnBack">
                         <img src="/img/icoBack3.png" width="40" />
                         </button>
-                    @if ((appState.ExamTags & 2) == 2)
+                    @if (((appState.ExamTags & 2) == 2) & (studentExamTest.TestOptions.Count >= 2))
                         {
                             <button class="btn btn-link" @onclick="() => BtnHelpShowAnswer(studentExamTest)">
                             <img src="/img/icoInfo1.png" width="30" />

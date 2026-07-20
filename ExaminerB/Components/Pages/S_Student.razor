@@ -213,7 +213,7 @@
                                                             }
                                                         @if ((studentExam.StudentExamTags & 13) == 13)
                                                             {
-                                                            <MudIconButton Icon="@Icons.Material.Filled.Assignment" Size="Size.Small" OnClick="() => BtnReportExam(studentExam.StudentExamId)" Title="گزارش آزمون" />
+                                                            <MudIconButton Icon="@Icons.Material.Filled.Assignment" Size="Size.Small" OnClick="() => BtnReportExam(studentExam)" Title="گزارش آزمون" />
                                                             }
                                                         </MudItem>
                                                     </MudGrid>
@@ -786,15 +786,15 @@
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync ()
-    {
+        {
         appState.OnChange += TriggerRender;
         if (Convert.ToInt32(appState.UserLoginStatus) != 1)
-        {
+            {
             Navman.NavigateTo("/Login");
-        }
+            }
         student.UserId = appState.UserId ?? 0;
         if (student.UserId > 0)
-        {
+            {
             //on first run, student.UserId is 0
             //student.UserId = appState.UserId ?? 0;
             await ReadCourseList();
@@ -808,98 +808,98 @@
             await ReadChatroomList();
             await ReadNoteList();
             if (appState.Cmd == "showAlertsOnExamsAndNewChats")
-            {
+                {
                 //show alerts on first pageLoad (after Login)
                 //1-show alert on new chats
                 int _newchat = 0;
                 foreach (Chat ch in lstChats)
-                {
+                    {
                     //unread chat
                     if (((ch.ChatTags & 1) == 0) && (ch.ToId == student.UserId))
-                    {
+                        {
                         _newchat++;
+                        }
                     }
-                }
                 if (_newchat > 1)
-                {
+                    {
                     Snackbar.Add($"{_newchat} new chats", Severity.Info);
-                }
+                    }
                 else if (_newchat == 1)
-                {
+                    {
                     Snackbar.Add($"new chat", Severity.Info);
-                }
+                    }
                 //2-show alert on not finished exams ahead
                 int _newexam = 0;
                 foreach (StudentExam se in lstStudentExams)
-                {
+                    {
                     //not started exam
                     DateTime _examDateTimeStart = se.ExamDateTime.LocalDateTime;
                     TimeSpan diff = (_examDateTimeStart.AddMinutes(se.ExamDuration) - DateTime.Now);
                     if (((se.StudentExamTags & 4) == 0) && (diff > TimeSpan.Zero))
-                    {
+                        {
                         _newexam++;
+                        }
                     }
-                }
                 if (_newexam > 1)
-                {
+                    {
                     Snackbar.Add($"{_newexam} exams", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-                }
+                    }
                 else if (_newexam == 1)
-                {
+                    {
                     Snackbar.Add($"1 exam", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-                }
+                    }
                 appState.SetCmd(""); //dont repeat alerts
-            }
+                }
             _hasFetched = true;
+            }
         }
-    }
     protected override async Task OnAfterRenderAsync (bool firstRender)
-    {
-        if (firstRender && !hasScrolled)
         {
+        if (firstRender && !hasScrolled)
+            {
             hasScrolled = true;
             await JS.InvokeVoidAsync("scrollToTop");
+            }
         }
-    }
     private void TriggerRender ()
-    {
+        {
         InvokeAsync(StateHasChanged);
-    }
+        }
     public void Dispose ()
-    {
+        {
         appState.OnChange -= TriggerRender;
-    }
+        }
     //btns for StudentCourses
     private void BtnTakeATest (int studentCourseId)
-    {
+        {
         appState.SetClps("C");
         Navman.NavigateTo($"/S_StudentCourseTest/{student.UserId}/{studentCourseId}/new");
-    }
+        }
     private void BtnTryToCorrect (int studentCourseId)
-    {
+        {
         appState.SetClps("C");
         Navman.NavigateTo($"/S_StudentCourseTest/{student.UserId}/{studentCourseId}/edit");
-    }
+        }
     private async Task BtnShowCourseFolders (StudentCourse studentCourse)
-    {
+        {
         appState.SetClps("C");
         _hasFetched = false;
         appState.SetCmd("ShowCourseFolders");
         appState.SetCourseId(studentCourse.CourseId);
         lstCourseFolders = await feService.Read_CourseFolders(studentCourse.CourseId, "active");
         if (lstCourseFolders.Count == 0)
-        {
+            {
             Snackbar.Add($"no folder for: {studentCourse.CourseName}", severity: Severity.Normal, opt => { opt.VisibleStateDuration = 2000; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-        }
+            }
         _hasFetched = true;
-    }
+        }
     private void BtnReportStudentCourseTests (int studentCourseId, string courseName)
-    {
+        {
         appState.SetClps("C");
         Navman.NavigateTo($"/S_ReportStudentCourse/{student.UserId}/{studentCourseId}/{courseName}");
-    }
+        }
     private async Task BtnFilterStudentCourseTests (StudentCourse studentCourse, string mode)
-    {
+        {
         //this code replaced by lambda equivalent
         // switch (mode)
         //     case "filter":{message = $"Filter out correct answers in Course ( {studentCourse.CourseName} ) \n just keep incorrect ones?";break;}
@@ -907,56 +907,57 @@
         //---lambda:
         appState.SetClps("C");
         string msg = mode switch
-        {
-            "filter" => $"<hr><span style='color:indianred'>Filter out </span>your correct answers in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoFilter.png' width='40'/></div><br><hr>",
-            "wipeout" => $"<hr><span style='color:indianred'>Clear</span> all your sample tests in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>",
-            _ => throw new ArgumentException($"Invalid mode: {mode}")
-        };
+            {
+                "filter" => $"<hr><span style='color:indianred'>Filter out </span>your correct answers in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoFilter.png' width='40'/></div><br><hr>",
+                "wipeout" => $"<hr><span style='color:indianred'>Clear</span> all your sample tests in ( {studentCourse.CourseName} ) ?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>",
+                _ => throw new ArgumentException($"Invalid mode: {mode}")
+                };
         var message = new MarkupString($"{msg}");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-        {
+            {
             var result = await feService.Delete_StudentCourseTests(mode, studentCourse);
             //refresh
             lstStudentCourses = await feService.Read_StudentCourses("Si", student.UserId, 0);
+            }
         }
-    }
     //btns for StudentExams
     public async Task BtnStartExam (StudentExam studentExam)
-    {
+        {
         appState.SetClps("E");
         //read ExamTags : is exam training? Yes:allow Help
         Exam exam = await feService.Read_Exam(studentExam.ExamId, false);
         DateTime _examDateTimeStart = exam.ExamDateTime.LocalDateTime;
         DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);
         if (_examDateTimeStart > DateTime.Now)
-        {
+            {
             Snackbar.Add($"exam starts at {PersianDate(exam.ExamDateTime.ToString())}", Severity.Info);
             TimeSpan diff = _examDateTimeStart - DateTime.Now;
             int hours = (int) diff.TotalHours;
             int minutes = diff.Minutes;
             Snackbar.Add($"{hours} hr  {minutes + 1} min", Severity.Success);
-        }
+            }
         else if (DateTime.Now > _examDateTimeFinish)
-        {
+            {
             Snackbar.Add($"exam is finished", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-        }
+            }
         else
-        {
+            {
             //keep ExamTags in appState (use in S-StudentExamTest page)
             appState.SetExamTags(exam.ExamTags);
             bool result = await feService.Update_StudentExamTags(studentExam, "startedOn");
             if (result)
-            {
+                {
                 appState.SetStudentExamId(studentExam.StudentExamId);
                 Navman.NavigateTo($"/S_StudentExamTests");
+                }
             }
         }
-    }
-    private void BtnReportExam (int studentExamId)
-    {
+    private void BtnReportExam (StudentExam studentExam)
+        {
         appState.SetClps("E");
-        Navman.NavigateTo($"/S_ReportStudentExam/{studentExamId}/Review");
+        appState.SetExamId (studentExam.ExamId);
+        Navman.NavigateTo($"/S_ReportStudentExam/{studentExam.StudentExamId}/Review");
     }
     //btns for StudentMessages
     private async Task BtnSetStudentMessageAsRead (StudentMessage studentMessage)

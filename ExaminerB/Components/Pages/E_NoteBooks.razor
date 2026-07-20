@@ -903,10 +903,10 @@ else
         }
     public async Task GetListOfProjects (int userId, string mode)
         {
-        _hasFetched = false;
+        // _hasFetched = false;
         lstProjects.Clear();
         lstProjects = await feService.Read_Projects(userId, mode);
-        _hasFetched = true;
+        // _hasFetched = true;
         }
     //SP (SECTION)
     public async Task BtnAddNewSubproject (int projectId)
@@ -1174,7 +1174,7 @@ else
                 {
                 newNote.NoteTags |= 16; //16:Student-Note
                 }
-            _hasFetched = false;
+            // _hasFetched = false;
             int result = await feService.Create_Note(newNote);
             if (result > 0)
                 {
@@ -1186,7 +1186,7 @@ else
                 {
                 Snackbar.Add("failed to copy note", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
-            _hasFetched = true;
+            // _hasFetched = true;
             }
         }
     public async Task BtnDeleteNote (Note note)
@@ -1201,11 +1201,11 @@ else
                 {
                 Snackbar.Add($"deleted", Severity.Warning);
                 user.UserId = Convert.ToInt32(appState.UserId);
-                _hasFetched = false;
+                // _hasFetched = false;
                 await GetListOfProjects(user.UserId, _ShowProjectsMode);
                 Subproject _subProject = new Subproject() { SubprojectId = Convert.ToInt32(note.ReferenceId), ProjectId = Convert.ToInt32(appState.ProjectId) };
                 await BtnReadSectionNotes(_subProject);
-                _hasFetched = true;
+                // _hasFetched = true;
                 StateHasChanged();
                 }
             else
