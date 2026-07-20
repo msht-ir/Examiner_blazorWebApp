@@ -1024,9 +1024,9 @@ namespace ExaminerB.Service
                 return new List<StudentExamTest> ();
                 }
             }
-        public async Task<List<StudentExamTest>> Read_StudentsExamTest (StudentExamTest studentExamTest)
+        public async Task<List<StudentExamTest>> Read_StudentsExamTest (int examId, int testId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsExamTest", studentExamTest);
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsExamTest?examId={examId}", testId);
             if (response.IsSuccessStatusCode)
                 {
                 var lstStudentsExamTest = await response.Content.ReadFromJsonAsync<List<StudentExamTest>> ();
@@ -1064,6 +1064,7 @@ namespace ExaminerB.Service
             StudentExamTest tempTest = new ()
                 {
                 StudentExamTestId = studentExamTestId,
+                StudentExamTestAns = 1, //set 1 for example (just not 0, unless the test in not considered as answered)
                 StudentExamTestAnsText = answerText
                 };
             var response = await _http.PostAsJsonAsync ($"api/Update_StudentExamTestAnswer", tempTest);

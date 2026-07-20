@@ -17,136 +17,165 @@
 else
     {
     //Page-Header
-    <div style="text-align:center">
+        <div style="text-align:center">
         <h3>@appState.CourseName</h3>
-    </div>
+        </div>
     @if (appState.Cmd.ToLower() == "coursetests")
         {
         <h5 style="text-align:center">Course Tests</h5>
         }
     else if (appState.Cmd.ToLower() == "coursetopictests")
         {
-        <h5 style="text-align:center;color:indianred">Topic: @appState.CourseTopicTitle</h5>                
+        <h5 style="text-align:center;color:indianred">Topic: @appState.CourseTopicTitle</h5>
         }
     else if (appState.Cmd.ToLower() == "examtests")
         {
-        <h4 style="text-align:center">Exam Raw Sheet Tests</h4>        
+        <h4 style="text-align:center">Exam Raw Sheet Tests</h4>
         }
     else if (appState.Cmd.ToLower() == "studentexamtests")
         {
-        <h6 style="text-align:center">
+            <h6 style="text-align:center">
             Student Exam Tests <br /> @appState.StudentName - @appState.StudentNickname
-        </h6>
+            </h6>
         }
     else if (appState.Cmd.ToLower() == "studentexamtestsraw")
         {
-        <div style="text-align:center">
-            <img src="@qrCodeImageUrl" alt="QR Code" width="120"/>
+            <div style="text-align:center">
+            <img src="@qrCodeImageUrl" alt="QR Code" width="120" />
             <div style="font-size:small;">@appState.StudentName - @appState.StudentNickname</div>
-        </div>
+            </div>
         }
     else if (appState.Cmd.ToLower() == "studentexamtestsanswers")
         {
-        <div style="text-align:center">
+            <div style="text-align:center">
             <div style="font-size:small;">@appState.StudentName - @appState.StudentNickname</div>
-        </div>
+            </div>
         }
     else if (appState.Cmd.ToLower() == "studentcoursetests")
         {
-        <h5 style="text-align:center">@appState.Cmd</h5>                
+        <h5 style="text-align:center">@appState.Cmd</h5>
         }
     else
         {
-        <h5 style="text-align:center">Student Course Tests</h5>                
+        <h5 style="text-align:center">Student Course Tests</h5>
         }
-    <EditForm Model = "lstxTests" style="max-width:600px; margin: 0 auto;">
+        <EditForm Model="lstxTests" style="max-width:600px; margin: 0 auto;">
         <hr />
-        <div class="d-flex align-items-center" style="text-align: center; text-align:center">
+            <div class="d-flex align-items-center" style="text-align: center; text-align:center">
             @* Back *@
-            <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/img/icoBack3.png" title="Back بازگشت" alt="Edit" width="40"/>
-            </button>
+                <button class="btn btn-link" @onclick="BtnBack">
+                <img src="/img/icoBack3.png" title="Back بازگشت" alt="Edit" width="40" />
+                </button>
             @* Font *@
-            <button class="btn btn-link" @onclick="BtnChangeFontSize">
-                <img src="/img/icoFontAa.png" title="Use Larger/Smaller  تغيير انداز فونت" alt="Edit" width="35"/>
-            </button>
+                <button class="btn btn-link" @onclick="BtnChangeFontSize">
+                <img src="/img/icoFontAa.png" title="Use Larger/Smaller  تغيير انداز فونت" alt="Edit" width="35" />
+                </button>
             @* Keys *@
-            <button class="btn btn-link" @onclick="BtnShowAnswers">
-                <img src="/img/icoKeys.png" title="Show Test Answers گزينه صحيح را نمايش بده" alt="Edit" width="30"/>
-            </button>
+                <button class="btn btn-link" @onclick="BtnShowAnswers">
+                <img src="/img/icoKeys.png" title="Show Test Answers گزينه صحيح را نمايش بده" alt="Edit" width="30" />
+                </button>
             @* Paginate *@
             @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
                 {
-                <div class="d-flex align-items-center ms-5">
+                    <div class="d-flex align-items-center ms-5">
                     <MudNumericField T="int" @ref="refPageNumber" @bind-Value="intPendingPageNumber" Label="Page" Variant="Variant.Outlined" Margin="Margin.Dense" Autocomplete="off" Class="my-textfield" style="width: 100px;padding-left:10px" />
-                    <button class="btn btn-link  ms-2" @onclick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)">
+                        <button class="btn btn-link  ms-2" @onclick="async () => await BtnReadTestsPaginated(intPendingPageNumber)">
                         <img src="/img/icoListT.png" width="38" />
-                    </button>
-              </div>  
+                        </button>
+                    </div>
                 }
             <hr />
-        </div>
+            </div>
         @if ((appState.Cmd.ToLower() == "coursetopictests") || (appState.Cmd.ToLower() == "coursetests"))
             {
-            <div>
+                <div>
                 <hr style="border-color:red" />
-                <div class="d-flex gap-4 justify-content-center" style="margin-top:25px">
+                    <div class="d-flex gap-4 justify-content-center" style="margin-top:25px">
                     <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Medium" OnClick="BtnSelectAllTests" Title=" Select all" />
                     <MudIconButton Icon="@Icons.Material.Filled.Rule" Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Medium" OnClick="BtnInvertSelection" Title="Invert Selection" />
                     @* <MudButton Variant="Variant.Filled" Size="MudBlazor.Size.Small" Color="MudBlazor.Color.Primary" OnClick="BtnSelectAllTests" style="width:40px;">all</MudButton>
                     <MudButton Variant="Variant.Filled" Size="MudBlazor.Size.Small" Color="MudBlazor.Color.Tertiary" OnClick="BtnInvertSelection" style="width:60px;">invert</MudButton> *@
+                    </div>
                 </div>
-            </div>            
             }
             @{
             i = (intPageNumber - 1) * 20;
             }
-        @foreach (var tst in lstxTests) 
+        @foreach (var tst in lstxTests)
             {
             @* Test *@
-            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
-                <MudCard Class="mx-0">
-                    <MudCardContent Style="background-color:whitesmoke;">
-                        @{
-                        stl= (_cmd == "useSmallFont") ? "font-size:small;" : "font-size:normal;";
-                        string testRtlStatus = ((tst.TestTags & 1) == 1) ? "direction:rtl;text-align:right;" : "";
-                        string optRtlStatus = ((tst.TestTags & 2) == 2) ? "direction:rtl;text-align:right;" : "";
-                        i++;
-                        }
+                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                    <MudCard Class="mx-0">
+                        <MudCardContent Style="background-color:whitesmoke;">
+                            @{
+                            stl = (_cmd == "useSmallFont") ? "font-size:small;" : "font-size:normal;";
+                            string testRtlStatus = ((tst.TestTags & 1) == 1) ? "direction:rtl;text-align:right;" : "";
+                            string optRtlStatus = ((tst.TestTags & 2) == 2) ? "direction:rtl;text-align:right;" : "";
+                            i++;
+                            }
                         <div style="@stl font-weight:bold; @testRtlStatus">@i - @tst.TestTitle</div>
-                        <div style="@testRtlStatus display:flex; align-items:center; gap:2px;" >
+                            <div style="@testRtlStatus display:flex; align-items:center; gap:2px;">
                             @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
                                 {
                                 <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected" />
-                                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
-                                    <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="18px"/>
-                                </button>
+                                    <button class="btn btn-link" style="@testRtlStatus" @onclick="() => BtnEditCourseTest(tst)">
+                                    <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="18px" />
+                                    </button>
                                 }
                             else if (appState.Cmd.ToLower() == "examtests")
-                                {                
-                                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
-                                    <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px"/>
-                                </button>
-                                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnDeleteTestFromExamRawSheet(tst)">
-                                    <img src="/img/icoDelete1.png" title="Delete Test حذف تست" alt="Edit" width="20px"/>
-                                </button>
+                                {
+                                    <button class="btn btn-link" style="@testRtlStatus" @onclick="() => BtnEditCourseTest(tst)">
+                                    <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px" />
+                                    </button>
+                                    <button class="btn btn-link" style="@testRtlStatus" @onclick="() => BtnDeleteTestFromExamRawSheet(tst)">
+                                    <img src="/img/icoDelete1.png" title="Delete Test حذف تست" alt="Delete" width="20px" />
+                                    </button>
+                                @if (tst.TestType < 2)
+                                    {
+                                        <button class="btn btn-link" style="@testRtlStatus" @onclick="() => BtnShowAnswersToThisTest(tst)">
+                                        <img src="/img/icoList.png" title="Show Answers نمايش پاسخ ها" alt="ُShow" width="20px" />
+                                        </button>
+                                    }
                                 }
                             else if ((appState.Cmd.ToLower() == "studentexamtests") | (appState.Cmd.ToLower() == "studentexamtestsanswers"))
-                                {                
-                                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
-                                    <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px"/>
-                                </button>
-                                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnShowCourseTestStats(tst)">
-                                    <img src="/img/icoChartPie.png" title="Show stats نمايش آمار" alt="Edit" width="25px"/>
-                                </button>
+                                {
+                                    <button class="btn btn-link" style="@testRtlStatus" @onclick="() => BtnEditCourseTest(tst)">
+                                    <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px" />
+                                    </button>
+                                @if (tst.TestType >= 2)
+                                    {
+                                        <button class="btn btn-link" style="@testRtlStatus" @onclick="() => BtnShowCourseTestStats(tst)">
+                                        <img src="/img/icoChartPie.png" title="Show stats نمايش آمار" alt="Edit" width="25px" />
+                                        </button>
+                                    }
                                 }
                             else if (appState.Cmd.ToLower() == "studentcoursetests")
                                 {
-                                <button class="btn btn-link" style="@testRtlStatus" @onclick="()=>BtnEditCourseTest(tst)">
-                                    <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px"/>
-                                </button>
+                                    <button class="btn btn-link" style="@testRtlStatus" @onclick="() => BtnEditCourseTest(tst)">
+                                    <img src="/img/icoEditPen.png" title="Edit Test" alt="Edit" width="20px" />
+                                    </button>
                                 }
-                        </div>
+                            </div>
+                        @* Show Students Answers to EssayTests *@
+                        @if ((_cmd == "ShowAnswersToThisTest") & (_studentExamTestId == tst.TestId) & (!appState.Cmd.EndsWith("raw")))
+                            {
+                            foreach (StudentExamTest tst2 in lstTestAnswers)
+                                {
+                                    <div style="font-size:small;">
+                                        <button class="btn btn-link" style="@testRtlStatus" @onclick="() => BtnChangeStudentExamTestAnswerTextApprovedStatus(tst2)">
+                                        @if ((tst2.StudentExamTestTags & 128) == 128)
+                                            {
+                                            <img src="/img/icoYesNo_Yes.png" title="Answer is Correct" alt="Answer is Correct" width="18px" />
+                                            }
+                                        else
+                                            {
+                                            <img src="/img/icoYesNo_No.png" title="Answer is Correct" alt="Answer is Correct" width="18px" />
+                                            }
+                                        </button>
+                                    <span style="font-weight:bold;">@tst2.StudentId</span>: <span style="font-family:Tahoma;color:indianred">@tst2.StudentExamTestAnsText</span>
+                                    </div>
+                                }
+                            }
                         @* Show-TestOptions *@
                         @foreach (var opt in tst.TestOptions)
                             {
@@ -156,119 +185,134 @@ else
                                 }
                             else
                                 {
-                                if((opt.TestOptionId == tst.StudentExamTestKey) & (opt.TestOptionId == tst.StudentExamTestAns))
+                                if ((opt.TestOptionId == tst.StudentExamTestKey) & (opt.TestOptionId == tst.StudentExamTestAns))
                                     {
                                     <div style="@stl color:darkgoldenrod;font-weight:bold; @optRtlStatus"> - @opt.TestOptionTitle</div>
                                     }
-                                else if((opt.TestOptionId == tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
+                                else if ((opt.TestOptionId == tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
                                     {
                                     <div style="@stl color:royalblue; @optRtlStatus"> - @opt.TestOptionTitle</div>
                                     }
-                                else if((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId == tst.StudentExamTestAns))
+                                else if ((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId == tst.StudentExamTestAns))
                                     {
                                     <div style="@stl color:indianred; @optRtlStatus"> - @opt.TestOptionTitle</div>
                                     }
-                                else if((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
+                                else if ((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
                                     {
                                     <div style="@stl color:black; @optRtlStatus"> - @opt.TestOptionTitle</div>
                                     }
                                 }
                             }
+                        @if ((tst.TestType < 2) & (!appState.Cmd.EndsWith("raw")))
+                            {
+                            /* if is essay-Question and report allows showing answers... */
+                            <hr />
+                                <div style="@stl color:indianred; @optRtlStatus">
+                                @if ((tst.StudentExamTestTags & 128) == 128)
+                                    {
+                                    <img src="/img/icoYesNo_Yes.png" title="Answer is Correct" alt="Answer is Correct" width="18px" />
+                                    }
+                                <span style="margin-left:5px;margin-right:5px;">@tst.StudentExamTestAnsText</span>
+                                </div>
+                            }
                         @if (((appState.Cmd == "studentexamtests") | (appState.Cmd == "studentexamtestsanswers")) & (appState.TestId == tst.TestId))
                             {
                             <div style="font-weight:bold;">stats:</div>
-                            <div style="padding-left:30px;">
+                                <div style="padding-left:30px;">
                                 <div style="font-style:italic;color:dodgerblue">@nStudentsVisited Visits</div>
-                                <div style="font-weight:bold">
+                                    <div style="font-weight:bold">
                                     @nStudentsAnswered Answers
                                     <span style="font-weight:normal;padding-left:5px;">(@nStudentsAnsweredCorrectly correct, @nStudentsAnsweredIncorrectly incorrect)</span>
                                     <span style="font-weight:bold;padding-left:10px;">@nStudentsNotAnswered noAnswer</span>
-                                </div> 
-                            </div>
-                            <br /> 
-                            <div class="d-flex justify-content-center">
-                                <MudChart ChartType="ChartType.Donut"
-                                    InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
-                                    InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
-                                    Width="100px" Height="100px">
-                                </MudChart>
-                                <br /> 
-                            </div>
-                           }
-                    </MudCardContent>
-                </MudCard>
-            </MudContainer>        
+                                    </div>
+                                </div>
+                            <br />
+                                <div class="d-flex justify-content-center">
+                                    <MudChart ChartType="ChartType.Donut"
+                                          InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
+                                          InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
+                                          Width="100px" Height="100px">
+                                    </MudChart>
+                                <br />
+                                </div>
+                            }
+                        </MudCardContent>
+                    </MudCard>
+                </MudContainer>
             }
-            @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
-                {
-                @* ADD TESTS TO AN EXAM *@
+        @if ((appState.Cmd.ToLower() == "coursetests") || (appState.Cmd.ToLower() == "coursetopictests"))
+            {
+            @* ADD TESTS TO AN EXAM *@
                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                     <MudCard Class="mx-0">
                         <MudCardContent Style="background-color:whitesmoke;">
-                            <div style="font-style:italic;font-weight:bold;color:royalblue;padding-bottom:5px;">Add tests to:</div>
+                        <div style="font-style:italic;font-weight:bold;color:royalblue;padding-bottom:5px;">Add tests to:</div>
                             <div class="d-flex">
                                 <MudSelect T="int" Label="Exam" @bind-Value="intExamId" Class="w-auto my-select" Variant="Variant.Outlined" Margin="Margin.Dense" Style="color:royalblue;width:140px;font-size:small;">
-                                    <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
-                                    @foreach (Exam exam in lstExams) { <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem> }
+                                <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
+                                @foreach (Exam exam in lstExams)
+                                    {
+                                    <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem>
+                                    }
                                 </MudSelect>
                                 <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnAddSelectedTestsToAnExam">
                                 <img src="/img/icoListAddNew1.png" width="36" title="add selected tests to the exam" />
                                 </button>
                                 <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnEditExam">
-                                    <img src="/img/icoFolderE.png" width="26" title="goto exam page" />
+                                <img src="/img/icoFolderE.png" width="26" title="goto exam page" />
                                 </button>
                             </div>
                         </MudCardContent>
                     </MudCard>
                 </MudContainer>
-                <hr style="color:red" />
-                }
-            <br />
-            <br />
+            <hr style="color:red" />
+            }
+        <br />
+        <br />
         @if (appState.Cmd.ToLower() == "studentexamtestsraw")
             {
-            <div style="break-before: page;text-align:center">
-                <img src="@qrCodeImageUrl" alt="QR Code" width="120"/>
+                <div style="break-before: page;text-align:center">
+                <img src="@qrCodeImageUrl" alt="QR Code" width="120" />
                 <div style="font-size:small;">@appState.StudentName - @appState.StudentNickname</div>
-                <_AnswerSheet/>
-            </div>
+                <_AnswerSheet />
+                </div>
             }
         else if (appState.Cmd.ToLower() == "studentexamtests")
             {
             @* PREPARE FOR QRCODE FOR STUDENT EXAM TESTS - SHOW CORRECT OPTIONS*@
             lstQstns.Clear();
             nrtst = 0;
-            @foreach (var tstx in lstxTests) 
+            @foreach (var tstx in lstxTests)
                 {
-                lstQstns.Add (0);
+                lstQstns.Add(0);
                 nrtst++;
                 nropt = 0;
                 foreach (var optx in tstx.TestOptions)
                     {
                     nropt++;
-                    if(optx.TestOptionId == tstx.StudentExamTestKey)
+                    if (optx.TestOptionId == tstx.StudentExamTestKey)
                         {
-                        lstQstns[nrtst-1] = nropt;
+                        lstQstns [nrtst - 1] = nropt;
                         }
                     }
                 }
             @* SHEET *@
-            <div style="break-before: page;text-align:center">
+                <div style="break-before: page;text-align:center">
                 <div>KEY</div>
-                <div class="simple-sheet">
+                    <div class="simple-sheet">
                     <hr />
-                    <div class="sheet-columns">
+                        <div class="sheet-columns">
                         @for (int col = 0; col < 3; col++)
                             {
-                            <div class="sheet-column">
+                                <div class="sheet-column">
                                 @for (int i = 1; i <= 20; i++)
                                     {
                                     var qstn = col * 20 + i;
-                                    <div class="question-line">
+                                        <div class="question-line">
                                         <span class="q-number">@qstn.</span>
-                                        @if(qstn <= lstQstns.Count)
+                                        @if (qstn <= lstQstns.Count)
                                             {
-                                            @if(@lstQstns[qstn-1] == 1)
+                                            @if (@lstQstns [qstn - 1] == 1)
                                                 {
                                                 <div class="choice-box" style="background-color:black"></div>
                                                 }
@@ -276,7 +320,7 @@ else
                                                 {
                                                 <div class="choice-box" style="background-color:white"></div>
                                                 }
-                                            @if(@lstQstns[qstn-1] == 2)
+                                            @if (@lstQstns [qstn - 1] == 2)
                                                 {
                                                 <div class="choice-box" style="background-color:black"></div>
                                                 }
@@ -284,7 +328,7 @@ else
                                                 {
                                                 <div class="choice-box" style="background-color:white"></div>
                                                 }
-                                            @if(@lstQstns[qstn-1] == 3)
+                                            @if (@lstQstns [qstn - 1] == 3)
                                                 {
                                                 <div class="choice-box" style="background-color:black"></div>
                                                 }
@@ -292,7 +336,7 @@ else
                                                 {
                                                 <div class="choice-box" style="background-color:white"></div>
                                                 }
-                                            @if(@lstQstns[qstn-1] == 4)
+                                            @if (@lstQstns [qstn - 1] == 4)
                                                 {
                                                 <div class="choice-box" style="background-color:black"></div>
                                                 }
@@ -300,7 +344,7 @@ else
                                                 {
                                                 <div class="choice-box" style="background-color:white"></div>
                                                 }
-                                            @if(@lstQstns[qstn-1] == 5)
+                                            @if (@lstQstns [qstn - 1] == 5)
                                                 {
                                                 <div class="choice-box" style="background-color:black"></div>
                                                 }
@@ -314,68 +358,68 @@ else
                                             <div class="choice-box"></div>
                                             <div class="choice-box"></div>
                                             <div class="choice-box"></div>
-                                            <div class="choice-box"></div>                                            
-                                            <div class="choice-box"></div>                                            
+                                            <div class="choice-box"></div>
+                                            <div class="choice-box"></div>
                                             }
-                                    </div>
+                                        </div>
                                     }
-                            </div>
+                                </div>
                             }
-                    </div>
+                        </div>
                     <hr />
+                    </div>
                 </div>
-            </div>
             }
         else if (appState.Cmd.ToLower() == "studentexamtestsanswers")
             {
             @* PREPARE FOR QRCODE FOR STUDENT EXAM TESTS - SHOW STUDENT ANSWERS*@
             lstAnswr.Clear();
-            lstQstns.Clear ();
+            lstQstns.Clear();
             nrtst = 0;
-            @foreach (var tstx in lstxTests) 
+            @foreach (var tstx in lstxTests)
                 {
-                lstAnswr.Add (0);
-                lstQstns.Add (0);
+                lstAnswr.Add(0);
+                lstQstns.Add(0);
                 nrtst++;
                 nropt = 0;
                 foreach (var optx in tstx.TestOptions)
                     {
                     nropt++;
-                    if(optx.TestOptionId == tstx.StudentExamTestAns)
+                    if (optx.TestOptionId == tstx.StudentExamTestAns)
                         {
-                        lstAnswr[nrtst-1] = nropt;
+                        lstAnswr [nrtst - 1] = nropt;
                         }
-                    if(optx.TestOptionId == tstx.StudentExamTestKey)
+                    if (optx.TestOptionId == tstx.StudentExamTestKey)
                         {
-                        lstQstns[nrtst-1] = nropt;
+                        lstQstns [nrtst - 1] = nropt;
                         }
                     }
                 }
             @* SHEET *@
-            <div style="break-before: page;text-align:center">
+                <div style="break-before: page;text-align:center">
                 <div>ANSWERS</div>
-                <div class="simple-sheet">
+                    <div class="simple-sheet">
                     <hr />
-                    <div class="sheet-columns">
+                        <div class="sheet-columns">
                         @for (int col = 0; col < 3; col++)
                             {
-                            <div class="sheet-column">
+                                <div class="sheet-column">
                                 @for (int i = 1; i <= 20; i++)
                                     {
                                     var qstn = col * 20 + i;
-                                    <div class="question-line">
+                                        <div class="question-line">
                                         <span class="q-number">@qstn.</span>
-                                        @if(qstn <= lstQstns.Count)
+                                        @if (qstn <= lstQstns.Count)
                                             {
-                                            @if((@lstQstns[qstn-1] == 1) & (@lstAnswr[qstn-1] == 1))
+                                            @if ((@lstQstns [qstn - 1] == 1) & (@lstAnswr [qstn - 1] == 1))
                                                 {
                                                 <div class="choice-box" style="background-color:gray"></div>
                                                 }
-                                            else if((@lstQstns[qstn-1] == 1) & (@lstAnswr[qstn-1] != 1))
+                                            else if ((@lstQstns [qstn - 1] == 1) & (@lstAnswr [qstn - 1] != 1))
                                                 {
                                                 <div class="choice-box" style="background-color:Black"></div>
                                                 }
-                                            else if((@lstQstns[qstn-1] != 1) & (@lstAnswr[qstn-1] == 1))
+                                            else if ((@lstQstns [qstn - 1] != 1) & (@lstAnswr [qstn - 1] == 1))
                                                 {
                                                 <div class="choice-box" style="background-color:gray"></div>
                                                 }
@@ -383,15 +427,15 @@ else
                                                 {
                                                 <div class="choice-box" style="background-color:white"></div>
                                                 }
-                                            @if((@lstQstns[qstn-1] == 2) & (@lstAnswr[qstn-1] == 2))
+                                            @if ((@lstQstns [qstn - 1] == 2) & (@lstAnswr [qstn - 1] == 2))
                                                 {
                                                 <div class="choice-box" style="background-color:gray"></div>
                                                 }
-                                            else if((@lstQstns[qstn-1] == 2) & (@lstAnswr[qstn-1] != 2))
+                                            else if ((@lstQstns [qstn - 1] == 2) & (@lstAnswr [qstn - 1] != 2))
                                                 {
                                                 <div class="choice-box" style="background-color:Black"></div>
                                                 }
-                                            else if((@lstQstns[qstn-1] != 2) & (@lstAnswr[qstn-1] == 2))
+                                            else if ((@lstQstns [qstn - 1] != 2) & (@lstAnswr [qstn - 1] == 2))
                                                 {
                                                 <div class="choice-box" style="background-color:gray"></div>
                                                 }
@@ -399,15 +443,15 @@ else
                                                 {
                                                 <div class="choice-box" style="background-color:white"></div>
                                                 }
-                                            @if((@lstQstns[qstn-1] == 3) & (@lstAnswr[qstn-1] == 3))
+                                            @if ((@lstQstns [qstn - 1] == 3) & (@lstAnswr [qstn - 1] == 3))
                                                 {
                                                 <div class="choice-box" style="background-color:gray"></div>
                                                 }
-                                            else if((@lstQstns[qstn-1] == 3) & (@lstAnswr[qstn-1] != 3))
+                                            else if ((@lstQstns [qstn - 1] == 3) & (@lstAnswr [qstn - 1] != 3))
                                                 {
                                                 <div class="choice-box" style="background-color:Black"></div>
                                                 }
-                                            else if((@lstQstns[qstn-1] != 3) & (@lstAnswr[qstn-1] == 3))
+                                            else if ((@lstQstns [qstn - 1] != 3) & (@lstAnswr [qstn - 1] == 3))
                                                 {
                                                 <div class="choice-box" style="background-color:gray"></div>
                                                 }
@@ -415,15 +459,15 @@ else
                                                 {
                                                 <div class="choice-box" style="background-color:white"></div>
                                                 }
-                                            @if((@lstQstns[qstn-1] == 4) & (@lstAnswr[qstn-1] == 4))
+                                            @if ((@lstQstns [qstn - 1] == 4) & (@lstAnswr [qstn - 1] == 4))
                                                 {
                                                 <div class="choice-box" style="background-color:gray"></div>
                                                 }
-                                            else if((@lstQstns[qstn-1] == 4) & (@lstAnswr[qstn-1] != 4))
+                                            else if ((@lstQstns [qstn - 1] == 4) & (@lstAnswr [qstn - 1] != 4))
                                                 {
                                                 <div class="choice-box" style="background-color:Black"></div>
                                                 }
-                                            else if((@lstQstns[qstn-1] != 4) & (@lstAnswr[qstn-1] == 4))
+                                            else if ((@lstQstns [qstn - 1] != 4) & (@lstAnswr [qstn - 1] == 4))
                                                 {
                                                 <div class="choice-box" style="background-color:gray"></div>
                                                 }
@@ -431,15 +475,15 @@ else
                                                 {
                                                 <div class="choice-box" style="background-color:white"></div>
                                                 }
-                                            @if((@lstQstns[qstn-1] == 5) & (@lstAnswr[qstn-1] == 5))
+                                            @if ((@lstQstns [qstn - 1] == 5) & (@lstAnswr [qstn - 1] == 5))
                                                 {
                                                 <div class="choice-box" style="background-color:gray"></div>
                                                 }
-                                            else if((@lstQstns[qstn-1] == 5) & (@lstAnswr[qstn-1] != 5))
+                                            else if ((@lstQstns [qstn - 1] == 5) & (@lstAnswr [qstn - 1] != 5))
                                                 {
                                                 <div class="choice-box" style="background-color:Black"></div>
                                                 }
-                                            else if((@lstQstns[qstn-1] != 5) & (@lstAnswr[qstn-1] == 5))
+                                            else if ((@lstQstns [qstn - 1] != 5) & (@lstAnswr [qstn - 1] == 5))
                                                 {
                                                 <div class="choice-box" style="background-color:gray"></div>
                                                 }
@@ -453,68 +497,97 @@ else
                                             <div class="choice-box"></div>
                                             <div class="choice-box"></div>
                                             <div class="choice-box"></div>
-                                            <div class="choice-box"></div>                                            
-                                            <div class="choice-box"></div>                                            
+                                            <div class="choice-box"></div>
+                                            <div class="choice-box"></div>
                                             }
-                                    </div>
+                                        </div>
                                     }
-                            </div>
+                                </div>
                             }
-                    </div>
+                        </div>
                     <hr />
+                    </div>
                 </div>
-            </div>
             }
             <div style="text-align: center;">
                 <button class="btn btn-link" type="submit" @onclick="BtnBack">
-                    <img src="/img/icoBack3.png" width="40" />
+                <img src="/img/icoBack3.png" width="40" />
                 </button>
-                @if ((appState.Cmd == "studentexamtests") || (appState.Cmd == "studentexamtestsraw") || (appState.Cmd == "studentexamtestsanswers"))
-                    {
+            @if ((appState.Cmd == "studentexamtests") || (appState.Cmd == "studentexamtestsraw") || (appState.Cmd == "studentexamtestsanswers"))
+                {
                     <button class="btn btn-link" @onclick="BtnShowRawAnswerSheet">
-                        <img src="/img/gifQRCode.gif" title="show raw answer sheet" alt="show raw answer sheet" width="45"/>
+                    <img src="/img/gifQRCode.gif" title="show raw answer sheet" alt="show raw answer sheet" width="45" />
                     </button>
                     <button class="btn btn-link" @onclick="BtnShowTestKeys">
-                        <img src="/img/icoKeys.png" title="show student answers" alt="Show student answers" width="30"/>
+                    <img src="/img/icoKeys.png" title="show student answers" alt="Show student answers" width="30" />
                     </button>
                     <button class="btn btn-link" @onclick="BtnShowStudentAnswers">
-                        <img src="/img/icoReport1.png" title="show student answers" alt="Show student answers" width="30"/>
+                    <img src="/img/icoReport1.png" title="show student answers" alt="Show student answers" width="30" />
                     </button>
-                    }
+                }
             </div>
-            <hr />
-    </EditForm>
+        <hr />
+        </EditForm>
     }
     <style>
-        .simple-sheet {font-family: Arial, sans-serif; padding: 10px;}
-        .sheet-columns {display: flex; gap: 25px;}
-        .sheet-column {flex: 1;}
-        .question-line {display: flex; align-items: center; gap: 8px; margin-bottom: 5px;}
-        .q-number {width: 25px; text-align: right;font-size: 12px;}
-        .choice-box {width: 18px; height: 18px; border: 1px solid #333; margin: 0 2px;}
+    .simple-sheet {
+        font-family: Arial, sans-serif;
+        padding: 10px;
+    }
+
+    .sheet-columns {
+        display: flex;
+        gap: 25px;
+    }
+
+    .sheet-column {
+        flex: 1;
+    }
+
+    .question-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 5px;
+    }
+
+    .q-number {
+        width: 25px;
+        text-align: right;
+        font-size: 12px;
+    }
+
+    .choice-box {
+        width: 18px;
+        height: 18px;
+        border: 1px solid #333;
+        margin: 0 2px;
+    }
     </style>
     <script>
-        window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+    window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
     </script>
 
 @code {
     public bool _hasFetched = false;
-    private MudNumericField <int> refPageNumber;
+    private MudNumericField<int> refPageNumber;
     private int intPageNumber = 1;        //actual page used for numbering
     private int intPendingPageNumber = 1; //value typed in the input (prevent changing i (index number) of tests in list)
-    User user = new User ();
-    Course course = new Course ();
-    List<StudentExamTest> lstxTests = new List<StudentExamTest> ();
-    List<Test> lstTests = new List<Test> ();
-    List<int> lstQstns = new List<int> ();
-    List<int> lstAnswr = new List<int> ();
-    List<Exam> lstExams = new List<Exam> ();
+    User user = new User();
+    Course course = new Course();
+    List<StudentExamTest> lstxTests = new List<StudentExamTest>();
+    List<StudentExamTest> lstTestAnswers = new List<StudentExamTest>();
+    List<Test> lstTests = new List<Test>();
+    List<int> lstQstns = new List<int>();
+    List<int> lstAnswr = new List<int>();
+    List<Exam> lstExams = new List<Exam>();
     private int intExamId;
     int i = 0;
     int nrtst = 0;
     int nropt = 0;
     int StudentId;
     string _cmd;
+    public long _studentExamTestId = 0;
     string stl;
     public int nStudents = 0;
     public int nStudentsVisited = 0;
@@ -530,25 +603,25 @@ else
     public string qrCodeImageUrl;
 
     //LifeCycleEvents
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync ()
         {
         appState.OnChange += TriggerRender;
-        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+        if (Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            Navman.NavigateTo ("/Login");
+            Navman.NavigateTo("/Login");
             }
-        appState.SetTestId (0);
-        await RefreshPageData ();
+        appState.SetTestId(0);
+        await RefreshPageData();
         StudentId = Convert.ToInt32(appState.UserId);
         stl = "";
         intExamId = (Convert.ToInt32(appState.ExamId) > 0) ? Convert.ToInt32(appState.ExamId) : 0; //makes combo select the exam if any
         _hasFetched = true;
-        } 
-    private void TriggerRender()
+        }
+    private void TriggerRender ()
         {
         InvokeAsync(StateHasChanged);
         }
-    public void Dispose()
+    public void Dispose ()
         {
         appState.OnChange -= TriggerRender;
         }
@@ -569,41 +642,40 @@ else
             }
         StateHasChanged();
         }
-
     //btns
-    public void BtnShowAnswers()
+    public void BtnShowAnswers ()
         {
         string _appstatecmd = appState.Cmd ?? "";
-        _appstatecmd = (_appstatecmd.EndsWith ("raw")) ? (Strings.Left (_appstatecmd, _appstatecmd.Length - 3)) : (_appstatecmd + "raw");
-        appState.SetCmd (_appstatecmd);
+        _appstatecmd = (_appstatecmd.EndsWith("raw")) ? (Strings.Left(_appstatecmd, _appstatecmd.Length - 3)) : (_appstatecmd + "raw");
+        appState.SetCmd(_appstatecmd);
         i = 0;
-        GenerateQRCode ();
+        GenerateQRCode();
         }
-    public void BtnCourseExamStats()
+    public void BtnCourseExamStats ()
         {
-        _cmd = (_cmd == "showStatistics")? "": "showStatistics";
+        _cmd = (_cmd == "showStatistics") ? "" : "showStatistics";
         i = 0;
         }
-    public void BtnChangeFontSize()
+    public void BtnChangeFontSize ()
         {
-        _cmd = (_cmd == "useSmallFont")? "": "useSmallFont";
+        _cmd = (_cmd == "useSmallFont") ? "" : "useSmallFont";
         i = 0;
         }
-    public async Task BtnReadTestsPaginated(int newPage)
+    public async Task BtnReadTestsPaginated (int newPage)
         {
         intPageNumber = newPage;
         if (appState.Cmd == "coursetests")
             {
-            lstTests = await feService.Read_TestsByCourseId (Convert.ToInt32 (appState.CourseId), intPageNumber, true);        
+            lstTests = await feService.Read_TestsByCourseId(Convert.ToInt32(appState.CourseId), intPageNumber, true);
             }
         else if (appState.Cmd == "coursetopictests")
             {
-            lstTests = await feService.Read_TestsByCourseTopicId (Convert.ToInt32 (appState.CourseTopicId), intPageNumber, true);           
+            lstTests = await feService.Read_TestsByCourseTopicId(Convert.ToInt32(appState.CourseTopicId), intPageNumber, true);
             }
-        lstxTests.Clear ();
-        foreach(Test tst in lstTests)
+        lstxTests.Clear();
+        foreach (Test tst in lstTests)
             {
-            lstxTests.Add (new StudentExamTest()
+            lstxTests.Add(new StudentExamTest()
                 {
                 StudentExamId = tst.CourseId,
                 TestId = tst.TestId,
@@ -618,11 +690,12 @@ else
                 TestLevel = tst.TestLevel,
                 TestOptions = tst.TestOptions
                 }
-            );}
+            );
+            }
         //find and set key
-        foreach(StudentExamTest t in lstxTests)
+        foreach (StudentExamTest t in lstxTests)
             {
-            foreach(TestOption opt in t.TestOptions)
+            foreach (TestOption opt in t.TestOptions)
                 {
                 if (opt.TestOptionTags >= 2)
                     {
@@ -632,27 +705,38 @@ else
                 }
             }
         }
-    public async Task BtnEditCourseTest(StudentExamTest studentExamTest)
+    public async Task BtnEditCourseTest (StudentExamTest studentExamTest)
         {
-        appState.SetTestId (studentExamTest.TestId);
-        appState.SetReturnPage ("/T_ReportTests");
-        Navman.NavigateTo ("/T_CourseTest");
+        appState.SetTestId(studentExamTest.TestId);
+        appState.SetReturnPage("/T_ReportTests");
+        Navman.NavigateTo("/T_CourseTest");
         }
-    public async Task BtnDeleteTestFromExamRawSheet(StudentExamTest studentExamTest)
+    public async Task BtnShowAnswersToThisTest (StudentExamTest studentExamTest)
         {
-        if(await JS.InvokeAsync<bool>("confirm", "Remove Tests from Exam-Sheet ?"))
+        lstTestAnswers = await feService.Read_StudentsExamTest(Convert.ToInt32(appState.ExamId), studentExamTest.TestId);
+        _studentExamTestId = studentExamTest.TestId;
+        _cmd = "ShowAnswersToThisTest";
+        StateHasChanged();
+        }
+    public async Task BtnDeleteTestFromExamRawSheet (StudentExamTest studentExamTest)
+        {
+        if (await JS.InvokeAsync<bool>("confirm", "Remove Tests from Exam-Sheet ?"))
             {
-            ExamTest examTest = new () { ExamId = Convert.ToInt32 (appState.ExamId), TestId = studentExamTest.TestId };
-            bool result = await feService.Delete_ExamTest (examTest);
-            await RefreshPageData ();
-            StateHasChanged ();
+            ExamTest examTest = new()
+                {
+                ExamId = Convert.ToInt32(appState.ExamId),
+                TestId = studentExamTest.TestId
+                };
+            bool result = await feService.Delete_ExamTest(examTest);
+            await RefreshPageData();
+            StateHasChanged();
             }
         }
-    public async Task BtnShowCourseTestStats(StudentExamTest studentExamTest)
+    public async Task BtnShowCourseTestStats (StudentExamTest studentExamTest)
         {
         _hasFetched = false;
         //Read StudentExam and StudentExamTest Across Students
-        List<StudentExamTest> lstStudentsExamTest = await feService.Read_StudentsExamTest (studentExamTest);
+        List<StudentExamTest> lstStudentsExamTest = await feService.Read_StudentsExamTest(Convert.ToInt32(appState.ExamId), studentExamTest.TestId);
         //calcs ...
         nStudents = lstStudentsExamTest.Count;
         nStudentsVisited = 0;
@@ -665,41 +749,41 @@ else
         nStudentsSlectedOpt3 = 0;
         nStudentsSlectedOpt4 = 0;
         nStudentsSlectedOpt5 = 0;
-        foreach(StudentExamTest tst in lstStudentsExamTest)
+        foreach (StudentExamTest tst in lstStudentsExamTest)
             {
-            if((tst.StudentExamTestTags & 1) == 1)
+            if ((tst.StudentExamTestTags & 1) == 1)
                 {
                 nStudentsVisited++;
                 }
-            if((tst.StudentExamTestTags & 4) == 4)
+            if ((tst.StudentExamTestTags & 4) == 4)
                 {
                 nStudentsAnswered++;
-                if(tst.StudentExamTestAns == tst.StudentExamTestKey)
+                if (tst.StudentExamTestAns == tst.StudentExamTestKey)
                     {
                     nStudentsAnsweredCorrectly++;
                     }
                 else
                     {
-                    nStudentsAnsweredIncorrectly++;                    
+                    nStudentsAnsweredIncorrectly++;
                     }
                 }
-            if((tst.StudentExamTestAns == studentExamTest.Opt1Id))
+            if ((tst.StudentExamTestAns == studentExamTest.Opt1Id))
                 {
                 nStudentsSlectedOpt1++;
                 }
-            if((tst.StudentExamTestAns == studentExamTest.Opt2Id))
+            if ((tst.StudentExamTestAns == studentExamTest.Opt2Id))
                 {
                 nStudentsSlectedOpt2++;
                 }
-            if((tst.StudentExamTestAns == studentExamTest.Opt3Id))
+            if ((tst.StudentExamTestAns == studentExamTest.Opt3Id))
                 {
                 nStudentsSlectedOpt3++;
                 }
-            if((tst.StudentExamTestAns == studentExamTest.Opt4Id))
+            if ((tst.StudentExamTestAns == studentExamTest.Opt4Id))
                 {
                 nStudentsSlectedOpt4++;
                 }
-            if((tst.StudentExamTestAns != 0) & (tst.StudentExamTestAns == studentExamTest.Opt5Id))
+            if ((tst.StudentExamTestAns != 0) & (tst.StudentExamTestAns == studentExamTest.Opt5Id))
                 {
                 nStudentsSlectedOpt5++;
                 }
@@ -707,22 +791,22 @@ else
         nStudentsNotAnswered = nStudentsVisited - nStudentsAnswered;
         if (appState.TestId == studentExamTest.TestId)
             {
-            appState.SetTestId (0);
+            appState.SetTestId(0);
             }
         else
             {
-            appState.SetTestId (studentExamTest.TestId);
+            appState.SetTestId(studentExamTest.TestId);
             }
         //appState.SetCmd ("ShowStudentExamTestStats");
         _hasFetched = true;
-        StateHasChanged ();
+        StateHasChanged();
         }
-    public async Task BtnAddSelectedTestsToAnExam()
+    public async Task BtnAddSelectedTestsToAnExam ()
         {
         if (intExamId <= 0)
             {
-            Snackbar.Add("select an exam", Severity.Info); 
-            //await JS.InvokeVoidAsync ("alert", "");            
+            Snackbar.Add("select an exam", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            //await JS.InvokeVoidAsync ("alert", "");
             }
         else
             {
@@ -731,56 +815,68 @@ else
                 .Select(t => t.TestId)
                 .ToList();
             int testCount = 0;
-            foreach(int intTestId in selectedIds)
+            foreach (int intTestId in selectedIds)
                 {
-                ExamTest examTest = new ExamTest () {ExamId = intExamId, TestId= intTestId };
-                int result = await feService.Create_ExamTest (examTest);
+                ExamTest examTest = new ExamTest() { ExamId = intExamId, TestId = intTestId };
+                int result = await feService.Create_ExamTest(examTest);
                 if (result > 0)
                     {
                     testCount++;
                     }
                 }
             //appState.SetCmd ("coursetests");
-            StateHasChanged ();            
-            Snackbar.Add($"\n\n{testCount} tests added to exam", Severity.Success); 
+            StateHasChanged();
+            Snackbar.Add($"\n\n{testCount} tests added to exam", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             //old code: await JS.InvokeVoidAsync ("alert", $"\n\n{testCount} Tests was added to the Exam Successfully")
             }
         }
-    public async Task BtnEditExam()
+    public async Task BtnEditExam ()
         {
         if (intExamId > 0)
             {
-            Navman.NavigateTo ($"/T_Exam/{intExamId}");
+            Navman.NavigateTo($"/T_Exam/{intExamId}");
             }
         else
             {
-            Snackbar.Add("select an exam", Severity.Info); 
-            //await JS.InvokeVoidAsync ("alert", "");            
+            Snackbar.Add("select an exam", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            //await JS.InvokeVoidAsync ("alert", "");
             }
         }
-    public async Task BtnShowRawAnswerSheet()
+    public async Task BtnShowRawAnswerSheet ()
         {
-        BtnShowAnswers ();
-        appState.SetCmd ("studentexamtestsraw");
-        Snackbar.Add("raw sheet", Severity.Info); 
+        BtnShowAnswers();
+        appState.SetCmd("studentexamtestsraw");
+        Snackbar.Add("raw sheet", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
         }
-    public async Task BtnShowStudentAnswers()
+    public async Task BtnShowStudentAnswers ()
         {
-        appState.SetCmd ("studentexamtestsanswers");
-        Snackbar.Add("student sheet", Severity.Info); 
+        appState.SetCmd("studentexamtestsanswers");
+        Snackbar.Add("student sheet", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
         }
-    public async Task BtnShowTestKeys()
+    public async Task BtnChangeStudentExamTestAnswerTextApprovedStatus (StudentExamTest tst3)
         {
-        appState.SetCmd ("studentexamtests");
-        Snackbar.Add("keys", Severity.Info); 
+        tst3.StudentExamTestTags = ((tst3.StudentExamTestTags & 128) == 0) ? (tst3.StudentExamTestTags | 128) : (tst3.StudentExamTestTags & ~128);
+        bool result = await feService.Update_StudentExamTestTags(tst3);
+        //refresh
+        await BtnShowAnswersToThisTest(tst3);
+        //info
+        string _msg = ((tst3.StudentExamTestTags & 128) == 128) ? "answer is correct!" : "answer is wrong!";
+        _cmd = "ShowAnswersToThisTest";
+        Snackbar.Add(_msg, Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+        StateHasChanged();
         }
-    public void BtnBack()
+    public async Task BtnShowTestKeys ()
+        {
+        appState.SetCmd("studentexamtests");
+        Snackbar.Add("keys", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+        }
+    public void BtnBack ()
         {
         appState.SetReturnPage((appState.ReturnPage == "/T_ReportTests") ? "/T_SwitchBoard" : appState.ReturnPage);
         Navman.NavigateTo(appState.ReturnPage ?? "/T_SwitchBoard");
         }
     //method
-    public async Task RefreshPageData()
+    public async Task RefreshPageData ()
         {
         _hasFetched = false;
         switch (appState.Cmd?.ToLower())
@@ -788,38 +884,39 @@ else
             case "coursetests":
             case "coursetopictests":
                     {
-                    course = new Course () { CourseId = Convert.ToInt32 (appState.CourseId) };
-                    lstExams.Clear ();
-                    lstExams = await feService.Read_Exams (course.CourseId);
-                    await BtnReadTestsPaginated (1);
+                    course = new Course() { CourseId = Convert.ToInt32(appState.CourseId) };
+                    lstExams.Clear();
+                    lstExams = await feService.Read_Exams(course.CourseId);
+                    await BtnReadTestsPaginated(1);
                     break;
                     }
-            case"examtests":
+            case "examtests":
                     {
-                    lstxTests.Clear ();
-                    List<Test> lstExamTests = await feService.Read_TestsByExamId (Convert.ToInt32 (appState.ExamId), true);
-                    foreach(Test tst in lstExamTests)
+                    lstxTests.Clear();
+                    List<Test> lstExamTests = await feService.Read_TestsByExamId(Convert.ToInt32(appState.ExamId), true);
+                    foreach (Test tst in lstExamTests)
                         {
-                        lstxTests.Add (new StudentExamTest()
-                        {
-                        StudentExamId = tst.CourseId,
-                        TestId = tst.TestId,
-                        StudentExamTestKey = 0,
-                        StudentExamTestAns = 0,
-                        TestIndex = 0,
-                        TestTitle = tst.TestTitle,
-                        TestType = tst.TestType,
-                        CourseTopicId = tst.TopicId,
-                        CourseTopicTitle = "",
-                        TestTags = tst.TestTags,
-                        TestLevel = tst.TestLevel,
-                        TestOptions = tst.TestOptions
+                        lstxTests.Add(new StudentExamTest()
+                            {
+                            StudentExamId = tst.CourseId,
+                            TestId = tst.TestId,
+                            StudentExamTestKey = 0,
+                            StudentExamTestAns = 0,
+                            TestIndex = 0,
+                            TestTitle = tst.TestTitle,
+                            TestType = tst.TestType,
+                            CourseTopicId = tst.TopicId,
+                            CourseTopicTitle = "",
+                            TestTags = tst.TestTags,
+                            TestLevel = tst.TestLevel,
+                            TestOptions = tst.TestOptions
+                            }
+                            );
                         }
-                            );}
                     //find and set key
-                    foreach(StudentExamTest t in lstxTests)
+                    foreach (StudentExamTest t in lstxTests)
                         {
-                        foreach(TestOption opt in t.TestOptions)
+                        foreach (TestOption opt in t.TestOptions)
                             {
                             if (opt.TestOptionTags >= 2)
                                 {
@@ -830,69 +927,70 @@ else
                         }
                     break;
                     }
-            case"studentexamtests":
+            case "studentexamtests":
             case "studentexamtestsraw":
             case "studentexamtestsanswers":
                     {
-                    lstxTests.Clear ();
-                    StudentExam studentExam = await feService.Read_StudentExam (Convert.ToInt32 (appState.StudentExamId), false);
-                    appState.SetStudentId (studentExam.StudentId);
-                    appState.SetStudentName (studentExam.StudentName);
-                    appState.SetStudentNickname (studentExam.StudentNickname);
-                    lstxTests = await feService.Read_StudentExamTests (Convert.ToInt32 (appState.StudentExamId),true);
+                    lstxTests.Clear();
+                    StudentExam studentExam = await feService.Read_StudentExam(Convert.ToInt32(appState.StudentExamId), false);
+                    appState.SetStudentId(studentExam.StudentId);
+                    appState.SetStudentName(studentExam.StudentName);
+                    appState.SetStudentNickname(studentExam.StudentNickname);
+                    lstxTests = await feService.Read_StudentExamTests(Convert.ToInt32(appState.StudentExamId), true);
                     break;
                     }
             case "studentcoursetests":
                     {
-                    lstxTests.Clear ();
-                    StudentCourse studentCourse = new StudentCourse () 
-                    {
-                        StudentCourseId = Convert.ToInt32 (appState.StudentCourseId)
-                    };
-                    List<StudentCourseTest> lstStudentCourseTests = await feService.Read_StudentCourseTests (studentCourse, true);
+                    lstxTests.Clear();
+                    StudentCourse studentCourse = new StudentCourse()
+                        {
+                        StudentCourseId = Convert.ToInt32(appState.StudentCourseId)
+                        };
+                    List<StudentCourseTest> lstStudentCourseTests = await feService.Read_StudentCourseTests(studentCourse, true);
                     //copy data to a shared satandard list so that html code uses it
-                    foreach(StudentCourseTest sctest in lstStudentCourseTests)
+                    foreach (StudentCourseTest sctest in lstStudentCourseTests)
                         {
-                        lstxTests.Add (new StudentExamTest()
-                        {
-                        StudentExamId = sctest.StudentCourseId,                        
-                        TestId = sctest.TestId,
-                        StudentExamTestKey = sctest.TestKey,
-                        StudentExamTestAns = sctest.UserAns,
-                        TestIndex = sctest.TestIndex,
-                        TestTitle = sctest.TestTitle,
-                        TestType = sctest.TestType,
-                        CourseTopicId = sctest.CourseTopicId,
-                        CourseTopicTitle = sctest.CourseTopicTitle,
-                        TestTags = sctest.TestTags,
-                        TestLevel = sctest.TestLevel,
-                        TestOptions = sctest.TestOptions
+                        lstxTests.Add(new StudentExamTest()
+                            {
+                            StudentExamId = sctest.StudentCourseId,
+                            TestId = sctest.TestId,
+                            StudentExamTestKey = sctest.TestKey,
+                            StudentExamTestAns = sctest.UserAns,
+                            TestIndex = sctest.TestIndex,
+                            TestTitle = sctest.TestTitle,
+                            TestType = sctest.TestType,
+                            CourseTopicId = sctest.CourseTopicId,
+                            CourseTopicTitle = sctest.CourseTopicTitle,
+                            TestTags = sctest.TestTags,
+                            TestLevel = sctest.TestLevel,
+                            TestOptions = sctest.TestOptions
+                            }
+                        );
                         }
-                        );}
-                    break; 
+                    break;
                     }
             }
         _hasFetched = true;
         }
-    private void GenerateQRCode()
+    private void GenerateQRCode ()
         {
-        QRCodeGenerator qrGen = new QRCodeGenerator ();
+        QRCodeGenerator qrGen = new QRCodeGenerator();
         //QRCodeData qrData = qrGen.CreateQrCode ($"{@appState.StudentName} - {@appState.StudentNickname}", QRCodeGenerator.ECCLevel.Q);
-        QRCodeData qrData = qrGen.CreateQrCode ($"{@appState.StudentId}", QRCodeGenerator.ECCLevel.Q);
+        QRCodeData qrData = qrGen.CreateQrCode($"{@appState.StudentId}", QRCodeGenerator.ECCLevel.Q);
         QRCode qRCode = new QRCode(qrData);
-        Bitmap bitmap = qRCode.GetGraphic (15);
-        var BitmapBytes = ConvertBitmapToBytes (bitmap);
+        Bitmap bitmap = qRCode.GetGraphic(15);
+        var BitmapBytes = ConvertBitmapToBytes(bitmap);
         var bitmapBytes = ConvertBitmapToBytes(bitmap);
         // Convert to base64 for displaying in img tag
         qrCodeImageUrl = $"data:image/png;base64,{Convert.ToBase64String(bitmapBytes)}";
-        StateHasChanged();       
+        StateHasChanged();
         }
-    private byte[] ConvertBitmapToBytes(Bitmap bitmap)
+    private byte [] ConvertBitmapToBytes (Bitmap bitmap)
         {
         using (MemoryStream ms = new())
             {
-            bitmap.Save (ms, System.Drawing.Imaging.ImageFormat.Png);
-            return ms.ToArray ();
+            bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+            return ms.ToArray();
             }
         }
-}
+    }

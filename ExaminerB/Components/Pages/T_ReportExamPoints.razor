@@ -19,7 +19,7 @@ else
         <div style="text-align:center; padding:10px;">
         <h6 style="color:gray;">@course.CourseName</h6>
         <h5 style="color:royalblue"><span style="color:darkgray;font-style:italic;">Exam </span>@exam.ExamTitle</h5>
-        <h6>@exam.ExamDateTime <span style="font-size:small;color:indianred"> /@exam.ExamDuration min </span><span style="font-size:small;color:gray"> /students: @lstStudentsExams.Count</span></h6>
+        <h6>@PersianDate(exam.ExamDateTime.ToString()) <span style="font-size:small;color:indianred"> /@exam.ExamDuration min </span><span style="font-size:small;color:gray"> /students: @lstStudentsExams.Count</span></h6>
         </div>
     <hr />
         <div style="text-align:center">

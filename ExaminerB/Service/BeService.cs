@@ -2664,7 +2664,6 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<List<StudentExamTest>> Read_StudentExamTestsAsync (int studentExamId, bool readOptions)
             {
-            //this [overload] has its own cnn
             List<StudentExamTest> lstStudentExamTests = new ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
@@ -2842,18 +2841,17 @@ namespace ExaminerB.Services2Backend
                 return new StudentExamTest ();
                 }
             }
-        public async Task<List<StudentExamTest>> Read_StudentsExamTestAsync (StudentExamTest studentExamTest)
+        public async Task<List<StudentExamTest>> Read_StudentsExamTestAsync (int examId, int testId)
             {
-            //this [overload] has its own cnn
             List<StudentExamTest> lstStudentExamTests = new ();
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
-            string sql = "dbo.sp_Read_StudentsExamTest";
+            string sql = "dbo.sp_ReadStudentsExamTest";
             await cnn.OpenAsync ();
             using SqlCommand cmd = new (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@testid", studentExamTest.TestId);
-            cmd.Parameters.AddWithValue ("@studentexamid", studentExamTest.StudentExamId);
+            cmd.Parameters.AddWithValue ("@examid", examId);
+            cmd.Parameters.AddWithValue ("@testid", testId);
             try
                 {
                 using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())

@@ -263,7 +263,7 @@ else
         {
         _hasFetched = false;
         //Read StudentExam and StudentExamTest Across Students
-        List<StudentExamTest> lstStudentsExamTest = await feService.Read_StudentsExamTest (studentExamTest);
+        List<StudentExamTest> lstStudentsExamTest = await feService.Read_StudentsExamTest (Convert.ToInt32(appState.ExamId),studentExamTest.TestId);
         //calcs ...
         nStudents = lstStudentsExamTest.Count;
         nStudentsVisited = 0;

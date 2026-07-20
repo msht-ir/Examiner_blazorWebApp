@@ -282,6 +282,7 @@
         }
     public async Task BtnClearAnswer (StudentExamTest stdntExamTest)
         {
+        _answerText = "";
         await feService.Update_StudentExamTestAnswer(studentExamTest.StudentExamTestId, 0);
         stdntExamTest.StudentExamTestTags = (stdntExamTest.StudentExamTestTags & ~4);
         bool result = await feService.Update_StudentExamTestTags(stdntExamTest);
