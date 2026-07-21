@@ -386,7 +386,15 @@ else
                                                                                             <MudCard Class="mx-0">
                                                                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                                                                     <div class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
-                                                                                                    @PersianDate(notex.NoteDateTime.ToString())
+                                                                                                    @if (notex.IsTodo)
+                                                                                                        {
+                                                                                                        <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
+                                                                                                        @PersianDate(notex.NoteDueDateTime.ToString())
+                                                                                                        }
+                                                                                                    else
+                                                                                                        {
+                                                                                                        @PersianDate(notex.NoteDateTime.ToString())
+                                                                                                        }
                                                                                                     </div>
                                                                                                 <hr />
                                                                                                 @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId) == notex.NoteId))
@@ -494,7 +502,15 @@ else
                                                                                             <MudCard Class="mx-0">
                                                                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                                                                     <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
-                                                                                                    @PersianDate(notex.NoteDateTime.ToString())
+                                                                                                    @if (notex.IsTodo)
+                                                                                                        {
+                                                                                                        <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
+                                                                                                        @PersianDate(notex.NoteDueDateTime.ToString())
+                                                                                                        }
+                                                                                                    else
+                                                                                                        {
+                                                                                                        @PersianDate(notex.NoteDateTime.ToString())
+                                                                                                        }
                                                                                                     </div>
                                                                                                 <hr />
                                                                                                     <span class="d-flex align-items-center mt-1" style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
@@ -1110,9 +1126,11 @@ else
             appState.SetNoteReferenceType(0);
             }
         appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
+        appState.SetNoteDueDateTime(note.NoteDueDateTime.ToString("yyyy-MM-dd HH:mm"));
         appState.SetNoteText(note.NoteText);
         appState.SetNoteCreatorId(note.CreatorId);
         appState.SetNoteIsRtl(note.IsRtl);
+        appState.SetNoteIsTodo(note.IsTodo);
         appState.SetCmd("UpdateNote");
         StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
@@ -1125,9 +1143,11 @@ else
         appState.SetNoteReferenceType(note.ReferenceType);
         appState.SetNoteReferenceName(note.ReferenceName);
         appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
+        appState.SetNoteDueDateTime(note.NoteDueDateTime.ToString("yyyy-MM-dd HH:mm"));
         appState.SetNoteText(note.NoteText);
         appState.SetNoteCreatorId(note.CreatorId);
         appState.SetNoteIsRtl(note.IsRtl);
+        appState.SetNoteIsTodo(note.IsTodo);
         appState.SetCmd("ShowNoteInDialog");
         StateHasChanged();
         }

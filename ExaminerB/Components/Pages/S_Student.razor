@@ -517,7 +517,7 @@
                                 <div>
                                     <p style="text-align:center;font-size:x-small;">
                                     با ايجاد يک انجمن، موضوعي را براي تبادل نظر و گفتگو مطرح کنيد
-                                    <br />                                    
+                                    <br />
                                     قوانين: ورود همه دانشجويان به انجمن براي آگاهي و تبادل نظر آزاد است
                                     <br />
                                     شما مي توانيد انجمن خودتان را حذف کنيد
@@ -654,7 +654,15 @@
                                                 <MudCard Class="mx-0">
                                                     <MudCardContent Style="background-color:whitesmoke;">
                                                         <span class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold; font-size:smaller;margin:0px; ">
-                                                        @PersianDate(notex.NoteDateTime.ToString())
+                                                        @if (notex.IsTodo)
+                                                            {
+                                                            <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
+                                                            @PersianDate(notex.NoteDueDateTime.ToString())
+                                                            }
+                                                        else
+                                                            {
+                                                            @PersianDate(notex.NoteDateTime.ToString())
+                                                            }
                                                         </span>
                                                     <hr />
                                                         <div style="white-space: pre-wrap; font-weight:normal; font-family:'Segoe UI';font-size:small">
@@ -694,7 +702,15 @@
                                                 <MudCard Class="mx-0">
                                                     <MudCardContent Style="background-color:whitesmoke;">
                                                         <span class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;font-size:smaller;margin:0px;">
-                                                        @PersianDate(notex.NoteDateTime.ToString())
+                                                        @if (notex.IsTodo)
+                                                            {
+                                                            <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
+                                                            @PersianDate(notex.NoteDueDateTime.ToString())
+                                                            }
+                                                        else
+                                                            {
+                                                            @PersianDate(notex.NoteDateTime.ToString())
+                                                            }
                                                         </span>
                                                     <hr />
                                                         <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
@@ -956,12 +972,12 @@
     private void BtnReportExam (StudentExam studentExam)
         {
         appState.SetClps("E");
-        appState.SetExamId (studentExam.ExamId);
+        appState.SetExamId(studentExam.ExamId);
         Navman.NavigateTo($"/S_ReportStudentExam/{studentExam.StudentExamId}/Review");
-    }
+        }
     //btns for StudentMessages
     private async Task BtnSetStudentMessageAsRead (StudentMessage studentMessage)
-    {
+        {
         appState.SetClps("M");
         //modes: setOn, setOff
         studentMessage.StudentMessageTags |= 1;
@@ -969,97 +985,97 @@
         bool result = await feService.Update_StudentMessageSetAsRead(studentMessage);
         await ReadMessageList();
         StateHasChanged();
-    }
+        }
     private async Task BtnSetStudentMessageBookmark (StudentMessage studentMessage, int mode)
-    {
+        {
         appState.SetClps("M");
         //modes: 0:setOff, 1:setOn
         switch (mode)
-        {
+            {
             case 0:
-                {
+                    {
                     studentMessage.StudentMessageTags &= ~2;
                     break;
-                }
+                    }
             case 1:
-                {
+                    {
                     studentMessage.StudentMessageTags |= 2;
                     break;
-                }
-        }
+                    }
+            }
         bool result = await feService.Update_StudentMessageTags(studentMessage);
         await ReadMessageList();
 
         switch (mode)
-        {
+            {
             case 0:
-                {
+                    {
                     Snackbar.Add("bookmark removed", Severity.Info);
                     break;
-                }
+                    }
             case 1:
-                {
+                    {
                     Snackbar.Add("message bookmarked", Severity.Success);
                     break;
-                }
-        }
+                    }
+            }
         appState.SetCmd("");
         StateHasChanged();
-    }
+        }
     private async Task BtnSetMyAnswer (StudentMessage studentMessage, int ans)
-    {
+        {
         appState.SetClps("M");
         //ans: 0:No, 1:Yes
         switch (ans)
-        {
+            {
             case 2:
-                {
+                    {
                     studentMessage.StudentMessageTags &= ~16;
                     studentMessage.StudentMessageTags &= ~32;
                     appState.SetCmd("");
                     break;
-                }
+                    }
             case 1:
-                {
+                    {
                     studentMessage.StudentMessageTags |= 16;
                     studentMessage.StudentMessageTags &= ~32;
                     break;
-                }
+                    }
             case 0:
-                {
+                    {
                     studentMessage.StudentMessageTags &= ~16;
                     studentMessage.StudentMessageTags |= 32;
                     break;
-                }
-        }
+                    }
+            }
         bool result = await feService.Update_StudentMessageTags(studentMessage);
         await ReadMessageList();
         StateHasChanged();
-    }
+        }
     private async Task BtnGetStudentAnswer (int messageId)
-    {
+        {
         appState.SetClps("M");
         //Lets GetStudentAnswer...
         appState.SetCmd("GetStudentAnswer");
         appState.SetMessageId(messageId);
         StateHasChanged();
-    }
+        }
     private async Task BtnDeleteStudentMessage (StudentMessage studentMessage)
-    {
+        {
         appState.SetClps("M");
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Message? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-        {
+            {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags(studentMessage);
             Snackbar.Add("deleted", Severity.Success);
             await ReadMessageList();
-        }
+            }
         StateHasChanged();
-    }
+        }
     private async Task BtnGotoReportStudentMessages (StudentMessage studentMessage)
-    {
+        {
         appState.SetClps("M");
         appState.SetReturnPage("/S_Student");
         appState.SetStudentMessageId(studentMessage.StudentMessageId);
@@ -1067,100 +1083,100 @@
         appState.SetStudentName(student.UserName);
         appState.SetStudentNickname(student.UserNickname);
         Navman.NavigateTo($"/T_ReportMessages/S/{student.UserId}");
-    }
-    private void BtnCangeFont (int messageId)
-    {
-        if (messageId == Convert.ToInt32(appState.MessageId))
-        {
-            _cmd = (_cmd == "useCourierFont") ? "" : "useCourierFont";
         }
-        else
+    private void BtnCangeFont (int messageId)
         {
+        if (messageId == Convert.ToInt32(appState.MessageId))
+            {
+            _cmd = (_cmd == "useCourierFont") ? "" : "useCourierFont";
+            }
+        else
+            {
             appState.SetMessageId(messageId);
             _cmd = "useCourierFont";
-        }
+            }
         StateHasChanged();
-    }
+        }
     //btns for chats
     public async Task BtnReadStudentsBySearch ()
-    {
+        {
         appState.SetClps("CH");
         if (strSearch.Length >= 3)
-        {
+            {
             int teacherId = Convert.ToInt32(appState.TeacherId);
             lstStudents = await feService.Read_StudentsByKeyword(Convert.ToInt32(appState.UserId), strSearch, 0);
             if (lstStudents.Count == 0)
-            {
+                {
                 Snackbar.Add($"students like '{strSearch}' not found", Severity.Info);
-            }
+                }
             StateHasChanged();
-        }
+            }
         else
-        {
+            {
             strSearch = "";
             lstStudents.Clear();
+            }
         }
-    }
     private async Task BtnOpenThisChat (Chat chat)
-    {
+        {
         int _meId = Convert.ToInt32(appState.UserId);
         if (chat.ToId == _meId)
-        {
+            {
             await BtnSetChatAsRead(chat);
-        }
+            }
         appState.SetClps("CH");
         mateId = (chat.FromId == _meId) ? chat.ToId : chat.FromId;
         appState.SetChatMateId(mateId);
         _cmd = "OpenThisChat";
         StateHasChanged();
-    }
+        }
     private async Task BtnSetChatAsRead (Chat chat)
-    {
+        {
         chat.ChatTags |= 1; //set chatTags bit1(IsRead) On
         bool result = await feService.Update_ChatTags(chat);
         appState.SetClps("CH");
         //modes: setOn, setOff
         await ReadChatList();
         StateHasChanged();
-    }
+        }
     private async Task BtnStartNewChat (int mateId)
-    {
+        {
         appState.SetClps("CH");
         appState.SetChatMateId(mateId);
         _cmd = "OpenThisChat";
         StateHasChanged();
-    }
+        }
     private async Task BtnDeleteChat (StudentMessage studentMessage)
-    {
+        {
         appState.SetClps("CH");
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Message? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-        {
+            {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags(studentMessage);
             Snackbar.Add("deleted", Severity.Success);
             await ReadMessageList();
-        }
+            }
         StateHasChanged();
-    }
+        }
     //btns for chatrooms
     private async Task BtnAddNewChatroom ()
-    {
+        {
         chatroom.ChatroomName = "";
         chatroom.ChatroomTerms = "";
         appState.SetClps("CHR");
         _cmd = _cmd == "AddNewChatroom" ? "" : "AddNewChatroom";
         StateHasChanged();
-    }
+        }
     private async Task BtnCreateChatroom ()
-    {
+        {
         appState.SetClps("CHR");
         if ((chatroom.ChatroomTerms.Trim() == "") || (chatroom.ChatroomName.Trim() == ""))
-        {
+            {
             Snackbar.Add($"Enter chatroom NAME and SUBJECT", Severity.Info);
             return;
-        }
+            }
         student.UserId = appState.UserId ?? 0;
         chatroom.ChatroomAdminId = student.UserId;
         chatroom.ChatroomDepartmentId = Convert.ToInt32(appState.DepartmentId);
@@ -1168,44 +1184,44 @@
         _cmd = "";
         await ReadChatroomList();
         StateHasChanged();
-    }
+        }
     private async Task BtnOpenThisChatroom (Chatroom chatroom)
-    {
+        {
         appState.SetClps("CHR");
         appState.SetSelectedChatroomId(chatroom.ChatroomId);
         appState.SetSelectedChatroomName(chatroom.ChatroomName);
         _cmd = "OpenChatroom";
         StateHasChanged();
-    }
+        }
     private async Task BtnDeleteChatroom (int chatroomId)
-    {
+        {
         appState.SetClps("CHR");
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> chatroom?<br>All Posts in this chatroom will be deleted!.<br><br>Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "Cancel");
         if (confirmResult == true)
-        {
+            {
             student.UserId = appState.UserId ?? 0;
             chatroom.ChatroomAdminId = student.UserId;
             chatroom.ChatroomDepartmentId = Convert.ToInt32(appState.TeacherId);
             bool result = await feService.Delete_Chatroom(chatroomId);
             if (result)
-            {
+                {
                 Snackbar.Add($"deleted", Severity.Warning);
                 _cmd = "";
                 StateHasChanged();
                 appState.SetCmd("");
                 await ReadChatroomList();
                 StateHasChanged();
-            }
+                }
             else
-            {
+                {
                 Snackbar.Add($"failed to delete chatroom", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                }
             }
         }
-    }
     //btns for notes
     public async Task CreateNote ()
-    {
+        {
         appState.SetClps("SN");
         //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
         student.UserId = Convert.ToInt32(appState.UserId);
@@ -1216,18 +1232,20 @@
         StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
         //to handel close event, I added in the Modal_CreateNote: [Parameter] public EventCallback OnClose
-    }
+        }
     public async Task BtnShowNoteInDialog (Note note)
-    {
+        {
         appState.SetClps("SN");
         appState.SetSelectedNoteId(note.NoteId);
         appState.SetNoteReferenceId(note.ReferenceId);
         appState.SetNoteReferenceType(note.ReferenceType);
         appState.SetNoteReferenceName(note.ReferenceName);
         appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
+        appState.SetNoteDueDateTime(note.NoteDueDateTime.ToString("yyyy-MM-dd HH:mm"));
         appState.SetNoteText(note.NoteText);
         appState.SetNoteCreatorId(note.CreatorId);
         appState.SetNoteIsRtl(note.IsRtl);
+        appState.SetNoteIsTodo(note.IsTodo);
         appState.SetCmd("ShowNoteInDialog");
         StateHasChanged();
         //After the Modal_ShowNote is closed, HandleModalClose will refresh the list
@@ -1241,9 +1259,11 @@
         appState.SetNoteReferenceType(note.ReferenceType);
         appState.SetNoteReferenceName(note.ReferenceName);
         appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
+        appState.SetNoteDueDateTime(note.NoteDueDateTime.ToString("yyyy-MM-dd HH:mm"));
         appState.SetNoteText(note.NoteText);
         appState.SetNoteCreatorId(note.CreatorId);
         appState.SetNoteIsRtl(note.IsRtl);
+        appState.SetNoteIsTodo(note.IsTodo);
         appState.SetCmd("UpdateNote");
         StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list

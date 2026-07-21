@@ -162,11 +162,15 @@
         public void SetNoteReferenceName (string _NoteReferenceName) { NoteReferenceName = _NoteReferenceName; OnChange?.Invoke (); }
         public string? NoteDateTime { get; private set; }
         public void SetNoteDateTime (string _NoteDateTime) { NoteDateTime = _NoteDateTime; OnChange?.Invoke (); }
+        public string? NoteDueDateTime { get; private set; }
+        public void SetNoteDueDateTime (string _NoteDueDateTime) { NoteDueDateTime = _NoteDueDateTime; OnChange?.Invoke (); }
         public string? NoteText { get; private set; }
         public void SetNoteText (string _NoteText) { NoteText = _NoteText; OnChange?.Invoke (); }
         public int? NoteCreatorId {get; private set;}
         public void SetNoteCreatorId (int _NoteCreatorId) { NoteCreatorId = _NoteCreatorId; OnChange?.Invoke (); }
         public bool NoteIsRtl { get; private set; }
         public void SetNoteIsRtl (bool _NoteIsRtl) { NoteIsRtl = _NoteIsRtl; OnChange?.Invoke (); }
+        public bool NoteIsTodo { get; private set; }
+        public void SetNoteIsTodo (bool _NoteIsTodo) { NoteIsTodo = _NoteIsTodo; OnChange?.Invoke (); }
         }
     }

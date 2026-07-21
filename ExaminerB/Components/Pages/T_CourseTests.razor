@@ -547,9 +547,10 @@ else
             }
 
 
-/*
+        /*
+        * old method wo epplus (takes more time)
         try
-            {
+        {
             _hasFetched = false;
             excelFile = e.File;
             //using var memoryStream = new MemoryStream();
@@ -558,7 +559,7 @@ else
             using var workbook = new XLWorkbook(stream);
             int i = 0;
             foreach (IXLWorksheet ws in workbook.Worksheets)
-                {
+            {
                 lstWorksheets.Add(ws.Worksheet.Name);
                 }
             StateHasChanged();
@@ -567,13 +568,13 @@ else
             _hasFetched = true;
             }
         catch (Exception ex)
-            {
+        {
             Console.WriteLine($"--------Error\n{ex}");
             appState.SetCmd("");
             _hasFetched = true;
             return;
             }
- */
+        */
         }
     private async Task OnWorksheetChanged (string newValue)
         {
@@ -591,6 +592,7 @@ else
             }
         else
             {
+            _hasFetched = false;
             var message = new MarkupString($"<hr>CONFIRM: <br><br>Tests in the <span style='color:indianred'>Selected</span><span style='color:royalblue'> Excel Worksheet</span> will be imported <br><br><span style='font-weight:bold'>Duplicate tests</span><br>are imported without warning! <span style='color:indianred'><br><br>Continue .... </span>?<br><br><div style='text-align:center'><img src='/img/icoExcel1.png' width='70'/></div><br><hr>");
             bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
@@ -663,6 +665,7 @@ else
                 lstWorksheets.Clear();
                 lstCourseTests.Clear();
                 lstCourseTests = await feService.Read_TestsByCourseId(Convert.ToInt32(appState.CourseId), intPageNumber, false);
+                lstCourseTopics = await feService.Read_CourseTopics (Convert.ToInt32 (appState.CourseId));
                 Snackbar.Add("data imported", Severity.Success);
                 _hasFetched = true;
                 appState.SetCmd("");

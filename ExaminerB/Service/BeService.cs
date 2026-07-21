@@ -2471,9 +2471,10 @@ namespace ExaminerB.Services2Backend
                 note.ReferenceId = reader.GetInt32 (1);
                 note.ReferenceType = reader.GetInt32 (2);
                 note.NoteDateTime = reader.GetDateTimeOffset (3);
-                note.NoteText = reader.GetString (4);
-                note.NoteTags = reader.GetInt32 (5);
-                note.ReferenceName = reader.GetString (6);
+                note.NoteDueDateTime = reader.GetDateTimeOffset (4);
+                note.NoteText = reader.GetString (5);
+                note.NoteTags = reader.GetInt32 (6);
+                note.ReferenceName = reader.GetString (7);
                 lstNotes.Add (note);
                 }
             await cnn.CloseAsync ();
@@ -3835,8 +3836,10 @@ namespace ExaminerB.Services2Backend
             cmd2.CommandType = CommandType.StoredProcedure;
             cmd2.Parameters.AddWithValue ("@referenceid", note.ReferenceId);
             cmd2.Parameters.AddWithValue ("@referencetype", note.ReferenceType);
+            cmd2.Parameters.AddWithValue ("@notedatetime", note.NoteDateTime);
+            cmd2.Parameters.AddWithValue ("@noteduedatetime", note.NoteDueDateTime);
             cmd2.Parameters.AddWithValue ("@notetext", note.NoteText);
-            cmd2.Parameters.AddWithValue ("@notetags", note.NoteTags); //1:rtl 2:done 4:shared 8:readonly
+            cmd2.Parameters.AddWithValue ("@notetags", note.NoteTags);
             cmd2.Parameters.AddWithValue ("@creatorid", note.CreatorId);
             await cmd2.ExecuteNonQueryAsync ();
             await cnn.CloseAsync ();
@@ -3864,10 +3867,11 @@ namespace ExaminerB.Services2Backend
                 note.ReferenceId = reader.GetInt32 (1);
                 note.ReferenceType = reader.GetInt32 (2);
                 note.NoteDateTime = reader.GetDateTimeOffset (3);
-                note.NoteText = reader.GetString (4);
-                note.CreatorId = reader.GetInt32 (5);
-                note.NoteTags = reader.GetInt32 (6);
-                note.ReferenceName = reader.GetString (7);
+                note.NoteDueDateTime = reader.GetDateTimeOffset (4);
+                note.NoteText = reader.GetString (5);
+                note.CreatorId = reader.GetInt32 (6);
+                note.NoteTags = reader.GetInt32 (7);
+                note.ReferenceName = reader.GetString (8);
                 lstNotes.Add (note);
                 }
             await cnn.CloseAsync ();
@@ -3895,10 +3899,11 @@ namespace ExaminerB.Services2Backend
                 note.ReferenceId = reader.GetInt32 (1);
                 note.ReferenceType = reader.GetInt32 (2);
                 note.NoteDateTime = reader.GetDateTimeOffset (3);
-                note.NoteText = reader.GetString (4);
-                note.CreatorId = reader.GetInt32 (5);
-                note.NoteTags = reader.GetInt32 (6);
-                note.ReferenceName = reader.GetString (7);
+                note.NoteDueDateTime = reader.GetDateTimeOffset (4);
+                note.NoteText = reader.GetString (5);
+                note.CreatorId = reader.GetInt32 (6);
+                note.NoteTags = reader.GetInt32 (7);
+                note.ReferenceName = reader.GetString (8);
                 lstNotes.Add (note);
                 }
             await cnn.CloseAsync ();
@@ -3921,10 +3926,11 @@ namespace ExaminerB.Services2Backend
                 note.ReferenceId = reader.GetInt32 (1);
                 note.ReferenceType = reader.GetInt32 (2);
                 note.NoteDateTime = reader.GetDateTimeOffset (3);
-                note.NoteText = reader.GetString (4);
-                note.CreatorId = reader.GetInt32 (5);
-                note.NoteTags = reader.GetInt32 (6);
-                note.ReferenceName = reader.GetString (7);
+                note.NoteDueDateTime = reader.GetDateTimeOffset (4);
+                note.NoteText = reader.GetString (5);
+                note.CreatorId = reader.GetInt32 (6);
+                note.NoteTags = reader.GetInt32 (7);
+                note.ReferenceName = reader.GetString (8);
                 }
             await cnn.CloseAsync ();
             return note;
@@ -3940,6 +3946,7 @@ namespace ExaminerB.Services2Backend
             cmd.Parameters.AddWithValue ("@referenceid", note.ReferenceId);
             cmd.Parameters.AddWithValue ("@referencetype", note.ReferenceType);
             cmd.Parameters.AddWithValue ("@NoteDateTime", note.NoteDateTime);
+            cmd.Parameters.AddWithValue ("@NoteDueDateTime", note.NoteDueDateTime);
             cmd.Parameters.AddWithValue ("@notetext", note.NoteText);
             cmd.Parameters.AddWithValue ("@notetags", note.NoteTags); //1:rtl 2:done 4:shared 8:readonly
             cmd.Parameters.AddWithValue ("@noteid", note.NoteId);

@@ -493,9 +493,10 @@ namespace ExaminerS.Models
         {
         public int NoteId { get; set; } = 0;
         public int ReferenceId { get; set; } = 0;
-        public int ReferenceType { get; set; } = 0; //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
+        public int ReferenceType { get; set; } = 0; 
         public string ReferenceName { get; set; } = "";
         public DateTimeOffset NoteDateTime { get; set; } 
+        public DateTimeOffset NoteDueDateTime { get; set; } 
         public string NoteText { get; set; } = "";
         public int NoteTags { get; set; } = 0; //1:rtl 2:done 3:shared 4:readonly 
         public bool IsRtl
@@ -509,7 +510,7 @@ namespace ExaminerS.Models
                     NoteTags &= ~1;
                 }
             }
-        public bool IsDone
+        public bool IsTodo
             {
             get => (NoteTags & 2) == 2;
             set
@@ -520,7 +521,7 @@ namespace ExaminerS.Models
                     NoteTags &= ~2;
                 }
             }
-        public bool IsShared
+        public bool IsDone
             {
             get => (NoteTags & 4) == 4;
             set
@@ -531,7 +532,7 @@ namespace ExaminerS.Models
                     NoteTags &= ~4;
                 }
             }
-        public bool IsReadonly
+        public bool IsShared
             {
             get => (NoteTags & 8) == 8;
             set
@@ -540,6 +541,17 @@ namespace ExaminerS.Models
                     NoteTags |= 8;
                 else
                     NoteTags &= ~8;
+                }
+            }
+        public bool IsReadonly
+            {
+            get => (NoteTags & 16) == 16;
+            set
+                {
+                if (value)
+                    NoteTags |= 16;
+                else
+                    NoteTags &= ~16;
                 }
             }
         public int CreatorId { get; set; } = 0;

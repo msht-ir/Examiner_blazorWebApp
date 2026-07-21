@@ -43,7 +43,6 @@
                                                        PickerVariant="PickerVariant.Dialog"
                                                        Dense="true" />
                                         </div>
-
                                     <MudTextField T="string"
                                                   Label="@($"{note.NoteText?.Length ?? 0} / 4000")"
                                                   @bind-Value="note.NoteText"
@@ -52,13 +51,41 @@
                                                   Lines="18"
                                                   AutoResize="true"
                                                   Style=@($"width:100%;direction:{(note.IsRtl ? "rtl" : "ltr")};font-size:13px;font-family:{(note.IsRtl ? "'Segoe UI'" : "'Courier New', Courier, monospace")};color:black;") />
-                                        <MudCheckBox @bind-Value="note.IsRtl"
-                                                 Label="RTL"
-                                                 Color="Color.Primary">
-                                        </MudCheckBox>
+                                        <div class="d-flex gap-4 mb-3">
+                                            <MudCheckBox @bind-Value="note.IsTodo"
+                                                     Label="Todo"
+                                                     Color="Color.Secondary">
+                                            </MudCheckBox>
+                                            <MudCheckBox @bind-Value="note.IsRtl"
+                                                     Label="RTL"
+                                                     Color="Color.Primary">
+                                            </MudCheckBox>
+                                        </div>
+                                    @* todo - set date and time *@
+                                    @if (note.IsTodo)
+                                        {
+                                        <hr style="color:red;" />
+                                            <div class="d-flex gap-4 mb-3">
+                                            <MudDatePicker Label="due date"
+                                                           @bind-Date="_dueDate"
+                                                           Culture="@_persianCulture"
+                                                           DateFormat="yyyy-MM-dd"
+                                                           Variant="Variant.Text"
+                                                           Elevation="12"
+                                                           Margin="Margin.Dense"
+                                                           Modal="true" />
+                                            <MudTimePicker Label="due time"
+                                                           @bind-Time="_dueTime"
+                                                           TimeFormat="HH:mm"
+                                                           Variant="Variant.Text"
+                                                           PickerVariant="PickerVariant.Dialog"
+                                                           Dense="true" />
+                                            </div>
+                                        }
+                                    @* Buttons *@
                                     @if (appState.Cmd == "CreateNote")
                                         {
-                                            <div class="d-flex gap-2 justify-content-center" style="text-align:center">
+                                            <div class="d-flex gap-2 justify-content-center" style="text-align:center;margin-top:50px;">
                                                 <MudButton Variant="Variant.Outlined"
                                                        Size="Size.Small"
                                                        Color="Color.Primary"
@@ -130,8 +157,10 @@
     bool _hasFetched;
     string textDirection = "ltr";
     private DateTime? _date = DateTime.Now;
-
+    private DateTime? _dueDate = DateTime.Now;
     private TimeSpan? _time = DateTime.Now.TimeOfDay;
+    private TimeSpan? _dueTime = DateTime.Now.TimeOfDay;
+
     int _PersianYear = 0;
     int _PersianMonth = 0;
     int _PersianDay = 0;
@@ -150,20 +179,33 @@
         note.ReferenceId = Convert.ToInt32(appState.NoteReferenceId);
         note.ReferenceType = Convert.ToInt32(appState.NoteReferenceType);
         note.CreatorId = Convert.ToInt32(appState.UserId);
+        if (appState.NoteDueDateTime == "1900-01-01 00:00")
+            {
+            appState.SetNoteDueDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm"));
+            }
         //for edit mode
         if (appState.Cmd == "UpdateNote")
             {
-            //DT
-            DateTimeOffset dTOffset = DateTimeOffset.Parse(appState.NoteDateTime);
-            //PARSE DATETIME
-            _PersianYear = dTOffset.Year;
-            _PersianMonth = dTOffset.Month;
-            _PersianDay = dTOffset.Day;
-            _date = dTOffset.LocalDateTime;
-            _time = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? dTOffset.TimeOfDay.Add(new TimeSpan(3, 30, 0)) : dTOffset.TimeOfDay;
+            Console.WriteLine($"----- appState.NoteDateTime    = {appState.NoteDateTime}");
+            Console.WriteLine($"----- appState.NoteDueDateTime = {appState.NoteDueDateTime}");
+            //DT1
+            DateTimeOffset dT1Offset = DateTimeOffset.Parse(appState.NoteDateTime);
+            _PersianYear = dT1Offset.Year;
+            _PersianMonth = dT1Offset.Month;
+            _PersianDay = dT1Offset.Day;
+            _date = dT1Offset.LocalDateTime;
+            _time = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? dT1Offset.TimeOfDay : dT1Offset.TimeOfDay.Add(new TimeSpan(-3, -30, 0)); //I dont know why! but it works like this!
+            //DT2
+            DateTimeOffset dT2Offset = DateTimeOffset.Parse(appState.NoteDueDateTime);
+            _PersianYear = dT2Offset.Year;
+            _PersianMonth = dT2Offset.Month;
+            _PersianDay = dT2Offset.Day;
+            _dueDate = dT2Offset.LocalDateTime;
+            _dueTime = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? dT2Offset.TimeOfDay : dT2Offset.TimeOfDay.Add(new TimeSpan(-3, -30, 0)); //I dont know why! but it works like this!
             //END PARSE DATETIME
             note.NoteText = appState.NoteText ?? "";
             note.IsRtl = Convert.ToBoolean(appState.NoteIsRtl);
+            note.IsTodo = Convert.ToBoolean(appState.NoteIsTodo);
             }
         _persianCulture = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? new CultureInfo("fa-IR") : new CultureInfo("en-US");
         _hasFetched = true;
@@ -201,8 +243,10 @@
         else
             {
             //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
-            DateTime _dt = _date.Value.Date + _time.Value;
-            note.NoteDateTime = _dt;
+            DateTime _dt1 = _date.Value.Date + _time.Value;
+            DateTime _dt2 = _dueDate.Value.Date + _dueTime.Value;
+            note.NoteDateTime = _dt1;
+            note.NoteDueDateTime = _dt2;
             _hasFetched = false;
             int result = await feService.Create_Note(note);
             if (result > 0)
@@ -237,8 +281,10 @@
             note.NoteId = Convert.ToInt32(appState.SelectedNoteId);
             note.ReferenceId = Convert.ToInt32(appState.NoteReferenceId);
             note.ReferenceType = Convert.ToInt32(appState.NoteReferenceType);
-            DateTime _dt = _date.Value.Date + _time.Value;
-            note.NoteDateTime = _dt;
+            DateTime _dt1 = _date.Value.Date + _time.Value;
+            DateTime _dt2 = _dueDate.Value.Date + _dueTime.Value;
+            note.NoteDateTime = _dt1;
+            note.NoteDueDateTime = _dt2;
             //not neccessary, but just to ensure everything is ok:
             _hasFetched = false;
             bool result = await feService.Update_Note(note);

@@ -64,6 +64,7 @@ else
                                                                   Adornment="Adornment.End"
                                                                   AdornmentIcon="@Icons.Material.Filled.Save"
                                                                   OnAdornmentClick="() => BtnUpdateCourse(crs)"
+                                                                  style="font-family:Tahoma"
                                                                   Class="my-textfield" />
                                                         <MudButton class="btn btn-link"
                                                                name="btnNewCourse"
@@ -303,6 +304,7 @@ else
                                               Variant="Variant.Text"
                                               Margin="Margin.Dense"
                                               Autocomplete="off"
+                                              style="font-family:Tahoma"
                                               Immediate="true"
                                               Adornment="Adornment.End"
                                               AdornmentIcon="@Icons.Material.Filled.Save"
@@ -547,7 +549,6 @@ else
         }
     public async Task BtnSaveNewCourseFolder (int courseId)
         {
-        _hasFetched = false;
         courseFolder.CourseId = courseId;
         int result = await feService.Create_CourseFolder(courseFolder);
         if (result > 0)
@@ -562,11 +563,9 @@ else
             Snackbar.Add($"failed to save course folder", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); 
             }
         appState.SetCourseId(courseId);
-        _hasFetched = true;
         }
     public async Task BtnUpdateCourseFolder (CourseFolder courseFolder)
         {
-        _hasFetched = false;
         bool result = await feService.Update_CourseFolder(courseFolder);
         if (result)
             {
@@ -575,7 +574,6 @@ else
             appState.SetCmd("");
             StateHasChanged();
             }
-        _hasFetched = true;
         }
     public async Task BtnDeleteCourseFolder (int courseFolderId)
         {
@@ -583,7 +581,6 @@ else
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            _hasFetched = false;
             bool result = await feService.Delete_CourseFolder(courseFolderId);
             if (result)
                 {
@@ -591,7 +588,6 @@ else
                 appState.SetCmd("");
                 StateHasChanged();
                 }
-            _hasFetched = true;
             }
         }
     public void BtnUpdateCourseFolderActiveInPlace (CourseFolder courseFolder, int flag, bool isChecked)
