@@ -3391,11 +3391,10 @@ namespace ExaminerB.Services2Backend
                 await reader2.CloseAsync ();
                 }
             await cnn.CloseAsync ();
-            // Sort: Unread first (bit 0 = 0), then read (bit 0 = 1), then by date
+            // Sort: 
             lstChats = lstChats
-                .OrderBy (chat => (chat.ChatTags & 1) == 0 ? 0 : 1)  // Unread first
-                .ThenByDescending (chat => chat.DateTimeSent)
-                .ToList ();
+            .OrderByDescending (chat => chat.DateTimeSent)
+            .ToList ();
             return lstChats;
             }
         public async Task<List<Chat>> Read_ChatsWithOneMateAsync (int studentId, int mateId)

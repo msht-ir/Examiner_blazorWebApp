@@ -13,25 +13,21 @@
     <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
         <MudCard Class="mx-auto">
             <MudCardContent Style="background-color:rgba(249,249,249);">
-                <h5>Excel file format to <span style="color:indianred">import</span> [ STUDENTS ] <br /></h5>
+                <h5>Excel columns to <span style="color:indianred">import</span> STUDENTS<br /></h5>
+                <hr />
                 <table class="table table-light">
                     <tr>
                         <th>column</th>
                         <th>header</th>
-                        <th>content</th>
+                        <th></th>
                     </tr>
                     <tr>
                         <td>A</td>
                         <td>UserName</td>
-                        <td>Username of the student by which they login<br />username cannot be changedby the user (student)</td>
+                        <td>Username (and default password) of the student by which they can login<br />username cannot be changedby the user (student)</td>
                     </tr>
                     <tr>
                         <td>B</td>
-                        <td>Password</td>
-                        <td>Password of the student by which they login<br />password may be changed later by the user (student)</td>
-                    </tr>
-                    <tr>
-                        <td>C</td>
                         <td>Nickname</td>
                         <td>this is the display name of the student <br /> set it as 'name + surname' (default) <br /> display name can be changed by the student </td>
                     </tr>
@@ -41,17 +37,17 @@
         </MudCard>
     </MudContainer>
 </div>
-<div style="text-align:left">
+@* <div style="text-align:left">
     <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
         <MudCard Class="mx-auto">
             <MudCardContent Style="background-color:rgba(249,249,249);">
                 <h5>Send <span style="color:indianred">message</span> to Students <br /></h5>
                 <ul>
                     <li>
-                        list students in a group, in a course, in an exam, recipients of a messageuse, list all students, or list by search
+                        list students of a group, a course, an exam, ... or by search
                     </li>
                     <li>
-                        select/deselect students
+                        select from students
                     </li>
                     <li>
                         click an action (in relevant menu)
@@ -60,4 +56,4 @@
             </MudCardContent>
         </MudCard>
     </MudContainer>
-</div>
+</div> *@

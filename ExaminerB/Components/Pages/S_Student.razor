@@ -528,7 +528,7 @@
                                     </p>
                                 </div>
                                 <div style="text-align:center">
-                                    <button class="btn btn-link align-items-center" Title=@((_help) ? "refresh chatrooms بروز رساني" : "") @onclick="ReadChatroomList">
+                                    <button class="btn btn-link align-items-center" Title=@((_help) ? "refresh forums بروز رساني" : "") @onclick="ReadChatroomList">
                                     <img src="/img/gifUserLogin.gif" width="34" />
                                     </button>
                                 </div>
@@ -540,7 +540,7 @@
                                         <MudCard Class="mx-0">
                                             <MudCardContent Style="background-color:whitesmoke;">
                                             <MudTextField @bind-Value="chatroom.ChatroomName"
-                                                          Label="chatroom name"
+                                                          Label="forum name"
                                                           Variant="Variant.Text"
                                                           Margin="Margin.Dense"
                                                           Autocomplete="off"
@@ -550,7 +550,7 @@
                                                           OnAdornmentClick="BtnCreateChatroom"
                                                           Style="font-family:Tahoma" />
                                             <MudTextField @bind-Value="chatroom.ChatroomTerms"
-                                                          Label="about chatroom"
+                                                          Label="about forum"
                                                           Variant="Variant.Text"
                                                           Margin="Margin.Dense"
                                                           Autocomplete="off"
@@ -576,7 +576,7 @@
                                             <MudCard Class="mx-0">
                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                     <div>
-                                                        <button class="btn btn-link" style="text-decoration: none;" Title=@((_help) ? "enter chatroom" : "") @onclick="() => BtnOpenThisChatroom(chatroom)">
+                                                        <button class="btn btn-link" style="text-decoration: none;" Title=@((_help) ? "enter forum" : "") @onclick="() => BtnOpenThisChatroom(chatroom)">
                                                         <img class="pulse-animation" src="/img/icoSwitchBoardStudents.png" width="34" />
                                                         <span style="font-weight:bold;color:gray;margin-left:5px;"> @chatroom.ChatroomName </span>
                                                         </button>
@@ -588,7 +588,7 @@
                                                     {
                                                         <div style="text-align:right">
                                                             <button class="btn btn-link" @onclick="() => BtnDeleteChatroom(chatroom.ChatroomId)">
-                                                            <img src="/img/icoDelete1.png" width="20" title="Delete chatroom" />
+                                                            <img src="/img/icoDelete1.png" width="20" title="Delete forum" />
                                                             </button>
                                                         </div>
                                                     }
@@ -1174,7 +1174,7 @@
         appState.SetClps("CHR");
         if ((chatroom.ChatroomTerms.Trim() == "") || (chatroom.ChatroomName.Trim() == ""))
             {
-            Snackbar.Add($"Enter chatroom NAME and SUBJECT", Severity.Info);
+            Snackbar.Add($"Enter forum NAME and SUBJECT", Severity.Info);
             return;
             }
         student.UserId = appState.UserId ?? 0;
@@ -1196,7 +1196,7 @@
     private async Task BtnDeleteChatroom (int chatroomId)
         {
         appState.SetClps("CHR");
-        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> chatroom?<br>All Posts in this chatroom will be deleted!.<br><br>Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> forum?<br>All Posts in this forum will be deleted!.<br><br>Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "Cancel");
         if (confirmResult == true)
             {
@@ -1215,7 +1215,7 @@
                 }
             else
                 {
-                Snackbar.Add($"failed to delete chatroom", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                Snackbar.Add($"failed to delete forum", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             }
         }
