@@ -159,6 +159,30 @@ namespace ExaminerB.Services2Backend
                 }
             return users;
             }
+        public async Task<List<User>> Read_NewTeachersAsync ()
+            {
+            var users = new List<User> ();
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new SqlConnection (connString);
+            using SqlCommand cmd = new ("dbo.sp_ReadNewTeachers", cnn); // -- ORDER BY usrNickName
+            cmd.CommandType = CommandType.StoredProcedure;
+            await cnn.OpenAsync ();
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            while (await reader.ReadAsync ())
+                {
+                users.Add (new User
+                    {
+                    UserId = reader.GetInt32 (0),
+                    DepartmentId = reader.GetInt32 (1),
+                    UserName = reader.GetString (2),
+                    UserPass = reader.GetString (3),
+                    UserNickname = reader.GetString (4),
+                    UserEmail = reader.GetString (5),
+                    UserTags = Convert.ToInt32 (reader.GetInt32 (6))
+                    });
+                }
+            return users;
+            }
         public async Task<bool> Update_TeacherAsync (User user)
             {
             string sql = "dbo.sp_UpdateTeacher";
@@ -169,6 +193,7 @@ namespace ExaminerB.Services2Backend
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue ("@departmentid", user.DepartmentId);
                 cmd.Parameters.AddWithValue ("@usrname", user.UserName);
                 cmd.Parameters.AddWithValue ("@usrpass", user.UserPass);
                 cmd.Parameters.AddWithValue ("@usrnickname", user.UserNickname);
@@ -3876,6 +3901,37 @@ namespace ExaminerB.Services2Backend
                 }
             await cnn.CloseAsync ();
             return lstNotes;
+            }
+        public async Task<List<Note>> Read_DueNotesAsync (int userId, int nDays)
+            {
+            //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
+            string sql = "dbo.sp_ReadNotesDue";
+            List<Note> lstDueNotes = new List<Note> ();
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new SqlConnection (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue ("@creatorid", userId);
+            cmd.Parameters.AddWithValue ("@days", nDays);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+            lstDueNotes.Clear ();
+            while (await reader.ReadAsync ())
+                {
+                Note note = new Note ();
+                note.NoteId = reader.GetInt32 (0);
+                note.ReferenceId = reader.GetInt32 (1);
+                note.ReferenceType = reader.GetInt32 (2);
+                note.NoteDateTime = reader.GetDateTimeOffset (3);
+                note.NoteDueDateTime = reader.GetDateTimeOffset (4);
+                note.NoteText = reader.GetString (5);
+                note.CreatorId = reader.GetInt32 (6);
+                note.NoteTags = reader.GetInt32 (7);
+                //note.ReferenceName = reader.GetString (8);
+                lstDueNotes.Add (note);
+                }
+            await cnn.CloseAsync ();
+            return lstDueNotes;
             }
         public async Task<List<Note>> Read_NotesBySearchKeyAsync (string searchKey, int parentId, int mode)
             {

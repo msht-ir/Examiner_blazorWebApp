@@ -64,6 +64,19 @@ namespace ExaminerB.Service
                 return new List<User> ();
                 }
             }
+        public async Task<List<User>> Read_NewTeachers ()
+            {
+            var response = await _http.PostAsync ("api/Read_NewTeachers", null);
+            if (response.IsSuccessStatusCode)
+                {
+                List<User> lstNewTeachers = await response.Content.ReadFromJsonAsync<List<User>> ();
+                return lstNewTeachers;
+                }
+            else
+                {
+                return new List<User> ();
+                }
+            }
         public async Task<bool> Update_User (User user)
             {
             if (user.UserRole.ToLower () == "student")
@@ -1411,6 +1424,19 @@ namespace ExaminerB.Service
                 {
                 List<Note>? lstNotes = await response.Content.ReadFromJsonAsync<List<Note>> ();
                 return lstNotes ?? new List<Note> ();
+                }
+            else
+                {
+                return new List<Note> ();
+                }
+            }
+        public async Task<List<Note>> Read_DueNotes (int userId, int nDays)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_DueNotes?nDays={nDays}", userId);
+            if (response.IsSuccessStatusCode)
+                {
+                List<Note>? lstDueNotes = await response.Content.ReadFromJsonAsync<List<Note>> ();
+                return lstDueNotes ?? new List<Note> ();
                 }
             else
                 {

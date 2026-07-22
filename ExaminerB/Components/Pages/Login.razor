@@ -136,6 +136,7 @@
     private string _username = "";
     private string _password = "";
     private bool _firstRender = true;
+    private List<Note> lstDueNotes = new List<Note>();
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync ()
@@ -192,6 +193,17 @@
                         appState.SetUserRole(user.UserRole);
                         appState.SetUserNickname(user.UserNickname);
                         appState.SetCmd("showAlertsOnExamsAndNewChats");
+                        if ((user.UserTags & 16) == 16)
+                            {
+                            lstDueNotes = await feService.Read_DueNotes (user.UserId, ((user.UserTags & 32) == 32) ? 7 : 3);
+                            if (lstDueNotes.Count > 0)
+                                {
+                                foreach (Note dueNote in lstDueNotes)
+                                    {
+                                    Snackbar.Add($"{PersianDate(dueNote.NoteDueDateTime.ToString())} : {dueNote.NoteText}", Severity.Info, opt => { opt.VisibleStateDuration = 5000; opt.ShowTransitionDuration = 800; opt.HideTransitionDuration = 800; });
+                                    }
+                                }
+                            }
                         //navigate
                         await Task.Delay(1);
                         Navman.NavigateTo("/S_Student");
@@ -208,10 +220,21 @@
                         appState.SetUserTags(user.UserTags);
                         appState.SetUserRole(user.UserRole);
                         appState.SetUserNickname(user.UserNickname);
+                        if ((user.UserTags & 16) == 16)
+                            {
+                            lstDueNotes = await feService.Read_DueNotes(user.UserId, ((user.UserTags & 32) == 32) ? 7 : 3);
+                            if (lstDueNotes.Count > 0)
+                                {
+                                foreach (Note dueNote in lstDueNotes)
+                                    {
+                                    Snackbar.Add($"{PersianDate(dueNote.NoteDueDateTime.ToString())} : {dueNote.NoteText}", Severity.Info, opt => { opt.VisibleStateDuration = 5000; opt.ShowTransitionDuration = 800; opt.HideTransitionDuration = 800; });
+                                    }
+                                }
+                            }
                         //navigate
                         await Task.Delay(1);
                         Navman.NavigateTo("/T_SwitchBoard");
-                        Snackbar.Add($"\n\nwelcome {user.UserNickname}!", Severity.Info, opt => { opt.VisibleStateDuration = 2000; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                        Snackbar.Add($"\n\nwelcome {user.UserNickname}!", Severity.Success, opt => { opt.VisibleStateDuration = 1000; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                         break;
                         }
                 }
@@ -226,6 +249,19 @@
     public void BtnSignup ()
         {
         Navman.NavigateTo("/T_SignUp");
+        }
+    //convert date
+    public string PersianDate (string? dt)
+        {
+        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
+        if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
+            {
+            return feService.ToPersianDate(dt);
+            }
+        else
+            {
+            return dt;
+            }
         }
     //methods
     void TogglePasswordVisibility ()

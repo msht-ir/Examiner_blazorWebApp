@@ -55,6 +55,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Read_TeachersAsync (departmentId);
             return Ok (result);
             }
+        [HttpPost ("Read_NewTeachers")]
+        public async Task<ActionResult<List<User>>> Read_NewTeachers ()
+            {
+            var result = await _BeService.Read_NewTeachersAsync ();
+            return Ok (result);
+            }
         [HttpPost ("Update_Teacher")]
         public async Task<ActionResult<bool>> Update_Teacher ([FromBody] User user)
             {
@@ -966,6 +972,12 @@ namespace ExaminerB.Backend
         public async Task<ActionResult<List<Note>>> Read_Notes ([FromBody] int referenceId, [FromQuery] int referenceType, [FromQuery] int teacherid)
             {
             var result = await _BeService.Read_NotesAsync (referenceId, referenceType, teacherid);
+            return Ok (result);
+            }
+        [HttpPost ("Read_DueNotes")]
+        public async Task<ActionResult<List<Note>>> Read_DueNotes ([FromBody] int userid, [FromQuery] int nDays)
+            {
+            var result = await _BeService.Read_DueNotesAsync (userid, nDays);
             return Ok (result);
             }
         [HttpPost ("Read_NotesBySearchKey")]

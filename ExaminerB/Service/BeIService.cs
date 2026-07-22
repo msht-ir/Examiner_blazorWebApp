@@ -14,6 +14,7 @@ namespace ExaminerB.Services2Backend
         #region U:usrs
         Task<bool> Create_TeacherAsync (User teacher);
         Task<List<User>> Read_TeachersAsync (int departmentId);
+        Task<List<User>> Read_NewTeachersAsync ();
         Task<bool> Update_TeacherAsync (User user);
         Task<bool> Delete_TeacherAsync (int userId);
         #endregion
@@ -207,6 +208,7 @@ namespace ExaminerB.Services2Backend
         #region N:Notes
         Task<int> Create_NoteAsync (Note note);
         Task<List<Note>> Read_NotesAsync (int referenceId, int referenceType, int teacherId);
+        Task<List<Note>> Read_DueNotesAsync (int userId, int nDays);
         Task<List<Note>> Read_NotesBySearchKeyAsync (string searchKey, int referenceId, int mode);
         Task<Note> Read_NoteAsync (int referenceId);
         Task<bool> Update_NoteAsync (Note note);
