@@ -222,7 +222,7 @@
                         appState.SetUserNickname(user.UserNickname);
                         if ((user.UserTags & 16) == 16)
                             {
-                            lstDueNotes = await feService.Read_DueNotes(user.UserId, ((user.UserTags & 32) == 32) ? 7 : 3);
+                            lstDueNotes = await feService.Read_DueNotes (user.UserId, ((user.UserTags & 32) == 32) ? 7 : 3);
                             if (lstDueNotes.Count > 0)
                                 {
                                 foreach (Note dueNote in lstDueNotes)
