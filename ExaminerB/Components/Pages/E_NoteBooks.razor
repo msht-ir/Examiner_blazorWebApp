@@ -90,7 +90,7 @@ else
                                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
-                                        <span style="color:indianred; font-weight:bold;">@note.NoteDateTime</span>
+                                        <span style="color:indianred; font-weight:bold;">@PersianDate(note.NoteDateTime.ToString())</span>
                                         <p style="color:gray;font-weight:normal;font-style:italic">@note.ReferenceName</p>
                                         <hr />
                                         @if (note.NoteText.Length > 100)
@@ -140,7 +140,7 @@ else
                                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
                                     <MudCard Class="mx-0">
                                         <MudCardContent Style="background-color:whitesmoke;">
-                                        <span style="color:indianred; font-weight:bold;">@note.NoteDateTime</span>
+                                        <span style="color:indianred; font-weight:bold;">@PersianDate(note.NoteDateTime.ToString())</span>
                                         <p style="color:gray;font-weight:normal;font-style:italic">@note.ReferenceName</p>
                                         <hr />
                                         @if (note.NoteText.Length > 100)
@@ -363,7 +363,7 @@ else
                                                                     {
                                                                     @* SECTION BUTTONS *@
                                                                         <div style="text-align:center">
-                                                                            <button class="btn btn-link pulse-animation" @onclick="() => BtnCreateNewSubprojectNote(subProject)">
+                                                                            <button class="btn btn-link pulse-animation" @onclick="() => BtnCreateNewSectionNote(subProject)">
                                                                             <img src="/img/icoNewNote3.png" width="24" title="new note" />
                                                                             </button>
                                                                             <button class="btn btn-link" type="button" @onclick="() => BtnEditSubproject(subProject.SubprojectId)">
@@ -614,7 +614,7 @@ else
                                                                         @if (lstSPNotes.Count > 0)
                                                                             {
                                                                                 <div style="text-align:center;margin-top:8px;">
-                                                                                    <button class="btn btn-link" @onclick="() => BtnCreateNewSubprojectNote(subProject)">
+                                                                                    <button class="btn btn-link" @onclick="() => BtnCreateNewSectionNote(subProject)">
                                                                                     <img src="/img/icoNewNote3.png" width="28" title="add new note" />
                                                                                     </button>
                                                                                 </div>
@@ -1066,7 +1066,7 @@ else
             }
         }
     //SP notes
-    public async Task BtnCreateNewSubprojectNote (Subproject subProject)
+    public async Task BtnCreateNewSectionNote (Subproject section)
         {
         //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
         if (appState.UserRole == "teacher")
@@ -1081,8 +1081,8 @@ else
             {
             appState.SetNoteReferenceType(0);
             }
-        appState.SetNoteReferenceId(subProject.SubprojectId);
-        appState.SetProjectId(subProject.ProjectId);
+        appState.SetNoteReferenceId(section.SubprojectId);
+        appState.SetProjectId(section.ProjectId);
         appState.SetCmd("CreateNote");
         StateHasChanged();
         }
@@ -1126,7 +1126,7 @@ else
             appState.SetNoteReferenceType(0);
             }
         appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
-        appState.SetNoteDueDateTime(note.NoteDueDateTime.ToString("yyyy-MM-dd HH:mm"));
+        appState.SetNoteDueDateTime(note.NoteDueDateTime?.ToString("yyyy-MM-dd HH:mm")); //use ? becuse note.NoteDueDateTime is nullable
         appState.SetNoteText(note.NoteText);
         appState.SetNoteCreatorId(note.CreatorId);
         appState.SetNoteIsRtl(note.IsRtl);
@@ -1143,7 +1143,7 @@ else
         appState.SetNoteReferenceType(note.ReferenceType);
         appState.SetNoteReferenceName(note.ReferenceName);
         appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
-        appState.SetNoteDueDateTime(note.NoteDueDateTime.ToString("yyyy-MM-dd HH:mm"));
+        appState.SetNoteDueDateTime(note.NoteDueDateTime?.ToString("yyyy-MM-dd HH:mm")); //use ? becuse note.NoteDueDateTime is nullable
         appState.SetNoteText(note.NoteText);
         appState.SetNoteCreatorId(note.CreatorId);
         appState.SetNoteIsRtl(note.IsRtl);

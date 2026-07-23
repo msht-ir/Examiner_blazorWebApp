@@ -671,7 +671,12 @@ else
             }
         @* FOOTER *@
         <br />
-        <MudSwitch @bind-Value="_help" Label="help on mouse hover" Color="Color.Primary" Dense="true"></MudSwitch>
+            <MudSwitch @bind-Value="_help"
+                   Label="help"
+                   Color="Color.Primary"
+                   title="help on mouse hover هنگام عبور ماوس از روي دکمه ها، کمک را نشان بده"
+                   Dense="true">
+            </MudSwitch>
         <hr />
             <div style="text-align: center;">
                 <button type="button"
@@ -714,7 +719,7 @@ else
     }
 
     <script>
-    window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});
+    window.addEventListener('load', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
     </script>
 
 @code {

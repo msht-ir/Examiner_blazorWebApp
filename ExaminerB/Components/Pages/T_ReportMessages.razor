@@ -675,7 +675,7 @@ else
         {
         appState.SetSelectedNoteId (note.NoteId);
         appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
-        appState.SetNoteDueDateTime(note.NoteDueDateTime.ToString("yyyy-MM-dd HH:mm"));
+        appState.SetNoteDueDateTime(note.NoteDueDateTime?.ToString("yyyy-MM-dd HH:mm")); //use ? becuse note.NoteDueDateTime is nullable
         appState.SetNoteText(note.NoteText);
         appState.SetNoteIsRtl (note.IsRtl);
         appState.SetNoteReferenceType(note.ReferenceType);
@@ -691,7 +691,7 @@ else
         appState.SetNoteReferenceId (note.ReferenceId);
         appState.SetNoteReferenceType(note.ReferenceType);
         appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
-        appState.SetNoteDueDateTime(note.NoteDueDateTime.ToString("yyyy-MM-dd HH:mm"));
+        appState.SetNoteDueDateTime(note.NoteDueDateTime?.ToString("yyyy-MM-dd HH:mm")); //use ? becuse note.NoteDueDateTime is nullable
         appState.SetNoteText(note.NoteText);
         appState.SetNoteIsRtl (note.IsRtl);
         appState.SetNoteCreatorId(note.CreatorId);

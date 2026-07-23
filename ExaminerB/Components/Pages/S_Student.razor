@@ -1103,8 +1103,7 @@
         appState.SetClps("CH");
         if (strSearch.Length >= 3)
             {
-            int teacherId = Convert.ToInt32(appState.TeacherId);
-            lstStudents = await feService.Read_StudentsByKeyword(Convert.ToInt32(appState.UserId), strSearch, 0);
+            lstStudents = await feService.Read_StudentsByKeyword(student.DepartmentId, strSearch, 0);
             if (lstStudents.Count == 0)
                 {
                 Snackbar.Add($"students like '{strSearch}' not found", Severity.Info);
@@ -1241,7 +1240,7 @@
         appState.SetNoteReferenceType(note.ReferenceType);
         appState.SetNoteReferenceName(note.ReferenceName);
         appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
-        appState.SetNoteDueDateTime(note.NoteDueDateTime.ToString("yyyy-MM-dd HH:mm"));
+        appState.SetNoteDueDateTime(note.NoteDueDateTime?.ToString("yyyy-MM-dd HH:mm")); //use ? becuse note.NoteDueDateTime is nullable
         appState.SetNoteText(note.NoteText);
         appState.SetNoteCreatorId(note.CreatorId);
         appState.SetNoteIsRtl(note.IsRtl);
@@ -1259,7 +1258,7 @@
         appState.SetNoteReferenceType(note.ReferenceType);
         appState.SetNoteReferenceName(note.ReferenceName);
         appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
-        appState.SetNoteDueDateTime(note.NoteDueDateTime.ToString("yyyy-MM-dd HH:mm"));
+        appState.SetNoteDueDateTime(note.NoteDueDateTime?.ToString("yyyy-MM-dd HH:mm")); //use ? becuse note.NoteDueDateTime is nullable
         appState.SetNoteText(note.NoteText);
         appState.SetNoteCreatorId(note.CreatorId);
         appState.SetNoteIsRtl(note.IsRtl);

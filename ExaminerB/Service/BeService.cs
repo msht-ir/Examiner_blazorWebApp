@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Office.Word;
 using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
@@ -3861,7 +3862,7 @@ namespace ExaminerB.Services2Backend
             cmd2.Parameters.AddWithValue ("@referenceid", note.ReferenceId);
             cmd2.Parameters.AddWithValue ("@referencetype", note.ReferenceType);
             cmd2.Parameters.AddWithValue ("@notedatetime", note.NoteDateTime);
-            cmd2.Parameters.AddWithValue ("@noteduedatetime", note.NoteDueDateTime);
+            cmd2.Parameters.AddWithValue ("@noteduedatetime", (object) note.NoteDueDateTime ?? DBNull.Value);
             cmd2.Parameters.AddWithValue ("@notetext", note.NoteText);
             cmd2.Parameters.AddWithValue ("@notetags", note.NoteTags);
             cmd2.Parameters.AddWithValue ("@creatorid", note.CreatorId);
@@ -4000,8 +4001,8 @@ namespace ExaminerB.Services2Backend
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@referenceid", note.ReferenceId);
             cmd.Parameters.AddWithValue ("@referencetype", note.ReferenceType);
-            cmd.Parameters.AddWithValue ("@NoteDateTime", note.NoteDateTime);
-            cmd.Parameters.AddWithValue ("@NoteDueDateTime", note.NoteDueDateTime);
+            cmd.Parameters.AddWithValue ("@notedatetime", note.NoteDateTime);
+            cmd.Parameters.AddWithValue ("@noteduedatetime", (object) note.NoteDueDateTime ?? DBNull.Value); //null cannot be saved to DB, use DBNull instead!
             cmd.Parameters.AddWithValue ("@notetext", note.NoteText);
             cmd.Parameters.AddWithValue ("@notetags", note.NoteTags); //1:rtl 2:done 4:shared 8:readonly
             cmd.Parameters.AddWithValue ("@noteid", note.NoteId);

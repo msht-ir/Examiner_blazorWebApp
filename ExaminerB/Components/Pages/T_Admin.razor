@@ -106,7 +106,7 @@ else
                                 <button type="button"
                                     class="btn btn-link pulse-hover"
                                     @onclick='() => BtnListNewTeachers()'>
-                                <img src="/img/icoChatroomAddNew.png" width="40" />
+                                <img src="/img/icoChatroomAddNew.png" width="40" title="ليست اساتيد جديد که بايد تاييد و در يک گروه قرار داده شوند" />
                                 </button>
                             </div>
                             <div class="d-flex gap-3">
@@ -417,10 +417,6 @@ else
                                             <img src="/img/icoSave2.png" width="20" />
                                             </button>
                                         <span style='font-size:smaller; @((user.UserTags & 1) == 1 ? "color:black" : "color:indianred")'>@user.UserNickname - @user.UserName </span>
-                                        @if ((user.UserTags & 128) == 128)
-                                            {
-                                            <span style="font-style:italic; font-weight:bold;font-size:x-small;color:darkgoldenrod;margin-left:10px;">ADMINISTRATOR</span>
-                                            }
                                         </div>
                                     }
                                 </MudCardContent>
@@ -777,21 +773,32 @@ else
         }
     private async Task BtnSaveTeacherSetDepartment (User teacher)
         {
-        teacher.DepartmentId = DepartmentId;
-        teacher.UserRole = "teacher";
-        bool result = await feService.Update_User(teacher);
-        if (result)
+        if (DepartmentId < 1)
             {
-            lstTeachers = await feService.Read_Teachers(DepartmentId);
-            Snackbar.Add($"teacher {strTeacherUsername} - {strTeacherNickname} updated", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-            _cmd = "listteachers";
+            Snackbar.Add($"select a department", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            return;
+            }
+        //ask
+        var message = new MarkupString($"<hr>Save<span style='color:indianred'> membership </span> of the teacher in the selected <span style='color:indianred'>Department</span>?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
+            {
+            teacher.DepartmentId = DepartmentId;
+            teacher.UserRole = "teacher";
+            bool result = await feService.Update_User(teacher);
+            if (result)
+                {
+                lstTeachers = await feService.Read_Teachers(DepartmentId);
+                Snackbar.Add($"teacher {strTeacherUsername} - {strTeacherNickname} updated", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                _cmd = "listteachers";
+                StateHasChanged();
+                }
+            else
+                {
+                Snackbar.Add($"failed to update {strTeacherUsername}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                }
             StateHasChanged();
             }
-        else
-            {
-            Snackbar.Add($"failed to update {strTeacherUsername}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-            }
-        StateHasChanged();
         }
     private async Task BtnCreateNewTeacher ()
         {
@@ -835,9 +842,9 @@ else
         strTeacherPassword = teacher.UserPass;
         strTeacherNickname = teacher.UserNickname;
         strTeacherEmail = teacher.UserEmail;
-        _showDueNotes =  (((teacher.UserTags) & 16) == 16);
+        _showDueNotes = (((teacher.UserTags) & 16) == 16);
         _dueNotesDays7 = (((teacher.UserTags) & 32) == 32);
-        _calendarFa =    (((teacher.UserTags) & 256) == 256);
+        _calendarFa = (((teacher.UserTags) & 256) == 256);
         _cmd = "editteacher";
         StateHasChanged();
         }

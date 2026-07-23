@@ -26,7 +26,6 @@
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:whitesmoke;">
-                                    @* <MudDatePicker Label="Calendar تقويم" @bind-Date="_date" Culture="@GetPersianCulture()" DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" Margin="Margin.Dense" /> *@
                                         <div class="d-flex gap-4 mb-3">
                                         <MudDatePicker Label="date"
                                                        @bind-Date="_date"
@@ -156,6 +155,7 @@
     Note note = new Note();
     bool _hasFetched;
     string textDirection = "ltr";
+
     private DateTime? _date = DateTime.Now;
     private DateTime? _dueDate = DateTime.Now;
     private TimeSpan? _time = DateTime.Now.TimeOfDay;
@@ -164,8 +164,6 @@
     int _PersianYear = 0;
     int _PersianMonth = 0;
     int _PersianDay = 0;
-    int _Hour = 0;
-    int _Minute = 0;
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync ()
@@ -186,22 +184,22 @@
         //for edit mode
         if (appState.Cmd == "UpdateNote")
             {
-            Console.WriteLine($"----- appState.NoteDateTime    = {appState.NoteDateTime}");
-            Console.WriteLine($"----- appState.NoteDueDateTime = {appState.NoteDueDateTime}");
-            //DT1
+            // Console.WriteLine($"----- appState.NoteDateTime    = {appState.NoteDateTime}");
+            // Console.WriteLine($"----- appState.NoteDueDateTime = {appState.NoteDueDateTime}");
+            //DT1 (NoteDateTime)
             DateTimeOffset dT1Offset = DateTimeOffset.Parse(appState.NoteDateTime);
             _PersianYear = dT1Offset.Year;
             _PersianMonth = dT1Offset.Month;
             _PersianDay = dT1Offset.Day;
             _date = dT1Offset.LocalDateTime;
-            _time = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? dT1Offset.TimeOfDay : dT1Offset.TimeOfDay.Add(new TimeSpan(-3, -30, 0)); //I dont know why! but it works like this!
-            //DT2
+            _time = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? dT1Offset.TimeOfDay.Add(new TimeSpan(+3, +30, 0)) : dT1Offset.TimeOfDay; //I dont know why! but it works like this!
+            //DT2 (NoteDueDateTime)
             DateTimeOffset dT2Offset = DateTimeOffset.Parse(appState.NoteDueDateTime);
             _PersianYear = dT2Offset.Year;
             _PersianMonth = dT2Offset.Month;
             _PersianDay = dT2Offset.Day;
             _dueDate = dT2Offset.LocalDateTime;
-            _dueTime = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? dT2Offset.TimeOfDay : dT2Offset.TimeOfDay.Add(new TimeSpan(-3, -30, 0)); //I dont know why! but it works like this!
+            _dueTime = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? dT2Offset.TimeOfDay.Add(new TimeSpan(+3, +30, 0)) : dT2Offset.TimeOfDay; //I dont know why! but it works like this!
             //END PARSE DATETIME
             note.NoteText = appState.NoteText ?? "";
             note.IsRtl = Convert.ToBoolean(appState.NoteIsRtl);
@@ -245,9 +243,9 @@
             //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
             DateTime _dt1 = _date.Value.Date + _time.Value;
             DateTime _dt2 = _dueDate.Value.Date + _dueTime.Value;
-            note.NoteDateTime = _dt1;
-            note.NoteDueDateTime = _dt2;
-            _hasFetched = false;
+            note.NoteDateTime = _dt1.ToUniversalTime();   //convert time to utc
+            note.NoteDueDateTime = (note.IsTodo) ? _dt2.ToUniversalTime () : null;
+            // _hasFetched = false;
             int result = await feService.Create_Note(note);
             if (result > 0)
                 {
@@ -260,7 +258,7 @@
                 {
                 Snackbar.Add("failed to save note", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
-            _hasFetched = true;
+            // _hasFetched = true;
             }
         }
     public async Task BtnUpdateNote ()
@@ -283,8 +281,8 @@
             note.ReferenceType = Convert.ToInt32(appState.NoteReferenceType);
             DateTime _dt1 = _date.Value.Date + _time.Value;
             DateTime _dt2 = _dueDate.Value.Date + _dueTime.Value;
-            note.NoteDateTime = _dt1;
-            note.NoteDueDateTime = _dt2;
+            note.NoteDateTime = _dt1.ToUniversalTime();      //convert time to utc;
+            note.NoteDueDateTime = (note.IsTodo) ? _dt2.ToUniversalTime() : null;
             //not neccessary, but just to ensure everything is ok:
             _hasFetched = false;
             bool result = await feService.Update_Note(note);

@@ -42,11 +42,11 @@
                         @if (browserInfo != null)
                             {
                                 <div class="flex align-content-center align-items-center justify-content-center" style="font-size:smaller; color:cadetblue; margin-top:20px">
-                                <span style="color:blue">Your device info:</span>
+                                <span style="color:blue">device info:</span>
                                 <br />
                                 @browserInfo.BrowserName / @browserInfo.OSName @browserInfo.OSVersion
                                 <br />
-                                display: @browserInfo.ScreenResolution, cpu: @browserInfo.CPUArchitect<br />
+                                @browserInfo.ScreenResolution, cpu: @browserInfo.CPUArchitect<br />
                                 @* CPU:           @browserInfo.CPUArchitect
                                    Device Model:  @browserInfo.DeviceModel
                                    Device Type:   @browserInfo.DeviceType

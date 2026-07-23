@@ -496,7 +496,7 @@ namespace ExaminerS.Models
         public int ReferenceType { get; set; } = 0; 
         public string ReferenceName { get; set; } = "";
         public DateTimeOffset NoteDateTime { get; set; } 
-        public DateTimeOffset NoteDueDateTime { get; set; } 
+        public DateTimeOffset? NoteDueDateTime { get; set; } 
         public string NoteText { get; set; } = "";
         public int NoteTags { get; set; } = 0; //1:rtl 2:done 3:shared 4:readonly 
         public bool IsRtl
