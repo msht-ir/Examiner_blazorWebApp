@@ -35,19 +35,26 @@
                         @if (user.UserRole == "teacher")
                             {
                             <hr />
-                            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.AppRegistration" Size="Size.Small" OnClick="@(() => BtnSignup())" Style="margin-left:20px">SingUp New Teacher</MudButton>
+                            <MudButton 
+                                Variant="Variant.Filled" 
+                                EndIcon="@Icons.Material.Filled.AppRegistration" 
+                                Size="Size.Small" 
+                                OnClick="@(() => BtnSignup())" 
+                                Style="margin-left:20px;width:150px;">
+                                Sign Up
+                            </MudButton>
                             }
                         <hr />
+                        @*
+
                         <BrowserDetect @bind-BrowserInfo="browserInfo" />
                         @if (browserInfo != null)
                             {
                                 <div class="flex align-content-center align-items-center justify-content-center" style="font-size:smaller; color:cadetblue; margin-top:20px">
                                 <span style="color:blue">device info:</span>
                                 <br />
-                                @browserInfo.BrowserName / @browserInfo.OSName @browserInfo.OSVersion
-                                <br />
-                                @browserInfo.ScreenResolution, cpu: @browserInfo.CPUArchitect<br />
-                                @* CPU:           @browserInfo.CPUArchitect
+                                @browserInfo.CPUArchitect . @browserInfo.ScreenResolution . @browserInfo.BrowserName . @browserInfo.OSName @browserInfo.OSVersion <br />
+                                // CPU:           @browserInfo.CPUArchitect
                                    Device Model:  @browserInfo.DeviceModel
                                    Device Type:   @browserInfo.DeviceType
                                    Browser major: @browserInfo.BrowserMajor
@@ -55,14 +62,15 @@
                                    Is Desktop:    @browserInfo.IsDesktop
                                    Is Mobile:     @browserInfo.IsMobile
                                    Is Tablet:     @browserInfo.IsTablet
-                                   Is PadPro:     @browserInfo.IsIPadPro*@
+                                   Is PadPro:     @browserInfo.IsIPadPro
+                                   //
                                 </div>
                             }
                         else
                             {
                             <p>Detecting browser...</p>
                             }
-
+                        *@
                         </div>
                     </div>
                 </div>
@@ -112,7 +120,7 @@
                                    Variant="Variant.Filled"
                                    EndIcon="@Icons.Material.Filled.AccountBox"
                                    Size="Size.Large"
-                                   Style="text-align:center; width:320px;margin-top:60px;">
+                                   Style="text-align:center; width:320px;margin-top:40px;">
                             Login
                             </MudButton>
                         </div>
@@ -200,7 +208,7 @@
                                 {
                                 foreach (Note dueNote in lstDueNotes)
                                     {
-                                    Snackbar.Add($"{PersianDate(dueNote.NoteDueDateTime.ToString())} : {dueNote.NoteText}", Severity.Info, opt => { opt.VisibleStateDuration = 5000; opt.ShowTransitionDuration = 800; opt.HideTransitionDuration = 800; });
+                                    Snackbar.Add($"{(dueNote.NoteText.Length > 30 ? dueNote.NoteText.Substring(0, 30) + " ...": dueNote.NoteText)}", Severity.Info, opt => { opt.VisibleStateDuration = 5000; opt.ShowTransitionDuration = 800; opt.HideTransitionDuration = 800; });
                                     }
                                 }
                             }
@@ -227,7 +235,7 @@
                                 {
                                 foreach (Note dueNote in lstDueNotes)
                                     {
-                                    Snackbar.Add($"{PersianDate(dueNote.NoteDueDateTime.ToString())} : {dueNote.NoteText}", Severity.Info, opt => { opt.VisibleStateDuration = 5000; opt.ShowTransitionDuration = 800; opt.HideTransitionDuration = 800; });
+                                    Snackbar.Add($"{(dueNote.NoteText.Length > 30 ? dueNote.NoteText.Substring(0, 30) + " ...": dueNote.NoteText)}", Severity.Info, opt => { opt.VisibleStateDuration = 5000; opt.ShowTransitionDuration = 800; opt.HideTransitionDuration = 800; });
                                     }
                                 }
                             }
@@ -251,16 +259,15 @@
         Navman.NavigateTo("/T_SignUp");
         }
     //convert date
-    public string PersianDate (string? dt)
+    public string PersianDate (DateTimeOffset? dt)
         {
-        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
         if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
             {
-            return feService.ToPersianDate(dt);
+            return feService.ToPersianDate(dt.ToString());
             }
         else
             {
-            return dt;
+            return dt?.ToString("yyyy-MM-dd HH:mm");
             }
         }
     //methods

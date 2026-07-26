@@ -20,7 +20,7 @@ else
     {
         <EditForm Model="lstDepartments" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <img src="/img/icoAdmin.png" width="70" title="admin page صفحه ادمين" />
-        <h4 style="color:royalblue; font-style:italic">Administrative</h4>
+        <h5 style="color:royalblue; font-style:italic">Administrative</h5>
         <hr />
         @* COMBO D *@
             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 mb-4 px-0">
@@ -64,7 +64,7 @@ else
                         @* EDIT Department *@
                             <div class="d-flex">
                             <MudTextField @ref="refDepartmentName"
-                                          @bind-Value="strDepartmentName"
+                                          @bind-Value="_departmentEdit.DepartmentName"
                                           Label="department"
                                           Variant="Variant.Text"
                                           Margin="Margin.Dense"
@@ -76,7 +76,7 @@ else
                             </div>
                             <div class="d-flex">
                             <MudTextField @ref="refDepartmentInfo"
-                                          @bind-Value="strDepartmentInfo"
+                                          @bind-Value="_departmentEdit.DepartmentInfo"
                                           Label="about"
                                           Variant="Variant.Text"
                                           Margin="Margin.Dense"
@@ -96,12 +96,12 @@ else
                                 <button type="button"
                                     class="btn btn-link pulse-hover"
                                     @onclick='() => BtnAddNewDepartment()'>
-                                <img src="/img/icoAdd1.png" width="22" title="add new department ايجاد گروه آموزشي جديد" />
+                                <img src="/img/icoAdd0.png" width="22" title="add new department ايجاد گروه آموزشي جديد" />
                                 </button>
                                 <button type="button"
                                     class="btn btn-link pulse-hover"
                                     @onclick='() => BtnListDepartments()'>
-                                <img src="/img/icoList.png" width="24" title="ليست گروه هاي آموزشي" />
+                                <img src="/img/icoListD.png" width="38" title="ليست گروه هاي آموزشي" />
                                 </button>
                                 <button type="button"
                                     class="btn btn-link pulse-hover"
@@ -388,7 +388,7 @@ else
                                 @foreach (User user in lstNewTeachers)
                                     {
                                         <div class="d-flex align-items-center mb-1">
-                                            <button type="button"
+                                            @* <button type="button"
                                                 class="btn btn-link"
                                                 style="margin-left:1px"
                                                 Title="delete teacher حذف استاد"
@@ -401,6 +401,13 @@ else
                                                 {
                                                 <img src="/img/icoOff.png" width="22" />
                                                 }
+                                            </button> *@
+                                            <button type="button"
+                                                class="btn btn-link"
+                                                style="margin-left:1px"
+                                                Title="delete teacher حذف درخواست اکانت استاد"
+                                                @onclick='() => BtnDeleteTeacher(user)'>
+                                            <img src="/img/icoDelete1.png" width="20" />
                                             </button>
                                             <button type="button"
                                                 class="btn btn-link"
@@ -487,7 +494,7 @@ else
                                                     <span style="font-size:smaller;font-weight:bold;">@i</span><br />
                                                     </td>
                                                     <td>
-                                                    <span style="font-size:smaller;">@PersianDate(exam.ExamDateTime.ToString())</span><br />
+                                                    <span style="font-size:smaller;">@PersianDate(exam.ExamDateTime)</span><br />
                                                     </td>
                                                     <td>
                                                     <span style="font-size:smaller; color:indianred;margin-left:20px;">@exam.ExamTitle</span><br />
@@ -509,15 +516,9 @@ else
                     break;
                     }
             }
-        @* <div style="text-align: center;margin-top:70px;">
-                <button type="button"
-                    class="btn btn-link pulse-hover"
-                    @onclick='() => BtnListNewTeachers()'>
-                <img src="/img/icoReport0.png" width="32" />
-                </button>
-            </div> *@
         @* FOOTER *@
-            <div style="text-align: center;margin-top:70px;">
+
+            <div style="text-align: center;margin-top:100px;">
                 <button type="button"
                     class="btn btn-link"
                     @onclick="BtnBack">
@@ -558,8 +559,6 @@ else
 
     private MudTextField<string> refDepartmentName;
     private MudTextField<string> refDepartmentInfo;
-    string strDepartmentName = "";
-    string strDepartmentInfo = "";
 
     private MudTextField<string> refNewDepartmentName;
     private MudTextField<string> refNewDepartmentInfo;
@@ -581,6 +580,7 @@ else
     List<Course> lstCourses = new List<Course>();
     List<Exam> lstExams = new List<Exam>();
     Department department = new Department();
+    Department _departmentEdit = new Department();
     Course course = new Course();
     Exam exam = new Exam();
     int i = 0;
@@ -649,13 +649,11 @@ else
         DepartmentId = newValue;
         department.DepartmentId = DepartmentId;
         department.DepartmentName = "-"; //just because this field is required
-        appState.SetDepartmentId(DepartmentId);
         StateHasChanged();
         }
     private void BtnAddNewDepartment ()
         {
-        strDepartmentName = "";
-        strDepartmentInfo = "";
+        _departmentEdit = new();
         _cmd = "addnewdepartment";
         StateHasChanged();
         // refNewDepartmentName.FocusAsync();
@@ -680,10 +678,7 @@ else
         {
         if (departmentId > 0)
             {
-            Department thisDepartment = await feService.Read_Department(departmentId);
-            appState.SetDepartmentId(departmentId);
-            strDepartmentName = thisDepartment.DepartmentName;
-            strDepartmentInfo = thisDepartment.DepartmentInfo;
+            _departmentEdit = await feService.Read_Department(departmentId);
             _cmd = "editdepartment";
             StateHasChanged();
             refDepartmentName.FocusAsync();
@@ -691,12 +686,9 @@ else
         }
     private async Task BtnUpdateDepartment ()
         {
-        if (strDepartmentName.Trim() != "")
+        if (_departmentEdit.DepartmentName.Trim() != "")
             {
-            department.DepartmentId = Convert.ToInt32(appState.DepartmentId);
-            department.DepartmentName = strDepartmentName;
-            department.DepartmentInfo = strDepartmentInfo;
-            bool Result = await feService.Update_Department(department);
+            bool Result = await feService.Update_Department(_departmentEdit);
             Snackbar.Add($"updated to: {department.DepartmentName}", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             lstDepartments.Clear();
             lstDepartments = await feService.Read_Departments(); //refresh list
@@ -717,7 +709,6 @@ else
                     {
                     Snackbar.Add("department deleted", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     DepartmentId = 0;
-                    appState.SetDepartmentId(0);
                     _cmd = "listdepartments";
                     lstDepartments.Clear();
                     lstDepartments = await feService.Read_Departments();
@@ -909,6 +900,19 @@ else
                 }
             }
         }
+    private async Task BtnDeleteTeacher (User teacher)
+        {
+        var message = new MarkupString($"<hr>Delete<span style='color:indianred'> request </span> of the teacher? <span style='color:indianred'> Are you sure</span>?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
+            {
+            bool result = await feService.Delete_Teacher (teacher.UserId);
+            Snackbar.Add($"teacher (request) deleted", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            await BtnListNewTeachers ();
+            _cmd = "listnewteachers";
+            StateHasChanged();
+            }
+        }
     private async Task BtnToggleTeacherActiveTag (User teacher)
         {
         if ((teacher.UserTags & 1) == 1)
@@ -1020,16 +1024,15 @@ else
         Navman.NavigateTo(pg);
         }
     //convert date
-    public string PersianDate (string? dt)
+    public string PersianDate (DateTimeOffset? dt)
         {
-        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
         if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
             {
-            return feService.ToPersianDate(dt);
+            return feService.ToPersianDate(dt.ToString());
             }
         else
             {
-            return dt;
+            return dt?.ToString("yyyy-MM-dd HH:mm");
             }
         }
 

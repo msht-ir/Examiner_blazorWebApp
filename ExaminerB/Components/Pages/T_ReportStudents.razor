@@ -176,7 +176,7 @@ else
                                                                             <td style="color:indianred;font-weight:bold;">
                                                                             <span style="color:gray;font-weight:bold;padding:0px;">@exm.CourseName</span>
                                                                             <br /> @exm.ExamTitle
-                                                                            <br /> <span style="color:black;font-weight:normal;padding:0px;">@PersianDate(exm.ExamDateTime.ToString())</span>
+                                                                            <br /> <span style="color:black;font-weight:normal;padding:0px;">@PersianDate(exm.ExamDateTime)</span>
                                                                             <br />
                                                                             @if ((exm.StudentExamTags & 4) == 4)
                                                                                 {
@@ -473,16 +473,15 @@ else
             }
         }
     //convert date
-    public string PersianDate (string? dt)
+    public string PersianDate (DateTimeOffset? dt)
         {
-        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
         if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
             {
-            return feService.ToPersianDate(dt);
+            return feService.ToPersianDate(dt.ToString());
             }
         else
             {
-            return dt;
+            return dt?.ToString("yyyy-MM-dd HH:mm");
             }
         }
     //methods

@@ -87,7 +87,7 @@ else
                         <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
                             <MudCard Class="mx-0">
                                 <MudCardContent Style="background-color:whitesmoke;">
-                                <span style="color:indianred; font-weight:bold;">@PersianDate(note.NoteDateTime.ToString())</span>
+                                <span style="color:indianred; font-weight:bold;">@PersianDate(note.NoteDateTime)</span>
                                 <p style="color:gray;font-weight:normal;font-style:italic">@note.ReferenceName</p>
                                 <hr />
                                 @if (note.NoteText.Length > 100)
@@ -152,12 +152,12 @@ else
                             aria-expanded="true"
                             aria-controls="@collapseId_due">
                             <button class="btn btn-link" @onclick="() => BtnReadDueNotes()">
-                            <img class="pulse-hover" src="img/icoTodoTimer2.png" width="38" style="margin-right:10px;" />
+                            <img class="pulse-hover" src="img/icoClock2.png" width="30" style="margin-right:10px;" />
                             </button>
                         <h5 style="color:mediumslateblue">Todo Notes <span style="font-size:x-small;color:indianred">@((user.UserTags & 32) == 32 ? "(\u00B1 7 days)" : "(\u00B1 3 days)")</span> </h5>
                         </button>
                     </h4>
-                    <div id="@collapseId_due" class="accordion-collapse @_clpsP" data-bs-parent="#accordionProjects">
+                    <div id="@collapseId_due" class="accordion-collapse collapse" data-bs-parent="#accordionProjects">
                         <div class="accordion-body" style="background-color:rgba(254,254,254);">
                             <div id="T1">
                             @foreach (Note dueNotex in lstDueNotes)
@@ -171,11 +171,11 @@ else
                                                     @if (dueNotex.IsTodo)
                                                         {
                                                         <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
-                                                        @PersianDate(dueNotex.NoteDueDateTime.ToString())
+                                                        @PersianDate(dueNotex.NoteDueDateTime)
                                                         }
                                                     else
                                                         {
-                                                        @PersianDate(dueNotex.NoteDateTime.ToString())
+                                                        @PersianDate(dueNotex.NoteDateTime)
                                                         }
                                                     </div>
                                                 <hr />
@@ -220,14 +220,14 @@ else
             @* 2 NOTEBOOKS and SECTIONS *@
                 <div class="d-flex justify-content-center align-items-center mb-1" style="text-align:center">
                     <button class="btn btn-link" @onclick="BtnToggleShowProjectsMode">
-                    <img src="/img/icoListP.png" width="34" title="toggle: active / non-active / all-notes" />
+                    <img src="/img/icoList.png" width="28" title="toggle: active / non-active / all-notes" />
                     </button>
                     <span style="font-size:large;text-align:center;color:indianred; margin:10px;">
                     @(_ShowProjectsMode switch
                         {
                             "all" => "all notebooks",
-                            "active" => "active notebooks",
-                            "inactive" => "inactive notebooks",
+                            "active" => "active",
+                            "inactive" => "inactive",
                             _ => ""
                             })
                     </span>
@@ -416,11 +416,11 @@ else
                                                                                                 @if (notex.IsTodo)
                                                                                                     {
                                                                                                     <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
-                                                                                                    @PersianDate(notex.NoteDueDateTime.ToString())
+                                                                                                    @PersianDate(notex.NoteDueDateTime)
                                                                                                     }
                                                                                                 else
                                                                                                     {
-                                                                                                    @PersianDate(notex.NoteDateTime.ToString())
+                                                                                                    @PersianDate(notex.NoteDateTime)
                                                                                                     }
                                                                                                 </div>
                                                                                             <hr />
@@ -832,10 +832,8 @@ else
         }
     public async Task GetListOfProjects (int userId, string mode)
         {
-        // _hasFetched = false;
         lstProjects.Clear();
         lstProjects = await feService.Read_Projects(userId, mode);
-        // _hasFetched = true;
         }
     //SP (SECTION)
     public async Task BtnAddNewSubproject (int projectId)
@@ -1117,7 +1115,6 @@ else
                 {
                 newNote.NoteTags |= 16; //16:Student-Note
                 }
-            // _hasFetched = false;
             int result = await feService.Create_Note(newNote);
             if (result > 0)
                 {
@@ -1129,7 +1126,6 @@ else
                 {
                 Snackbar.Add("failed to copy note", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
-            // _hasFetched = true;
             }
         }
     public async Task BtnRemoveDueNoteTag (Note note)
@@ -1164,11 +1160,9 @@ else
                 {
                 Snackbar.Add($"deleted", Severity.Warning);
                 user.UserId = Convert.ToInt32(appState.UserId);
-                // _hasFetched = false;
                 await GetListOfProjects(user.UserId, _ShowProjectsMode);
                 Subproject _subProject = new Subproject() { SubprojectId = Convert.ToInt32(note.ReferenceId), ProjectId = Convert.ToInt32(appState.ProjectId) };
                 await BtnReadSectionNotes(_subProject);
-                // _hasFetched = true;
                 StateHasChanged();
                 }
             else
@@ -1291,16 +1285,15 @@ else
             }
         }
     //convert date
-    public string PersianDate (string? dt)
+    public string PersianDate (DateTimeOffset? dt)
         {
-        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
         if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
             {
-            return feService.ToPersianDate(dt);
+            return feService.ToPersianDate(dt.ToString());
             }
         else
             {
-            return dt;
+            return dt?.ToString("yyyy-MM-dd HH:mm");
             }
         }
     //back

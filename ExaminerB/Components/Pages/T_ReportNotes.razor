@@ -60,11 +60,11 @@ else
                                         @if (notex.IsTodo)
                                             {
                                             <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
-                                            @PersianDate(notex.NoteDueDateTime.ToString())
+                                            @PersianDate(notex.NoteDueDateTime)
                                             }
                                         else
                                             {
-                                            @PersianDate(notex.NoteDateTime.ToString())
+                                            @PersianDate(notex.NoteDateTime)
                                             }
                                         </span>
                                     <hr />
@@ -156,11 +156,11 @@ else
                                         @if (notex.IsTodo)
                                             {
                                             <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
-                                            @PersianDate(notex.NoteDueDateTime.ToString())
+                                            @PersianDate(notex.NoteDueDateTime)
                                             }
                                         else
                                             {
-                                            @PersianDate(notex.NoteDateTime.ToString())
+                                            @PersianDate(notex.NoteDateTime)
                                             }
                                         </span>
                                     <hr />
@@ -381,16 +381,15 @@ else
         Navman.NavigateTo("/T_SwitchBoard");
         }
     //convert date
-    public string PersianDate (string? dt)
+    public string PersianDate (DateTimeOffset? dt)
         {
-        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
         if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
             {
-            return feService.ToPersianDate(dt);
+            return feService.ToPersianDate(dt.ToString());
             }
         else
             {
-            return dt;
+            return dt?.ToString("yyyy-MM-dd HH:mm");
             }
         }
     //methods

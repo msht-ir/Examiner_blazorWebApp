@@ -179,7 +179,7 @@
                                                                 <div style="color:indianred; font-weight:bold;">
                                                                 <div><span style="color:gray; font-weight:normal;">@studentExam.CourseName</span></div>
                                                                 <div>@studentExam.ExamTitle</div>
-                                                                <div><span style="color:royalblue; font-weight:normal;">@PersianDate(studentExam.ExamDateTime.ToString())</span></div>
+                                                                <div><span style="color:royalblue; font-weight:normal;">@PersianDate(studentExam.ExamDateTime)</span></div>
                                                                 </div>
                                                             }
                                                         else
@@ -187,7 +187,7 @@
                                                                 <div style="color:darkslategrey; font-weight:bold;">
                                                                 <div><span style="color:gray; font-weight:normal;">@studentExam.CourseName</span></div>
                                                                 <div>@studentExam.ExamTitle</div>
-                                                                <div><span style="color:royalblue; font-weight:normal;">@PersianDate(studentExam.ExamDateTime.ToString())</span></div>
+                                                                <div><span style="color:royalblue; font-weight:normal;">@PersianDate(studentExam.ExamDateTime)</span></div>
                                                                 </div>
                                                             }
                                                         </MudItem>
@@ -269,7 +269,7 @@
                                                     @studentMessage.MessageTitle
                                                     </div>
                                                     <div style="font-size:smaller; font-weight:bold;color:indianred;text-align:center; margin-top:10px;">
-                                                    @PersianDate(studentMessage.DateTimeSent.ToString())
+                                                    @PersianDate(studentMessage.DateTimeSent)
                                                     </div>
                                                 @if ((studentMessage.MessageId == Convert.ToInt32(appState.MessageId)) & (_cmd == "useCourierFont"))
                                                     {
@@ -353,7 +353,7 @@
                                                 }
                                             else
                                                 {
-                                                <span style="padding-left:5px; color:indianred"> @PersianDate(studentMessage.DateTimeSent.ToString()) </span>
+                                                <span style="padding-left:5px; color:indianred"> @PersianDate(studentMessage.DateTimeSent) </span>
                                                     <button class="btn btn-link" Title=@((_help) ? "Open/Show this message" : "") @onclick="() => BtnSetStudentMessageAsRead(studentMessage)">
                                                     <img src="/img/icoEnvelop2.png" width="20" />
                                                     </button>
@@ -458,12 +458,12 @@
                                                         }
                                                     @if (chat.FromId == student.UserId)
                                                         {
-                                                        <span style="font-size:x-small; font-weight:bold;color:gray;"> @PersianDate(chat.DateTimeSent.ToString()) </span>
+                                                        <span style="font-size:x-small; font-weight:bold;color:gray;"> @PersianDate(chat.DateTimeSent) </span>
                                                         <span style="font-size:x-small; font-weight:normal;color:gray;padding-left:10px;"> @chat.ToName </span>
                                                         }
                                                     else
                                                         {
-                                                        <span style="font-size:x-small; font-weight:bold;color:indianred;"> @PersianDate(chat.DateTimeSent.ToString()) </span>
+                                                        <span style="font-size:x-small; font-weight:bold;color:indianred;"> @PersianDate(chat.DateTimeSent) </span>
                                                         <span style="font-size:x-small; font-weight:bold;color:Indianred;padding-left:10px;"> @chat.FromName </span>
                                                         }
                                                     </button>
@@ -657,11 +657,11 @@
                                                         @if (notex.IsTodo)
                                                             {
                                                             <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
-                                                            @PersianDate(notex.NoteDueDateTime.ToString())
+                                                            @PersianDate(notex.NoteDueDateTime)
                                                             }
                                                         else
                                                             {
-                                                            @PersianDate(notex.NoteDateTime.ToString())
+                                                            @PersianDate(notex.NoteDateTime)
                                                             }
                                                         </span>
                                                     <hr />
@@ -705,11 +705,11 @@
                                                         @if (notex.IsTodo)
                                                             {
                                                             <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
-                                                            @PersianDate(notex.NoteDueDateTime.ToString())
+                                                            @PersianDate(notex.NoteDueDateTime)
                                                             }
                                                         else
                                                             {
-                                                            @PersianDate(notex.NoteDateTime.ToString())
+                                                            @PersianDate(notex.NoteDateTime)
                                                             }
                                                         </span>
                                                     <hr />
@@ -757,8 +757,9 @@
                            EndIcon="@Icons.Material.Filled.Password"
                            Size="Size.Small"
                            OnClick="@(() => BtnChangeStudentPassword())"
+                           title="پسورد و تنظيمات"
                            FullWidth>
-                    Change Pass
+                    Preferences
                     </MudButton>
                     <MudButton Variant="Variant.Filled"
                            EndIcon="@Icons.Material.Filled.Logout"
@@ -947,7 +948,7 @@
         DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);
         if (_examDateTimeStart > DateTime.Now)
             {
-            Snackbar.Add($"exam starts at {PersianDate(exam.ExamDateTime.ToString())}", Severity.Info);
+            Snackbar.Add($"exam starts at {PersianDate(exam.ExamDateTime)}", Severity.Info);
             TimeSpan diff = _examDateTimeStart - DateTime.Now;
             int hours = (int) diff.TotalHours;
             int minutes = diff.Minutes;
@@ -1294,16 +1295,15 @@
             }
         }
     //convert date
-    public string PersianDate (string? dt)
+    public string PersianDate (DateTimeOffset? dt)
         {
-        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
         if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
             {
-            return feService.ToPersianDate(dt);
+            return feService.ToPersianDate(dt.ToString());
             }
         else
             {
-            return dt;
+            return dt?.ToString("yyyy-MM-dd HH:mm");
             }
         }
     //methods

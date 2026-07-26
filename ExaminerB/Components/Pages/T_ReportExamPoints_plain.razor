@@ -19,7 +19,7 @@ else
         <h6 style="color:gray;">
             Course: @course.CourseName | Exam: @exam.ExamTitle
             <br />
-            (@PersianDate(exam.ExamDateTime.ToString()))
+            (@PersianDate(exam.ExamDateTime))
             <br />
             Duration: @exam.ExamDuration min | students: @lstStudentsExam.Count
         </h6>
@@ -147,16 +147,15 @@ else
         _hasFetched = true;
         }
     //convert date
-    public string PersianDate (string? dt)
+    public string PersianDate (DateTimeOffset? dt)
         {
-        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
         if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
             {
-            return feService.ToPersianDate(dt);
+            return feService.ToPersianDate(dt.ToString());
             }
         else
             {
-            return dt;
+            return dt?.ToString("yyyy-MM-dd HH:mm");
             }
         }
     }

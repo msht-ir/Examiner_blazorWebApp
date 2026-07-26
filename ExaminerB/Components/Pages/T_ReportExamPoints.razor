@@ -19,7 +19,7 @@ else
         <div style="text-align:center; padding:10px;">
         <h6 style="color:gray;">@course.CourseName</h6>
         <h5 style="color:royalblue"><span style="color:darkgray;font-style:italic;">Exam </span>@exam.ExamTitle</h5>
-        <h6>@PersianDate(exam.ExamDateTime.ToString()) <span style="font-size:small;color:indianred"> /@exam.ExamDuration min </span><span style="font-size:small;color:gray"> /students: @lstStudentsExams.Count</span></h6>
+        <h6>@PersianDate(exam.ExamDateTime) <span style="font-size:small;color:indianred"> /@exam.ExamDuration min </span><span style="font-size:small;color:gray"> /students: @lstStudentsExams.Count</span></h6>
         </div>
     <hr />
         <div style="text-align:center">
@@ -84,8 +84,8 @@ else
                             </div>
                             <div style="font-weight:normal;">
                             @* <img src="/img/icoReport0.png" width="20" /> *@
-                            <span style="color:green">start: </span> <span style="font-size:small">@PersianDate(studentExam.DateTimeStart.ToString())</span> /
-                            <span style="color:royalblue">finish: </span> <span style="font-size:small">@PersianDate(studentExam.DateTimeFinish.ToString())</span>
+                            <span style="color:green">start: </span> <span style="font-size:small">@PersianDate(studentExam.DateTimeStart)</span> /
+                            <span style="color:royalblue">finish: </span> <span style="font-size:small">@PersianDate(studentExam.DateTimeFinish)</span>
                             </div>
                             <div style="display:flex; align-items:center;font-weight:bold;">
                                 <button class="btn btn-link" @onclick="async () => await BtnShowStudentExamTests(studentExam)">
@@ -174,16 +174,15 @@ else
         Navman.NavigateTo("/T_ReportExamPoints_plain");
         }
     //convert date
-    public string PersianDate (string? dt)
+    public string PersianDate (DateTimeOffset? dt)
         {
-        // notices: 1-this mthod must be synchronus. 2- for miladi dates, simply discard this methos in html above
         if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
             {
-            return feService.ToPersianDate(dt);
+            return feService.ToPersianDate(dt.ToString());
             }
         else
             {
-            return dt;
+            return dt?.ToString("yyyy-MM-dd HH:mm");
             }
         }
     //method

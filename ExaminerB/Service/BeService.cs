@@ -214,6 +214,7 @@ namespace ExaminerB.Services2Backend
             string sql = "dbo.sp_DeleteTeacher";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
             using SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@teacherid", userId);
