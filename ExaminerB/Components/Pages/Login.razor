@@ -18,7 +18,11 @@
         <div class="accordion align-items-center m-2" id="accordionIndex" style="text-align:center;min-width:380px;max-width:400px;">
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
+                    <button class="accordion-button collapsed"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseZero"
+                        aria-expanded="false"
+                        aria-controls="collapseZero">
                     <h6 style="color:lightseagreen">e<span style="font-style:italic;font-weight:normal;color:indianred">x</span>aminer</h6>
                     </button>
                 </h2>
@@ -35,14 +39,13 @@
                         @if (user.UserRole == "teacher")
                             {
                             <hr />
-                            <MudButton 
-                                Variant="Variant.Filled" 
-                                EndIcon="@Icons.Material.Filled.AppRegistration" 
-                                Size="Size.Small" 
-                                OnClick="@(() => BtnSignup())" 
-                                Style="margin-left:20px;width:150px;">
+                                <MudButton Variant="Variant.Filled"
+                                       EndIcon="@Icons.Material.Filled.AppRegistration"
+                                       Size="Size.Small"
+                                       OnClick="@(() => BtnSignup())"
+                                       Style="margin-left:20px;width:150px;">
                                 Sign Up
-                            </MudButton>
+                                </MudButton>
                             }
                         <hr />
                         @*
@@ -121,7 +124,14 @@
                                    EndIcon="@Icons.Material.Filled.AccountBox"
                                    Size="Size.Large"
                                    Style="text-align:center; width:320px;margin-top:40px;">
-                            Login
+                            @if (user.UserRole == "student")
+                                {
+                                <span> Student Login</span>
+                                }
+                            else
+                                {
+                                <span> Teacher Login</span>
+                                }
                             </MudButton>
                         </div>
                     </MudCardContent>
@@ -203,12 +213,12 @@
                         appState.SetCmd("showAlertsOnExamsAndNewChats");
                         if ((user.UserTags & 16) == 16)
                             {
-                            lstDueNotes = await feService.Read_DueNotes (user.UserId, ((user.UserTags & 32) == 32) ? 7 : 3);
+                            lstDueNotes = await feService.Read_DueNotes(user.UserId, ((user.UserTags & 32) == 32) ? 7 : 3);
                             if (lstDueNotes.Count > 0)
                                 {
                                 foreach (Note dueNote in lstDueNotes)
                                     {
-                                    Snackbar.Add($"{(dueNote.NoteText.Length > 30 ? dueNote.NoteText.Substring(0, 30) + " ...": dueNote.NoteText)}", Severity.Info, opt => { opt.VisibleStateDuration = 5000; opt.ShowTransitionDuration = 800; opt.HideTransitionDuration = 800; });
+                                    Snackbar.Add($"{(dueNote.NoteText.Length > 30 ? dueNote.NoteText.Substring(0, 30) + " ..." : dueNote.NoteText)}", Severity.Info, opt => { opt.VisibleStateDuration = 5000; opt.ShowTransitionDuration = 800; opt.HideTransitionDuration = 800; });
                                     }
                                 }
                             }
@@ -230,12 +240,12 @@
                         appState.SetUserNickname(user.UserNickname);
                         if ((user.UserTags & 16) == 16)
                             {
-                            lstDueNotes = await feService.Read_DueNotes (user.UserId, ((user.UserTags & 32) == 32) ? 7 : 3);
+                            lstDueNotes = await feService.Read_DueNotes(user.UserId, ((user.UserTags & 32) == 32) ? 7 : 3);
                             if (lstDueNotes.Count > 0)
                                 {
                                 foreach (Note dueNote in lstDueNotes)
                                     {
-                                    Snackbar.Add($"{(dueNote.NoteText.Length > 30 ? dueNote.NoteText.Substring(0, 30) + " ...": dueNote.NoteText)}", Severity.Info, opt => { opt.VisibleStateDuration = 5000; opt.ShowTransitionDuration = 800; opt.HideTransitionDuration = 800; });
+                                    Snackbar.Add($"{(dueNote.NoteText.Length > 30 ? dueNote.NoteText.Substring(0, 30) + " ..." : dueNote.NoteText)}", Severity.Info, opt => { opt.VisibleStateDuration = 5000; opt.ShowTransitionDuration = 800; opt.HideTransitionDuration = 800; });
                                     }
                                 }
                             }
@@ -281,6 +291,7 @@
     private void SwitchUserRole ()
         {
         user.UserRole = (user.UserRole == "student") ? "teacher" : "student";
+        refUser.FocusAsync ();
         StateHasChanged();
         }
     private async Task HandleKey_Passwordbox (KeyboardEventArgs e)

@@ -522,7 +522,12 @@ else
                 <button type="button"
                     class="btn btn-link"
                     @onclick="BtnBack">
-                <img src="/img/icoBack3.png" width="40" />
+                <img src="/img/icoBack3.png" width="38" />
+                </button>
+                <button type="button"
+                    class="btn btn-link pulse-hover"
+                    @onclick='() => BtnGotoPage("M")'>
+                <img src="/img/icoList.png" width="32" />
                 </button>
                 <button type="button"
                     class="btn btn-link pulse-hover"
@@ -1016,6 +1021,7 @@ else
         {
         string pg = page switch
             {
+                "M" => "/T_SwitchBoard",
                 "S" => "/T_Students",
                 "N" => "/E_NoteBooks",
                 "C" => "/T_Courses"
