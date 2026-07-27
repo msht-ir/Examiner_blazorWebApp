@@ -730,7 +730,7 @@ else
             Snackbar.Add("select a department", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
-    //Teachers
+    //teachers
     private async Task OnTeacherChanged (int newValue)
         {
         //update CourseId from the event
@@ -775,7 +775,7 @@ else
             return;
             }
         //ask
-        var message = new MarkupString($"<hr>Save<span style='color:indianred'> membership </span> of the teacher in the selected <span style='color:indianred'>Department</span>?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
+        var message = new MarkupString($"<hr>Save<span style='color:indianred'> membership </span> of the teacher in the selected <span style='color:indianred'>Department</span>?<br><br> <div style='text-align:center'><img src='/img/icoUserAddNew.png' width='40'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {

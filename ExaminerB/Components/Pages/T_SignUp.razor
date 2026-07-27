@@ -37,8 +37,14 @@
                                 </li>
                             </ul>
                             <div class="form-check form-check-inline" style="padding-top:8px;">
-                            <input class="form-check-input" type="checkbox" checked="@checkAgree" @onchange="e => BtnAgree((bool) e.Value)" />
-                            <label class="form-check-label" style="font-size: small; color: RoyalBlue;">I agree</label>
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   checked="@checkAgree"
+                                   @onchange="e => BtnAgree((bool) e.Value)" />
+                                <label class="form-check-label"
+                                   style="font-size: small; color: RoyalBlue;">
+                                I agree
+                                </label>
                             </div>
                         </div>
                     </MudCardContent>
@@ -107,7 +113,7 @@
                            EndIcon="@Icons.Material.Filled.CloudUpload"
                            Size="Size.Small"
                            OnClick="@(() => BtnSignupNewTeacher())"
-                           Style="margin-right:20px">Sing-Up </MudButton>
+                           Style="margin-right:20px">SIGN-UP </MudButton>
                 }
             <MudButton Variant="Variant.Filled"
                        EndIcon="@Icons.Material.Filled.Help"
