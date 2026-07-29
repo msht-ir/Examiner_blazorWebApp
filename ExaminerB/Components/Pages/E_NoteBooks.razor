@@ -486,7 +486,7 @@ else
                                                                                                 @* CMD MENU *@
                                                                                                     <div class="d-flex align-items-center text-start" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
                                                                                                         <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                                                                                            <MudMenuItem @onclick="() => BtnCopyToQuickNotes(notex, subProject.ProjectId)">
+                                                                                                            <MudMenuItem @onclick="() => BtnCopyToQuickNotes(notex, subProject)">
                                                                                                                 <button class="btn btn-link">
                                                                                                                 <img src="/img/icoCopyToNoteReport.png" width="26" title="copy to quick note" />
                                                                                                                 </button>
@@ -1091,22 +1091,23 @@ else
         lstSearchedtNotes.Clear();
         StateHasChanged();
         }
-    public async Task BtnCopyToQuickNotes (Note note, int projectId)
+    public async Task BtnCopyToQuickNotes (Note note, Subproject subproject)
         {
         var message = new MarkupString($"<hr><span style='color:DarkGreen'>COPY</span> this note to Quick-Notes?<br><br><div style='text-align:center'><img src='/img/icoCopyToNoteReport.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
-            appState.SetProjectId(projectId);
+            appState.SetProjectId(subproject.ProjectId);
             user.UserRole = appState.UserRole;
             Note newNote = new Note()
                 {
                 NoteId = 1,
                 ReferenceId = Convert.ToInt32(appState.UserId),
                 ReferenceType = 1,
-                NoteDateTime = new DateTimeOffset(), // note.NoteDateTime,
-                NoteText = note.NoteText,
+                NoteDateTime = DateTime.Now, // note.NoteDateTime,
+                NoteDueDateTime = note.NoteDueDateTime, // note.NoteDateTime,
+                NoteText = $"[COPY from NoteBook Section '{subproject.SubprojectName}'] \n" + note.NoteText,
                 NoteTags = note.NoteTags,
                 CreatorId = Convert.ToInt32(appState.UserId)
                 };
