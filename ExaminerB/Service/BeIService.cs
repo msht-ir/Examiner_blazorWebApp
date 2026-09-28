@@ -37,7 +37,7 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region G:Groups
         Task<int> Create_GroupAsync (Group group);
-        Task<List<Group>> Read_GroupsAsync (User user, bool getGroupStudents);
+        Task<List<Group>> Read_GroupsAsync (User user, bool showAllGroups, bool getGroupStudents);
         Task<Group> Read_GroupAsync (int groupId);
         Task<bool> Update_GroupAsync (Group group);
         Task<int> Delete_GroupAsync (int groupId);

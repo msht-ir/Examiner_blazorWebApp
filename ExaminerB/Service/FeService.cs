@@ -248,9 +248,9 @@ namespace ExaminerB.Service
                 return false;
                 }
             }
-        public async Task<List<Group>> Read_Groups (User user, bool getGroupStudents)
+        public async Task<List<Group>> Read_Groups (User user, bool showAllGroups, bool getGroupStudents)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Groups?getGroupStudents={getGroupStudents}", user);
+            var response = await _http.PostAsJsonAsync ($"api/Read_Groups?showAllGroups={showAllGroups}&getGroupStudents={getGroupStudents}", user);
             if (response.IsSuccessStatusCode)
                 {
                 List<Group>? groups = await response.Content.ReadFromJsonAsync<List<Group>> ();

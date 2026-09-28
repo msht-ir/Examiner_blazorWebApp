@@ -1,0 +1,15 @@
+use msht_LeoRex
+
+select c.CourseName, sct.* from Students s
+inner join StudentCourses sc on s.studentid = sc.studentid 
+inner join StudentCourseTests sct on sc.courseId = sc.courseid
+inner join courses c on sc.courseId=c.CourseId
+ where s.studentid in (454, 448)
+
+select c.CourseName, count (*) TestsByStudentsCount 
+from studentCourseTests sct
+inner join StudentCourses sc on sct.StudentCourseId = sc.StudentCourseId
+inner join courses c on sc.courseId = c.CourseId
+group by c.CourseName
+
+select count (*) from studentCourseTests sct

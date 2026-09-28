@@ -154,20 +154,42 @@ else
                     else if (_cmd == "EditGroup")
                         {
                             <div class="d-flex">
+                                <MudSwitch @bind-Value="thisGroup.IsActive"
+                                       Label="active"
+                                       Color="Color.Primary"
+                                       title="activate thie group"
+                                       Style="margin-right:10px;margin-top:10px;"
+                                       Dense="true">
+                                </MudSwitch>
                             <MudTextField @ref="reftxtNewGroup"
-                                          @bind-Value="strGroupName"
+                                          @bind-Value="thisGroup.GroupName"
                                           Label="edit group"
                                           Variant="Variant.Text"
                                           Margin="Margin.Dense"
                                           Autocomplete="off"
                                           Adornment="Adornment.End"
                                           AdornmentIcon="@Icons.Material.Filled.Save"
-                                          OnAdornmentClick="() => BtnUpdateGroup(strGroupName)"
+                                          OnAdornmentClick="() => BtnUpdateGroup()"
                                           Class="my-textfield" />
                                 <button class="btn btn-link" style="margin-left:20px;" Title=@((_help) ? "cancel" : "") @onclick="BtnCancel">
                                 <img src="/img/icoCancel.png" width="20" />
                                 </button>
                             </div>
+                        }
+                    @if (_cmd == "SelectExcelFileOfStudentUsernames")
+                        {
+                        <hr style="color:slateblue" />
+                        <h6 style="text-align:center; color:indianred">Get students usernames from Excel file</h6>
+                            <div class="d-flex align-items-center" style="gap:10px;margin-top:20px;margin-left:20px;">
+                                <button class="btn btn-link pulse-hover"
+                                    Title=@((_help) ? "cancel" : "")
+                                    style="margin-right:10px;"
+                                    @onclick="BtnCancel">
+                                <img src="/img/icoCancel.png" width="24" />
+                                </button>
+                            <InputFile Title=@((_help) ? "get from excel" : "") OnChange="HandleExcelFileOfStudentUsernames" />
+                            </div>
+                        <br />
                         }
                     else
                         {
@@ -198,6 +220,32 @@ else
                                      Size="Size.Small"
                                      Style="margin-top:15px;"
                                      Dense="true">
+                                    <MudMenuItem @onclick="() => BtnAddStudentsToGroup()">
+                                        <button class="btn btn-link" Title=@((_help) ? "add selected students to this group" : "")>
+                                        <img src="/img/icoListAddNew1.png" width="30" />
+                                        </button>
+                                    add students to group
+                                    </MudMenuItem>
+                                    <MudMenuItem @onclick="() => BtnAddStudentsToGroupUsingExcel()">
+                                        <button class="btn btn-link" Title=@((_help) ? "add students to this group (from excel)" : "")>
+                                        <img src="/img/icoExcel1.png" width="20" />
+                                        </button>
+                                    add students to group
+                                    </MudMenuItem>
+                                    <MudMenuItem @onclick="() => BtnRemoveStudentsFromGroup()">
+                                        <button class="btn btn-link" Title=@((_help) ? "remove selected students from this group" : "")>
+                                        <img src="/img/icoCancel.png" width="18" />
+                                        </button>
+                                    remove from group
+                                    </MudMenuItem>
+                                <MudDivider />
+                                    <MudMenuItem @onclick="BtnShowGroups">
+                                        <button class="btn btn-link" Title=@((_help) ? "show all groups ()" : "")>
+                                        <img src="/img/icoList.png" width="22" />
+                                        </button>
+                                    <span style="color:royalblue">@_showGroups</span>
+                                    </MudMenuItem>
+                                <MudDivider />
                                     <MudMenuItem @onclick="BtnAddNewGroup">
                                         <button class="btn btn-link" Title=@((_help) ? "add new group" : "")>
                                         <img src="/img/icoAdd0.png" width="22" />
@@ -214,22 +262,9 @@ else
                                         <button class="btn btn-link" Title=@((_help) ? "delete group" : "")>
                                         <img src="/img/icoDelete2.png" width="26" />
                                         </button>
-                                    delete group
+                                    <span style="color:indianred">delete group</span>
                                     </MudMenuItem>
-                                <hr />
-                                    <MudMenuItem @onclick="() => BtnAddStudentsToGroup()">
-                                        <button class="btn btn-link" Title=@((_help) ? "add selected students to this group" : "")>
-                                        <img src="/img/icoListAddNew1.png" width="30" />
-                                        </button>
-                                    add students to group
-                                    </MudMenuItem>
-                                    <MudMenuItem @onclick="() => BtnRemoveStudentsFromGroup()">
-                                        <button class="btn btn-link" Title=@((_help) ? "remove selected students from this group" : "")>
-                                        <img src="/img/icoCancel.png" width="18" />
-                                        </button>
-                                    remove from group
-                                    </MudMenuItem>
-                                <hr />
+                                <MudDivider />
                                     <MudMenuItem @onclick='() => BtnCreateNote(GroupId, 14)'>
                                         <button class="btn btn-link" Title=@((_help) ? "add note about this group" : "")>
                                         <img src="/img/icoNewNote3.png" width="22" />
@@ -572,16 +607,9 @@ else
                                             <button class="btn btn-link" Title=@((_help) ? "delete this message" : "")>
                                             <img src="/img/icoDelete2.png" width="28" />
                                             </button>
-                                        delete message
+                                        <span style="color:indianred">delete message</span>
                                         </MudMenuItem>
-                                    <hr />
-                                        <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
-                                            <button class="btn btn-link" Title=@((_help) ? "report courses and exams of students that received this message" : "")>
-                                            <img src="/img/icoFolderS.png" width="24" />
-                                            </button>
-                                        students folder
-                                        </MudMenuItem>
-                                    <hr />
+                                    <MudDivider />
                                     @* SEND *@
                                         <MudMenuItem>
                                         <MudCheckBox @bind-Value="requestFeedback" Label="type: feedback" Color="Color.Primary"></MudCheckBox>
@@ -591,6 +619,13 @@ else
                                             <img class="pulse-animation" src="/img/icoEnvelopSend.png" width="24" />
                                             </button>
                                         send message to students
+                                        </MudMenuItem>
+                                    <MudDivider />
+                                        <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
+                                            <button class="btn btn-link" Title=@((_help) ? "report courses and exams of students that received this message" : "")>
+                                            <img src="/img/icoFolderS.png" width="24" />
+                                            </button>
+                                        students folder
                                         </MudMenuItem>
                                     </MudMenu>
                                 </div>
@@ -631,8 +666,6 @@ else
                                            Size="Size.Medium"
                                            OnClick="BtnInvertSelection"
                                            Title="Invert Selection" />
-                            @* <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="BtnSelectAllStudents" style="width:40px;">all</MudButton> *@
-                            @* <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Tertiary" OnClick="BtnInvertSelection"  style="width:60px;">invert</MudButton> *@
                             </div>
                         @foreach (User student in lstStudents)
                             {
@@ -742,6 +775,7 @@ else
     private MudSelect<int> refMessages;
     string strNewGroupName = "";
     string strGroupName = "";
+    bool boolGroupActive;
     string strNewMessageTitle = "";
     string strNewMessageBody = "";
     int GroupId = 0;
@@ -754,11 +788,13 @@ else
     List<Message> lstMessages = new();
     List<User> lstStudents = new();
     Group group = new Group();
+    Group thisGroup = new Group();
     Course course = new Course();
     Exam exam = new Exam();
     Message message = new Message();
     int i = 0;
-    bool _help;
+    bool _help = true;
+    string _showGroups = "show all groups";
     string _cmd = "";
     public bool _hasFetched = false;
     public bool requestFeedback { get; set; } = false;
@@ -777,7 +813,7 @@ else
         user.UserPass = appState.UserPass;
         user.UserRole = appState.UserRole;
         //on second rener, user.UserId will get its value
-        lstGroups = await feService.Read_Groups(user, false);
+        lstGroups = await feService.Read_Groups(user, false, false);
         lstCourses = await feService.Read_Courses(user.UserId);
         lstMessages = await feService.Read_Messages(user.UserId, false);
         GroupId = appState.GroupId ?? 0;
@@ -788,7 +824,6 @@ else
             ExamId = appState.ExamId ?? 0;
             }
         MessageId = appState.MessageId ?? 0;
-        _help = Convert.ToBoolean(appState.HelpOnHover);
         _hasFetched = true;
         }
     protected override async Task OnAfterRenderAsync (bool firstRender)
@@ -938,6 +973,12 @@ else
         appState.SetGroupId(GroupId);
         StateHasChanged();
         }
+    private async Task BtnShowGroups ()
+        {
+        lstGroups = await feService.Read_Groups(user, (_showGroups == "show all groups" ? true : false), false);
+        _showGroups = _showGroups == "show all groups" ? "show active groups" : "show all groups";
+        StateHasChanged();
+        }
     private void BtnAddNewGroup ()
         {
         _cmd = "AddNewGroup";
@@ -947,11 +988,11 @@ else
     private async Task BtnCreateNewGroup (string groupName)
         {
         user.UserId = Convert.ToInt32(appState.UserId);
-        Group group = new Group() { GroupName = groupName, UserId = user.UserId };
+        Group group = new Group() { GroupName = groupName, UserId = user.UserId, GroupTags = 1 };
         bool result = await feService.Create_Group(group);
         if (result)
             {
-            lstGroups = await feService.Read_Groups(user, false);
+            lstGroups = await feService.Read_Groups(user, false, false);
             Snackbar.Add($"group {groupName} created", Severity.Success);
             _cmd = "";
             StateHasChanged();
@@ -1013,26 +1054,21 @@ else
         {
         if (groupId > 0)
             {
-            Group thisGroup = await feService.Read_Group(groupId);
-            appState.SetGroupId(groupId);
-            appState.SetGroupName(thisGroup.GroupName);
-            strGroupName = appState.GroupName;
+            thisGroup = await feService.Read_Group(groupId);
             _cmd = "EditGroup";
             StateHasChanged();
             reftxtNewGroup.FocusAsync();
             }
         }
-    private async Task BtnUpdateGroup (string groupName)
+    private async Task BtnUpdateGroup ()
         {
-        if (groupName.Trim() != "")
+        if (thisGroup.GroupName.Trim() != "")
             {
-            group.GroupId = Convert.ToInt32(appState.GroupId);
-            group.GroupName = strGroupName;
-            group.UserId = Convert.ToInt32(appState.UserId);
-            bool Result = await feService.Update_Group(group);
-            Snackbar.Add($"updated to: {group.GroupName}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+            bool Result = await feService.Update_Group(thisGroup);
+            Snackbar.Add($"updated to: {thisGroup.GroupName}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             lstGroups.Clear();
-            lstGroups = await feService.Read_Groups(user, false); //refresh list
+            lstGroups = await feService.Read_Groups(user, false, false); //refresh list
+            GroupId = 0;
             _cmd = "";
             StateHasChanged();
             }
@@ -1054,7 +1090,7 @@ else
                     appState.SetGroupId(0);
                     _cmd = "";
                     lstGroups.Clear();
-                    lstGroups = await feService.Read_Groups(user, false);
+                    lstGroups = await feService.Read_Groups(user, false, false);
                     StateHasChanged();
                     }
                 else
@@ -1067,6 +1103,83 @@ else
             {
             Snackbar.Add("select a group", Severity.Warning);
             }
+        }
+    //group: get student usernames from excel and add to selected group
+    private async Task BtnAddStudentsToGroupUsingExcel ()
+        {
+        if (_cmd == "SelectExcelFileOfStudentUsernames")
+            {
+            _cmd = "";
+            }
+        else
+            {
+            user.UserName = "username";
+            user.UserNickname = "nickname";
+            user.UserPass = "1234";
+            _cmd = "SelectExcelFileOfStudentUsernames";
+            }
+        StateHasChanged();
+        }
+    private async Task HandleExcelFileOfStudentUsernames (InputFileChangeEventArgs e)
+        {
+        var message = new MarkupString(@$"<hr><span style='color:indianred'>Read</span> student usernames from Excell file? </br></br></br><div style='text-align:center'><img src='/img/icoExcel1.png' width='40'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult != true)
+            {
+            _cmd = "";
+            StateHasChanged();
+            return;
+            }
+        _hasFetched = false;
+        var file = e.File;
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
+        await ParseStudentUsernameExcelAsync(memoryStream);
+        }
+    private async Task ParseStudentUsernameExcelAsync (Stream stream)
+        {
+        //list all students
+        user.UserId = Convert.ToInt32(appState.UserId);
+        lstStudents = await feService.Read_StudentsAll(Convert.ToInt32(appState.DepartmentId));
+        try
+            {
+            string studentUserName = "";
+            int studentUserId = 0;
+            List<int> lstStudentIds = new List<int>();
+            using var workbook = new XLWorkbook(stream);
+            var worksheet = workbook.Worksheet(1); //1:first sheet
+            i = 0;
+            int _departmentId = Convert.ToInt32(appState.DepartmentId); //ie teacher'd departmentId
+            //build a dictionary once before the loop: loop will be dramatically faster
+            var userIdLookup = lstStudents
+                .GroupBy(u => u.UserName, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First().UserId, StringComparer.OrdinalIgnoreCase);
+            foreach (var row in worksheet.RowsUsed().Skip(1))
+                {
+                string student = row.Cell(1).GetString().Trim();
+                if (string.IsNullOrEmpty(student))
+                    continue;
+                lstStudentIds.Add(userIdLookup.TryGetValue(student, out int userId) ? userId : 0);
+                }
+            bool result = await feService.Create_StudentGroups(GroupId, lstStudentIds);
+            if (result)
+                {
+                Snackbar.Add($"{lstStudentIds.Count()} students added to the group", Severity.Success);
+                }
+            else
+                {
+                Snackbar.Add($"failed", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                }
+            }
+        catch (Exception ex)
+            {
+            Console.WriteLine($"Error in [ImportExcel2]: {ex}");
+            }
+        _hasFetched = true;
+        appState.SetCmd("");
+        _cmd = "";
+        StateHasChanged();
         }
     //course-exam
     private async Task OnCourseChanged (int newValue)
@@ -1424,7 +1537,7 @@ else
             Snackbar.Add($"{itemx}", Severity.Info);
             }
         }
-    //excel import
+    //excel import new students
     public async Task BtnAddNewStudent ()
         {
         if (_cmd == "AddnewStudent")

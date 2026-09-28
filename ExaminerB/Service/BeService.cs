@@ -600,7 +600,7 @@ namespace ExaminerB.Services2Backend
             await cnn.CloseAsync ();
             return i;
             }
-        public async Task<List<Group>> Read_GroupsAsync (User user, bool getGroupStudents)
+        public async Task<List<Group>> Read_GroupsAsync (User user, bool showAllGroups, bool getGroupStudents)
             {
             List<Group> lstGroups = new List<Group> ();
             string sql = "dbo.sp_ReadGroups";
@@ -611,7 +611,8 @@ namespace ExaminerB.Services2Backend
                 await cnn.OpenAsync ();
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@userid", user.UserId);
+                cmd.Parameters.AddWithValue ("@UserId", user.UserId);
+                cmd.Parameters.AddWithValue ("@ShowAllGroups", showAllGroups);
                 using (var reader = await cmd.ExecuteReaderAsync ())
                     {
                     while (await reader.ReadAsync ())
@@ -621,6 +622,7 @@ namespace ExaminerB.Services2Backend
                             GroupId = reader.GetInt32 (0),
                             GroupName = reader.GetString (1),
                             UserId = reader.GetInt32 (2),
+                            GroupTags = reader.GetInt32 (3),
                             Students = new List<StudentGroup> (),
                             };
                         lstGroups.Add (group);
@@ -661,6 +663,7 @@ namespace ExaminerB.Services2Backend
                         group.GroupId = reader.GetInt32 (0);
                         group.GroupName = reader.GetString (1);
                         group.UserId = reader.GetInt32 (2);
+                        group.GroupTags = reader.GetInt32 (3);
                         group.Students = new List<StudentGroup> ();
                         }
                     }
@@ -685,6 +688,7 @@ namespace ExaminerB.Services2Backend
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@groupname", group.GroupName);
                 cmd.Parameters.AddWithValue ("@groupid", group.GroupId);
+                cmd.Parameters.AddWithValue ("@grouptags", group.GroupTags);
                 await cmd.ExecuteNonQueryAsync ();
                 return true;
                 }

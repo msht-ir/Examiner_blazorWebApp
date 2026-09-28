@@ -93,6 +93,19 @@ namespace ExaminerS.Models
         public int GroupId { get; set; } = 0;
         public string GroupName { get; set; } = "";
         public int UserId { get; set; } = 0;
+        public int GroupTags { get; set; } = 0;
+        public bool IsActive
+            {
+            get => (GroupTags & 1) == 1;
+            set
+                {
+                if (value)
+                    GroupTags |= 1;
+                else
+                    GroupTags &= ~1;
+                }
+            }
+
         public List<StudentGroup> Students { get; set; } = new List<StudentGroup> ();
         }
     //SG

@@ -164,9 +164,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_Groups")]
-        public async Task<ActionResult<List<Group>>> Read_Groups ([FromBody] User user, [FromQuery] bool getGroupStudents)
+        public async Task<ActionResult<List<Group>>> Read_Groups ([FromBody] User user, [FromQuery] bool showAllGroups, [FromQuery] bool getGroupStudents)
             {
-            var result = await _BeService.Read_GroupsAsync (user, getGroupStudents);
+            var result = await _BeService.Read_GroupsAsync (user, showAllGroups, getGroupStudents);
             return Ok (result);
             }
         [HttpPost ("Read_Group")]
