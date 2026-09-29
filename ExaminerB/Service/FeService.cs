@@ -1128,9 +1128,9 @@ namespace ExaminerB.Service
                 return new Message ();
                 }
             }
-        public async Task<List<Message>> Read_Messages (int userId, bool getStudentMessages)
+        public async Task<List<Message>> Read_Messages (int userId, bool readAllMessages, bool getStudentMessages)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Messages?getStudentMessages={getStudentMessages}", userId);
+            var response = await _http.PostAsJsonAsync ($"api/Read_Messages?readAllMessages={readAllMessages}&getStudentMessages={getStudentMessages}", userId);
             if (response.IsSuccessStatusCode)
                 {
                 List<Message>? lstMessages = await response.Content.ReadFromJsonAsync<List<Message>> ();

@@ -3096,6 +3096,7 @@ namespace ExaminerB.Services2Backend
                     message.DateTimeCreated = reader.GetDateTimeOffset (2);
                     message.MessageTitle = reader.GetString (3);
                     message.MessageBody = reader.GetString (4);
+                    message.MessageTags = reader.GetInt32 (5);
                     message.Students = new List<StudentMessage> ();
                     }
                 await cnn.CloseAsync ();
@@ -3113,7 +3114,7 @@ namespace ExaminerB.Services2Backend
                 return new Message ();
                 }
             }
-        public async Task<List<Message>> Read_MessagesAsync (int userId, bool getStudentMessages)
+        public async Task<List<Message>> Read_MessagesAsync (int userId, bool readAllMessages, bool getStudentMessages)
             {
             List<Message> lstMessages = new List<Message> ();
             string sql = "dbo.sp_ReadMessages";
@@ -3126,6 +3127,7 @@ namespace ExaminerB.Services2Backend
                 SqlCommand cmd = new SqlCommand (sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@userid", userId);
+                cmd.Parameters.AddWithValue ("@readAllMessages", readAllMessages);
                 SqlDataReader reader = await cmd.ExecuteReaderAsync ();
                 while (await reader.ReadAsync ())
                     {
@@ -3136,6 +3138,7 @@ namespace ExaminerB.Services2Backend
                         DateTimeCreated = reader.GetDateTimeOffset (2),
                         MessageTitle = reader.GetString (3),
                         MessageBody = reader.GetString (4),
+                        MessageTags = reader.GetInt32 (5),
                         Students = new List<StudentMessage> ()
                         });
                     }
@@ -3164,10 +3167,11 @@ namespace ExaminerB.Services2Backend
             await cnn.OpenAsync ();
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue ("@messageid", message.MessageId);
             cmd.Parameters.AddWithValue ("@datetimecreated", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
             cmd.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
             cmd.Parameters.AddWithValue ("@messagebody", message.MessageBody);
-            cmd.Parameters.AddWithValue ("@messageid", message.MessageId);
+            cmd.Parameters.AddWithValue ("@messagetags", message.MessageTags);
             int i = cmd.ExecuteNonQuery ();
             await cnn.CloseAsync ();
             return true;

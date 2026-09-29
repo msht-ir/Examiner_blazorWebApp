@@ -74,7 +74,7 @@
                                 {
                                     <MudContainer Class="mt-2 px-0">
                                         <MudCard Class="mx-0" elevation="2">
-                                            <MudCardContent Style="background-color: rgba(250,250,250);">
+                                            <MudCardContent Style="background-color: whitesmoke;">
                                             @* use (double) to make result decimal not integer *@
                                                 @{
                                                 strRunningPoint = studentCourse.NumberOfTests == 0 ? "---" : $"{studentCourse.CorrectAnswers} / {studentCourse.NumberOfTests} = {((double) studentCourse.CorrectAnswers / studentCourse.NumberOfTests * 20.0):F1}";
@@ -84,7 +84,7 @@
                                                 </div>
                                             <hr />
                                                 <button class="btn btn-link" Title=@((_help) ? "get a random Test from course" + studentCourse.CourseName : "") @onclick="() => BtnTakeATest(studentCourse.StudentCourseId)">
-                                                <img class="pulse-animation" src="/img/icoReport0.png" width="24" />
+                                                <img class="pulse-animation" src="/img/icoListT.png" width="30" />
                                                 </button>
                                             @if ((studentCourse.StudentCourseTags & 5) == 5)
                                                 {
@@ -614,7 +614,6 @@
                             data-bs-target="#CollapseId6"
                             aria-expanded="false"
                             aria-controls="CollapseId6" style="background-color:WhiteSmoke">
-                        @* <h4>Chats <span style="font-weight:bold;font-size:x-small;color:indianred">( <span style="color:royalblue">@lstChats.Count / @unreadChatCount</span> )</span></h4> *@
                             <h4>
                             <img class="pulse-hover" src="/img/icoNote1.png" width="26" style="margin-right:10px;" title="دفترچه يادداشت" />
                             notebook <span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstNotes.Count ) </span></span>
@@ -633,11 +632,11 @@
                         <div class="accordion-body" style="background-color:white">
                             <div id="T3">
                                 <div style="text-align:center">
-                                    <button class="btn btn-link align-items-center" Title="add quick note افزودن يادداشت جديد" @onclick="CreateNote">
-                                    <img class="pulse-animation" src="/img/icoNewNote3.png" width="32" />
-                                    </button>
                                     <button class="btn btn-link pulse-hover" @onclick="GotoNotebooks">
                                     <img src="/img/icoNoteBook.png" width="48" title="notebooks دفترچه يادداشت" />
+                                    </button>
+                                    <button class="btn btn-link align-items-center" Title="add quick note افزودن يادداشت جديد" @onclick="CreateNote">
+                                    <img class="pulse-animation" src="/img/icoNewNote3.png" width="32" />
                                     </button>
                                 </div>
                             @* LIST NOTES *@
@@ -749,9 +748,8 @@
                     </div>
                 </div>
             <br />
-            <MudSwitch @bind-Value="_help" Label="help" Color="Color.Primary" Dense="true" title="هنگام عبور ماوس، راهنمايي کن"></MudSwitch>
+            @* <MudSwitch @bind-Value="_help" Label="help" Color="Color.Primary" Dense="true" title="هنگام عبور ماوس، راهنمايي کن"></MudSwitch> *@
             <hr />
-            <br />
                 <div class="d-flex gap-4 justify-content-center" style="text-align:center; margin-top:30px;max-width:500px;">
                     <MudButton Variant="Variant.Filled"
                            EndIcon="@Icons.Material.Filled.Password"
@@ -796,7 +794,7 @@
     Chatroom chatroom = new Chatroom();
     private int unreadChatCount = 0;
     private int mateId = 0;
-    bool _help;
+    bool _help = true;
     string _clps = ""; //appState.Clps values: C:Courses, E:Exams, M:Messages, CH:Chats
     string _cmd = "";
     string _font = "font-family:'Segoe UI';";
@@ -839,11 +837,11 @@
                     }
                 if (_newchat > 1)
                     {
-                    Snackbar.Add($"{_newchat} new chats", Severity.Info);
+                    Snackbar.Add($"{_newchat} new chats", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     }
                 else if (_newchat == 1)
                     {
-                    Snackbar.Add($"new chat", Severity.Info);
+                    Snackbar.Add($"new chat", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     }
                 //2-show alert on not finished exams ahead
                 int _newexam = 0;
@@ -948,11 +946,11 @@
         DateTime _examDateTimeFinish = _examDateTimeStart.AddMinutes(exam.ExamDuration);
         if (_examDateTimeStart > DateTime.Now)
             {
-            Snackbar.Add($"exam starts at {PersianDate(exam.ExamDateTime)}", Severity.Info);
+            Snackbar.Add($"exam starts at {PersianDate(exam.ExamDateTime)}", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             TimeSpan diff = _examDateTimeStart - DateTime.Now;
             int hours = (int) diff.TotalHours;
             int minutes = diff.Minutes;
-            Snackbar.Add($"{hours} hr  {minutes + 1} min", Severity.Success);
+            Snackbar.Add($"{hours} hr  {minutes + 1} min", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         else if (DateTime.Now > _examDateTimeFinish)
             {
@@ -1011,12 +1009,12 @@
             {
             case 0:
                     {
-                    Snackbar.Add("bookmark removed", Severity.Info);
+                    Snackbar.Add("bookmark removed", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     break;
                     }
             case 1:
                     {
-                    Snackbar.Add("message bookmarked", Severity.Success);
+                    Snackbar.Add("message bookmarked", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     break;
                     }
             }
@@ -1070,7 +1068,7 @@
             {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags(studentMessage);
-            Snackbar.Add("deleted", Severity.Success);
+            Snackbar.Add("deleted", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             await ReadMessageList();
             }
         StateHasChanged();
@@ -1107,12 +1105,13 @@
             lstStudents = await feService.Read_StudentsByKeyword(student.DepartmentId, strSearch, 0);
             if (lstStudents.Count == 0)
                 {
-                Snackbar.Add($"students like '{strSearch}' not found", Severity.Info);
+                Snackbar.Add($"students like '{strSearch}' not found", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             StateHasChanged();
             }
         else
             {
+            Snackbar.Add($"enter at least 3 chars", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             strSearch = "";
             lstStudents.Clear();
             }
@@ -1155,7 +1154,7 @@
             {
             studentMessage.StudentMessageTags |= 4;
             bool result = await feService.Update_StudentMessageTags(studentMessage);
-            Snackbar.Add("deleted", Severity.Success);
+            Snackbar.Add("deleted", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             await ReadMessageList();
             }
         StateHasChanged();
@@ -1174,7 +1173,7 @@
         appState.SetClps("CHR");
         if ((chatroom.ChatroomTerms.Trim() == "") || (chatroom.ChatroomName.Trim() == ""))
             {
-            Snackbar.Add($"Enter forum NAME and SUBJECT", Severity.Info);
+            Snackbar.Add($"Enter forum NAME and SUBJECT", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             return;
             }
         student.UserId = appState.UserId ?? 0;
@@ -1206,7 +1205,7 @@
             bool result = await feService.Delete_Chatroom(chatroomId);
             if (result)
                 {
-                Snackbar.Add($"deleted", Severity.Warning);
+                Snackbar.Add($"deleted", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 _cmd = "";
                 StateHasChanged();
                 appState.SetCmd("");
@@ -1279,7 +1278,7 @@
             bool result = await feService.Delete_Note(noteId);
             if (result)
                 {
-                Snackbar.Add($"deleted", Severity.Warning);
+                Snackbar.Add($"deleted", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 student.UserId = Convert.ToInt32(appState.UserId);
                 _hasFetched = false;
                 lstNotes.Clear();

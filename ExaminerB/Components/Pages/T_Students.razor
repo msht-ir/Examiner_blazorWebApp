@@ -178,18 +178,21 @@ else
                         }
                     @if (_cmd == "SelectExcelFileOfStudentUsernames")
                         {
+                        <h6 style="text-align:center; color:indianred">add students to group</h6>
                         <hr style="color:slateblue" />
-                        <h6 style="text-align:center; color:indianred">Get students usernames from Excel file</h6>
                             <div class="d-flex align-items-center" style="gap:10px;margin-top:20px;margin-left:20px;">
+                            <img src="/img/icoExcel1.png" width="28" height="28" />
+                            <InputFile Title=@((_help) ? "get from excel" : "") OnChange="HandleExcelFileOfStudentUsernames" />
+                            </div>
+                        <hr style="color:slateblue" />
+                            <div tabindex="0" style="text-align:center;margin-left:30px;margin-right:30px;">
                                 <button class="btn btn-link pulse-hover"
                                     Title=@((_help) ? "cancel" : "")
                                     style="margin-right:10px;"
                                     @onclick="BtnCancel">
                                 <img src="/img/icoCancel.png" width="24" />
                                 </button>
-                            <InputFile Title=@((_help) ? "get from excel" : "") OnChange="HandleExcelFileOfStudentUsernames" />
                             </div>
-                        <br />
                         }
                     else
                         {
@@ -503,7 +506,7 @@ else
                         {
                         <h5>new message</h5>
                         <MudTextField @ref="reftxtNewMessageTitle"
-                                      @bind-Value="strNewMessageTitle"
+                                      @bind-Value="message.MessageTitle"
                                       Label="title "
                                       Variant="Variant.Text"
                                       Margin="Margin.Dense"
@@ -511,7 +514,7 @@ else
                                       Class="my-textfield"
                                       Style="font-family: 'Segoe UI';" />
                         <MudTextField @ref="reftxtNewMessageBody"
-                                      @bind-Value="strNewMessageBody"
+                                      @bind-Value="message.MessageBody"
                                       Label="message"
                                       Variant="Variant.Text"
                                       Margin="Margin.Dense"
@@ -519,7 +522,7 @@ else
                                       Class="my-textfield"
                                       Lines="5" Style="font-family: 'Segoe UI';" />
                             <div style="text-align:center">
-                                <button class="btn btn-link" Title=@((_help) ? "save message" : "") @onclick="() => BtnCreateNewMessage(strNewMessageTitle, strNewMessageBody)">
+                                <button class="btn btn-link" Title=@((_help) ? "save message" : "") @onclick="() => BtnCreateNewMessage()">
                                 <img class="pulse-animation" src="/img/icoSave2.png" width="24" />
                                 </button>
                                 <button class="btn btn-link" Title=@((_help) ? "cancel" : "") @onclick="BtnCancel">
@@ -532,8 +535,15 @@ else
                         if (_cmd == "EditMessage")
                             {
                             <h5>Edit message</h5>
+                                <MudSwitch @bind-Value="message.IsActive"
+                                       Label="active"
+                                       Color="Color.Primary"
+                                       title="activate thie group"
+                                       Style="margin-right:10px;margin-top:10px;"
+                                       Dense="true">
+                                </MudSwitch>
                             <MudTextField @ref="reftxtNewMessageTitle"
-                                          @bind-Value="strNewMessageTitle"
+                                          @bind-Value="message.MessageTitle"
                                           Label="title"
                                           Variant="Variant.Text"
                                           Margin="Margin.Dense"
@@ -541,7 +551,7 @@ else
                                           Class="my-textfield"
                                           Style="font-family: 'Segoe UI';" />
                             <MudTextField @ref="reftxtNewMessageBody"
-                                          @bind-Value="strNewMessageBody"
+                                          @bind-Value="message.MessageBody"
                                           Label="message"
                                           Variant="Variant.Text"
                                           Margin="Margin.Dense"
@@ -585,6 +595,15 @@ else
                                          EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
                                          Style="margin-top:15px;"
                                          Size="Size.Small" Dense="true">
+                                    <MudDivider />
+                                        <MudMenuItem @onclick="BtnShowMessages">
+                                            <button class="btn btn-link" Title=@((_help) ? "show all messages ()" : "")>
+                                            <img src="/img/icoList.png" width="22" />
+                                            </button>
+                                        <span style="color:royalblue">@_showMessages</span>
+                                        </MudMenuItem>
+                                    <MudDivider />
+
                                         <MudMenuItem @onclick="BtnAddNewMessage">
                                             <button class="btn btn-link" Title=@((_help) ? "add new message" : "")>
                                             <img class="pulse-animation" src="/img/icoAdd0.png" width="22" />
@@ -704,12 +723,6 @@ else
             }
         @* FOOTER *@
         <br />
-            <MudSwitch @bind-Value="_help"
-                   Label="help"
-                   Color="Color.Primary"
-                   title="help on mouse hover هنگام عبور ماوس از روي دکمه ها، کمک را نشان بده"
-                   Dense="true">
-            </MudSwitch>
         <hr />
             <div style="text-align: center;">
                 <button type="button"
@@ -776,8 +789,8 @@ else
     string strNewGroupName = "";
     string strGroupName = "";
     bool boolGroupActive;
-    string strNewMessageTitle = "";
-    string strNewMessageBody = "";
+    // string strNewMessageTitle = "";
+    // string strNewMessageBody = "";
     int GroupId = 0;
     int CourseId = 0;
     int ExamId = 0;
@@ -795,6 +808,7 @@ else
     int i = 0;
     bool _help = true;
     string _showGroups = "show all groups";
+    string _showMessages = "show all messages";
     string _cmd = "";
     public bool _hasFetched = false;
     public bool requestFeedback { get; set; } = false;
@@ -815,7 +829,7 @@ else
         //on second rener, user.UserId will get its value
         lstGroups = await feService.Read_Groups(user, false, false);
         lstCourses = await feService.Read_Courses(user.UserId);
-        lstMessages = await feService.Read_Messages(user.UserId, false);
+        lstMessages = await feService.Read_Messages(user.UserId, false, false);
         GroupId = appState.GroupId ?? 0;
         CourseId = appState.CourseId ?? 0;
         if (CourseId > 0)
@@ -1027,27 +1041,35 @@ else
         }
     private async Task BtnRemoveStudentsFromGroup ()
         {
-        List<int> lstStudentIds = new List<int>();
-        int _count = 0;
-        foreach (User student in lstStudents)
+        var message = new MarkupString(@$"<hr><span style='color:indianred'>DELETE </span> selected students from this group? </br></br></br><div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
-            if (student.IsSelected)
+            List<int> lstStudentIds = new List<int>();
+            int _count = 0;
+            foreach (User student in lstStudents)
                 {
-                lstStudentIds.Add(student.UserId);
-                _count++;
-                student.IsSelected = false;
+                if (student.IsSelected)
+                    {
+                    lstStudentIds.Add(student.UserId);
+                    _count++;
+                    student.IsSelected = false;
+                    }
                 }
-            }
-        bool result = await feService.Delete_StudentGroups(GroupId, lstStudentIds);
-        if (result)
-            {
-            Snackbar.Add($"{_count} students removed from the group", Severity.Success);
-            //refresh list of students in this group
-            await BtnReadStudents(GroupId, "G");
-            }
-        else
-            {
-            Snackbar.Add($"failed", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            //bug corrected in db (related to this code):  from two or more repetitive student-group records, one must be kept.
+            //because (gId and sId) are passed to db to delete student-group records, it will delete every matching student-group record
+            //unless the _sp be forced to delete one record per request.
+            bool result = await feService.Delete_StudentGroups(GroupId, lstStudentIds);
+            if (result)
+                {
+                Snackbar.Add($"{_count} students removed from the group", Severity.Success);
+                //refresh
+                await BtnReadStudents(GroupId, "G");
+                }
+            else
+                {
+                Snackbar.Add($"failed", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                }
             }
         }
     private async Task BtnEditGroup (int groupId)
@@ -1177,8 +1199,10 @@ else
             Console.WriteLine($"Error in [ImportExcel2]: {ex}");
             }
         _hasFetched = true;
-        appState.SetCmd("");
+        lstStudents.Clear();
         _cmd = "";
+        await BtnReadStudents(GroupId, "G");
+        appState.SetCmd("");
         StateHasChanged();
         }
     //course-exam
@@ -1334,6 +1358,13 @@ else
             }
         }
     //message
+    private async Task BtnShowMessages ()
+        {
+        lstMessages = await feService.Read_Messages(user.UserId, (_showMessages == "show all messages" ? true : false), false);
+        _showMessages = _showMessages == "show all messages" ? "show active messages" : "show all messages";
+        MessageId = 0;
+        StateHasChanged();
+        }
     private async Task BtnShowHideMessage (int messageId)
         {
         if (messageId > 0)
@@ -1364,33 +1395,35 @@ else
     private void BtnAddNewMessage ()
         {
         _cmd = "AddNewMessage";
-        strNewMessageTitle = "";
-        strNewMessageBody = "";
+        message.MessageTitle = "";
+        message.MessageBody = "";
         StateHasChanged();
         reftxtNewMessageTitle.FocusAsync();
         }
-    private async Task BtnCreateNewMessage (string messageTitle, string messageBody)
+    private async Task BtnCreateNewMessage ()
         {
-        if (messageBody.Length < 4000)
+        if (message.MessageBody.Length < 4000)
             {
             user.UserId = Convert.ToInt32(appState.UserId);
-            Message message = new Message() { UserId = user.UserId, DateTimeCreated = new DateTimeOffset(), MessageTitle = messageTitle, MessageBody = messageBody };
+            message.UserId = user.UserId;
+            message.DateTimeCreated = new DateTimeOffset();
+
             int result = await feService.Create_Message(message);
             if (result > 0)
                 {
-                lstMessages = await feService.Read_Messages(user.UserId, false);
-                Snackbar.Add($"message {messageTitle} (len:{messageBody.Length}) created", Severity.Success);
+                lstMessages = await feService.Read_Messages(user.UserId, false, false);
+                Snackbar.Add($"message {message.MessageTitle} (len:{message.MessageBody.Length}) created", Severity.Success);
                 _cmd = "";
                 StateHasChanged();
                 }
             else
                 {
-                Snackbar.Add($"failed to create message {messageTitle}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                Snackbar.Add($"failed to create message {message.MessageTitle}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             }
         else
             {
-            Snackbar.Add($"large message ({messageBody.Length}), max: 4000", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            Snackbar.Add($"large message ({message.MessageBody.Length}), max: 4000", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     private async Task BtnAddStudentsToMessage ()
@@ -1420,17 +1453,12 @@ else
         {
         if (messageId > 0)
             {
-            var message = new MarkupString($"<hr><span style='color:indianred'>Edit</span> message?<br>There may be previous Messages send using existing Title/Body.<br>Continue?<br><br><div style='text-align:center'><img src='/img/icoRename.png' width='70'/></div><br><hr>");
-            bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+            var messagex = new MarkupString($"<hr><span style='color:indianred'>Edit</span> message?<br>There may be previous Messages send using existing Title/Body.<br>Continue?<br><br><div style='text-align:center'><img src='/img/icoRename.png' width='70'/></div><br><hr>");
+            bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: messagex, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
                 {
-                Message thisMessage = await feService.Read_Message(messageId, false);
-                appState.SetMessageId(messageId);
-                appState.SetMessageTitle(thisMessage.MessageTitle);
-                appState.SetMessageBody(thisMessage.MessageBody);
-                strNewMessageTitle = appState.MessageTitle;
-                strNewMessageBody = appState.MessageBody;
-                Snackbar.Add($"updated to: {strNewMessageTitle}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
+                message = await feService.Read_Message(messageId, false);
+                Snackbar.Add($"updated to: {message.MessageTitle}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 _cmd = "EditMessage";
                 StateHasChanged();
                 reftxtNewMessageTitle.FocusAsync();
@@ -1439,15 +1467,13 @@ else
         }
     private async Task BtnUpdateMessage ()
         {
-        if ((strNewMessageTitle.Trim() != "") & (strNewMessageBody.Trim() != ""))
+        if ((message.MessageTitle.Trim() != "") & (message.MessageBody.Trim() != ""))
             {
-            message.MessageId = Convert.ToInt32(appState.MessageId);
-            message.MessageTitle = strNewMessageTitle;
-            message.MessageBody = strNewMessageBody;
             bool Result = await feService.Update_Message(message);
             Snackbar.Add($"updated to: {message.MessageTitle}", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
             lstMessages.Clear();
-            lstMessages = await feService.Read_Messages(user.UserId, false); //refresh list
+            MessageId = 0;
+            lstMessages = await feService.Read_Messages(user.UserId, false, false); //refresh list
             _cmd = "";
             StateHasChanged();
             }
@@ -1469,13 +1495,17 @@ else
                     appState.SetMessageId(0);
                     _cmd = "HideMessageBody";
                     lstMessages.Clear();
-                    lstMessages = await feService.Read_Messages(user.UserId, false);
+                    lstMessages = await feService.Read_Messages(user.UserId, false, false);
                     StateHasChanged();
                     }
                 else
                     {
-                    Snackbar.Add("failed to delete message", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                    //line below commented because even when delete is successful, this is shown!
+                    // Snackbar.Add("failed to delete message", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     }
+                MessageId = 0;
+                await BtnShowMessages ();
+                StateHasChanged ();
                 }
             }
         else

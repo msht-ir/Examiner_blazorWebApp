@@ -745,9 +745,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_Messages")]
-        public async Task<ActionResult<List<Message>>> Read_Messages ([FromBody] int userId, [FromQuery] bool getStudentMessages)
+        public async Task<ActionResult<List<Message>>> Read_Messages ([FromBody] int userId, [FromQuery] bool readAllMessages, [FromQuery] bool getStudentMessages)
             {
-            var result = await _BeService.Read_MessagesAsync (userId, getStudentMessages);
+            var result = await _BeService.Read_MessagesAsync (userId, readAllMessages, getStudentMessages);
             return Ok (result);
             }
         [HttpPost ("Update_Message")]
@@ -757,7 +757,7 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Delete_Messages")]
-        public async Task<ActionResult<bool>> Delete_MessagesById ([FromQuery] string mode, [FromBody] int recipientId)
+        public async Task<ActionResult<bool>> Delete_Messages ([FromQuery] string mode, [FromBody] int recipientId)
             {
             var result = await _BeService.Delete_MessagesAsync (mode, recipientId);
             return result ? Ok (result) : NotFound (result);

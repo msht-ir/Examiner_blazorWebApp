@@ -395,6 +395,19 @@ namespace ExaminerS.Models
         public DateTimeOffset DateTimeCreated { get; set; } 
         public string MessageTitle { get; set; } = "";
         public string MessageBody { get; set; } = "";
+        public int MessageTags { get; set; } = 0;
+        public bool IsActive
+            {
+            get => (MessageTags & 1) == 1;
+            set
+                {
+                if (value)
+                    MessageTags |= 1;
+                else
+                    MessageTags &= ~1;
+                }
+            }
+
         public List<StudentMessage> Students { get; set; } = new List<StudentMessage> ();
         }
     //SM
