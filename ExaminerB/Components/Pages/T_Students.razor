@@ -487,7 +487,7 @@ else
                                     </button>
                                 students folder
                                 </MudMenuItem>
-                                <MudMenuItem @onclick='() => BtnGotoExamsPage(ExamId, refCourses.Text.ToString() ?? "")'>
+                                <MudMenuItem @onclick='() => BtnGotoExamsPage(ExamId)'>
                                     <button class="btn btn-link" Title=@((_help) ? "goto page exams" : "")>
                                     <img class="pulse-animation" src="/img/icoFolderE.png" width="24" />
                                     </button>
@@ -1337,15 +1337,17 @@ else
             Snackbar.Add($"select a course", Severity.Warning);
             }
         }
-    private void BtnGotoExamsPage (int examId, string CourseName)
+    private void BtnGotoExamsPage (int examId)
         {
+        var selectedCourse = lstCourses?.FirstOrDefault(c => c.CourseId == CourseId);
+        string courseName = selectedCourse?.CourseName ?? "";
         if (examId > 0)
             {
             appState.SetCourseId(CourseId);
             appState.SetCourseName(course.CourseName);
             Navman.NavigateTo($"/T_Exam/{examId}"); // : /T_Exam/{examId:int}
             }
-        else if (CourseName != "")
+        else if (courseName != "")
             {
             appState.SetCourseId(CourseId);
             appState.SetCourseName(course.CourseName);
