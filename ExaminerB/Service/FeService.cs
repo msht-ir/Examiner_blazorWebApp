@@ -852,7 +852,7 @@ namespace ExaminerB.Service
         #region SE:StudentExams
         public async Task<int> Create_StudentExams (int examId, List<int> lstStudentIds)
             {
-            StudentExam studentExam = new StudentExam () { StudentId = 0, ExamId = examId, DateTimeStart = new DateTimeOffset(), DateTimeFinish = new DateTimeOffset(), StudentExamTags = 0, StudentExamPoint = 0 };
+            StudentExam studentExam = new StudentExam () { StudentId = 0, ExamId = examId, DateTimeStart = new DateTimeOffset (), DateTimeFinish = new DateTimeOffset (), StudentExamTags = 0, StudentExamPoint = 0 };
             var response = await _http.PostAsJsonAsync ($"api/Create_StudentExams?examId={examId}", lstStudentIds);
             return response.IsSuccessStatusCode ? 1 : 0;
             }
@@ -951,7 +951,7 @@ namespace ExaminerB.Service
                 case "startedOff":
                         {
                         studentExam.StudentExamTags = (studentExam.StudentExamTags & ~2);
-                        studentExam.DateTimeStart = new DateTimeOffset();
+                        studentExam.DateTimeStart = new DateTimeOffset ();
                         break;
                         }
                 case "finishedOn":

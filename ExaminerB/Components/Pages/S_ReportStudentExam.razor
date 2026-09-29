@@ -1,4 +1,5 @@
 ﻿@page "/S_ReportStudentExam/{studentExamId:int}/{pagemode}"
+@rendermode InteractiveServer
 @using ExaminerB.Service
 @inject NavigationManager Navman
 @inject AppState appState
@@ -37,9 +38,10 @@ else
                 <br />
                     <div class="d-flex justify-content-center">
                         <MudChart ChartType="ChartType.Donut"
-                              InputData="@(new double[] {nTestsAnsweredCorrectly, (nTests - nTestsAnsweredCorrectly) })"
-                              InputLabels="@(new[] { "correct: "+ nTestsAnsweredCorrectly, "rest: " + (nTests - nTestsAnsweredCorrectly) })"
-                              Width="100px" Height="100px">
+                              T="double"
+                              ChartSeries="@(new double [] { nTestsAnsweredCorrectly, (nTests - nTestsAnsweredCorrectly) }.AsChartDataSet())"
+                              ChartLabels="@(new [] { "correct: " + nTestsAnsweredCorrectly, "rest: " + (nTests - nTestsAnsweredCorrectly) })"
+                              Width="300px" Height="300px">
                         </MudChart>
                     <br />
                     </div>
@@ -142,10 +144,12 @@ else
                                 <br />
                                     <div class="d-flex justify-content-center">
                                         <MudChart ChartType="ChartType.Donut"
-                                              InputData="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 })"
-                                              InputLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
-                                              Width="100px" Height="100px">
+                                              T="double"
+                                              ChartSeries="@(new double[] {nStudentsSlectedOpt1, nStudentsSlectedOpt2, nStudentsSlectedOpt3, nStudentsSlectedOpt4, nStudentsSlectedOpt5 }.AsChartDataSet())"
+                                              ChartLabels="@(new[] { "a: "+ @nStudentsSlectedOpt1,"b: "+ @nStudentsSlectedOpt2, "c: "+ @nStudentsSlectedOpt3, "d: "+ @nStudentsSlectedOpt4, "e: "+ @nStudentsSlectedOpt5, })"
+                                              Width="200px" Height="200px">
                                         </MudChart>
+
                                     <br />
                                     </div>
                                 }
@@ -165,9 +169,9 @@ else
 @code {
     [Parameter]
     public int studentExamId
-    {
+        {
         get; set;
-    }
+        }
     [Parameter] public string pagemode { get; set; } = ""; // possible values: {Review|RawSheet}
     User student = new User();
     StudentExam studentExam = new StudentExam();
@@ -198,27 +202,27 @@ else
     bool _hasFetched = false;
     //LifeCycleEvents
     protected override async Task OnInitializedAsync ()
-    {
+        {
         appState.OnChange += TriggerRender;
         if (Convert.ToInt32(appState.UserLoginStatus) != 1)
-        {
+            {
 
             Navman.NavigateTo("/Login");
-        }
+            }
         appState.SetCmd("");
-    }
+        }
     protected override async Task OnParametersSetAsync ()
-    {
-    }
+        {
+        }
     protected override async Task OnAfterRenderAsync (bool firstRender)
-    {
+        {
         //scroll to top
         if (firstRender)
-        {
+            {
             await JS.InvokeVoidAsync("window.scrollTo", 0, 0);
-        }
+            }
         if (!_hasFetched)
-        {
+            {
             student.UserName = appState.UserName ?? "";
             studentExam.StudentExamId = studentExamId;
             studentExam = await feService.Read_StudentExam(studentExamId, true);
@@ -230,56 +234,56 @@ else
             nTestsAnsweredIncorrectly = 0;
             nTestsNotAnswered = 0;
             foreach (StudentExamTest tst in studentExam.StudentExamTests)
-            {
+                {
                 if ((tst.StudentExamTestTags & 1) == 1)
-                {
+                    {
                     nTestsVisited++;
-                }
+                    }
                 if ((tst.StudentExamTestTags & 4) == 4)
-                {
+                    {
                     nTestsAnswered++;
                     if (tst.StudentExamTestAns == tst.StudentExamTestKey)
-                    {
+                        {
                         nTestsAnsweredCorrectly++;
-                    }
+                        }
                     else
-                    {
+                        {
                         nTestsAnsweredIncorrectly++;
+                        }
                     }
                 }
-            }
             _hasFetched = true;
             StateHasChanged();
+            }
         }
-    }
     private void TriggerRender ()
-    {
+        {
         InvokeAsync(StateHasChanged);
-    }
+        }
     public void Dispose ()
-    {
+        {
         appState.OnChange -= TriggerRender;
-    }
+        }
     //btns
     public void BtnBackToStudentExams ()
-    {
+        {
         Navman.NavigateTo("/S_Student");
-    }
+        }
     public void BtnCalcPercents ()
-    {
+        {
         if (appState.Cmd == "ShowStudentExamStats")
-        {
+            {
             appState.SetCmd("");
-        }
+            }
         else
-        {
+            {
             appState.SetCmd("ShowStudentExamStats");
+            }
         }
-    }
 
 
     public async Task BtnShowStudentExamTestStats (StudentExamTest studentExamTest)
-    {
+        {
         //Read StudentExam and StudentExamTest Across Students
         List<StudentExamTest> lstStudentsExamTest = await feService.Read_StudentsExamTest(Convert.ToInt32(appState.ExamId), studentExamTest.TestId);
         //calcs ...

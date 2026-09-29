@@ -3,6 +3,12 @@
 @inject AppState appState
 @inject NavigationManager Navman
 
+@* Required *@
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudPopoverProvider />
+
 <div class="page">
     <div class="sidebar"> 
         @if (Navman.Uri.Contains("/S_StudentExamTests"))
@@ -43,14 +49,6 @@
             }
     </div>   
     <main>
-        @* Required *@
-        <MudThemeProvider />
-        <MudPopoverProvider />
-        @* Needed for dialogs *@
-        <MudDialogProvider />
-        @* Needed for snackbars *@
-        <MudSnackbarProvider />
-
         <div class="top-row px-4">
             @if (appState.UserLoginStatus == 1)
                 {

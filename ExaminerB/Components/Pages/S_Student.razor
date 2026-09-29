@@ -928,7 +928,7 @@
                 _ => throw new ArgumentException($"Invalid mode: {mode}")
                 };
         var message = new MarkupString($"{msg}");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             var result = await feService.Delete_StudentCourseTests(mode, studentCourse);
@@ -1063,7 +1063,7 @@
         {
         appState.SetClps("M");
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Message? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             studentMessage.StudentMessageTags |= 4;
@@ -1149,7 +1149,7 @@
         {
         appState.SetClps("CH");
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Message? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             studentMessage.StudentMessageTags |= 4;
@@ -1196,7 +1196,7 @@
         {
         appState.SetClps("CHR");
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> forum?<br>All Posts in this forum will be deleted!.<br><br>Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "Cancel");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "Cancel");
         if (confirmResult == true)
             {
             student.UserId = appState.UserId ?? 0;
@@ -1272,7 +1272,7 @@
         {
         appState.SetClps("SN");
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> note? Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             bool result = await feService.Delete_Note(noteId);

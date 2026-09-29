@@ -230,7 +230,7 @@ else
     public async Task BtnSetExamAsFinishedForAllStudents (int examId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Terminate</span> all Students's Exams?<br><br><div style='text-align:center'><img src='/img/icoClock2.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             _hasFetched = false;
@@ -267,7 +267,7 @@ else
     public async Task BtnDeleteExam (Exam exam)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> exam {exam.ExamTitle} ?<br>Sure?<br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             bool result = await feService.Delete_Exam(exam.ExamId);

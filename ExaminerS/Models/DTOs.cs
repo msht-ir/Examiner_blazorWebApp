@@ -114,13 +114,16 @@ namespace ExaminerS.Models
         public int StudentGroupId { get; set; } = 0;
         public int StudentId { get; set; } = 0;
         public int GroupId { get; set; } = 0;
-        public DateTimeOffset DateTimeJoined { get; set; }
+        public DateTimeOffset DateTimeJoined
+            {
+            get; set;
+            }
         public int StudentGroupTags { get; set; } = 0;
         public string GroupName { get; set; } = "";
         public string StudentName { get; set; } = "";
         public string StudentNickname { get; set; } = "";
         public int StudentTags { get; set; } = 0; //1:IsActive 2:CanChangePass 4: 8: 16: 32: 64:selected 128: 256:
-        }  
+        }
     //C
     public class Course
         {
@@ -133,7 +136,7 @@ namespace ExaminerS.Models
         public List<CourseTopic> CourseTopics { get; set; } = new List<CourseTopic> ();
         public List<CourseFolder> CourseFolders { get; set; } = new List<CourseFolder> ();
         public List<StudentCourse> Students { get; set; } = new List<StudentCourse> ();
-        }   
+        }
     //CF
     public class CourseFolder
         {
@@ -161,7 +164,7 @@ namespace ExaminerS.Models
         public string StudentNickname { get; set; } = "";
         public int NumberOfTests { get; set; } = 0;
         public int CorrectAnswers { get; set; } = 0;
-        public int StudentCourseTags { get; set;  } = 0;
+        public int StudentCourseTags { get; set; } = 0;
         public bool IsActive
             {
             get => (StudentCourseTags & 1) == 1;
@@ -208,7 +211,10 @@ namespace ExaminerS.Models
         public int Opt5Id { get; set; } = 0;
         public int TestKey { get; set; } = 0;
         public int UserAns { get; set; } = 0;
-        public DateTimeOffset DateTime { get; set; }
+        public DateTimeOffset DateTime
+            {
+            get; set;
+            }
         public int TestIndex { get; set; } = 0; //not used?
         public string TestTitle { get; set; } = "";
         public int TestType { get; set; } = 0; //[1-5]
@@ -255,7 +261,10 @@ namespace ExaminerS.Models
         public int ExamId { get; set; } = 0;
         public int CourseId { get; set; } = 0;
         public string ExamTitle { get; set; } = "";
-        public DateTimeOffset ExamDateTime { get; set; } 
+        public DateTimeOffset ExamDateTime
+            {
+            get; set;
+            }
         public int ExamDuration { get; set; } = 0;
         public int ExamNTests { get; set; } = 0;
         public int ExamTags { get; set; } = 0; //1:active 2:SampleTestMode 4:TrainingMode 8:RealExamMode
@@ -316,7 +325,10 @@ namespace ExaminerS.Models
         public string CourseName { get; set; } = "";
         public int ExamId { get; set; } = 0;
         public string ExamTitle { get; set; } = "";
-        public DateTimeOffset ExamDateTime { get; set; }
+        public DateTimeOffset ExamDateTime
+            {
+            get; set;
+            }
         public int ExamDuration { get; set; } = 0;
         public int ExamNTests { get; set; } = 0;
         public int ExamTags { get; set; } = 0;
@@ -342,8 +354,14 @@ namespace ExaminerS.Models
                     StudentExamTags &= ~8;
                 }
             }
-        public DateTimeOffset DateTimeStart { get; set; } 
-        public DateTimeOffset DateTimeFinish { get; set; } 
+        public DateTimeOffset DateTimeStart
+            {
+            get; set;
+            }
+        public DateTimeOffset DateTimeFinish
+            {
+            get; set;
+            }
         public int StudentExamTags { get; set; } = 0;   //1:started 2:finished
         public decimal StudentExamPoint { get; set; } = 0;
         public int ExamIndex { get; set; } = 0;
@@ -392,7 +410,10 @@ namespace ExaminerS.Models
         {
         public int MessageId { get; set; } = 0;
         public int UserId { get; set; } = 0;
-        public DateTimeOffset DateTimeCreated { get; set; } 
+        public DateTimeOffset DateTimeCreated
+            {
+            get; set;
+            }
         public string MessageTitle { get; set; } = "";
         public string MessageBody { get; set; } = "";
         public int MessageTags { get; set; } = 0;
@@ -420,9 +441,18 @@ namespace ExaminerS.Models
         public string StudentNickname { get; set; } = "";
         public string MessageTitle { get; set; } = "";
         public string MessageBody { get; set; } = "";
-        public DateTimeOffset DateTimeCreated { get; set; } 
-        public DateTimeOffset DateTimeSent { get; set; } 
-        public DateTimeOffset DateTimeRead { get; set; } 
+        public DateTimeOffset DateTimeCreated
+            {
+            get; set;
+            }
+        public DateTimeOffset DateTimeSent
+            {
+            get; set;
+            }
+        public DateTimeOffset DateTimeRead
+            {
+            get; set;
+            }
         public int StudentMessageTags { get; set; } = 0;
         }
     //CH
@@ -433,7 +463,10 @@ namespace ExaminerS.Models
         public string FromName { get; set; } = "";
         public int ToId { get; set; } = 0;
         public string ToName { get; set; } = "";
-        public DateTimeOffset DateTimeSent { get; set; }
+        public DateTimeOffset DateTimeSent
+            {
+            get; set;
+            }
         public string ChatText { get; set; } = "";
         public int ChatTags { get; set; } = 0; //Tags: {1:IsRead 2:IsImp 4:IsBookmarked 8:IsDeleted}
         //wrapper properties for each flag
@@ -489,7 +522,10 @@ namespace ExaminerS.Models
         public int UserId { get; set; } = 0;
         public int UserType { get; set; } = 0; //1:User(Teacher) 2:Student
         public string ProjectName { get; set; } = "";
-        public int ProjectTags { get; set; }
+        public int ProjectTags
+            {
+            get; set;
+            }
         //wrapper properties for each flag
         public bool IsActive
             {
@@ -519,10 +555,16 @@ namespace ExaminerS.Models
         {
         public int NoteId { get; set; } = 0;
         public int ReferenceId { get; set; } = 0;
-        public int ReferenceType { get; set; } = 0; 
+        public int ReferenceType { get; set; } = 0;
         public string ReferenceName { get; set; } = "";
-        public DateTimeOffset NoteDateTime { get; set; } 
-        public DateTimeOffset? NoteDueDateTime { get; set; } 
+        public DateTimeOffset NoteDateTime
+            {
+            get; set;
+            }
+        public DateTimeOffset? NoteDueDateTime
+            {
+            get; set;
+            }
         public string NoteText { get; set; } = "";
         public int NoteTags { get; set; } = 0; //1:rtl 2:done 3:shared 4:readonly 
         public bool IsRtl
@@ -604,7 +646,10 @@ namespace ExaminerS.Models
         public int ChatroomId { get; set; } = 0;
         public int SenderId { get; set; } = 0;
         public string SenderName { get; set; } = "";
-        public DateTimeOffset PostDateTime { get; set; } 
+        public DateTimeOffset PostDateTime
+            {
+            get; set;
+            }
         public string PostText { get; set; } = "";
         public int PostTags { get; set; } = 0;
         public bool NeedsReply

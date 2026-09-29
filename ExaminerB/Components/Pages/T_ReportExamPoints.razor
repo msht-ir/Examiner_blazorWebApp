@@ -221,7 +221,7 @@ else
     private async Task ClearMessagesInjectedToExamSession ()
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Clear</span> injected messages to this exam session?<br><br><div style='text-align:center'><img src='/img/icoEraser.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             @foreach (var studentExam in lstStudentsExams)

@@ -330,7 +330,7 @@ else
     public async Task BtnDeleteTest ()
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> test? (test options will also be deleted) <br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             Snackbar.Add("updated", Severity.Success);
@@ -382,7 +382,7 @@ else
     public async Task BtnDeleteTestOption (int testOptionId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> test option? <br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             bool result = await feService.Delete_TestOption(testOptionId);

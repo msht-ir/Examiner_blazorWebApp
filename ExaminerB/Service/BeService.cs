@@ -1,5 +1,4 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Office.Word;
 using ExaminerS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
@@ -2548,7 +2547,7 @@ namespace ExaminerB.Services2Backend
                 List<StudentExam> lstStudentsExams = await Read_StudentExamsAsync ("ByExamid", examId, 0);
                 foreach (StudentExam stdntex in lstStudentsExams)
                     {
-                    if (stdntex.DateTimeFinish.ToString().Length > 0)
+                    if (stdntex.DateTimeFinish.ToString ().Length > 0)
                         {
                         bool result = await CalculatePoints_StudentExamsAsync (stdntex.StudentExamId);
                         }
@@ -2600,7 +2599,7 @@ namespace ExaminerB.Services2Backend
                 cmd.Parameters.AddWithValue ("@studentexamid", tempStudentExam.StudentExamId);
                 int c = cmd.ExecuteNonQuery ();
                 await cnn.CloseAsync ();
-                if (tempStudentExam.DateTimeFinish.ToString().Length > 0)
+                if (tempStudentExam.DateTimeFinish.ToString ().Length > 0)
                     {
                     bool result = await CalculatePoints_StudentExamsAsync (tempStudentExam.StudentExamId);
                     }

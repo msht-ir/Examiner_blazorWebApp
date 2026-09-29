@@ -17,17 +17,17 @@ else if (appState.Cmd == "CreateNewSubprojectNote")
     {
     <Modal_CreateNote />
     }
-else if(appState.Cmd == "ShowNoteInDialog")
+else if (appState.Cmd == "ShowNoteInDialog")
     {
     <Modal_ShowNote OnClose="HandleModalClose" />
     }
-else if(appState.Cmd == "UpdateNote")
+else if (appState.Cmd == "UpdateNote")
     {
     <Modal_CreateNote OnClose="HandleModalClose" />
     }
 else if (appState.Cmd == "CreateNote")
     {
-    <Modal_CreateNote OnClose="HandleModalClose"/>
+    <Modal_CreateNote OnClose="HandleModalClose" />
     }
 else
     {
@@ -35,85 +35,86 @@ else
     <h6 style="text-align:center;color:indianred">@appState.StudentNickname</h6>
     @if (lstStudentMessages.Count > 0)
         {
-        <div style="text-align:center">
-            @if (appState.Cmd== "ShowStudentMessageStats" & @nMessagesAll > 0)
+            <div style="text-align:center">
+            @if (appState.Cmd == "ShowStudentMessageStats" & @nMessagesAll > 0)
                 {
-                <button class="btn btn-link" @onclick="BtnBack">
+                    <button class="btn btn-link" @onclick="BtnBack">
                     <img src="/img/icoBack3.png" width="40" />
-                </button>
+                    </button>
                 @if (user.UserRole == "teacher")
                     {
-                    <button class="btn btn-link" @onclick="()=>BtnDelete_MessagesOfstudent(Id)">
+                        <button class="btn btn-link" @onclick="() => BtnDelete_MessagesOfstudent(Id)">
                         <img src="/img/icoDelete2.png" width="35" />
-                    </button>                                    
+                        </button>
                     }
                 <br />
                 <hr />
-                <div style="text-align:left; padding-left:25px;background-color:whitesmoke">
+                    <div style="text-align:left; padding-left:25px;background-color:whitesmoke">
                     <div style="font-weight:bold">Messages <span style="font-weight:normal;"> ( @nMessagesAll ) </span></div>
                     <div style="padding-left:15px;">@nMessagesRead ( @(nMessagesRead * 100 / nMessagesAll)% ) Read</div>
                     <div style="padding-left:15px;">@nMessagesBookmarked Bookmarked</div>
                     <div style="padding-left:15px;">@nMessagesDeleted Deleted</div>
                     <br />
-                </div>
-                <br /> 
-                @if(nMessagesTypeIsFeedback > 0)
-                    {
-                    <div class="d-flex justify-content-center">
-                        <MudChart ChartType="ChartType.Donut"
-                            InputData="@(new double[] {nMessagesAnsweredYes, nMessagesAnsweredNo,nMessagesNotAnswered })"
-                            InputLabels="@(new[] { "Yes: "+ @nMessagesAnsweredYes, "No: " + nMessagesAnsweredNo, "notSure: "+ nMessagesNotAnswered })"
-                            Width="100px" Height="100px" >
-                        </MudChart>
                     </div>
+                <br />
+                @if (nMessagesTypeIsFeedback > 0)
+                    {
+                        <div class="d-flex justify-content-center">
+                            <MudChart ChartType="ChartType.Donut"
+                                  T="double"
+                                  ChartSeries="@(new double [] { nMessagesAnsweredYes, nMessagesAnsweredNo, nMessagesNotAnswered }.AsChartDataSet())"
+                                  ChartLabels="@(new [] { "Yes: " + @nMessagesAnsweredYes, "No: " + nMessagesAnsweredNo, "notSure: " + nMessagesNotAnswered })"
+                                  Width="200px" Height="200px">
+                            </MudChart>
+                        </div>
                     <div style="color:gray;font-weight:bold; padding-left:25px;">Participation: <span style="font-weight:normal;"> @(nMessagesAnsweredYes + nMessagesAnsweredNo) /  @nMessagesTypeIsFeedback ( @((nMessagesAnsweredYes + nMessagesAnsweredNo) * 100 / @nMessagesTypeIsFeedback)% ) </span></div>
                     }
                 }
             else
                 {
-                <button class="btn btn-link" @onclick="BtnBack">
+                    <button class="btn btn-link" @onclick="BtnBack">
                     <img src="/img/icoBack3.png" width="40" />
-                </button>                
+                    </button>
                 @if (user.UserRole == "teacher")
                     {
-                    <button class="btn btn-link" @onclick="BtnCalcPercentsForStudent">
+                        <button class="btn btn-link" @onclick="BtnCalcPercentsForStudent">
                         <img src="/img/gifChartPie.gif" width="40" />
-                    </button>
+                        </button>
                     }
-                <button class="btn btn-link" @onclick="()=>BtnDelete_MessagesOfstudent(Id)">
+                    <button class="btn btn-link" @onclick="() => BtnDelete_MessagesOfstudent(Id)">
                     <img src="/img/icoDelete2.png" width="35" />
-                </button>
+                    </button>
                 }
-            </div>        
+            </div>
         }
     }
-    <hr />
+<hr />
     <EditForm Model="lstStudentMessages" style="max-width:600px; margin: 0 auto;">
     @if (user.UserRole == "teacher")
         {
-        <div class="accordion" id="accordionStudent" style="margin: 0 auto;">
+            <div class="accordion" id="accordionStudent" style="margin: 0 auto;">
             @* --- STUDENT Notes *@
-            <div class="accordion-item mb-2">
+                <div class="accordion-item mb-2">
                     <h4 class="accordion-header">
-                        <button class="accordion-button @(appState.Cmd=="ShowCourseFolders" ? "" : "collapsed")"
+                        <button class="accordion-button @(appState.Cmd == "ShowCourseFolders" ? "" : "collapsed")"
                             type="button"
                             data-bs-toggle="collapse"
                             data-bs-target="#CollapseId2"
                             aria-expanded="false"
                             aria-controls="CollapseId2" style="background-color:WhiteSmoke">
-                            <h4>notes <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstNotes.Count )</span></h4>
+                        <h4>notes <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstNotes.Count )</span></h4>
                         </button>
                     </h4>
-                <div id="CollapseId2" class="accordion-collapse collapse" data-bs-parent="#accordionStudent" style="text-align:center;">
+                    <div id="CollapseId2" class="accordion-collapse collapse" data-bs-parent="#accordionStudent" style="text-align:center;">
                         <div class="accordion-body" style="background-color:white">
-                        <button class="btn btn-link" style="margin-left:1px; text-align:center;" Title="add note about this student" @onclick='() => BtnCreateNote(Id, "S")'>
+                            <button class="btn btn-link" style="margin-left:1px; text-align:center;" Title="add note about this student" @onclick='() => BtnCreateNote(Id, "S")'>
                             <img src="/img/icoNewNote3.png" width="32" />
-                        </button>
+                            </button>
 
-                            @foreach (Note notex in lstNotes)
+                        @foreach (Note notex in lstNotes)
+                            {
+                            if ((notex.NoteTags & 1) == 1)
                                 {
-                                if ((notex.NoteTags & 1) == 1)
-                                    {
                                     <div class="mt-3 text-end">
                                         <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                             <MudCard Class="mx-0">
@@ -129,30 +130,30 @@ else
                                                         @PersianDate(notex.NoteDateTime)
                                                         }
                                                     </span>
-                                                    <hr />
+                                                <hr />
                                                     <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
-                                                        @if (notex.NoteText.Length > 100)
-                                                            {
-                                                            <div> @notex.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
-                                                            }
-                                                        else
-                                                            {
-                                                            <div> @notex.NoteText</div>
-                                                            }
+                                                    @if (notex.NoteText.Length > 100)
+                                                        {
+                                                        <div> @notex.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
+                                                        }
+                                                    else
+                                                        {
+                                                        <div> @notex.NoteText</div>
+                                                        }
                                                     </div>
                                                     <button class="btn btn-link" @onclick="() => BtnShowNoteInDialog(notex)">
                                                     <img src="/img/icoNoteReport.png" width="24" />
                                                     </button>
                                                     <button class="btn btn-link" @onclick="() => BtnDeleteNote(notex.NoteId)">
-                                                        <img src="/img/icoDelete1.png" width="24" />
+                                                    <img src="/img/icoDelete1.png" width="24" />
                                                     </button>
                                                 </MudCardContent>
                                             </MudCard>
                                         </MudContainer>
                                     </div>
-                                    }
-                                else
-                                    {
+                                }
+                            else
+                                {
                                     <div class="mt-3 text-start">
                                         <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                             <MudCard Class="mx-0">
@@ -168,194 +169,203 @@ else
                                                         @PersianDate(notex.NoteDateTime)
                                                         }
                                                     </span>
-                                                    <hr />
+                                                <hr />
                                                     <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small">
-                                                        @if (notex.NoteText.Length > 100)
-                                                            {
-                                                            <div> @notex.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
-                                                            }
-                                                        else
-                                                            {
-                                                            <div> @notex.NoteText</div>
-                                                            }
+                                                    @if (notex.NoteText.Length > 100)
+                                                        {
+                                                        <div> @notex.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
+                                                        }
+                                                    else
+                                                        {
+                                                        <div> @notex.NoteText</div>
+                                                        }
                                                     </div>
                                                     <button class="btn btn-link" @onclick="() => BtnShowNoteInDialog(notex)">
                                                     <img src="/img/icoNoteReport.png" width="24" />
                                                     </button>
                                                     <button class="btn btn-link" @onclick="() => BtnDeleteNote(notex.NoteId)">
-                                                        <img src="/img/icoDelete1.png" width="24" />
+                                                    <img src="/img/icoDelete1.png" width="24" />
                                                     </button>
                                                 </MudCardContent>
                                             </MudCard>
                                         </MudContainer>
                                     </div>
-                                    }
-                                }   
+                                }
+                            }
                         </div>
                     </div>
                 </div>
             </div>
         }
-    @if(lstStudentMessages.Count > 0)
+    @if (lstStudentMessages.Count > 0)
         {
         <h5 style="text-align:left; margin-top:30px">messages</h5>
         @foreach (StudentMessage message in lstStudentMessages)
-                {
+            {
                 <MudContainer Class="mt-2 px-0 width-max:500">
                     <MudCard Class="mx-0">
                         <MudCardContent Style="background-color:whitesmoke;">
                             <div style="font-weight:bold; text-align:center; white-space: pre-wrap;">
-                                @message.MessageTitle
+                            @message.MessageTitle
                             </div>
-                        <div style="text-align:center;">
-                            <button class="btn btn-link" @onclick="() => BtnCalcPercentsForMessage(message)">
-                                    <img src="/img/icoChartPie.png" width="22" />
+                            <div style="text-align:center;">
+                                <button class="btn btn-link" @onclick="() => BtnCalcPercentsForMessage(message)">
+                                <img src="/img/icoChartPie.png" width="22" />
                                 </button>
-                                <button class="btn btn-link" Title="change font" @onclick="()=>BtnCangeFont(message.MessageId)">
-                                    <img src="/img/icoFontAa.png" width="20" />
+                                <button class="btn btn-link" Title="change font" @onclick="() => BtnCangeFont(message.MessageId)">
+                                <img src="/img/icoFontAa.png" width="20" />
                                 </button>
                             </div>
-                            <hr style="color:gray" />
+                        <hr style="color:gray" />
                         @if ((message.MessageId == Convert.ToInt32(appState.MessageId)) & (_cmd == "useCourierFont"))
-                                {
-                                _font="font-family:Courier New, Courier, monospace;font-size:small;";
-                                }
-                            else
-                                {
-                                _font="font-family:'Segoe UI';";
-                                }
+                            {
+                            _font = "font-family:Courier New, Courier, monospace;font-size:small;";
+                            }
+                        else
+                            {
+                            _font = "font-family:'Segoe UI';";
+                            }
                             <div style="text-align:center;">
                                 <div style="@_font text-align:left; white-space: pre-wrap">
-                                    @message.MessageBody
+                                @message.MessageBody
                                 </div>
-                                <hr style="color:royalblue" />
+                            <hr style="color:royalblue" />
                             <div>Sent: @PersianDate(message.DateTimeSent)</div>
-                                @if((message.StudentMessageTags & 1) == 1)
-                                    {
-                                <div>Read: @PersianDate(message.DateTimeRead)</div>
-                                    }
-                                @if((message.StudentMessageTags & 16) == 16)
-                                    {
-                                    <span style="color:royalblue;font-weight:bold"># YES </span>
-                                    }
-                                @if((message.StudentMessageTags & 32) == 32)
-                                    {
-                                    <span style="color:indianred;font-weight:bold"># NO </span>
-                                    }
-                                @if((message.StudentMessageTags & 2) == 2)
-                                    {
-                                    <span style="color:gray;font-style:italic">Bookmarked </span>
-                                    }
-                                @if((message.StudentMessageTags & 4) == 4)
-                                    {
-                                    <span style="color:gray;font-style:italic">Deleted </span>
-                                    }
-                            </div>
-                            @if ((appState.Cmd == "ShowMessageStats") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
+                            @if ((message.StudentMessageTags & 1) == 1)
                                 {
+                                <div>Read: @PersianDate(message.DateTimeRead)</div>
+                                }
+                            @if ((message.StudentMessageTags & 16) == 16)
+                                {
+                                <span style="color:royalblue;font-weight:bold"># YES </span>
+                                }
+                            @if ((message.StudentMessageTags & 32) == 32)
+                                {
+                                <span style="color:indianred;font-weight:bold"># NO </span>
+                                }
+                            @if ((message.StudentMessageTags & 2) == 2)
+                                {
+                                <span style="color:gray;font-style:italic">Bookmarked </span>
+                                }
+                            @if ((message.StudentMessageTags & 4) == 4)
+                                {
+                                <span style="color:gray;font-style:italic">Deleted </span>
+                                }
+                            </div>
+                        @if ((appState.Cmd == "ShowMessageStats") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
+                            {
                                 <div style="text-align:left; padding-left:25px;">
-                                    <div style="font-weight:bold">Target Students <span style="font-weight:normal;"> ( @nStudents ) </span></div>
-                                    <div style="padding-left:15px;">@nStudentsRead ( @(nStudentsRead * 100 / nStudents)% ) Read</div>
-                                    <div style="padding-left:15px;">@nStudentsBookmarked Bookmarked</div>
-                                    <div style="padding-left:15px;">@nStudentsDeleted Deleted</div>
-                                    @if (user.UserRole == "teacher")
-                                        {
-                                        <button class="btn btn-link" @onclick="()=>BtnListAnswersToThisMessage(message)">
-                                            <img src="/img/icoListM.png" width="26" />
-                                        </button>                                
-                                        }
-                                </div>
-                                @if((message.StudentMessageTags & 8) == 8)
+                                <div style="font-weight:bold">Target Students <span style="font-weight:normal;"> ( @nStudents ) </span></div>
+                                <div style="padding-left:15px;">@nStudentsRead ( @(nStudentsRead * 100 / nStudents)% ) Read</div>
+                                <div style="padding-left:15px;">@nStudentsBookmarked Bookmarked</div>
+                                <div style="padding-left:15px;">@nStudentsDeleted Deleted</div>
+                                @if (user.UserRole == "teacher")
                                     {
+                                        <button class="btn btn-link" @onclick="() => BtnListAnswersToThisMessage(message)">
+                                        <img src="/img/icoListM.png" width="26" />
+                                        </button>
+                                    }
+                                </div>
+                            @if ((message.StudentMessageTags & 8) == 8)
+                                {
                                     <div class="d-flex justify-content-center">
                                         <MudChart ChartType="ChartType.Donut"
-                                                  InputData="@(new double[] { nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered, (nStudents - nStudentsRead) })"
-                                                  InputLabels="@(new[] { "Yes: " + nStudentsAnsweredYes, "No: " + nStudentsAnsweredNo, "notSure: " + nStudentsNotAnswered, "notRead: " + (nStudents - nStudentsRead) })"
-                                                  Width="100px" Height="100px">
+                                              T="double"
+                                              ChartSeries="@(new double [] { nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered, (nStudents - nStudentsRead) }.AsChartDataSet())"
+                                              ChartLabels="@(new [] { "Yes: " + nStudentsAnsweredYes, "No: " + nStudentsAnsweredNo, "notSure: " + nStudentsNotAnswered, "notRead: " + (nStudents - nStudentsRead) })"
+                                              Width="200px" Height="200px">
                                         </MudChart>
                                     </div>
                                 <div class="d-flex justify-content-center" style="color:gray;text-align:left;font-weight:bold; padding-left:25px;">Participation: <span style="font-weight:normal; margin-left:10px;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>
-                                    <br />
-                                    }
+                                <br />
                                 }
-                            else
-                                {
+                            }
+                        else
+                            {
                                 <div style="text-align:center">
-                                    @* <button class="btn btn-link" @onclick="()=>BtnCalcPercentsForMessage(message)">
+                                @* <button class="btn btn-link" @onclick="()=>BtnCalcPercentsForMessage(message)">
                                         <img src="/img/icoChartPie.png" width="26" />
                                     </button> *@
-                                    @if (user.UserRole == "teacher")
-                                        {
-                                        <button class="btn btn-link" @onclick="()=>BtnDelete_Messages(message.MessageId)">
-                                            <img src="/img/icoDelete2.png" width="30" />
+                                @if (user.UserRole == "teacher")
+                                    {
+                                        <button class="btn btn-link" @onclick="() => BtnDelete_Messages(message.MessageId)">
+                                        <img src="/img/icoDelete2.png" width="30" />
                                         </button>
-                                        <button class="btn btn-link" @onclick="()=>BtnDelete_Message(message.StudentMessageId)">
-                                            <img src="/img/icoDelete1.png" width="22" />
-                                        </button>                
-                                        }
+                                        <button class="btn btn-link" @onclick="() => BtnDelete_Message(message.StudentMessageId)">
+                                        <img src="/img/icoDelete1.png" width="22" />
+                                        </button>
+                                    }
                                 </div>
-                                }
-                            @if((appState.Cmd == "ShowListOfAnswersToThisMessage") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
-                                {
-                                <hr style="color:indianred"/>
+                            }
+                        @if ((appState.Cmd == "ShowListOfAnswersToThisMessage") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
+                            {
+                            <hr style="color:indianred" />
                                 <table class="table table-borderless">
-                                    @foreach (StudentMessage studentMessage in lstStudentMessageInstances)
-                                        {
+                                @foreach (StudentMessage studentMessage in lstStudentMessageInstances)
+                                    {
                                         <tr>
                                             <td style="text-align:left">
-                                                @if((studentMessage.StudentMessageTags & 1) == 1)
-                                                    {
+                                            @if ((studentMessage.StudentMessageTags & 1) == 1)
+                                                {
                                                     <span style="font-size:x-small;font-style:normal;font-weight:bold;color:royalblue">
-                                                        @studentMessage.DateTimeRead
-                                                    </span>                                                
-                                                    }
-                                                else
-                                                    {
-                                                    <span style="font-size:x-small;font-style:normal;font-weight:bold;color:indianred">
-                                                        not read
+                                                    @studentMessage.DateTimeRead
                                                     </span>
-                                                    }
-                                                <br/>
-                                                <span style="font-size:smaller">
-                                                    @studentMessage.StudentName (@studentMessage.StudentNickname)
-                                                </span>
-                                                <hr />
-                                            </td>
-                                            @if((@studentMessage.StudentMessageTags & 16) == 16)
-                                                {
-                                                <span style="font-size:smaller;font-weight:bold; color:royalblue">YES</span>
-                                                }
-                                            else if((@studentMessage.StudentMessageTags & 32) == 32)
-                                                {
-                                                <span style="font-size:smaller;font-weight:bold; color:indianred">NO</span>
                                                 }
                                             else
                                                 {
-                                                <span style="font-size:smaller;font-weight:bold; color:lightslategray">--</span>
+                                                    <span style="font-size:x-small;font-style:normal;font-weight:bold;color:indianred">
+                                                    not read
+                                                    </span>
                                                 }
+                                            <br />
+                                                <span style="font-size:smaller">
+                                                @studentMessage.StudentName (@studentMessage.StudentNickname)
+                                                </span>
+                                            <hr />
+                                            </td>
+                                        @if ((@studentMessage.StudentMessageTags & 16) == 16)
+                                            {
+                                            <span style="font-size:smaller;font-weight:bold; color:royalblue">YES</span>
+                                            }
+                                        else if ((@studentMessage.StudentMessageTags & 32) == 32)
+                                            {
+                                            <span style="font-size:smaller;font-weight:bold; color:indianred">NO</span>
+                                            }
+                                        else
+                                            {
+                                            <span style="font-size:smaller;font-weight:bold; color:lightslategray">--</span>
+                                            }
                                         </tr>
-                                        }
+                                    }
                                 </table>
-                                }
+                            }
                         </MudCardContent>
                     </MudCard>
                 </MudContainer>
-                }
-    }
+            }
+        }
     </EditForm>
     <div style="text-align:center">
-        <br />
+    <br />
         <button class="btn btn-link" @onclick="BtnBack">
-            <img src="/img/icoBack3.png" width="40" />
+        <img src="/img/icoBack3.png" width="40" />
         </button>
     </div>
     <script>
-        window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+    window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
     </script>
 
 @code {
-    [Parameter] public string mode { get; set; }
-    [Parameter] public int Id { get; set; }
+    [Parameter]
+    public string mode
+        {
+        get; set;
+        }
+    [Parameter]
+    public int Id
+        {
+        get; set;
+        }
     //messages
     public int nMessagesAll;
     public int nMessagesRead;
@@ -376,37 +386,37 @@ else
     public int nStudentsNotAnswered = 0;
     private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
     int dataSize = 4;
-    User user = new User ();
-    List<StudentMessage> lstStudentMessages = new List<StudentMessage> ();
-    List<StudentMessage> lstStudentMessageInstances = new List<StudentMessage> ();
-    List<Note> lstNotes = new List<Note> ();
+    User user = new User();
+    List<StudentMessage> lstStudentMessages = new List<StudentMessage>();
+    List<StudentMessage> lstStudentMessageInstances = new List<StudentMessage>();
+    List<Note> lstNotes = new List<Note>();
     public bool _hasFetched = false;
     string _cmd = "";
-    string _font="font-family:'Segoe UI';";
+    string _font = "font-family:'Segoe UI';";
 
     //LifeCycleEvents
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync ()
         {
         appState.OnChange += TriggerRender;
-        if(Convert.ToInt32(appState.UserLoginStatus) != 1)
+        if (Convert.ToInt32(appState.UserLoginStatus) != 1)
             {
-            Navman.NavigateTo ("/Login");
+            Navman.NavigateTo("/Login");
             }
-        appState.SetCmd ("");
+        appState.SetCmd("");
         user.UserRole = appState.UserRole ?? "";
-        await GetListOfMessagesAndNotes ();
+        await GetListOfMessagesAndNotes();
         _hasFetched = true;
-        } 
-    private void TriggerRender()
+        }
+    private void TriggerRender ()
         {
         InvokeAsync(StateHasChanged);
         }
-    public void Dispose()
+    public void Dispose ()
         {
         appState.OnChange -= TriggerRender;
         }
     //btns-Students
-    public void BtnCalcPercentsForStudent()
+    public void BtnCalcPercentsForStudent ()
         {
         nMessagesAll = 0;
         nMessagesRead = 0;
@@ -419,26 +429,26 @@ else
         foreach (StudentMessage stmsg in lstStudentMessages)
             {
             nMessagesAll++;
-            if((stmsg.StudentMessageTags & 1) == 1)
+            if ((stmsg.StudentMessageTags & 1) == 1)
                 {
-                nMessagesRead++;                
+                nMessagesRead++;
                 }
-            if((stmsg.StudentMessageTags & 2) == 2)
+            if ((stmsg.StudentMessageTags & 2) == 2)
                 {
                 nMessagesBookmarked++;
                 }
-            if((stmsg.StudentMessageTags & 4) == 4)
+            if ((stmsg.StudentMessageTags & 4) == 4)
                 {
                 nMessagesDeleted++;
                 }
-            if((stmsg.StudentMessageTags & 8) == 8)
+            if ((stmsg.StudentMessageTags & 8) == 8)
                 {
                 nMessagesTypeIsFeedback++;
-                if((stmsg.StudentMessageTags & 16) == 16)
+                if ((stmsg.StudentMessageTags & 16) == 16)
                     {
                     nMessagesAnsweredYes++;
                     }
-                else if((stmsg.StudentMessageTags & 32) == 32)
+                else if ((stmsg.StudentMessageTags & 32) == 32)
                     {
                     nMessagesAnsweredNo++;
                     }
@@ -446,37 +456,37 @@ else
                     {
                     nMessagesNotAnswered++;
                     }
-                }                
+                }
             }
-        appState.SetCmd ("ShowStudentMessageStats");
+        appState.SetCmd("ShowStudentMessageStats");
         }
-    public async Task BtnDelete_MessagesOfstudent(int studentId)
+    public async Task BtnDelete_MessagesOfstudent (int studentId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> all messages of this student?<div style='text-align:center'><br><br><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            bool result = await feService.Delete_Messages ("ByStudentId", studentId);
-            if(result)
+            bool result = await feService.Delete_Messages("ByStudentId", studentId);
+            if (result)
                 {
-                int id = Convert.ToInt32 (Id);
+                int id = Convert.ToInt32(Id);
                 Snackbar.Add("deleted", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 lstStudentMessages.Clear();
-                lstStudentMessages = await feService.Read_StudentMessages ("S", Id, 0);
+                lstStudentMessages = await feService.Read_StudentMessages("S", Id, 0);
                 appState.SetCmd("");
                 StateHasChanged();
                 }
             else
                 {
                 Snackbar.Add("failed to delete message", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                }            
+                }
             }
         }
     //btns-Messages
-    public async Task BtnCalcPercentsForMessage(StudentMessage message)
+    public async Task BtnCalcPercentsForMessage (StudentMessage message)
         {
         _hasFetched = false;
-        lstStudentMessageInstances = await feService.Read_StudentMessages ("M", message.MessageId, 0);
+        lstStudentMessageInstances = await feService.Read_StudentMessages("M", message.MessageId, 0);
         if (lstStudentMessageInstances.Count > 0)
             {
             nStudents = 0;
@@ -490,16 +500,16 @@ else
             foreach (StudentMessage stmsg in lstStudentMessageInstances)
                 {
                 nStudents++;
-                if((stmsg.StudentMessageTags & 1) == 1)
+                if ((stmsg.StudentMessageTags & 1) == 1)
                     {
-                    nStudentsRead++;                
-                    if((stmsg.StudentMessageTags & 8) == 8)
+                    nStudentsRead++;
+                    if ((stmsg.StudentMessageTags & 8) == 8)
                         {
-                        if((stmsg.StudentMessageTags & 16) == 16)
+                        if ((stmsg.StudentMessageTags & 16) == 16)
                             {
                             nStudentsAnsweredYes++;
                             }
-                        else if((stmsg.StudentMessageTags & 32) ==32)
+                        else if ((stmsg.StudentMessageTags & 32) == 32)
                             {
                             nStudentsAnsweredNo++;
                             }
@@ -511,42 +521,42 @@ else
                     }
                 else
                     {
-                    nStudentsNotRead++;                                    
+                    nStudentsNotRead++;
                     }
-                if((stmsg.StudentMessageTags & 2) == 2)
+                if ((stmsg.StudentMessageTags & 2) == 2)
                     {
                     nStudentsBookmarked++;
                     }
-                if((stmsg.StudentMessageTags & 4) == 4)
+                if ((stmsg.StudentMessageTags & 4) == 4)
                     {
                     nStudentsDeleted++;
                     }
                 }
-            appState.SetCmd ("ShowMessageStats");
-            appState.SetMessageId (message.MessageId);
+            appState.SetCmd("ShowMessageStats");
+            appState.SetMessageId(message.MessageId);
             }
         _hasFetched = true;
         }
-    public async Task BtnListAnswersToThisMessage(StudentMessage message)
+    public async Task BtnListAnswersToThisMessage (StudentMessage message)
         {
-        appState.SetCmd ("ShowListOfAnswersToThisMessage");
-        appState.SetMessageId (message.MessageId);
+        appState.SetCmd("ShowListOfAnswersToThisMessage");
+        appState.SetMessageId(message.MessageId);
         _hasFetched = true;
         }
-    public async Task BtnDelete_Message(int studentMessageId)
+    public async Task BtnDelete_Message (int studentMessageId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> message permanently?<br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "confirm", markupMessage: message, yesText: "Delete", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "confirm", markupMessage: message, yesText: "Delete", cancelText: "No");
         if (confirmResult == true)
             {
-            int userId = Convert.ToInt32 (appState.UserId);
-            bool result = await feService.Delete_Messages ("ByStudentMesssageId", studentMessageId);
-            if(result)
+            int userId = Convert.ToInt32(appState.UserId);
+            bool result = await feService.Delete_Messages("ByStudentMesssageId", studentMessageId);
+            if (result)
                 {
                 Snackbar.Add("deleted", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                int id = Convert.ToInt32 (Id);
+                int id = Convert.ToInt32(Id);
                 lstStudentMessages.Clear();
-                lstStudentMessages = await feService.Read_StudentMessages ("S", Id, 0);
+                lstStudentMessages = await feService.Read_StudentMessages("S", Id, 0);
                 appState.SetCmd("");
                 StateHasChanged();
                 }
@@ -556,41 +566,41 @@ else
                 }
             }
         }
-    public async Task BtnDelete_Messages(int messageId)
+    public async Task BtnDelete_Messages (int messageId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> messages permanently?<br><span style='font-weight:bold;color:royalblue'>All</span> instances of this message sent to students<br>will also be <span style='color:indianred'>deleted</span><br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            int groupId = Convert.ToInt32 (appState.GroupId);
-            bool result = await feService.Delete_Messages ("ByMessageid", messageId);
-            if(result)
+            int groupId = Convert.ToInt32(appState.GroupId);
+            bool result = await feService.Delete_Messages("ByMessageid", messageId);
+            if (result)
                 {
-                int id = Convert.ToInt32 (Id);
+                int id = Convert.ToInt32(Id);
                 Snackbar.Add("deleted.", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
                 lstStudentMessages.Clear();
-                lstStudentMessages = await feService.Read_StudentMessages ("S", Id, 0);
+                lstStudentMessages = await feService.Read_StudentMessages("S", Id, 0);
                 appState.SetCmd("");
                 StateHasChanged();
                 }
             else
                 {
                 Snackbar.Add("failed to delete message", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
-                }            
+                }
             }
-        }    
-    private void BtnCangeFont(int messageId)
+        }
+    private void BtnCangeFont (int messageId)
         {
-        if(messageId == Convert.ToInt32(appState.MessageId))
+        if (messageId == Convert.ToInt32(appState.MessageId))
             {
-            _cmd = (_cmd == "useCourierFont")?  "": "useCourierFont";
+            _cmd = (_cmd == "useCourierFont") ? "" : "useCourierFont";
             }
         else
             {
-            appState.SetMessageId (messageId);
+            appState.SetMessageId(messageId);
             _cmd = "useCourierFont";
             }
-        StateHasChanged ();
+        StateHasChanged();
         }
     private async Task BtnCreateNote (int Id, string mode)
         {
@@ -625,7 +635,7 @@ else
                     "e" => "select a Course, then select an Exam",
                     _ => null
                     };
-            Snackbar.Add($"{itemx}", Severity.Info); 
+            Snackbar.Add($"{itemx}", Severity.Info);
             }
         }
     //convert date
@@ -641,97 +651,97 @@ else
             }
         }
     //methods
-    public async Task GetListOfMessagesAndNotes()
+    public async Task GetListOfMessagesAndNotes ()
         {
         if (user.UserRole == "teacher")
             {
-            lstStudentMessages = await feService.Read_StudentMessages ("X", Id, Convert.ToInt32 (appState.UserId));
+            lstStudentMessages = await feService.Read_StudentMessages("X", Id, Convert.ToInt32(appState.UserId));
             }
         else
             {
             lstStudentMessages.Clear();
-            StudentMessage studentMessage = await feService.Read_StudentMessage (Convert.ToInt32(appState.StudentMessageId));
-            lstStudentMessages.Add (studentMessage);
+            StudentMessage studentMessage = await feService.Read_StudentMessage(Convert.ToInt32(appState.StudentMessageId));
+            lstStudentMessages.Add(studentMessage);
             //if role=student: automatically call BtnCalcPercentsForMessage() for that one message!
             await BtnCalcPercentsForMessage(studentMessage);
             }
         int referenceType = mode switch
             {
-            "U" => 11,
-            "SP" => 12,
-            "S" => 13,
-            "G" => 14,
-            "C" => 15,
-            "E" => 16,
-            _ => 0
-            };
+                "U" => 11,
+                "SP" => 12,
+                "S" => 13,
+                "G" => 14,
+                "C" => 15,
+                "E" => 16,
+                _ => 0
+                };
         if ((referenceType > 0) & (user.UserRole == "teacher"))
             {
             lstNotes = await feService.Read_Notes(Id, referenceType, Convert.ToInt32(appState.UserId));
             }
         }
-    public async Task BtnShowNoteInDialog(Note note)
+    public async Task BtnShowNoteInDialog (Note note)
         {
-        appState.SetSelectedNoteId (note.NoteId);
+        appState.SetSelectedNoteId(note.NoteId);
         appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
         appState.SetNoteDueDateTime(note.NoteDueDateTime?.ToString("yyyy-MM-dd HH:mm")); //use ? becuse note.NoteDueDateTime is nullable
         appState.SetNoteText(note.NoteText);
-        appState.SetNoteIsRtl (note.IsRtl);
+        appState.SetNoteIsRtl(note.IsRtl);
         appState.SetNoteReferenceType(note.ReferenceType);
-        appState.SetNoteReferenceId (note.ReferenceId);
+        appState.SetNoteReferenceId(note.ReferenceId);
         appState.SetNoteReferenceName(note.ReferenceName);
         appState.SetNoteCreatorId(note.CreatorId);
         appState.SetCmd("ShowNoteInDialog");
-        StateHasChanged ();
+        StateHasChanged();
         }
-    public async Task BtnEditNoteInDialog(Note note)
+    public async Task BtnEditNoteInDialog (Note note)
         {
-        appState.SetSelectedNoteId (note.NoteId);
-        appState.SetNoteReferenceId (note.ReferenceId);
+        appState.SetSelectedNoteId(note.NoteId);
+        appState.SetNoteReferenceId(note.ReferenceId);
         appState.SetNoteReferenceType(note.ReferenceType);
         appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
         appState.SetNoteDueDateTime(note.NoteDueDateTime?.ToString("yyyy-MM-dd HH:mm")); //use ? becuse note.NoteDueDateTime is nullable
         appState.SetNoteText(note.NoteText);
-        appState.SetNoteIsRtl (note.IsRtl);
+        appState.SetNoteIsRtl(note.IsRtl);
         appState.SetNoteCreatorId(note.CreatorId);
         appState.SetCmd("UpdateNote");
-        StateHasChanged ();
+        StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
-        //to handel close event, I added in the Modal_CreateNote: [Parameter] public EventCallback OnClose 
+        //to handel close event, I added in the Modal_CreateNote: [Parameter] public EventCallback OnClose
         }
-    public async Task BtnDeleteNote(int noteId)
+    public async Task BtnDeleteNote (int noteId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> note permanently?<br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
 
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "confirm", markupMessage: message, yesText: "Delete", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "confirm", markupMessage: message, yesText: "Delete", cancelText: "No");
         if (confirmResult == true)
             {
-            bool result = await feService.Delete_Note (noteId);
-            if(result)
+            bool result = await feService.Delete_Note(noteId);
+            if (result)
                 {
-                Snackbar.Add($"deleted", Severity.Warning); 
+                Snackbar.Add($"deleted", Severity.Warning);
                 user.UserId = Convert.ToInt32(appState.UserId);
                 _hasFetched = false;
-                await GetListOfMessagesAndNotes ();
+                await GetListOfMessagesAndNotes();
                 _hasFetched = true;
                 appState.SetCmd("");
                 StateHasChanged();
                 }
             else
                 {
-                Snackbar.Add($"failed to delete note", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); 
+                Snackbar.Add($"failed to delete note", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             }
         }
-    private async Task HandleModalClose() 
+    private async Task HandleModalClose ()
         {
-        int userId = Convert.ToInt32 (appState.UserId);
-        await GetListOfMessagesAndNotes (); 
-        StateHasChanged(); 
+        int userId = Convert.ToInt32(appState.UserId);
+        await GetListOfMessagesAndNotes();
+        StateHasChanged();
         }
     //Exit
-    public void BtnBack()
+    public void BtnBack ()
         {
-        Navman.NavigateTo (appState.ReturnPage ?? "/Login");
+        Navman.NavigateTo(appState.ReturnPage ?? "/Login");
         }
-}
+    }

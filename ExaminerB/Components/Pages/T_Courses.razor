@@ -452,7 +452,7 @@ else
     public async Task BtnDeleteCourse (Course course)
         {
         var message = new MarkupString($"<span style='color:indianred'>Warning:</span> Several related data may be deleted! <br><ul><li> Tests</li><li>Exams</li><li>Student Exams</li><li>...</li><br>Continue? <hr style=color:blue><span style='color:indianred'>Delete </span> <strong>( {course.CourseName} )</strong>?<hr style=color:blue>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             if (await JS.InvokeAsync<bool>("confirm", "Last warning: \n\nAre you sure? Delete?"))
@@ -578,7 +578,7 @@ else
     public async Task BtnDeleteCourseFolder (int courseFolderId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> <strong>(Course Folder Link: {courseFolderId})</strong>?<br>Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             bool result = await feService.Delete_CourseFolder(courseFolderId);

@@ -318,7 +318,7 @@ else
     public async Task BtnDeleteStudentCourse (int studentCourseId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Remove</span> student from this course<br>and <span style='color:indianred'>delete</span> student tests in this course?<hr><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             bool result = await feService.Delete_StudentCourse(studentCourseId);
@@ -357,7 +357,7 @@ else
     public async Task BtnDeleteStudentExam (int studentExamId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Exam (for this Student)?<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             _hasFetched = false;
@@ -400,7 +400,7 @@ else
         {
         //if(await JS.InvokeAsync<bool>("confirm", "\n Set Exam  @exm.ExamTitle  as Finished for this Student?"))
         var message = new MarkupString(@$"<hr>Set <span style='color:indianred'>{studentExam.ExamTitle}</span> as Finished?<br><br><div style='text-align:center'><img src='/img/icoClock2.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             bool result = await feService.Update_StudentExamTags(studentExam, "finishedOn");
@@ -419,7 +419,7 @@ else
     public async Task BtnResetStudentExam (StudentExam studentExam)
         {
         var message = new MarkupString(@$"<hr>Activate <span style='color:indianred'>{studentExam.ExamTitle}</span> for this Student?<div style='text-align:center'><img src='/img/icoGo1.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             bool result = await feService.Update_StudentExamTags(studentExam, "finishedOff");

@@ -1042,7 +1042,7 @@ else
     private async Task BtnRemoveStudentsFromGroup ()
         {
         var message = new MarkupString(@$"<hr><span style='color:indianred'>DELETE </span> selected students from this group? </br></br></br><div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             List<int> lstStudentIds = new List<int>();
@@ -1101,7 +1101,7 @@ else
         if (groupId > 0)
             {
             var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> the group?<br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
-            bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+            bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
                 {
                 int result = await feService.Delete_Group(groupId);
@@ -1145,7 +1145,7 @@ else
     private async Task HandleExcelFileOfStudentUsernames (InputFileChangeEventArgs e)
         {
         var message = new MarkupString(@$"<hr><span style='color:indianred'>Read</span> student usernames from Excell file? </br></br></br><div style='text-align:center'><img src='/img/icoExcel1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult != true)
             {
             _cmd = "";
@@ -1454,7 +1454,7 @@ else
         if (messageId > 0)
             {
             var messagex = new MarkupString($"<hr><span style='color:indianred'>Edit</span> message?<br>There may be previous Messages send using existing Title/Body.<br>Continue?<br><br><div style='text-align:center'><img src='/img/icoRename.png' width='70'/></div><br><hr>");
-            bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: messagex, yesText: "Yes", cancelText: "No");
+            bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: messagex, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
                 {
                 message = await feService.Read_Message(messageId, false);
@@ -1484,7 +1484,7 @@ else
         if (messageId > 0)
             {
             var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> the message and <span style='color:indianred; font-weight:bold'>all</span> instances already sent to Students?<br><br>Are you <span style='color:royalblue'>Sure</span>? <div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
-            bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+            bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
                 {
                 bool result = await feService.Delete_Messages("ByMessageId", messageId);
@@ -1639,7 +1639,7 @@ else
     private async Task BtnHelpImporStudentsFromtExcel ()
         {
         var message = new MarkupString(@$"<hr>To import a list of students from <span style='font-weight:bold;color:green'>Excel</span> file:<br><br>column A = UserName<br>column B = Password<br>column C = Nickname <br><br>notice: no duplicates!<hr><div style='text-align:center'><img src='/img/icoExcel1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Guide", markupMessage: message, yesText: "got it");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Guide", markupMessage: message, yesText: "got it");
         }
     //handle Keys
     private async Task HandleKey_Searchbox (KeyboardEventArgs e)

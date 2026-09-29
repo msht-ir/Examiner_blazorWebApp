@@ -594,7 +594,7 @@ else
             {
             _hasFetched = false;
             var message = new MarkupString($"<hr>CONFIRM: <br><br>Tests in the <span style='color:indianred'>Selected</span><span style='color:royalblue'> Excel Worksheet</span> will be imported <br><br><span style='font-weight:bold'>Duplicate tests</span><br>are imported without warning! <span style='color:indianred'><br><br>Continue .... </span>?<br><br><div style='text-align:center'><img src='/img/icoExcel1.png' width='70'/></div><br><hr>");
-            bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+            bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
                 {
                 _hasFetched = false;

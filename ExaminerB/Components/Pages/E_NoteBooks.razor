@@ -769,7 +769,7 @@ else
     private async Task BtnDeleteProject (int projectId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>CAUTION!!!<br><br>Delete</span> notebook <span style='color:royalblue'>{project.ProjectName}</span> ?<br><br><span style='font-weight:bold'>All</span> sections and notes in this notebook<br><br>will be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             bool result = await feService.Delete_Project(projectId);
@@ -908,7 +908,7 @@ else
         {
         appState.SetProjectId(subProject.ProjectId);
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> section <span style='color:royalblue'>{subProject.SubprojectName}</span> ?<br><br><span style='font-weight:bold'>All</span> notes in this section will also be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             bool result = await feService.Delete_Subproject(subProject.SubprojectId);
@@ -1094,7 +1094,7 @@ else
     public async Task BtnCopyToQuickNotes (Note note, Subproject subproject)
         {
         var message = new MarkupString($"<hr><span style='color:DarkGreen'>COPY</span> this note to Quick-Notes?<br><br><div style='text-align:center'><img src='/img/icoCopyToNoteReport.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
@@ -1132,7 +1132,7 @@ else
     public async Task BtnRemoveDueNoteTag (Note note)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Remove</span> Todo tag from this note?<br><br><span style='font-weight:bold'>This note</span> will be a <span style='color:indianred'> simple note</span>!<br><br><div style='text-align:center'><img src='/img/icoOff.png' width='50'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             appState.SetNoteReferenceId(note.ReferenceId);
@@ -1152,7 +1152,7 @@ else
     public async Task BtnDeleteNote (Note note)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> this note?<br><br><span style='font-weight:bold'>This note</span> will be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             appState.SetNoteReferenceId(note.ReferenceId);

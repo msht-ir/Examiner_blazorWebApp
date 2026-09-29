@@ -224,7 +224,7 @@ your email:<br>{user.UserEmail}<br><br><hr style=color:blue>
 <strong>' {user.UserName} '</strong> as Teacher, after your account ia approved by the admin.
 <hr style=color:blue>
 ");
-                bool? confirmResult = await DialogService.ShowMessageBox(title: "Examiner accounts", markupMessage: message, yesText: "OK");
+                bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Examiner accounts", markupMessage: message, yesText: "OK");
                 if (confirmResult == true)
                     {
                     Navman.NavigateTo("/Login");

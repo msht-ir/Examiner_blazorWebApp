@@ -492,7 +492,7 @@ else
     public async Task BtnDeleteExamComposition (int examCompositionId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> Exam Composition? <br>Are you sure?<br><br> <div style='text-align:center'><img src='/img/icoDelete1.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             Snackbar.Add("Exam composition Removed!", Severity.Warning);
@@ -525,7 +525,7 @@ else
         else
             {
             var message = new MarkupString($"<hr><span style='color:indianred'>Remove</span> all existing tests from <span style='color:royalblue'>Exam</span> test list<br> and <span style=color:green>DRAW RANDOM</span> tests based on design?<br><br> <div style='text-align:center'><img src='/img/icoShuffle.png' width='40'/></div><br><hr>");
-            bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+            bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
                 {
                 _hasFetched = false;
@@ -585,7 +585,7 @@ else
     public async Task BtnDeleteExamTest (int testId)
         {
         var message = new MarkupString($"<hr><span style='color:indianred'>Remove</span> this test from <span style='color:royalblue'>Exam</span> test list? <br> Remove??<br><br> <div style='text-align:center'><img src='/img/icoEraser.png' width='40'/></div><br><hr>");
-        bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             ExamTest examTest = new ExamTest() { ExamId = exam.ExamId, TestId = testId, PercentCorrect = 0, PercentIncorrect = 0, PercentHelped = 0 };
@@ -607,7 +607,7 @@ else
     public async Task BtnBack ()
         {
         // var message = new MarkupString($"<hr><span style='color:indianred'>Save</span> Exam Changes? <br><span style='font-weight:bold;'>Notice:</span><br>Number of tests in this exam will be <span style='color:royalblue'>Updated</span> automatically<br><br> <div style='text-align:center'><img src='/img/icoSave1.png' width='40'/></div><br><hr>");
-        // bool? confirmResult = await DialogService.ShowMessageBox(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        // bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         // if (confirmResult == true)
         //     {
         //     await BtnUpdateExam ();
