@@ -50,13 +50,14 @@
                                                   Lines="18"
                                                   AutoResize="true"
                                                   Style=@($"width:100%;direction:{(note.IsRtl ? "rtl" : "ltr")};font-size:13px;font-family:{(note.IsRtl ? "'Segoe UI'" : "'Courier New', Courier, monospace")};color:black;") />
-                                        <div class="d-flex gap-4 mb-3">
+                                            <div class="d-flex gap-4 justify-content-center" style="text-align:center;">
                                             <MudCheckBox @bind-Value="note.IsTodo"
-                                                     Label="Todo"
-                                                     Color="Color.Secondary">
+                                                     Label="reminder"
+                                                     Color="Color.Secondary"
+                                                     Style="margin-right:50px;">
                                             </MudCheckBox>
                                             <MudCheckBox @bind-Value="note.IsRtl"
-                                                     Label="RTL"
+                                                     Label="right to left"
                                                      Color="Color.Primary">
                                             </MudCheckBox>
                                         </div>
@@ -84,7 +85,7 @@
                                     @* Buttons *@
                                     @if (appState.Cmd == "CreateNote")
                                         {
-                                            <div class="d-flex gap-4 justify-content-center" style="text-align:center;margin-top:50px;">
+                                            <div class="d-flex gap-4 justify-content-center" style="text-align:center;margin-top:40px;">
                                                 <MudButton Variant="Variant.Outlined"
                                                        Size="Size.Small"
                                                        Color="Color.Primary"
@@ -103,7 +104,7 @@
                                         }
                                     else if (appState.Cmd == "UpdateNote")
                                         {
-                                            <div class="d-flex gap-4 justify-content-center" style="text-align:center">
+                                            <div class="d-flex gap-4 justify-content-center" style="text-align:center;margin-top:40px;">
                                                 <MudButton Variant="Variant.Outlined"
                                                        Size="Size.Small"
                                                        Color="Color.Primary"

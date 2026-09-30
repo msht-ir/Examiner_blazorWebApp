@@ -200,149 +200,161 @@ else
     @if (lstStudentMessages.Count > 0)
         {
         <h5 style="text-align:left; margin-top:30px">messages</h5>
-        @foreach (StudentMessage message in lstStudentMessages)
-            {
-                <MudContainer Class="mt-2 px-0 width-max:500">
-                    <MudCard Class="mx-0">
-                        <MudCardContent Style="background-color:whitesmoke;">
-                            <div style="font-weight:bold; text-align:center; white-space: pre-wrap;">
-                            @message.MessageTitle
+        <MudExpansionPanels Class="gap-4 mt-6">
+                @foreach (StudentMessage message in lstStudentMessages)
+                    {
+                    <MudExpansionPanel MaxHeight="600" Expanded="false" Style="background-color:rgb(250,250,250)">
+                        <TitleContent>
+                            <div class="d-flex">
+                                <MudIcon Icon="@Icons.Material.Filled.InsertComment" class="mr-3"></MudIcon>
+                                <MudText><span style="font-family:'Segoe UI';font-weight:normal;color:rgb(86,119,133)">@message.MessageTitle</span></MudText>
                             </div>
-                            <div style="text-align:center;">
-                                <button class="btn btn-link" @onclick="() => BtnCalcPercentsForMessage(message)">
-                                <img src="/img/icoChartPie.png" width="22" />
-                                </button>
-                                <button class="btn btn-link" Title="change font" @onclick="() => BtnCangeFont(message.MessageId)">
-                                <img src="/img/icoFontAa.png" width="20" />
-                                </button>
-                            </div>
-                        <hr style="color:gray" />
-                        @if ((message.MessageId == Convert.ToInt32(appState.MessageId)) & (_cmd == "useCourierFont"))
-                            {
-                            _font = "font-family:Courier New, Courier, monospace;font-size:small;";
-                            }
-                        else
-                            {
-                            _font = "font-family:'Segoe UI';";
-                            }
-                            <div style="text-align:center;">
-                                <div style="@_font text-align:left; white-space: pre-wrap">
-                                @message.MessageBody
-                                </div>
-                            <hr style="color:royalblue" />
-                            <div>Sent: @PersianDate(message.DateTimeSent)</div>
-                            @if ((message.StudentMessageTags & 1) == 1)
-                                {
-                                <div>Read: @PersianDate(message.DateTimeRead)</div>
-                                }
-                            @if ((message.StudentMessageTags & 16) == 16)
-                                {
-                                <span style="color:royalblue;font-weight:bold"># YES </span>
-                                }
-                            @if ((message.StudentMessageTags & 32) == 32)
-                                {
-                                <span style="color:indianred;font-weight:bold"># NO </span>
-                                }
-                            @if ((message.StudentMessageTags & 2) == 2)
-                                {
-                                <span style="color:gray;font-style:italic">Bookmarked </span>
-                                }
-                            @if ((message.StudentMessageTags & 4) == 4)
-                                {
-                                <span style="color:gray;font-style:italic">Deleted </span>
-                                }
-                            </div>
-                        @if ((appState.Cmd == "ShowMessageStats") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
-                            {
-                                <div style="text-align:left; padding-left:25px;">
-                                <div style="font-weight:bold">Target Students <span style="font-weight:normal;"> ( @nStudents ) </span></div>
-                                <div style="padding-left:15px;">@nStudentsRead ( @(nStudentsRead * 100 / nStudents)% ) Read</div>
-                                <div style="padding-left:15px;">@nStudentsBookmarked Bookmarked</div>
-                                <div style="padding-left:15px;">@nStudentsDeleted Deleted</div>
-                                @if (user.UserRole == "teacher")
-                                    {
-                                        <button class="btn btn-link" @onclick="() => BtnListAnswersToThisMessage(message)">
-                                        <img src="/img/icoListM.png" width="26" />
-                                        </button>
-                                    }
-                                </div>
-                            @if ((message.StudentMessageTags & 8) == 8)
-                                {
-                                    <div class="d-flex justify-content-center">
-                                        <MudChart ChartType="ChartType.Donut"
-                                              T="double"
-                                              ChartSeries="@(new double [] { nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered, (nStudents - nStudentsRead) }.AsChartDataSet())"
-                                              ChartLabels="@(new [] { "Yes: " + nStudentsAnsweredYes, "No: " + nStudentsAnsweredNo, "notSure: " + nStudentsNotAnswered, "notRead: " + (nStudents - nStudentsRead) })"
-                                              Width="200px" Height="200px">
-                                        </MudChart>
+                        </TitleContent>
+                        <ChildContent>
+                        <MudContainer Class="mt-2 px-0 width-max:500">
+                            <MudCard Class="mx-0">
+                                <MudCardContent Style="background-color:whitesmoke;">
+                                    <div style="font-weight:bold; text-align:center; white-space: pre-wrap;">
+                                    @message.MessageTitle
                                     </div>
-                                <div class="d-flex justify-content-center" style="color:gray;text-align:left;font-weight:bold; padding-left:25px;">Participation: <span style="font-weight:normal; margin-left:10px;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>
-                                <br />
-                                }
-                            }
-                        else
-                            {
-                                <div style="text-align:center">
-                                @* <button class="btn btn-link" @onclick="()=>BtnCalcPercentsForMessage(message)">
-                                        <img src="/img/icoChartPie.png" width="26" />
-                                    </button> *@
-                                @if (user.UserRole == "teacher")
-                                    {
-                                        <button class="btn btn-link" @onclick="() => BtnDelete_Messages(message.MessageId)">
-                                        <img src="/img/icoDelete2.png" width="30" />
+                                    <div style="text-align:center;">
+                                        <button class="btn btn-link" @onclick="() => BtnCalcPercentsForMessage(message)">
+                                        <img src="/img/icoChartPie.png" width="22" />
                                         </button>
-                                        <button class="btn btn-link" @onclick="() => BtnDelete_Message(message.StudentMessageId)">
-                                        <img src="/img/icoDelete1.png" width="22" />
+                                        <button class="btn btn-link" Title="change font" @onclick="() => BtnCangeFont(message.MessageId)">
+                                        <img src="/img/icoFontAa.png" width="20" />
                                         </button>
-                                    }
-                                </div>
-                            }
-                        @if ((appState.Cmd == "ShowListOfAnswersToThisMessage") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
-                            {
-                            <hr style="color:indianred" />
-                                <table class="table table-borderless">
-                                @foreach (StudentMessage studentMessage in lstStudentMessageInstances)
+                                    </div>
+                                <hr style="color:gray" />
+                                @if ((message.MessageId == Convert.ToInt32(appState.MessageId)) & (_cmd == "useCourierFont"))
                                     {
-                                        <tr>
-                                            <td style="text-align:left">
-                                            @if ((studentMessage.StudentMessageTags & 1) == 1)
-                                                {
-                                                    <span style="font-size:x-small;font-style:normal;font-weight:bold;color:royalblue">
-                                                    @studentMessage.DateTimeRead
-                                                    </span>
-                                                }
-                                            else
-                                                {
-                                                    <span style="font-size:x-small;font-style:normal;font-weight:bold;color:indianred">
-                                                    not read
-                                                    </span>
-                                                }
-                                            <br />
-                                                <span style="font-size:smaller">
-                                                @studentMessage.StudentName (@studentMessage.StudentNickname)
-                                                </span>
-                                            <hr />
-                                            </td>
-                                        @if ((@studentMessage.StudentMessageTags & 16) == 16)
-                                            {
-                                            <span style="font-size:smaller;font-weight:bold; color:royalblue">YES</span>
-                                            }
-                                        else if ((@studentMessage.StudentMessageTags & 32) == 32)
-                                            {
-                                            <span style="font-size:smaller;font-weight:bold; color:indianred">NO</span>
-                                            }
-                                        else
-                                            {
-                                            <span style="font-size:smaller;font-weight:bold; color:lightslategray">--</span>
-                                            }
-                                        </tr>
+                                    _font = "font-family:Courier New, Courier, monospace;font-size:small;";
                                     }
-                                </table>
-                            }
-                        </MudCardContent>
-                    </MudCard>
-                </MudContainer>
+                                else
+                                    {
+                                    _font = "font-family:'Segoe UI';";
+                                    }
+                                    <div style="text-align:center;">
+                                        <div style="@_font text-align:left; white-space: pre-wrap">
+                                        @message.MessageBody
+                                        </div>
+                                    <hr style="color:royalblue" />
+                                    <div>Sent: @PersianDate(message.DateTimeSent)</div>
+                                    @if ((message.StudentMessageTags & 1) == 1)
+                                        {
+                                        <div>Read: @PersianDate(message.DateTimeRead)</div>
+                                        }
+                                    @if ((message.StudentMessageTags & 16) == 16)
+                                        {
+                                        <span style="color:royalblue;font-weight:bold"># YES </span>
+                                        }
+                                    @if ((message.StudentMessageTags & 32) == 32)
+                                        {
+                                        <span style="color:indianred;font-weight:bold"># NO </span>
+                                        }
+                                    @if ((message.StudentMessageTags & 2) == 2)
+                                        {
+                                        <span style="color:gray;font-style:italic">Bookmarked </span>
+                                        }
+                                    @if ((message.StudentMessageTags & 4) == 4)
+                                        {
+                                        <span style="color:gray;font-style:italic">Deleted </span>
+                                        }
+                                    </div>
+                                @if ((appState.Cmd == "ShowMessageStats") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
+                                    {
+                                        <div style="text-align:left; padding-left:25px;">
+                                        <div style="font-weight:bold">Target Students <span style="font-weight:normal;"> ( @nStudents ) </span></div>
+                                        <div style="padding-left:15px;">@nStudentsRead ( @(nStudentsRead * 100 / nStudents)% ) Read</div>
+                                        <div style="padding-left:15px;">@nStudentsBookmarked Bookmarked</div>
+                                        <div style="padding-left:15px;">@nStudentsDeleted Deleted</div>
+                                        @if (user.UserRole == "teacher")
+                                            {
+                                                <button class="btn btn-link" @onclick="() => BtnListAnswersToThisMessage(message)">
+                                                <img src="/img/icoListM.png" width="26" />
+                                                </button>
+                                            }
+                                        </div>
+                                    @if ((message.StudentMessageTags & 8) == 8)
+                                        {
+                                            <div class="d-flex justify-content-center">
+                                                <MudChart ChartType="ChartType.Donut"
+                                                      T="double"
+                                                      ChartSeries="@(new double [] { nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered, (nStudents - nStudentsRead) }.AsChartDataSet())"
+                                                      ChartLabels="@(new [] { "Yes: " + nStudentsAnsweredYes, "No: " + nStudentsAnsweredNo, "notSure: " + nStudentsNotAnswered, "notRead: " + (nStudents - nStudentsRead) })"
+                                                      Width="200px" Height="200px">
+                                                </MudChart>
+                                            </div>
+                                        <div class="d-flex justify-content-center" style="color:gray;text-align:left;font-weight:bold; padding-left:25px;">Participation: <span style="font-weight:normal; margin-left:10px;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>
+                                        <br />
+                                        }
+                                    }
+                                else
+                                    {
+                                        <div style="text-align:center">
+                                        @* <button class="btn btn-link" @onclick="()=>BtnCalcPercentsForMessage(message)">
+                                                <img src="/img/icoChartPie.png" width="26" />
+                                            </button> *@
+                                        @if (user.UserRole == "teacher")
+                                            {
+                                                <button class="btn btn-link" @onclick="() => BtnDelete_Messages(message.MessageId)">
+                                                <img src="/img/icoDelete2.png" width="30" />
+                                                </button>
+                                                <button class="btn btn-link" @onclick="() => BtnDelete_Message(message.StudentMessageId)">
+                                                <img src="/img/icoDelete1.png" width="22" />
+                                                </button>
+                                            }
+                                        </div>
+                                    }
+                                @if ((appState.Cmd == "ShowListOfAnswersToThisMessage") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
+                                    {
+                                    <hr style="color:indianred" />
+                                        <table class="table table-borderless">
+                                        @foreach (StudentMessage studentMessage in lstStudentMessageInstances)
+                                            {
+                                                <tr>
+                                                    <td style="text-align:left">
+                                                    @if ((studentMessage.StudentMessageTags & 1) == 1)
+                                                        {
+                                                            <span style="font-size:x-small;font-style:normal;font-weight:bold;color:royalblue">
+                                                            @studentMessage.DateTimeRead
+                                                            </span>
+                                                        }
+                                                    else
+                                                        {
+                                                            <span style="font-size:x-small;font-style:normal;font-weight:bold;color:indianred">
+                                                            not read
+                                                            </span>
+                                                        }
+                                                    <br />
+                                                        <span style="font-size:smaller">
+                                                        @studentMessage.StudentName (@studentMessage.StudentNickname)
+                                                        </span>
+                                                    <hr />
+                                                    </td>
+                                                @if ((@studentMessage.StudentMessageTags & 16) == 16)
+                                                    {
+                                                    <span style="font-size:smaller;font-weight:bold; color:royalblue">YES</span>
+                                                    }
+                                                else if ((@studentMessage.StudentMessageTags & 32) == 32)
+                                                    {
+                                                    <span style="font-size:smaller;font-weight:bold; color:indianred">NO</span>
+                                                    }
+                                                else
+                                                    {
+                                                    <span style="font-size:smaller;font-weight:bold; color:lightslategray">--</span>
+                                                    }
+                                                </tr>
+                                            }
+                                        </table>
+                                    }
+                                </MudCardContent>
+                            </MudCard>
+                        </MudContainer>
+                </ChildContent>
+            </MudExpansionPanel>
             }
+        </MudExpansionPanels>
         }
     </EditForm>
     <div style="text-align:center">

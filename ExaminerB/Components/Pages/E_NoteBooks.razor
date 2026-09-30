@@ -47,7 +47,7 @@ else
             }
         </div>
         <EditForm Model="lstProjects">
-        @* SEARCH BOX *@
+        @* 0 SEARCH BOX *@
             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
                 <MudCard Class="mx-0">
                     <MudCardContent Style="background-color:whitesmoke;">
@@ -258,7 +258,6 @@ else
                                     <div id="T1">
                                     @if ((appState.Cmd == "EditProject") && (appState.ProjectId == project.ProjectId))
                                         {
-                                        string btnProjectId = "btnProjectName";
                                             <div class="d-flex mb-3">
                                             <MudTextField @ref="refProjectName"
                                                           @bind-Value="project.ProjectName"
@@ -284,12 +283,13 @@ else
                                         }
                                     else
                                         {
+                                        @* NOTEBOOK CMD BUTTONS *@
                                             <div style="text-align: center;">
-                                                <button class="btn btn-link" @onclick="() => BtnAddNewSubproject(project.ProjectId)">
-                                                <img src="/img/icoAddSection1.png" width="28" title="add new section" />
-                                                </button>
                                                 <button class="btn btn-link" type="button" @onclick="() => BtnEditProject(project.ProjectId)">
-                                                <img src="/img/icoRename.png" width="34" title="edit notebook" />
+                                                <img src="/img/icoRename.png" width="30" title="edit notebook" />
+                                                </button>
+                                                <button class="btn btn-link" @onclick="() => BtnAddNewSubproject(project.ProjectId)">
+                                                <img src="/img/icoAddSection1.png" width="26" title="new section" />
                                                 </button>
                                             <hr style="color:red" />
                                             </div>
@@ -390,16 +390,16 @@ else
                                                                     }
                                                                 else
                                                                     {
-                                                                    @* SECTION BUTTONS *@
+                                                                    @* SECTION CMD BUTTONS *@
                                                                         <div style="text-align:center">
-                                                                            <button class="btn btn-link pulse-animation" @onclick="() => BtnCreateNewSectionNote(subProject)">
-                                                                            <img src="/img/icoNewNote3.png" width="24" title="new note" />
-                                                                            </button>
                                                                             <button class="btn btn-link" type="button" @onclick="() => BtnEditSubproject(subProject.SubprojectId)">
                                                                             <img src="/img/icoRename.png" width="30" title="edit section" />
                                                                             </button>
                                                                             <button class="btn btn-link" type="button" @onclick="() => BtnReplaceSection(subProject.SubprojectId)">
                                                                             <img src="/img/icoMoveToNoteBook.png" width="32" title="move section to another notebook" />
+                                                                            </button>
+                                                                            <button class="btn btn-link pulse-animation" @onclick="() => BtnCreateNewSectionNote(subProject)">
+                                                                            <img src="/img/icoNewNote3.png" width="24" title="new note" />
                                                                             </button>
                                                                         </div>
                                                                     @* 2.3 NOTES *@
@@ -485,7 +485,13 @@ else
                                                                                                 <hr>
                                                                                                 @* CMD MENU *@
                                                                                                     <div class="d-flex align-items-center text-start" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
-                                                                                                        <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
+                                                                                                        <MudMenu Label="Menu"
+                                                                                                             Variant="Variant.Outlined"
+                                                                                                             Color="Color.Tertiary"
+                                                                                                             StartIcon="@Icons.Material.Filled.Menu"
+                                                                                                             EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
+                                                                                                             Size="Size.Small"
+                                                                                                             Dense="true">
                                                                                                             <MudMenuItem @onclick="() => BtnCopyToQuickNotes(notex, subProject)">
                                                                                                                 <button class="btn btn-link">
                                                                                                                 <img src="/img/icoCopyToNoteReport.png" width="26" title="copy to quick note" />
@@ -506,8 +512,9 @@ else
                                                                                                             delete note
                                                                                                             </MudMenuItem>
                                                                                                         </MudMenu>
+                                                                                                    @* EDIT NOTE *@
                                                                                                         <button class="btn btn-link pulse-hover" @onclick="() => BtnEditNoteInDialog(notex)">
-                                                                                                        <img src="/img/icoRename.png" width="28" title="edit note" />
+                                                                                                        <img src="/img/icoEditPen.png" width="22" title="edit note" />
                                                                                                         </button>
                                                                                                     @if (notex.NoteText.Length > 100)
                                                                                                         {
