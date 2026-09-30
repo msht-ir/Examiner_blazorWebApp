@@ -3327,6 +3327,7 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Delete_StudentMessageAsync (int studentMessageId)
             {
+            //delete a single StudentMessage by Id 
             string sql = "dbo.sp_DeleteStudentMessage";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
@@ -3334,6 +3335,35 @@ namespace ExaminerB.Services2Backend
             SqlCommand cmd = new SqlCommand (sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@studentmessageid", studentMessageId);
+            int i = cmd.ExecuteNonQuery ();
+            await cnn.CloseAsync ();
+            return (i > 0) ? true : false;
+            }
+        public async Task<bool> Delete_StudentMessagesByMessageIdAsync (int messageId)
+            {
+            //delete all StudentMessages sent from a Message by MessageId  
+            string sql = "dbo.sp_DeleteStudentMessagesByMessageId";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue ("@messageid", messageId);
+            int i = cmd.ExecuteNonQuery ();
+            await cnn.CloseAsync ();
+            return (i > 0) ? true : false;
+            }
+        public async Task<bool> Delete_StudentMessagesByMessageIdAndStudentIdAsync (int messageId, int studentId)
+            {
+            //delete StudentMessage(s) by MessageId, StudentsId 
+            string sql = "dbo.sp_DeleteStudentMessagesByMessageIdAndStudentId";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue ("@messageid", messageId);
+            cmd.Parameters.AddWithValue ("@studentid", studentId);
             int i = cmd.ExecuteNonQuery ();
             await cnn.CloseAsync ();
             return (i > 0) ? true : false;

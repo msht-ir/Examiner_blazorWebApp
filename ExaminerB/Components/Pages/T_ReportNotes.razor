@@ -21,9 +21,6 @@ else
     @if (lstNotes.Count > 0)
         {
             <div style="text-align: center; margin:15px;">
-                <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/img/icoBack3.png" width="40" title="back" />
-                </button>
                 <button class="btn btn-link" @onclick="() => GotoProjects()">
                 <img src="/img/icoNoteBook.png" style="width:44px" title="goto Notebooks" />
                 </button>
@@ -115,7 +112,7 @@ else
                                                 <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
                                                     <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
                                                         <button class="btn btn-link pulse-animation">
-                                                        <img src="/img/icoRename.png" width="28" title="ويرايش يادداشت" />
+                                                        <img src="/img/icoEditPen.png" width="22" title="ويرايش يادداشت" />
                                                         </button>
                                                     edit
                                                     </MudMenuItem>
@@ -211,7 +208,7 @@ else
                                                 <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
                                                     <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
                                                         <button class="btn btn-link pulse-animation">
-                                                        <img src="/img/icoRename.png" width="28" title="ويرايش يادداشت" />
+                                                        <img src="/img/icoEditPen.png" width="22" title="ويرايش يادداشت" />
                                                         </button>
                                                     edit
                                                     </MudMenuItem>
@@ -251,7 +248,7 @@ else
     {
         <div style="text-align:center">
             <button class="btn btn-link" @onclick="BtnBack">
-            <img src="/img/icoBack3.png" width="40" />
+            <img src="/img/icoList.png" width="32" />
             </button>
         </div>
     }

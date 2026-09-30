@@ -528,13 +528,13 @@
                                 } *@
                                 <div>
                                     <p style="text-align:center;font-size:x-small;">
-                                    با ايجاد يک انجمن، موضوعي را براي تبادل نظر و گفتگو مطرح کنيد
+                                    ايجاد يک انجمن براي طرح يک موضوع و تبادل نظر و گفتگو
                                     <br />
-                                    قوانين: ورود همه دانشجويان به انجمن براي آگاهي و تبادل نظر آزاد است
+                                    قوانين: ورود همه دانشجويان سامانه به همه انجمن ها براي مطالعه يا تبادل نظر آزاد است
                                     <br />
-                                    شما مي توانيد انجمن خودتان را حذف کنيد
+                                    ادمين مي تواند انجمن خود را و هر دانشجو مي تواند پست هاي خودش را حذف کند
                                     <br />
-                                    هر دانشجو مي تواند پست هاي خودش را حذف کند
+                                     انجمن ها و پست ها بايد در مورد موضوعات درسي و دانشگاهي باشند
                                     <br />
                                     Forums for discussion and exchange of ideas
                                     </p>
@@ -548,7 +548,7 @@
                                 {
                                 <hr />
                                     <MudContainer>
-                                    <h5 style="color:darkgoldenrod;text-align:center;margin-top:20px">new chatroom</h5>
+                                    <h5 style="color:darkgoldenrod;text-align:center;margin-top:20px">new forum</h5>
                                         <MudCard Class="mx-0">
                                             <MudCardContent Style="background-color:whitesmoke;">
                                             <MudTextField @bind-Value="chatroom.ChatroomName"
@@ -590,7 +590,7 @@
                                                     <div>
                                                         <button class="btn btn-link" style="text-decoration: none;" Title=@((_help) ? "enter forum" : "") @onclick="() => BtnOpenThisChatroom(chatroom)">
                                                         <img class="pulse-animation" src="/img/icoSwitchBoardStudents.png" width="34" />
-                                                        <span style="font-weight:bold;color:gray;margin-left:5px;"> @chatroom.ChatroomName </span>
+                                                        <span style="color:indianred;margin-left:10px;">join forum: </span><span style="font-weight:bold;color:gray;margin-left:5px;"> @chatroom.ChatroomName </span>
                                                         </button>
                                                     <hr />
                                                     <div style="font-style:italic;font-size:small; font-weight:normal;color:gray;padding-left:10px;">admin: <span style="color:royalblue;">@chatroom.ChatroomAdminName</span></div>
@@ -645,10 +645,10 @@
                             <div id="T3">
                                 <div style="text-align:center">
                                     <button class="btn btn-link pulse-hover" @onclick="GotoNotebooks">
-                                    <img src="/img/icoNoteBook.png" width="48" title="notebooks دفترچه يادداشت" />
+                                    <img src="/img/icoNoteBook.png" width="42" title="notebooks دفترچه يادداشت" />
                                     </button>
                                     <button class="btn btn-link align-items-center" Title="add quick note افزودن يادداشت جديد" @onclick="CreateNote">
-                                    <img class="pulse-animation" src="/img/icoNewNote3.png" width="32" />
+                                    <img class="pulse-animation" src="/img/icoNewNote3.png" width="28" />
                                     </button>
                                 </div>
                             @* LIST NOTES *@
@@ -695,7 +695,7 @@
                                                                 </button>
                                                             }
                                                             <button class="btn btn-link" Title=@((_help) ? "ويرايش يادداشت" : "") @onclick="() => BtnEditNoteInDialog(notex)">
-                                                            <img class="pulse-hover" src="/img/icoRename.png" width="28" />
+                                                            <img class="pulse-hover" src="/img/icoEditPen.png" width="22" />
                                                             </button>
                                                             <button class="btn btn-link" Title=@((_help) ? "حذف يادداشت" : "") @onclick="() => BtnDeleteNote(notex.NoteId)">
                                                             <img class="pulse-hover" src="/img/icoDelete1.png" width="22" />
@@ -743,7 +743,7 @@
                                                                 </button>
                                                             }
                                                             <button class="btn btn-link" Title=@((_help) ? "edit note" : "") @onclick="() => BtnEditNoteInDialog(notex)">
-                                                            <img class="pulse-hover" src="/img/icoRename.png" width="28" />
+                                                            <img class="pulse-hover" src="/img/icoEditPen.png" width="22" />
                                                             </button>
                                                             <button class="btn btn-link" Title=@((_help) ? "delete note" : "") @onclick="() => BtnDeleteNote(notex.NoteId)">
                                                             <img class="pulse-hover" src="/img/icoDelete1.png" width="22" />

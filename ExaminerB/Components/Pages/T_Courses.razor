@@ -226,7 +226,7 @@ else
                                                                     <input class="form-inline border" @bind="cf.CourseFolderActive" type="checkbox" />
                                                                     <label style="padding-right:5px;">Active</label>
                                                                         <button class="btn btn-link" @onclick="() => BtnUpdateCourseFolder(cf)">
-                                                                        <img src="/img/icoSave2.png" width="25" />
+                                                                        <img src="/img/icoSave2.png" width="22" />
                                                                         </button>
                                                                         <button class="btn btn-link" @onclick="() => BtnDeleteCourseFolder(cf.CourseFolderId)">
                                                                         <img src="/img/icoDelete1.png" width="25" />
@@ -322,20 +322,21 @@ else
                 }
             else
                 {
+                    <br />
                     <button class="btn btn-link" @onclick="BtnAddNewCourse">
-                    <img src="/img/icoAdd1.png" width="22" />
+                    <img src="/img/icoCourseAddNew.png" width="36" title="add new course" />
                     </button>
                 }
             <hr style="color:red" />
                 <div style="text-align: center;">
                     <button class="btn btn-link" @onclick="BtnBack">
-                    <img src="/img/icoBack3.png" width="40" />
+                    <img src="/img/icoList.png" width="32" />
                     </button>
                     <button class="btn btn-link" @onclick='() => BtnGotoPage("S")'>
-                    <img src="/img/icoSwitchBoardStudents.png" width="44" />
+                    <img src="/img/icoSwitchBoardStudents.png" width="42" />
                     </button>
                     <button class="btn btn-link" @onclick='() => BtnGotoPage("N")'>
-                    <img src="/img/icoNoteBook.png" width="44" />
+                    <img src="/img/icoNoteBook.png" width="42" />
                     </button>
                 </div>
             </div>

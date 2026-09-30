@@ -33,9 +33,9 @@ else
     {
     <div style="font-size:larger; text-align:center;color:black">@appState.UserNickname</div>
         <div style="text-align:left; max-width:500px; margin: 0 auto;">
-            <button class="btn btn-link" @onclick="() => BtnBackToCallingPage()">
+            @* <button class="btn btn-link" @onclick="() => BtnBackToCallingPage()">
             <img src="/img/icoBack3.png" style="width:40px" title="back" />
-            </button>
+            </button> *@
         @if (appState.UserRole == "teacher")
             {
                 <button class="btn btn-link" @onclick="() => BtnGotoReportUserNotes()">
@@ -196,7 +196,7 @@ else
                                                         <img src="/img/icoOn.png" width="26" title="edit note" />
                                                         </button>
                                                         <button class="btn btn-link pulse-hover" @onclick="() => BtnEditNoteInDialog(dueNotex)">
-                                                        <img src="/img/icoRename.png" width="28" title="edit note" />
+                                                        <img src="/img/icoEditPen.png" width="22" title="edit note" />
                                                         </button>
                                                     @if (dueNotex.NoteText.Length > 100)
                                                         {
@@ -250,7 +250,7 @@ else
                                     <button class="btn btn-link" @onclick="() => BtnReadNotebookNotes(project)">
                                     <img class="pulse-hover" src="img/icoNoteBook.png" width="38" style="margin-right:10px;" />
                                     </button>
-                                <h3 style="color:indigo">@project.ProjectName</h3>
+                                <h4 style="color:rgb(80,135,160)">@project.ProjectName</h4>
                                 </button>
                             </h4>
                             <div id="@collapseId" class="accordion-collapse @_clpsP" data-bs-parent="#accordionProjects">
@@ -333,7 +333,7 @@ else
                                                                     <button class="btn btn-link">
                                                                     <img class="pulse-animation" src="img/icoBookmark1.png" width="22" style="margin-right:5px;" />
                                                                     </button>
-                                                                <h6 style="margin-left:5px;">@subProject.SubprojectName</h6>
+                                                                <h6 style="color:rgb(230,100,100);margin-left:5px;">@subProject.SubprojectName</h6>
                                                                 </button>
                                                             </h4>
                                                             <div id="@collapseId2" class="accordion-collapse @_clpsSP" data-bs-parent="#accordionSubprojects-@project.ProjectId">
@@ -412,7 +412,7 @@ else
                                                                                     <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                                                                         <MudCard Class="mx-0">
                                                                                             <MudCardContent Style="background-color:whitesmoke;">
-                                                                                                <div class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
+                                                                                                <div class="d-flex align-items-center" style="text-align:center; color:rgb(130,7,150); font-weight:bold;font-size:small">
                                                                                                 @if (notex.IsTodo)
                                                                                                     {
                                                                                                     <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
@@ -576,7 +576,7 @@ else
                         <div style="max-width:500px; margin: 0 auto;">
                         <br />
                             <button class="btn btn-link" @onclick="() => BtnBackToCallingPage()">
-                            <img src="/img/icoBack3.png" style="width:40px" title="back" />
+                            <img src="/img/icoList.png" style="width:32px" title="back" />
                             </button>
                         @if (user.UserRole == "teacher")
                             {
@@ -585,7 +585,7 @@ else
                                 </button>
                             }
                             <button class="btn btn-link" @onclick="BtnAddNewProject">
-                            <img src="/img/icoAddNewNoteBook.png" width="44" title="add new notebook" />
+                            <img src="/img/icoAddNewNoteBook.png" width="40" title="add new notebook" />
                             </button>
                         </div>
                     }

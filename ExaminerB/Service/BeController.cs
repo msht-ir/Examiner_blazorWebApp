@@ -800,6 +800,18 @@ namespace ExaminerB.Backend
             var result = await _BeService.Delete_StudentMessageAsync (studentMessageId);
             return Ok (result);
             }
+        [HttpPost ("Delete_StudentMessagesByMessageId")]
+        public async Task<ActionResult<bool>> Delete_StudentMessageByMessageId ([FromBody] int messageId)
+            {
+            var result = await _BeService.Delete_StudentMessagesByMessageIdAsync (messageId);
+            return Ok (result);
+            }
+        [HttpPost ("Delete_StudentMessagesByMessageIdAndStudentId")]
+        public async Task<ActionResult<bool>> Delete_StudentMessageByMessageIdAndStudentId ([FromBody] int messageId, [FromQuery] int studentId)
+            {
+            var result = await _BeService.Delete_StudentMessagesByMessageIdAndStudentIdAsync (messageId, studentId);
+            return Ok (result);
+            }
         #endregion
         #region CH:Chats
         [HttpPost ("Create_Chat")]

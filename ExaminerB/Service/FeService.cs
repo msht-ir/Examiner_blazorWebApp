@@ -1200,6 +1200,16 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ($"api/Delete_StudentMessage", studentMessageId);
             return response.IsSuccessStatusCode ? true : false;
             }
+        public async Task<bool> Delete_StudentMessagesByMessageId (int messageId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Delete_StudentMessagesByMessageId", messageId);
+            return response.IsSuccessStatusCode ? true : false;
+            }
+        public async Task<bool> Delete_StudentMessagesByMessageIdAndStudentId (int messageId, int studentId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Delete_StudentMessagesByMessageIdAndStudentId?studentId={studentId}", messageId);
+            return response.IsSuccessStatusCode ? true : false;
+            }
         #endregion
         #region CH:Chats
         public async Task<int> Create_Chat (Chat chat)

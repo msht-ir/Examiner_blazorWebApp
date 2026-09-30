@@ -640,6 +640,19 @@ else
                                         send message to students
                                         </MudMenuItem>
                                     <MudDivider />
+                                        <MudMenuItem @onclick="() => BtnDeleteStudentMessagesByMessageId(MessageId)">
+                                            <button class="btn btn-link" Title=@((_help) ? "delete sent messages" : "")>
+                                            <img src="/img/icoDelete2.png" width="28" />
+                                            </button>
+                                        <span style="color:indianred">delete sent messages</span>
+                                        </MudMenuItem>
+                                        <MudMenuItem @onclick="() => BtnDeleteStudentMessagesByMessageIdAndStudentId(MessageId)">
+                                            <button class="btn btn-link" Title=@((_help) ? "delete sent messages (to selected students)" : "")>
+                                            <img src="/img/icoDelete2.png" width="28" />
+                                            </button>
+                                        <span style="color:indianred">delete sent messages to selected stidents</span>
+                                        </MudMenuItem>
+                                    <MudDivider />
                                         <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
                                             <button class="btn btn-link" Title=@((_help) ? "report courses and exams of students that received this message" : "")>
                                             <img src="/img/icoFolderS.png" width="24" />
@@ -728,7 +741,7 @@ else
                 <button type="button"
                     class="btn btn-link"
                     @onclick="BtnBack">
-                <img src="/img/icoBack3.png" width="40" />
+                <img src="/img/icoList.png" width="32" />
                 </button>
                 <button type="button"
                     class="btn btn-link pulse-hover"
@@ -1399,8 +1412,9 @@ else
         _cmd = "AddNewMessage";
         message.MessageTitle = "";
         message.MessageBody = "";
+        message.MessageTags = 1;
         StateHasChanged();
-        reftxtNewMessageTitle.FocusAsync();
+        //reftxtNewMessageTitle.FocusAsync();
         }
     private async Task BtnCreateNewMessage ()
         {
@@ -1445,6 +1459,7 @@ else
         if (result)
             {
             Snackbar.Add($"message sent to {_count} students", Severity.Success);
+            await BtnReadStudents(MessageId, "M");
             }
         else
             {
@@ -1506,9 +1521,64 @@ else
                     // Snackbar.Add("failed to delete message", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     }
                 MessageId = 0;
-                await BtnShowMessages ();
-                StateHasChanged ();
+                await BtnShowMessages();
+                StateHasChanged();
                 }
+            }
+        else
+            {
+            Snackbar.Add("select a message", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            }
+        }
+    private async Task BtnDeleteStudentMessagesByMessageId (int messageId)
+        {
+        //deletes all StudentMessages sent from a message Id
+        if (messageId > 0)
+            {
+            var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> all messages sent from a <span style='color:indianred; font-weight:bold'>message</span> ?<br><br>Are you <span style='color:royalblue'>Sure</span>? <div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
+            bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+            if (confirmResult == true)
+                {
+                bool result = await feService.Delete_StudentMessagesByMessageId(messageId);
+                if (result)
+                    {
+                    Snackbar.Add("sent messages deleted", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                    MessageId = 0;
+                    appState.SetMessageId(0);
+                    _cmd = "HideMessageBody";
+                    lstMessages.Clear();
+                    lstMessages = await feService.Read_Messages(user.UserId, false, false);
+                    StateHasChanged();
+                    }
+                await BtnShowMessages();
+                StateHasChanged();
+                }
+            }
+        else
+            {
+            Snackbar.Add("select a message", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            }
+        }
+    private async Task BtnDeleteStudentMessagesByMessageIdAndStudentId (int messageId)
+        {
+        //deletes StudentMessages sent from a message Id to selected Students
+        if (messageId > 0)
+            {
+            var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> messages sent <span style='color:indianred; font-weight:bold'>selected students</span> ?<br><br>Are you <span style='color:royalblue'>Sure</span>? <div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
+            bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+            if (confirmResult == true)
+                {
+                foreach (User student in lstStudents)
+                    {
+                    if (student.IsSelected)
+                        {
+                        bool result = await feService.Delete_StudentMessagesByMessageIdAndStudentId(messageId, student.UserId);
+                        }
+                    }
+                }
+            Snackbar.Add("sent messages deleted", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            //refresh list
+            await BtnReadStudents(messageId, "M");
             }
         else
             {
