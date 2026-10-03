@@ -11,7 +11,7 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
-<div style="text-align: center; max-width:500px; margin: 0 auto;">
+<div style="text-align:center; max-width:500px; margin:0 auto; padding:0 8px; box-sizing:border-box;">
     <h3 class="card-title text-center text-secondary">@course.CourseName exams</h3>
     @if (appState.Message != "")
         {
@@ -91,7 +91,7 @@ else
                                     <span style="font-weight:bold;font-size:smaller;"> [@exam.ExamNTests Tests, @exam.ExamDuration min]</span>
                                     </div>
                                 <hr style="color:indianred" />
-                                    <table class="table table-light" style="margin:auto;max-width:300px">
+                                    <table class="table table-light" style="margin:auto; width:100%; max-width:300px; table-layout:fixed;">
                                         <tr>
                                             <td>
                                                 <button style="border:none" class="btn btn-link" title="edit exam ويرايش آزمون" @onclick="() => BtnEditExam(exam)">
