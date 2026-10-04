@@ -267,29 +267,30 @@
                                                 @if ((studentMessage.StudentMessageTags & 1) == 1)
                                                     {
                                                     <MudIcon Icon="@Icons.Material.Outlined.MarkAsUnread" class="mr-3"></MudIcon>
-                                                    <MudText>
-                                                        <span style="font-family:'Segoe UI';font-weight:normal;font-size:smaller;color:rgb(86,119,133)">
-                                                        @(studentMessage.MessageTitle)
-                                                        </span>
-                                                    </MudText>
+                                                        <MudText>
+                                                            <span style="font-family:'Segoe UI';font-weight:normal;font-size:smaller;color:rgb(86,119,133)">
+                                                            @(studentMessage.MessageTitle)
+                                                            </span>
+                                                        </MudText>
                                                     }
                                                 else
                                                     {
                                                     <MudIcon Icon="@Icons.Material.Outlined.Markunread" class="mr-3"></MudIcon>
-                                                    <MudText>
-                                                        <span style="font-family:'Segoe UI';font-weight:normal;font-size:smaller;color:rgb(86,119,133)">
-                                                        @(studentMessage.MessageTitle.Length > 6 ? studentMessage.MessageTitle.Substring(0, 6) + "..." : studentMessage.MessageTitle)
-                                                        </span>
-                                                    </MudText>
+                                                        <MudText>
+                                                        <span style="padding-left:5px; color:indianred;"> @PersianDate(studentMessage.DateTimeSent) </span>
+                                                            <span style="font-family:'Segoe UI';font-weight:normal;font-size:smaller;color:rgb(86,119,133);margin-left:10px;">
+                                                            @(studentMessage.MessageTitle.Length > 20 ? studentMessage.MessageTitle.Substring(0, 20) + "..." : studentMessage.MessageTitle)
+                                                            </span>
+                                                        </MudText>
                                                     }
                                                 </div>
                                             </TitleContent>
                                             <ChildContent>
                                                 <MudContainer Class="mt-2 px-0">
-                                                    <MudCard Class="mx-0">
-                                                        <MudCardContent Style="background-color:whitesmoke;">
-                                                        @if ((studentMessage.StudentMessageTags & 1) == 1)
-                                                            {
+                                                @if ((studentMessage.StudentMessageTags & 1) == 1)
+                                                    {
+                                                        <MudCard Class="mx-0">
+                                                            <MudCardContent Style="background-color:whitesmoke;">
                                                                 <div style="font-size:smaller; font-weight:bold;color:indianred;text-align:center; margin-top:10px;">
                                                                 @PersianDate(studentMessage.DateTimeSent)
                                                                 </div>
@@ -372,17 +373,16 @@
                                                                         </button>
                                                                     }
                                                                 </div>
-                                                            }
-                                                        else
-                                                            {
-                                                            @* message is unread (new) *@
-                                                            <span style="padding-left:5px; color:indianred;"> @PersianDate(studentMessage.DateTimeSent) </span>
-                                                                <button class="btn btn-link" style="text-decoration:none;" Title=@((_help) ? "Open/Show this message" : "") @onclick="() => BtnSetStudentMessageAsRead(studentMessage)">
-                                                                Open read message...
-                                                                </button>
-                                                            }
-                                                        </MudCardContent>
-                                                    </MudCard>
+                                                            </MudCardContent>
+                                                        </MudCard>
+                                                    }
+                                                else
+                                                    {
+                                                    @* message is unread (new) *@
+                                                        <button class="btn btn-link" style="text-decoration:none;" Title=@((_help) ? "Open/Show this message" : "") @onclick="() => BtnSetStudentMessageAsRead(studentMessage)">
+                                                        Open read message...
+                                                        </button>
+                                                    }
                                                 </MudContainer>
                                             </ChildContent>
                                         </MudExpansionPanel>

@@ -26,12 +26,12 @@ namespace ExaminerS.Models
         /*
           1:  IsActive
           2:  CanChangePass
-          4:  CanReviewExam
-          8:  CanGetStudentExamTests
-          16: CanCorrectStudentExamTests
-          32: CanReviewStudentExamTests 
+          4:  -
+          8:  -
+          16: ShowDueNotes
+          32: DueNotesDays 3->7 
           64: IsSelected
-          128:
+          128:SuperUser
           256:CalendarFa
           -
           wrapper properties:
@@ -57,6 +57,28 @@ namespace ExaminerS.Models
                     UserTags |= 2;
                 else
                     UserTags &= ~2;
+                }
+            }
+        public bool ShowDueNotes
+            {
+            get => (UserTags & 16) == 16;
+            set
+                {
+                if (value)
+                    UserTags |= 16;
+                else
+                    UserTags &= ~16;
+                }
+            }
+        public bool DueNotesDays
+            {
+            get => (UserTags & 32) == 32;
+            set
+                {
+                if (value)
+                    UserTags |= 32;
+                else
+                    UserTags &= ~32;
                 }
             }
         public bool IsSelected

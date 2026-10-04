@@ -188,7 +188,7 @@ else
                                 <MudCardContent Style="background-color:rgba(249,249,249);">
                                     <div class="d-flex">
                                     <MudTextField @ref="refTeacherUsername"
-                                                  @bind-Value="strTeacherUsername"
+                                                  @bind-Value="_teacher.UserName"
                                                   Label="username"
                                                   Variant="Variant.Text"
                                                   Margin="Margin.Dense"
@@ -200,7 +200,7 @@ else
                                     </div>
                                     <div class="d-flex">
                                     <MudTextField @ref="refTeacherPassword"
-                                                  @bind-Value="strTeacherPassword"
+                                                  @bind-Value="_teacher.UserPass"
                                                   Label="password"
                                                   Variant="Variant.Text"
                                                   Margin="Margin.Dense"
@@ -209,7 +209,7 @@ else
                                     </div>
                                     <div class="d-flex">
                                     <MudTextField @ref="refTeacherNickname"
-                                                  @bind-Value="strTeacherNickname"
+                                                  @bind-Value="_teacher.UserNickname"
                                                   Label="nickname"
                                                   Variant="Variant.Text"
                                                   Margin="Margin.Dense"
@@ -219,7 +219,7 @@ else
                                     </div>
                                     <div class="d-flex">
                                     <MudTextField @ref="refTeacherEmail"
-                                                  @bind-Value="strTeacherEmail"
+                                                  @bind-Value="_teacher.UserEmail"
                                                   Label="email"
                                                   Variant="Variant.Text"
                                                   Margin="Margin.Dense"
@@ -244,7 +244,7 @@ else
                                 <MudCardContent Style="background-color:rgba(249,249,249);">
                                     <div class="d-flex">
                                     <MudTextField @ref="refTeacherUsername"
-                                                  @bind-Value="strTeacherUsername"
+                                                  @bind-Value="_teacher.UserName"
                                                   Label="username"
                                                   Variant="Variant.Text"
                                                   Margin="Margin.Dense"
@@ -256,7 +256,7 @@ else
                                     </div>
                                     <div class="d-flex">
                                     <MudTextField @ref="refTeacherPassword"
-                                                  @bind-Value="strTeacherPassword"
+                                                  @bind-Value="_teacher.UserPass"
                                                   Label="password"
                                                   Variant="Variant.Text"
                                                   Margin="Margin.Dense"
@@ -265,7 +265,7 @@ else
                                     </div>
                                     <div class="d-flex">
                                     <MudTextField @ref="refTeacherNickname"
-                                                  @bind-Value="strTeacherNickname"
+                                                  @bind-Value="_teacher.UserNickname"
                                                   Label="nickname"
                                                   Variant="Variant.Text"
                                                   Margin="Margin.Dense"
@@ -275,7 +275,7 @@ else
                                     </div>
                                     <div class="d-flex">
                                     <MudTextField @ref="refTeacherEmail"
-                                                  @bind-Value="strTeacherEmail"
+                                                  @bind-Value="_teacher.UserEmail"
                                                   Label="email"
                                                   Variant="Variant.Text"
                                                   Margin="Margin.Dense"
@@ -283,8 +283,16 @@ else
                                                   Class="my-textfield" />
                                     </div>
                                     <div>
+                                    @* Change Pass? *@
+                                        <MudSwitch @bind-Value="_teacher.CanChangePass"
+                                               Label="can change password"
+                                               Color="Color.Secondary"
+                                               Dense="true"
+                                               Style="margin-top:20px;font-family:Tahoma;"
+                                               title="کاربر مي تواند پسورد خود را تغيير دهد">
+                                        </MudSwitch>
                                     @* Show Due Notes *@
-                                        <MudSwitch @bind-Value="_showDueNotes"
+                                        <MudSwitch @bind-Value="_teacher.ShowDueNotes"
                                                Label="reminder"
                                                Color="Color.Secondary"
                                                Dense="true"
@@ -292,7 +300,7 @@ else
                                                title="نمايش يادآوري يادداشت هاي سررسيد شده">
                                         </MudSwitch>
                                     @* Due Notes +/-Days *@
-                                        <MudSwitch @bind-Value="_dueNotesDays7"
+                                        <MudSwitch @bind-Value="_teacher.DueNotesDays"
                                                Label="seek longer (7 days)"
                                                Color="Color.Success"
                                                Dense="true"
@@ -300,7 +308,7 @@ else
                                                title="يادداشت هاي 7 روز گذشته و آينده">
                                         </MudSwitch>
                                     @* Persian Calendar *@
-                                        <MudSwitch @bind-Value="_calendarFa"
+                                        <MudSwitch @bind-Value="_teacher.CalendarFa"
                                                Label="Persian calendar"
                                                Color="Color.Primary"
                                                Dense="true"
@@ -309,7 +317,6 @@ else
                                         </MudSwitch>
 
                                     </div>
-
                                     <div class="d-flex" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                                         <button class="btn btn-link" style="margin-top:30px;" Title="cancel" @onclick="BtnCancel">
                                         <img src="/img/icoCancel.png" width="20" />
@@ -548,14 +555,11 @@ else
 
 @code {
     User user = new User();
+    User _teacher = new User();
     private MudTextField<string> refTeacherUsername;
     private MudTextField<string> refTeacherPassword;
     private MudTextField<string> refTeacherNickname;
     private MudTextField<string> refTeacherEmail;
-    string strTeacherUsername = "";
-    string strTeacherPassword = "";
-    string strTeacherNickname = "";
-    string strTeacherEmail = "";
 
     private MudTextField<string> refDepartmentName;
     private MudTextField<string> refDepartmentInfo;
@@ -587,9 +591,6 @@ else
     string _cmd = "";
     public bool _hasFetched = false;
     public bool requestFeedback { get; set; } = false;
-    bool _showDueNotes;
-    bool _dueNotesDays7;
-    bool _calendarFa;
 
     //LifeCycleEvents
     protected override async Task OnInitializedAsync ()
@@ -755,10 +756,7 @@ else
         }
     private void BtnAddNewTeacher ()
         {
-        strTeacherUsername = "";
-        strTeacherPassword = "";
-        strTeacherNickname = "";
-        strTeacherEmail = "";
+        _teacher = new User ();
         _cmd = "addnewteacher";
         StateHasChanged();
         }
@@ -780,123 +778,69 @@ else
             if (result)
                 {
                 lstTeachers = await feService.Read_Teachers(DepartmentId);
-                Snackbar.Add($"teacher {strTeacherUsername} - {strTeacherNickname} updated", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                Snackbar.Add($"teacher {_teacher.UserName} - {_teacher.UserNickname} updated", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 _cmd = "listteachers";
                 StateHasChanged();
                 }
             else
                 {
-                Snackbar.Add($"failed to update {strTeacherUsername}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                Snackbar.Add($"failed to update {_teacher.UserName}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             StateHasChanged();
             }
         }
     private async Task BtnCreateNewTeacher ()
         {
-        if ((strTeacherUsername.Trim() == "") || (strTeacherPassword.Trim() == "") || (strTeacherNickname.Trim() == "") || (strTeacherEmail.Trim() == ""))
+        if ((_teacher.UserName.Trim() == "") || (_teacher.UserPass.Trim() == "") || (_teacher.UserNickname.Trim() == "") || (_teacher.UserEmail.Trim() == ""))
             {
             Snackbar.Add($"fill in blanks", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             return;
             }
         else
             {
-            int _departmentId = DepartmentId;
-            User teacher = new User()
-                {
-                DepartmentId = _departmentId,
-                UserName = strTeacherUsername,
-                UserPass = strTeacherPassword,
-                UserNickname = strTeacherNickname,
-                UserEmail = strTeacherEmail,
-                UserTags = 1,
-                UserRole = "teacher"
-                };
-            bool result = await feService.Create_Teacher(teacher);
+            _teacher.DepartmentId = DepartmentId;
+            _teacher.UserTags = 1;
+            _teacher.UserRole = "teacher";
+            bool result = await feService.Create_Teacher(_teacher);
             if (result)
                 {
                 lstTeachers = await feService.Read_Teachers(DepartmentId);
-                Snackbar.Add($"teacher {strTeacherUsername} - {strTeacherNickname} created", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                Snackbar.Add($"teacher {_teacher.UserName} - {_teacher.UserNickname} created", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 _cmd = "";
                 StateHasChanged();
                 }
             else
                 {
-                Snackbar.Add($"failed to create {strTeacherUsername}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                Snackbar.Add($"failed to create {_teacher.UserName}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             }
         }
     private async Task BtnEditTeacher (User teacher)
         {
-        appState.SetTeacherId(teacher.UserId);
-        appState.SetCmd(teacher.UserTags.ToString()); //I used cmd here because 'appstate.UserTags' value must be preserved for the admin (who has login)
-        strTeacherUsername = teacher.UserName;
-        strTeacherPassword = teacher.UserPass;
-        strTeacherNickname = teacher.UserNickname;
-        strTeacherEmail = teacher.UserEmail;
-        _showDueNotes = (((teacher.UserTags) & 16) == 16);
-        _dueNotesDays7 = (((teacher.UserTags) & 32) == 32);
-        _calendarFa = (((teacher.UserTags) & 256) == 256);
+        _teacher = teacher;
         _cmd = "editteacher";
         StateHasChanged();
         }
     private async Task BtnUpdateTeacher ()
         {
-        if ((strTeacherUsername.Trim() == "") || (strTeacherPassword.Trim() == "") || (strTeacherNickname.Trim() == "") || (strTeacherEmail.Trim() == ""))
+        if ((_teacher.UserName.Trim() == "") || (_teacher.UserPass.Trim() == "") || (_teacher.UserNickname.Trim() == "") || (_teacher.UserEmail.Trim() == ""))
             {
             Snackbar.Add($"fill in blanks", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             return;
             }
         else
             {
-            User teacher = new User()
-                {
-                UserId = Convert.ToInt32(appState.TeacherId),
-                DepartmentId = DepartmentId,
-                UserName = strTeacherUsername,
-                UserPass = strTeacherPassword,
-                UserNickname = strTeacherNickname,
-                UserEmail = strTeacherEmail,
-                UserTags = Convert.ToInt32(appState.Cmd),
-                UserRole = "teacher"
-                };
-            //showDueNotes
-            if (_showDueNotes)
-                {
-                teacher.UserTags |= 16;
-                }
-            else
-                {
-                teacher.UserTags &= ~16;
-                }
-            //dueNotesDays7
-            if (_dueNotesDays7)
-                {
-                teacher.UserTags |= 32;
-                }
-            else
-                {
-                teacher.UserTags &= ~32;
-                }
-            //calendarFa
-            if (_calendarFa)
-                {
-                teacher.UserTags |= 256;
-                }
-            else
-                {
-                teacher.UserTags &= ~256;
-                }
-            bool result = await feService.Update_User(teacher);
+            bool result = await feService.Update_User(_teacher);
             if (result)
                 {
                 lstTeachers = await feService.Read_Teachers(DepartmentId);
-                Snackbar.Add($"teacher {strTeacherUsername} - {strTeacherNickname} updated", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                Snackbar.Add($"teacher {_teacher.UserName} - {_teacher.UserNickname} updated", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 _cmd = "listteachers";
                 StateHasChanged();
                 }
             else
                 {
-                Snackbar.Add($"failed to update {strTeacherUsername}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                Snackbar.Add($"failed to update {_teacher.UserName}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             }
         }
@@ -928,13 +872,13 @@ else
         if (result)
             {
             lstTeachers = await feService.Read_Teachers(DepartmentId);
-            Snackbar.Add($"teacher {strTeacherUsername} account updated", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            Snackbar.Add($"teacher {_teacher.UserName} account updated", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             _cmd = "listteachers";
             StateHasChanged();
             }
         else
             {
-            Snackbar.Add($"failed to update {strTeacherUsername}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            Snackbar.Add($"failed to update {_teacher.UserName}", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     //course-exam
