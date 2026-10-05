@@ -20,7 +20,7 @@ else
     {
         <EditForm Model="lstDepartments" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <img src="/img/icoAdmin.png" width="70" title="admin page صفحه ادمين" />
-        <h5 style="color:royalblue; font-style:italic">Administrative</h5>
+        <h6 style="color:royalblue; font-style:italic">Admin</h6>
         <hr />
         @* COMBO D *@
             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 mb-4 px-0">
@@ -96,12 +96,12 @@ else
                                 <button type="button"
                                     class="btn btn-link pulse-hover"
                                     @onclick='() => BtnAddNewDepartment()'>
-                                <img src="/img/icoAdd0.png" width="22" title="add new department ايجاد گروه آموزشي جديد" />
+                                <img src="/img/icoAdd0.png" width="20" title="add new department ايجاد گروه آموزشي جديد" />
                                 </button>
                                 <button type="button"
                                     class="btn btn-link pulse-hover"
                                     @onclick='() => BtnListDepartments()'>
-                                <img src="/img/icoListD.png" width="38" title="ليست گروه هاي آموزشي" />
+                                <img src="/img/icoListD.png" width="34" title="ليست گروه هاي آموزشي" />
                                 </button>
                                 <button type="button"
                                     class="btn btn-link pulse-hover"
@@ -143,7 +143,7 @@ else
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                    <h6 style="text-align:center;color:royalblue">departments</h6>
+                                    <h3 style="text-align:center;color:royalblue;font-style:italic;">departments</h3>
                                     <hr style="color:indianred" />
                                     @foreach (Department department in lstDepartments)
                                         {
@@ -181,7 +181,7 @@ else
             case "addnewteacher":
                     {
                         <div class="d-flex" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                        <h6 style="color:indianred;">add new Teacher</h6>
+                        <h5 style="color:indianred;">add new teacher</h5>
                         </div>
                         <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 mb-4 px-0">
                             <MudCard Class="mx-auto">
@@ -286,7 +286,7 @@ else
                                     @* Change Pass? *@
                                         <MudSwitch @bind-Value="_teacher.CanChangePass"
                                                Label="can change password"
-                                               Color="Color.Secondary"
+                                               Color="Color.Dark"
                                                Dense="true"
                                                Style="margin-top:20px;font-family:Tahoma;"
                                                title="کاربر مي تواند پسورد خود را تغيير دهد">
@@ -296,7 +296,7 @@ else
                                                Label="reminder"
                                                Color="Color.Secondary"
                                                Dense="true"
-                                               Style="margin-top:20px;font-family:Tahoma;"
+                                               Style="margin-top:5px;font-family:Tahoma;"
                                                title="نمايش يادآوري يادداشت هاي سررسيد شده">
                                         </MudSwitch>
                                     @* Due Notes +/-Days *@
@@ -333,15 +333,15 @@ else
                         <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                             <MudCard Class="mx-0">
                                 <MudCardContent Style="background-color:rgba(249,249,249);">
-                                <h6 style="text-align:center;color:royalblue">teachers</h6>
-                                    <div style="text-align: center;">
+                                <h3 style="text-align:center;color:royalblue;font-style:italic;">teachers</h3>
+                                <hr style="color:indianred" />
+                                    <div style="text-align: left;">
                                         <button type="button"
                                             class="btn btn-link pulse-hover"
                                             @onclick='() => BtnAddNewTeacher()'>
-                                        <img src="/img/icoAdd0.png" width="22" />
+                                        <img src="/img/icoAdd1.png" width="18" />
                                         </button>
                                     </div>
-                                <hr style="color:indianred" />
                                 @foreach (User user in lstTeachers)
                                     {
                                         <div class="d-flex align-items-center mb-1">
@@ -362,18 +362,18 @@ else
                                             <button type="button"
                                                 class="btn btn-link"
                                                 style="margin-left:1px"
-                                                Title="edit teacher ويرايش اکانت استاد"
-                                                @onclick='() => BtnEditTeacher(user)'>
-                                            <img src="/img/icoKeys.png" width="22" />
-                                            </button>
-                                            <button type="button"
-                                                class="btn btn-link"
-                                                style="margin-left:1px"
                                                 Title="list courses ليست درس ها"
                                                 @onclick='() => BtnListCourses(user.UserId)'>
                                             <img src="/img/icoListC.png" width="30" />
                                             </button>
-                                        <span style='font-size:smaller; @((user.UserTags & 1) == 1 ? "color:black" : "color:indianred")'>@user.UserNickname - @user.UserName </span>
+                                            <button type="button"
+                                                class="btn btn-link"
+                                                style="margin-left:1px"
+                                                Title="edit teacher ويرايش اکانت استاد"
+                                                @onclick='() => BtnEditTeacher(user)'>
+                                            <img src="/img/icoKeys.png" width="20" />
+                                            </button>
+                                        <span style='font-size:smaller; @((user.UserTags & 1) == 1 ? "color:black" : "color:indianred"); margin-left:5px;'>@user.UserNickname - @user.UserName </span>
                                         @if ((user.UserTags & 128) == 128)
                                             {
                                             <span style="font-style:italic; font-weight:bold;font-size:x-small;color:darkgoldenrod;margin-left:10px;">ADMINISTRATOR</span>
@@ -390,50 +390,43 @@ else
                         <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                             <MudCard Class="mx-0">
                                 <MudCardContent Style="background-color:rgba(249,249,249);">
-                                <h6 style="text-align:center;color:royalblue">new teachers signed up (select department and save)</h6>
+                                <h3 style="text-align:center;color:royalblue;font-style:italic;">new teachers signed up</h3>
                                 <hr style="color:indianred" />
-                                @foreach (User user in lstNewTeachers)
+                                @if(lstNewTeachers.Count() > 0)
                                     {
-                                        <div class="d-flex align-items-center mb-1">
-                                            @* <button type="button"
-                                                class="btn btn-link"
-                                                style="margin-left:1px"
-                                                Title="delete teacher حذف استاد"
-                                                @onclick='() => BtnToggleTeacherActiveTag(user)'>
-                                            @if ((user.UserTags & 1) == 1)
-                                                {
-                                                <img src="/img/icoOn.png" width="22" />
-                                                }
-                                            else
-                                                {
-                                                <img src="/img/icoOff.png" width="22" />
-                                                }
-                                            </button> *@
-                                            <button type="button"
-                                                class="btn btn-link"
-                                                style="margin-left:1px"
-                                                Title="delete teacher حذف درخواست اکانت استاد"
-                                                @onclick='() => BtnDeleteTeacher(user)'>
-                                            <img src="/img/icoDelete1.png" width="20" />
-                                            </button>
-                                            <button type="button"
-                                                class="btn btn-link"
-                                                style="margin-left:1px"
-                                                Title="edit teacher ويرايش اکانت استاد"
-                                                @onclick='() => BtnEditTeacher(user)'>
-                                            <img src="/img/icoKeys.png" width="22" />
-                                            </button>
-                                            <button type="button"
-                                                class="btn btn-link"
-                                                style="margin-left:1px"
-                                                Title="Save membership in Department عضويت در گروه آموزشي ذخيره شود"
-                                                @onclick='() => BtnSaveTeacherSetDepartment(user)'>
-                                            <img src="/img/icoSave2.png" width="20" />
-                                            </button>
-                                        <span style='font-size:smaller; @((user.UserTags & 1) == 1 ? "color:black" : "color:indianred")'>@user.UserNickname - @user.UserName </span>
-                                        </div>
+                                    foreach (User user in lstNewTeachers)
+                                        {
+                                            <div class="d-flex align-items-center mb-1">
+                                                <button type="button"
+                                                    class="btn btn-link"
+                                                    style="margin-left:1px"
+                                                    Title="delete teacher حذف درخواست اکانت استاد"
+                                                    @onclick='() => BtnDeleteTeacher(user)'>
+                                                <img src="/img/icoDelete1.png" width="20" />
+                                                </button>
+                                                <button type="button"
+                                                    class="btn btn-link"
+                                                    style="margin-left:1px"
+                                                    Title="edit teacher ويرايش اکانت استاد"
+                                                    @onclick='() => BtnEditTeacher(user)'>
+                                                <img src="/img/icoKeys.png" width="22" />
+                                                </button>
+                                                <button type="button"
+                                                    class="btn btn-link"
+                                                    style="margin-left:1px"
+                                                    Title="Save membership in Department عضويت در گروه آموزشي ذخيره شود"
+                                                    @onclick='() => BtnSaveTeacherSetDepartment(user)'>
+                                                <img src="/img/icoSave2.png" width="20" />
+                                                </button>
+                                            <span style='font-size:smaller; @((user.UserTags & 1) == 1 ? "color:black" : "color:indianred")'>@user.UserNickname - @user.UserName </span>
+                                            </div>
+                                        }
                                     }
-                                </MudCardContent>
+                                else
+                                    {
+                                <h6 style="text-align:center;color:gray;font-style:italic;">Empty</h6>
+                                    }
+                            </MudCardContent>
                             </MudCard>
                         </MudContainer>
                     break;
@@ -445,18 +438,11 @@ else
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                    <h6 style="text-align:center;color:royalblue">courses</h6>
+                                    <h3 style="text-align:center;color:royalblue;font-style:italic;">courses</h3>
                                     <hr style="color:indianred" />
                                     @foreach (Course course in lstCourses)
                                         {
                                             <div class="d-flex align-items-center mb-1">
-                                            @* <button type="button"
-                                                    class="btn btn-link"
-                                                    style="margin-left:1px"
-                                                    Title="list tests ليست تست ها"
-                                                    @onclick='() => BtnExportTests(course.CourseId)'>
-                                                <img src="/img/icoListT.png" width="30" />
-                                                </button> *@
                                                 <button type="button"
                                                     class="btn btn-link"
                                                     style="margin-left:1px"
@@ -480,7 +466,7 @@ else
                             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
-                                    <h6 style="text-align:center;color:royalblue">list of Exams <span style="color:indianred">@appState.Message</span></h6>
+                                    <h3 style="text-align:center;color:royalblue;font-style:italic;">exams <span style="color:indianred">@appState.Message</span></h3>
                                     <hr style="color:indianred" />
                                         @{
                                         i = 0;
@@ -830,6 +816,12 @@ else
             }
         else
             {
+            _teacher.UserRole = "teacher";
+            _teacher.StudentGroups = new ();
+            _teacher.StudentCourses = new ();
+            _teacher.StudentExams = new ();
+            _teacher.StudentMessages = new ();
+            _teacher.StudentNotes = new ();
             bool result = await feService.Update_User(_teacher);
             if (result)
                 {

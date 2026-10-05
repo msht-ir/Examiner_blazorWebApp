@@ -79,20 +79,8 @@ namespace ExaminerB.Service
             }
         public async Task<bool> Update_User (User user)
             {
-            if (user.UserRole.ToLower () == "student")
-                {
-                var response = await _http.PostAsJsonAsync ("api/Update_Student", user);
-                return (response.IsSuccessStatusCode) ? true : false;
-                }
-            else if (user.UserRole.ToLower () == "teacher")
-                {
-                var response = await _http.PostAsJsonAsync ("api/Update_Teacher", user);
-                return (response.IsSuccessStatusCode) ? true : false;
-                }
-            else
-                {
-                return false;
-                }
+            var response = await _http.PostAsJsonAsync ("api/Update_Teacher", user);
+            return (response.IsSuccessStatusCode) ? true : false;
             }
         public async Task<bool> Delete_Teacher (int userId)
             {

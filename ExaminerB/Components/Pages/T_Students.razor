@@ -31,7 +31,7 @@ else
                     <MudCardContent Style="background-color:rgba(249,249,249);">
                     @if (_cmd == "AddnewStudent")
                         {
-                        <h6 style="text-align:center; color:indianred">method A: add a student</h6>
+                        <h6 style="text-align:center; color:indianred">A: add a student</h6>
                             <div tabindex="0" style="text-align:center;margin-left:30px;margin-right:30px;">
                             <MudTextField @ref="refNewUser"
                                           @bind-Value="user.UserName"
@@ -43,6 +43,7 @@ else
                             <MudTextField @ref="refNickname"
                                           @bind-Value="user.UserNickname"
                                           Label="nickname"
+                                          Style="font-family: 'Segoe UI';"
                                           Variant="Variant.Text"
                                           Margin="Margin.Dense"
                                           Autocomplete="off"
@@ -65,8 +66,9 @@ else
                                 <img src="/img/icoCancel.png" width="20" />
                                 </button>
                             </div>
+                            <br />
                         <hr style="color:slateblue" />
-                        <h6 style="text-align:center; color:indianred">method B: Import from Excel file</h6>
+                        <h6 style="text-align:center; color:indianred">B: Import students from Excel</h6>
                             <div class="d-flex align-items-center" style="gap:10px;margin-top:20px;margin-left:20px;">
                                 <button class="btn btn-link" Title=@((_help) ? "cancel" : "") @onclick="BtnHelpImporStudentsFromtExcel">
                                 <img src="/img/icoExcel1.png" width="28" height="28" />
@@ -158,7 +160,7 @@ else
                                        Label="active"
                                        Color="Color.Primary"
                                        title="activate thie group"
-                                       Style="margin-right:10px;margin-top:10px;"
+                                       Style="margin-right:12px;margin-top:10px;"
                                        Dense="true">
                                 </MudSwitch>
                             <MudTextField @ref="reftxtNewGroup"
@@ -166,6 +168,7 @@ else
                                           Label="edit group"
                                           Variant="Variant.Text"
                                           Margin="Margin.Dense"
+                                          Style="font-family: 'Segoe UI';"
                                           Autocomplete="off"
                                           Adornment="Adornment.End"
                                           AdornmentIcon="@Icons.Material.Filled.Save"

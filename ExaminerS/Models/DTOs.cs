@@ -36,7 +36,6 @@ namespace ExaminerS.Models
           -
           wrapper properties:
         */
-
         public bool IsActive
             {
             get => (UserTags & 1) == 1;
