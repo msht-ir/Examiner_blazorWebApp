@@ -1341,6 +1341,7 @@
         {
         student.UserId = appState.UserId ?? 0;
         lstStudentExams.Clear();
+        //notice: for students page, exams are retrieved from db if (examTags&1=1)
         lstStudentExams = await feService.Read_StudentExams("ByStudentId", student.UserId, 0) ?? new List<StudentExam>();
         }
     private async Task ReadMessageList ()

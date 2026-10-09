@@ -690,7 +690,7 @@ else
             lstStudentMessages.Clear();
             StudentMessage studentMessage = await feService.Read_StudentMessage(Convert.ToInt32(appState.StudentMessageId));
             lstStudentMessages.Add(studentMessage);
-            //if role=student: automatically call BtnCalcPercentsForMessage() for that one message!
+            //if role=student then automatically call BtnCalcPercentsForMessage() for that one message!
             await BtnCalcPercentsForMessage(studentMessage);
             }
         int referenceType = mode switch

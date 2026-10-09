@@ -12,7 +12,7 @@
 @inject ISnackbar Snackbar
 
 <div style="text-align:center; max-width:500px; margin:0 auto; padding:0 8px; box-sizing:border-box;">
-    <h3 class="card-title text-center text-secondary">@course.CourseName exams</h3>
+    <h4 class="card-title text-center text-secondary">@course.CourseName</h4>
     @if (appState.Message != "")
         {
         <h6 style="color:indianred">@appState.Message</h6>
@@ -78,7 +78,7 @@ else
                     <TitleContent>
                         <div class="d-flex">
                             <MudIcon Icon="@Icons.Material.Outlined.AutoStories" class="mr-3"></MudIcon>
-                            <MudText><span style="font-weight:normal;color:rgb(86,119,133)">@exam.ExamTitle</span></MudText>
+                            <MudText><span style="font-weight:normal;color:rgb(86,119,133);font-family:'Segoe UI'; font-size:smaller;">@exam.ExamTitle</span></MudText>
                         </div>
                     </TitleContent>
                     <ChildContent>
