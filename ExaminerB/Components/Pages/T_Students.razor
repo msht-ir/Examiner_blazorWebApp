@@ -1163,9 +1163,9 @@ else
                 User student = new User()
                     {
                     DepartmentId = _departmentId,
-                    UserName = row.Cell(1).GetString(),
-                    UserPass = row.Cell(1).GetString(),
-                    UserNickname = row.Cell(2).GetString(),
+                    UserName = row.Cell(3).GetString(),
+                    UserPass = row.Cell(3).GetString(),
+                    UserNickname = row.Cell(2).GetString() + " - " + row.Cell(1).GetString(),
                     UserRole = "student",
                     UserTags = 1
                     };
@@ -1408,7 +1408,7 @@ else
                 .ToDictionary(g => g.Key, g => g.First().UserId, StringComparer.OrdinalIgnoreCase);
             foreach (var row in worksheet.RowsUsed().Skip(1))
                 {
-                string student = row.Cell(1).GetString().Trim();
+                string student = row.Cell(3).GetString().Trim(); //from column C
                 if (string.IsNullOrEmpty(student))
                     continue;
                 lstStudentIds.Add(userIdLookup.TryGetValue(student, out int userId) ? userId : 0);
