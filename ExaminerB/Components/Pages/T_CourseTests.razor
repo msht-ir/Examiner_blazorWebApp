@@ -1,5 +1,9 @@
 ﻿@page "/T_CourseTests"
 @using ClosedXML.Excel
+@using Microsoft.Extensions.Hosting
+@using ClosedXML
+@using ExaminerB.Service
+@using System.Threading.Tasks
 @using ExaminerB.Service
 @using Microsoft.Extensions.Hosting
 @using ClosedXML
@@ -545,36 +549,6 @@ else
             _hasFetched = true;
             return;
             }
-
-
-        /*
-        * old method wo epplus (takes more time)
-        try
-        {
-            _hasFetched = false;
-            excelFile = e.File;
-            //using var memoryStream = new MemoryStream();
-            await excelFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(stream);
-            stream.Position = 0;
-            using var workbook = new XLWorkbook(stream);
-            int i = 0;
-            foreach (IXLWorksheet ws in workbook.Worksheets)
-            {
-                lstWorksheets.Add(ws.Worksheet.Name);
-                }
-            StateHasChanged();
-            Snackbar.Add("excel worksheets listed", Severity.Success);
-            appState.SetCmd("importexcelworksheets");
-            _hasFetched = true;
-            }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"--------Error\n{ex}");
-            appState.SetCmd("");
-            _hasFetched = true;
-            return;
-            }
-        */
         }
     private async Task OnWorksheetChanged (string newValue)
         {

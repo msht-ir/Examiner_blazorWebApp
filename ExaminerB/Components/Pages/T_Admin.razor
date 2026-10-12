@@ -21,8 +21,7 @@ else
         <EditForm Model="lstDepartments" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <img src="/img/icoAdmin.png" width="70" title="admin page صفحه ادمين" />
         <h6 style="color:royalblue; font-style:italic">Admin</h6>
-        <hr />
-        @* COMBO D *@
+        @* SECTION 1 ---- NEW/EDIT Department / SHOW NewTeachers *@
             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 mb-4 px-0">
                 <MudCard Class="mx-auto">
                     <MudCardContent Style="background-color:rgba(249,249,249);">
@@ -95,11 +94,6 @@ else
                             <div style="text-align: center;">
                                 <button type="button"
                                     class="btn btn-link pulse-hover"
-                                    @onclick='() => BtnAddNewDepartment()'>
-                                <img src="/img/icoAdd0.png" width="20" title="add new department ايجاد گروه آموزشي جديد" />
-                                </button>
-                                <button type="button"
-                                    class="btn btn-link pulse-hover"
                                     @onclick='() => BtnListDepartments()'>
                                 <img src="/img/icoListD.png" width="34" title="ليست گروه هاي آموزشي" />
                                 </button>
@@ -144,6 +138,13 @@ else
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                     <h3 style="text-align:center;color:royalblue;font-style:italic;">departments</h3>
+                                    <div style="text-align: left;">
+                                        <button type="button"
+                                            class="btn btn-link pulse-hover"
+                                            @onclick='() => BtnAddNewDepartment()'>
+                                        <img src="/img/icoAdd1.png" width="18" />
+                                        </button>
+                                    </div>
                                     <hr style="color:indianred" />
                                     @foreach (Department department in lstDepartments)
                                         {
@@ -249,6 +250,7 @@ else
                                                   Variant="Variant.Text"
                                                   Margin="Margin.Dense"
                                                   Autocomplete="off"
+                                                  Style="margin-right:40px;"
                                                   Adornment="Adornment.End"
                                                   AdornmentIcon="@Icons.Material.Filled.Save"
                                                   OnAdornmentClick="() => BtnUpdateTeacher()"
@@ -259,6 +261,7 @@ else
                                                   @bind-Value="_teacher.UserPass"
                                                   Label="password"
                                                   Variant="Variant.Text"
+                                                  Style="margin-right:40px;"
                                                   Margin="Margin.Dense"
                                                   Autocomplete="off"
                                                   Class="my-textfield" />
@@ -270,7 +273,7 @@ else
                                                   Variant="Variant.Text"
                                                   Margin="Margin.Dense"
                                                   Autocomplete="off"
-                                                  Style="font-family:tahoma"
+                                                  Style="font-family:tahoma;margin-right:40px;"
                                                   Class="my-textfield" />
                                     </div>
                                     <div class="d-flex">
@@ -279,22 +282,31 @@ else
                                                   Label="email"
                                                   Variant="Variant.Text"
                                                   Margin="Margin.Dense"
+                                                  Style="margin-right:40px;"
                                                   Autocomplete="off"
                                                   Class="my-textfield" />
                                     </div>
                                     <div>
+                                    @* Is Active? *@
+                                        <MudSwitch @bind-Value="_teacher.IsActive"
+                                               Label="account is active"
+                                               Color="Color.Primary"
+                                               Dense="true"
+                                               Style="margin-top:20px;font-family:Tahoma;"
+                                               title="اکانت کاربر (استاد) فعال / غير فعال است">
+                                        </MudSwitch>
                                     @* Change Pass? *@
                                         <MudSwitch @bind-Value="_teacher.CanChangePass"
                                                Label="can change password"
                                                Color="Color.Dark"
                                                Dense="true"
-                                               Style="margin-top:20px;font-family:Tahoma;"
+                                               Style="margin-top:5px;font-family:Tahoma;"
                                                title="کاربر مي تواند پسورد خود را تغيير دهد">
                                         </MudSwitch>
                                     @* Show Due Notes *@
                                         <MudSwitch @bind-Value="_teacher.ShowDueNotes"
                                                Label="reminder"
-                                               Color="Color.Secondary"
+                                               Color="Color.Success"
                                                Dense="true"
                                                Style="margin-top:5px;font-family:Tahoma;"
                                                title="نمايش يادآوري يادداشت هاي سررسيد شده">
@@ -310,7 +322,7 @@ else
                                     @* Persian Calendar *@
                                         <MudSwitch @bind-Value="_teacher.CalendarFa"
                                                Label="Persian calendar"
-                                               Color="Color.Primary"
+                                               Color="Color.Warning"
                                                Dense="true"
                                                Style="margin-top:5px;font-family:Tahoma;"
                                                title="Use Persian Calendar از تقويم شمسي استفاده مي کنم">
@@ -334,7 +346,6 @@ else
                             <MudCard Class="mx-0">
                                 <MudCardContent Style="background-color:rgba(249,249,249);">
                                 <h3 style="text-align:center;color:royalblue;font-style:italic;">teachers</h3>
-                                <hr style="color:indianred" />
                                     <div style="text-align: left;">
                                         <button type="button"
                                             class="btn btn-link pulse-hover"
@@ -342,6 +353,7 @@ else
                                         <img src="/img/icoAdd1.png" width="18" />
                                         </button>
                                     </div>
+                                <hr style="color:indianred" />
                                 @foreach (User user in lstTeachers)
                                     {
                                         <div class="d-flex align-items-center mb-1">
@@ -376,7 +388,7 @@ else
                                         <span style='font-size:smaller; @((user.UserTags & 1) == 1 ? "color:black" : "color:indianred"); margin-left:5px;'>@user.UserNickname - @user.UserName </span>
                                         @if ((user.UserTags & 128) == 128)
                                             {
-                                            <span style="font-style:italic; font-weight:bold;font-size:x-small;color:darkgoldenrod;margin-left:10px;">ADMINISTRATOR</span>
+                                            <span style="font-style:italic; font-weight:bold;font-size:x-small;color:darkgoldenrod;margin-left:10px;">ADMIN</span>
                                             }
                                         </div>
                                     }
@@ -409,15 +421,15 @@ else
                                                     style="margin-left:1px"
                                                     Title="edit teacher ويرايش اکانت استاد"
                                                     @onclick='() => BtnEditTeacher(user)'>
-                                                <img src="/img/icoKeys.png" width="22" />
+                                                <img src="/img/icoKeys.png" width="20" />
                                                 </button>
-                                                <button type="button"
+                                                @* <button type="button"
                                                     class="btn btn-link"
                                                     style="margin-left:1px"
                                                     Title="Save membership in Department عضويت در گروه آموزشي ذخيره شود"
                                                     @onclick='() => BtnSaveTeacherSetDepartment(user)'>
                                                 <img src="/img/icoSave2.png" width="20" />
-                                                </button>
+                                                </button> *@
                                             <span style='font-size:smaller; @((user.UserTags & 1) == 1 ? "color:black" : "color:indianred")'>@user.UserNickname - @user.UserName </span>
                                             </div>
                                         }
@@ -511,13 +523,13 @@ else
             }
         @* FOOTER *@
 
-            <div style="text-align: center;margin-top:100px;">
+            <div style="text-align: center;margin-top:40px;">
                 <button type="button"
                     class="btn btn-link pulse-hover"
                     @onclick='() => BtnGotoPage("M")'>
                 <img src="/img/icoList.png" width="32" />
                 </button>
-                <button type="button"
+                @* <button type="button"
                     class="btn btn-link pulse-hover"
                     @onclick='() => BtnGotoPage("N")'>
                 <img src="/img/icoNoteBook.png" width="38" />
@@ -531,7 +543,7 @@ else
                     class="btn btn-link pulse-hover"
                     @onclick='() => BtnGotoPage("S")'>
                 <img src="/img/icoSwitchBoardStudents.png" width="42" />
-                </button>
+                </button> *@
             </div>
         </EditForm>
     }
@@ -814,9 +826,14 @@ else
             Snackbar.Add($"fill in blanks", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             return;
             }
+        else if (DepartmentId < 1)
+            {
+            Snackbar.Add($"select a department", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            } 
         else
             {
             _teacher.UserRole = "teacher";
+            _teacher.DepartmentId = DepartmentId;
             _teacher.StudentGroups = new ();
             _teacher.StudentCourses = new ();
             _teacher.StudentExams = new ();

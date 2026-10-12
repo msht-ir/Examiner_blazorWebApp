@@ -12,6 +12,9 @@
 @inject ISnackbar Snackbar
 
 <div style="text-align:center; max-width:500px; margin:0 auto; padding:0 8px; box-sizing:border-box;">
+    <div style="text-align: center;">
+    <p style="font-size:large;font-style:italic;color:rgb(220,220,220)">@appState.UserNickname</p>
+    </div>
     <h4 class="card-title text-center text-secondary">@course.CourseName</h4>
     @if (appState.Message != "")
         {
