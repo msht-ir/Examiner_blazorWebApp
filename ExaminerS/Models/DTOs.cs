@@ -24,17 +24,16 @@ namespace ExaminerS.Models
         public string UserEmail { get; set; } = "";
         public int UserTags { get; set; } = 0;
         /*
-          1:  IsActive
-          2:  CanChangePass
-          4:  -
-          8:  -
-          16: ShowDueNotes
-          32: DueNotesDays 3->7 
-          64: IsSelected
-          128:SuperUser
-          256:CalendarFa
-          -
-          wrapper properties:
+         *     USER / STUDENT
+          1:   IsActive
+          2:   CanChangePass
+          4:   -
+          8:   -
+          16:  ShowDueNotes
+          32:  DueNotesDays 7/14
+          64:  IsSelected
+          128: SuperUser
+          256: CalendarFa
         */
         public bool IsActive
             {

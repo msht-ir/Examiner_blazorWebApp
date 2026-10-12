@@ -415,7 +415,6 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Update_StudentAsync (User student)
             {
-            //tags: 1:Active 2:ChangePass            
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
             string sql = "dbo.sp_UpdateStudent";
