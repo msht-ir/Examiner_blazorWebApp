@@ -795,6 +795,13 @@ else
                                     <button type="button"
                                         class="btn btn-link"
                                         style="margin-left:1px"
+                                        Title=@((_help) ? "add note about this student ايجاد يادداشت براي اين دانشجو" : "")
+                                        @onclick='() => BtnCreateNote(student.UserId, 13)'>
+                                    <img src="/img/icoNewNote3.png" width="20" />
+                                    </button>
+                                    <button type="button"
+                                        class="btn btn-link"
+                                        style="margin-left:1px"
                                         Title=@((_help) ? "show courses and exams درس ها و آزمون ها" : "")
                                         @onclick='() => BtnReportStudent(student.UserId, "S")'>
                                     <img src="/img/icoFolderS.png" width="22" />
@@ -805,13 +812,6 @@ else
                                         Title=@((_help) ? "show notes and messages يادداشت ها و پيام ها" : "")
                                         @onclick='() => BtnGotoPageReportMessages(student)'>
                                     <img src="/img/icoListM.png" width="30" />
-                                    </button>
-                                    <button type="button"
-                                        class="btn btn-link"
-                                        style="margin-left:1px"
-                                        Title=@((_help) ? "add note about this student ايجاد يادداشت براي اين دانشجو" : "")
-                                        @onclick='() => BtnCreateNote(student.UserId, 13)'>
-                                    <img src="/img/icoNewNote3.png" width="20" />
                                     </button>
                                 <span style="font-size:x-small">@student.UserName - @student.UserNickname</span>
                                 </div>

@@ -50,7 +50,7 @@
                             aria-controls="CollapseId2" style="background-color:WhiteSmoke">
                             <h4>
                             <img class="pulse-hover" src="/img/icoCourse.png" width="24" style="margin-right:10px;" title="درس ها" />
-                            courses <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentCourses.Count )</span>
+                            <span style="color:rgb(82, 109, 117)">courses</span> <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentCourses.Count )</span>
                             </h4>
                         </button>
                     </h4>
@@ -89,7 +89,7 @@
                                             @if ((studentCourse.StudentCourseTags & 5) == 5)
                                                 {
                                                     <button class="btn btn-link" Title=@((_help) ? "report " + studentCourse.StudentNickname + " tests answered in course: " + studentCourse.CourseName : "") @onclick="() => BtnReportStudentCourseTests(studentCourse.StudentCourseId, studentCourse.CourseName)">
-                                                    <img class="pulse-hover" src="/img/icoReport1.png" width="22" />
+                                                    <img class="pulse-hover" src="/img/icoReport1.png" width="20" />
                                                     </button>
                                                 }
                                             @if ((studentCourse.StudentCourseTags & 3) == 3)
@@ -116,13 +116,18 @@
                                                     <h6 style="padding-left:10px;font-size:small;">folders: </h6>
                                                     @foreach (CourseFolder cf in lstCourseFolders)
                                                         {
-                                                        <div style="color:indianred;font-size:small;padding-left:15px;"><a href="@cf.CourseFolderUrl" target="_blank" style="color:indianred;text-decoration:none;">@cf.CourseFolderTitle</a></div>
+                                                        <div style="color:indianred;font-size:small;padding-left:15px;">
+                                                            <a href="@cf.CourseFolderUrl" target="_blank" style="color:indianred;text-decoration:none;">@cf.CourseFolderTitle</a>
+                                                        </div>
                                                         }
                                                     }
                                                 }
                                             else
                                                 {
-                                                    <button class="btn btn-link" Title=@((_help) ? "show links for " + studentCourse.CourseName + " folder(s) online" : "") style="padding:15px;border: none;" @onclick='async () => await BtnShowCourseFolders(studentCourse)'>
+                                                    <button class="btn btn-link" 
+                                                    Title=@((_help) ? "show links for " + studentCourse.CourseName + " folder(s) online" : "") 
+                                                    style="padding:15px;border: none;" 
+                                                    @onclick='async () => await BtnShowCourseFolders(studentCourse)'>
                                                     <img class="pulse-hover" src="/img/icoFolderCF.png" width="28" />
                                                     </button>
                                                 }
@@ -144,7 +149,7 @@
                             aria-controls="CollapseId1" style="background-color:whitesmoke">
                             <h4>
                             <img class="pulse-hover" src="/img/icoEditPen.png" width="22" style="margin-right:10px;" title="آزمون ها" />
-                            exams <span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentExams.Count )</span>
+                             <span style="color:rgb(82, 109, 117)">exams </span><span style="font-weight:bold;font-size:x-small;color:forestgreen">( @lstStudentExams.Count )</span>
                             </h4>
                         </button>
                     </h4>
@@ -235,8 +240,8 @@
                             aria-expanded="false"
                             aria-controls="CollapseId3" style="background-color:WhiteSmoke">
                             <h4>
-                            <img class="pulse-animation" src="/img/icoListM.png" width="32" style="margin-right:10px;" title="پيام ها" />
-                            messages <span style="font-weight:bold;font-size:x-small;color:indianred">( @unreadMessageCount <span style="color:blue">/@lstStudentMessages.Count</span> )</span>
+                            <img class="pulse-animation" src="/img/icoListM.png" width="28" style="margin-right:10px;" title="پيام ها" />
+                           <span style="color:rgb(82, 109, 117)">messages </span> <span style="font-weight:bold;font-size:x-small;color:indianred">( @unreadMessageCount <span style="color:blue">/@lstStudentMessages.Count</span> )</span>
                             </h4>
                         </button>
                     </h4>
@@ -402,7 +407,7 @@
                             aria-controls="CollapseId4" style="background-color:WhiteSmoke">
                             <h4>
                             <img class="pulse-hover" src="/img/icoChat.png" width="30" style="margin-right:10px;" title="چت هاي من" />
-                            chat <span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChats.Count ) </span></span>
+                            <span style="color:rgb(82, 109, 117)">chat </span><span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChats.Count ) </span></span>
                             </h4>
                         </button>
                     </h4>
@@ -471,7 +476,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <button class="btn btn-link"
                                                         style="text-decoration:none;"
-                                                        Title=@((_help) ? "Show chat history with this friend" : "")
+                                                        Title=@((_help) ? "Show chat history" : "")
                                                         @onclick="() => BtnOpenThisChat(chat)">
                                                     @if (chat.IsRead)
                                                         {
@@ -511,7 +516,7 @@
                         </div>
                     </div>
                 </div>
-            @* --- 5/6 CHATROOMS (Forum)*@
+            @* --- 5/6 FORUMS *@
                 <div class="accordion-item mb-2">
                     <h4 class="accordion-header">
                         <button class="accordion-button collapsed" type="button"
@@ -520,8 +525,8 @@
                             aria-expanded="false"
                             aria-controls="CollapseId5" style="background-color:WhiteSmoke">
                             <h4>
-                            <img class="pulse-hover" src="/img/icoSwitchBoardStudents.png" width="36" style="margin-right:10px;" title="چت گروهي" />
-                            forums <span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChatrooms.Count ) </span></span>
+                            <img class="pulse-hover" src="/img/icoSwitchBoardStudents.png" width="32" style="margin-right:10px;" title="چت گروهي" />
+                            <span style="color:rgb(82, 109, 117)">forums </span><span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstChatrooms.Count ) </span></span>
                             </h4>
                         </button>
                     </h4>
@@ -541,13 +546,13 @@
                                 } *@
                                 <div>
                                     <p style="text-align:center;font-size:x-small;">
-                                    ايجاد يک انجمن براي طرح يک موضوع و تبادل نظر و گفتگو
+                                    ايجاد يک انجمن براي طرح موضوع، تبادل نظر و گفتگو
                                     <br />
-                                    قوانين: ورود همه دانشجويان سامانه به همه انجمن ها براي مطالعه يا تبادل نظر آزاد است
+                                    قوانين: ورود دانشجويان به همه انجمن ها براي مطالعه و تبادل نظر آزاد است
                                     <br />
-                                    ادمين مي تواند انجمن خود را و هر دانشجو مي تواند پست هاي خودش را حذف کند
+                                    ادمين مي تواند انجمن خود و هر دانشجو مي تواند پست هاي خودش را حذف کند
                                     <br />
-                                    انجمن ها و پست ها بايد در مورد موضوعات درسي و دانشگاهي باشند
+                                    انجمن ها و پست ها بايد در مورد موضوعات درسي باشند
                                     <br />
                                     Forums for discussion and exchange of ideas
                                     </p>
@@ -641,7 +646,7 @@
                             aria-controls="CollapseId6" style="background-color:WhiteSmoke">
                             <h4>
                             <img class="pulse-hover" src="/img/icoNote1.png" width="26" style="margin-right:10px;" title="دفترچه يادداشت" />
-                            notebook <span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstNotes.Count ) </span></span>
+                            <span style="color:rgb(82, 109, 117)">notebook </span><span style="font-weight:bold;font-size:x-small;color:indianred"><span style="color:forestgreen"> ( @lstNotes.Count ) </span></span>
                             </h4>
                         </button>
                     </h4>

@@ -300,6 +300,10 @@ else
         user.UserId = Convert.ToInt32(appState.UserId);
         user.UserName = appState.UserName;
         lstNotes = await feService.Read_Notes(Id, mode, user.UserId);
+        if(lstNotes.Count() == 0)
+            {
+            await CreateNote ();
+            }
         await GetListOfProjects(user.UserId, _ShowProjectsMode);
         _hasFetched = true;
         }

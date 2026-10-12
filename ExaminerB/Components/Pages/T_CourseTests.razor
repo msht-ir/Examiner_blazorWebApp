@@ -219,7 +219,7 @@ else
                                 <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
                                 @foreach (Exam exam in lstExams)
                                     {
-                                    <MudSelectItem Value="@exam.ExamId">@exam.ExamTitle</MudSelectItem>
+                                    <MudSelectItem Value="@exam.ExamId"><span style="font-size:smaller;font-family:'Segoe UI'">@exam.ExamTitle</span></MudSelectItem>
                                     }
                                 </MudSelect>
                             </div>

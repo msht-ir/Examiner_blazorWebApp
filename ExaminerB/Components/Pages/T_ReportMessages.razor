@@ -274,14 +274,14 @@ else
                                             }
                                         @if ((message.StudentMessageTags & 4) == 4)
                                             {
-                                            <span style="color:gray;font-style:italic">Deleted </span>
+                                            <span style="color:rgb(240,120,120);font-style:italic">Deleted </span>
                                             }
                                         </div>
                                     @if ((appState.Cmd == "ShowMessageStats") & (message.MessageId == appState.MessageId) & (@nStudents > 0))
                                         {
                                             <div style="text-align:left; padding-left:25px;">
-                                            <div style="font-weight:bold">Target Students <span style="font-weight:normal;"> ( @nStudents ) </span></div>
-                                            <div style="padding-left:15px;">@nStudentsRead ( @(nStudentsRead * 100 / nStudents)% ) Read</div>
+                                            <div style="font-weight:bold">Recipients: <span style="font-weight:normal;"> @nStudents students </span></div>
+                                            <div style="padding-left:15px;">@nStudentsRead <span style="color:indianred;">( @(nStudentsRead * 100 / nStudents)% ) Read</span></div>
                                             <div style="padding-left:15px;">@nStudentsBookmarked Bookmarked</div>
                                             <div style="padding-left:15px;">@nStudentsDeleted Deleted</div>
                                             @if (user.UserRole == "teacher")
@@ -293,14 +293,14 @@ else
                                             </div>
                                         @if ((message.StudentMessageTags & 8) == 8)
                                             {
-                                                <div class="d-flex justify-content-center">
-                                                    <MudChart ChartType="ChartType.Donut"
-                                                          T="double"
-                                                          ChartSeries="@(new double [] { nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered, (nStudents - nStudentsRead) }.AsChartDataSet())"
-                                                          ChartLabels="@(new [] { "Yes: " + nStudentsAnsweredYes, "No: " + nStudentsAnsweredNo, "notSure: " + nStudentsNotAnswered, "notRead: " + (nStudents - nStudentsRead) })"
-                                                          Width="200px" Height="200px">
-                                                    </MudChart>
-                                                </div>
+                                            <div class="d-flex justify-content-center">
+                                                <MudChart ChartType="ChartType.Donut"
+                                                T="double"
+                                                ChartSeries="@(new double [] { nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered, (nStudents - nStudentsRead) }.AsChartDataSet())"
+                                                ChartLabels="@(new [] { "Yes: " + nStudentsAnsweredYes, "No: " + nStudentsAnsweredNo, "notSure: " + nStudentsNotAnswered, "notRead: " + (nStudents - nStudentsRead) })"
+                                                Width="200px" Height="200px">
+                                                </MudChart>
+                                            </div>
                                             <div class="d-flex justify-content-center" style="color:gray;text-align:left;font-weight:bold; padding-left:25px;">Participation: <span style="font-weight:normal; margin-left:10px;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>
                                             <br />
                                             }
