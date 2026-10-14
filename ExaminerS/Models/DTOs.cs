@@ -430,10 +430,7 @@ namespace ExaminerS.Models
         {
         public int MessageId { get; set; } = 0;
         public int UserId { get; set; } = 0;
-        public DateTimeOffset DateTimeCreated
-            {
-            get; set;
-            }
+        public DateTimeOffset DateTimeCreated { get; set; }
         public string MessageTitle { get; set; } = "";
         public string MessageBody { get; set; } = "";
         public int MessageTags { get; set; } = 0;
@@ -446,6 +443,17 @@ namespace ExaminerS.Models
                     MessageTags |= 1;
                 else
                     MessageTags &= ~1;
+                }
+            }
+        public bool IsSelected
+            {
+            get => (MessageTags & 2) == 2;
+            set
+                {
+                if (value)
+                    MessageTags |= 2;
+                else
+                    MessageTags &= ~2;
                 }
             }
 

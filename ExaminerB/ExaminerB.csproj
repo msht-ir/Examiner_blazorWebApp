@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.105.1" />
     <PackageReference Include="EPPlus" Version="9.0.0-preview" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.1" />
     <PackageReference Include="MudBlazor" Version="9.11.0" />
     <PackageReference Include="PSC.Blazor.Components.BrowserDetect" Version="10.0.3" />
   </ItemGroup>
