@@ -756,6 +756,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Update_MessageAsync (message);
             return Ok (result);
             }
+        [HttpPost ("Update_MessageTags")]
+        public async Task<ActionResult<bool>> Update_MessageTags ([FromBody] Message message)
+            {
+            var result = await _BeService.Update_MessageTagsAsync (message);
+            return Ok (result);
+            }
         [HttpPost ("Delete_Messages")]
         public async Task<ActionResult<bool>> Delete_Messages ([FromQuery] string mode, [FromBody] int recipientId)
             {

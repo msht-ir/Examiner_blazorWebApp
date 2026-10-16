@@ -1,7 +1,14 @@
-﻿using ExaminerS.Models;
+﻿using ClosedXML.Excel;
+using ExaminerS.Models;
+using System.ComponentModel;
 using System.Globalization;
 using Department = ExaminerS.Models.Department;
 using Group = ExaminerS.Models.Group;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using QuestPDF.Drawing;
+using IContainer = QuestPDF.Infrastructure.IContainer;
 
 namespace ExaminerB.Service
     {
@@ -1142,6 +1149,11 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
             return response.IsSuccessStatusCode ? true : false;
             }
+        public async Task<bool> Update_MessageTags (Message message)
+            {
+            var response = await _http.PostAsJsonAsync ("api/Update_MessageTags", message);
+            return response.IsSuccessStatusCode ? true : false;
+            }
         public async Task<bool> Delete_Messages (string mode, int recipientId)
             {
             //modes: ByStudentId, ByMessageId, ByStudentMessageId
@@ -1508,12 +1520,303 @@ namespace ExaminerB.Service
                 {
                 return "-";
                 }
-            //convert
+            //convert to DateTime tehranTime
+            datetime = datetime.AddHours (3).AddMinutes (30);
             PersianCalendar pc = new PersianCalendar ();
             return $"{pc.GetYear (datetime):0000}-" +
                        $"{pc.GetMonth (datetime):00}-" +
                        $"{pc.GetDayOfMonth (datetime):00} " +
                        $"{pc.GetHour (datetime):00}:{pc.GetMinute (datetime):00}";
+            }
+        #endregion
+        #region Export PDF
+        public byte [] GenerateExcel<T> (List<T> data, string sheetName = "Report")
+            {
+            using var wb = new XLWorkbook ();
+            var ws = wb.Worksheets.Add (sheetName);
+            var properties = typeof (T).GetProperties ();
+            //add headers
+            for (int i = 3; i < properties.Length - 2; i++)
+                {
+                ws.Cell (1, i - 2).Value = properties [i].Name;
+                ws.Cell (1, i - 2).Style.Font.Bold = true;
+                ws.Cell (1, i - 2).Style.Fill.BackgroundColor = XLColor.LightBlue;
+                }
+            //add rows
+            for (int row = 0; row < data.Count; row++)
+                {
+                for (int col = 3; col < properties.Length - 2; col++)
+                    {
+                    var value = properties [col].GetValue (data [row]);
+                    ws.Cell (row + 2, col - 2).Value = value?.ToString () ?? "";
+                    }
+                }
+            //auto-fit
+            ws.Columns ().AdjustToContents ();
+            using var stream = new MemoryStream ();
+            wb.SaveAs (stream);
+            return stream.ToArray ();
+            }
+        public byte [] GenerateReportMessageStudentsPdf (List<StudentMessage> lstStudentMessages, string reportType)
+            {
+            /* NOTES for developers (1405.07.21):
+            New QuestPDF upgrade doesn't automatically use Farsi-fonts. Use standard web-font 'Vazirmatn-Regular.ttf'.
+            1- conpy font file into a project folder eg. D:\VS\Examiner\ExaminerB\Resources\Fonts
+            2- register the font in program.cs (see there)
+            3- use the font as below:
+            page.DefaultTextStyle (x => x 
+                        .FontFamily ("Lato", "Vazirmatn")
+                        .FontSize (10)); */
+            QuestPDF.Settings.License = LicenseType.Community;
+            var report = Document.Create (container =>
+                {
+                    container.Page (page =>
+                        {
+                            page.Size (PageSizes.A4);
+                            page.Margin (1, Unit.Centimetre);
+                            page.PageColor (Colors.White);
+                            page.DefaultTextStyle (x => x
+                                .FontFamily ("Lato", "Vazirmatn")
+                                .FontSize (10));
+                            switch (reportType)
+                                {
+                                case "menuM31":
+                                        {
+                                        //menuM31
+                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Students Received a Message"));
+                                        page.Content ().Element (compose => ComposeContentM3x (compose, lstStudentMessages));
+                                        page.Footer ().Element (ComposeFooter);
+                                        break;
+                                        }
+                                case "menuM32":
+                                        {
+                                        //menuM32
+                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Students Received a Message But Haven't Read"));
+                                        page.Content ().Element (compose => ComposeContentM3x (compose, lstStudentMessages));
+                                        page.Footer ().Element (ComposeFooter);
+                                        break;
+                                        }
+                                case "menuM41":
+                                        {
+                                        //menuM41
+                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Messages Sent To Selected Students"));
+                                        page.Content ().Element (compose => ComposeContentM4x (compose, lstStudentMessages));
+                                        page.Footer ().Element (ComposeFooter);
+                                        break;
+                                        }
+                                case "menuM42":
+                                        {
+                                        //menuM42
+                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Messages Sent To Selected Students But Not Read"));
+                                        page.Content ().Element (compose => ComposeContentM4x (compose, lstStudentMessages));
+                                        page.Footer ().Element (ComposeFooter);
+                                        break;
+                                        }
+                                case "menuM43":
+                                        {
+                                        //menuM43
+                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Feedback Messages Sent To Selected Students"));
+                                        page.Content ().Element (compose => ComposeContentM4x (compose, lstStudentMessages));
+                                        page.Footer ().Element (ComposeFooter);
+                                        break;
+                                        }
+                                case "menuM44":
+                                        {
+                                        //menuM44
+                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Active Messages Sent To Selected Students"));
+                                        page.Content ().Element (compose => ComposeContentM4x (compose, lstStudentMessages));
+                                        page.Footer ().Element (ComposeFooter);
+                                        break;
+                                        }
+                                case "menuM45":
+                                        {
+                                        //menuM45
+                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Selected Messages Sent To Selected Students"));
+                                        page.Content ().Element (compose => ComposeContentM4x (compose, lstStudentMessages));
+                                        page.Footer ().Element (ComposeFooter);
+                                        break;
+                                        }
+                                default:
+                                        {
+                                        return;
+                                        }
+                                }
+                        });
+                });
+            return report.GeneratePdf ();
+            }
+        private void ComposeHeader (IContainer container, string title)
+            {
+            var imagePath = Path.Combine (Directory.GetCurrentDirectory (), "wwwroot", "img", "icoLogin_S.png");
+            container.Row (row =>
+            {
+                row.RelativeItem ().Column (column =>
+                {
+                    column.Item ()
+                        .AlignCenter ()
+                        .Width (140)
+                        .Image (imagePath);
+                    column.Item ()
+                        .AlignCenter ()
+                        .Text ($"{ToPersianDate (DateTime.UtcNow.ToString ())}")
+                        .FontSize (9)
+                        .FontColor (Colors.Red.Darken1);
+                    column.Item ()
+                        .AlignCenter ()
+                        .Text (title)
+                        .FontSize (10)
+                        .Bold ()
+                        .FontColor (Colors.Grey.Darken2)
+                        .DirectionFromRightToLeft ();
+                });
+            });
+            }
+        private void ComposeFooter (IContainer container)
+            {
+            container.AlignCenter ().Text (x =>
+            {
+                x.Span ("صفحه ");
+                x.CurrentPageNumber ();
+                x.Span (" از ");
+                x.TotalPages ();
+            });
+            }
+        private void ComposeContentM3x (IContainer container, List<StudentMessage> data)
+            {
+            container.PaddingVertical (10).Column (column =>
+            {
+                column.Spacing (10); //space between cards
+
+                column.Item ().Element (cardContainer =>
+                {
+                    //CardStyle
+                    cardContainer
+                        .Border (1)
+                        .BorderColor (Colors.Grey.Lighten4)
+                        .Background (Colors.Green.Lighten5)
+                        .Padding (12)
+                        .ShowEntire ()
+                        .Column (cardColumn =>
+                        {
+                            cardColumn.Spacing (8);
+                            cardColumn.Item ()
+                                .AlignLeft ()
+                                .Text (text =>
+                                {
+                                    text.Span (data [0].MessageTitle)
+                                        .FontSize (9)
+                                        .FontColor (Colors.Red.Darken3)
+                                        .DirectionFromRightToLeft ();
+                                    text.Span ($"\r\n {ToPersianDate (data [0].DateTimeCreated.ToString ())}  Created  \r\n {ToPersianDate (data [0].DateTimeSent.ToString ())}  Sent")
+                                        .FontSize (9)
+                                        .FontColor (Colors.Green.Darken3)
+                                        .DirectionFromRightToLeft ();
+                                    text.Span ($"\r\n \r\n Message: \r\n {data [0].MessageBody.Trim ()}")
+                                        .FontSize (9)
+                                        .FontColor (Colors.Blue.Darken3)
+                                        .DirectionFromRightToLeft ();
+                                });
+                        });
+                });
+                foreach (var item in data)
+                    {
+                    column.Item ().Element (cardContainer =>
+                    {
+                        //CardStyle
+                        cardContainer
+                            .Border (1)
+                            .BorderColor (Colors.Grey.Lighten4)
+                            .Background (Colors.Grey.Lighten5)
+                            .Padding (12)
+                            .ShowEntire ()
+                            .Column (cardColumn =>
+                            {
+                                cardColumn.Spacing (8);
+                                cardColumn.Item ()
+                                    .AlignLeft ()
+                                    .Text (text =>
+                                    {
+                                        text.Span ("Username: " + item.StudentName)
+                                            .FontSize (9)
+                                            .FontColor (Colors.Red.Darken3)
+                                            .DirectionFromRightToLeft ();
+                                        text.Span (" / Name: " + item.StudentNickname)
+                                            .FontSize (9)
+                                            .FontColor (Colors.Blue.Darken3)
+                                            .DirectionFromRightToLeft ();
+                                        if ((item.StudentMessageTags & 1) == 1)
+                                            {
+                                            text.Span (" / Read: " + ToPersianDate (item.DateTimeRead.ToString ()))
+                                                .FontSize (9)
+                                                .FontColor (Colors.Black)
+                                                .DirectionFromRightToLeft ();
+                                            }
+                                        else
+                                            {
+                                            text.Span (" / not read")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Red.Lighten2)
+                                                .DirectionFromRightToLeft ();
+                                            }
+                                        if ((item.StudentMessageTags & 2) == 2)
+                                            {
+                                            text.Span (" /Bookmaked");
+                                            }
+                                        if ((item.StudentMessageTags & 4) == 4)
+                                            {
+                                            text.Span (" /Deleted");
+                                            }
+                                        if ((item.StudentMessageTags & 16) == 16)
+                                            {
+                                            text.Span (" /Answere:YES");
+                                            }
+                                        if ((item.StudentMessageTags & 32) == 32)
+                                            {
+                                            text.Span (" /Answere:NO");
+                                            }
+
+                                    });
+                            });
+                    });
+                    }
+            });
+            }
+        private void ComposeContentM4x (IContainer container, List<StudentMessage> data)
+            {
+            container.PaddingVertical (10).Column (column =>
+            {
+                column.Spacing (10); //space between cards
+                foreach (var item in data)
+                    {
+                    column.Item ().Element (cardContainer =>
+                    {
+                        //CardStyle
+                        cardContainer
+                            .Border (1)
+                            .BorderColor (Colors.Grey.Lighten4)
+                            .Background (Colors.White)
+                            .Padding (12)
+                            .ShowEntire ()
+                            .Column (cardColumn =>
+                            {
+                                cardColumn.Spacing (8);
+                                cardColumn.Item ()
+                                    .AlignLeft ()
+                                    .Text (text =>
+                                    {
+                                        text.Span ("Username: " + item.StudentName)
+                                            .FontSize (9)
+                                            .FontColor (Colors.Red.Darken3)
+                                            .DirectionFromRightToLeft ();
+                                        text.Span ("Nickname: " + item.StudentNickname)
+                                            .FontSize (9)
+                                            .FontColor (Colors.Red.Darken3)
+                                            .DirectionFromRightToLeft ();
+                                    });
+                            });
+                    });
+                    }
+            });
             }
 
         #endregion

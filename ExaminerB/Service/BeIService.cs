@@ -160,6 +160,7 @@ namespace ExaminerB.Services2Backend
         Task<Message> Read_MessageAsync (int messageId, bool getStudentMessages);
         Task<List<Message>> Read_MessagesAsync (int userId, bool readAllMessages, bool getStudentMessages);
         Task<bool> Update_MessageAsync (Message message);
+        Task<bool> Update_MessageTagsAsync (Message message);
         Task<bool> Delete_MessagesAsync (string mode, int recipientId);
         #endregion
         #region SM:StudentMessages

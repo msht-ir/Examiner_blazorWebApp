@@ -4,7 +4,13 @@ using ExaminerB.Services2Backend;
 using ExaminerS.Models;
 using MudBlazor.Services;
 using PSC.Blazor.Components.BrowserDetect;
+using QuestPDF.Drawing;
 var builder = WebApplication.CreateBuilder (args);
+
+// Register Persian font here at startup (needed by QuestPDF to generate pdfs with Fa fonts)
+var fontResourceName = "ExaminerB.Resources.Fonts.Vazirmatn-Regular.ttf";
+FontManager.RegisterFontFromEmbeddedResource (fontResourceName);
+
 // Add services to the container.
 builder.Services.AddRazorComponents ().AddInteractiveServerComponents ();
 builder.Services.AddScoped<AppState> ();

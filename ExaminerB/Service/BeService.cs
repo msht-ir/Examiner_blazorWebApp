@@ -3174,6 +3174,20 @@ namespace ExaminerB.Services2Backend
             await cnn.CloseAsync ();
             return true;
             }
+        public async Task<bool> Update_MessageTagsAsync (Message message)
+            {
+            string sql = "dbo.sp_UpdateMessageTags";
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            await cnn.OpenAsync ();
+            SqlCommand cmd = new SqlCommand (sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue ("@messageid", message.MessageId);
+            cmd.Parameters.AddWithValue ("@messagetags", message.MessageTags);
+            int i = cmd.ExecuteNonQuery ();
+            await cnn.CloseAsync ();
+            return true;
+            }
         public async Task<bool> Delete_MessagesAsync (string mode, int recipientId)
             {
             string sql = "dbo.sp_DeleteMessages";

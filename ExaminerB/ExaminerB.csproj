@@ -11,11 +11,105 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Fonts\vazirmatn-arabic-100-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-100-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-100-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-200-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-200-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-200-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-300-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-300-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-300-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-400-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-400-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-400-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-500-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-500-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-500-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-600-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-600-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-600-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-700-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-700-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-700-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-800-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-800-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-800-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-900-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-900-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-arabic-900-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-100-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-100-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-100-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-200-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-200-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-200-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-300-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-300-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-300-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-400-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-400-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-400-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-500-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-500-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-500-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-600-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-600-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-600-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-700-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-700-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-700-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-800-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-800-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-800-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-900-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-900-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-900-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-100-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-100-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-100-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-200-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-200-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-200-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-300-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-300-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-300-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-400-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-400-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-400-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-500-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-500-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-500-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-600-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-600-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-600-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-700-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-700-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-700-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-800-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-800-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-800-normal.woff2" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-900-normal.ttf" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-900-normal.woff" />
+    <None Remove="Resources\Fonts\vazirmatn-latin-ext-900-normal.woff2" />
+    <None Remove="Resources\Fonts\Vazirmatn-Regular.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Fonts\Vazirmatn-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.105.1" />
     <PackageReference Include="EPPlus" Version="9.0.0-preview" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.1" />
     <PackageReference Include="MudBlazor" Version="9.11.0" />
     <PackageReference Include="PSC.Blazor.Components.BrowserDetect" Version="10.0.3" />
+    <PackageReference Include="QuestPDF" Version="2026.9.1" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="11.0.0-rc.2.26504.105" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="11.0.0-rc.2.26504.105" />
   </ItemGroup>
 
   <ItemGroup>

@@ -146,12 +146,12 @@ else
                                           Class="my-textfield" />
                                 <MudMenu Label="menu"
                                      Variant="Variant.Outlined"
-                                     Color="Color.Warning"
+                                     Color="Color.Dark"
                                      StartIcon="@Icons.Material.Filled.AccountBox"
                                      EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
                                      Style="margin-top:15px;"
                                      Size="Size.Small" Dense="true">
-                                     @* MENU STUDENT *@
+                                @* MENU STUDENT *@
                                     <MudMenuItem @onclick="BtnAddNewStudent">
                                         <button class="btn btn-link pulse-hover" Title=@((_help) ? "add new student" : "")>
                                         <img src="/img/icoAdd0.png" width="20" title="new student افزودن دانشجوي جديد" />
@@ -305,7 +305,7 @@ else
                                     <MudSelectItem Value="@group.GroupId"><span style="font-size:small;font-family:Tahoma;">@group.GroupName</span></MudSelectItem>
                                     }
                                 </MudSelect>
-                                @* MENU GROUPS *@
+                            @* MENU GROUPS *@
                                 <MudMenu Label="Menu"
                                      Variant="Variant.Outlined"
                                      Color="Color.Dark"
@@ -687,28 +687,34 @@ else
                                             </MudSelectItem>
                                         }
                                     </MudSelect>
-                                    @* MENU M *@
+                                @* MENU M *@
                                     <MudMenu Label="menu"
                                          Variant="Variant.Outlined"
                                          Color="Color.Primary"
                                          StartIcon="@Icons.Material.Filled.ForwardToInbox"
                                          EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
-                                         Size="Size.Small" 
+                                         Size="Size.Small"
                                          Dense="true">
-                                        @* SUBMENU 1 Message *@
+                                    @* SUBMENU 1 Message *@
                                         <MudMenu Label="Message"
                                              Class="submenu-no-pad"
                                              Variant="Variant.Outlined"
                                              Color="Color.Tertiary"
                                              StartIcon="@Icons.Material.Filled.MailOutline"
                                              EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
-                                             Size="Size.Small" 
+                                             Size="Size.Small"
                                              Dense="true">
-                                            <MudMenuItem @onclick="BtnShowMessages">
+                                            <MudMenuItem @onclick="() => BtnShowMessages(true)">
                                                 <button class="btn btn-link" Title=@((_help) ? "show all messages ()" : "")>
                                                 <img src="/img/icoList.png" width="22" />
                                                 </button>
-                                            <span style="color:royalblue">@_showMessages</span>
+                                            show <span style="color:royalblue">all</span> messages
+                                            </MudMenuItem>
+                                            <MudMenuItem @onclick="() => BtnShowMessages(false)">
+                                                <button class="btn btn-link" Title=@((_help) ? "show only active messages ()" : "")>
+                                                <img src="/img/icoYesNo_Yes.png" width="22" />
+                                                </button>
+                                            show <span style="color:darkgoldenrod">active</span> messages
                                             </MudMenuItem>
                                             <MudMenuItem @onclick="BtnAddNewMessage">
                                                 <button class="btn btn-link" Title=@((_help) ? "add new message" : "")>
@@ -734,89 +740,83 @@ else
                                                 </button>
                                             students folders
                                             </MudMenuItem>
-                                            <MudMenuItem @onclick='() => BtnReportNotReadStudent(MessageId, "M")'>
-                                                <button class="btn btn-link" Title=@((_help) ? "report students that received this message" : "")>
-                                                <img src="/img/icoListS.png" width="28" />
-                                                </button>
-                                            report students
-                                            </MudMenuItem>
-                                            <MudMenuItem @onclick='() => BtnReportNotReadStudent(MessageId, "M")'>
-                                                <button class="btn btn-link" Title=@((_help) ? "report students that haven't read this message" : "")>
-                                                <img src="/img/icoListS.png" width="28" />
-                                                </button>
-                                            report (not read) students
-                                            </MudMenuItem>
-                                            <MudMenuItem @onclick="() => BtnDeleteMessage(MessageId)">
-                                                <button class="btn btn-link" Title=@((_help) ? "delete this message" : "")>
-                                                <img src="/img/icoDelete2.png" width="28" />
-                                                </button>
-                                            <span style="color:indianred">Del this message</span>
-                                            </MudMenuItem>
-                                            <MudMenuItem @onclick="() => BtnDeleteStudentMessagesByMessageId(MessageId)">
-                                                <button class="btn btn-link" Title=@((_help) ? "delete sent messages" : "")>
-                                                <img src="/img/icoDelete2.png" width="28" />
-                                                </button>
-                                            <span style="color:indianred">Del sent items</span>
-                                            </MudMenuItem>
                                         </MudMenu>
-                                        @* SUBMENU 2 Send *@
+                                    @* SUBMENU 2 Send *@
                                         <MudMenu Label="Send"
                                              Variant="Variant.Outlined"
                                              Color="Color.Tertiary"
                                              StartIcon="@Icons.Material.Filled.ForwardToInbox"
                                              EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
-                                             Size="Size.Small" Dense="true">
+                                             Size="Size.Small"
+                                             Dense="true">
                                             <MudMenuItem>
-                                            <MudCheckBox @bind-Value="requestFeedback" Label="feedback" Color="Color.Primary"></MudCheckBox>
+                                                <MudCheckBox @bind-Value="requestFeedback"
+                                                         Label="message feedback"
+                                                         Color="Color.Primary">
+                                                </MudCheckBox>
                                             </MudMenuItem>
-                                            <MudMenuItem @onclick="() => BtnAddStudentsToMessage()">
-                                                <button class="btn btn-link" Title=@((_help) ? "send this message to: selected students (above)" : "")>
+                                            <MudMenuItem @onclick="() => BtnSendSelectedMessagesToSelectedStudents()">
+                                                <button class="btn btn-link" Title=@((_help) ? "send selected messages to: selected students" : "")>
                                                 <img class="pulse-animation" src="/img/icoEnvelopSend.png" width="24" />
                                                 </button>
-                                            send to selected students
+                                            send selected messages to selected students
                                             </MudMenuItem>
                                         </MudMenu>
-                                        @* SUBMENU 3 selected messages*@
-                                        <MudMenu Label="selected message(s)"
+                                    @* SUBMENU 3 selected messages*@
+                                        <MudMenu Label="selected messages"
                                              Variant="Variant.Outlined"
                                              Color="Color.Tertiary"
                                              StartIcon="@Icons.Material.Filled.AutoAwesomeMotion"
                                              EndIcon="@Icons.Material.Filled.MenuBook"
                                              Style="margin-top:15px;"
                                              Size="Size.Small" Dense="true">
-                                            <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
+                                            <MudMenuItem @onclick='() => BtnClearSelectionsOfMessages()'>
+                                                <button class="btn btn-link" Title=@((_help) ? "clear selections" : "")>
+                                                <img src="/img/icoEraser.png" width="22" />
+                                                </button>
+                                            clear selections
+                                            </MudMenuItem>
+                                            <MudMenuItem @onclick='() => BtnUpdateSelectedMessagesActiveTag(true)'>
+                                                <button class="btn btn-link" Title=@((_help) ? "set selected messages as active" : "")>
+                                                <img src="/img/icoYesNo_Yes.png" width="22" />
+                                                </button>
+                                            set as <span style="color:green">active</span>
+                                            </MudMenuItem>
+                                            <MudMenuItem @onclick='() => BtnUpdateSelectedMessagesActiveTag(false)'>
+                                                <button class="btn btn-link" Title=@((_help) ? "set selected messages as inactive" : "")>
+                                                <img src="/img/icoYesNo_No.png" width="22" />
+                                                </button>
+                                            set as <span style="color:indianred">inactive</span>
+                                            </MudMenuItem>
+                                        <MudDivider />
+                                            <MudMenuItem @onclick='() => BtnReportStudentsOfSelectedMessagesAsPdf(true)'>
                                                 <button class="btn btn-link" Title=@((_help) ? "report students that received selected messages" : "")>
                                                 <img src="/img/icoListS.png" width="28" />
                                                 </button>
                                             report students
                                             </MudMenuItem>
-                                            <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
-                                                <button class="btn btn-link" Title=@((_help) ? "report students that didn't read selected messages" : "")>
+                                            <MudMenuItem @onclick='() => BtnReportStudentsOfSelectedMessagesAsPdf(false)'>
+                                                <button class="btn btn-link" Title=@((_help) ? "report students that haven't read selected messages" : "")>
                                                 <img src="/img/icoListS.png" width="28" />
                                                 </button>
-                                            report (not read) students
+                                            report students <span style="color:indianred">not read</span>
                                             </MudMenuItem>
-                                            <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
-                                                <button class="btn btn-link" Title=@((_help) ? "set selected messages as active" : "")>
-                                                <img src="/img/icoYesNo_Yes.png" width="22" />
-                                                </button>
-                                            set messages as <span style="color:green">active</span>
-                                            </MudMenuItem>
-                                            <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
-                                                <button class="btn btn-link" Title=@((_help) ? "set selected messages as inactive" : "")>
-                                                <img src="/img/icoYesNo_No.png" width="22" />
-                                                </button>
-                                            set messages as <span style="color:indianred">inative</span>
-                                            </MudMenuItem>
+                                        <MudDivider />
                                             <MudMenuItem @onclick="() => BtnDeleteSelectedMessages()">
                                                 <button class="btn btn-link" Title=@((_help) ? "delete selected messages" : "")>
                                                 <img src="/img/icoDelete2.png" width="28" />
                                                 </button>
-                                            <span style="color:indianred">Del selected messages</span>
+                                            <span style="color:indianred">Delete</span> messages
+                                            </MudMenuItem>
+                                            <MudMenuItem @onclick="() => BtnDeleteSentMessagesFromSelectedMessages()">
+                                                <button class="btn btn-link" Title=@((_help) ? "delete items sent from selected messages" : "")>
+                                                <img src="/img/icoDelete2.png" width="28" />
+                                                </button>
+                                            <span style="color:indianred">Delete</span> sent messages
                                             </MudMenuItem>
                                         </MudMenu>
-                                        @* SUBMENU 4 the selected student*@
-                                        <MudMenu Label="selected student"
+                                    @* SUBMENU 4 the selected student*@
+                                        <MudMenu Label="selected students"
                                              Variant="Variant.Outlined"
                                              Color="Color.Tertiary"
                                              StartIcon="@Icons.Material.Filled.CoPresent"
@@ -825,33 +825,33 @@ else
                                              Size="Size.Small" Dense="true">
                                             <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
                                                 <button class="btn btn-link" Title=@((_help) ? "report courses and exams of students that received this message" : "")>
-                                                <img src="/img/icoListM.png" width="24" />
+                                                <img src="/img/icoListM.png" width="28" />
                                                 </button>
-                                            report all messages
+                                            report <span style="color:darkviolet;font-weight:bold;">all</span> messages
                                             </MudMenuItem>
                                             <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
                                                 <button class="btn btn-link" Title=@((_help) ? "report courses and exams of students that received this message" : "")>
-                                                <img src="/img/icoListM.png" width="24" />
+                                                <img src="/img/icoListM.png" width="28" />
                                                 </button>
-                                            report feedback messages
+                                            report <span style="color:mediumslateblue">feedback</span> messages
                                             </MudMenuItem>
                                             <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
                                                 <button class="btn btn-link" Title=@((_help) ? "report courses and exams of students that received this message" : "")>
-                                                <img src="/img/icoListM.png" width="24" />
+                                                <img src="/img/icoListM.png" width="28" />
                                                 </button>
-                                            report active messages
+                                            report <span style="color:forestgreen">active</span> messages
                                             </MudMenuItem>
                                             <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")' StartIcon="@Icons.Material.Filled.CoPresent">
                                                 <button class="btn btn-link" Title=@((_help) ? "report courses and exams of students that received this message" : "")>
-                                                <img src="/img/icoListM.png" width="24" />
+                                                <img src="/img/icoListM.png" width="28" />
                                                 </button>
-                                            report selected messages
+                                            report <span style="color:royalblue">selected</span> messages
                                             </MudMenuItem>
-                                            <MudMenuItem @onclick="() => BtnDeleteStudentMessagesByMessageIdAndStudentId(MessageId)">
-                                                <button class="btn btn-link" Title=@((_help) ? "delete sent messages (to selected students)" : "")>
+                                            <MudMenuItem @onclick="() => BtnDeleteSentMessagesToSelectedStudents()">
+                                                <button class="btn btn-link" Title=@((_help) ? "delete selected messages sent to selected students" : "")>
                                                 <img src="/img/icoDelete2.png" width="28" />
                                                 </button>
-                                            <span style="color:indianred">Del selected messages sent</span>
+                                            <span style="color:indianred">Delete</span> selected messages sent
                                             </MudMenuItem>
                                         </MudMenu>
                                     </MudMenu>
@@ -1021,7 +1021,6 @@ else
     int i = 0;
     bool _help = true;
     string _showGroups = "show all groups";
-    string _showMessages = ""; // "show all messages";
     string _cmd = "";
     public bool _hasFetched = false;
     public bool requestFeedback { get; set; } = false;
@@ -1042,7 +1041,7 @@ else
         //on second rener, user.UserId will get its value
         lstGroups = await feService.Read_Groups(user, false, false);
         lstCourses = await feService.Read_Courses(user.UserId);
-        await BtnShowMessages(); //lstMessages = await feService.Read_Messages(user.UserId, true, false);
+        await BtnShowMessages(true);
         GroupId = appState.GroupId ?? 0;
         CourseId = appState.CourseId ?? 0;
         if (CourseId > 0)
@@ -1161,27 +1160,6 @@ else
         StateHasChanged();
         }
     public async Task BtnReportStudent (int Id, string mode)
-        {
-        if (Id > 0)
-            {
-            appState.SetReturnPage("/T_Students");
-            Navman.NavigateTo($"/T_ReportStudents/{mode}/{Id}");
-            }
-        else
-            {
-            string? itemx = mode.ToLower() switch
-                {
-                    "s" => "Select a Student from list",
-                    "g" => "Select a Group from list",
-                    "c" => "Select a Course from list",
-                    "e" => "Select a Course, then select an Exam",
-                    "m" => "Select a Mesage from list",
-                    _ => null
-                    };
-            Snackbar.Add($"{itemx}", Severity.Info);
-            }
-        }
-    public async Task BtnReportNotReadStudent (int Id, string mode)
         {
         if (Id > 0)
             {
@@ -1718,11 +1696,10 @@ else
             Snackbar.Add($"select a course", Severity.Warning);
             }
         }
-    //message
-    private async Task BtnShowMessages ()
+    //message menuM1
+    private async Task BtnShowMessages (bool _showAllmessages)
         {
-        lstMessages = await feService.Read_Messages(user.UserId, (_showMessages == "show all messages" ? true : false), false);
-        _showMessages = _showMessages == "show all messages" ? "show active messages" : "show all messages";
+        lstMessages = await feService.Read_Messages(user.UserId, (_showAllmessages ? true : false), false);
         MessageId = 0;
         StateHasChanged();
         }
@@ -1788,30 +1765,6 @@ else
             Snackbar.Add($"large message ({message.MessageBody.Length}), max: 4000", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
-    private async Task BtnAddStudentsToMessage ()
-        {
-        List<int> lstStudentIds = new List<int>();
-        int _count = 0;
-        foreach (User student in lstStudents)
-            {
-            if (student.IsSelected)
-                {
-                lstStudentIds.Add(student.UserId);
-                _count++;
-                student.IsSelected = false;
-                }
-            }
-        bool result = await feService.Create_StudentMessages(MessageId, lstStudentIds, requestFeedback);
-        if (result)
-            {
-            Snackbar.Add($"message sent to {_count} students", Severity.Success);
-            await BtnReadStudents(MessageId, "M");
-            }
-        else
-            {
-            Snackbar.Add($"failed", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-            }
-        }
     private async Task BtnEditMessage (int messageId)
         {
         if (messageId > 0)
@@ -1841,118 +1794,180 @@ else
             StateHasChanged();
             }
         }
-    private async Task BtnDeleteMessage (int messageId)
+    //message menuM2
+    private async Task BtnSendSelectedMessagesToSelectedStudents ()
         {
-        //deletes a Message and all its StudentMessages sent to Students
-        if (messageId > 0)
+        List<int> lstStudentIds = new List<int>();
+        int _count = 0;
+        //step1: get list of selected students
+        foreach (User student in lstStudents)
             {
-            var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> the message and <span style='color:indianred; font-weight:bold'>all</span> instances already sent to Students?<br><br>Are you <span style='color:royalblue'>Sure</span>? <div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
-            bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
-            if (confirmResult == true)
+            if (student.IsSelected)
                 {
-                bool result = await feService.Delete_Messages("ByMessageId", messageId);
+                lstStudentIds.Add(student.UserId);
+                _count++;
+                student.IsSelected = false;
+                }
+            }
+        //step2: send selected messages to the students
+        foreach (Message msg in lstMessages)
+            {
+            if (msg.IsSelected)
+                {
+                bool result = await feService.Create_StudentMessages(msg.MessageId, lstStudentIds, requestFeedback);
                 if (result)
                     {
-                    Snackbar.Add("message deleted", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-                    MessageId = 0;
-                    appState.SetMessageId(0);
-                    _cmd = "HideMessageBody";
-                    lstMessages.Clear();
-                    lstMessages = await feService.Read_Messages(user.UserId, false, false);
-                    StateHasChanged();
+                    Snackbar.Add($"message sent to {_count} students", Severity.Success);
                     }
                 else
                     {
-                    //line below commented because even when delete is successful, this is shown!
-                    // Snackbar.Add("failed to delete message", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                    Snackbar.Add($"failed", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                     }
-                MessageId = 0;
-                await BtnShowMessages();
-                StateHasChanged();
                 }
+            }
+        await BtnReadStudents(MessageId, "M");
+        }
+    //message menuM3
+    public async Task BtnClearSelectionsOfMessages ()
+        {
+        foreach (Message msg in lstMessages)
+            {
+            msg.IsSelected = false;
+            }
+        }
+    public async Task BtnReportStudentsOfSelectedMessagesAsPdf (bool _reportAll)
+        {
+        //menuM31,M32
+        foreach (Message msg in lstMessages)
+            {
+            if (msg.IsSelected)
+                {
+                //1- Read SudentMessages
+                List<StudentMessage> lstStudentMessages = await feService.Read_StudentMessages("M", msg.MessageId, Convert.ToInt32(appState.UserId));
+                //2- Filter
+                if (!_reportAll)
+                    {
+                    //filter read-Messages
+                    lstStudentMessages = lstStudentMessages.Where(x => (x.StudentMessageTags & 1) == 0).ToList();
+                    }
+                //3- Generate
+                var pdfBytes = feService.GenerateReportMessageStudentsPdf(lstStudentMessages, "menuM31");
+                //4- Download
+                using var stream = new MemoryStream(pdfBytes);
+                using var streamRef = new DotNetStreamReference(stream);
+                await JS.InvokeVoidAsync("downloadFileFromStream", "ReportMessageStudents.pdf", streamRef);
+                }
+            }
+        }
+    private async Task BtnUpdateSelectedMessagesActiveTag (bool _isActive)
+        {
+        foreach (Message msg in lstMessages)
+            {
+            if (msg.IsSelected)
+                {
+                msg.IsActive = _isActive;
+                bool Result = await feService.Update_MessageTags(msg);
+                }
+            }
+        //show maeesage
+        if (_isActive)
+            {
+            Snackbar.Add($"selected messages were set as Active ", Severity.Success);
             }
         else
             {
-            Snackbar.Add("select a message", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            Snackbar.Add($"selected messages were set as Inactive ", Severity.Success);
             }
+        lstMessages.Clear();
+        MessageId = 0;
+        lstMessages = await feService.Read_Messages(user.UserId, false, false); //refresh list
+        _cmd = "";
+        StateHasChanged();
         }
     private async Task BtnDeleteSelectedMessages ()
         {
-        //deletes selected Messages and all their StudentMessages sent to Students
-            var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> selected messages and <span style='color:indianred; font-weight:bold'>all</span> their instances already sent to Students?<br><br>Are you <span style='color:royalblue'>Sure</span>? <div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
-            bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
-            if (confirmResult == true)
-                {
-                //bool result = await feService.Delete_Messages("ByMessageId", messageId);
-                bool result =true; //temp code -del me
-                if (result)
-                    {
-                    Snackbar.Add("message deleted", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-                    MessageId = 0;
-                    appState.SetMessageId(0);
-                    _cmd = "HideMessageBody";
-                    lstMessages.Clear();
-                    lstMessages = await feService.Read_Messages(user.UserId, false, false);
-                    StateHasChanged();
-                    }
-                MessageId = 0;
-                await BtnShowMessages();
-                StateHasChanged();
-                }
-        }
-    private async Task BtnDeleteStudentMessagesByMessageId (int messageId)
-        {
-        //deletes all StudentMessages sent from a message Id
-        if (messageId > 0)
+        //menuM35 - deletes selected Messages and all their StudentMessages sent to Students
+        var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> selected messages and <span style='color:indianred; font-weight:bold'>all</span> their instances already sent to Students?<br><br>Are you <span style='color:royalblue'>Sure</span>? <div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
-            var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> all messages sent from a <span style='color:indianred; font-weight:bold'>message</span> ?<br><br>Are you <span style='color:royalblue'>Sure</span>? <div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
-            bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
-            if (confirmResult == true)
+            foreach (Message msg in lstMessages)
                 {
-                bool result = await feService.Delete_StudentMessagesByMessageId(messageId);
-                if (result)
+                if (msg.IsSelected)
                     {
-                    Snackbar.Add("sent messages deleted", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-                    MessageId = 0;
-                    appState.SetMessageId(0);
-                    _cmd = "HideMessageBody";
-                    lstMessages.Clear();
-                    lstMessages = await feService.Read_Messages(user.UserId, false, false);
-                    StateHasChanged();
-                    }
-                await BtnShowMessages();
-                StateHasChanged();
-                }
-            }
-        else
-            {
-            Snackbar.Add("select a message", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-            }
-        }
-    private async Task BtnDeleteStudentMessagesByMessageIdAndStudentId (int messageId)
-        {
-        //deletes StudentMessages sent from a message Id to selected Students
-        if (messageId > 0)
-            {
-            var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> messages sent <span style='color:indianred; font-weight:bold'>selected students</span> ?<br><br>Are you <span style='color:royalblue'>Sure</span>? <div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
-            bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
-            if (confirmResult == true)
-                {
-                foreach (User student in lstStudents)
-                    {
-                    if (student.IsSelected)
+                    bool result = await feService.Delete_Messages("ByMessageId", msg.MessageId);
+                    if (result)
                         {
-                        bool result = await feService.Delete_StudentMessagesByMessageIdAndStudentId(messageId, student.UserId);
+                        Snackbar.Add("message deleted", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                        MessageId = 0;
+                        appState.SetMessageId(0);
+                        _cmd = "HideMessageBody";
+                        lstMessages.Clear();
+                        lstMessages = await feService.Read_Messages(user.UserId, false, false);
+                        StateHasChanged();
                         }
                     }
                 }
-            Snackbar.Add("sent messages deleted", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-            //refresh list
-            await BtnReadStudents(messageId, "M");
+            MessageId = 0;
+            await BtnShowMessages(true);
+            StateHasChanged();
             }
-        else
+        }
+    private async Task BtnDeleteSentMessagesFromSelectedMessages ()
+        {
+        //menuM36 - deletes all StudentMessages sent from a message Id
+        var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> all messages sent from a <span style='color:indianred; font-weight:bold'>message</span> ?<br><br>Are you <span style='color:royalblue'>Sure</span>? <div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
             {
-            Snackbar.Add("select a message", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            foreach (Message msg in lstMessages)
+                {
+                if (msg.IsSelected)
+                    {
+                    bool result = await feService.Delete_StudentMessagesByMessageId(msg.MessageId);
+                    if (result)
+                        {
+                        Snackbar.Add("sent messages deleted", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                        MessageId = 0;
+                        appState.SetMessageId(0);
+                        _cmd = "HideMessageBody";
+                        lstMessages.Clear();
+                        lstMessages = await feService.Read_Messages(user.UserId, false, false);
+                        StateHasChanged();
+                        }
+                    }
+                }
+            await BtnShowMessages(true);
+            StateHasChanged();
+            }
+        }
+    //message menuM4
+    private async Task BtnDeleteSentMessagesToSelectedStudents ()
+        {
+        //deletes sent messages from selected messages Id to the selected students
+        var message = new MarkupString(@$"<hr><span style='color:indianred'>Delete</span> messages sent <span style='color:indianred; font-weight:bold'>selected students</span> ?<br><br>Are you <span style='color:royalblue'>Sure</span>? <div style='text-align:center'><img src='/img/icoDelete2.png' width='40'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
+            {
+            foreach (Message msg in lstMessages)
+                {
+                if (msg.IsSelected)
+                    {
+                    foreach (User student in lstStudents)
+                        {
+                        if (student.IsSelected)
+                            {
+                            bool result = await feService.Delete_StudentMessagesByMessageIdAndStudentId(msg.MessageId, student.UserId);
+                            }
+                        }
+                    }
+                }
+            }
+        Snackbar.Add("selected messages sent to selected students deleted", Severity.Success, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+        //refresh list
+        if (MessageId > 0)
+            {
+            await BtnReadStudents(MessageId, "M");
             }
         }
     //Notes
