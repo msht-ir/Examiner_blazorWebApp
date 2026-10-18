@@ -1,13 +1,14 @@
 ﻿using ClosedXML.Excel;
 using ExaminerS.Models;
-using System.ComponentModel;
-using System.Globalization;
-using Department = ExaminerS.Models.Department;
-using Group = ExaminerS.Models.Group;
+using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using QuestPDF.Drawing;
+using System.ComponentModel;
+using System.Globalization;
+using System.Net.NetworkInformation;
+using Department = ExaminerS.Models.Department;
+using Group = ExaminerS.Models.Group;
 using IContainer = QuestPDF.Infrastructure.IContainer;
 
 namespace ExaminerB.Service
@@ -1645,6 +1646,46 @@ namespace ExaminerB.Service
                 });
             return report.GeneratePdf ();
             }
+        public byte [] GenerateReportStudentsFolderPdf (List<User> lstReportStudents, string reportType)
+            {
+            /* NOTES for developers (1405.07.21):
+            New QuestPDF upgrade doesn't automatically use Farsi-fonts. Use standard web-font 'Vazirmatn-Regular.ttf'.
+            1- conpy font file into a project folder eg. D:\VS\Examiner\ExaminerB\Resources\Fonts
+            2- register the font in program.cs (see there)
+            3- use the font as below:
+            page.DefaultTextStyle (x => x 
+                        .FontFamily ("Lato", "Vazirmatn")
+                        .FontSize (10)); */
+            QuestPDF.Settings.License = LicenseType.Community;
+            var report = Document.Create (container =>
+                {
+                    container.Page (page =>
+                        {
+                            page.Size (PageSizes.A4);
+                            page.Margin (1, Unit.Centimetre);
+                            page.PageColor (Colors.White);
+                            page.DefaultTextStyle (x => x
+                                .FontFamily ("Lato", "Vazirmatn")
+                                .FontSize (10));
+                            switch (reportType)
+                                {
+                                case "menuM16":
+                                        {
+                                        //menuM31
+                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Students Folders for Students Received a Message"));
+                                        page.Content ().Element (compose => ComposeContentM1x (compose, lstReportStudents));
+                                        page.Footer ().Element (ComposeFooter);
+                                        break;
+                                        }
+                                default:
+                                        {
+                                        return;
+                                        }
+                                }
+                        });
+                });
+            return report.GeneratePdf ();
+            }
         private void ComposeHeader (IContainer container, string title)
             {
             var imagePath = Path.Combine (Directory.GetCurrentDirectory (), "wwwroot", "img", "icoLogin_S.png");
@@ -1679,6 +1720,104 @@ namespace ExaminerB.Service
                 x.CurrentPageNumber ();
                 x.Span (" از ");
                 x.TotalPages ();
+            });
+            }
+        private void ComposeContentM1x (IContainer container, List<User> data)
+            {
+            container.PaddingVertical (10).Column (column =>
+            {
+                column.Spacing (10); //space between cards
+                foreach (var student in data)
+                    {
+                    column.Item ().Element (cardContainer =>
+                    {
+                        //CardStyle
+                        cardContainer
+                            .Border (1)
+                            .BorderColor (Colors.Grey.Lighten4)
+                            .Background (Colors.Grey.Lighten5)
+                            .Padding (12)
+                            .Column (cardColumn =>
+                            {
+                                cardColumn.Spacing (8);
+                                cardColumn.Item ()
+                                    .AlignLeft ()
+                                    .Text (text =>
+                                    {
+                                        text.Span ("Usr: " + student.UserNickname + " / " + student.UserName)
+                                            .FontSize (9)
+                                            .FontColor (Colors.Red.Darken3)
+                                            .DirectionFromRightToLeft ();
+                                        if (student.IsActive)
+                                            {
+                                            text.Span (" active")
+                                            .FontSize (9)
+                                            .FontColor (Colors.Blue.Darken3);
+                                            }
+                                        if (student.CanChangePass)
+                                            {
+                                            text.Span (" changePass")
+                                            .FontSize (9)
+                                            .FontColor (Colors.Blue.Darken3);
+                                            }
+                                        text.Span ("\r\n");
+
+                                        foreach (StudentCourse stCrs in student.StudentCourses)
+                                            {
+                                            text.Span ("Course: " + stCrs.CourseName + "\r\n   " + stCrs.CorrectAnswers + " / " + stCrs.NumberOfTests + "\r\n")
+                                            .FontSize (9)
+                                            .FontColor (Colors.Red.Darken3)
+                                            .DirectionFromRightToLeft ();
+                                            if (stCrs.IsActive)
+                                                {
+                                                text.Span ("  active")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Blue.Darken3);
+                                                }
+                                            if (stCrs.Retry)
+                                                {
+                                                text.Span ("  can retry")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Blue.Darken3);
+                                                }
+                                            if (stCrs.Review)
+                                                {
+                                                text.Span ("  can review")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Blue.Darken3);
+                                                }
+                                            text.Span ("\r\n");
+                                            }
+                                        //insert hr
+                                        foreach (StudentExam exm in student.StudentExams)
+                                            {
+                                            text.Span ("Exam: " + exm.ExamTitle + "\r\n")
+                                            .FontSize (9)
+                                            .FontColor (Colors.Red.Darken3)
+                                            .DirectionFromRightToLeft ();
+                                            if (exm.StudentExamTags >= 2)
+                                                {
+                                                text.Span ("  Tests:" + exm.ExamNTests + " (" + exm.ExamDuration + " m) \r\n  Point: " + exm.StudentExamPoint.ToString ("F2") + "/20 \r\n")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Blue.Darken3);
+                                                }
+                                            else if (exm.StudentExamTags == 1)
+                                                {
+                                                text.Span ("  Tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m) satrted \r\n")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Blue.Darken3);
+                                                }
+                                            else
+                                                {
+                                                text.Span ("  Tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m)  new \r\n")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Blue.Darken3);
+                                                }
+                                            }
+                                    });
+                            });
+                    });
+                    }
             });
             }
         private void ComposeContentM3x (IContainer container, List<StudentMessage> data)
