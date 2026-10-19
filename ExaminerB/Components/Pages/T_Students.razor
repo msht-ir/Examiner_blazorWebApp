@@ -753,9 +753,9 @@ else
                                                 </MudMenuItem>
                                                 <MudMenuItem @onclick='() => BtnReportStudentAsPdf(MessageId, "M")'>
                                                     <button class="btn btn-link" Title=@((_help) ? "report courses and exams of students that received this message" : "")>
-                                                    <img src="/img/icoFolderS.png" width="24" />
+                                                    <img src="/img/icoPdf.png" width="24" />
                                                     </button>
-                                                report students folders
+                                                report students
                                                 </MudMenuItem>
                                             </MudMenu>
                                         @* SUBMENU 2 Send *@
@@ -808,13 +808,13 @@ else
                                             <MudDivider />
                                                 <MudMenuItem @onclick='() => BtnReportStudentsOfSelectedMessagesAsPdf(true)'>
                                                     <button class="btn btn-link" Title=@((_help) ? "report students that received selected messages" : "")>
-                                                    <img src="/img/icoListS.png" width="28" />
+                                                    <img src="/img/icoPdf.png" width="24" />
                                                     </button>
                                                 report students
                                                 </MudMenuItem>
                                                 <MudMenuItem @onclick='() => BtnReportStudentsOfSelectedMessagesAsPdf(false)'>
                                                     <button class="btn btn-link" Title=@((_help) ? "report students that haven't read selected messages" : "")>
-                                                    <img src="/img/icoListS.png" width="28" />
+                                                    <img src="/img/icoPdf.png" width="24" />
                                                     </button>
                                                 report students <span style="color:indianred">not read</span>
                                                 </MudMenuItem>
@@ -842,25 +842,25 @@ else
                                                  Size="Size.Small" Dense="true">
                                                 <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
                                                     <button class="btn btn-link" Title=@((_help) ? "report courses and exams of students that received this message" : "")>
-                                                    <img src="/img/icoListM.png" width="28" />
+                                                    <img src="/img/icoPdf.png" width="24" />
                                                     </button>
                                                 report <span style="color:darkviolet;font-weight:bold;">all</span> messages
                                                 </MudMenuItem>
                                                 <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
                                                     <button class="btn btn-link" Title=@((_help) ? "report courses and exams of students that received this message" : "")>
-                                                    <img src="/img/icoListM.png" width="28" />
+                                                    <img src="/img/icoPdf.png" width="24" />
                                                     </button>
                                                 report <span style="color:mediumslateblue">feedback</span> messages
                                                 </MudMenuItem>
                                                 <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")'>
                                                     <button class="btn btn-link" Title=@((_help) ? "report courses and exams of students that received this message" : "")>
-                                                    <img src="/img/icoListM.png" width="28" />
+                                                    <img src="/img/icoPdf.png" width="24" />
                                                     </button>
                                                 report <span style="color:forestgreen">active</span> messages
                                                 </MudMenuItem>
                                                 <MudMenuItem @onclick='() => BtnReportStudent(MessageId, "M")' StartIcon="@Icons.Material.Filled.CoPresent">
                                                     <button class="btn btn-link" Title=@((_help) ? "report courses and exams of students that received this message" : "")>
-                                                    <img src="/img/icoListM.png" width="28" />
+                                                    <img src="/img/icoPdf.png" width="24" />
                                                     </button>
                                                 report <span style="color:royalblue">selected</span> messages
                                                 </MudMenuItem>
@@ -868,7 +868,7 @@ else
                                                     <button class="btn btn-link" Title=@((_help) ? "delete selected messages sent to selected students" : "")>
                                                     <img src="/img/icoDelete2.png" width="28" />
                                                     </button>
-                                                <span style="color:indianred">Delete</span> selected messages sent
+                                                <span style="color:indianred">Delete</span> selected msgs sent
                                                 </MudMenuItem>
                                             </MudMenu>
                                         </MudMenu>
@@ -896,7 +896,7 @@ else
         @if (lstStudents.Count > 0)
             {
                 <div style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; align-items:flex-start; margin-top:25px; width:100%;">
-                    @* max width below is: 880 = 860+20 *@
+                @* max width below is: 880 = 860+20 *@
                     <MudContainer Class="mt-2 px-0" Style="flex:1 1 100%; min-width:0; max-width:880px; margin:0 auto;">
                         <MudCard style="min-width:440px; width:100%; min-height:140px;">
                             <MudCardContent Style="background-color:rgba(249,249,249);">
@@ -907,12 +907,18 @@ else
                                                Color="Color.Primary"
                                                Size="Size.Medium"
                                                OnClick="BtnSelectAllStudents"
-                                               Title="Select all" />
+                                               Title="Select all انتخاب همه" />
                                 <MudIconButton Icon="@Icons.Material.Filled.Rule"
                                                Color="Color.Primary"
                                                Size="Size.Medium"
                                                OnClick="BtnInvertSelection"
-                                               Title="Invert Selection" />
+                                               Title="Invert Selection انتخاب ها برعکس شود" />
+                                <MudIconButton Icon="@Icons.Material.Filled.MenuBook"
+                                               Color="Color.Dark"
+                                               Size="Size.Medium"
+                                               Style="margin-left:30px"
+                                               OnClick="BtnReportStudentsNotesOfSelectedStudentsAsPdf"
+                                               Title="list of notes for selected students گزارش يادداشت هاي داشجويان انتخاب شده" />
                                 </div>
                             @foreach (User student in lstStudents)
                                 {
@@ -1112,7 +1118,7 @@ else
             Snackbar.Add($"failed to create new student", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
-    public async Task BtnReadStudentsBySearch ()
+    private async Task BtnReadStudentsBySearch ()
         {
         if (strSearch != "")
             {
@@ -1123,7 +1129,7 @@ else
             StateHasChanged();
             }
         }
-    public async Task BtnListAllStudent ()
+    private async Task BtnListAllStudent ()
         {
         user.UserId = Convert.ToInt32(appState.UserId);
         lstStudents = await feService.Read_StudentsAll(Convert.ToInt32(appState.DepartmentId));
@@ -1131,7 +1137,7 @@ else
         appState.SetMessage($"all students");
         StateHasChanged();
         }
-    public async Task BtnReadStudents (int Id, string mode)
+    private async Task BtnReadStudents (int Id, string mode)
         {
         if (Id > 0)
             {
@@ -1164,7 +1170,7 @@ else
             Snackbar.Add($"{itemx}", Severity.Info);
             }
         }
-    public async Task BtnSelectAllStudents ()
+    private async Task BtnSelectAllStudents ()
         {
         foreach (User student in lstStudents)
             {
@@ -1172,7 +1178,7 @@ else
             }
         StateHasChanged();
         }
-    public async Task BtnInvertSelection ()
+    private async Task BtnInvertSelection ()
         {
         foreach (User student in lstStudents)
             {
@@ -1180,7 +1186,7 @@ else
             }
         StateHasChanged();
         }
-    public async Task BtnReportStudent (int Id, string mode)
+    private async Task BtnReportStudent (int Id, string mode)
         {
         if (Id > 0)
             {
@@ -1201,7 +1207,7 @@ else
             Snackbar.Add($"{itemx}", Severity.Info);
             }
         }
-    public async Task BtnReportStudentAsPdf (int Id, string mode)
+    private async Task BtnReportStudentAsPdf (int Id, string mode)
         {
         if (Id > 0)
             {
@@ -1229,6 +1235,20 @@ else
                     };
             Snackbar.Add($"{itemx}", Severity.Info);
             }
+        }
+    private async Task BtnReportStudentsNotesOfSelectedStudentsAsPdf ()
+        {
+        //cmdStudentsListResults
+        //1- Collect selected Students Ids
+        List<int> lstSelectedStudentsIds = lstStudents.Where(s => s.IsSelected).Select(s => s.UserId).ToList();
+        //2- Read SudentNotes of selected students for teacherId
+        List<User> lstSelectedStudentsNotes = await feService.Read_StudentsNotes(lstSelectedStudentsIds, user.UserId);
+        //3- Generate
+        var pdfBytes = feService.GenerateReportStudentsNotesPdf(lstSelectedStudentsNotes, "cmdS1");
+        //4- Download
+        using var stream = new MemoryStream(pdfBytes);
+        using var streamRef = new DotNetStreamReference(stream);
+        await JS.InvokeVoidAsync("downloadFileFromStream", "ReportStudentsNotes.pdf", streamRef);
         }
     public void BtnGotoPageReportMessages (User student)
         {
@@ -1281,9 +1301,7 @@ else
             stream.Position = 0;
             //use EPPlus to read worksheet names
             using var package = new ExcelPackage(stream);
-            lstWorksheets = package.Workbook.Worksheets
-                .Select(ws => ws.Name)
-                .ToList();
+            lstWorksheets = package.Workbook.Worksheets.Select (ws => ws.Name).ToList ();
             StateHasChanged();
             Snackbar.Add("Excel worksheets listed", Severity.Success);
             _cmd = "showexcelworksheetstoimportnewstudents";

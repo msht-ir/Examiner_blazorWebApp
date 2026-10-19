@@ -309,13 +309,14 @@ namespace ExaminerB.Services2Backend
                     StudentNotes = new List<Note> ()
                     });
                 }
-            if ((readStudentGCEM & 1) == 1)
-                {
-                foreach (User student in lstStudents)
-                    {
-                    student.StudentGroups = await Read_StudentGroupsAsync (student.UserId, "ByStudentId");
-                    }
-                }
+            //to read StudentGroups in mode 'ByStudentId' teacher id is required!
+            //if ((readStudentGCEM & 1) == 1)
+            //    {
+            //    foreach (User student in lstStudents)
+            //        {
+            //        student.StudentGroups = await Read_StudentGroupsAsync (student.UserId, "ByStudentId",0);
+            //        }
+            //    }
             if ((readStudentGCEM & 2) == 2)
                 {
                 foreach (User student in lstStudents)
@@ -378,7 +379,7 @@ namespace ExaminerB.Services2Backend
                     //read studentGroups 
                     foreach (User student in lstStudents)
                         {
-                        student.StudentGroups = await Read_StudentGroupsAsync (student.UserId, "ByStudentId");
+                        student.StudentGroups = await Read_StudentGroupsAsync (student.UserId, "ByStudentId", teacherId);
                         }
                     }
                 if ((readStudentGCEM & 2) == 2)
@@ -630,7 +631,7 @@ namespace ExaminerB.Services2Backend
                     {
                     foreach (Group grp in lstGroups)
                         {
-                        grp.Students = await Read_StudentGroupsAsync (grp.GroupId, "ByGroupid");
+                        grp.Students = await Read_StudentGroupsAsync (grp.GroupId, "ByGroupid", user.UserId);
                         }
                     }
                 return lstGroups;
@@ -665,7 +666,7 @@ namespace ExaminerB.Services2Backend
                         group.Students = new List<StudentGroup> ();
                         }
                     }
-                group.Students = await Read_StudentGroupsAsync (groupId, "ByGroupId");
+                group.Students = await Read_StudentGroupsAsync (groupId, "ByGroupId", 0); //in mode 'ByGroupId' userId is not used: 0 is dummy
                 return group;
                 }
             catch (Exception ex)
@@ -728,7 +729,7 @@ namespace ExaminerB.Services2Backend
             await cnn.CloseAsync ();
             return true;
             }
-        public async Task<List<StudentGroup>> Read_StudentGroupsAsync (int Id, string mode)
+        public async Task<List<StudentGroup>> Read_StudentGroupsAsync (int Id, string mode, int teacherId)
             {
             //read SG records
             List<StudentGroup> lstStudentGroups = new List<StudentGroup> ();
@@ -742,6 +743,7 @@ namespace ExaminerB.Services2Backend
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@mode", mode);
                 cmd.Parameters.AddWithValue ("@id", Id);
+                cmd.Parameters.AddWithValue ("@teacherId", teacherId);
                 using (var reader = await cmd.ExecuteReaderAsync ())
                     {
                     while (await reader.ReadAsync ())
@@ -753,8 +755,8 @@ namespace ExaminerB.Services2Backend
                             GroupId = reader.GetInt32 (2),
                             DateTimeJoined = reader.GetDateTimeOffset (3),
                             StudentGroupTags = reader.GetInt32 (4),
-                            StudentName = reader.GetString (5),
-                            GroupName = reader.GetString (6),
+                            GroupName = reader.GetString (5),
+                            StudentName = reader.GetString (6),
                             StudentNickname = reader.GetString (7),
                             StudentTags = reader.GetInt32 (8),
                             };
@@ -4015,6 +4017,17 @@ namespace ExaminerB.Services2Backend
                 }
             await cnn.CloseAsync ();
             return lstNotes;
+            }
+        public async Task<List<User>> Read_StudentsNotesAsync (List<int> lstStudentsIds, int teacherId)
+            {
+            List<User> lstStudents = new List<User> ();
+            foreach (int sid in lstStudentsIds)
+                {
+                User st = new User ();
+                st.StudentNotes=await Read_NotesAsync(sid, 13, teacherId);
+                lstStudents.Add (st);
+                }
+            return lstStudents;
             }
         public async Task<Note> Read_NoteAsync (int noteId)
             {

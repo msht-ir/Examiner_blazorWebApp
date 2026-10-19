@@ -196,9 +196,9 @@ namespace ExaminerB.Backend
             return Ok (result);
             }
         [HttpPost ("Read_StudentGroups")]
-        public async Task<ActionResult<List<StudentGroup>>> Read_StudentGroups ([FromBody] int Id, [FromQuery] string mode)
+        public async Task<ActionResult<List<StudentGroup>>> Read_StudentGroups ([FromBody] int Id, [FromQuery] string mode, [FromQuery] int teacherId)
             {
-            var result = await _BeService.Read_StudentGroupsAsync (Id, mode);
+            var result = await _BeService.Read_StudentGroupsAsync (Id, mode, teacherId);
             return Ok (result);
             }
         [HttpPost ("Delete_StudentGroups")]
@@ -1002,6 +1002,12 @@ namespace ExaminerB.Backend
         public async Task<ActionResult<List<Note>>> Read_NotesBySearchKey ([FromBody] int referenceId, [FromQuery] string searchKey, [FromQuery] int mode)
             {
             var result = await _BeService.Read_NotesBySearchKeyAsync (searchKey, referenceId, mode);
+            return Ok (result);
+            }
+        [HttpPost ("Read_StudentsNotes")]
+        public async Task<ActionResult<List<User>>> Read_StudentsNotes ([FromBody] List<int> lstStudentsIds, [FromQuery] int teacherId)
+            {
+            var result = await _BeService.Read_StudentsNotesAsync (lstStudentsIds, teacherId);
             return Ok (result);
             }
         [HttpPost ("Read_Note")]

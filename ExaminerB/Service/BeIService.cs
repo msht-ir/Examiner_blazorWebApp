@@ -44,7 +44,7 @@ namespace ExaminerB.Services2Backend
         #endregion
         #region SG:StudentGroups
         Task<bool> Create_StudentGroupsAsync (int groupId, List<int> lstStudentIds);
-        Task<List<StudentGroup>> Read_StudentGroupsAsync (int Id, string mode);
+        Task<List<StudentGroup>> Read_StudentGroupsAsync (int Id, string mode, int teacherId);
         Task<bool> Delete_StudentGroupsAsync (int groupId, List<int> lstStudentIds);
         #endregion
         #region C:Courses
@@ -213,6 +213,7 @@ namespace ExaminerB.Services2Backend
         Task<List<Note>> Read_NotesAsync (int referenceId, int referenceType, int teacherId);
         Task<List<Note>> Read_DueNotesAsync (int userId, int nDays);
         Task<List<Note>> Read_NotesBySearchKeyAsync (string searchKey, int referenceId, int mode);
+        Task<List<User>> Read_StudentsNotesAsync (List<int> lstStudentsIds, int teacherId);
         Task<Note> Read_NoteAsync (int referenceId);
         Task<bool> Update_NoteAsync (Note note);
         Task<bool> Update_NoteParentAsync (Note note);

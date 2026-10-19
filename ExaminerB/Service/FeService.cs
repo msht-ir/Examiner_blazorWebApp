@@ -305,9 +305,9 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ($"api/Create_StudentGroups?groupId={groupId}", lstStudentIds);
             return response.IsSuccessStatusCode ? true : false;
             }
-        public async Task<List<StudentGroup>> ReadStudentGroups (int Id, string mode)
+        public async Task<List<StudentGroup>> ReadStudentGroups (int Id, string mode, int teacherId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentGroups?mode={mode}", Id);
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentGroups?mode={mode}, teacherId={teacherId}", Id);
             if (response.IsSuccessStatusCode)
                 {
                 List<StudentGroup> lstStudentGroups = await response.Content.ReadFromJsonAsync<List<StudentGroup>> ();
@@ -1475,6 +1475,19 @@ namespace ExaminerB.Service
                 return new List<Note> ();
                 }
             }
+        public async Task<List<User>> Read_StudentsNotes (List<int> lstStudentsIds, int teacherId)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsNotes?teacherid={teacherId}", lstStudentsIds);
+            if (response.IsSuccessStatusCode)
+                {
+                List<User>? lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
+                return lstStudents ?? new List<User> ();
+                }
+            else
+                {
+                return new List<User> ();
+                }
+            }
         public async Task<Note> Read_Note (int noteId)
             {
             var response = await _http.PostAsJsonAsync ($"api/Read_Note", noteId);
@@ -1686,6 +1699,46 @@ namespace ExaminerB.Service
                 });
             return report.GeneratePdf ();
             }
+        public byte [] GenerateReportStudentsNotesPdf (List<User> lstReportStudentsNotes, string reportType)
+            {
+            /* NOTES for developers (1405.07.21):
+            New QuestPDF upgrade doesn't automatically use Farsi-fonts. Use standard web-font 'Vazirmatn-Regular.ttf'.
+            1- conpy font file into a project folder eg. D:\VS\Examiner\ExaminerB\Resources\Fonts
+            2- register the font in program.cs (see there)
+            3- use the font as below:
+            page.DefaultTextStyle (x => x 
+                        .FontFamily ("Lato", "Vazirmatn")
+                        .FontSize (10)); */
+            QuestPDF.Settings.License = LicenseType.Community;
+            var report = Document.Create (container =>
+                {
+                    container.Page (page =>
+                        {
+                            page.Size (PageSizes.A4);
+                            page.Margin (1, Unit.Centimetre);
+                            page.PageColor (Colors.White);
+                            page.DefaultTextStyle (x => x
+                                .FontFamily ("Lato", "Vazirmatn")
+                                .FontSize (10));
+                            switch (reportType)
+                                {
+                                case "cmdS1":
+                                        {
+                                        //menuM31
+                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Students Notess for Selected Students"));
+                                        page.Content ().Element (compose => ComposeContentS1 (compose, lstReportStudentsNotes));
+                                        page.Footer ().Element (ComposeFooter);
+                                        break;
+                                        }
+                                default:
+                                        {
+                                        return;
+                                        }
+                                }
+                        });
+                });
+            return report.GeneratePdf ();
+            }
         private void ComposeHeader (IContainer container, string title)
             {
             var imagePath = Path.Combine (Directory.GetCurrentDirectory (), "wwwroot", "img", "icoLogin_S.png");
@@ -1744,9 +1797,9 @@ namespace ExaminerB.Service
                                     .AlignLeft ()
                                     .Text (text =>
                                     {
-                                        text.Span ("Usr: " + student.UserNickname + " / " + student.UserName + "\r\n")
+                                        text.Span ("use:    " + student.UserNickname + "    /nickname: " + student.UserName + "\r\n")
                                             .FontSize (9)
-                                            .FontColor (Colors.Red.Darken3)
+                                            .FontColor (Colors.Black)
                                             .DirectionFromRightToLeft ();
                                         if (student.IsActive)
                                             {
@@ -1756,21 +1809,42 @@ namespace ExaminerB.Service
                                             }
                                         if (student.CanChangePass)
                                             {
-                                            text.Span (" #user can change their Password")
+                                            text.Span (" #user can change Password")
                                             .FontSize (9)
                                             .FontColor (Colors.Blue.Darken3);
+                                            }
+                                        //GROUPS
+                                        if (student.StudentGroups.Count > 0)
+                                            {
+                                            text.Span ("\r\n--- Groups\r\n");
+                                            foreach (StudentGroup stGrp in student.StudentGroups)
+                                                {
+                                                text.Span ("   " + stGrp.GroupName + "\r\n")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Red.Darken3)
+                                                .DirectionFromRightToLeft ();
+                                                text.Span ("         Joined: " + ToPersianDate (stGrp.DateTimeJoined.ToString ()))
+                                                .FontSize (9)
+                                                .FontColor (Colors.Blue.Darken3)
+                                                .DirectionFromRightToLeft ();
+                                                text.Span ("\r\n");
+                                                }
+                                            }
+                                        else
+                                            {
+                                            text.Span ("\r\n--- No Groups!");
                                             }
                                         //COURSES
                                         if (student.StudentCourses.Count > 0)
                                             {
-                                            text.Span ("\r\n--- Courses\r\n");
+                                            text.Span ("--- Courses\r\n");
                                             foreach (StudentCourse stCrs in student.StudentCourses)
                                                 {
-                                                text.Span ("- " + stCrs.CourseName + "\r\n")
+                                                text.Span ("   " + stCrs.CourseName + "\r\n")
                                                 .FontSize (9)
                                                 .FontColor (Colors.Red.Darken3)
                                                 .DirectionFromRightToLeft ();
-                                                text.Span ("    random tests: " + stCrs.CorrectAnswers + " / " + stCrs.NumberOfTests + "     ")
+                                                text.Span ("         random tests: " + stCrs.CorrectAnswers + " / " + stCrs.NumberOfTests + "     ")
                                                 .FontSize (9)
                                                 .FontColor (Colors.Blue.Darken3)
                                                 .DirectionFromRightToLeft ();
@@ -1782,13 +1856,13 @@ namespace ExaminerB.Service
                                                     }
                                                 if (stCrs.Retry)
                                                     {
-                                                    text.Span ("  #student can retry incorrect answers")
+                                                    text.Span ("  #can retry incorrect answers")
                                                     .FontSize (9)
                                                     .FontColor (Colors.Blue.Darken3);
                                                     }
                                                 if (stCrs.Review)
                                                     {
-                                                    text.Span ("  #student can review answered tests")
+                                                    text.Span ("  #can review answered tests")
                                                     .FontSize (9)
                                                     .FontColor (Colors.Blue.Darken3);
                                                     }
@@ -1805,25 +1879,25 @@ namespace ExaminerB.Service
                                             text.Span ("--- Exams \r\n");
                                             foreach (StudentExam exm in student.StudentExams)
                                                 {
-                                                text.Span ("- " + exm.ExamTitle + "\r\n")
+                                                text.Span ("   " + exm.ExamTitle + "\r\n")
                                                 .FontSize (9)
                                                 .FontColor (Colors.Red.Darken3)
                                                 .DirectionFromRightToLeft ();
                                                 if (exm.StudentExamTags >= 2)
                                                     {
-                                                    text.Span ("   Tests:" + exm.ExamNTests + " (" + exm.ExamDuration + " m) \r\n  Point: " + exm.StudentExamPoint.ToString ("F2") + "/20 \r\n")
+                                                    text.Span ("         Tests:" + exm.ExamNTests + " (" + exm.ExamDuration + " m)      Point: " + exm.StudentExamPoint.ToString ("F2") + "/20 \r\n")
                                                     .FontSize (9)
                                                     .FontColor (Colors.Blue.Darken3);
                                                     }
                                                 else if (exm.StudentExamTags == 1)
                                                     {
-                                                    text.Span ("   Tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m) satrted \r\n")
+                                                    text.Span ("         Tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m) satrted \r\n")
                                                     .FontSize (9)
                                                     .FontColor (Colors.Blue.Darken3);
                                                     }
                                                 else
                                                     {
-                                                    text.Span ("   Tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m)  new \r\n")
+                                                    text.Span ("         Tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m)  new \r\n")
                                                     .FontSize (9)
                                                     .FontColor (Colors.Blue.Darken3);
                                                     }
@@ -1970,6 +2044,59 @@ namespace ExaminerB.Service
                                             .FontSize (9)
                                             .FontColor (Colors.Red.Darken3)
                                             .DirectionFromRightToLeft ();
+                                    });
+                            });
+                    });
+                    }
+            });
+            }
+        private void ComposeContentS1 (IContainer container, List<User> data)
+            {
+            container.PaddingVertical (10).Column (column =>
+            {
+                column.Spacing (10); //space between cards
+                foreach (var student in data)
+                    {
+                    column.Item ().Element (cardContainer =>
+                    {
+                        //CardStyle
+                        cardContainer
+                            .Border (1)
+                            .BorderColor (Colors.Grey.Lighten4)
+                            .Background (Colors.Grey.Lighten5)
+                            .Padding (12)
+                            .Column (cardColumn =>
+                            {
+                                cardColumn.Spacing (8);
+                                cardColumn.Item ()
+                                    .AlignLeft ()
+                                    .Text (text =>
+                                    {
+                                        //NOTESS
+                                        if (student.StudentNotes.Count > 0)
+                                            {
+                                            text.Span (student.StudentNotes [0].ReferenceName + "\r\n")
+                                            .FontSize (9)
+                                            .FontColor (Colors.Red.Darken3)
+                                            .DirectionFromRightToLeft ();
+                                            text.Span ("--- Notes\r\n");
+                                            foreach (Note stNt in student.StudentNotes)
+                                                {
+                                                text.Span (ToPersianDate(stNt.NoteDateTime.ToString()) + "\r\n")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Red.Darken3)
+                                                .DirectionFromRightToLeft ();
+                                                text.Span ("Note: " + stNt.NoteText)
+                                                .FontSize (9)
+                                                .FontColor (Colors.Blue.Darken3)
+                                                .DirectionFromRightToLeft ();
+                                                text.Span ("\r\n");
+                                                }
+                                            }
+                                        else
+                                            {
+                                            text.Span ("\r\n--- No Notes!");
+                                            }
                                     });
                             });
                     });
