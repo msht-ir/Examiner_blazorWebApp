@@ -1744,75 +1744,94 @@ namespace ExaminerB.Service
                                     .AlignLeft ()
                                     .Text (text =>
                                     {
-                                        text.Span ("Usr: " + student.UserNickname + " / " + student.UserName)
+                                        text.Span ("Usr: " + student.UserNickname + " / " + student.UserName + "\r\n")
                                             .FontSize (9)
                                             .FontColor (Colors.Red.Darken3)
                                             .DirectionFromRightToLeft ();
                                         if (student.IsActive)
                                             {
-                                            text.Span (" active")
+                                            text.Span (" #account is active")
                                             .FontSize (9)
                                             .FontColor (Colors.Blue.Darken3);
                                             }
                                         if (student.CanChangePass)
                                             {
-                                            text.Span (" changePass")
+                                            text.Span (" #user can change their Password")
                                             .FontSize (9)
                                             .FontColor (Colors.Blue.Darken3);
                                             }
-                                        text.Span ("\r\n");
-
-                                        foreach (StudentCourse stCrs in student.StudentCourses)
+                                        //COURSES
+                                        if (student.StudentCourses.Count > 0)
                                             {
-                                            text.Span ("Course: " + stCrs.CourseName + "\r\n   " + stCrs.CorrectAnswers + " / " + stCrs.NumberOfTests + "\r\n")
-                                            .FontSize (9)
-                                            .FontColor (Colors.Red.Darken3)
-                                            .DirectionFromRightToLeft ();
-                                            if (stCrs.IsActive)
+                                            text.Span ("\r\n--- Courses\r\n");
+                                            foreach (StudentCourse stCrs in student.StudentCourses)
                                                 {
-                                                text.Span ("  active")
+                                                text.Span ("- " + stCrs.CourseName + "\r\n")
                                                 .FontSize (9)
-                                                .FontColor (Colors.Blue.Darken3);
-                                                }
-                                            if (stCrs.Retry)
-                                                {
-                                                text.Span ("  can retry")
+                                                .FontColor (Colors.Red.Darken3)
+                                                .DirectionFromRightToLeft ();
+                                                text.Span ("    random tests: " + stCrs.CorrectAnswers + " / " + stCrs.NumberOfTests + "     ")
                                                 .FontSize (9)
-                                                .FontColor (Colors.Blue.Darken3);
+                                                .FontColor (Colors.Blue.Darken3)
+                                                .DirectionFromRightToLeft ();
+                                                if (stCrs.IsActive)
+                                                    {
+                                                    text.Span ("  #course is active")
+                                                    .FontSize (9)
+                                                    .FontColor (Colors.Blue.Darken3);
+                                                    }
+                                                if (stCrs.Retry)
+                                                    {
+                                                    text.Span ("  #student can retry incorrect answers")
+                                                    .FontSize (9)
+                                                    .FontColor (Colors.Blue.Darken3);
+                                                    }
+                                                if (stCrs.Review)
+                                                    {
+                                                    text.Span ("  #student can review answered tests")
+                                                    .FontSize (9)
+                                                    .FontColor (Colors.Blue.Darken3);
+                                                    }
+                                                text.Span ("\r\n");
                                                 }
-                                            if (stCrs.Review)
-                                                {
-                                                text.Span ("  can review")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Blue.Darken3);
-                                                }
-                                            text.Span ("\r\n");
                                             }
-                                        //insert hr
-                                        foreach (StudentExam exm in student.StudentExams)
+                                        else
                                             {
-                                            text.Span ("Exam: " + exm.ExamTitle + "\r\n")
-                                            .FontSize (9)
-                                            .FontColor (Colors.Red.Darken3)
-                                            .DirectionFromRightToLeft ();
-                                            if (exm.StudentExamTags >= 2)
+                                            text.Span ("\r\n--- No Courses!");
+                                            }
+                                        //EXAMS
+                                        if (student.StudentExams.Count > 0)
+                                            {
+                                            text.Span ("--- Exams \r\n");
+                                            foreach (StudentExam exm in student.StudentExams)
                                                 {
-                                                text.Span ("  Tests:" + exm.ExamNTests + " (" + exm.ExamDuration + " m) \r\n  Point: " + exm.StudentExamPoint.ToString ("F2") + "/20 \r\n")
+                                                text.Span ("- " + exm.ExamTitle + "\r\n")
                                                 .FontSize (9)
-                                                .FontColor (Colors.Blue.Darken3);
+                                                .FontColor (Colors.Red.Darken3)
+                                                .DirectionFromRightToLeft ();
+                                                if (exm.StudentExamTags >= 2)
+                                                    {
+                                                    text.Span ("   Tests:" + exm.ExamNTests + " (" + exm.ExamDuration + " m) \r\n  Point: " + exm.StudentExamPoint.ToString ("F2") + "/20 \r\n")
+                                                    .FontSize (9)
+                                                    .FontColor (Colors.Blue.Darken3);
+                                                    }
+                                                else if (exm.StudentExamTags == 1)
+                                                    {
+                                                    text.Span ("   Tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m) satrted \r\n")
+                                                    .FontSize (9)
+                                                    .FontColor (Colors.Blue.Darken3);
+                                                    }
+                                                else
+                                                    {
+                                                    text.Span ("   Tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m)  new \r\n")
+                                                    .FontSize (9)
+                                                    .FontColor (Colors.Blue.Darken3);
+                                                    }
                                                 }
-                                            else if (exm.StudentExamTags == 1)
-                                                {
-                                                text.Span ("  Tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m) satrted \r\n")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Blue.Darken3);
-                                                }
-                                            else
-                                                {
-                                                text.Span ("  Tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m)  new \r\n")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Blue.Darken3);
-                                                }
+                                            }
+                                        else
+                                            {
+                                            text.Span ("\r\n--- No Exams!");
                                             }
                                     });
                             });
@@ -1832,7 +1851,7 @@ namespace ExaminerB.Service
                     cardContainer
                         .Border (1)
                         .BorderColor (Colors.Grey.Lighten4)
-                        .Background (Colors.Green.Lighten5)
+                        .Background (Colors.Yellow.Lighten5)
                         .Padding (12)
                         .ShowEntire ()
                         .Column (cardColumn =>
