@@ -15,7 +15,7 @@ else
     {
         <EditForm Model="test" style="max-width:600px; margin: 0 auto;">
             <div style="text-align: center;">
-            <h2 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole : @courseName  </span></h2>
+            <h3 style="color:gray">e<span style="color:indianred">x</span>aminer<span style="font-style:italic;font-size:small;color:royalblue"> WebApp </span> <span style="font-style:italic;font-size:small;color:indianred"> - @appState.UserRole : @courseName  </span></h3>
             @* <h5 style="color:IndianRed">@courseName</h5> *@
             </div>
         @if (appState.Message != "")
@@ -109,10 +109,10 @@ else
                             data-bs-target="#TestOptions"
                             aria-expanded="false"
                             aria-controls="TestOptions">
-                            <h4 style="color:indianred">
+                            <h5 style="color:indianred">
                             <img class="pulse-animation" src="/img/icoList.png" width="24" />
-                            Options
-                            </h4>
+                            options
+                            </h5>
                         </button>
                     </h4>
                     <div id="TestOptions" class="accordion-collapse collapse" data-bs-parent="#accordionTestOptions">
@@ -226,10 +226,10 @@ else
                     <br />
                     <br />
                         <button class="btn btn-link pulse-animation" type="submit" @onclick="() => BtnCreateExamTest(test)">
-                        <img src="/img/icoSave2.png" width="25" />
+                        <img src="/img/icoSave2.png" width="22" />
                         </button>
                         <button class="btn btn-link" name="btnNewCourse" @onclick="BtnCancel">
-                        <img src="/img/icoCancel.png" width="24" />
+                        <img src="/img/icoCancel.png" width="22" />
                         </button>
                     <hr style="color:Red" />
                     </div>
@@ -240,7 +240,7 @@ else
                     <img src="/img/icoBack3.png" width="40" />
                     </button>
                     <button class="btn btn-link" type="submit" @onclick="BtnAddExamTest">
-                    <img src="/img/icoListE.png" width="42" />
+                    <img src="/img/icoListE.png" width="40" />
                     </button>
                 }
             </div>

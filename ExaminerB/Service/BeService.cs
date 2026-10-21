@@ -3192,17 +3192,25 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Delete_MessagesAsync (string mode, int recipientId)
             {
-            string sql = "dbo.sp_DeleteMessages";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@mode", mode);
-            cmd.Parameters.AddWithValue ("@recipientid", recipientId);
-            int i = cmd.ExecuteNonQuery ();
-            await cnn.CloseAsync ();
-            return (i > 0) ? true : false;
+            try
+                {
+                string sql = "dbo.sp_DeleteMessages";
+                string? connString = _config.GetConnectionString ("cnni");
+                using SqlConnection cnn = new (connString);
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue ("@mode", mode);
+                cmd.Parameters.AddWithValue ("@recipientid", recipientId);
+                int i = cmd.ExecuteNonQuery ();
+                await cnn.CloseAsync ();
+                return (i > 0) ? true : false;
+                }
+            catch (Exception x)
+                {
+                Console.WriteLine (x.ToString ());
+                return (false);
+                }
             }
         #endregion
         #region SM:StudentMessages
@@ -4024,7 +4032,7 @@ namespace ExaminerB.Services2Backend
             foreach (int sid in lstStudentsIds)
                 {
                 User st = new User ();
-                st.StudentNotes=await Read_NotesAsync(sid, 13, teacherId);
+                st.StudentNotes = await Read_NotesAsync (sid, 13, teacherId);
                 lstStudents.Add (st);
                 }
             return lstStudents;

@@ -1,12 +1,9 @@
 ﻿using ClosedXML.Excel;
 using ExaminerS.Models;
-using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using System.ComponentModel;
 using System.Globalization;
-using System.Net.NetworkInformation;
 using Department = ExaminerS.Models.Department;
 using Group = ExaminerS.Models.Group;
 using IContainer = QuestPDF.Infrastructure.IContainer;
@@ -1522,7 +1519,7 @@ namespace ExaminerB.Service
             return response.IsSuccessStatusCode ? true : false;
             }
         #endregion
-        #region FRONTEND Methods
+        #region FrontEnd Methods
         public string ToPersianDate (string? dt)
             {
             //this method converts miladi to shamsi just for display; actual data on db is miladi-date
@@ -1535,7 +1532,7 @@ namespace ExaminerB.Service
                 return "-";
                 }
             //convert to DateTime tehranTime
-            datetime = datetime.AddHours (3).AddMinutes (30);
+            //this line adds 3:300 for local time in Iran?  //datetime = datetime.AddHours (3).AddMinutes (30);
             PersianCalendar pc = new PersianCalendar ();
             return $"{pc.GetYear (datetime):0000}-" +
                        $"{pc.GetMonth (datetime):00}-" +
@@ -1543,7 +1540,7 @@ namespace ExaminerB.Service
                        $"{pc.GetHour (datetime):00}:{pc.GetMinute (datetime):00}";
             }
         #endregion
-        #region Export PDF
+        #region Export Excel
         public byte [] GenerateExcel<T> (List<T> data, string sheetName = "Report")
             {
             using var wb = new XLWorkbook ();
@@ -1571,6 +1568,8 @@ namespace ExaminerB.Service
             wb.SaveAs (stream);
             return stream.ToArray ();
             }
+        #endregion
+        #region Export PDF
         public byte [] GenerateReportMessageStudentsPdf (List<StudentMessage> lstStudentMessages, string reportType)
             {
             /* NOTES for developers (1405.07.21):
@@ -1610,42 +1609,10 @@ namespace ExaminerB.Service
                                         page.Footer ().Element (ComposeFooter);
                                         break;
                                         }
-                                case "menuM41":
+                                case "menuM4x":
                                         {
-                                        //menuM41
+                                        //menuM4x
                                         page.Header ().Element (compose => ComposeHeader (compose, "Report Messages Sent To Selected Students"));
-                                        page.Content ().Element (compose => ComposeContentM4x (compose, lstStudentMessages));
-                                        page.Footer ().Element (ComposeFooter);
-                                        break;
-                                        }
-                                case "menuM42":
-                                        {
-                                        //menuM42
-                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Messages Sent To Selected Students But Not Read"));
-                                        page.Content ().Element (compose => ComposeContentM4x (compose, lstStudentMessages));
-                                        page.Footer ().Element (ComposeFooter);
-                                        break;
-                                        }
-                                case "menuM43":
-                                        {
-                                        //menuM43
-                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Feedback Messages Sent To Selected Students"));
-                                        page.Content ().Element (compose => ComposeContentM4x (compose, lstStudentMessages));
-                                        page.Footer ().Element (ComposeFooter);
-                                        break;
-                                        }
-                                case "menuM44":
-                                        {
-                                        //menuM44
-                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Active Messages Sent To Selected Students"));
-                                        page.Content ().Element (compose => ComposeContentM4x (compose, lstStudentMessages));
-                                        page.Footer ().Element (ComposeFooter);
-                                        break;
-                                        }
-                                case "menuM45":
-                                        {
-                                        //menuM45
-                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Selected Messages Sent To Selected Students"));
                                         page.Content ().Element (compose => ComposeContentM4x (compose, lstStudentMessages));
                                         page.Footer ().Element (ComposeFooter);
                                         break;
@@ -1685,7 +1652,7 @@ namespace ExaminerB.Service
                                 case "menuM16":
                                         {
                                         //menuM31
-                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Students Folders for Students Received a Message"));
+                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Students Folders"));
                                         page.Content ().Element (compose => ComposeContentM1x (compose, lstReportStudents));
                                         page.Footer ().Element (ComposeFooter);
                                         break;
@@ -1725,7 +1692,7 @@ namespace ExaminerB.Service
                                 case "cmdS1":
                                         {
                                         //menuM31
-                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Students Notess for Selected Students"));
+                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Students Notes for Selected Students"));
                                         page.Content ().Element (compose => ComposeContentS1 (compose, lstReportStudentsNotes));
                                         page.Footer ().Element (ComposeFooter);
                                         break;
@@ -1741,7 +1708,7 @@ namespace ExaminerB.Service
             }
         private void ComposeHeader (IContainer container, string title)
             {
-            var imagePath = Path.Combine (Directory.GetCurrentDirectory (), "wwwroot", "img", "icoLogin_S.png");
+            var imagePath = Path.Combine (Directory.GetCurrentDirectory (), "wwwroot", "img", "icoLogin_S1.png");
             container.Row (row =>
             {
                 row.RelativeItem ().Column (column =>
@@ -1752,16 +1719,16 @@ namespace ExaminerB.Service
                         .Image (imagePath);
                     column.Item ()
                         .AlignCenter ()
-                        .Text ($"{ToPersianDate (DateTime.UtcNow.ToString ())}")
-                        .FontSize (9)
-                        .FontColor (Colors.Red.Darken1);
-                    column.Item ()
-                        .AlignCenter ()
                         .Text (title)
                         .FontSize (10)
                         .Bold ()
                         .FontColor (Colors.Grey.Darken2)
                         .DirectionFromRightToLeft ();
+                    column.Item ()
+                        .AlignCenter ()
+                        .Text ($"{ToPersianDate (DateTime.Now.ToString ())}") //if DateTime.UtcNow is used, 2:30 or 3:30 must be added for Iran (depending on SummerTime)
+                        .FontSize (9)
+                        .FontColor (Colors.Red.Darken1);
                 });
             });
             }
@@ -1797,19 +1764,23 @@ namespace ExaminerB.Service
                                     .AlignLeft ()
                                     .Text (text =>
                                     {
-                                        text.Span ("use:    " + student.UserNickname + "    /nickname: " + student.UserName + "\r\n")
+                                        text.Span ("user: " + student.UserName + "\r\n")
+                                            .FontSize (9)
+                                            .FontColor (Colors.Black)
+                                            .DirectionFromRightToLeft ();
+                                        text.Span ("nickname: " + student.UserNickname + "\r\n")
                                             .FontSize (9)
                                             .FontColor (Colors.Black)
                                             .DirectionFromRightToLeft ();
                                         if (student.IsActive)
                                             {
-                                            text.Span (" #account is active")
+                                            text.Span (" #accActive")
                                             .FontSize (9)
                                             .FontColor (Colors.Blue.Darken3);
                                             }
                                         if (student.CanChangePass)
                                             {
-                                            text.Span (" #user can change Password")
+                                            text.Span (" #changePass")
                                             .FontSize (9)
                                             .FontColor (Colors.Blue.Darken3);
                                             }
@@ -1819,20 +1790,19 @@ namespace ExaminerB.Service
                                             text.Span ("\r\n--- Groups\r\n");
                                             foreach (StudentGroup stGrp in student.StudentGroups)
                                                 {
-                                                text.Span ("   " + stGrp.GroupName + "\r\n")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Red.Darken3)
-                                                .DirectionFromRightToLeft ();
-                                                text.Span ("         Joined: " + ToPersianDate (stGrp.DateTimeJoined.ToString ()))
+                                                text.Span ("         at " + ToPersianDate (stGrp.DateTimeJoined.ToString ()) + "  joined:     ")
                                                 .FontSize (9)
                                                 .FontColor (Colors.Blue.Darken3)
                                                 .DirectionFromRightToLeft ();
-                                                text.Span ("\r\n");
+                                                text.Span (stGrp.GroupName + "\r\n")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Red.Darken3)
+                                                .DirectionFromRightToLeft ();
                                                 }
                                             }
                                         else
                                             {
-                                            text.Span ("\r\n--- No Groups!");
+                                            text.Span ("\r\n--- no groups!\r\n");
                                             }
                                         //COURSES
                                         if (student.StudentCourses.Count > 0)
@@ -1840,38 +1810,37 @@ namespace ExaminerB.Service
                                             text.Span ("--- Courses\r\n");
                                             foreach (StudentCourse stCrs in student.StudentCourses)
                                                 {
-                                                text.Span ("   " + stCrs.CourseName + "\r\n")
+                                                text.Span ("     " + stCrs.CourseName + "    ")
                                                 .FontSize (9)
                                                 .FontColor (Colors.Red.Darken3)
                                                 .DirectionFromRightToLeft ();
-                                                text.Span ("         random tests: " + stCrs.CorrectAnswers + " / " + stCrs.NumberOfTests + "     ")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Blue.Darken3)
-                                                .DirectionFromRightToLeft ();
                                                 if (stCrs.IsActive)
                                                     {
-                                                    text.Span ("  #course is active")
+                                                    text.Span ("#active  ")
                                                     .FontSize (9)
                                                     .FontColor (Colors.Blue.Darken3);
                                                     }
                                                 if (stCrs.Retry)
                                                     {
-                                                    text.Span ("  #can retry incorrect answers")
+                                                    text.Span ("#retry  ")
                                                     .FontSize (9)
                                                     .FontColor (Colors.Blue.Darken3);
                                                     }
                                                 if (stCrs.Review)
                                                     {
-                                                    text.Span ("  #can review answered tests")
+                                                    text.Span ("#review  ")
                                                     .FontSize (9)
                                                     .FontColor (Colors.Blue.Darken3);
                                                     }
-                                                text.Span ("\r\n");
+                                                text.Span ("        tests: " + stCrs.CorrectAnswers + " / " + stCrs.NumberOfTests + "\r\n")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Blue.Darken3)
+                                                .DirectionFromRightToLeft ();
                                                 }
                                             }
                                         else
                                             {
-                                            text.Span ("\r\n--- No Courses!");
+                                            text.Span ("\r\n--- no courses!\r\n");
                                             }
                                         //EXAMS
                                         if (student.StudentExams.Count > 0)
@@ -1883,21 +1852,28 @@ namespace ExaminerB.Service
                                                 .FontSize (9)
                                                 .FontColor (Colors.Red.Darken3)
                                                 .DirectionFromRightToLeft ();
+                                                text.Span ("         exam date/time: " + ToPersianDate (exm.ExamDateTime.ToString ()) + "\r\n")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Blue.Darken3)
+                                                .DirectionFromRightToLeft ();
                                                 if (exm.StudentExamTags >= 2)
                                                     {
-                                                    text.Span ("         Tests:" + exm.ExamNTests + " (" + exm.ExamDuration + " m)      Point: " + exm.StudentExamPoint.ToString ("F2") + "/20 \r\n")
+                                                    text.Span ("         tests: " + exm.ExamNTests + " (" + exm.ExamDuration + " m)      point: " + exm.StudentExamPoint.ToString ("F2") + "/20 \r\n")
+                                                    .FontSize (9)
+                                                    .FontColor (Colors.Blue.Darken3);
+                                                    text.Span ("         start: " + ToPersianDate (exm.DateTimeStart.ToString ()) + "   finish: " + ToPersianDate (exm.DateTimeFinish.ToString ()) + "\r\n")
                                                     .FontSize (9)
                                                     .FontColor (Colors.Blue.Darken3);
                                                     }
                                                 else if (exm.StudentExamTags == 1)
                                                     {
-                                                    text.Span ("         Tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m) satrted \r\n")
+                                                    text.Span ("         tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m) [satrted] \r\n")
                                                     .FontSize (9)
                                                     .FontColor (Colors.Blue.Darken3);
                                                     }
                                                 else
                                                     {
-                                                    text.Span ("         Tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m)  new \r\n")
+                                                    text.Span ("         tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m) \r\n")
                                                     .FontSize (9)
                                                     .FontColor (Colors.Blue.Darken3);
                                                     }
@@ -1905,7 +1881,7 @@ namespace ExaminerB.Service
                                             }
                                         else
                                             {
-                                            text.Span ("\r\n--- No Exams!");
+                                            text.Span ("\r\n--- no exams!");
                                             }
                                     });
                             });
@@ -2000,11 +1976,11 @@ namespace ExaminerB.Service
                                             }
                                         if ((item.StudentMessageTags & 16) == 16)
                                             {
-                                            text.Span (" /Answere:YES");
+                                            text.Span (" /Answer:YES");
                                             }
                                         if ((item.StudentMessageTags & 32) == 32)
                                             {
-                                            text.Span (" /Answere:NO");
+                                            text.Span (" /Answer:NO");
                                             }
 
                                     });
@@ -2018,6 +1994,34 @@ namespace ExaminerB.Service
             container.PaddingVertical (10).Column (column =>
             {
                 column.Spacing (10); //space between cards
+                column.Item ().Element (cardContainer =>
+                {
+                    //CardStyle
+                    cardContainer
+                        .Border (1)
+                        .BorderColor (Colors.Grey.Lighten4)
+                        .Background (Colors.Yellow.Lighten5)
+                        .Padding (12)
+                        .ShowEntire ()
+                        .Column (cardColumn =>
+                        {
+                            cardColumn.Spacing (8);
+                            cardColumn.Item ()
+                                .AlignLeft ()
+                                .Text (text =>
+                                {
+                                    text.Span ("username: " + data [0].StudentName + "\r\n")
+                                        .FontSize (9)
+                                        .FontColor (Colors.Red.Darken3)
+                                        .DirectionFromRightToLeft ();
+                                    text.Span ("display name: " + data [0].StudentNickname)
+                                        .FontSize (9)
+                                        .FontColor (Colors.Blue.Darken3)
+                                        .DirectionFromRightToLeft ();
+                                });
+                        });
+                });
+
                 foreach (var item in data)
                     {
                     column.Item ().Element (cardContainer =>
@@ -2026,7 +2030,7 @@ namespace ExaminerB.Service
                         cardContainer
                             .Border (1)
                             .BorderColor (Colors.Grey.Lighten4)
-                            .Background (Colors.White)
+                            .Background (Colors.Grey.Lighten5)
                             .Padding (12)
                             .ShowEntire ()
                             .Column (cardColumn =>
@@ -2036,17 +2040,57 @@ namespace ExaminerB.Service
                                     .AlignLeft ()
                                     .Text (text =>
                                     {
-                                        text.Span ("Username: " + item.StudentName)
+                                        text.Span (item.MessageTitle + "\r\n")
                                             .FontSize (9)
                                             .FontColor (Colors.Red.Darken3)
                                             .DirectionFromRightToLeft ();
-                                        text.Span ("Nickname: " + item.StudentNickname)
+                                        text.Span ($"\r\n{ToPersianDate (item.DateTimeCreated.ToString ())}  Created  \r\n{ToPersianDate (item.DateTimeSent.ToString ())}  Sent\r\n")
                                             .FontSize (9)
-                                            .FontColor (Colors.Red.Darken3)
+                                            .FontColor (Colors.Black)
                                             .DirectionFromRightToLeft ();
+                                        if ((item.StudentMessageTags & 1) == 1)
+                                            {
+                                            text.Span ($"{ToPersianDate (item.DateTimeRead.ToString ())}  Read\r\n")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Black)
+                                                .DirectionFromRightToLeft ();
+                                            }
+                                        else
+                                            {
+                                            text.Span ("  not read\r\n")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Red.Lighten2)
+                                                .DirectionFromRightToLeft ();
+                                            }
+                                        if ((item.StudentMessageTags & 16) == 16)
+                                            {
+                                            text.Span ("  --Yes")
+                                            .FontColor (Colors.Blue.Darken1);
+                                            }
+                                        if ((item.StudentMessageTags & 32) == 32)
+                                            {
+                                            text.Span ("  --No")
+                                            .FontColor (Colors.Red.Lighten1);
+                                            }
+                                        if ((item.StudentMessageTags & 2) == 2)
+                                            {
+                                            text.Span ("  --bookmaked");
+                                            }
+                                        if ((item.StudentMessageTags & 4) == 4)
+                                            {
+                                            text.Span ("  --deleted")
+                                            .FontColor (Colors.Grey.Darken1);
+                                            }
                                     });
                             });
                     });
+
+
+
+
+
+
+
                     }
             });
             }
@@ -2057,53 +2101,51 @@ namespace ExaminerB.Service
                 column.Spacing (10); //space between cards
                 foreach (var student in data)
                     {
-                    column.Item ().Element (cardContainer =>
-                    {
-                        //CardStyle
-                        cardContainer
-                            .Border (1)
-                            .BorderColor (Colors.Grey.Lighten4)
-                            .Background (Colors.Grey.Lighten5)
-                            .Padding (12)
-                            .Column (cardColumn =>
-                            {
-                                cardColumn.Spacing (8);
-                                cardColumn.Item ()
-                                    .AlignLeft ()
-                                    .Text (text =>
-                                    {
-                                        //NOTESS
-                                        if (student.StudentNotes.Count > 0)
-                                            {
+                    if (student.StudentNotes.Count > 0)
+                        {
+                        column.Item ().Element (cardContainer =>
+                        {
+                            //CardStyle
+                            cardContainer
+                                .Border (1)
+                                .BorderColor (Colors.Grey.Lighten4)
+                                .Background (Colors.Grey.Lighten5)
+                                .Padding (12)
+                                .Column (cardColumn =>
+                                {
+                                    cardColumn.Spacing (8);
+                                    cardColumn.Item ()
+                                        .AlignLeft ()
+                                        .Text (text =>
+                                        {
+                                            //NOTESS
                                             text.Span (student.StudentNotes [0].ReferenceName + "\r\n")
                                             .FontSize (9)
                                             .FontColor (Colors.Red.Darken3)
                                             .DirectionFromRightToLeft ();
-                                            text.Span ("--- Notes\r\n");
                                             foreach (Note stNt in student.StudentNotes)
                                                 {
-                                                text.Span (ToPersianDate(stNt.NoteDateTime.ToString()) + "\r\n")
+                                                text.Span ("created at: ")
+                                                .FontSize (9)
+                                                .FontColor (Colors.Black)
+                                                .DirectionFromRightToLeft ();
+                                                text.Span (ToPersianDate (stNt.NoteDateTime.ToString ()) + "\r\n")
                                                 .FontSize (9)
                                                 .FontColor (Colors.Red.Darken3)
                                                 .DirectionFromRightToLeft ();
-                                                text.Span ("Note: " + stNt.NoteText)
+                                                text.Span (stNt.NoteText)
                                                 .FontSize (9)
                                                 .FontColor (Colors.Blue.Darken3)
                                                 .DirectionFromRightToLeft ();
                                                 text.Span ("\r\n");
                                                 }
-                                            }
-                                        else
-                                            {
-                                            text.Span ("\r\n--- No Notes!");
-                                            }
-                                    });
-                            });
-                    });
+                                        });
+                                });
+                        });
+                        }
                     }
             });
             }
-
         #endregion
         }
     }

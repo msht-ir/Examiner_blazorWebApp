@@ -194,8 +194,8 @@ else
                                                         aria-expanded="false"
                                                         aria-controls="topics">
                                                         <h6 style="color:indianred;">
-                                                        <img class="pulse-hover" src="/img/icoFolderSearch.png" width="24" style="margin-right:10px;" title="فولدرهاي درس" />
-                                                        Folders
+                                                        <img class="pulse-hover" src="/img/icoWeb.png" width="38" style="margin-right:10px;" title="فولدرهاي درس" />
+                                                        Links
                                                         </h6>
                                                     </button>
                                                 </h4>
@@ -242,7 +242,7 @@ else
                                                             <MudContainer Class="mt-2 px-0">
                                                                 <MudCard Class="mx-0">
                                                                     <MudCardContent Style="background-color:whitesmoke;">
-                                                                    <h6 style="color:royalblue;text-align:center">add new folder</h6>
+                                                                    <h6 style="color:royalblue;text-align:center">add new link</h6>
                                                                         <div class="mb-2">
                                                                         <MudTextField @ref="txtNewCourseFolderTitle"
                                                                                       @bind-Value="courseFolder.CourseFolderTitle"
@@ -545,7 +545,7 @@ else
     public void BtnAddNewCourseFolder (int courseId)
         {
         appState.SetCmd("AddNewCourseFolder");
-        courseFolder.CourseFolderTitle = "new folder";
+        courseFolder.CourseFolderTitle = "new link";
         courseFolder.CourseFolderUrl = "https://";
         appState.SetCourseId(courseId);
         StateHasChanged();

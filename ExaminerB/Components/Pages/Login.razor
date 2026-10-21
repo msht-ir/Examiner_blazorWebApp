@@ -46,11 +46,11 @@
                         <div style="display: flex; justify-content: flex-end;margin-bottom:20px;">
                         @if (user.UserRole == "student")
                             {
-                            <img src="/img/icoLogin_S.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
+                            <img src="/img/icoLogin_S1.png" width="300" style="margin-right:10px" @onclick="SwitchUserRole" />
                             }
                         else
                             {
-                            <img src="/img/icoLogin_T.png" width="320" style="margin-right:10px" @onclick="SwitchUserRole" />
+                            <img src="/img/icoLogin_T1.png" width="300" style="margin-right:10px" @onclick="SwitchUserRole" />
                             }
                         </div>
                         <MudButton OnClick="@(() => BtnLogin())"

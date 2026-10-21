@@ -116,4 +116,13 @@
     <ProjectReference Include="..\ExaminerS\ExaminerS.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\img\icoLogin_S1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\img\icoLogin_T1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

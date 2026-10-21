@@ -33,6 +33,7 @@ else
     {
     <h6 style="text-align:center;">Messages of: <span style="color:indianred">@appState.StudentName</span></h6>
     <h6 style="text-align:center;color:indianred">@appState.StudentNickname</h6>
+    //header pie-chart
     @if (lstStudentMessages.Count > 0)
         {
             <div style="text-align:center">
@@ -44,7 +45,7 @@ else
                 @if (user.UserRole == "teacher")
                     {
                         <button class="btn btn-link" @onclick="() => BtnDelete_MessagesOfstudent(Id)">
-                        <img src="/img/icoDelete2.png" width="35" />
+                        <img src="/img/icoDelete2.png" width="35" title="delete all the messages sent to this student"/>
                         </button>
                     }
                 <br />
@@ -82,7 +83,7 @@ else
                         </button>
                     }
                     <button class="btn btn-link" @onclick="() => BtnDelete_MessagesOfstudent(Id)">
-                    <img src="/img/icoDelete2.png" width="35" />
+                    <img src="/img/icoDelete2.png" width="35" title="delete all the messages sent to this student" />
                     </button>
                 }
             </div>
@@ -199,6 +200,7 @@ else
         }
     @if (lstStudentMessages.Count > 0)
         {
+        @* STUDENT MESSAGES *@
         <h5 style="text-align:left; margin-top:30px">messages <span style="color:indianred;font-size:x-small;">(red: deleted by user)</span></h5>
             <MudExpansionPanels Class="gap-4 mt-6">
             @foreach (StudentMessage message in lstStudentMessages)
@@ -213,7 +215,7 @@ else
                                 }
                             else
                                 {
-                                <MudIcon Icon="@Icons.Material.Outlined.LocalPostOffice" class="mr-3 pulse-hover"></MudIcon>                            
+                                <MudIcon Icon="@Icons.Material.Outlined.LocalPostOffice" Color="Color.Secondary" class="mr-3 pulse-hover"></MudIcon>
                                 }
                             @if ((message.StudentMessageTags & 4) == 4)
                                 {
@@ -293,14 +295,14 @@ else
                                             </div>
                                         @if ((message.StudentMessageTags & 8) == 8)
                                             {
-                                            <div class="d-flex justify-content-center">
-                                                <MudChart ChartType="ChartType.Donut"
-                                                T="double"
-                                                ChartSeries="@(new double [] { nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered, (nStudents - nStudentsRead) }.AsChartDataSet())"
-                                                ChartLabels="@(new [] { "Yes: " + nStudentsAnsweredYes, "No: " + nStudentsAnsweredNo, "notSure: " + nStudentsNotAnswered, "notRead: " + (nStudents - nStudentsRead) })"
-                                                Width="200px" Height="200px">
-                                                </MudChart>
-                                            </div>
+                                                <div class="d-flex justify-content-center">
+                                                    <MudChart ChartType="ChartType.Donut"
+                                                          T="double"
+                                                          ChartSeries="@(new double [] { nStudentsAnsweredYes, nStudentsAnsweredNo, nStudentsNotAnswered, (nStudents - nStudentsRead) }.AsChartDataSet())"
+                                                          ChartLabels="@(new [] { "Yes: " + nStudentsAnsweredYes, "No: " + nStudentsAnsweredNo, "notSure: " + nStudentsNotAnswered, "notRead: " + (nStudents - nStudentsRead) })"
+                                                          Width="200px" Height="200px">
+                                                    </MudChart>
+                                                </div>
                                             <div class="d-flex justify-content-center" style="color:gray;text-align:left;font-weight:bold; padding-left:25px;">Participation: <span style="font-weight:normal; margin-left:10px;"> @(nStudentsAnsweredYes + nStudentsAnsweredNo) /  @nStudents ( @((nStudentsAnsweredYes + nStudentsAnsweredNo) * 100 / @nStudents)% ) </span></div>
                                             <br />
                                             }
@@ -308,16 +310,13 @@ else
                                     else
                                         {
                                             <div style="text-align:center">
-                                            @* <button class="btn btn-link" @onclick="()=>BtnCalcPercentsForMessage(message)">
-                                                <img src="/img/icoChartPie.png" width="26" />
-                                            </button> *@
                                             @if (user.UserRole == "teacher")
                                                 {
                                                     <button class="btn btn-link" @onclick="() => BtnDelete_Messages(message.MessageId)">
-                                                    <img src="/img/icoDelete2.png" width="30" />
+                                                    <img src="/img/icoDelete2.png" width="30" title="delete all instances of this message sent to everyone" />
                                                     </button>
                                                     <button class="btn btn-link" @onclick="() => BtnDelete_Message(message.StudentMessageId)">
-                                                    <img src="/img/icoDelete1.png" width="22" />
+                                                    <img src="/img/icoDelete1.png" width="22" title="delete just this message item" />
                                                     </button>
                                                 }
                                             </div>
@@ -578,7 +577,7 @@ else
         if (confirmResult == true)
             {
             int userId = Convert.ToInt32(appState.UserId);
-            bool result = await feService.Delete_Messages("ByStudentMesssageId", studentMessageId);
+            bool result = await feService.Delete_Messages("ByStudentMessageId", studentMessageId);
             if (result)
                 {
                 Snackbar.Add("deleted", Severity.Success); //Severity.Warning | .Error | .Info | .Success --needs: @inject ISnackbar Snackbar
@@ -596,12 +595,12 @@ else
         }
     public async Task BtnDelete_Messages (int messageId)
         {
-        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> messages permanently?<br><span style='font-weight:bold;color:royalblue'>All</span> instances of this message sent to students<br>will also be <span style='color:indianred'>deleted</span><br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
+        var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> main message and <br><span style='font-weight:bold;color:royalblue'>all</span> instances sent to students<br>will also be <span style='color:indianred'>deleted</span>permanently.<br><br><div style='text-align:center'><img src='/img/icoDelete2.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
             int groupId = Convert.ToInt32(appState.GroupId);
-            bool result = await feService.Delete_Messages("ByMessageid", messageId);
+            bool result = await feService.Delete_Messages("ByMessageId", messageId);
             if (result)
                 {
                 int id = Convert.ToInt32(Id);
