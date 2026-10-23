@@ -24,16 +24,16 @@ namespace ExaminerS.Models
         public string UserEmail { get; set; } = "";
         public int UserTags { get; set; } = 0;
         /*
-         *     USER / STUDENT
-          1:   IsActive
-          2:   CanChangePass
-          4:   -
-          8:   -
-          16:  ShowDueNotes
-          32:  DueNotesDays 7/14
-          64:  IsSelected
-          128: SuperUser
-          256: CalendarFa
+         *  ---- USER / STUDENT
+            1:  IsActive
+            2:  CanChangePass
+            4:  CalendarFa
+            8:  DontExpireAcc
+           16:  ShowReminders
+           32:  RemindNotesDays 7->14
+           64:  IsSelected
+          128:  Admin
+          256:  SuperUser
         */
         public bool IsActive
             {
@@ -57,7 +57,18 @@ namespace ExaminerS.Models
                     UserTags &= ~2;
                 }
             }
-        public bool ShowDueNotes
+        public bool CalendarFa
+            {
+            get => (UserTags & 4) == 4;
+            set
+                {
+                if (value)
+                    UserTags |= 4;
+                else
+                    UserTags &= ~4;
+                }
+            }
+        public bool ShowReminders
             {
             get => (UserTags & 16) == 16;
             set
@@ -68,7 +79,7 @@ namespace ExaminerS.Models
                     UserTags &= ~16;
                 }
             }
-        public bool DueNotesDays
+        public bool ReminderDays
             {
             get => (UserTags & 32) == 32;
             set
@@ -90,7 +101,18 @@ namespace ExaminerS.Models
                     UserTags &= ~64;
                 }
             }
-        public bool CalendarFa
+        public bool IsAdmin
+            {
+            get => (UserTags & 128) == 128;
+            set
+                {
+                if (value)
+                    UserTags |= 128;
+                else
+                    UserTags &= ~128;
+                }
+            }
+        public bool IsSuperuser
             {
             get => (UserTags & 256) == 256;
             set
@@ -101,6 +123,7 @@ namespace ExaminerS.Models
                     UserTags &= ~256;
                 }
             }
+
         public List<StudentGroup> StudentGroups { get; set; } = new List<StudentGroup> ();
         public List<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse> ();
         public List<StudentExam> StudentExams { get; set; } = new List<StudentExam> ();
@@ -142,7 +165,7 @@ namespace ExaminerS.Models
         public string GroupName { get; set; } = "";
         public string StudentName { get; set; } = "";
         public string StudentNickname { get; set; } = "";
-        public int StudentTags { get; set; } = 0; //1:IsActive 2:CanChangePass 4: 8: 16: 32: 64:selected 128: 256:
+        public int StudentTags { get; set; } = 0; //1:IsActive 2:CanChangePass 4:CalendarFa 8:DontExpire 16:ShowReminder 32:Days7-14 64:IsSelected 128: 256:
         }
     //C
     public class Course

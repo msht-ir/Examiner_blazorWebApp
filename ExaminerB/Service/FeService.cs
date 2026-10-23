@@ -1114,7 +1114,9 @@ namespace ExaminerB.Service
         public async Task<int> Create_Message (Message message)
             {
             var response = await _http.PostAsJsonAsync ($"api/Create_Message", message);
-            return response.IsSuccessStatusCode ? 1 : 0;
+            if (!response.IsSuccessStatusCode)
+                return 0;
+            return await response.Content.ReadFromJsonAsync<int> ();
             }
         public async Task<Message> Read_Message (int messageId, bool getStudentMessages)
             {

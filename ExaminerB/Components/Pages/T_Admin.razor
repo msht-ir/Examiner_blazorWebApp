@@ -19,8 +19,8 @@
 else
     {
         <EditForm Model="lstDepartments" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <img src="/img/icoAdmin.png" width="70" title="admin page صفحه ادمين" />
-        <h6 style="color:royalblue; font-style:italic">Admin</h6>
+        <img src="/img/icoAdmin.png" width="50" title="admin page صفحه ادمين" />
+        <h6 style="color:royalblue; font-style:italic">@((user.UserTags & 256) == 256 ? "Superuser" : "Admin")</h6>
         @* SECTION 1 ---- NEW/EDIT Department / SHOW NewTeachers *@
             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 mb-4 px-0">
                 <MudCard Class="mx-auto">
@@ -92,15 +92,18 @@ else
                         {
                         @* ComboBox Departments *@
                             <div style="text-align: center;">
+                            @if ((user.UserTags & 256) == 256)
+                                {
+                                    <button type="button"
+                                        class="btn btn-link pulse-hover"
+                                        @onclick='() => BtnListNewTeachers()'>
+                                    <img src="/img/icoChatroomAddNew.png" width="40" title="ليست اساتيد جديد که بايد تاييد و در يک گروه قرار داده شوند" />
+                                    </button>
+                                }
                                 <button type="button"
                                     class="btn btn-link pulse-hover"
                                     @onclick='() => BtnListDepartments()'>
                                 <img src="/img/icoListD.png" width="34" title="ليست گروه هاي آموزشي" />
-                                </button>
-                                <button type="button"
-                                    class="btn btn-link pulse-hover"
-                                    @onclick='() => BtnListNewTeachers()'>
-                                <img src="/img/icoChatroomAddNew.png" width="40" title="ليست اساتيد جديد که بايد تاييد و در يک گروه قرار داده شوند" />
                                 </button>
                             </div>
                             <div class="d-flex gap-3">
@@ -138,37 +141,45 @@ else
                                 <MudCard Class="mx-0">
                                     <MudCardContent Style="background-color:rgba(249,249,249);">
                                     <h3 style="text-align:center;color:royalblue;font-style:italic;">departments</h3>
-                                    <div style="text-align: left;">
-                                        <button type="button"
-                                            class="btn btn-link pulse-hover"
-                                            @onclick='() => BtnAddNewDepartment()'>
-                                        <img src="/img/icoAdd1.png" width="18" />
-                                        </button>
-                                    </div>
+                                    @if (user.IsSuperuser)
+                                        {
+                                        @* superuser can create a new department *@
+                                            <div style="text-align: left;">
+                                                <button type="button"
+                                                    class="btn btn-link pulse-hover"
+                                                    @onclick='() => BtnAddNewDepartment()'>
+                                                <img src="/img/icoAdd1.png" width="18" />
+                                                </button>
+                                            </div>
+                                        }
                                     <hr style="color:indianred" />
                                     @foreach (Department department in lstDepartments)
                                         {
                                             <div class="d-flex align-items-center mb-1">
-                                                <button type="button"
-                                                    class="btn btn-link"
-                                                    style="margin-left:1px"
-                                                    Title="delete depatment حذف دپارتمان"
-                                                    @onclick='() => BtnDeleteDepartment(department.DepartmentId)'>
-                                                <img src="/img/icoDelete1.png" width="20" />
-                                                </button>
-                                                <button type="button"
-                                                    class="btn btn-link"
-                                                    style="margin-left:1px"
-                                                    Title="edit depatment ويرايش دپارتمان"
-                                                    @onclick='() => BtnEditDepartment(department.DepartmentId)'>
-                                                <img src="/img/icoRename.png" width="26" />
-                                                </button>
+                                            @if (user.IsSuperuser)
+                                                {
+                                                @* superuser can edit/delete a department *@
+                                                    <button type="button"
+                                                        class="btn btn-link"
+                                                        style="margin-left:1px"
+                                                        Title="delete depatment حذف دپارتمان"
+                                                        @onclick='() => BtnDeleteDepartment(department.DepartmentId)'>
+                                                    <img src="/img/icoDelete1.png" width="20" />
+                                                    </button>
+                                                    <button type="button"
+                                                        class="btn btn-link"
+                                                        style="margin-left:1px"
+                                                        Title="edit depatment ويرايش دپارتمان"
+                                                        @onclick='() => BtnEditDepartment(department.DepartmentId)'>
+                                                    <img src="/img/icoRename.png" width="26" />
+                                                    </button>
+                                                }
                                                 <button type="button"
                                                     class="btn btn-link"
                                                     style="margin-left:1px"
                                                     Title="list teachers ليست اساتيد"
                                                     @onclick='() => BtnListTeachers(department.DepartmentId)'>
-                                                <img src="/img/icoSwitchBoardStudents.png" width="32" />
+                                                <img src="/img/icoListT.png" width="30" />
                                                 </button>
                                             <button style="font-size:small;color:dimgray" @onclick='() => BtnListTeachers(department.DepartmentId)'>@department.DepartmentName</button>
                                             </div>
@@ -228,7 +239,7 @@ else
                                                   Class="my-textfield" />
                                     </div>
                                     <div class="d-flex" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                        <button class="btn btn-link" style="margin-top:30px;" Title="cancel" @onclick="BtnCancel">
+                                        <button class="btn btn-link pulse-hover" style="margin-top:30px;" Title="cancel" @onclick="BtnCancel">
                                         <img src="/img/icoCancel.png" width="20" />
                                         </button>
                                     </div>
@@ -295,7 +306,7 @@ else
                                                Style="margin-top:20px;font-family:Tahoma;"
                                                title="اکانت کاربر (استاد) فعال / غير فعال است">
                                         </MudSwitch>
-                                    @* Change Pass? *@
+                                    @* Can Change Pass? *@
                                         <MudSwitch @bind-Value="_teacher.CanChangePass"
                                                Label="can change password"
                                                Color="Color.Dark"
@@ -303,23 +314,7 @@ else
                                                Style="margin-top:5px;font-family:Tahoma;"
                                                title="کاربر مي تواند پسورد خود را تغيير دهد">
                                         </MudSwitch>
-                                    @* Show Due Notes *@
-                                        <MudSwitch @bind-Value="_teacher.ShowDueNotes"
-                                               Label="reminder"
-                                               Color="Color.Success"
-                                               Dense="true"
-                                               Style="margin-top:5px;font-family:Tahoma;"
-                                               title="نمايش يادآوري يادداشت هاي سررسيد شده">
-                                        </MudSwitch>
-                                    @* Due Notes +/-Days *@
-                                        <MudSwitch @bind-Value="_teacher.DueNotesDays"
-                                               Label="seek longer (7 days)"
-                                               Color="Color.Success"
-                                               Dense="true"
-                                               Style="margin-top:5px;font-family:Tahoma;"
-                                               title="يادداشت هاي 7 روز گذشته و آينده">
-                                        </MudSwitch>
-                                    @* Persian Calendar *@
+                                    @* Use Persian Calendar? *@
                                         <MudSwitch @bind-Value="_teacher.CalendarFa"
                                                Label="Persian calendar"
                                                Color="Color.Warning"
@@ -327,10 +322,39 @@ else
                                                Style="margin-top:5px;font-family:Tahoma;"
                                                title="Use Persian Calendar از تقويم شمسي استفاده مي کنم">
                                         </MudSwitch>
-
+                                    @* Show Reminders *@
+                                        <MudSwitch @bind-Value="_teacher.ShowReminders"
+                                               Label="reminders"
+                                               Color="Color.Success"
+                                               Dense="true"
+                                               Style="margin-top:5px;font-family:Tahoma;"
+                                               title="نمايش يادآوري يادداشت هاي سررسيد شده">
+                                        </MudSwitch>
+                                    @* Extend Reminder +/-14 Days *@
+                                        <MudSwitch @bind-Value="_teacher.ReminderDays"
+                                               Label="extend to 14 days"
+                                               Color="Color.Success"
+                                               Dense="true"
+                                               Style="margin-top:5px;font-family:Tahoma;"
+                                               title="يادداشت هاي 14 روز گذشته و آينده">
+                                        </MudSwitch>
+                                    @if (user.IsSuperuser)
+                                        {
+                                        @* Is Admin? *@
+                                            <MudSwitch @bind-Value="_teacher.IsAdmin"
+                                                   Label="Admin"
+                                                   Color="Color.Secondary"
+                                                   Dense="true"
+                                                   Style="margin-top:5px;font-family:Tahoma;"
+                                                   title="کاربر ادمين دپارتمان است">
+                                            </MudSwitch>
+                                        }
                                     </div>
-                                    <div class="d-flex" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                        <button class="btn btn-link" style="margin-top:30px;" Title="cancel" @onclick="BtnCancel">
+                                    <div class="d-flex" style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+                                        <button class="btn btn-link pulse-hover" style="margin-top:30px;" Title="cancel" @onclick="BtnUpdateTeacher">
+                                        <img src="/img/icoSave2.png" width="20" />
+                                        </button>
+                                        <button class="btn btn-link pulse-hover" style="margin-top:30px;" Title="cancel" @onclick="BtnCancel">
                                         <img src="/img/icoCancel.png" width="20" />
                                         </button>
                                     </div>
@@ -404,7 +428,7 @@ else
                                 <MudCardContent Style="background-color:rgba(249,249,249);">
                                 <h3 style="text-align:center;color:royalblue;font-style:italic;">new teachers signed up</h3>
                                 <hr style="color:indianred" />
-                                @if(lstNewTeachers.Count() > 0)
+                                @if (lstNewTeachers.Count() > 0)
                                     {
                                     foreach (User user in lstNewTeachers)
                                         {
@@ -423,7 +447,7 @@ else
                                                     @onclick='() => BtnEditTeacher(user)'>
                                                 <img src="/img/icoKeys.png" width="20" />
                                                 </button>
-                                                @* <button type="button"
+                                            @* <button type="button"
                                                     class="btn btn-link"
                                                     style="margin-left:1px"
                                                     Title="Save membership in Department عضويت در گروه آموزشي ذخيره شود"
@@ -436,9 +460,9 @@ else
                                     }
                                 else
                                     {
-                                <h6 style="text-align:center;color:gray;font-style:italic;">Empty</h6>
+                                    <h6 style="text-align:center;color:gray;font-style:italic;">Empty</h6>
                                     }
-                            </MudCardContent>
+                                </MudCardContent>
                             </MudCard>
                         </MudContainer>
                     break;
@@ -529,21 +553,6 @@ else
                     @onclick='() => BtnGotoPage("M")'>
                 <img src="/img/icoList.png" width="32" />
                 </button>
-                @* <button type="button"
-                    class="btn btn-link pulse-hover"
-                    @onclick='() => BtnGotoPage("N")'>
-                <img src="/img/icoNoteBook.png" width="38" />
-                </button>
-                <button type="button"
-                    class="btn btn-link pulse-hover"
-                    @onclick='() => BtnGotoPage("C")'>
-                <img src="/img/icoSwitchBoardCourses.png" width="42" />
-                </button>
-                <button type="button"
-                    class="btn btn-link pulse-hover"
-                    @onclick='() => BtnGotoPage("S")'>
-                <img src="/img/icoSwitchBoardStudents.png" width="42" />
-                </button> *@
             </div>
         </EditForm>
     }
@@ -603,8 +612,14 @@ else
         user.UserName = appState.UserName;
         user.UserPass = appState.UserPass;
         user.UserRole = appState.UserRole;
+        user.UserTags = Convert.ToInt32(appState.UserTags);
+        user.DepartmentId = Convert.ToInt32(appState.UserDepartmentId);
         //on second rener, user.UserId will get its value
         lstDepartments = await feService.Read_Departments();
+        if (!user.IsSuperuser)
+            {
+            lstDepartments = lstDepartments.Where(x => x.DepartmentId == user.DepartmentId).ToList();
+            }
         _cmd = "listdepartments";
         _hasFetched = true;
         }
@@ -754,7 +769,7 @@ else
         }
     private void BtnAddNewTeacher ()
         {
-        _teacher = new User ();
+        _teacher = new User();
         _cmd = "addnewteacher";
         StateHasChanged();
         }
@@ -829,16 +844,16 @@ else
         else if (DepartmentId < 1)
             {
             Snackbar.Add($"select a department", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-            } 
+            }
         else
             {
             _teacher.UserRole = "teacher";
             _teacher.DepartmentId = DepartmentId;
-            _teacher.StudentGroups = new ();
-            _teacher.StudentCourses = new ();
-            _teacher.StudentExams = new ();
-            _teacher.StudentMessages = new ();
-            _teacher.StudentNotes = new ();
+            _teacher.StudentGroups = new();
+            _teacher.StudentCourses = new();
+            _teacher.StudentExams = new();
+            _teacher.StudentMessages = new();
+            _teacher.StudentNotes = new();
             bool result = await feService.Update_User(_teacher);
             if (result)
                 {
@@ -859,9 +874,9 @@ else
         bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
             {
-            bool result = await feService.Delete_Teacher (teacher.UserId);
+            bool result = await feService.Delete_Teacher(teacher.UserId);
             Snackbar.Add($"teacher (request) deleted", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-            await BtnListNewTeachers ();
+            await BtnListNewTeachers();
             _cmd = "listnewteachers";
             StateHasChanged();
             }
@@ -980,7 +995,7 @@ else
     //convert date
     public string PersianDate (DateTimeOffset? dt)
         {
-        if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
+        if ((Convert.ToInt32(appState.UserTags) & 4) == 4)
             {
             return feService.ToPersianDate(dt.ToString());
             }

@@ -1297,7 +1297,7 @@ else
     //convert date
     public string PersianDate (DateTimeOffset? dt)
         {
-        if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
+        if ((Convert.ToInt32(appState.UserTags) & 4) == 4)
             {
             return feService.ToPersianDate(dt.ToString());
             }

@@ -330,7 +330,7 @@ else
                     {
                     case "S":
                             {
-                            List<User> student = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.DepartmentId), "S", id, 0, 15);
+                            List<User> student = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.UserDepartmentId), "S", id, 0, 15);
                             student [0].StudentCourses = await feService.Read_StudentCourses("S", id, Convert.ToInt32(appState.UserId));
                             student [0].StudentExams = await feService.Read_StudentExams("ByStudentIdAndTeacherId", id, Convert.ToInt32(appState.UserId));
                             lstStudents.Add(student [0]);
@@ -339,7 +339,7 @@ else
                     default:
                             {
                             //modes: GCEM (not S)
-                            var resultx = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.DepartmentId), mode, id, 0, 15);
+                            var resultx = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.UserDepartmentId), mode, id, 0, 15);
                             lstStudents = resultx;
                             break;
                             }
@@ -371,7 +371,7 @@ else
                     {
                     case "S":
                             {
-                            List<User> students = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.DepartmentId), "S", id, 0, 15); //15 = all GCEM
+                            List<User> students = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.UserDepartmentId), "S", id, 0, 15); //15 = all GCEM
                             students [0].StudentExams = await feService.Read_StudentExams("ByStudentIdAndTeacherId", id, Convert.ToInt32(appState.UserId));
                             students [0].StudentCourses = await feService.Read_StudentCourses("S", id, 0);
                             //lstStudents.Add (student);
@@ -379,7 +379,7 @@ else
                             }
                     default:
                             {
-                            var resultx = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.DepartmentId), "mode", id, 0, 15);
+                            var resultx = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.UserDepartmentId), "mode", id, 0, 15);
                             lstStudents = resultx;
                             break;
                             }
@@ -475,7 +475,7 @@ else
     //convert date
     public string PersianDate (DateTimeOffset? dt)
         {
-        if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
+        if ((Convert.ToInt32(appState.UserTags) & 4) == 4)
             {
             return feService.ToPersianDate(dt.ToString());
             }
@@ -492,28 +492,28 @@ else
             {
             case "G":
                     {
-                    var result = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.DepartmentId), "G", id, Convert.ToInt32(appState.UserId), 15);
+                    var result = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.UserDepartmentId), "G", id, Convert.ToInt32(appState.UserId), 15);
                     lstStudents = result;
                     break;
                     }
             case "C":
                     {
-                    lstStudents = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.DepartmentId), "C", id, Convert.ToInt32(appState.UserId), 15);
+                    lstStudents = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.UserDepartmentId), "C", id, Convert.ToInt32(appState.UserId), 15);
                     break;
                     }
             case "E":
                     {
-                    lstStudents = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.DepartmentId), "E", id, Convert.ToInt32(appState.UserId), 15);
+                    lstStudents = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.UserDepartmentId), "E", id, Convert.ToInt32(appState.UserId), 15);
                     break;
                     }
             case "M":
                     {
-                    lstStudents = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.DepartmentId), "M", id, Convert.ToInt32(appState.UserId), 15);
+                    lstStudents = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.UserDepartmentId), "M", id, Convert.ToInt32(appState.UserId), 15);
                     break;
                     }
             case "S":
                     {
-                    lstStudents = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.DepartmentId), "S", id, Convert.ToInt32(appState.UserId), 15);
+                    lstStudents = await feService.Read_StudentsByGCEMSId(Convert.ToInt32(appState.UserDepartmentId), "S", id, Convert.ToInt32(appState.UserId), 15);
                     break;
                     }
             }

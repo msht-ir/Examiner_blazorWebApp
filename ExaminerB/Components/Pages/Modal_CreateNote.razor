@@ -192,20 +192,20 @@
             _PersianMonth = dT1Offset.Month;
             _PersianDay = dT1Offset.Day;
             _date = dT1Offset.LocalDateTime;
-            _time = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? dT1Offset.TimeOfDay.Add(new TimeSpan(+3, +30, 0)) : dT1Offset.TimeOfDay; //I dont know why! but it works like this!
+            _time = ((Convert.ToInt32(appState.UserTags) & 4) == 4) ? dT1Offset.TimeOfDay.Add(new TimeSpan(+3, +30, 0)) : dT1Offset.TimeOfDay; //I dont know why! but it works like this!
             //DT2 (NoteDueDateTime)
             DateTimeOffset dT2Offset = DateTimeOffset.Parse(appState.NoteDueDateTime);
             _PersianYear = dT2Offset.Year;
             _PersianMonth = dT2Offset.Month;
             _PersianDay = dT2Offset.Day;
             _dueDate = dT2Offset.LocalDateTime;
-            _dueTime = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? dT2Offset.TimeOfDay.Add(new TimeSpan(+3, +30, 0)) : dT2Offset.TimeOfDay; //I dont know why! but it works like this!
+            _dueTime = ((Convert.ToInt32(appState.UserTags) & 4) == 4) ? dT2Offset.TimeOfDay.Add(new TimeSpan(+3, +30, 0)) : dT2Offset.TimeOfDay; //I dont know why! but it works like this!
             //END PARSE DATETIME
             note.NoteText = appState.NoteText ?? "";
             note.IsRtl = Convert.ToBoolean(appState.NoteIsRtl);
             note.IsTodo = Convert.ToBoolean(appState.NoteIsTodo);
             }
-        _persianCulture = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? new CultureInfo("fa-IR") : new CultureInfo("en-US");
+        _persianCulture = ((Convert.ToInt32(appState.UserTags) & 4) == 4) ? new CultureInfo("fa-IR") : new CultureInfo("en-US");
         _hasFetched = true;
         }
     private void TriggerRender ()

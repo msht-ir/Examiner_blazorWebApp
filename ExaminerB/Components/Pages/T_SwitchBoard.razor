@@ -14,8 +14,20 @@
 
     <div class="container" style="max-width:500px; margin: 0 auto;">
         <div style="text-align: center;">
-            <div style="text-align: center;margin-top:50px;margin-bottom:20px;">
-            <p style="font-size:large;font-style:italic;color:royalblue">@appState.UserNickname</p>
+            <div style="text-align: center;margin-top:30px;margin-bottom:30px;">
+            @if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
+                {
+                <p style="font-size:large;font-style:italic;color:royalblue"> <span style="font-size:small;font-style:italic;color:darkgoldenrod"> @appState.UserName - superuser </span><br /> @appState.UserNickname</p>
+                }
+            else if ((Convert.ToInt32(appState.UserTags) & 128) == 128)
+                {
+                <p style="font-size:large;font-style:italic;color:royalblue"> <span style="font-size:small;font-style:italic;color:silver"> @appState.UserName - admin </span><br /> @appState.UserNickname</p>
+                }
+            else 
+                {
+                <p style="font-size:large;font-style:italic;color:royalblue"> <span style="font-size:small;font-style:italic;color:seagreen"> @appState.UserName - teacher </span><br /> @appState.UserNickname</p>
+                }
+
             </div>
         <hr style="color:red;margin-bottom:50px;" />
 
@@ -26,10 +38,10 @@
                 <button class="btn btn-link pulse-hover" style="transform: translateY(-1px);border-radius: 30%;" @onclick="GotoCourses">
                 <img src="/img/icoSwitchBoardCourses.png" width="46" title="courses درس ها" />
                 </button>
-            @if (Convert.ToInt32(appState.UserTags & 128) == 128)
+            @if ((user.UserTags & 128) == 128 || (user.UserTags & 256) == 256)
                 {
                     <button class="btn btn-link pulse-hover" style="transform: translateY(-1px);border-radius: 30%;" @onclick="BtnGotoAdminPage">
-                    <img src="/img/icoAdmin.png" width="46" title="admin page صفحه ادمين" />
+                    <img src="/img/icoAdmin.png" width="46" title="su/admin page صفحه ادمين / سوپر يوزر" />
                     </button>
                 }
             else
@@ -83,6 +95,12 @@
             {
             Navman.NavigateTo("/Login");
             }
+        user.UserId = Convert.ToInt32(appState.UserId);
+        user.UserName = appState.UserName;
+        user.UserPass = appState.UserPass;
+        user.UserNickname = appState.UserNickname;
+        user.UserRole = appState.UserRole;
+        user.UserTags = Convert.ToInt32(appState.UserTags);
         }
     protected async Task OnAfterRenderAsync ()
         {

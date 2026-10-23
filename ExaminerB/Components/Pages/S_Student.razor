@@ -849,7 +849,7 @@
             student.UserTags = Convert.ToInt32(appState.UserTags);
             student.UserName = appState.UserName ?? "";
             student.UserNickname = appState.UserNickname ?? "";
-            student.DepartmentId = Convert.ToInt32(appState.DepartmentId);
+            student.DepartmentId = Convert.ToInt32(appState.UserDepartmentId);
             await ReadMessageList();
             await ReadChatList();
             await ReadChatroomList();
@@ -1210,7 +1210,7 @@
             }
         student.UserId = appState.UserId ?? 0;
         chatroom.ChatroomAdminId = student.UserId;
-        chatroom.ChatroomDepartmentId = Convert.ToInt32(appState.DepartmentId);
+        chatroom.ChatroomDepartmentId = Convert.ToInt32(appState.UserDepartmentId);
         int result = await feService.Create_Chatroom(chatroom);
         _cmd = "";
         await ReadChatroomList();
@@ -1328,7 +1328,7 @@
     //convert date
     public string PersianDate (DateTimeOffset? dt)
         {
-        if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
+        if ((Convert.ToInt32(appState.UserTags) & 4) == 4)
             {
             return feService.ToPersianDate(dt.ToString());
             }
@@ -1367,7 +1367,7 @@
         {
         student.UserId = appState.UserId ?? 0;
         lstChatrooms.Clear();
-        lstChatrooms = await feService.Read_Chatrooms(Convert.ToInt32(appState.DepartmentId));
+        lstChatrooms = await feService.Read_Chatrooms(Convert.ToInt32(appState.UserDepartmentId));
         }
     private async Task ReadNoteList ()
         {

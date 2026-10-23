@@ -106,7 +106,7 @@
                                                    Size="Size.Small"
                                                    OnClick="@(() => BtnSignup())"
                                                    Style="margin-left:20px;width:150px;">
-                                            Sign Up
+                                            Join Us
                                             </MudButton>
                                             <MudButton Variant="Variant.Filled"
                                                    EndIcon="@Icons.Material.Outlined.HelpCenter"
@@ -208,14 +208,14 @@
             {
             appState.SetCourseId(0);
             appState.SetExamId(0);
-            appState.SetDepartmentId(0);
+            appState.SetUserDepartmentId(0);
             switch (user.UserRole)
                 {
                 case "student":
                         {
                         appState.SetUserLoginStatus(1);
                         appState.SetUserId(user.UserId);
-                        appState.SetDepartmentId(user.DepartmentId);
+                        appState.SetUserDepartmentId(user.DepartmentId);
                         appState.SetUserName(user.UserName);
                         appState.SetUserPass(user.UserPass);
                         appState.SetUserTags(user.UserTags);
@@ -243,7 +243,7 @@
                         {
                         appState.SetUserLoginStatus(1);
                         appState.SetUserId(user.UserId);
-                        appState.SetDepartmentId(user.DepartmentId);
+                        appState.SetUserDepartmentId(user.DepartmentId);
                         appState.SetUserName(user.UserName);
                         appState.SetUserPass(user.UserPass);
                         appState.SetUserTags(user.UserTags);
@@ -282,7 +282,7 @@
     //convert date
     public string PersianDate (DateTimeOffset? dt)
         {
-        if ((Convert.ToInt32(appState.UserTags) & 256) == 256)
+        if ((Convert.ToInt32(appState.UserTags) & 4) == 4)
             {
             return feService.ToPersianDate(dt.ToString());
             }

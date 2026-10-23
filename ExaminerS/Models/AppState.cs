@@ -73,22 +73,22 @@
             }
 
         //user (teacher|student)
-        public int? DepartmentId
+        public string? UserDepartmentName
             {
             get; private set;
             }
-        public void SetDepartmentId (int _DepartmentId)
+        public void SetUserDepartmentName (string _UserDepartmentName)
             {
-            DepartmentId = _DepartmentId;
+            UserDepartmentName = _UserDepartmentName;
             OnChange?.Invoke ();
             }
-        public string? DepartmentName
+        public int? UserDepartmentId
             {
             get; private set;
             }
-        public void SetDepartmentName (string _DepartmentName)
+        public void SetUserDepartmentId (int _UserDepartmentId)
             {
-            DepartmentName = _DepartmentName;
+            UserDepartmentId = _UserDepartmentId;
             OnChange?.Invoke ();
             }
         public int? TeacherId

@@ -19,21 +19,22 @@
                 <MudCard Class="mx-auto">
                     <MudCardContent Style="background-color:rgba(249,249,249);">
                         <div style="text-align:left">
-                        Here, your temporary teacher-account will be created immediately.<br />
-                        Contact via email if furture help is needed.<br />
-                        Preferably, setup examiner app on your own server.<br />
-                        You may contact for detailed info on database tables.<br />
+                        You are about to apply for an account to join Examiner.<br />
+                        You will recieve a reply by email and be requested for more info.<br />
+                        We need to know if you are ready to join an existing department,<br />
+                        or you want to create your own department and be the admin.<br />
+                        Contact me by email if you didn't receive our reply within 3 working days.<br />
                         <br />
                         <span style="font-weight:bold;color:indianred">notice:</span><br />
                             <ul>
                                 <li>
-                                use Examiner app for educational purposes<br />
+                                Examiner app is free and just for educational purpose<br />
                                 </li>
                                 <li>
-                                free service for students<br />
+                                Examiner server will be eventually closed some day, we will notify admins of departments beforehand<br />
                                 </li>
                                 <li>
-                                this server may be closed, backup your work<br />
+                                We encourage you to setup your permanent server for Examiner. Fill free to contact me for a database template and the web app. 
                                 </li>
                             </ul>
                             <div class="form-check form-check-inline" style="padding-top:8px;">
@@ -43,7 +44,7 @@
                                    @onchange="e => BtnAgree((bool) e.Value)" />
                                 <label class="form-check-label"
                                    style="font-size: small; color: RoyalBlue;">
-                                I agree
+                                continue
                                 </label>
                             </div>
                         </div>
@@ -52,7 +53,7 @@
             </MudContainer>
         @if (_cmd == "agreed")
             {
-            <h6 style="color:royalblue; margin-top:20px;">SIGN UP <span style="font-style:italic;color:gray"> (new teacher)</span></h6>
+            <h6 style="color:royalblue; margin-top:20px;">SIGN UP <span style="font-style:italic;color:gray"> (new teacher/admin account)</span></h6>
                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
                     <MudCard Class="mx-auto">
                         <MudCardContent Style="background-color:rgba(249,249,249);">
@@ -113,13 +114,13 @@
                            EndIcon="@Icons.Material.Filled.CloudUpload"
                            Size="Size.Small"
                            OnClick="@(() => BtnSignupNewTeacher())"
-                           Style="margin-right:20px">SIGN-UP </MudButton>
+                           Style="margin-right:20px">Submit </MudButton>
                 }
             <MudButton Variant="Variant.Filled"
                        EndIcon="@Icons.Material.Filled.Help"
                        Size="Size.Small"
                        OnClick="@(() => BtnHelpSignupNewTeacher())"
-                       Style="margin-right:20px;color:forestgreen">Guide </MudButton>
+                       Style="margin-right:20px;color:forestgreen">Help </MudButton>
             <MudButton Variant="Variant.Filled"
                        EndIcon="@Icons.Material.Filled.Cancel"
                        Size="Size.Small"

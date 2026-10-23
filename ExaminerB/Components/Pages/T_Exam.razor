@@ -407,14 +407,14 @@ else
             Navman.NavigateTo("/Login");
             }
         appState.SetCmd("");
-        _persianCulture = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? new CultureInfo("fa-IR") : new CultureInfo("en-US");
+        _persianCulture = ((Convert.ToInt32(appState.UserTags) & 4) == 4) ? new CultureInfo("fa-IR") : new CultureInfo("en-US");
         exam = await feService.Read_Exam(examId, false);
         //PARSE DATETIME
         _PersianYear = exam.ExamDateTime.Year;
         _PersianMonth = exam.ExamDateTime.Month;
         _PersianDay = exam.ExamDateTime.Day;
         _date = exam.ExamDateTime.LocalDateTime;
-        _time = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? exam.ExamDateTime.TimeOfDay.Add(new TimeSpan(3, 30, 0)) : exam.ExamDateTime.TimeOfDay;
+        _time = ((Convert.ToInt32(appState.UserTags) & 4) == 4) ? exam.ExamDateTime.TimeOfDay.Add(new TimeSpan(3, 30, 0)) : exam.ExamDateTime.TimeOfDay;
         //END PARSE DATETIME
         lstExamCompositions = await feService.Read_ExamCompositions(examId);
         lstExamTests = await feService.Read_TestsByExamId(examId, true);
@@ -437,7 +437,7 @@ else
     public async Task BtnUpdateExam ()
         {
         DateTime _dt = _date.Value.Date + _time.Value;
-        exam.ExamDateTime = ((Convert.ToInt32(appState.UserTags) & 256) == 256) ? _dt.Add(new TimeSpan(-3, -30, 0)) : _dt; //if IR: convert to utc
+        exam.ExamDateTime = ((Convert.ToInt32(appState.UserTags) & 4) == 4) ? _dt.Add(new TimeSpan(-3, -30, 0)) : _dt; //if IR: convert to utc
         exam.ExamNTests = lstExamTests.Count;
         bool result = await feService.Update_Exam(exam);
         Snackbar.Add("exam updated", severity: Severity.Info, opt => { opt.VisibleStateDuration = 1000; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
