@@ -890,6 +890,7 @@ else
         {
         appState.SetReturnPage((appState.ReturnPage == "/T_ReportTests") ? "/T_SwitchBoard" : appState.ReturnPage);
         Navman.NavigateTo(appState.ReturnPage ?? "/T_SwitchBoard");
+        //Navman.NavigateTo("/T_SwitchBoard");
         }
     //method
     public async Task RefreshPageData ()

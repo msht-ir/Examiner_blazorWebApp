@@ -80,30 +80,33 @@ else
                                 <img src="/img/icoFolderS.png" width="22" />
                                 </button>
                             @i: @studentExam.StudentName - @studentExam.StudentNickname
+                            </div>
+                        @if (!(studentExam.DateTimeStart.ToString().Contains("1/1/1900")))
+                            {
                             <hr />
-                            </div>
-                            <div style="font-weight:normal;">
-                            @* <img src="/img/icoReport0.png" width="20" /> *@
-                            <span style="color:green">start: </span> <span style="font-size:small">@PersianDate(studentExam.DateTimeStart)</span> /
-                            <span style="color:royalblue">finish: </span> <span style="font-size:small">@PersianDate(studentExam.DateTimeFinish)</span>
-                            </div>
-                            <div style="display:flex; align-items:center;font-weight:bold;">
-                                <button class="btn btn-link" @onclick="async () => await BtnShowStudentExamTests(studentExam)">
-                                <img src="/img/icoListT.png" width="28" />
-                                </button>
-                            @if (studentExam.StudentExamPoint < 10)
-                                {
-                                <span style="color:red">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
-                                }
-                            else if (studentExam.StudentExamPoint < 17)
-                                {
-                                <span style="color:royalblue">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
-                                }
-                            else
-                                {
-                                <span style="color:darkgoldenrod">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
-                                }
-                            </div>
+                                <div style="font-weight:normal;">
+                                @* <img src="/img/icoReport0.png" width="20" /> *@
+                                <span style="color:green">start: </span> <span style="font-size:small">@(studentExam.DateTimeStart.ToString().Contains("1/1/1900") ? " - " : @PersianDate(studentExam.DateTimeStart))</span> /
+                                <span style="color:royalblue">finish: </span> <span style="font-size:small">@(studentExam.DateTimeStart.ToString().Contains("1/1/1900") ? " - " : @PersianDate(studentExam.DateTimeFinish))</span>
+                                </div>
+                                <div style="display:flex; align-items:center;font-weight:bold;">
+                                    <button class="btn btn-link" @onclick="async () => await BtnShowStudentExamTests(studentExam)">
+                                    <img src="/img/icoListT.png" width="28" />
+                                    </button>
+                                @if (studentExam.StudentExamPoint < 10)
+                                    {
+                                    <span style="color:red">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
+                                    }
+                                else if (studentExam.StudentExamPoint < 17)
+                                    {
+                                    <span style="color:royalblue">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
+                                    }
+                                else
+                                    {
+                                    <span style="color:darkgoldenrod">@(Math.Abs(studentExam.StudentExamPoint).ToString("F2"))</span> <span style="font-size:x-small;color:dimgray"> /20</span>
+                                    }
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -167,6 +170,7 @@ else
         appState.SetStudentExamId(studentExam.StudentExamId);
         appState.SetStudentName(studentExam.StudentName);
         appState.SetStudentNickname(studentExam.StudentNickname);
+        appState.SetReturnPage("/T_ReportExamPoints");
         Navman.NavigateTo("/T_ReportTests");
         }
     public void BtnReportPointsPlain ()
@@ -208,7 +212,7 @@ else
                 note.ReferenceType = 17;
                 note.NoteDateTime = DateTime.UtcNow;
                 note.NoteText = _txtNewExamSessionNote;
-                note.CreatorId = Convert.ToInt32 (appState.UserId);
+                note.CreatorId = Convert.ToInt32(appState.UserId);
                 int result = await feService.Create_Note(note);
                 }
             Snackbar.Add($"message injected to Exam Session", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });

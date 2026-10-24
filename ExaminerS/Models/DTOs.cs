@@ -446,7 +446,6 @@ namespace ExaminerS.Models
                     TestTags &= ~64;  //clear bit 6
                 }
             }
-
         }
     //M
     public class Message

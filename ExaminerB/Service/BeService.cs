@@ -2532,6 +2532,8 @@ namespace ExaminerB.Services2Backend
         public async Task<bool> Update_StudentsExamTagsAsync (string mode, int examId)
             {
             //Update tags of StudentExams for all student having this ExamId
+            //modes: see feServices
+            string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
             string sql = "dbo.sp_UpdateStudentsExamTags";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);
@@ -2542,6 +2544,7 @@ namespace ExaminerB.Services2Backend
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue ("@examid", examId);
                 cmd.Parameters.AddWithValue ("@mode", mode);
+                cmd.Parameters.AddWithValue ("@currentdatetime", currentDateTime);
                 int c = cmd.ExecuteNonQuery ();
                 await cnn.CloseAsync ();
                 //get list of students have this exam

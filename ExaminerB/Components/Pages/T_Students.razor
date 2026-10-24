@@ -150,6 +150,8 @@ else
                                          EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
                                          Style="margin-top:15px;"
                                          Size="Size.Small" Dense="true">
+                                    @if (user.IsAdmin || user.IsSuperuser)
+                                        {
                                         <MudMenuItem @onclick="BtnAddNewStudent">
                                             <button class="btn btn-link pulse-hover" Title=@((_help) ? "add a new student" : "")>
                                             <img src="/img/icoAdd0.png" width="18" title="new student افزودن دانشجوي جديد" />
@@ -162,6 +164,7 @@ else
                                             </button>
                                         import from excel
                                         </MudMenuItem>
+                                        }
                                         <MudMenuItem @onclick="BtnListAllStudent">
                                             <button class="btn btn-link" Title=@((_help) ? "list all students" : "")>
                                             <img src="/img/icoListAll.png" width="32" />
@@ -1158,6 +1161,7 @@ else
         user.UserName = appState.UserName;
         user.UserPass = appState.UserPass;
         user.UserRole = appState.UserRole;
+        user.UserTags = Convert.ToInt32(appState.UserTags);
         //on second rener, user.UserId will get its value
         lstGroups = await feService.Read_Groups(user, false, false);
         lstCourses = await feService.Read_Courses(user.UserId);
