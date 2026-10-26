@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.EMMA;
 using ExaminerS.Models;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -1000,6 +1001,11 @@ namespace ExaminerB.Service
             var response = await _http.PostAsJsonAsync ("api/Delete_Exam", examId);
             return response.IsSuccessStatusCode ? true : false;
             }
+        public async Task<bool> Delete_StudentExams (int examId, List<int> lstStudentIds)
+            {
+            var response = await _http.PostAsJsonAsync ($"api/Delete_StudentExams?examId={examId}", lstStudentIds);
+            return response.IsSuccessStatusCode ? true : false;
+            }
         public async Task<bool> Delete_StudentExam (int studentExamId)
             {
             var response = await _http.PostAsJsonAsync ("api/Delete_StudentExam", studentExamId);
@@ -1710,14 +1716,14 @@ namespace ExaminerB.Service
             }
         private void ComposeHeader (IContainer container, string title)
             {
-            var imagePath = Path.Combine (Directory.GetCurrentDirectory (), "wwwroot", "img", "icoLogin_S1.png");
+            var imagePath = Path.Combine (Directory.GetCurrentDirectory (), "wwwroot", "img", "ExaminerJpStyle.png");
             container.Row (row =>
             {
                 row.RelativeItem ().Column (column =>
                 {
                     column.Item ()
                         .AlignCenter ()
-                        .Width (140)
+                        .Width (80)
                         .Image (imagePath);
                     column.Item ()
                         .AlignCenter ()
@@ -1766,12 +1772,12 @@ namespace ExaminerB.Service
                                     .AlignLeft ()
                                     .Text (text =>
                                     {
-                                        text.Span ("user: " + student.UserName + "\r\n")
-                                            .FontSize (9)
+                                        text.Span (student.UserName + "\r\n")
+                                            .FontSize (14)
                                             .FontColor (Colors.Black)
                                             .DirectionFromRightToLeft ();
-                                        text.Span ("nickname: " + student.UserNickname + "\r\n")
-                                            .FontSize (9)
+                                        text.Span (student.UserNickname + "\r\n")
+                                            .FontSize (12)
                                             .FontColor (Colors.Black)
                                             .DirectionFromRightToLeft ();
                                         if (student.IsActive)
@@ -1789,101 +1795,170 @@ namespace ExaminerB.Service
                                         //GROUPS
                                         if (student.StudentGroups.Count > 0)
                                             {
-                                            text.Span ("\r\n--- Groups\r\n");
-                                            foreach (StudentGroup stGrp in student.StudentGroups)
-                                                {
-                                                text.Span ("         at " + ToPersianDate (stGrp.DateTimeJoined.ToString ()) + "  joined:     ")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Blue.Darken3)
-                                                .DirectionFromRightToLeft ();
-                                                text.Span (stGrp.GroupName + "\r\n")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Red.Darken3)
-                                                .DirectionFromRightToLeft ();
-                                                }
-                                            }
-                                        else
+                                            //text.Span ("\r\nGroups\r\n").FontSize (14);
+                                            cardColumn.Item ().Table (table =>
                                             {
-                                            text.Span ("\r\n--- no groups!\r\n");
+                                                //1 Define columns
+                                                table.ColumnsDefinition (columns =>
+                                                {
+                                                    columns.ConstantColumn (20);  //row # fix width in points (1 point = 1/72 inch)
+                                                    columns.RelativeColumn (2);   //Groupname --relative width (using sum of all relatives) 
+                                                    columns.RelativeColumn (1);   //DateTimeJoined
+                                                });
+                                                //2 Header
+                                                table.Header (header =>
+                                                {
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                                                        .Text ("#").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                                                        .Text ("Group").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                                                        .Text ("Date/Time Joined").FontSize (9).Bold ();
+                                                });
+                                                //3 Body rows
+                                                int index = 0;
+                                                foreach (StudentGroup stGrp in student.StudentGroups)
+                                                    {
+                                                    index++;
+                                                    var bg = index % 2 == 0 ? Colors.Grey.Lighten5 : Colors.White;
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (index.ToString ()).FontSize (9);
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (stGrp.GroupName).FontSize (9)
+                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (ToPersianDate (stGrp.DateTimeJoined.ToString ())).FontSize (9)
+                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    }
+                                            });
                                             }
                                         //COURSES
                                         if (student.StudentCourses.Count > 0)
                                             {
-                                            text.Span ("--- Courses\r\n");
-                                            foreach (StudentCourse stCrs in student.StudentCourses)
-                                                {
-                                                text.Span ("     " + stCrs.CourseName + "    ")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Red.Darken3)
-                                                .DirectionFromRightToLeft ();
-                                                if (stCrs.IsActive)
-                                                    {
-                                                    text.Span ("#active  ")
-                                                    .FontSize (9)
-                                                    .FontColor (Colors.Blue.Darken3);
-                                                    }
-                                                if (stCrs.Retry)
-                                                    {
-                                                    text.Span ("#retry  ")
-                                                    .FontSize (9)
-                                                    .FontColor (Colors.Blue.Darken3);
-                                                    }
-                                                if (stCrs.Review)
-                                                    {
-                                                    text.Span ("#review  ")
-                                                    .FontSize (9)
-                                                    .FontColor (Colors.Blue.Darken3);
-                                                    }
-                                                text.Span ("        tests: " + stCrs.CorrectAnswers + " / " + stCrs.NumberOfTests + "\r\n")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Blue.Darken3)
-                                                .DirectionFromRightToLeft ();
-                                                }
-                                            }
-                                        else
+                                            //text.Span ("\r\nCourses\r\n").FontSize (14);
+                                            cardColumn.Item ().Table (table =>
                                             {
-                                            text.Span ("\r\n--- no courses!\r\n");
+                                                //1 Define columns
+                                                table.ColumnsDefinition (columns =>
+                                                {
+                                                    columns.ConstantColumn (20);  //row # fix width in points (1 point = 1/72 inch)
+                                                    columns.RelativeColumn (2);   //Coursename --relative width (using sum of all relatives) 
+                                                    columns.RelativeColumn (1);   //Active
+                                                    columns.RelativeColumn (1);   //Retry
+                                                    columns.RelativeColumn (1);   //Review
+                                                    columns.RelativeColumn (1);   //tests
+                                                });
+                                                //2 Header
+                                                table.Header (header =>
+                                                {
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4).
+                                                        Text ("#").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4).
+                                                        Text ("Course").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4).
+                                                        Text ("Active").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4).
+                                                        Text ("Retry").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4).
+                                                        Text ("Review").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4).
+                                                        Text ("Tests").FontSize (9).Bold ();
+                                                });
+                                                //3 Body rows
+                                                int index = 0;
+                                                foreach (StudentCourse stCrs in student.StudentCourses)
+                                                    {
+                                                    index++;
+                                                    var bg = index % 2 == 0 ? Colors.Grey.Lighten5 : Colors.White;
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (index.ToString ()).FontSize (9);
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (stCrs.CourseName).FontSize (9)
+                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (stCrs.IsActive ? "Active" : "-").FontSize (9)
+                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (stCrs.Retry ? "Retry" : "-").FontSize (9)
+                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (stCrs.Review ? "Review" : "-").FontSize (9)
+                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (stCrs.CorrectAnswers + " / " + stCrs.NumberOfTests).FontSize (9)
+                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    }
+                                            });
                                             }
                                         //EXAMS
                                         if (student.StudentExams.Count > 0)
                                             {
-                                            text.Span ("--- Exams \r\n");
-                                            foreach (StudentExam exm in student.StudentExams)
-                                                {
-                                                text.Span ("   " + exm.ExamTitle + "\r\n")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Red.Darken3)
-                                                .DirectionFromRightToLeft ();
-                                                text.Span ("         exam date/time: " + ToPersianDate (exm.ExamDateTime.ToString ()) + "\r\n")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Blue.Darken3)
-                                                .DirectionFromRightToLeft ();
-                                                if (exm.StudentExamTags >= 2)
-                                                    {
-                                                    text.Span ("         tests: " + exm.ExamNTests + " (" + exm.ExamDuration + " m)      point: " + exm.StudentExamPoint.ToString ("F2") + "/20 \r\n")
-                                                    .FontSize (9)
-                                                    .FontColor (Colors.Blue.Darken3);
-                                                    text.Span ("         start: " + ToPersianDate (exm.DateTimeStart.ToString ()) + "   finish: " + ToPersianDate (exm.DateTimeFinish.ToString ()) + "\r\n")
-                                                    .FontSize (9)
-                                                    .FontColor (Colors.Blue.Darken3);
-                                                    }
-                                                else if (exm.StudentExamTags == 1)
-                                                    {
-                                                    text.Span ("         tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m) [satrted] \r\n")
-                                                    .FontSize (9)
-                                                    .FontColor (Colors.Blue.Darken3);
-                                                    }
-                                                else
-                                                    {
-                                                    text.Span ("         tests: " + exm.ExamNTests + "(" + exm.ExamDuration + "m) \r\n")
-                                                    .FontSize (9)
-                                                    .FontColor (Colors.Blue.Darken3);
-                                                    }
-                                                }
-                                            }
-                                        else
+                                            //text.Span ("\r\nExams\r\n").FontSize (14);
+                                            cardColumn.Item ().Table (table =>
                                             {
-                                            text.Span ("\r\n--- no exams!");
+                                                //1 Define columns
+                                                table.ColumnsDefinition (columns =>
+                                                {
+                                                    columns.ConstantColumn (20);  //row # fix width in points (1 point = 1/72 inch)
+                                                    columns.RelativeColumn (2);   //Examname --relative width (using sum of all relatives) 
+                                                    columns.RelativeColumn (2);   //Exam DateTime
+                                                    columns.RelativeColumn (1);   //Exam nTests
+                                                    columns.RelativeColumn (1);   //Exam Time(m)
+                                                    columns.RelativeColumn (2);   //Point
+                                                    columns.RelativeColumn (2);   //DateTime Started
+                                                    columns.RelativeColumn (2);   //DateTime Finished
+                                                });
+                                                //2 Header
+                                                table.Header (header =>
+                                                {
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                                                        .Text ("#").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                                                        .Text ("Exam").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                                                        .Text ("Date/Time").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                                                        .Text ("Tests").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                                                        .Text ("Time").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                                                        .Text ("Point").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                                                        .Text ("Started").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                                                        .Text ("Finished").FontSize (9).Bold ();
+                                                });
+                                                //3 Body rows
+                                                int index = 0;
+                                                foreach (StudentExam exm in student.StudentExams)
+                                                    {
+                                                    index++;
+                                                    var bg = index % 2 == 0 ? Colors.Grey.Lighten5 : Colors.White;
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (index.ToString ()).FontSize (9);
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (exm.ExamTitle).FontSize (9)
+                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (ToPersianDate (exm.ExamDateTime.ToString ())).FontSize (9)
+                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (exm.ExamNTests.ToString ()).FontSize (9)
+                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (exm.ExamDuration.ToString ()).FontSize (9)
+                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (exm.StudentExamPoint.ToString ("F2") + "/20").FontSize (9)
+                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (ToPersianDate(exm.DateTimeStart.ToString ())).FontSize (9)
+                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (ToPersianDate(exm.DateTimeFinish.ToString ())).FontSize (9)
+                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    }
+                                            });
                                             }
                                     });
                             });
@@ -1895,11 +1970,10 @@ namespace ExaminerB.Service
             {
             container.PaddingVertical (10).Column (column =>
             {
-                column.Spacing (10); //space between cards
-
+                column.Spacing (10);
+                //Header card
                 column.Item ().Element (cardContainer =>
                 {
-                    //CardStyle
                     cardContainer
                         .Border (1)
                         .BorderColor (Colors.Grey.Lighten4)
@@ -1909,86 +1983,96 @@ namespace ExaminerB.Service
                         .Column (cardColumn =>
                         {
                             cardColumn.Spacing (8);
-                            cardColumn.Item ()
-                                .AlignLeft ()
-                                .Text (text =>
-                                {
-                                    text.Span (data [0].MessageTitle)
-                                        .FontSize (9)
-                                        .FontColor (Colors.Red.Darken3)
-                                        .DirectionFromRightToLeft ();
-                                    text.Span ($"\r\n {ToPersianDate (data [0].DateTimeCreated.ToString ())}  Created  \r\n {ToPersianDate (data [0].DateTimeSent.ToString ())}  Sent")
-                                        .FontSize (9)
-                                        .FontColor (Colors.Green.Darken3)
-                                        .DirectionFromRightToLeft ();
-                                    text.Span ($"\r\n \r\n Message: \r\n {data [0].MessageBody.Trim ()}")
-                                        .FontSize (9)
-                                        .FontColor (Colors.Blue.Darken3)
-                                        .DirectionFromRightToLeft ();
-                                });
+                            cardColumn.Item ().AlignLeft ().Text (text =>
+                            {
+                                text.Span (data [0].MessageTitle)
+                                    .FontSize (9)
+                                    .FontColor (Colors.Red.Darken3)
+                                    .DirectionFromRightToLeft ();
+                                text.Span ($"\r\n {ToPersianDate (data [0].DateTimeCreated.ToString ())}  Created  \r\n {ToPersianDate (data [0].DateTimeSent.ToString ())}  Sent")
+                                    .FontSize (9)
+                                    .FontColor (Colors.Green.Darken3)
+                                    .DirectionFromRightToLeft ();
+                                text.Span ($"\r\n \r\n Message: \r\n {data [0].MessageBody.Trim ()}")
+                                    .FontSize (9)
+                                    .FontColor (Colors.Blue.Darken3)
+                                    .DirectionFromRightToLeft ();
+                            });
                         });
                 });
-                foreach (var item in data)
+                //Table of students
+                column.Item ().Table (table =>
+                {
+                    //1 Define columns
+                    table.ColumnsDefinition (columns =>
                     {
-                    column.Item ().Element (cardContainer =>
-                    {
-                        //CardStyle
-                        cardContainer
-                            .Border (1)
-                            .BorderColor (Colors.Grey.Lighten4)
-                            .Background (Colors.Grey.Lighten5)
-                            .Padding (12)
-                            .ShowEntire ()
-                            .Column (cardColumn =>
-                            {
-                                cardColumn.Spacing (8);
-                                cardColumn.Item ()
-                                    .AlignLeft ()
-                                    .Text (text =>
-                                    {
-                                        text.Span ("Username: " + item.StudentName)
-                                            .FontSize (9)
-                                            .FontColor (Colors.Red.Darken3)
-                                            .DirectionFromRightToLeft ();
-                                        text.Span (" / Name: " + item.StudentNickname)
-                                            .FontSize (9)
-                                            .FontColor (Colors.Blue.Darken3)
-                                            .DirectionFromRightToLeft ();
-                                        if ((item.StudentMessageTags & 1) == 1)
-                                            {
-                                            text.Span (" / Read: " + ToPersianDate (item.DateTimeRead.ToString ()))
-                                                .FontSize (9)
-                                                .FontColor (Colors.Black)
-                                                .DirectionFromRightToLeft ();
-                                            }
-                                        else
-                                            {
-                                            text.Span (" / not read")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Red.Lighten2)
-                                                .DirectionFromRightToLeft ();
-                                            }
-                                        if ((item.StudentMessageTags & 2) == 2)
-                                            {
-                                            text.Span (" /Bookmaked");
-                                            }
-                                        if ((item.StudentMessageTags & 4) == 4)
-                                            {
-                                            text.Span (" /Deleted");
-                                            }
-                                        if ((item.StudentMessageTags & 16) == 16)
-                                            {
-                                            text.Span (" /Answer:YES");
-                                            }
-                                        if ((item.StudentMessageTags & 32) == 32)
-                                            {
-                                            text.Span (" /Answer:NO");
-                                            }
-
-                                    });
-                            });
+                        columns.ConstantColumn (20);  //row # fix width in points (1 point = 1/72 inch)
+                        columns.RelativeColumn (2);   //Username --relative width (using sum of all relatives) 
+                        columns.RelativeColumn (3);   //Name
+                        columns.RelativeColumn (2);   //Read
+                        columns.RelativeColumn (1);   //Bookmarked
+                        columns.RelativeColumn (1);   //Deleted
+                        columns.RelativeColumn (1);   //Answer
                     });
-                    }
+                    //2 Header
+                    table.Header (header =>
+                    {
+                        header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                            .Text ("#").FontSize (9).Bold ();
+                        header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                            .Text ("Username").FontSize (9).Bold ();
+                        header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                            .Text ("Display Name").FontSize (9).Bold ();
+                        header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                            .Text ("Read").FontSize (9).Bold ();
+                        header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                            .Text ("Bkmrkd").FontSize (9).Bold ();
+                        header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                            .Text ("Del").FontSize (9).Bold ();
+                        header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                            .Text ("Ans").FontSize (9).Bold ();
+                    });
+                    //3 Body rows
+                    int index = 0;
+                    foreach (var item in data)
+                        {
+                        index++;
+                        var bg = index % 2 == 0 ? Colors.Grey.Lighten5 : Colors.White;
+                        table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                            .Padding (4).Text (index.ToString ()).FontSize (9);
+                        table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                            .Padding (4).Text (item.StudentName).FontSize (9)
+                            .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                        table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                            .Padding (4).Text (item.StudentNickname).FontSize (9)
+                            .FontColor (Colors.Blue.Darken3);
+                        //Read date-time
+                        var readCell = table.Cell ().Background (bg)
+                            .BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3).Padding (4);
+                        if ((item.StudentMessageTags & 1) == 1)
+                            readCell.Text (ToPersianDate (item.DateTimeRead.ToString ()))
+                                .FontSize (9).FontColor (Colors.Black);
+                        else
+                            readCell.Text ("not read")
+                                .FontSize (9).FontColor (Colors.Red.Lighten2);
+                        //Bkmrkd
+                        table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                            .Padding (4)
+                            .Text ((item.StudentMessageTags & 2) == 2 ? "BK" : "-")
+                            .FontSize (9);
+                        //Del
+                        table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                            .Padding (4)
+                            .Text ((item.StudentMessageTags & 4) == 4 ? "D" : "-")
+                            .FontSize (9);
+                        //Ans
+                        var answer = (item.StudentMessageTags & 16) == 16 ? "YES"
+                                   : (item.StudentMessageTags & 32) == 32 ? "NO"
+                                   : "-";
+                        table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                            .Padding (4).Text (answer).FontSize (9);
+                        }
+                });
             });
             }
         private void ComposeContentM4x (IContainer container, List<StudentMessage> data)

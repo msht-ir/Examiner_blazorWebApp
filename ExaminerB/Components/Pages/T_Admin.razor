@@ -332,11 +332,11 @@ else
                                         </MudSwitch>
                                     @* Extend Reminder +/-14 Days *@
                                         <MudSwitch @bind-Value="_teacher.ReminderDays"
-                                               Label="extend to 14 days"
+                                               Label="remind ±14 days (daf=7)"
                                                Color="Color.Success"
                                                Dense="true"
                                                Style="margin-top:5px;font-family:Tahoma;"
-                                               title="يادداشت هاي 14 روز گذشته و آينده">
+                                               title="remind ±14 days (default=7) يادداشت هاي 14 روز گذشته و آينده">
                                         </MudSwitch>
                                     @if (user.IsSuperuser)
                                         {

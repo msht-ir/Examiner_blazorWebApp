@@ -656,6 +656,12 @@ namespace ExaminerB.Backend
             var result = await _BeService.Delete_StudentExamsByExamIdAsync (examId);
             return Ok (result);
             }
+        [HttpPost ("Delete_StudentExams")]
+        public async Task<ActionResult<bool>> Delete_StudentExams ([FromBody] List<int> lstStudentIds, [FromQuery] int examId)
+            {
+            var result = await _BeService.Delete_StudentExamsAsync (examId, lstStudentIds);
+            return Ok (result);
+            }
         [HttpPost ("Delete_StudentExam")]
         public async Task<ActionResult<bool>> Delete_StudentExam ([FromBody] int studentExamId)
             {

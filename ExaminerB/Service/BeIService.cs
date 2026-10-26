@@ -140,6 +140,7 @@ namespace ExaminerB.Services2Backend
         Task<bool> Delete_StudentExamsByStudentIdAsync (int studentId);
         Task<bool> Delete_StudentExamsByExamIdAsync (int examId);
         Task<bool> Delete_StudentExamAsync (int studentExamId);
+        Task<bool> Delete_StudentExamsAsync (int examId, List<int>lstStudentIds);
         Task<bool> CalculatePoints_StudentExamsAsync (int studentexamid);
         #endregion
         #region SET:StudentExamTests

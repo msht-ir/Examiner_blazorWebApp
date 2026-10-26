@@ -117,10 +117,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="wwwroot\img\icoLogin_S1.png">
+    <Content Update="wwwroot\img\icoLoginS.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\img\icoLogin_T1.png">
+    <Content Update="wwwroot\img\icoLoginT.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

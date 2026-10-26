@@ -2640,6 +2640,23 @@ namespace ExaminerB.Services2Backend
             cmd.ExecuteNonQuery ();
             return true;
             }
+        public async Task<bool> Delete_StudentExamsAsync (int examId, List<int>lstStudentIds)
+            {
+            string? connString = _config.GetConnectionString ("cnni");
+            using SqlConnection cnn = new (connString);
+            string sql = "dbo.sp_DeletetudentExamByStudentIdAndExamId";
+            foreach (int studentId in lstStudentIds)
+                {
+                await cnn.OpenAsync ();
+                SqlCommand cmd = new SqlCommand (sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue ("@examid", examId);
+                cmd.Parameters.AddWithValue ("@studentid", studentId);
+                cmd.ExecuteNonQuery ();
+                await cnn.CloseAsync ();
+                }
+            return true;
+            }
         public async Task<bool> Delete_StudentExamAsync (int studentExamId)
             {
             string? connString = _config.GetConnectionString ("cnni");
@@ -2650,6 +2667,7 @@ namespace ExaminerB.Services2Backend
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
             cmd.ExecuteNonQuery ();
+            await cnn.CloseAsync ();
             return true;
             }
         public async Task<bool> CalculatePoints_StudentExamsAsync (int studentexamid)
