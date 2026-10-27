@@ -1904,9 +1904,9 @@ namespace ExaminerB.Service
                                                     columns.RelativeColumn (2);   //Exam DateTime
                                                     columns.RelativeColumn (1);   //Exam nTests
                                                     columns.RelativeColumn (1);   //Exam Time(m)
-                                                    columns.RelativeColumn (2);   //Point
                                                     columns.RelativeColumn (2);   //DateTime Started
                                                     columns.RelativeColumn (2);   //DateTime Finished
+                                                    columns.RelativeColumn (2);   //Point
                                                 });
                                                 //2 Header
                                                 table.Header (header =>
@@ -1922,11 +1922,11 @@ namespace ExaminerB.Service
                                                     header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
                                                         .Text ("Time").FontSize (9).Bold ();
                                                     header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                                                        .Text ("Point").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
                                                         .Text ("Started").FontSize (9).Bold ();
                                                     header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
                                                         .Text ("Finished").FontSize (9).Bold ();
+                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
+                                                        .Text ("Point").FontSize (9).Bold ();
                                                 });
                                                 //3 Body rows
                                                 int index = 0;
@@ -1949,14 +1949,14 @@ namespace ExaminerB.Service
                                                         .Padding (4).Text (exm.ExamDuration.ToString ()).FontSize (9)
                                                         .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
                                                     table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (exm.StudentExamPoint.ToString ("F2") + "/20").FontSize (9)
-                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
                                                         .Padding (4).Text (ToPersianDate(exm.DateTimeStart.ToString ())).FontSize (9)
                                                         .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
                                                     table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
                                                         .Padding (4).Text (ToPersianDate(exm.DateTimeFinish.ToString ())).FontSize (9)
                                                         .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
+                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
+                                                        .Padding (4).Text (exm.StudentExamPoint.ToString ("F2") + "/20").FontSize (9)
+                                                        .FontColor (Colors.Blue.Darken3).DirectionFromRightToLeft ();
                                                     }
                                             });
                                             }
