@@ -114,31 +114,33 @@
                                             Guide
                                             </MudButton>
                                         }
-                                    @*
-                        <BrowserDetect @bind-BrowserInfo="browserInfo" />
-                        @if (browserInfo != null)
-                            {
-                                <div class="flex align-content-center align-items-center justify-content-center" style="font-size:smaller; color:cadetblue; margin-top:20px">
-                                <span style="color:blue">device info:</span>
-                                <br />
-                                @browserInfo.CPUArchitect . @browserInfo.ScreenResolution . @browserInfo.BrowserName . @browserInfo.OSName @browserInfo.OSVersion <br />
-                                // CPU:           @browserInfo.CPUArchitect
-                                   Device Model:  @browserInfo.DeviceModel
-                                   Device Type:   @browserInfo.DeviceType
-                                   Browser major: @browserInfo.BrowserMajor
-                                   Is Android:    @browserInfo.IsAndroid
-                                   Is Desktop:    @browserInfo.IsDesktop
-                                   Is Mobile:     @browserInfo.IsMobile
-                                   Is Tablet:     @browserInfo.IsTablet
-                                   Is PadPro:     @browserInfo.IsIPadPro
-                                   //
-                                </div>
-                            }
-                        else
-                            {
-                            <p>Detecting browser...</p>
-                            }
-                        *@
+                                        <div style="text-align:center">
+                                        @*
+                                        <BrowserDetect @bind-BrowserInfo="browserInfo" />
+                                        @if (browserInfo != null)
+                                            {
+                                                <div class="flex align-content-center align-items-center justify-content-center" style="font-size:smaller; color:cadetblue; margin-top:20px">
+                                                <span style="color:blue">device info:</span>
+                                                <br />
+                                                @browserInfo.CPUArchitect . @browserInfo.ScreenResolution . @browserInfo.BrowserName . @browserInfo.OSName @browserInfo.OSVersion <br />
+                                                // CPU:           @browserInfo.CPUArchitect
+                                                    Device Model:  @browserInfo.DeviceModel
+                                                    Device Type:   @browserInfo.DeviceType
+                                                    Browser major: @browserInfo.BrowserMajor
+                                                    Is Android:    @browserInfo.IsAndroid
+                                                    Is Desktop:    @browserInfo.IsDesktop
+                                                    Is Mobile:     @browserInfo.IsMobile
+                                                    Is Tablet:     @browserInfo.IsTablet
+                                                    Is PadPro:     @browserInfo.IsIPadPro
+                                                    //
+                                                </div>
+                                            }
+                                        else
+                                            {
+                                            <p>Detecting browser...</p>
+                                            }
+                                        *@
+                                        </div>
                                     </div>
                                 </div>
                             </div>

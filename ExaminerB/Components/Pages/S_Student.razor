@@ -385,7 +385,7 @@
                                                 else
                                                     {
                                                     @* message is unread (new) *@
-                                                        <hr />
+                                                    <hr />
                                                         <button class="btn btn-link" style="text-decoration:none;" Title=@((_help) ? "Open/Show this message" : "") @onclick="() => BtnSetStudentMessageAsRead(studentMessage)">
                                                         <span style="text-align:center;color:darkgoldenrod"> > Open read message ...</span>
                                                         </button>
@@ -543,9 +543,6 @@
                     <div id="CollapseId5" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
                         <div class="accordion-body" style="background-color:white">
                             <div id="T3">
-                            @* @if (_help)
-                                {
-                                } *@
                                 <div>
                                     <p style="text-align:center;font-size:x-small;">
                                     ايجاد يک انجمن براي طرح موضوع، تبادل نظر و گفتگو
@@ -779,7 +776,76 @@
                         </div>
                     </div>
                 </div>
-            <br />
+            @* --- 7/x GAMES *@
+                <div class="accordion-item mb-2">
+                    <h4 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#CollapseId7"
+                            aria-expanded="false"
+                            aria-controls="CollapseId7" style="background-color:WhiteSmoke">
+                            <h4>
+                            <img class="pulse-hover" src="/img/icoListE.png" width="36" style="margin-right:10px;" title="سرگرمي بازي با اعداد" />
+                            <span style="color:rgb(82, 109, 117)">entertainment </span><span style="font-weight:bold;font-size:x-small;color:indianred"></span>
+                            </h4>
+                        </button>
+                    </h4>
+                @if (appState.Clps == "GM")
+                    {
+                    _clps = "collapse show";
+                    }
+                else
+                    {
+                    _clps = "collapse";
+                    }
+                    <div id="CollapseId7" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
+                        <div class="accordion-body" style="background-color:white">
+                            <div id="T3">
+                                <div style="text-align:center">
+                                    <div style="text-align:center;margin:30px;">
+                                        <div>
+                                            <p style="text-align:center;font-size:x-small;">
+                                            با توجه به سه عدد داده شده در بازي شما بايد عدد چهارم را پيدا کنيد
+                                            <br />
+                                            يک الگوي ساده بين اعداد وجود دارد
+                                            <br />
+                                            بازي داراي 6 سطح است
+                                            <br />
+                                            </p>
+                                        </div>
+                                        <MudButton Variant="Variant.Filled"
+                                               EndIcon="@Icons.Material.Outlined.Games"
+                                               Color="Color.Secondary"
+                                               Size="Size.Small"
+                                               OnClick='@(() => BtnGame("GamePattern"))'
+                                               Style="margin-left:20px;width:150px;">
+                                        Start Game
+                                        </MudButton>
+                                    </div>
+                                <hr />
+                                    <div>
+                                        <p style="text-align:center;font-size:x-small;">
+                                        شما بايد اعداد را با هم جمع، تفريق، ضرب و يا تقسيم کنيد
+                                        <br />
+                                        براي سخت تر شدن بازي، تعداد ارقام صحيح و اعشار را براي عدد اول و عدد دوم تغيير دهيد
+                                        <br />
+                                        </p>
+                                    </div>
+                                    <div style="text-align:center;margin:30px;">
+                                        <MudButton Variant="Variant.Filled"
+                                               EndIcon="@Icons.Material.Outlined.Games"
+                                               Color="Color.Success"
+                                               Size="Size.Small"
+                                               OnClick='@(() => BtnGame("GameCalculation"))'
+                                               Style="margin-left:20px;width:150px;">
+                                        Start Game
+                                        </MudButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             @* <MudSwitch @bind-Value="_help" Label="help" Color="Color.Primary" Dense="true" title="هنگام عبور ماوس، راهنمايي کن"></MudSwitch> *@
             <hr />
                 <div class="d-flex gap-4 justify-content-center" style="text-align:center; margin-top:30px;max-width:500px;">
@@ -1325,6 +1391,11 @@
                 }
             }
         }
+    //Games
+    public void BtnGame (string _game)
+        {
+        Navman.NavigateTo("/" + _game);
+        }
     //convert date
     public string PersianDate (DateTimeOffset? dt)
         {
@@ -1385,7 +1456,7 @@
             {
             strSearch = "";
             await InvokeAsync(StateHasChanged);
-            await reftxtSearch.FocusAsync(); 
+            await reftxtSearch.FocusAsync();
             StateHasChanged();
             }
         }

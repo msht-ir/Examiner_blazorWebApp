@@ -2532,7 +2532,7 @@ namespace ExaminerB.Services2Backend
         public async Task<bool> Update_StudentsExamTagsAsync (string mode, int examId)
             {
             //Update tags of StudentExams for all student having this ExamId
-            //modes: see feServices
+            //modes: startedOn, startedOff, finishedOn, finishedOff, reviewOn, reviewOff  --see also feServices
             string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
             string sql = "dbo.sp_UpdateStudentsExamTags";
             string? connString = _config.GetConnectionString ("cnni");
@@ -2588,7 +2588,7 @@ namespace ExaminerB.Services2Backend
             }
         public async Task<bool> Update_StudentExamTagsAsync (StudentExam tempStudentExam)
             {
-            //Update tags of a single StudentExam
+            //Update tags of one StudentExam
             string sql = "dbo.sp_UpdateStudentExamTags";
             string? connString = _config.GetConnectionString ("cnni");
             using SqlConnection cnn = new (connString);

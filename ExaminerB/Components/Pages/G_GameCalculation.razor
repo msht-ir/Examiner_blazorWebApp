@@ -1,0 +1,567 @@
+﻿@page "/GameCalculation"
+
+@using ExaminerB.Service
+@inject NavigationManager Navman
+@inject AppState appState
+@inject HttpClient http
+@inject FeService feService
+@inject IJSRuntime JS
+@implements IDisposable
+@inject ISnackbar Snackbar
+
+<PageTitle>Examiner — Calculation</PageTitle>
+
+<style>
+    .gc-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 24px 16px;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+
+    .gc-card {
+        width: 100%;
+        max-width: 520px;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, .4);
+        overflow: hidden;
+    }
+
+    .gc-header {
+        background: linear-gradient(135deg, #0891b2 0%, #0ea5e9 100%);
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .gc-header h2 {
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: .5px;
+    }
+
+    .gc-header .player {
+        margin-top: 6px;
+        font-size: .95rem;
+        opacity: .9;
+    }
+
+    .gc-body {
+        padding: 22px;
+    }
+
+    .gc-section {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+        background: #f8fafc;
+    }
+
+    .gc-section-title {
+        font-size: .75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #64748b;
+        margin-bottom: 12px;
+        font-weight: 600;
+    }
+
+    .gc-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+    }
+
+    .gc-row:last-child { margin-bottom: 0; }
+
+    .gc-label {
+        color: #475569;
+        font-size: .9rem;
+        font-weight: 500;
+        min-width: 34px;
+    }
+
+    .gc-input {
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: .95rem;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
+        background: #fff;
+    }
+
+    .gc-input:focus {
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, .15);
+    }
+
+    .gc-input-sm { width: 70px; }
+    .gc-input-md { width: 90px; }
+
+    .gc-sep {
+        color: #94a3b8;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .gc-checks {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .gc-check {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: .9rem;
+        cursor: pointer;
+        transition: background .15s, border-color .15s;
+        user-select: none;
+    }
+
+    .gc-check:hover { background: #f1f5f9; }
+    .gc-check input { accent-color: #0ea5e9; cursor: pointer; margin: 0; }
+    .gc-check.active { border-color: #0ea5e9; background: #e0f2fe; }
+
+    .gc-btn {
+        border: none;
+        border-radius: 8px;
+        padding: 8px 18px;
+        font-size: .9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform .15s, box-shadow .2s, background .2s;
+    }
+
+    .gc-btn:hover { transform: translateY(-1px); }
+    .gc-btn:active { transform: translateY(0); }
+
+    .gc-btn-primary { background: #0ea5e9; color: #fff; }
+    .gc-btn-primary:hover { background: #0284c7; }
+
+    .gc-btn-success { background: #10b981; color: #fff; }
+    .gc-btn-success:hover { background: #059669; }
+
+    .gc-btn-warning { background: #f59e0b; color: #fff; }
+    .gc-btn-warning:hover { background: #d97706; }
+
+    .gc-btn-danger { background: #ef4444; color: #fff; }
+    .gc-btn-danger:hover { background: #dc2626; }
+
+    .gc-timer {
+        font-size: 1.7rem;
+        font-weight: 700;
+        color: #f59e0b;
+        text-align: center;
+        margin-bottom: 6px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .gc-question {
+        text-align: center;
+        font-size: 2.1rem;
+        font-weight: 700;
+        color: #0f766e;
+        letter-spacing: 1px;
+        margin: 8px 0 16px;
+        min-height: 3rem;
+        font-variant-numeric: tabular-nums;
+        word-break: break-word;
+    }
+
+    .gc-answer-row {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .gc-actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 6px;
+    }
+
+    .gc-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: .82rem;
+        margin-top: 16px;
+    }
+
+    .gc-table th {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 8px 6px;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .gc-table td {
+        padding: 7px 6px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #334155;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .gc-table tr:hover td { background: #f8fafc; }
+
+    .gc-output {
+        font-family: 'Courier New', monospace;
+        font-size: .78rem;
+        color: #94a3b8;
+        padding: 4px 22px 16px;
+        line-height: 1.5;
+    }
+
+    @@media (max-width: 480px) {
+        .gc-body { padding: 14px; }
+        .gc-question { font-size: 1.5rem; }
+        .gc-timer { font-size: 1.35rem; }
+        .gc-input-sm { width: 60px; }
+    }
+</style>
+
+<div class="gc-wrapper">
+    <div class="gc-card">
+
+        <div class="gc-header">
+            <h2>🧮 Calculation</h2>
+            <div class="player" id="playerName"></div>
+        </div>
+
+        <div class="gc-body">
+
+            <!-- SETTINGS -->
+            <div id="settings" class="gc-section">
+                <div class="gc-section-title">Operand 1</div>
+                <div class="gc-row">
+                    <span class="gc-label">N1</span>
+                    <input id="txt_N1int" type="number" class="gc-input gc-input-sm" placeholder="int" max="3" min="0" value="1">
+                    <span class="gc-sep">.</span>
+                    <input id="txt_N1dec" type="number" class="gc-input gc-input-sm" placeholder="dec" max="3" min="0" value="0">
+                </div>
+
+                <div class="gc-section-title" style="margin-top:14px;">Allowed operators</div>
+                <div class="gc-checks">
+                    <label class="gc-check"><input id="chk_1" type="checkbox" checked> + </label>
+                    <label class="gc-check"><input id="chk_2" type="checkbox" checked> − </label>
+                    <label class="gc-check"><input id="chk_3" type="checkbox"> × </label>
+                    <label class="gc-check"><input id="chk_4" type="checkbox"> ÷ </label>
+                </div>
+
+                <div class="gc-section-title" style="margin-top:14px;">Operand 2</div>
+                <div class="gc-row">
+                    <span class="gc-label">N2</span>
+                    <input id="txt_N2int" type="number" class="gc-input gc-input-sm" placeholder="int" max="3" min="0" value="1">
+                    <span class="gc-sep">.</span>
+                    <input id="txt_N2dec" type="number" class="gc-input gc-input-sm" placeholder="dec" max="3" min="0" value="0">
+                </div>
+
+                <div class="gc-row" style="margin-top:14px;">
+                    <span class="gc-label">⏱ Time</span>
+                    <input id="txt_Tm" type="number" class="gc-input gc-input-md" placeholder="sec" max="200" value="60">
+                    <span style="color:#94a3b8;font-size:.85rem;">seconds</span>
+                </div>
+
+                <div class="gc-row" style="margin-top:14px;justify-content:center;">
+                    <button class="gc-btn gc-btn-warning" type="button" onclick="btnStart_click()">▶ Start</button>
+                </div>
+            </div>
+
+            <!-- RUN -->
+            <div class="gc-section">
+                <div class="gc-section-title">Question</div>
+                <div class="gc-timer" id="lbl_Timer">00''</div>
+                <div class="gc-question" id="lbl_Qstn">—</div>
+
+                <div class="gc-answer-row">
+                    <input id="txt_Answer" type="number" step="any" class="gc-input gc-input-md" placeholder="Answer?">
+                    <button class="gc-btn gc-btn-success" type="button" onclick="btnAnswer_click()">✓ Answer</button>
+                </div>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="gc-actions">
+                <button class="gc-btn gc-btn-danger" type="button" onclick="btnExit_click()">✕ Exit</button>
+            </div>
+
+            <!-- RESULTS -->
+            <table id="tblAns" class="gc-table">
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Answer</th>
+                        <th>Yours</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+        </div>
+
+        <div id="output" class="gc-output"></div>
+    </div>
+</div>
+
+<!--SCRIPTS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+<script>
+    // ==== STATE ====
+    var playerName = "salam";
+    var N1int = 0, N2int = 0, N1dec = 0, N2dec = 0;
+    var N1 = 0, N2 = 0;
+    var GT = 0;           // game-type bitmask
+    var Qstn = "";
+    var R = 0;
+    var Ans = 0;
+    var userAns = 0;
+    var xInterval = null;
+    var Tm = 0;           // current countdown (seconds remaining in current question round)
+    var Ti = 0;           // total ticks elapsed
+    var strResult = "";
+    var running = false;  // guard so Start isn't re-entrant
+
+    // Player name label
+    document.getElementById("playerName").textContent =
+        playerName ? "👤 " + playerName : "";
+
+    // Focus first field
+    const tmInput = document.getElementById("txt_Tm");
+    tmInput.focus();
+    tmInput.select();
+    document.getElementById("output").textContent = "";
+
+    // Visually toggle checkbox chips
+    document.querySelectorAll(".gc-check input").forEach(cb => {
+        const lbl = cb.closest(".gc-check");
+        const sync = () => lbl.classList.toggle("active", cb.checked);
+        cb.addEventListener("change", sync);
+        sync();
+    });
+
+    function fmtTime(s) {
+        s = Math.max(0, s);
+        const m = Math.floor(s / 60);
+        const sec = s % 60;
+        return String(m).padStart(2, "0") + "' " + String(sec).padStart(2, "0") + "''";
+    }
+
+    // ==== START ====
+    function btnStart_click() {
+        if (running) return;
+
+        const t = tmInput.valueAsNumber;
+        if (isNaN(t) || t <= 0) {
+            tmInput.focus();
+            tmInput.select();
+            return;
+        }
+
+        running = true;
+        Tm = t;
+        Ti = 0;
+        Qstn = "";
+        Ans = 0;
+        userAns = 0;
+        strResult = "";
+        document.getElementById("lbl_Timer").textContent = fmtTime(Tm);
+        document.getElementById("output").textContent = "";
+
+        // --- read operator mask ---
+        GT = 0;
+        if (document.getElementById("chk_1").checked) GT |= 1;
+        if (document.getElementById("chk_2").checked) GT |= 2;
+        if (document.getElementById("chk_3").checked) GT |= 4;
+        if (document.getElementById("chk_4").checked) GT |= 8;
+        if (GT === 0) {
+            GT = 1;
+            document.getElementById("chk_1").checked = true;
+        }
+
+        // --- read operands ---
+        N1int = document.getElementById("txt_N1int").valueAsNumber || 0;
+        N1dec = document.getElementById("txt_N1dec").valueAsNumber || 0;
+        N2int = document.getElementById("txt_N2int").valueAsNumber || 0;
+        N2dec = document.getElementById("txt_N2dec").valueAsNumber || 0;
+
+        N1 = Math.floor(Math.random() * Math.pow(10, N1int + N1dec) + 1) / Math.pow(10, N1dec);
+        N2 = Math.floor(Math.random() * Math.pow(10, N2int + N2dec) + 1) / Math.pow(10, N2dec);
+
+        // --- pick a valid operator ---
+        R = Math.floor(Math.random() * 4 + 1);
+        while ((Math.pow(2, R - 1) & GT) !== Math.pow(2, R - 1)) {
+            R = Math.floor(Math.random() * 4 + 1);
+        }
+
+        // --- build question ---
+        switch (R) {
+            case 1:
+                Qstn = N1 + " + " + N2;
+                Ans = Math.round((N1 + N2) * 10) / 10;
+                break;
+            case 2:
+                if (N2 > N1) { const s = N2; N2 = N1; N1 = s; }
+                Qstn = N1 + " − " + N2;
+                Ans = Math.round((N1 - N2) * 10) / 10;
+                break;
+            case 3:
+                Qstn = N1 + " × " + N2;
+                Ans = Math.round((N1 * N2) * 10) / 10;
+                break;
+            case 4:
+                if (N2 > N1) { const s = N2; N2 = N1; N1 = s; }
+                Qstn = N1 + " ÷ " + N2;
+                Ans = Math.round((N1 / N2) * 10) / 10;
+                break;
+        }
+
+        document.getElementById("lbl_Qstn").textContent = Qstn;
+
+        startTimer(Tm);
+        const ansInput = document.getElementById("txt_Answer");
+        ansInput.value = "";
+        ansInput.focus();
+    }
+
+    // ==== ANSWER ====
+    function btnAnswer_click() {
+        if (!running || Tm <= 0) return;
+
+        const ansInput = document.getElementById("txt_Answer");
+        const raw = ansInput.value.trim();
+        if (raw === "") {
+            ansInput.focus();
+            ansInput.select();
+            return;
+        }
+
+        userAns = Math.trunc(Number(raw) * 10) / 10;
+        if (isNaN(userAns)) {
+            ansInput.focus();
+            ansInput.select();
+            return;
+        }
+
+        const tbody = document.querySelector("#tblAns tbody");
+
+        if (Math.abs(userAns - Ans) < 0.1) {
+            tbody.insertAdjacentHTML("beforeend",
+                `<tr>
+                    <td>${Qstn}</td>
+                    <td>${Ans}</td>
+                    <td>${userAns}</td>
+                    <td style="color:#059669;font-weight:600;">✓ Correct</td>
+                </tr>`);
+            ansInput.value = "";
+            ansInput.focus();
+            ansInput.select();
+        } else {
+            tbody.insertAdjacentHTML("beforeend",
+                `<tr>
+                    <td>${Qstn}</td>
+                    <td>?</td>
+                    <td>${userAns}</td>
+                    <td style="color:#dc2626;font-weight:600;">✕ Incorrect</td>
+                </tr>`);
+            alert("Incorrect — try again!\n\nYou have " + Tm + " seconds left.");
+            ansInput.focus();
+            ansInput.select();
+            return;
+        }
+
+        // next question
+        running = false;
+        btnStart_click();
+    }
+
+    // ==== TIMER ====
+    function startTimer(seconds) {
+        clearInterval(xInterval);
+        let remaining = seconds;
+        xInterval = setInterval(function () {
+            remaining--;
+            Tm = remaining;
+            Ti++;
+            document.getElementById("lbl_Timer").textContent = fmtTime(remaining);
+            if (remaining < 0) {
+                clearInterval(xInterval);
+                running = false;
+                document.getElementById("output").textContent += Qstn + " — Time over\n";
+                btnStart_click();
+            }
+        }, 1000);
+    }
+
+    // ==== EXIT ====
+    function btnExit_click() {
+        clearInterval(xInterval);
+        if (confirm("Exit?")) {
+            window.location.href = "/S_Student";
+        } else {
+            tmInput.focus();
+            tmInput.select();
+        }
+    }
+
+    // ==== ENTER handlers ====
+    tmInput.addEventListener("keyup", function (e) {
+        if (e.key === "Enter" && !isNaN(tmInput.valueAsNumber)) btnStart_click();
+    });
+
+    document.getElementById("txt_Answer").addEventListener("keyup", function (e) {
+        if (e.key === "Enter") btnAnswer_click();
+    });
+</script>
+
+@code {
+    private User user = new User();
+    private bool _firstRender = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        appState.OnChange += StateHasChanged;
+        appState.OnChange += TriggerRender;
+        appState.SetUserLoginStatus(0);
+        appState.SetStudentTags(0);
+        appState.SetUserName("");
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_firstRender)
+        {
+            _firstRender = false;
+            await Task.Delay(1);
+        }
+    }
+
+    private void TriggerRender()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        appState.OnChange -= TriggerRender;
+    }
+}
