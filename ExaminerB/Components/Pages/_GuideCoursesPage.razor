@@ -1,0 +1,598 @@
+﻿@using ExaminerB.Service
+@using System.ComponentModel.DataAnnotations
+@inject ProtectedSessionStorage sessionStorage
+@inject NavigationManager Navman
+@inject AppState appState
+@inject FeService feService
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<br />
+<div style="text-align:left">
+    <hr />
+    <h5 style="color:royalblue; text-align:center;margin-bottom:30px;">@(IsFa ? "راهنماي ايجاد درس جديد، آپلود سوالات و طراحي آزمون " : "How to create a course, import tests, and make exams")</h5>
+        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+            <MudCard Class="mx-auto guide-card">
+                <MudCardContent Class="guide-card-content">
+                @* Language switch *@
+                    <div class="lang-switch-wrap">
+                        <div class="lang-switch" role="group" aria-label="Language switch">
+                            <button type="button"
+                                class="lang-btn @(IsFa ? "" : "active")"
+                                @onclick="() => SetLang(false)">
+                            <i class="fas fa-globe"></i> English
+                            </button>
+                            <button type="button"
+                                class="lang-btn @(IsFa ? "active" : "")"
+                                @onclick="() => SetLang(true)">
+                            <i class="fas fa-globe"></i> فارسی
+                            </button>
+                        </div>
+                    </div>
+                @if (!IsFa)
+                    {
+                    @* <==================== ENGLISH ==================== *@
+                        <div class="header-strip">
+                            <h1>
+                            <i class="fas fa-user-graduate"></i>
+                            Quick guide for Courses, Tests and Exams for <span class="accent">Teachers </span> in Examiner
+                            </h1>
+                        <p>For more info please watch short videos and user manual available in author’s website</p>
+                            <span class="badge-required">
+                            <i class="fas fa-check-circle"></i> Read this guide before using the examiner
+                            </span>
+                        </div>
+                        <div class="notice-banner">
+                        <i class="fas fa-exclamation-triangle"></i>
+                            <div class="notice-text">
+                            <strong>Read short guide below about how to use Examiner as a teacher.</strong>
+                                <span>
+                                <br /> Each professor has a number of courses, and each course, within its own subset, has the following items:
+                                <br /> A number of links that point to internet addresses, useful websites, or shared folders.
+                                <br /> A number of topic headings (syllabus topics).
+                                <br /> A number of tests or non-multiple-choice short-answer questions.
+                                <br /> A number of exams.
+                                <br /> Each test has a number of options (2 to 5).
+                                <br /> For each test, the correct answer option must be specified.
+                                <br /> In each test, one of the options can be designated as the option that must always be the last option.
+                                <br /> For each test, its direction (right-to-left or left-to-right) must be specified.
+                                <br /> For each test, the direction (right-to-left or left-to-right) of its options must be specified.
+                                <br /> For each test, there is a difficulty level (from 1 to 5), and the default is 3.
+                                <br /> When uploading tests and questions, the topic headings are also uploaded, but the professor can create additional topic headings himself and place some tests in them.
+                                <br /> Each test or question belongs to only one topic heading.
+                                <br /> In addition to uploading, the professor can add new tests or questions one by one to the question bank.
+                                <br /> Create a course.
+                                <br /> Add useful links related to the course.
+                                <br /> To add tests to a course, click the course's tests folder icon.
+                                <br /> On the tests page, click the Excel icon.
+                                <br /> Select the Excel file containing the questions.
+                                <br /> Select the worksheet containing the questions for this course.
+                                <br /> The Excel file and worksheet must be formatted correctly. See the guide for creating the Excel file columns.
+                                <br /> Along with entering the questions, the topic headings are also created.
+                                <br /> To create tests or questions one by one, click the add new test icon.
+                                <br /> On the create/edit test page, enter the question title and select the topic heading from the list. Specify the question's difficulty level and reading direction (whether the question and, if it is a multiple-choice question, the options are right-to-left or left-to-right).
+                                <br /> If the question is multiple-choice, add the options to the question one by one.
+                                <br /> Return to the courses page and, to create an exam, click the exam list icon.
+                                <br /> On the exams page, create a new exam and save its name.
+                                <br /> On the new exam sheet, click the edit icon and go to the exam page.
+                                <br /> On the exam page, enter the exam date, time, and duration, and set the exam to active mode.
+                                <br /> To add questions to the exam, you must return to the course tests page. To do this, you can use the relevant icon on this page or go to the courses page and from there go to the tests page.
+                                <br /> The second way to add questions to the exam is to use the exam design section with the random selection method.
+                                <br /> Open the design section on the exam page and create a new component.
+                                <br /> In the exam component, enter the number of random questions, the topic heading, and the difficulty level of the questions.
+                                <br /> Create more components if necessary.
+                                <br /> After completing the design (creating the components), click the run components icon so that the exam questions are added to the exam randomly and according to the settings in the components.
+                                <br /> To hold the exam at the specified date and time, you must add students to the exam.
+                                <br /> For each student in the exam, a separate exam sheet is assigned, and the order of the questions and options is selected randomly.
+                                <br /> To add students to the exam, go to the students page.
+                                <br /> The students who must be added to the exam must first be listed. To do this, use the list of students in a group, the list of students in a course, or search.
+                                <br /> Select all the students appearing in a list or some of them (by ticking the checkbox next to their names).
+                                <br /> Then select the course name and exam name from the relevant lists and click the add students to exam icon from the menu next to the exam list.
+                                <br /> Exam sheets are created for each individual student; this operation may take a little time, so be patient.
+                                <br /> The exam starts automatically at the specified date and time and ends when the exam time is over.
+                                <br /> During the exam, the professor can increase or decrease the exam duration.
+                                <br /> During the exam, the professor can end the exam of any of the students.
+                                <br /> During the exam, the professor can view the exam sheet and answers of any of the students.
+                                <br /> During the exam, the professor can send messages to the exam session, and students will see the messages on the screen without needing to do anything special.
+                                <br /> The professor can enable or disable each student's access to their exam sheet and answers.
+                                <br /> Students can, by viewing their exam sheet, see the percentage of other students who answered each question and which option each selected.
+                                <br /> Students' exam scores are calculated automatically after the exam ends.
+                                <br /> For exams that include non-multiple-choice questions, the professor must specify whether the answers are correct or incorrect.
+                                <br /> To do this, the professor must click the exam questions icon on the exam sheet on the exams page. Then, by opening each question in order, the students' answers to each question are listed, and the professor can mark the correct answers with one click.
+                                <br /> In this way, the exam score is obtained from the sum of the score of multiple-choice questions and non-multiple-choice questions. Updating the exam score after the professor's correction is done by clicking the end exam icon (the red clock icon).
+                                <br /> On the same exams page, after clicking the exam report icon, the professor can view the list of scores and the exam sheet of each student as a report.
+                                <br /> Also, during the exam, the professor can see the start time or the absence of students in the exam.
+                                <br /> This information is also visible in the PDF report.
+                                <br /> To prepare this report, on the students page, list the exam students, then select all or some students (the checkbox next to the students' names) and click the prepare report icon in the menu next to the exam list.
+                                <br />
+                                <br />
+                                <h6>German: </h6>
+                                <br /> Jeder Professor hat eine Anzahl von Kursen, und jeder Kurs hat innerhalb seiner eigenen Teilmenge die folgenden Elemente:
+                                <br /> Eine Anzahl von Links, die auf Internetadressen, nützliche Websites oder freigegebene Ordner verweisen.
+                                <br /> Eine Anzahl von Themenüberschriften (Lehrplanthemen).
+                                <br /> Eine Anzahl von Tests oder Kurzantwortfragen ohne Multiple-Choice.
+                                <br /> Eine Anzahl von Prüfungen.
+                                <br /> Jeder Test hat eine Anzahl von Optionen (2 bis 5).
+                                <br /> Für jeden Test muss die Option der richtigen Antwort angegeben werden.
+                                <br /> In jedem Test kann eine der Optionen als die Option festgelegt werden, die immer die letzte Option sein muss.
+                                <br /> Für jeden Test muss seine Richtung (rechts-nach-links oder links-nach-rechts) angegeben werden.
+                                <br /> Für jeden Test muss die Richtung (rechts-nach-links oder links-nach-rechts) seiner Optionen angegeben werden.
+                                <br /> Für jeden Test gibt es einen Schwierigkeitsgrad (von 1 bis 5), und der Standardwert ist 3.
+                                <br /> Beim Hochladen von Tests und Fragen werden auch die Themenüberschriften hochgeladen, aber der Professor kann selbst zusätzliche Themenüberschriften erstellen und einige Tests darin ablegen.
+                                <br /> Jeder Test oder jede Frage gehört nur zu einer Themenüberschrift.
+                                <br /> Zusätzlich zum Hochladen kann der Professor neue Tests oder Fragen einzeln zur Fragenbank hinzufügen.
+                                <br /> Erstellen Sie einen Kurs.
+                                <br /> Fügen Sie nützliche Links zum Kurs hinzu.
+                                <br /> Um Tests zu einem Kurs hinzuzufügen, klicken Sie auf das Ordnersymbol für Tests des Kurses.
+                                <br /> Klicken Sie auf der Testseite auf das Excel-Symbol.
+                                <br /> Wählen Sie die Excel-Datei mit den Fragen aus.
+                                <br /> Wählen Sie das Arbeitsblatt aus, das die Fragen für diesen Kurs enthält.
+                                <br /> Die Excel-Datei und das Arbeitsblatt müssen korrekt formatiert sein. Siehe die Anleitung zum Erstellen der Spalten der Excel-Datei.
+                                <br /> Zusammen mit der Eingabe der Fragen werden auch die Themenüberschriften erstellt.
+                                <br /> Um Tests oder Fragen einzeln zu erstellen, klicken Sie auf das Symbol „Neuen Test hinzufügen“.
+                                <br /> Geben Sie auf der Seite „Test erstellen/bearbeiten“ den Fragetitel ein und wählen Sie die Themenüberschrift aus der Liste aus. Geben Sie den Schwierigkeitsgrad der Frage und die Leserichtung an (ob die Frage und, falls es sich um eine Multiple-Choice-Frage handelt, die Optionen rechts-nach-links oder links-nach-rechts sind).
+                                <br /> Wenn die Frage eine Multiple-Choice-Frage ist, fügen Sie die Optionen einzeln zur Frage hinzu.
+                                <br /> Kehren Sie zur Kursseite zurück und klicken Sie, um eine Prüfung zu erstellen, auf das Symbol für die Prüfungsliste.
+                                <br /> Erstellen Sie auf der Prüfungsseite eine neue Prüfung und speichern Sie ihren Namen.
+                                <br /> Klicken Sie auf dem neuen Prüfungsblatt auf das Bearbeitungssymbol und gehen Sie zur Prüfungsseite.
+                                <br /> Geben Sie auf der Prüfungsseite Datum, Uhrzeit und Dauer der Prüfung ein und setzen Sie die Prüfung in den aktiven Modus.
+                                <br /> Um Fragen zur Prüfung hinzuzufügen, müssen Sie zur Testseite des Kurses zurückkehren. Dazu können Sie das entsprechende Symbol auf dieser Seite verwenden oder zur Kursseite gehen und von dort zur Testseite.
+                                <br /> Die zweite Möglichkeit, Fragen zur Prüfung hinzuzufügen, ist die Verwendung des Prüfungsdesign-Bereichs mit der Methode der zufälligen Auswahl.
+                                <br /> Öffnen Sie den Design-Bereich auf der Prüfungsseite und erstellen Sie eine neue Komponente.
+                                <br /> Geben Sie in der Prüfungskomponente die Anzahl der zufälligen Fragen, die Themenüberschrift und den Schwierigkeitsgrad der Fragen ein.
+                                <br /> Erstellen Sie bei Bedarf weitere Komponenten.
+                                <br /> Nach Abschluss des Designs (Erstellen der Komponenten) klicken Sie auf das Symbol zum Ausführen der Komponenten, damit die Prüfungsfragen zufällig und gemäß den Einstellungen in den Komponenten zur Prüfung hinzugefügt werden.
+                                <br /> Um die Prüfung zum angegebenen Datum und zur angegebenen Uhrzeit abzuhalten, müssen Sie Studenten zur Prüfung hinzufügen.
+                                <br /> Für jeden Studenten in der Prüfung wird ein separates Prüfungsblatt zugewiesen, und die Reihenfolge der Fragen und Optionen wird zufällig ausgewählt.
+                                <br /> Um Studenten zur Prüfung hinzuzufügen, gehen Sie zur Studentenseite.
+                                <br /> Die Studenten, die zur Prüfung hinzugefügt werden sollen, müssen zuerst aufgelistet werden. Verwenden Sie dazu die Liste der Studenten einer Gruppe, die Liste der Studenten eines Kurses oder die Suche.
+                                <br /> Wählen Sie alle in einer Liste angezeigten Studenten oder einige von ihnen aus (indem Sie das Kontrollkästchen neben ihren Namen anklicken).
+                                <br /> Wählen Sie dann den Kursnamen und den Prüfungsnamen aus den entsprechenden Listen aus und klicken Sie im Menü neben der Prüfungsliste auf das Symbol „Studenten zur Prüfung hinzufügen“.
+                                <br /> Prüfungsblätter werden für jeden einzelnen Studenten erstellt; dieser Vorgang kann etwas Zeit in Anspruch nehmen, seien Sie geduldig.
+                                <br /> Die Prüfung beginnt automatisch zum angegebenen Datum und zur angegebenen Uhrzeit und endet, wenn die Prüfungszeit abgelaufen ist.
+                                <br /> Während der Prüfung kann der Professor die Prüfungsdauer erhöhen oder verringern.
+                                <br /> Während der Prüfung kann der Professor die Prüfung jedes einzelnen Studenten beenden.
+                                <br /> Während der Prüfung kann der Professor das Prüfungsblatt und die Antworten jedes einzelnen Studenten einsehen.
+                                <br /> Während der Prüfung kann der Professor Nachrichten an die Prüfungssitzung senden, und die Studenten sehen die Nachrichten auf dem Bildschirm, ohne etwas Besonderes tun zu müssen.
+                                <br /> Der Professor kann den Zugriff jedes Studenten auf sein Prüfungsblatt und seine Antworten aktivieren oder deaktivieren.
+                                <br /> Studenten können durch Anzeigen ihres Prüfungsblatts den Prozentsatz der anderen Studenten sehen, die jede Frage beantwortet haben, und welche Option jeder ausgewählt hat.
+                                <br /> Die Prüfungsnote der Studenten wird nach Ende der Prüfung automatisch berechnet.
+                                <br /> Bei Prüfungen, die Fragen ohne Multiple-Choice enthalten, muss der Professor angeben, ob die Antworten richtig oder falsch sind.
+                                <br /> Dazu muss der Professor auf der Prüfungsseite auf dem Prüfungsblatt auf das Symbol für Prüfungsfragen klicken. Dann werden durch Öffnen jeder Frage der Reihe nach die Antworten der Studenten auf jede Frage aufgelistet, und der Professor kann die richtigen Antworten mit einem Klick markieren.
+                                <br /> Auf diese Weise ergibt sich die Prüfungsnote aus der Summe der Note der Multiple-Choice-Fragen und der Note der Fragen ohne Multiple-Choice. Die Aktualisierung der Prüfungsnote nach der Korrektur durch den Professor erfolgt durch Klicken auf das Symbol „Prüfung beenden“ (das rote Uhr-Symbol).
+                                <br /> Auf derselben Prüfungsseite kann der Professor nach dem Klicken auf das Symbol für den Prüfungsbericht die Notenliste und das Prüfungsblatt jedes Studenten als Bericht anzeigen.
+                                <br /> Außerdem kann der Professor während der Prüfung die Startzeit oder die Abwesenheit der Studenten in der Prüfung sehen.
+                                <br /> Diese Informationen sind auch im PDF-Bericht sichtbar.
+                                <br /> Um diesen Bericht zu erstellen, listen Sie auf der Studentenseite die Prüfungsstudenten auf, wählen Sie dann alle oder einige Studenten aus (das Kontrollkästchen neben den Namen der Studenten) und klicken Sie im Menü neben der Prüfungsliste auf das Symbol „Bericht erstellen“.
+                                </span>
+                            </div>
+                        </div>
+                    @* <div class="table-wrap">
+                            <table class="guide-table">
+                                <thead>
+                                <tr><th>Action</th><th>Guide</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    <td>Name</td>
+                                        <td>
+                                        First name of the student.<br />
+                                        <span class="muted">Set it as 'name' only (default).</span><br />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    <td>Surname</td>
+                                        <td>
+                                        Surname (Family) of the student.<br />
+                                        <span class="muted">Set it as 'surname' only (default).</span><br />
+                                        <span class="muted">First name and Surname of student must be separately set in columns A and B.</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    <td>UserName</td>
+                                        <td>
+                                        Username (and also the default password) of the student by which they can login.<br />
+                                        <span class="muted">Username cannot be changed by the user (student).</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> *@
+                    }
+                else
+                    {
+                    @* ==================== PERSIAN ==================== *@
+                        <div class="header-strip" dir="rtl">
+                            <h1>
+                            <i class="fas fa-user-graduate"></i>
+                            راهنماي سريع دروس، تست ها و آزمونها <span class="accent">براي کاربر استاد</span> در اگزمينر
+                            </h1>
+                        <p style="text-align:right">براي اطلاعات بيشتر به ويديوهاي آموزشي کوتاه و دفترچه راهنماي موجود در وبسايت مولف مراجعه کنيد</p>
+                            <span class="badge-required">
+                            <i class="fas fa-check-circle"></i> مطالعه اين راهنما قبل از استفاده از نرم افزار توصيه مي شود
+                            </span>
+                        </div>
+                        <div class="notice-banner" dir="rtl">
+                        <i class="fas fa-exclamation-triangle"></i>
+                            <div class="notice-text" style="text-align:right">
+                            <strong>راهنماي کوتاه زير را در مورد استفاده از اگزمينر به عنوان کاربر استاد مطالعه کنيد</strong>
+                                <span>
+                                <br /> هر استاد داراي تعدادي درس و هر درس در زيرمجموعه خود داراي آيتم هاي زير است:
+                                <br /> تعدادي لينک که به آدرس هاي اينترنتي، سايت هاي مفيد و يا فولدرهاي به اشتراک گذاشته شده اشاره مي کنند.
+                                <br /> تعدادي سرفصل مطالب
+                                <br /> تعدادي تست و يا سوالات غير تستي پاسخ کوتاه
+                                <br /> تعدادي آزمون
+                                <br /> هر تست داراي تعدادي (2 تا 5) گزينه است
+                                <br /> براي هر تست گزينه پاسخ صحيح بايد مشخص شده باشد
+                                <br /> در هر تست يکي از گزينه ها مي تواند به عنوان گزينه اي که هميشه بايد آخرين گزينه باشد مشخص شده باشد
+                                <br /> براي هر تست بايد جهت راست به چپ يا چپ به راست آن مشخص شده باشد
+                                <br /> براي هر تست بايد جهت راست به چپ يا چپ به راست گزينه هاي آن مشخص شده باشد
+                                <br /> براي هر تست درجه سختي (از 1 تا 5) وجود دارد و پيش فرض 3 مي باشد
+                                <br /> هنگام آپلود تست ها و سوالات، سرفصل ها نيز آپلود مي شود ولي استاد مي تواند سرفصل هاي بيشتري را خودش ايجاد کند و برخي تست ها را در آنها قرار دهد.
+                                <br /> هر تست يا سوال فقط به يک سرفصل تعلق دارد.
+                                <br /> علاوه بر آپلود، استاد مي تواند تست ها يا سوالات جديد را يکي يکي در بانک سوالات اضافه کند.
+                                <br />
+                                <br /> يک درس ايجاد کنيد
+                                <br /> لينک هاي مفيد مربوط به درس را اضافه کنيد
+                                <br /> براي افزودن تست ها به يک درس، آيکن فولدر تست هاي درس را کليک کنيد
+                                <br /> در صفحه تست ها، آيکن اکسل را کليک کنيد
+                                <br /> فايل اکسل محتوي سوالات را انتخاب کنيد
+                                <br /> ورک شيت حاوي سوالات اين درس را انتخاب کنيد
+                                <br /> فايل اکسل و ورک شيت بايد به طور صحيح فرمت شده باشند. راهنماي مربوط به ايجاد ستون هاي فايل اکسل را ببينيد.
+                                <br /> همراه با ورود سوالات، سرفصل ها نيز ايجاد مي شوند.
+                                <br /> براي ايجاد تست ها يا سوالات بطور تک تک، آيکون افزودن تست جديد را کليک کنيد
+                                <br /> در صفحه ايجاد/ويرايش تست، عنوان سوال را وارد کنيد و سرفصل را از ليست انتخاب کنيد. درجه سختي سوال و جهت خواندن (راست به چپ يا چپ به راست بودن) سوال و گزينه ها (درصورت تستي بودن سوال) را مشخص کنيد.
+                                <br /> اگر سوال تستي است، گزينه ها را يکي يکي به سوال اضافه کنيد.
+                                <br /> به صفحه دروس برگرديد و براي ايجاد يک آزمون آيکن ليست آزمون ها را کليک کنيد
+                                <br /> در صفحه ازمون ها، يک آزمون جديد ايجاد کنيد و نام آن را ذخيره کنيد.
+                                <br /> در برگه آزمون جديد، آيکن ويرايش را کليک کنيد و به صفحه آزمون برويد
+                                <br /> در صفحه آزمون، تاريخ و ساعت و مدت آزمون را وارد کنيد و آزمون را در حالت  فعال قرار دهيد.
+                                <br /> براي افزودن سوال به آزمون بايد به صفحه تست هاي درس برگرديد. براي اين کار مي تواند از آيکن مربوطه در همين صفحه استفاده کنيد و يا به صفحه دروس برويد و از آنجا به صفحه تست ها برويد.
+                                <br /> راه دوم براي افزودن سوال به آزمون، استفاده از بخش طراحي آزمون به روش انتخاب تصادفي است.
+                                <br /> بخش طراحي در صفحه آزمون را باز کنيد و يک کامپوننت جديد ايجاد کنيد.
+                                <br /> در کامپوننت آزمون، تعداد سوالات تصادفي و سرفصل و درجه سختي سوالات را وارد کنيد.
+                                <br /> در صورت لزوم کامپوننت هاي بيشتري ايجاد کنيد.
+                                <br /> با تکميل طراحي (ايجاد کامپوننت ها)، آيکن اجراي کامپوننت ها را کليک کنيد تا سوالات آزمون بطور تصادفي و با توجه به تنظيمات موجود در کامپوننت ها، به آزمون افزوده شوند.
+                                <br /> براي برگزاري آزموندر تاريخ و زمان مشخص شده، بايد دانشجوياني را به آزمون اضافه کنيد.
+                                <br /> براي هر دانشجو در آزمون، برگه ازمون جداگانه اي اختصاص مي يابد که ترتيب سوالات و گزينه ها بطور تصادفي انتخاب مي شوند.
+                                <br /> براي افزودن دانشجويان به آزمون، به صفحه دانشجويان برويد.
+                                <br /> دانشجوياني که بايد به آزمون افزوده شوند بايد ابتدا ليست شوند. براي اين کار از ليست دانشجويان يک گروه و يا ليست دانشجويان يک درس و يا جستجو استفاده کنيد.
+                                <br /> همه دانشجويان ظاهر شده در يک ليست و يا برخي از آنها را انتخاب کنيد (با تيک زدن چک باکس کنار نام آنها)
+                                <br /> سپس نام درس و نام آزمون را از ليست هاي مربوطه انتخاب کنيد و از منوي کنار ليست آزمون ها آيکن افزودن دانشجويان به آزمون را کليک کنيد.
+                                <br /> برگه هاي آزمون براي تک تک دانشجويان ساخته مي شود، اين عمليات ممکن است اندکي طول بکشد، صبور باشيد.
+                                <br /> آزمون بطور خودکار در تاريخ و زمان مشخص شده آغاز و پس از اتمام زمان امتحان، خاتمه مي يابد.
+                                <br /> در حين برگزاري آزمون استاد مي تواند مدت زمان امتحان را افزايش يا کاهش دهد.
+                                <br /> در حين برگزاري آزمون استاد مي تواند آزمون هر يک از دانشجويان را خاتمه دهد.
+                                <br /> در حين برگزاري آزمون استاد مي تواند برگه آزمون و پاسخ هر يک از دانشجويان را مشاهده کند.
+                                <br /> در حين برگزاري آزمون استاد مي تواند پيام هايي را به جلسه ازمون ارسال کند و دانشجويان بدون نياز به کار خاصي، پيام ها را روي صفحه مشاهده مي کنند.
+                                <br /> استاد مي تواند امکان دسترسي هريک از دانشجويان به برگه امتحاني و پاسخ هايشان را فعال يا غير فعال کند.
+                                <br /> دانشجويان مي توانند با مشاهده برگه امتحاني خود، درصد پاسخ گويي ساير دانشجويان به هر يک از سوالات و انتخاب هريک از گزينه ها را ببينند.
+                                <br /> نمره آزمون دانشجويان پس از پايان آزمون بطور خودکار محاسبه مي شود.
+                                <br /> در مورد آزمون هايي که شامل سوالات غيرتستي است، استاد بايد صحيح بودن يا نبودن پاسخ ها را مشخص کند.
+                                <br /> براي اين کار استاد بايد در صفحه آزمون ها، در برگه آزمون، آيکن سوالات آزمون را کليک کند. سپس به ترتيب با باز کردن هر سوال، پاسخ هاي دانشجويان به هر سوال ليست مي شوند، و استاد مي تواند پاسخ هاي صحيح را با يک کليک مشخص کند.
+                                <br /> بدين ترتيب، نمره آزمون از مجموع نمره سوالات تستي و سوالات غير تستي بدست مي آيد. بروز رساني نمره آزمون پس از تصحيح استاد، با کليک روي آيکن خاتمه آزمون (آيک ساعت قرمز رنگ) صورت مي گيرد.
+                                <br /> در همين صفحه آزمون ها، پس از کليک روي آيکن گزارش آزمون، استاد مي تواند ليست نمرات و برگه آزمون هريک از دانشجويان را بصورت گزارش ببيند.
+                                <br /> همچنين، در زمان برگزاري امتحان، استاد مي تواند زمان شروع و يا غيبت دانشجويان در آزمون را مشاهده کند.
+                                <br /> اين اطلاعات در گزارش پي دي اف نيز قابل مشاهده هستند.
+                                <br /> براي تهيه اين گزارش در صفحه دانشجويان، دانشجويان آزمون را ليست کنيد، سپس همه يا برخي دانشجويان را انتخاب کنيد (چک باکس کنار نام دانشجويان) و آيکون تهيه گزارش را در منوي کنار ليست آزمون ها کليک کنيد.
+                                </span>
+                            </div>
+                        </div>
+                    @* <div class="table-wrap" dir="rtl">
+                            <table class="guide-table">
+                                <thead>
+                                <tr style="text-align:right"><th>عمليات</th><th>راهنما</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="text-align:right">
+                                    <td>نام دانشجو</td>
+                                        <td>
+                                        نام دانشجو.<br />
+                                        <span class="muted">فقط « نام» در اين ستون وارد شود.</span><br />
+                                        </td>
+                                    </tr>
+                                    <tr style="text-align:right">
+                                    <td>نام خانوادگي</td>
+                                        <td>
+                                        نام خانوادگي دانشجو.<br />
+                                        <span class="muted">فقط « نام خانوادگی» در اين ستون وارد شود.</span><br />
+                                        </td>
+                                    </tr>
+                                    <tr style="text-align:right">
+                                    <td>نام کاربري</td>
+                                        <td>
+                                        نام کاربری (و رمز عبور پیش‌فرض) دانشجو که با آن می‌تواند وارد شود.<br />
+                                        <span class="muted">نام کاربری توسط کاربر (دانشجو) قابل تغییر نیست.</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> *@
+                    }
+                    <div class="page-footer">
+                    <i class="fas fa-info-circle"></i>
+                    @(IsFa ? "راهنماي صفحه دروس در اگزمينر نسخه ۱.۰" : "Examiner guide on Courses page version 1.0")
+                    </div>
+                </MudCardContent>
+            </MudCard>
+        </MudContainer>
+    </div>
+
+    <style>
+    .guide-card {
+        border-radius: 1.5rem;
+        overflow: hidden;
+        box-shadow: 0 12px 30px -10px rgba(0, 20, 40, 0.15);
+    }
+
+    .guide-card-content {
+        background: #f8fafc;
+        padding: 1.25rem 1.25rem 1rem !important;
+        text-align: left;
+    }
+
+    /* language switch */
+    .lang-switch-wrap {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 0.85rem;
+    }
+
+    .lang-switch {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        background: #fff;
+        border: 1px solid #d0ddee;
+        border-radius: 40px;
+        padding: 0.25rem;
+        box-shadow: 0 4px 12px rgba(0, 20, 40, 0.06);
+    }
+
+    .lang-btn {
+        background: transparent;
+        border: none;
+        font-family: inherit;
+        font-size: 0.82rem;
+        font-weight: 600;
+        padding: 0.4rem 0.95rem;
+        border-radius: 40px;
+        cursor: pointer;
+        color: #4f5f73;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        line-height: 1;
+    }
+
+        .lang-btn i {
+            font-size: 0.82rem;
+        }
+
+        .lang-btn.active {
+            background: #0f2b4b;
+            color: #fff;
+            box-shadow: 0 3px 8px rgba(15, 43, 75, 0.25);
+        }
+
+        .lang-btn:not(.active):hover {
+            background: #eef3fa;
+            color: #0f2b4b;
+        }
+
+    /* header strip */
+    .header-strip {
+        background: linear-gradient(135deg, #0f2b4b 0%, #1e3a5f 100%);
+        color: #fff;
+        border-radius: 1.1rem;
+        padding: 1.15rem 1.25rem;
+        margin-bottom: 0.9rem;
+        box-shadow: 0 10px 22px -10px rgba(15, 43, 75, 0.55);
+    }
+
+        .header-strip h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 0 0 0.3rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.01em;
+        }
+
+            .header-strip h1 i {
+                color: #9bc7ff;
+                font-size: 1.05rem;
+            }
+
+        .header-strip .accent {
+            color: #ffb4a8;
+        }
+
+        .header-strip p {
+            margin: 0 0 0.6rem 0;
+            color: #cfe0f7;
+            font-size: 0.85rem;
+        }
+
+    .badge-required {
+        background: #f97316;
+        color: #fff;
+        padding: 0.35rem 0.85rem;
+        border-radius: 40px;
+        font-weight: 700;
+        font-size: 0.72rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        letter-spacing: 0.03em;
+        box-shadow: 0 4px 10px rgba(249, 115, 22, 0.35);
+    }
+
+    /* notice */
+    .notice-banner {
+        background: #fffbeb;
+        border-left: 5px solid #e11d48;
+        border-radius: 0.8rem;
+        padding: 0.85rem 1rem;
+        margin-bottom: 0.9rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        box-shadow: 0 4px 12px rgba(225, 29, 72, 0.08);
+    }
+
+        .notice-banner i {
+            font-size: 1.25rem;
+            color: #e11d48;
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+
+    .notice-text strong {
+        color: #9f1239;
+        font-size: 0.88rem;
+        display: block;
+        line-height: 1.4;
+    }
+
+    .notice-text span {
+        color: #4c1d24;
+        font-size: 0.78rem;
+        display: block;
+        margin-top: 0.2rem;
+        line-height: 1.5;
+    }
+
+    /* table */
+    .table-wrap {
+        background: #fff;
+        border-radius: 0.9rem;
+        border: 1px solid #e6ecf3;
+        overflow: hidden;
+        margin-bottom: 0.9rem;
+    }
+
+    .guide-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8rem;
+        margin: 0;
+    }
+
+        .guide-table thead th {
+            background: #eef4fc;
+            color: #0f2b4b;
+            font-weight: 700;
+            font-size: 0.72rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 0.55rem 0.7rem;
+            text-align: inherit;
+            border-bottom: 1px solid #dbe4ef;
+        }
+
+        .guide-table tbody td {
+            padding: 0.55rem 0.7rem;
+            border-bottom: 1px solid #f0f3f7;
+            color: #1e293b;
+            vertical-align: top;
+            line-height: 1.45;
+        }
+
+        .guide-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .guide-table tbody tr:nth-child(even) td {
+            background: #fbfdff;
+        }
+
+        .guide-table tbody td:first-child {
+            font-weight: 700;
+            color: #64748b;
+            width: 2.5rem;
+            text-align: center;
+        }
+
+        .guide-table tbody td:nth-child(2) {
+            font-weight: 600;
+            color: #0b1e33;
+            white-space: nowrap;
+        }
+
+    .accent {
+        color: #b91c1c;
+        font-weight: 700;
+    }
+
+    .muted {
+        color: #64748b;
+        font-size: 0.72rem;
+    }
+
+    /* footer */
+    .page-footer {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.72rem;
+        color: #8095ab;
+    }
+
+        .page-footer i {
+            font-size: 0.75rem;
+        }
+
+    [dir="rtl"] .page-footer {
+        justify-content: flex-start;
+    }
+
+    [dir="rtl"] .header-strip h1 {
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+
+    [dir="rtl"] .notice-banner {
+        border-left: none;
+        border-right: 5px solid #e11d48;
+    }
+
+    [dir="rtl"] .guide-table tbody td:nth-child(2) {
+        font-family: 'Vazirmatn', Tahoma, sans-serif;
+    }
+    </style>
+
+@code {
+    private bool IsFa = false;
+
+    protected override async Task OnAfterRenderAsync (bool firstRender)
+        {
+        if (!firstRender)
+            return;
+        try
+            {
+            var result = await sessionStorage.GetAsync<bool>("guide-lang-fa");
+            if (result.Success && result.Value != IsFa)
+                {
+                IsFa = result.Value;
+                StateHasChanged();
+                }
+            }
+        catch { /* prerender or unavailable session */ }
+        }
+
+    private async Task SetLang (bool fa)
+        {
+        if (IsFa == fa)
+            return;
+        IsFa = fa;
+        try
+            {
+            await sessionStorage.SetAsync("guide-lang-fa", fa);
+            }
+        catch { }
+        }
+    }

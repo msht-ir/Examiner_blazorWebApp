@@ -3,533 +3,351 @@
 @using ExaminerB.Service
 @inject NavigationManager Navman
 @inject AppState appState
-@inject HttpClient http
-@inject FeService feService
-@inject IJSRuntime JS
-@implements IDisposable
 @inject ISnackbar Snackbar
+@implements IDisposable
 
 <PageTitle>Examiner — Game Pattern</PageTitle>
-
-<style>
-    .gp-wrapper {
-        min-height: 100vh;
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
-        padding: 24px 16px;
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        font-family: 'Segoe UI', Tahoma, sans-serif;
-    }
-
-    .gp-card {
-        width: 100%;
-        max-width: 520px;
-        background: #ffffff;
-        border-radius: 16px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
-        overflow: hidden;
-    }
-
-    .gp-header {
-        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-        color: #fff;
-        padding: 20px;
-        text-align: center;
-    }
-
-    .gp-header h2 {
-        margin: 0;
-        font-weight: 700;
-        letter-spacing: .5px;
-    }
-
-    .gp-header .player {
-        margin-top: 6px;
-        font-size: .95rem;
-        opacity: .9;
-    }
-
-    .gp-body {
-        padding: 22px;
-    }
-
-    .gp-section {
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 16px;
-        background: #f8fafc;
-    }
-
-    .gp-section-title {
-        font-size: .75rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #64748b;
-        margin-bottom: 10px;
-        font-weight: 600;
-    }
-
-    .gp-form-row {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-
-    .gp-input, .gp-select {
-        border: 1px solid #cbd5e1;
-        border-radius: 8px;
-        padding: 8px 12px;
-        font-size: .95rem;
-        outline: none;
-        transition: border-color .2s, box-shadow .2s;
-    }
-
-    .gp-input:focus, .gp-select:focus {
-        border-color: #6366f1;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, .15);
-    }
-
-    .gp-select { flex: 1; min-width: 160px; }
-    .gp-input-num { width: 80px; }
-
-    .gp-btn {
-        border: none;
-        border-radius: 8px;
-        padding: 8px 18px;
-        font-size: .9rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform .15s, box-shadow .2s, background .2s;
-    }
-
-    .gp-btn:hover { transform: translateY(-1px); }
-    .gp-btn:active { transform: translateY(0); }
-
-    .gp-btn-primary { background: #6366f1; color: #fff; }
-    .gp-btn-primary:hover { background: #4f46e5; }
-
-    .gp-btn-success { background: #10b981; color: #fff; }
-    .gp-btn-success:hover { background: #059669; }
-
-    .gp-btn-warning { background: #f59e0b; color: #fff; }
-    .gp-btn-warning:hover { background: #d97706; }
-
-    .gp-btn-danger { background: #ef4444; color: #fff; }
-    .gp-btn-danger:hover { background: #dc2626; }
-
-    .gp-btn-ghost {
-        background: transparent;
-        color: #6366f1;
-        border: 1px solid #c7d2fe;
-    }
-    .gp-btn-ghost:hover { background: #eef2ff; }
-
-    .gp-timer {
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: #f59e0b;
-        text-align: center;
-        margin-bottom: 4px;
-        font-variant-numeric: tabular-nums;
-    }
-
-    .gp-progress {
-        text-align: center;
-        color: #64748b;
-        font-size: .85rem;
-        margin-bottom: 14px;
-    }
-
-    .gp-pattern {
-        text-align: center;
-        font-family: 'Courier New', monospace;
-        font-size: 1.35rem;
-        font-weight: 700;
-        color: #0f766e;
-        letter-spacing: 2px;
-        margin: 12px 0 18px;
-        word-break: break-word;
-        min-height: 2rem;
-    }
-
-    .gp-answer-row {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .gp-actions {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-        margin-top: 6px;
-    }
-
-    .gp-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: .82rem;
-        margin-top: 16px;
-    }
-
-    .gp-table th {
-        background: #f1f5f9;
-        color: #475569;
-        padding: 8px 6px;
-        text-align: left;
-        font-weight: 600;
-        border-bottom: 2px solid #e2e8f0;
-    }
-
-    .gp-table td {
-        padding: 7px 6px;
-        border-bottom: 1px solid #f1f5f9;
-        color: #334155;
-    }
-
-    .gp-table tr:hover td { background: #f8fafc; }
-
-    @@media (max-width: 480px) {
-        .gp-body { padding: 14px; }
-        .gp-pattern { font-size: 1.05rem; }
-        .gp-timer { font-size: 1.3rem; }
-    }
-</style>
-
 <div class="gp-wrapper">
-    <div class="gp-card">
-        <div class="gp-header">
-            <h2>🎯 Patterns</h2>
-            <div class="player" id="playerName"></div>
-        </div>
-
-        <div class="gp-body">
-
-            <!-- Settings -->
-            <div id="settings" class="gp-section">
-                <div class="gp-section-title">Settings</div>
-                <div class="gp-form-row" style="margin-bottom:10px;">
-                    <select id="lst_Level" class="gp-select">
-                        <option value="1" selected>Level 1 — Easy</option>
-                        <option value="2">Level 2</option>
-                        <option value="3">Level 3</option>
-                        <option value="4">Level 4</option>
-                        <option value="5">Level 5</option>
-                        <option value="6">Level 6 — Random</option>
-                    </select>
-                </div>
-                <div class="gp-form-row">
-                    <label for="txt_nQ" style="color:#475569;font-size:.9rem;">Questions</label>
-                    <input id="txt_nQ" type="number" class="gp-input gp-input-num" placeholder="#" max="15" value="2">
-                    <button class="gp-btn gp-btn-warning" type="button" onclick="btnStart_click()">▶ Start</button>
-                </div>
+        <div class="gp-card">
+            <div class="gp-header">
+            <h5>Patterns</h5>
+            <div class="player">@(string.IsNullOrEmpty(appState.UserName) ? "" : "👤 " + appState.UserName + " - " + appState.UserNickname)</div>
             </div>
-
+            <div class="gp-body">
+            @if (!running)
+                {
+                <!-- Settings -->
+                    <div class="gp-section">
+                    <div class="gp-section-title">Settings</div>
+                        <div class="gp-form-row" style="margin-bottom:10px;">
+                            <select class="gp-select" @bind="Level">
+                            <option value="1">Level 1 — Easy</option>
+                            <option value="2">Level 2</option>
+                            <option value="3">Level 3</option>
+                            <option value="4">Level 4</option>
+                            <option value="5">Level 5</option>
+                            <option value="6">Level 6 — Random</option>
+                            </select>
+                        </div>
+                        <div class="gp-form-row">
+                        <label style="color:#475569;font-size:.9rem;">Questions</label>
+                        <input type="number" class="gp-input gp-input-num" placeholder="#" max="15"
+                               @bind="NQ" @bind:event="oninput" @onkeyup="NQKeyUp" />
+                        <button class="gp-btn gp-btn-warning" type="button" @onclick="StartClicked">▶ Start</button>
+                        </div>
+                    </div>
+                }
             <!-- Run area -->
-            <div class="gp-section">
+                <div class="gp-section">
                 <div class="gp-section-title">Challenge</div>
-                <div class="gp-timer" id="lbl_Timer">00''</div>
-                <div class="gp-progress" id="lbl_Qi">1 of 2</div>
-                <div class="gp-pattern" id="lbl_N1N4">[ - ] [ - ] [ - ] [ - ]</div>
-
-                <div class="gp-answer-row">
-                    <input id="txt_Answer" type="text" class="gp-input" placeholder="Your answer…" style="width:150px;">
-                    <button class="gp-btn gp-btn-success" type="button" onclick="btnAnswer_click()">✓ Answer</button>
+                <div class="gp-timer">@TimerText</div>
+                <div class="gp-progress">@(running || Qi > 0 ? $"{Qi} of {NQ}" : $"1 of {NQ}")</div>
+                <div class="gp-pattern">@PatternText</div>
+                    <div class="gp-answer-row">
+                    <input type="text" class="gp-input" placeholder="Your answer…" style="width:150px;"
+                           @bind="AnswerInput" @bind:event="oninput" @onkeyup="AnswerKeyUp"
+                           disabled="@(!running || Tm <= 0 || Qi > NQ)" />
+                        <button class="gp-btn gp-btn-success" type="button"
+                            @onclick="AnswerClicked"
+                            disabled="@(!running || Tm <= 0 || Qi > NQ)">
+                        ✓ Answer
+                        </button>
+                    </div>
                 </div>
-            </div>
-
             <!-- Actions -->
-            <div class="gp-actions">
-                <button class="gp-btn gp-btn-ghost" type="button" onclick="btnHelp_click()">💡 Help</button>
-                <button class="gp-btn gp-btn-danger" type="button" onclick="btnExit_click()">✕ Exit</button>
-            </div>
-
+                <div class="gp-actions">
+                <button class="gp-btn gp-btn-ghost" type="button" @onclick="HelpClicked"> Help</button>
+                <button class="gp-btn gp-btn-danger" type="button" @onclick="ExitClicked"> Back to Students Page</button>
+                </div>
             <!-- Results -->
-            <table id="tblAns" class="gp-table">
-                <thead>
-                    <tr>
+                <table class="gp-table">
+                    <thead>
+                        <tr>
                         <th>#</th>
                         <th>Pattern</th>
                         <th>Answer</th>
                         <th>Yours</th>
                         <th>Result</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var r in Results)
+                        {
+                            <tr>
+                            <td>@r.Index</td>
+                            <td>@r.Pattern</td>
+                            <td>@r.Answer</td>
+                            <td>@r.Yours</td>
+                                <td style="@(r.Correct ? "color:#059669;font-weight:600;" : "color:#dc2626;font-weight:600;")">
+                                @(r.Correct ? "✓ Correct" : "✕ Incorrect")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
-
-<!--SCRIPTS-->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
-<script>
-    // ==== GAME STATE ====
-    var playerName = "";
-    var level = 0, nQ = 0, Qi = 0;
-    var Op1 = 0, Op2 = 0;
-    var x1 = 0, x2 = 0;
-    var Nx = 0, N1 = 0, N2 = 0, N3 = 0, N4 = 0;
-    var Ans = 0, userAns = 0, Tm = 0;
-    var strHelp = "", intSeconds = 0;
-    var xInterval;
-
-    // Player name label
-    document.getElementById("playerName").textContent =
-        playerName ? "👤 " + playerName : "";
-
-    // Focus first input
-    const nQInput = document.getElementById("txt_nQ");
-    nQInput.focus();
-    nQInput.select();
-
-    function fmtTime(s) {
-        s = Math.max(0, s);
-        const m = Math.floor(s / 60);
-        const sec = s % 60;
-        return String(m).padStart(2, "0") + "' " + String(sec).padStart(2, "0") + "''";
-    }
-
-    // ==== START ====
-    function btnStart_click() {
-        Tm = 0; Qi = 0; nQ = 0;
-        document.getElementById("lbl_Timer").textContent = fmtTime(0);
-
-        level = document.getElementById("lst_Level").value;
-        if (level === "0") {
-            document.getElementById("lst_Level").focus();
-            return;
-        }
-
-        nQ = parseInt(document.getElementById("txt_nQ").value, 10);
-        if (isNaN(nQ) || nQ < 2) {
-            nQInput.focus();
-            nQInput.select();
-            return;
-        }
-
-        const perQ = { "1": 50, "2": 60, "3": 60, "4": 70, "5": 80, "6": 70 };
-        intSeconds = nQ * (perQ[level] || 60);
-
-        startTimer(intSeconds);
-
-        // Hide settings
-        const settings = document.getElementById("settings");
-        settings.style.display = "none";
-
-        Ask();
-    }
-
-    // ==== ASK ====
-    function Ask() {
-        if (Tm <= 0) return;
-
-        Qi++;
-        if (Qi > nQ) {
-            clearInterval(xInterval);
-            document.getElementById("lbl_Timer").textContent = "⏹ Game over";
-            document.getElementById("txt_Answer").focus();
-            document.getElementById("txt_Answer").select();
-            return;
-        }
-
-        document.getElementById("lbl_Qi").textContent = Qi + " of " + nQ;
-        strHelp = "";
-
-        const rng = (min, max) => Math.floor(Math.random() * (max - min) + min);
-
-        // Step 1: base numbers
-        switch (level) {
-            case "1": case "2": case "3":
-                x1 = rng(2, 5); x2 = rng(2, 5); N1 = rng(2, 5); break;
-            case "4":
-                x1 = rng(2, 7); x2 = rng(2, 7); N1 = rng(2, 7); break;
-            case "5":
-                x1 = rng(3, 10); x2 = rng(3, 10); N1 = rng(3, 10); break;
-            case "6":
-                x1 = rng(2, 10); x2 = rng(2, 10); N1 = rng(2, 10); break;
-        }
-
-        // Step 2: operators
-        if (level === "1") {
-            Op1 = 30;
-            Op2 = rng(1, 3); // 1 or 2
-        } else {
-            Op1 = rng(1, 4) * 10;
-            Op2 = (Op1 === 10 || Op1 === 20) ? 3 : rng(1, 3);
-        }
-
-        // Step 3: which slot is hidden
-        switch (level) {
-            case "1": case "2": Nx = 4; break;
-            case "3": Nx = 1; break;
-            case "4": Nx = 3; break;
-            case "5": Nx = 2; break;
-            case "6": Nx = rng(1, 5); break;
-        }
-
-        // Step 4: build sequence
-        switch (Op1 + Op2) {
-            case 13:
-                strHelp = "[ +" + x1 + " *" + x2 + " ]";
-                N2 = (N1 + x1) * x2;
-                N3 = (N2 + x1) * x2;
-                N4 = (N3 + x1) * x2;
-                break;
-            case 23:
-                strHelp = "[ -" + x1 + " *" + x2 + " ]";
-                N2 = (N1 - x1) * x2;
-                N3 = (N2 - x1) * x2;
-                N4 = (N3 - x1) * x2;
-                break;
-            case 31:
-                strHelp = "[ *" + x1 + " +" + x2 + " ]";
-                N2 = (N1 * x1) + x2;
-                N3 = (N2 * x1) + x2;
-                N4 = (N3 * x1) + x2;
-                break;
-            case 32:
-                strHelp = "[ *" + x1 + " -" + x2 + " ]";
-                N2 = (N1 * x1) - x2;
-                N3 = (N2 * x1) - x2;
-                N4 = (N3 * x1) - x2;
-                break;
-        }
-
-        // Step 5: display
-        const lbl = document.getElementById("lbl_N1N4");
-        switch (Nx) {
-            case 1: Ans = N1; lbl.textContent = "[ ? ] [ " + N2 + " ] [ " + N3 + " ] [ " + N4 + " ]"; break;
-            case 2: Ans = N2; lbl.textContent = "[ " + N1 + " ] [ ? ] [ " + N3 + " ] [ " + N4 + " ]"; break;
-            case 3: Ans = N3; lbl.textContent = "[ " + N1 + " ] [ " + N2 + " ] [ ? ] [ " + N4 + " ]"; break;
-            case 4: Ans = N4; lbl.textContent = "[ " + N1 + " ] [ " + N2 + " ] [ " + N3 + " ] [ ? ]"; break;
-        }
-
-        const ansInput = document.getElementById("txt_Answer");
-        ansInput.value = "";
-        ansInput.focus();
-    }
-
-    // ==== ANSWER ====
-    function btnAnswer_click() {
-        if (Tm <= 0 || Qi > nQ) return;
-
-        const raw = document.getElementById("txt_Answer").value.trim();
-        userAns = Number(raw);
-        if (raw === "" || isNaN(userAns)) {
-            document.getElementById("txt_Answer").focus();
-            document.getElementById("txt_Answer").select();
-            return;
-        }
-
-        const tbody = document.querySelector("#tblAns tbody");
-
-        if (userAns === Ans) {
-            tbody.insertAdjacentHTML("beforeend",
-                `<tr>
-                    <td>${Qi}</td>
-                    <td>${strHelp}</td>
-                    <td>${Ans}</td>
-                    <td>${userAns}</td>
-                    <td style="color:#059669;font-weight:600;">✓ Correct</td>
-                </tr>`);
-        } else {
-            tbody.insertAdjacentHTML("beforeend",
-                `<tr>
-                    <td>${Qi}</td>
-                    <td>?</td>
-                    <td>?</td>
-                    <td>${userAns}</td>
-                    <td style="color:#dc2626;font-weight:600;">✕ Incorrect</td>
-                </tr>`);
-            document.getElementById("txt_Answer").focus();
-            document.getElementById("txt_Answer").select();
-            return;
-        }
-
-        strHelp = "";
-        Ask();
-    }
-
-    // ==== TIMER ====
-    function startTimer(seconds) {
-        Tm = seconds;
-        clearInterval(xInterval);
-        xInterval = setInterval(function () {
-            Tm--;
-            document.getElementById("lbl_Timer").textContent = fmtTime(Tm);
-            if (Tm <= 0) {
-                clearInterval(xInterval);
-                document.getElementById("lbl_Timer").textContent = "⏰ Time's up";
-            }
-        }, 1000);
-        document.getElementById("lbl_Timer").textContent = fmtTime(Tm);
-    }
-
-    // ==== HELP ====
-    function btnHelp_click() {
-        alert(strHelp || "Start a game to see the pattern help.");
-        document.getElementById("txt_Answer").focus();
-        document.getElementById("txt_Answer").select();
-    }
-
-    // ==== EXIT ====
-    function btnExit_click() {
-        if (confirm("Exit now? / مي خواهيد خارج شويد؟")) {
-            window.location.href = ".";
-        } else {
-            nQInput.focus();
-            nQInput.select();
-        }
-    }
-
-    // ==== ENTER key handlers ====
-    nQInput.addEventListener("keyup", function (e) {
-        if (e.key === "Enter" && !isNaN(nQInput.valueAsNumber)) btnStart_click();
-    });
-
-    document.getElementById("txt_Answer").addEventListener("keyup", function (e) {
-        if (e.key === "Enter") btnAnswer_click();
-    });
-</script>
 
 @code {
-    private User user = new User();
-    private bool _firstRender = true;
-
-    protected override async Task OnInitializedAsync()
-    {
-        appState.OnChange += StateHasChanged;
-        appState.OnChange += TriggerRender;
-        appState.SetUserLoginStatus(0);
-        appState.SetStudentTags(0);
-        appState.SetUserName("");
-        StateHasChanged();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (_firstRender)
+    // ---- bound UI state ----
+    private string Level = "1";
+    private int NQ = 2;
+    private string AnswerInput = "";
+    // ---- runtime state ----
+    private bool running = false;
+    private int Qi = 0;
+    private int Tm = 0;
+    private int IntSeconds = 0;
+    private int X1, X2, N1, N2, N3, N4;
+    private int Op1, Op2, Nx;
+    private int Ans;
+    private string StrHelp = "";
+    private string PatternText = "[ - ] [ - ] [ - ] [ - ]";
+    private string TimerText = "00' 00''";
+    private record ResultRow (int Index, string Pattern, string Answer, string Yours, bool Correct);
+    private List<ResultRow> Results = new();
+    private CancellationTokenSource? _timerCts;
+    private readonly Random _rng = new();
+    protected override void OnInitialized ()
         {
-            _firstRender = false;
-            await Task.Delay(1);
+        // Keep username intact — don't clear it (that broke the header).
+        }
+    private static string FmtTime (int s)
+        {
+        s = Math.Max(0, s);
+        int m = s / 60;
+        int sec = s % 60;
+        return $"{m:00}' {sec:00}''";
+        }
+    private int Rng (int min, int max) => _rng.Next(min, max);  // [min, max)
+    // ==== START ====
+    private async Task StartClicked ()
+        {
+        if (running)
+            return;
+        if (!int.TryParse(Level, out int lvl) || lvl < 1 || lvl > 6)
+            return;
+        if (NQ < 2)
+            return;
+
+        running = true;
+        Qi = 0;
+        Results.Clear();
+        Tm = 0;
+        TimerText = FmtTime(0);
+        StateHasChanged();
+
+        int perQ = lvl switch
+            {
+                1 => 50,
+                2 => 60,
+                3 => 60,
+                4 => 70,
+                5 => 80,
+                _ => 70
+                };
+        IntSeconds = NQ * perQ;
+
+        // start countdown
+        _timerCts = new CancellationTokenSource();
+        _ = CountdownAsync(_timerCts.Token);
+
+        await AskAsync();
+        }
+    private async Task CountdownAsync (CancellationToken token)
+        {
+        Tm = IntSeconds;
+        await InvokeAsync(StateHasChanged);
+        try
+            {
+            while (Tm > 0)
+                {
+                await Task.Delay(1000, token);
+                Tm--;
+                TimerText = Tm > 0 ? FmtTime(Tm) : "⏰ Time's up";
+                await InvokeAsync(StateHasChanged);
+                }
+            }
+        catch (TaskCanceledException) { /* answered all / exit */ }
+        }
+    // ==== ASK ====
+    private async Task AskAsync ()
+        {
+        if (Tm <= 0)
+            {
+            running = false;
+            return;
+            }
+        Qi++;
+        if (Qi > NQ)
+            {
+            _timerCts?.Cancel();
+            TimerText = "⏹ Game over";
+            running = false;
+            await InvokeAsync(StateHasChanged);
+            return;
+            }
+        StrHelp = "";
+        // Step 1: base numbers
+        int lvl = int.Parse(Level);
+        switch (lvl)
+            {
+            case 1:
+            case 2:
+            case 3:
+                X1 = Rng(2, 5);
+                X2 = Rng(2, 5);
+                N1 = Rng(2, 5);
+                break;
+            case 4:
+                X1 = Rng(2, 7);
+                X2 = Rng(2, 7);
+                N1 = Rng(2, 7);
+                break;
+            case 5:
+                X1 = Rng(3, 10);
+                X2 = Rng(3, 10);
+                N1 = Rng(3, 10);
+                break;
+            default: // 6
+                X1 = Rng(2, 10);
+                X2 = Rng(2, 10);
+                N1 = Rng(2, 10);
+                break;
+            }
+        // Step 2: operators
+        if (lvl == 1)
+            {
+            Op1 = 30;
+            Op2 = Rng(1, 3); // 1 or 2
+            }
+        else
+            {
+            Op1 = Rng(1, 4) * 10;
+            Op2 = (Op1 == 10 || Op1 == 20) ? 3 : Rng(1, 3);
+            }
+        // Step 3: hidden slot
+        switch (lvl)
+            {
+            case 1:
+            case 2:
+                Nx = 4;
+                break;
+            case 3:
+                Nx = 1;
+                break;
+            case 4:
+                Nx = 3;
+                break;
+            case 5:
+                Nx = 2;
+                break;
+            default:
+                Nx = Rng(1, 5);
+                break; // 1..4
+            }
+        // Step 4: build sequence
+        switch (Op1 + Op2)
+            {
+            case 13:
+                StrHelp = $"[ +{X1} *{X2} ]";
+                N2 = (N1 + X1) * X2;
+                N3 = (N2 + X1) * X2;
+                N4 = (N3 + X1) * X2;
+                break;
+            case 23:
+                StrHelp = $"[ -{X1} *{X2} ]";
+                N2 = (N1 - X1) * X2;
+                N3 = (N2 - X1) * X2;
+                N4 = (N3 - X1) * X2;
+                break;
+            case 31:
+                StrHelp = $"[ *{X1} +{X2} ]";
+                N2 = (N1 * X1) + X2;
+                N3 = (N2 * X1) + X2;
+                N4 = (N3 * X1) + X2;
+                break;
+            case 32:
+                StrHelp = $"[ *{X1} -{X2} ]";
+                N2 = (N1 * X1) - X2;
+                N3 = (N2 * X1) - X2;
+                N4 = (N3 * X1) - X2;
+                break;
+            }
+        // Step 5: display
+        switch (Nx)
+            {
+            case 1:
+                Ans = N1;
+                PatternText = $"[ ? ] [ {N2} ] [ {N3} ] [ {N4} ]";
+                break;
+            case 2:
+                Ans = N2;
+                PatternText = $"[ {N1} ] [ ? ] [ {N3} ] [ {N4} ]";
+                break;
+            case 3:
+                Ans = N3;
+                PatternText = $"[ {N1} ] [ {N2} ] [ ? ] [ {N4} ]";
+                break;
+            case 4:
+                Ans = N4;
+                PatternText = $"[ {N1} ] [ {N2} ] [ {N3} ] [ ? ]";
+                break;
+            }
+        AnswerInput = "";
+        await InvokeAsync(StateHasChanged);
+        }
+    // ==== ANSWER ====
+    private async Task AnswerClicked ()
+        {
+        if (!running || Tm <= 0 || Qi > NQ)
+            return;
+        if (string.IsNullOrWhiteSpace(AnswerInput))
+            return;
+        if (!int.TryParse(AnswerInput.Trim(), out int userAns))
+            return;
+        if (userAns == Ans)
+            {
+            Results.Add(new ResultRow(Qi, StrHelp, Ans.ToString(), userAns.ToString(), true));
+            StrHelp = "";
+            AnswerInput = "";
+            await AskAsync();
+            }
+        else
+            {
+            Results.Add(new ResultRow(Qi, "?", "?", userAns.ToString(), false));
+            AnswerInput = "";
+            await InvokeAsync(StateHasChanged);
+            }
+        }
+    private async Task AnswerKeyUp (KeyboardEventArgs e)
+        {
+        if (e.Key == "Enter")
+            await AnswerClicked();
+        }
+    private async Task NQKeyUp (KeyboardEventArgs e)
+        {
+        if (e.Key == "Enter" && NQ > 0)
+            await StartClicked();
+        }
+    // ==== HELP ====
+    private void HelpClicked ()
+        {
+        Snackbar.Add(string.IsNullOrEmpty(StrHelp)
+            ? "Start a game to see the pattern help."
+            : StrHelp, Severity.Info);
+        }
+    // ==== EXIT ====
+    private void ExitClicked ()
+        {
+        // _timerCts?.Cancel();
+        // running = false;
+        Navman.NavigateTo("/S_Student");
+        }
+    public void Dispose ()
+        {
+        _timerCts?.Cancel();
+        _timerCts?.Dispose();
         }
     }
-
-    private void TriggerRender()
-    {
-        InvokeAsync(StateHasChanged);
-    }
-
-    public void Dispose()
-    {
-        appState.OnChange -= TriggerRender;
-    }
-}

@@ -84,7 +84,7 @@
                                                 </div>
                                             <hr />
                                                 <button class="btn btn-link" Title=@((_help) ? "get a random Test from course" + studentCourse.CourseName : "") @onclick="() => BtnTakeATest(studentCourse.StudentCourseId)">
-                                                <img class="pulse-animation" src="/img/icoListT.png" width="30" />
+                                                <img class="pulse-animation" src="/img/icoCourse.png" width="22" />
                                                 </button>
                                             @if ((studentCourse.StudentCourseTags & 5) == 5)
                                                 {
@@ -785,7 +785,7 @@
                             aria-expanded="false"
                             aria-controls="CollapseId7" style="background-color:WhiteSmoke">
                             <h4>
-                            <img class="pulse-hover" src="/img/icoListE.png" width="36" style="margin-right:10px;" title="سرگرمي بازي با اعداد" />
+                            <img class="pulse-hover" src="/img/icoCalcs.png" width="30" style="margin-right:10px;" title="سرگرمي بازي با اعداد" />
                             <span style="color:rgb(82, 109, 117)">entertainment </span><span style="font-weight:bold;font-size:x-small;color:indianred"></span>
                             </h4>
                         </button>
@@ -803,40 +803,30 @@
                             <div id="T3">
                                 <div style="text-align:center">
                                     <div style="text-align:center;margin:30px;">
-                                        <div>
-                                            <p style="text-align:center;font-size:x-small;">
-                                            با توجه به سه عدد داده شده در بازي شما بايد عدد چهارم را پيدا کنيد
-                                            <br />
-                                            يک الگوي ساده بين اعداد وجود دارد
-                                            <br />
-                                            بازي داراي 6 سطح است
-                                            <br />
-                                            </p>
-                                        </div>
+                                        <p style="text-align:center;font-size:x-small;">
+                                        بدون وسيله، با ذهن محاسبه کنيد
+                                        <br />
+                                        </p>
                                         <MudButton Variant="Variant.Filled"
                                                EndIcon="@Icons.Material.Outlined.Games"
-                                               Color="Color.Secondary"
-                                               Size="Size.Small"
-                                               OnClick='@(() => BtnGame("GamePattern"))'
+                                               Color="Color.Success"
+                                               Size="Size.Medium"
+                                               OnClick='@(() => BtnGame("GameCalculation"))'
                                                Style="margin-left:20px;width:150px;">
                                         Start Game
                                         </MudButton>
                                     </div>
                                 <hr />
-                                    <div>
+                                    <div style="text-align:center;margin:30px;">
                                         <p style="text-align:center;font-size:x-small;">
-                                        شما بايد اعداد را با هم جمع، تفريق، ضرب و يا تقسيم کنيد
-                                        <br />
-                                        براي سخت تر شدن بازي، تعداد ارقام صحيح و اعشار را براي عدد اول و عدد دوم تغيير دهيد
+                                        با توجه به سه عدد داده شده، عدد چهارم را پيدا کنيد
                                         <br />
                                         </p>
-                                    </div>
-                                    <div style="text-align:center;margin:30px;">
                                         <MudButton Variant="Variant.Filled"
                                                EndIcon="@Icons.Material.Outlined.Games"
-                                               Color="Color.Success"
-                                               Size="Size.Small"
-                                               OnClick='@(() => BtnGame("GameCalculation"))'
+                                               Color="Color.Primary"
+                                               Size="Size.Medium"
+                                               OnClick='@(() => BtnGame("GamePattern"))'
                                                Style="margin-left:20px;width:150px;">
                                         Start Game
                                         </MudButton>

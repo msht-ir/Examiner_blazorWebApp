@@ -1324,7 +1324,12 @@ else
         }
     private async Task BtnSendQuickMessageToSelectedStudents ()
         {
-        //0 guard against no student selected
+        //0 guard against empty message & zero students selected
+        if (strQuickMessage.Trim().Length == 0)
+            {
+            Snackbar.Add($"empty message!", Severity.Warning);
+            return;
+            }
         int _countS = 0;
         foreach (User student in lstStudents)
             {
@@ -1339,7 +1344,7 @@ else
             return;
             }
         //create message body
-        if (strQuickMessage.Length < 4000)
+        if (strQuickMessage.Length < 120)
             {
             user.UserId = Convert.ToInt32(appState.UserId);
             message.UserId = user.UserId;
@@ -1391,7 +1396,7 @@ else
             }
         else
             {
-            Snackbar.Add($"large message ({message.MessageBody.Length}), max: 4000", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+            Snackbar.Add($"large message ({message.MessageBody.Length}), max: 120 (for quick message)", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     public void BtnGotoPageReportMessages (User student)

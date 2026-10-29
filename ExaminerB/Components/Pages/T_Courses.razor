@@ -11,7 +11,7 @@
 <div style="text-align: center;">
     <p style="font-size:large;font-style:italic;color:rgb(220,220,220)">@appState.UserNickname</p>
     <h2 style="color:royalblue">Courses</h2>
-</div>
+    </div>
 @if (!_hasFetched)
     {
     <_Loading />
@@ -133,7 +133,7 @@ else
                                                                                 <button class="btn btn-link" title="tests" @onclick="() => BtnListCourseTopicTests(ct)">
                                                                                 <img src="/img/icoFolderT.png" width="24" />
                                                                                 </button>
-                                                                                <button class="btn btn-link" title="delete this topic" @onclick="() => BtnDeleteCourseTopic(ct.CourseTopicId)"">
+                                                                                <button class="btn btn-link" title="delete this topic" @onclick="() => BtnDeleteCourseTopic(ct.CourseTopicId)" ">
                                                                                 <img src="/img/icoDelete1.png" width="20" />
                                                                                 </button>
                                                                             </div>
@@ -324,7 +324,7 @@ else
                 }
             else
                 {
-                    <br />
+                <br />
                     <button class="btn btn-link" @onclick="BtnAddNewCourse">
                     <img src="/img/icoAdd1.png" width="22" title="add new course افزودن درس جديد" />
                     </button>
@@ -340,12 +340,37 @@ else
                     <button class="btn btn-link" @onclick='() => BtnGotoPage("N")'>
                     <img src="/img/icoNoteBook.png" width="42" />
                     </button>
+                    <button class="btn btn-link" @onclick='() => BtnHelpCourses()'>
+                    <img src="/img/icoInfo1.png" width="36" />
+                    </button>
                 </div>
             </div>
         </EditForm>
+    @if (cmd == "showhelp")
+        {
+        <_GuideCoursesPage />
+        <hr />
+        <_GuideImportTests />
+        <br />
+        <hr style="color:red" />
+            <div style="text-align: center;">
+                <button class="btn btn-link" @onclick="BtnBack">
+                <img src="/img/icoList.png" width="32" />
+                </button>
+                <button class="btn btn-link" @onclick='() => BtnGotoPage("S")'>
+                <img src="/img/icoSwitchBoardStudents.png" width="42" />
+                </button>
+                <button class="btn btn-link" @onclick='() => BtnGotoPage("N")'>
+                <img src="/img/icoNoteBook.png" width="42" />
+                </button>
+                <button class="btn btn-link" @onclick='() => BtnHelpCourses()'>
+                <img src="/img/icoInfo1.png" width="36" />
+                </button>
+            </div>
     }
-    <script>
-    window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});
+    }
+<script>
+    window.addEventListener('load', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
     </script>
 
 @code {
@@ -428,7 +453,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to create course", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); 
+            Snackbar.Add($"failed to create course", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     public void BtnEditCourse (int courseId)
@@ -448,7 +473,7 @@ else
             }
         else
             {
-            Snackbar.Add("failed to update course name", Severity.Warning); 
+            Snackbar.Add("failed to update course name", Severity.Warning);
             //await JS.InvokeVoidAsync ("alert", "Course name did not changed --- process failed");
             }
         }
@@ -506,7 +531,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to create course topic", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); 
+            Snackbar.Add($"failed to create course topic", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
     public async Task BtnUpdateCourseTopic (CourseTopic courseTopic)
@@ -563,7 +588,7 @@ else
             }
         else
             {
-            Snackbar.Add($"failed to save course folder", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); 
+            Snackbar.Add($"failed to save course folder", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         appState.SetCourseId(courseId);
         }
@@ -616,5 +641,9 @@ else
                 };
         appState.SetReturnPage("/T_Courses");
         Navman.NavigateTo(pg);
+        }
+    private void BtnHelpCourses ()
+        {
+        cmd = cmd == "showhelp" ? "" : "showhelp";
         }
     }
