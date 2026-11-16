@@ -10,7 +10,7 @@
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
-<h5 style="text-align:center;padding-left:15px;">stickys notes - <span style="font-size:small;font-style:italic;text-align:center;color:indianred">@appState.UserNickname</span></h5>
+<h5 style="text-align:center;padding-left:15px;">quick notes - <span style="font-size:small;font-style:italic;text-align:center;color:indianred">@appState.UserNickname</span></h5>
 <hr style="color:red" />
     @if (!_hasFetched)
     {
@@ -109,32 +109,12 @@ else
                                     else
                                         {
                                             <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
-                                                <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.EditNote" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                                    <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
-                                                        <button class="btn btn-link pulse-animation">
-                                                        <img src="/img/icoEditPen.png" width="22" title="ويرايش يادداشت" />
-                                                        </button>
-                                                    edit
-                                                    </MudMenuItem>
-                                                    <MudMenuItem @onclick="() => BtnMoveNote(notex.NoteId)">
-                                                        <button class="btn btn-link">
-                                                        <img src="/img/icoMoveToNoteBook.png" width="32" title="انتقال يادداشت به دفترچه" />
-                                                        </button>
-                                                    move to notebook
-                                                    </MudMenuItem>
-                                                    <MudMenuItem @onclick="() => BtnDeleteNote(notex.NoteId)">
-                                                        <button class="btn btn-link">
-                                                        <img src="/img/icoDelete1.png" width="22" title="حذف يادداشت" />
-                                                        </button>
-                                                    delete note
-                                                    </MudMenuItem>
-                                                </MudMenu>
-                                            @if (notex.NoteText.Length > 100)
-                                                {
-                                                    <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(notex)">
-                                                    <img src="/img/icoNoteReport.png" width="22" title="نمايش يادداشت در صفحه" />
-                                                    </button>
-                                                }
+                                                <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Primary" OnClick="() => BtnShowNoteInDialog(notex)" />
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(notex)" />
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.DriveFileMove" Color="Color.Dark" OnClick="() => BtnMoveNote(notex.NoteId)" />
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(notex.NoteId)" />
+                                                </MudFabMenu>
                                             </div>
                                         }
                                     </MudCardContent>
@@ -152,7 +132,7 @@ else
                                         <span class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;font-size:smaller;margin:0px;">
                                         @if (notex.IsTodo)
                                             {
-                                            <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
+                                            <img class="pulse-animation" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
                                             @PersianDate(notex.NoteDueDateTime)
                                             }
                                         else
@@ -205,32 +185,12 @@ else
                                     else
                                         {
                                             <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
-                                                <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.EditNote" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                                                    <MudMenuItem @onclick="() => BtnEditNoteInDialog(notex)">
-                                                        <button class="btn btn-link pulse-animation">
-                                                        <img src="/img/icoEditPen.png" width="22" title="ويرايش يادداشت" />
-                                                        </button>
-                                                    edit
-                                                    </MudMenuItem>
-                                                    <MudMenuItem @onclick="() => BtnMoveNote(notex.NoteId)">
-                                                        <button class="btn btn-link">
-                                                        <img src="/img/icoMoveToNoteBook.png" width="32" title="انتقال يادداشت به دفترچه" />
-                                                        </button>
-                                                    move to notebook
-                                                    </MudMenuItem>
-                                                    <MudMenuItem @onclick="() => BtnDeleteNote(notex.NoteId)">
-                                                        <button class="btn btn-link">
-                                                        <img src="/img/icoDelete1.png" width="22" title="حذف يادداشت" />
-                                                        </button>
-                                                    delete note
-                                                    </MudMenuItem>
-                                                </MudMenu>
-                                            @if (notex.NoteText.Length > 100)
-                                                {
-                                                    <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(notex)">
-                                                    <img src="/img/icoNoteReport.png" width="22" title="نمايش يادداشت در صفحه" />
-                                                    </button>
-                                                }
+                                                <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Primary" OnClick="() => BtnShowNoteInDialog(notex)" />
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(notex)" />
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.DriveFileMove" Color="Color.Dark" OnClick="() => BtnMoveNote(notex.NoteId)" />
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(notex.NoteId)" />
+                                                </MudFabMenu>
                                             </div>
                                         }
                                     </MudCardContent>
@@ -260,9 +220,9 @@ else
             </button>
         </div>
     }
-    <script>
+    @* <script>
     window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
-    </script>
+    </script> *@
 
 @code {
     [Parameter]
@@ -300,9 +260,9 @@ else
         user.UserId = Convert.ToInt32(appState.UserId);
         user.UserName = appState.UserName;
         lstNotes = await feService.Read_Notes(Id, mode, user.UserId);
-        if(lstNotes.Count() == 0)
+        if (lstNotes.Count() == 0)
             {
-            await CreateNote ();
+            await CreateNote();
             }
         await GetListOfProjects(user.UserId, _ShowProjectsMode);
         _hasFetched = true;
@@ -356,7 +316,7 @@ else
             bool result = await feService.Update_NoteParent(_note);
             if (result)
                 {
-                Snackbar.Add("note moved to notebook", Severity.Success); 
+                Snackbar.Add("note moved to notebook", Severity.Success);
                 _cmd = "";
                 appState.SetCmd("");
                 lstNotes = await feService.Read_Notes(Id, mode, user.UserId);
@@ -364,12 +324,12 @@ else
                 }
             else
                 {
-                Snackbar.Add("failed", Severity.Warning); 
+                Snackbar.Add("failed", Severity.Warning);
                 }
             }
         else
             {
-            Snackbar.Add("select notebook and section", Severity.Info); 
+            Snackbar.Add("select notebook and section", Severity.Info);
             }
         }
     private void BtnCancel ()
@@ -445,7 +405,7 @@ else
             bool result = await feService.Delete_Note(noteId);
             if (result)
                 {
-                Snackbar.Add($"deleted", Severity.Warning); 
+                Snackbar.Add($"deleted", Severity.Warning);
                 user.UserId = Convert.ToInt32(appState.UserId);
                 _hasFetched = false;
                 lstNotes.Clear();
@@ -456,7 +416,7 @@ else
                 }
             else
                 {
-                Snackbar.Add($"Failed to delete note!", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; }); 
+                Snackbar.Add($"Failed to delete note!", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             }
         }

@@ -141,7 +141,7 @@ else
             }
         else
             {
-            @* due Notes *@
+            @* ToDo Notes *@
             var collapseId_due = $"collapse";
             _clpsP = "collapse";
                 <div class="accordion-item mt-2 mb-1" style="max-width:500px; margin: 0 auto;">
@@ -192,23 +192,14 @@ else
                                                         }
                                                     </div>
                                                 <hr>
-                                                @* dueNotes Buttons *@
+                                                @* ToDo Notes Buttons *@
                                                     <div class="d-flex align-items-center text-start" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
-                                                        <button class="btn btn-link pulse-hover" @onclick="() => BtnRemoveDueNoteTag(dueNotex)">
-                                                        <img src="/img/icoOn.png" width="26" title="edit note" />
-                                                        </button>
-                                                        <button class="btn btn-link pulse-hover" @onclick="() => BtnEditNoteInDialog(dueNotex)">
-                                                        <img src="/img/icoEditPen.png" width="22" title="edit note" />
-                                                        </button>
-                                                    @if (dueNotex.NoteText.Length > 100)
-                                                        {
-                                                            <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(dueNotex)">
-                                                            <img src="/img/icoNoteReport.png" width="22" title="show note expanded" />
-                                                            </button>
-                                                        }
-                                                        <button class="btn btn-link pulse-hover" @onclick="() => BtnDeleteNote(dueNotex)">
-                                                        <img src="/img/icoDelete1.png" width="22" title="edit note" />
-                                                        </button>
+                                                        <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                        <MudFabMenuItem StartIcon="@Icons.Material.Filled.AlarmOn" Color="Color.Success" OnClick="() => BtnRemoveDueNoteTag(dueNotex)" />
+                                                        <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Dark" OnClick="() => BtnShowNoteInDialog(dueNotex)" />
+                                                        <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(dueNotex)" />
+                                                        <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(dueNotex)" />
+                                                        </MudFabMenu>
                                                     </div>
                                                 </MudCardContent>
                                             </MudCard>
@@ -287,12 +278,10 @@ else
                                         {
                                         @* NOTEBOOK CMD BUTTONS *@
                                             <div style="text-align: center;">
-                                                <button class="btn btn-link" type="button" @onclick="() => BtnEditProject(project.ProjectId)">
-                                                <img src="/img/icoRename.png" width="30" title="edit notebook" />
-                                                </button>
-                                                <button class="btn btn-link" @onclick="() => BtnAddNewSubproject(project.ProjectId)">
-                                                <img src="/img/icoAddSection1.png" width="26" title="new section" />
-                                                </button>
+                                                <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                <MudFabMenuItem Title="edit notebook ويرايش دفتر" StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditProject(project.ProjectId)" />
+                                                <MudFabMenuItem Title="new section سکشن جديد" StartIcon="@Icons.Material.Filled.BookmarkAdd" Color="Color.Primary" OnClick="() => BtnAddNewSubproject(project.ProjectId)" />
+                                                </MudFabMenu>
                                             <hr style="color:red" />
                                             </div>
                                         @if ((appState.Cmd == "AddNewSubproject") && (appState.ProjectId == project.ProjectId))
@@ -394,15 +383,11 @@ else
                                                                     {
                                                                     @* SECTION CMD BUTTONS *@
                                                                         <div style="text-align:center">
-                                                                            <button class="btn btn-link" type="button" @onclick="() => BtnEditSubproject(subProject.SubprojectId)">
-                                                                            <img src="/img/icoRename.png" width="30" title="edit section" />
-                                                                            </button>
-                                                                            <button class="btn btn-link" type="button" @onclick="() => BtnReplaceSection(subProject.SubprojectId)">
-                                                                            <img src="/img/icoMoveToNoteBook.png" width="32" title="move section to another notebook" />
-                                                                            </button>
-                                                                            <button class="btn btn-link pulse-animation" @onclick="() => BtnCreateNewSectionNote(subProject)">
-                                                                            <img src="/img/icoNewNote3.png" width="24" title="new note" />
-                                                                            </button>
+                                                                            <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Success" Variant="Variant.Text" Direction="Direction.Right">
+                                                                            <MudFabMenuItem Title="edit section ويرايش بخش" StartIcon="@Icons.Material.Filled.BookmarkAdded" Color="Color.Primary" OnClick="() => BtnEditSubproject(subProject.SubprojectId)" />
+                                                                            <MudFabMenuItem Title="move to another notebook جابجا کردن" StartIcon="@Icons.Material.Filled.MoveDown" Color="Color.Warning" OnClick="() => BtnReplaceSection(subProject.SubprojectId)" />
+                                                                            <MudFabMenuItem Title="new note يادداشت جديد" StartIcon="@Icons.Material.Filled.PlaylistAdd" Color="Color.Success" OnClick="() => BtnCreateNewSectionNote(subProject)" />
+                                                                            </MudFabMenu>
                                                                         </div>
                                                                     @* 2.3 NOTES *@
                                                                     if (subProject.SubprojectId == Convert.ToInt32(appState.NoteReferenceId))
@@ -487,43 +472,13 @@ else
                                                                                                 <hr>
                                                                                                 @* CMD MENU *@
                                                                                                     <div class="d-flex align-items-center text-start" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
-                                                                                                        <MudMenu Label="Menu"
-                                                                                                             Variant="Variant.Outlined"
-                                                                                                             Color="Color.Tertiary"
-                                                                                                             StartIcon="@Icons.Material.Filled.EditNote"
-                                                                                                             EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
-                                                                                                             Size="Size.Small"
-                                                                                                             Dense="true">
-                                                                                                            <MudMenuItem @onclick="() => BtnCopyToQuickNotes(notex, subProject)">
-                                                                                                                <button class="btn btn-link">
-                                                                                                                <img src="/img/icoCopyToNoteReport.png" width="26" title="copy to quick note" />
-                                                                                                                </button>
-                                                                                                            copy to quick notes
-                                                                                                            </MudMenuItem>
-                                                                                                        <MudDivider />
-                                                                                                            <MudMenuItem @onclick="() => BtnReplaceNote(notex.NoteId)">
-                                                                                                                <button class="btn btn-link">
-                                                                                                                <img src="/img/icoMoveToNoteBook.png" width="32" title="انتقال يادداشت به دفترچه" />
-                                                                                                                </button>
-                                                                                                            replace
-                                                                                                            </MudMenuItem>
-                                                                                                            <MudMenuItem @onclick="() => BtnDeleteNote(notex)">
-                                                                                                                <button class="btn btn-link">
-                                                                                                                <img src="/img/icoDelete1.png" width="22" title="delete note" />
-                                                                                                                </button>
-                                                                                                            delete note
-                                                                                                            </MudMenuItem>
-                                                                                                        </MudMenu>
-                                                                                                    @* EDIT NOTE *@
-                                                                                                        <button class="btn btn-link pulse-hover" @onclick="() => BtnEditNoteInDialog(notex)">
-                                                                                                        <img src="/img/icoEditPen.png" width="22" title="edit note" />
-                                                                                                        </button>
-                                                                                                    @if (notex.NoteText.Length > 100)
-                                                                                                        {
-                                                                                                            <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(notex)">
-                                                                                                            <img src="/img/icoNoteReport.png" width="22" title="show note expanded" />
-                                                                                                            </button>
-                                                                                                        }
+                                                                                                        <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                                                                        <MudFabMenuItem Title="view نشان داده شود" StartIcon="@Icons.Material.Filled.Notes" Color="Color.Primary" OnClick="() => BtnShowNoteInDialog(notex)" />
+                                                                                                        <MudFabMenuItem Title="edit ويرايش" StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(notex)" />
+                                                                                                        <MudFabMenuItem Title="copy to quick notes کپي در يادداشت هاي سريع" StartIcon="@Icons.Material.Filled.DriveFileMove" Color="Color.Dark" OnClick="() => BtnCopyToQuickNotes(notex, subProject)" />
+                                                                                                        <MudFabMenuItem Title="move to another section جابجا کردن" StartIcon="@Icons.Material.Filled.MoveDown" Color="Color.Dark" OnClick="() => BtnReplaceNote(notex.NoteId)" />
+                                                                                                        <MudFabMenuItem Title="delete حذف" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(notex)" />
+                                                                                                        </MudFabMenu>
                                                                                                     </div>
                                                                                                 }
                                                                                             </MudCardContent>

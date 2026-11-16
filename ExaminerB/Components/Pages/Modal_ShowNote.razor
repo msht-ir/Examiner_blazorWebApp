@@ -53,33 +53,13 @@
                         </div>                        
                         }
                     <br />
-                    <div style="text-align:center">
-                        <MudMenu Label="actions" Variant="Variant.Outlined" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Menu" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Dense="true">
-                            <MudMenuItem @onclick="BtnEditNote">
-                                <button class="btn btn-link">
-                                    <img src="/img/icoRename.png" title="edit this note ويرايش" alt="FontSize" width="28"/>
-                                </button>
-                                edit this note
-                            </MudMenuItem>
-                            <MudMenuItem @onclick="BtnChangeFontSize">
-                                <button class="btn btn-link">
-                                    <img src="/img/icoFontAa.png" title="Font Size  تغيير انداز فونت" alt="FontSize" width="26"/>
-                                </button>
-                                change font size
-                            </MudMenuItem>
-                            <MudMenuItem @onclick="BtnDeleteNote">
-                                <button class="btn btn-link">
-                                    <img src="/img/icoDelete1.png" width="22" title="delete note"/>
-                                </button>
-                                delete this note
-                            </MudMenuItem>
-                        </MudMenu>
-                    </div>
-                    <hr />
-                    <div style="text-align:center">
-                        <button class="btn btn-link" @onclick="Close">
-                            <img src="/img/icoBack3.png" width="40" title="back" />
-                        </button>
+                    <div style="text-align:Left">
+                            <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                            <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="BtnEditNote" />
+                            <MudFabMenuItem StartIcon="@Icons.Material.Filled.FormatSize" Color="Color.Success" OnClick="BtnChangeFontSize" />
+                            <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="BtnDeleteNote" />
+                            <MudFabMenuItem StartIcon="@Icons.Material.Filled.ExitToApp" Color="Color.Dark" OnClick="Close" />
+                            </MudFabMenu>
                     </div>
                 </div>
             </div>

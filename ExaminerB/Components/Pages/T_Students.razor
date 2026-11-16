@@ -956,28 +956,13 @@ else
                                 }
                             else
                                 {
-                                    <div class="d-flex gap-2" style="min-width:0; flex-wrap:wrap;margin-top:25px;margin-bottom:15px">
-                                    <MudIconButton Icon="@Icons.Material.Filled.DoneAll"
-                                                   Color="Color.Primary"
-                                                   Size="Size.Medium"
-                                                   OnClick="BtnSelectAllStudents"
-                                                   Title="Select all انتخاب همه" />
-                                    <MudIconButton Icon="@Icons.Material.Filled.Rule"
-                                                   Color="Color.Primary"
-                                                   Size="Size.Medium"
-                                                   OnClick="BtnInvertSelection"
-                                                   Title="Invert Selection انتخاب ها برعکس شود" />
-                                    <MudIconButton Icon="@Icons.Material.Filled.MenuBook"
-                                                   Color="Color.Dark"
-                                                   Size="Size.Medium"
-                                                   Style="margin-left:30px"
-                                                   OnClick="BtnReportStudentsNotesOfSelectedStudentsAsPdf"
-                                                   Title="list of notes for selected students گزارش يادداشت هاي داشجويان انتخاب شده" />
-                                    <MudIconButton Icon="@Icons.Material.Filled.ForwardToInbox"
-                                                   Color="Color.Warning"
-                                                   Size="Size.Medium"
-                                                   OnClick="BtnNewQuickMessage"
-                                                   Title="send a quick message to selected students ارسال پيام سريع و کوتاه به داشجويان انتخاب شده" />
+                                    <div class="d-flex gap-2" style="min-width:0; flex-wrap:wrap;margin-top:25px;margin-bottom:5px">
+                                        <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                        <MudFabMenuItem Title="Select all انتخاب همه" StartIcon="@Icons.Material.Filled.DoneAll" Color="Color.Primary" OnClick="BtnSelectAllStudents" />
+                                        <MudFabMenuItem Title="Invert Selection انتخاب ها برعکس شود" StartIcon="@Icons.Material.Filled.Rule" Color="Color.Warning" OnClick="BtnInvertSelection" />
+                                        <MudFabMenuItem Title="list of notes for selected students گزارش يادداشت هاي داشجويان انتخاب شده" StartIcon="@Icons.Material.Filled.MenuBook" Color="Color.Secondary" OnClick="BtnReportStudentsNotesOfSelectedStudentsAsPdf" />
+                                        <MudFabMenuItem Title="send a quick message to selected students ارسال پيام سريع و کوتاه به داشجويان انتخاب شده" StartIcon="@Icons.Material.Filled.ForwardToInbox" Color="Color.Primary" OnClick="BtnNewQuickMessage" />
+                                        </MudFabMenu>
                                     </div>
                                 }
                             @foreach (User student in lstStudents)

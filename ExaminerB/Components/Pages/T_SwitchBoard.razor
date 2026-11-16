@@ -69,18 +69,19 @@ else
                 <br />
                 @* SAVE-INFO-EXIT *@
                     <div class="d-flex gap-5 justify-content-center">
-                        <button class="btn btn-link pulse-hover" style="transform: translateY(-1px);margin-right:5px;border-radius: 30%;" @onclick="GotoNotebooks">
-                        <img src="/img/icoSave2.png" width="30" title="notebooks دفترچه يادداشت" />
+                        <button class="btn btn-link pulse-hover" style="transform: translateY(-1px);margin-right:5px;border-radius: 30%;">
+                        <img src="/img/icoPrinter.png" width="36" title="report گزارش آماري" />
                         </button>
-                        <button class="btn btn-link pulse-hover" style="transform: translateY(-1px);border-radius: 30%;" @onclick="ReportUserNotes">
-                        <img src="/img/icoInfo1.png" width="34" title="quick notes يادداشت ها" />
+                        <button class="btn btn-link pulse-hover" style="transform: translateY(-1px);border-radius: 30%;">
+                        <img src="/img/icoInfo1.png" width="34" title="Guide راهنماي اپليکيشن اگزمينر" />
                         </button>
                         <button class="btn btn-link pulse-hover" style="transform: translateY(-1px);margin-left:5px;border-radius: 30%;" @onclick="@(() => GotoLogin())">
-                        <img src="/img/icoBack2.png" width="34" title="new quick note يادداشت جديد" />
+                        <img src="/img/icoBack2.png" width="34" title="Exit خروج" />
                         </button>
                     </div>
                 <br />
                 <br />
+                @* Notebook-QuickNote-AddNote *@
                     <div class="d-flex gap-5 justify-content-center">
                         <button class="btn btn-link pulse-hover" style="transform: translateY(-1px);margin-right:5px;border-radius: 30%;" @onclick="GotoNotebooks">
                         <img src="/img/icoNoteBook.png" width="48" title="notebooks دفترچه يادداشت" />
@@ -93,7 +94,7 @@ else
                         </button>
                     </div>
                 <br />
-                @* TO-DO Notes Accardion *@
+                @* Accardion: TO-DO Notes *@
                     <div style="text-align: center;margin-top:10px;margin-bottom:10px;">
                         @{
                         var collapseId_due = $"collapse";
@@ -147,23 +148,14 @@ else
                                                                 }
                                                             </div>
                                                         <hr>
-                                                        @* dueNotes Buttons *@
+                                                        @* TodoNotes Buttons *@
                                                             <div class="d-flex align-items-center text-start" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
-                                                                <button class="btn btn-link pulse-hover" @onclick="() => BtnRemoveDueNoteTag(dueNotex)">
-                                                                <img src="/img/icoOn.png" width="26" title="edit note" />
-                                                                </button>
-                                                                <button class="btn btn-link pulse-hover" @onclick="() => BtnEditNoteInDialog(dueNotex)">
-                                                                <img src="/img/icoEditPen.png" width="22" title="edit note" />
-                                                                </button>
-                                                            @if (dueNotex.NoteText.Length > 100)
-                                                                {
-                                                                    <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(dueNotex)">
-                                                                    <img src="/img/icoNoteReport.png" width="22" title="show note expanded" />
-                                                                    </button>
-                                                                }
-                                                                <button class="btn btn-link pulse-hover" @onclick="() => BtnDeleteNote(dueNotex)">
-                                                                <img src="/img/icoDelete1.png" width="22" title="edit note" />
-                                                                </button>
+                                                                <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.AlarmOn" Color="Color.Warning" OnClick="() => BtnRemoveDueNoteTag(dueNotex)" />
+                                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Dark" OnClick="() => BtnShowNoteInDialog(dueNotex)" />
+                                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(dueNotex)" />
+                                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(dueNotex)" />
+                                                                </MudFabMenu>
                                                             </div>
                                                         </MudCardContent>
                                                     </MudCard>

@@ -665,7 +665,7 @@
                                     <img src="/img/icoNoteBook.png" width="42" title="notebooks دفترچه يادداشت" />
                                     </button>
                                     <button class="btn btn-link align-items-center" Title="add quick note افزودن يادداشت جديد" @onclick="CreateNote">
-                                    <img class="pulse-animation" src="/img/icoNewNote3.png" width="28" />
+                                    <img class="pulse-animation" src="/img/icoEditPenNew.png" width="28" />
                                     </button>
                                 </div>
                             @* LIST NOTES *@
@@ -704,19 +704,12 @@
                                                             }
                                                         </div>
                                                     <hr />
-                                                        <div class="d-flex align-items-center justify-content-center">
-                                                        @if (notex.NoteText.Length > 100)
-                                                            {
-                                                                <button class="btn btn-link" Title=@((_help) ? "نمايش يادداشت در پنجره" : "") @onclick="() => BtnShowNoteInDialog(notex)">
-                                                                <img class="pulse-hover" src="/img/icoNoteReport.png" width="22" title="نمايش يادداشت در صفحه" />
-                                                                </button>
-                                                            }
-                                                            <button class="btn btn-link" Title=@((_help) ? "ويرايش يادداشت" : "") @onclick="() => BtnEditNoteInDialog(notex)">
-                                                            <img class="pulse-hover" src="/img/icoEditPen.png" width="22" />
-                                                            </button>
-                                                            <button class="btn btn-link" Title=@((_help) ? "حذف يادداشت" : "") @onclick="() => BtnDeleteNote(notex.NoteId)">
-                                                            <img class="pulse-hover" src="/img/icoDelete1.png" width="22" />
-                                                            </button>
+                                                        <div class="d-flex gap-2 align-items-center justify-content-center">
+                                                            <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                            <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Success" OnClick="() => BtnShowNoteInDialog(notex)" />
+                                                            <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(notex)" />
+                                                            <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(notex.NoteId)" />
+                                                            </MudFabMenu>
                                                         </div>
                                                     </MudCardContent>
                                                 </MudCard>
@@ -752,19 +745,12 @@
                                                             }
                                                         </div>
                                                     <hr />
-                                                        <div class="d-flex gap-3 align-items-center justify-content-center">
-                                                        @if (notex.NoteText.Length > 100)
-                                                            {
-                                                                <button class="btn btn-link" Title=@((_help) ? "نمايش يادداشت در پنجره" : "") @onclick="() => BtnShowNoteInDialog(notex)">
-                                                                <img class="pulse-hover" src="/img/icoNoteReport.png" width="22" title="نمايش يادداشت در صفحه" />
-                                                                </button>
-                                                            }
-                                                            <button class="btn btn-link" Title=@((_help) ? "edit note" : "") @onclick="() => BtnEditNoteInDialog(notex)">
-                                                            <img class="pulse-hover" src="/img/icoEditPen.png" width="22" />
-                                                            </button>
-                                                            <button class="btn btn-link" Title=@((_help) ? "delete note" : "") @onclick="() => BtnDeleteNote(notex.NoteId)">
-                                                            <img class="pulse-hover" src="/img/icoDelete1.png" width="22" />
-                                                            </button>
+                                                        <div class="d-flex gap-2 align-items-center justify-content-Left">
+                                                            <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                            <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Primary" OnClick="() => BtnShowNoteInDialog(notex)" />
+                                                            <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(notex)" />
+                                                            <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(notex.NoteId)" />
+                                                            </MudFabMenu>
                                                         </div>
                                                     </MudCardContent>
                                                 </MudCard>
@@ -859,9 +845,9 @@
             </div>
         }
     </div>
-    <script>
+@* <script>
     window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
-    </script>
+    </script> *@
 
 @code {
     User student = new User();
@@ -1384,6 +1370,7 @@
     //Games
     public void BtnGame (string _game)
         {
+        appState.SetClps("GM");
         Navman.NavigateTo("/" + _game);
         }
     //convert date

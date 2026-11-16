@@ -42,7 +42,7 @@
                     <span class="gc-label">⏱ Time</span>
                     <input type="number" class="gc-input gc-input-md" placeholder="sec" max="200" @bind="TmInput">
                     <span style="color:#94a3b8;font-size:.85rem;">secs</span>
-                        <button class="gc-btn gc-btn-warning" style="width:100px;margin-left:30px;"
+                        <button class="gc-btn gc-btn-success" style="width:100px;margin-left:30px;"
                             type="button" @onclick="StartClicked" disabled="@running">
                         ▶ Start
                         </button>
@@ -56,21 +56,21 @@
 
                     <div class="gc-answer-row">
                     <input type="number" step="any" class="gc-input gc-input-md"
-                           placeholder="Answer?"
+                           placeholder="?"
                            @bind="AnswerInput"
                            @bind:event="oninput"
                            @onkeyup="AnswerKeyUp"
                            disabled="@(!running || Tm <= 0)" />
-                        <button class="gc-btn gc-btn-success" type="button"
+                        <button class="gc-btn gc-btn-primary" type="button"
                             @onclick="AnswerClicked"
                             disabled="@(!running || Tm <= 0)">
-                        ✓ Answer
+                        Answer
                         </button>
                     </div>
                 </div>
             @* ACTIONS *@
                 <div class="gc-actions">
-                <button class="gc-btn gc-btn-danger" type="button" @onclick="ExitClicked">Back to Students Page</button>
+                <button class="gc-btn gc-btn-danger" type="button" @onclick="ExitClicked">Back</button>
                 </div>
             @* RESULTS *@
                 <table class="gc-table">

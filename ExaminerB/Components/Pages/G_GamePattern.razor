@@ -33,7 +33,7 @@
                         <label style="color:#475569;font-size:.9rem;">Questions</label>
                         <input type="number" class="gp-input gp-input-num" placeholder="#" max="15"
                                @bind="NQ" @bind:event="oninput" @onkeyup="NQKeyUp" />
-                        <button class="gp-btn gp-btn-warning" type="button" @onclick="StartClicked">▶ Start</button>
+                        <button class="gp-btn gp-btn-success" type="button" @onclick="StartClicked">▶ Start</button>
                         </div>
                     </div>
                 }
@@ -50,14 +50,14 @@
                         <button class="gp-btn gp-btn-success" type="button"
                             @onclick="AnswerClicked"
                             disabled="@(!running || Tm <= 0 || Qi > NQ)">
-                        ✓ Answer
+                        Answer
                         </button>
                     </div>
                 </div>
             <!-- Actions -->
                 <div class="gp-actions">
                 <button class="gp-btn gp-btn-ghost" type="button" @onclick="HelpClicked"> Help</button>
-                <button class="gp-btn gp-btn-danger" type="button" @onclick="ExitClicked"> Back to Students Page</button>
+                <button class="gp-btn gp-btn-danger" type="button" @onclick="ExitClicked"> Back</button>
                 </div>
             <!-- Results -->
                 <table class="gp-table">
