@@ -17,16 +17,16 @@
                     <div class="modal-header">
                     @if (lstChats.Count > 0)
                         {
-                        @if (lstChats [0].FromId == studentId)
+                        @if (lstChats[0].FromId == studentId)
                             {
                                 <div style="text-align:center; color:indianred;font-size:large; font-weight:bold;">
-                                @lstChats [0].ToName
+                                @lstChats[0].ToName
                                 </div>
                             }
                         else
                             {
                                 <div style="text-align:center; color:indianred;font-size:large; font-weight:bold;">
-                                @lstChats [0].FromName
+                                @lstChats[0].FromName
                                 </div>
                             }
                         <hr style="color:indianred" />
@@ -75,7 +75,7 @@
                                         <MudCardContent Style="background-color: rgba(250,250,250);">
                                         @if (chat.FromId == Convert.ToInt32(appState.UserId))
                                             {
-                                                <div class="d-flex align-items-center" style="font-size:smaller; font-weight:bold;color:darkgray;">
+                                                <div class="d-flex align-items-center" style="font-size:smaller; font-weight:bold;color:indianred;">
                                                 @PersianDate(chat.DateTimeSent)
                                                 </div>
                                             @* SHOW MY NAME

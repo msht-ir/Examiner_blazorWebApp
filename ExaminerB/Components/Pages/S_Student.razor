@@ -355,29 +355,21 @@
                                                                     }
                                                                 </div>
                                                             <hr style="color:gray" />
-                                                                <div style="text-align:center">
-                                                                    <button class="btn btn-link" Title=@((_help) ? "message statistics" : "") @onclick="() => BtnGotoReportStudentMessages(studentMessage)">
-                                                                    <img class="pulse-animation" src="/img/icoChartPie.png" width="22" />
-                                                                    </button>
-                                                                    <button class="btn btn-link" Title=@((_help) ? "change font" : "") @onclick="() => BtnCangeFont(studentMessage.MessageId)">
-                                                                    <img class="pulse-hover" src="/img/icoFontAa.png" width="24" />
-                                                                    </button>
-                                                                    <button class="btn btn-link" Title=@((_help) ? "delete message" : "") @onclick="() => BtnDeleteStudentMessage(studentMessage)">
-                                                                    <img class="pulse-hover" src="/img/icoDelete1.png" width="20" />
-                                                                    </button>
-                                                                @* IsBookmarked? *@
-                                                                @if ((studentMessage.StudentMessageTags & 2) == 2)
-                                                                    {
-                                                                        <button class="btn btn-link" Title=@((_help) ? "remove bookmark" : "") @onclick="() => BtnSetStudentMessageBookmark(studentMessage, 0)">
-                                                                        <img class="pulse-hover" src="/img/icoBookmark1.png" width="22" />
-                                                                        </button>
-                                                                    }
-                                                                else
-                                                                    {
-                                                                        <button class="btn btn-link" Title=@((_help) ? "bookmark this message" : "") @onclick="() => BtnSetStudentMessageBookmark(studentMessage, 1)">
-                                                                        <img class="pulse-hover" src="/img/icoBookmark0.png" width="22" />
-                                                                        </button>
-                                                                    }
+                                                                <div style="text-align:left">
+                                                                    <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                                    <MudFabMenuItem StartIcon="@Icons.Material.Filled.FormatSize" Color="Color.Primary" Title=@((_help) ? "change font" : "") OnClick="() => BtnCangeFont(studentMessage.MessageId)" />
+                                                                    @* IsBookmarked? *@
+                                                                    @if ((studentMessage.StudentMessageTags & 2) == 2)
+                                                                        {
+                                                                        <MudFabMenuItem StartIcon="@Icons.Material.Filled.BookmarkAdded" Color="Color.Dark" Title=@((_help) ? "remove bookmark" : "") OnClick="() => BtnSetStudentMessageBookmark(studentMessage, 0)" />
+                                                                        }
+                                                                    else
+                                                                        {
+                                                                        <MudFabMenuItem StartIcon="@Icons.Material.Filled.BookmarkBorder" Color="Color.Dark" Title=@((_help) ? "bookmark this message" : "") OnClick="() => BtnSetStudentMessageBookmark(studentMessage, 1)" />
+                                                                        }
+                                                                    <MudFabMenuItem StartIcon="@Icons.Material.Filled.PieChart" Color="Color.Dark" Title=@((_help) ? "message statistics" : "") OnClick="() => BtnGotoReportStudentMessages(studentMessage)" />
+                                                                    <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" Title=@((_help) ? "delete message" : "") OnClick="() => BtnDeleteStudentMessage(studentMessage)" />
+                                                                    </MudFabMenu>
                                                                 </div>
                                                             </MudCardContent>
                                                         </MudCard>
