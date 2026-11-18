@@ -606,8 +606,8 @@
                                                 <MudCardContent Style="background-color:whitesmoke;">
                                                     <div>
                                                         <button class="btn btn-link" style="text-decoration: none;" Title=@((_help) ? "enter forum" : "") @onclick="() => BtnOpenThisChatroom(chatroom)">
-                                                        <img class="pulse-animation" src="/img/icoSwitchBoardStudents.png" width="34" />
-                                                        <span style="color:indianred;margin-left:10px;">join forum: </span><span style="font-weight:bold;color:gray;margin-left:5px;"> @chatroom.ChatroomName </span>
+                                                        <img class="pulse-animation" src="/img/icoGo1.png" width="22" />
+                                                        <span style="color:indianred;margin-left:10px;">join </span><span style="font-weight:bold;color:gray;margin-left:5px;"> @chatroom.ChatroomName </span>
                                                         </button>
                                                     <hr />
                                                     <div style="font-style:italic;font-size:small; font-weight:normal;color:gray;padding-left:10px;">admin: <span style="color:royalblue;">@chatroom.ChatroomAdminName</span></div>
@@ -845,9 +845,6 @@
             </div>
         }
     </div>
-@* <script>
-    window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
-    </script> *@
 
 @code {
     User student = new User();

@@ -14,547 +14,552 @@
 @inject IDialogService DialogService
 
 @if (!_hasFetched)
-    {
-    <_LoadingTimer />
-    }
+{
+    <_LoadingTimer/>
+}
 else if (appState.Cmd == "CreateNote")
-    {
-    <Modal_CreateNote OnClose="HandleModalClose" />
-    }
+{
+    <Modal_CreateNote OnClose="HandleModalClose"/>
+}
 else if (appState.Cmd == "ShowNoteInDialog")
-    {
-    <Modal_ShowNote OnClose="HandleModalClose" />
-    }
+{
+    <Modal_ShowNote OnClose="HandleModalClose"/>
+}
 else if (appState.Cmd == "UpdateNote")
-    {
-    <Modal_CreateNote OnClose="HandleModalClose" />
-    }
+{
+    <Modal_CreateNote OnClose="HandleModalClose"/>
+}
 else
-    {
+{
     <div style="text-align: center;">
-    <p style="font-size:large;font-style:italic;color:rgb(220,220,220)">@appState.UserNickname</p>
+        <p style="font-size:large;font-style:italic;color:rgb(220,220,220)">@appState.UserNickname</p>
     </div>
-        <div style="text-align:left; max-width:500px; margin: 0 auto;">
-            @* <button class="btn btn-link" @onclick="() => BtnBackToCallingPage()">
+    <div style="text-align:left; max-width:500px; margin: 0 auto;">
+        @* <button class="btn btn-link" @onclick="() => BtnBackToCallingPage()">
             <img src="/img/icoBack3.png" style="width:40px" title="back" />
             </button> *@
         @if (appState.UserRole == "teacher")
-            {
-                <button class="btn btn-link" @onclick="() => BtnGotoReportUserNotes()">
-                <img src="/img/icoNoteReport.png" style="width:35px" title="goto: quick notes" />
-                </button>
-                <button class="btn btn-link pulse-animation" @onclick="CreateQuickNote">
-                <img src="/img/icoNewNote3.png" width="28" title="add new quick-note" />
-                </button>
-            }
-        </div>
-        <EditForm Model="lstProjects">
-        @* 0 SEARCH BOX *@
-            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
-                <MudCard Class="mx-0">
-                    <MudCardContent Style="background-color:whitesmoke;">
-                        <div class="mb-3" style="max-width:500px; margin:0 auto">
-                            <div class="d-flex align-items-center mb-3">
-                            <MudTextField T="string"
-                                          @ref="refSearchNote"
-                                          @bind-Value="strSearchKey"
-                                          OnKeyDown="HandleKey_Searchbox"
-                                          Label="Search"
-                                          Variant="Variant.Text"
-                                          Margin="Margin.Dense"
-                                          Immediate="true"
-                                          Adornment="Adornment.End"
-                                          AdornmentIcon="@Icons.Material.Filled.Search"
-                                          OnAdornmentClick="BtnReadNotesBySearch"
-                                          style="font-family:tahoma"
-                                          Class="my-textfield" />
-                            @if (lstSearchedtNotes.Count > 0)
+        {
+            <button class="btn btn-link" @onclick="() => BtnGotoReportUserNotes()">
+                <img src="/img/icoNoteReport.png" style="width:35px" title="goto: quick notes"/>
+            </button>
+            <button class="btn btn-link pulse-animation" @onclick="CreateQuickNote">
+                <img src="/img/icoNewNote3.png" width="28" title="add new quick-note"/>
+            </button>
+        }
+    </div>
+    <EditForm Model="lstProjects">
+    @* 0 SEARCH BOX *@
+    <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
+        <MudCard Class="mx-0">
+            <MudCardContent Style="background-color:whitesmoke;">
+                <div class="mb-3" style="max-width:500px; margin:0 auto">
+                    <div class="d-flex align-items-center mb-3">
+                        <MudTextField T="string"
+                                      @ref="refSearchNote"
+                                      @bind-Value="strSearchKey"
+                                      OnKeyDown="HandleKey_Searchbox"
+                                      Label="Search"
+                                      Variant="Variant.Text"
+                                      Margin="Margin.Dense"
+                                      Immediate="true"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@Icons.Material.Filled.Search"
+                                      OnAdornmentClick="BtnReadNotesBySearch"
+                                      style="font-family:tahoma"
+                                      Class="my-textfield"/>
+                        @if (lstSearchedtNotes.Count > 0)
+                        {
+                            <button class="btn btn-link" @onclick="BtnCancelSearch">
+                                <img src="/img/icoCancel.png" width="20" title="cancel search" style="margin-left:20px;margin-top:15px;"/>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </MudCardContent>
+        </MudCard>
+    </MudContainer>
+    @if (lstSearchedtNotes.Count > 0)
+    {
+        @* 1 SEARCH-RESULTS *@
+        <h5 style="text-align:center; margin-top:10px;">top 20 results</h5>
+        foreach (Note note in lstSearchedtNotes)
+        {
+            <div class="d-flex" style=" color:indianred; font-weight:bold;font-size:small">
+                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
+                    <MudCard Class="mx-0">
+                        <MudCardContent Style="background-color:whitesmoke;">
+                            <span style="color:indianred; font-weight:bold;">@PersianDate(note.NoteDateTime)</span>
+                            <p style="color:gray;font-weight:normal;font-style:italic">@note.ReferenceName</p>
+                            <hr/>
+                            @if (note.NoteText.Length > 100)
+                            {
+                                <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small;color:black;">
+                                    @note.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small;color:black;">
+                                    @note.NoteText
+                                </div>
+                            }
+                            <hr/>
+                            <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
+                                <MudMenu Label="actions"
+                                         Variant="Variant.Outlined"
+                                         Color="Color.Tertiary"
+                                         StartIcon="@Icons.Material.Filled.EditNote"
+                                         EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
+                                         Size="Size.Small"
+                                         Dense="true">
+                                    <MudMenuItem @onclick="() => BtnEditNoteInDialog(note)">
+                                        <button class="btn btn-link pulse-animation">
+                                            <img src="/img/icoRename.png" width="28"/>
+                                        </button>
+                                        edit note
+                                    </MudMenuItem>
+                                    <MudMenuItem @onclick="() => BtnDeleteNote(note)">
+                                        <button class="btn btn-link">
+                                            <img src="/img/icoDelete1.png" width="20" title="delete note"/>
+                                        </button>
+                                        delete note
+                                    </MudMenuItem>
+                                </MudMenu>
+                                @if (note.NoteText.Length > 100)
                                 {
-                                    <button class="btn btn-link" @onclick="BtnCancelSearch">
-                                    <img src="/img/icoCancel.png" width="20" title="cancel search" style="margin-left:20px;margin-top:15px;" />
+                                    <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(note)">
+                                        <img src="/img/icoNoteReport.png" width="24" title="show note expanded"/>
                                     </button>
                                 }
                             </div>
-                        </div>
-                    </MudCardContent>
-                </MudCard>
-            </MudContainer>
-        @if (lstSearchedtNotes.Count > 0)
-            {
-            @* 1 SEARCH-RESULTS *@
-            <h5 style="text-align:center; margin-top:10px;">top 20 results</h5>
-            foreach (Note note in lstSearchedtNotes)
-                {
-                    <div class="d-flex" style=" color:indianred; font-weight:bold;font-size:small">
-                        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" style="max-width:500px; margin: 0 auto;">
-                            <MudCard Class="mx-0">
-                                <MudCardContent Style="background-color:whitesmoke;">
-                                <span style="color:indianred; font-weight:bold;">@PersianDate(note.NoteDateTime)</span>
-                                <p style="color:gray;font-weight:normal;font-style:italic">@note.ReferenceName</p>
-                                <hr />
-                                @if (note.NoteText.Length > 100)
-                                    {
-                                        <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small;color:black;">
-                                        @note.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span>
-                                        </div>
-                                    }
-                                else
-                                    {
-                                        <div style="white-space: pre-wrap; font-family:Courier New, Courier, monospace;font-size:small;color:black;">
-                                        @note.NoteText
-                                        </div>
-                                    }
-                                <hr />
-                                    <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
-                                        <MudMenu Label="actions"
-                                             Variant="Variant.Outlined"
-                                             Color="Color.Tertiary"
-                                             StartIcon="@Icons.Material.Filled.EditNote"
-                                             EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
-                                             Size="Size.Small"
-                                             Dense="true">
-                                            <MudMenuItem @onclick="() => BtnEditNoteInDialog(note)">
-                                                <button class="btn btn-link pulse-animation">
-                                                <img src="/img/icoRename.png" width="28" />
-                                                </button>
-                                            edit note
-                                            </MudMenuItem>
-                                            <MudMenuItem @onclick="() => BtnDeleteNote(note)">
-                                                <button class="btn btn-link">
-                                                <img src="/img/icoDelete1.png" width="20" title="delete note" />
-                                                </button>
-                                            delete note
-                                            </MudMenuItem>
-                                        </MudMenu>
-                                    @if (note.NoteText.Length > 100)
-                                        {
-                                            <button class="btn btn-link pulse-animation" @onclick="() => BtnShowNoteInDialog(note)">
-                                            <img src="/img/icoNoteReport.png" width="24" title="show note expanded" />
-                                            </button>
-                                        }
-                                    </div>
-                                </MudCardContent>
-                            </MudCard>
-                        </MudContainer>
+                        </MudCardContent>
+                    </MudCard>
+                </MudContainer>
+            </div>
+        }
+    }
+    else
+    {
+        @* ToDo Notes *@
+        var collapseId_due = $"collapse";
+        _clpsP = "collapse";
+        <div class="accordion-item mt-2 mb-1" style="max-width:500px; margin: 0 auto;">
+            <h4 class="accordion-header" style="background-color:rgba(252,252,252)">
+                <button class="accordion-button collapsed"
+                        style="background-color:rgba(245,245,245)"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#@collapseId_due"
+                        aria-expanded="true"
+                        aria-controls="@collapseId_due">
+                    <button class="btn btn-link" @onclick="() => BtnReadDueNotes()">
+                        <img class="pulse-hover" src="img/icoClock2.png" width="30" style="margin-right:10px;"/>
+                    </button>
+                    <h5 style="color:mediumslateblue">Todo Notes <span style="font-size:x-small;color:indianred">@((user.UserTags & 32) == 32 ? "(\u00B1 7 days)" : "(\u00B1 3 days)")</span> </h5>
+                </button>
+            </h4>
+            <div id="@collapseId_due" class="accordion-collapse collapse" data-bs-parent="#accordionProjects">
+                <div class="accordion-body" style="background-color:rgba(254,254,254);">
+                    <div id="T1">
+                        @foreach (Note dueNotex in lstDueNotes)
+                        {
+                            var _noteDirection = ((dueNotex.NoteTags & 1) == 1) ? "text-end" : "text-start";
+                            <div class="mt-3 @_noteDirection">
+                                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                    <MudCard Class="mx-0">
+                                        <MudCardContent Style="background-color:whitesmoke;">
+                                            <div class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
+                                                @if (dueNotex.IsTodo)
+                                                {
+                                                    <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px"/>
+                                                    @PersianDate(dueNotex.NoteDueDateTime)
+                                                }
+                                                else
+                                                {
+                                                    @PersianDate(dueNotex.NoteDateTime)
+                                                }
+                                            </div>
+                                            <hr/>
+                                            <div style="white-space: pre-wrap; font-weight:normal; font-family:'Segoe UI';font-size:small">
+                                                @if (dueNotex.NoteText.Length > 100)
+                                                {
+                                                    <div>
+                                                        @dueNotex.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div style="font-weight:normal;font-family:'Segoe UI'"> @dueNotex.NoteText</div>
+                                                }
+                                            </div>
+                                            <hr>
+                                            @* ToDo Notes Buttons *@
+                                            <div class="d-flex align-items-center text-start" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
+                                                <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                    <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(dueNotex)"/>
+                                                    <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Dark" OnClick="() => BtnShowNoteInDialog(dueNotex)"/>
+                                                    <MudFabMenuItem StartIcon="@Icons.Material.Filled.AlarmOn" Color="Color.Warning" OnClick="() => BtnRemoveDueNoteTag(dueNotex)"/>
+                                                    <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(dueNotex)"/>
+                                                </MudFabMenu>
+                                            </div>
+                                        </MudCardContent>
+                                    </MudCard>
+                                </MudContainer>
+                            </div>
+                        }
                     </div>
-                }
-            }
-        else
-            {
-            @* ToDo Notes *@
-            var collapseId_due = $"collapse";
-            _clpsP = "collapse";
-                <div class="accordion-item mt-2 mb-1" style="max-width:500px; margin: 0 auto;">
-                    <h4 class="accordion-header" style="background-color:rgba(252,252,252)">
-                        <button class="accordion-button collapsed"
+                </div>
+            </div>
+        </div>
+        @* 2 NOTEBOOKS and SECTIONS *@
+        <div class="d-flex justify-content-center align-items-center mb-1" style="text-align:center">
+            <button class="btn btn-link" @onclick="BtnToggleShowProjectsMode">
+                <img src="/img/icoListN.png" width="28" title="toggle: active / non-active / all-notes"/>
+            </button>
+            <span style="font-size:normal;text-align:center;color:indianred; margin:10px;">
+                @(_ShowProjectsMode switch
+                {
+                    "all" => "all notebooks",
+                    "active" => "active",
+                    "inactive" => "inactive",
+                    _ => ""
+                })
+            </span>
+        </div>
+        <div class="accordion" id="accordionProjects" style="max-width:500px; margin: 0 auto;">
+        @* 2.1 NOTEBOOKS *@
+        @foreach (Project project in lstProjects)
+        {
+            var collapseId = $"collapse{project.ProjectId}";
+            _clpsP = ((appState.ProjectId) != project.ProjectId) ? "collapse" : "collapse show";
+            <div class="accordion-item mb-1">
+                <h4 class="accordion-header" style="background-color:rgba(252,252,252)">
+                    <button class="accordion-button collapsed"
                             style="background-color:rgba(245,245,245)"
                             type="button"
                             data-bs-toggle="collapse"
-                            data-bs-target="#@collapseId_due"
+                            data-bs-target="#@collapseId"
                             aria-expanded="true"
-                            aria-controls="@collapseId_due">
-                            <button class="btn btn-link" @onclick="() => BtnReadDueNotes()">
-                            <img class="pulse-hover" src="img/icoClock2.png" width="30" style="margin-right:10px;" />
-                            </button>
-                        <h5 style="color:mediumslateblue">Todo Notes <span style="font-size:x-small;color:indianred">@((user.UserTags & 32) == 32 ? "(\u00B1 7 days)" : "(\u00B1 3 days)")</span> </h5>
+                            aria-controls="@collapseId">
+                        <button class="btn btn-link" @onclick="() => BtnReadNotebookNotes(project)">
+                            <img class="pulse-hover" src="img/icoNoteBook.png" width="38" style="margin-right:10px;"/>
                         </button>
-                    </h4>
-                    <div id="@collapseId_due" class="accordion-collapse collapse" data-bs-parent="#accordionProjects">
-                        <div class="accordion-body" style="background-color:rgba(254,254,254);">
-                            <div id="T1">
-                            @foreach (Note dueNotex in lstDueNotes)
-                                {
-                                var _noteDirection = ((dueNotex.NoteTags & 1) == 1) ? "text-end" : "text-start";
-                                    <div class="mt-3 @_noteDirection">
-                                        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
-                                            <MudCard Class="mx-0">
-                                                <MudCardContent Style="background-color:whitesmoke;">
-                                                    <div class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
-                                                    @if (dueNotex.IsTodo)
-                                                        {
-                                                        <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
-                                                        @PersianDate(dueNotex.NoteDueDateTime)
-                                                        }
-                                                    else
-                                                        {
-                                                        @PersianDate(dueNotex.NoteDateTime)
-                                                        }
-                                                    </div>
-                                                <hr />
-                                                    <div style="white-space: pre-wrap; font-weight:normal; font-family:'Segoe UI';font-size:small">
-                                                    @if (dueNotex.NoteText.Length > 100)
-                                                        {
-                                                        <div> @dueNotex.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
-                                                        }
-                                                    else
-                                                        {
-                                                        <div style="font-weight:normal;font-family:'Segoe UI'"> @dueNotex.NoteText</div>
-                                                        }
-                                                    </div>
-                                                <hr>
-                                                @* ToDo Notes Buttons *@
-                                                    <div class="d-flex align-items-center text-start" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
-                                                        <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
-                                                        <MudFabMenuItem StartIcon="@Icons.Material.Filled.AlarmOn" Color="Color.Success" OnClick="() => BtnRemoveDueNoteTag(dueNotex)" />
-                                                        <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Dark" OnClick="() => BtnShowNoteInDialog(dueNotex)" />
-                                                        <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(dueNotex)" />
-                                                        <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(dueNotex)" />
-                                                        </MudFabMenu>
-                                                    </div>
-                                                </MudCardContent>
-                                            </MudCard>
-                                        </MudContainer>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @* 2 NOTEBOOKS and SECTIONS *@
-                <div class="d-flex justify-content-center align-items-center mb-1" style="text-align:center">
-                    <button class="btn btn-link" @onclick="BtnToggleShowProjectsMode">
-                    <img src="/img/icoListN.png" width="28" title="toggle: active / non-active / all-notes" />
+                        <h4 style="color:rgb(80,135,160)">@project.ProjectName</h4>
                     </button>
-                    <span style="font-size:normal;text-align:center;color:indianred; margin:10px;">
-                    @(_ShowProjectsMode switch
-                        {
-                            "all" => "all notebooks",
-                            "active" => "active",
-                            "inactive" => "inactive",
-                            _ => ""
-                            })
-                    </span>
-                </div>
-                <div class="accordion" id="accordionProjects" style="max-width:500px; margin: 0 auto;">
-                @* 2.1 NOTEBOOKS *@
-                @foreach (Project project in lstProjects)
-                    {
-                    var collapseId = $"collapse{project.ProjectId}";
-                    _clpsP = ((appState.ProjectId) != project.ProjectId) ? "collapse" : "collapse show";
-                        <div class="accordion-item mb-1">
-                            <h4 class="accordion-header" style="background-color:rgba(252,252,252)">
-                                <button class="accordion-button collapsed"
-                                    style="background-color:rgba(245,245,245)"
-                                    type="button"
-                                    data-bs-toggle="collapse"
-                                    data-bs-target="#@collapseId"
-                                    aria-expanded="true"
-                                    aria-controls="@collapseId">
-                                    <button class="btn btn-link" @onclick="() => BtnReadNotebookNotes(project)">
-                                    <img class="pulse-hover" src="img/icoNoteBook.png" width="38" style="margin-right:10px;" />
+                </h4>
+                <div id="@collapseId" class="accordion-collapse @_clpsP" data-bs-parent="#accordionProjects">
+                    <div class="accordion-body" style="background-color:rgba(250,250,250)">
+                        <div id="T1">
+                            @if ((appState.Cmd == "EditProject") && (appState.ProjectId == project.ProjectId))
+                            {
+                                <div class="d-flex mb-3">
+                                    <MudTextField @ref="refProjectName"
+                                                  @bind-Value="project.ProjectName"
+                                                  Label="notebook"
+                                                  Variant="Variant.Text"
+                                                  Margin="Margin.Dense"
+                                                  Autocomplete="off"
+                                                  Adornment="Adornment.End"
+                                                  AdornmentIcon="@Icons.Material.Filled.Save"
+                                                  OnAdornmentClick="() => BtnUpdateProject(project)"
+                                                  Style="font-family:tahoma;"
+                                                  Class="my-textfield"/>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <MudCheckBox @bind-Value="project.IsActive" Label="active" Color="Color.Primary"></MudCheckBox>
+                                    <button class="btn btn-link" style="margin-left:15px;" @onclick="() => BtnDeleteProject(project.ProjectId)" @key="project.ProjectId">
+                                        <img src="/img/icoDelete1.png" width="25" title="delete notebook"/>
                                     </button>
-                                <h4 style="color:rgb(80,135,160)">@project.ProjectName</h4>
-                                </button>
-                            </h4>
-                            <div id="@collapseId" class="accordion-collapse @_clpsP" data-bs-parent="#accordionProjects">
-                                <div class="accordion-body" style="background-color:rgba(250,250,250)">
-                                    <div id="T1">
-                                    @if ((appState.Cmd == "EditProject") && (appState.ProjectId == project.ProjectId))
-                                        {
-                                            <div class="d-flex mb-3">
-                                            <MudTextField @ref="refProjectName"
-                                                          @bind-Value="project.ProjectName"
-                                                          Label="notebook"
+                                    <button class="btn btn-link" style="margin-left:15px;" name="btnNewCourse" @onclick="BtnCancel">
+                                        <img src="/img/icoCancel.png" width="24" title="cancel"/>
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                @* NOTEBOOK CMD BUTTONS *@
+                                <div style="text-align: center;">
+                                    <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                        <MudFabMenuItem Title="edit notebook ويرايش دفتر" StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditProject(project.ProjectId)"/>
+                                        <MudFabMenuItem Title="new section سکشن جديد" StartIcon="@Icons.Material.Filled.BookmarkAdd" Color="Color.Primary" OnClick="() => BtnAddNewSubproject(project.ProjectId)"/>
+                                    </MudFabMenu>
+                                    <hr style="color:red"/>
+                                </div>
+                                @if ((appState.Cmd == "AddNewSubproject") && (appState.ProjectId == project.ProjectId))
+                                {
+                                    <div>
+                                        <div class="d-flex mb-3">
+                                            <MudTextField @ref="refNewSubproject"
+                                                          @bind-Value="txtNewSubprojectTitle"
+                                                          Label="new section"
                                                           Variant="Variant.Text"
                                                           Margin="Margin.Dense"
                                                           Autocomplete="off"
                                                           Adornment="Adornment.End"
                                                           AdornmentIcon="@Icons.Material.Filled.Save"
-                                                          OnAdornmentClick="() => BtnUpdateProject(project)"
+                                                          OnAdornmentClick="() => BtnSaveNewSubproject(project.ProjectId)"
                                                           Style="font-family:tahoma;"
-                                                          Class="my-textfield" />
-                                            </div>
-                                            <div class="d-flex mb-2">
-                                            <MudCheckBox @bind-Value="project.IsActive" Label="active" Color="Color.Primary"></MudCheckBox>
-                                                <button class="btn btn-link" style="margin-left:15px;" @onclick="() => BtnDeleteProject(project.ProjectId)" @key="project.ProjectId">
-                                                <img src="/img/icoDelete1.png" width="25" title="delete notebook" />
-                                                </button>
-                                                <button class="btn btn-link" style="margin-left:15px;" name="btnNewCourse" @onclick="BtnCancel">
-                                                <img src="/img/icoCancel.png" width="24" title="cancel" />
-                                                </button>
-                                            </div>
-                                        }
-                                    else
+                                                          Class="my-textfield"/>
+                                            <button class="btn btn-link" name="btnNewCourse" style="margin-left:20px;" @onclick="BtnCancel">
+                                                <img src="/img/icoCancel.png" width="20" title="cancel" style="margin-top:15px;"/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @* 2.2 SECTIONS *@
+                                    <div class="accordion" id="accordionSubprojects-@project.ProjectId">
+                                        @foreach (Subproject subProject in project.Subprojects)
                                         {
-                                        @* NOTEBOOK CMD BUTTONS *@
-                                            <div style="text-align: center;">
-                                                <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
-                                                <MudFabMenuItem Title="edit notebook ويرايش دفتر" StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditProject(project.ProjectId)" />
-                                                <MudFabMenuItem Title="new section سکشن جديد" StartIcon="@Icons.Material.Filled.BookmarkAdd" Color="Color.Primary" OnClick="() => BtnAddNewSubproject(project.ProjectId)" />
-                                                </MudFabMenu>
-                                            <hr style="color:red" />
-                                            </div>
-                                        @if ((appState.Cmd == "AddNewSubproject") && (appState.ProjectId == project.ProjectId))
-                                            {
-                                                <div>
-                                                    <div class="d-flex mb-3">
-                                                    <MudTextField @ref="refNewSubproject"
-                                                                  @bind-Value="txtNewSubprojectTitle"
-                                                                  Label="new section"
-                                                                  Variant="Variant.Text"
-                                                                  Margin="Margin.Dense"
-                                                                  Autocomplete="off"
-                                                                  Adornment="Adornment.End"
-                                                                  AdornmentIcon="@Icons.Material.Filled.Save"
-                                                                  OnAdornmentClick="() => BtnSaveNewSubproject(project.ProjectId)"
-                                                                  Style="font-family:tahoma;"
-                                                                  Class="my-textfield" />
-                                                        <button class="btn btn-link" name="btnNewCourse" style="margin-left:20px;" @onclick="BtnCancel">
-                                                        <img src="/img/icoCancel.png" width="20" title="cancel" style="margin-top:15px;" />
+                                            var collapseId2 = $"collapse2s{subProject.SubprojectId}";
+                                            _clpsSP = (appState.NoteReferenceId != subProject.SubprojectId) ? "collapse" : "collapse show";
+                                            <div class="accordion-item mb-1">
+                                                <h4 class="accordion-header">
+                                                    <button class="accordion-button collapsed"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#@collapseId2"
+                                                            aria-expanded="true"
+                                                            aria-controls="@collapseId2" @onclick="() => BtnReadSectionNotes(subProject)">
+                                                        <button class="btn btn-link">
+                                                            <img class="pulse-animation" src="img/icoBookmark1.png" width="22" style="margin-right:5px;"/>
                                                         </button>
+                                                        <h6 style="color:rgb(230,100,100);margin-left:5px;">@subProject.SubprojectName</h6>
+                                                    </button>
+                                                </h4>
+                                                <div id="@collapseId2" class="accordion-collapse @_clpsSP" data-bs-parent="#accordionSubprojects-@project.ProjectId">
+                                                    <div class="accordion-body" style="background-color:rgba(252,252,252)">
+                                                        @if ((appState.Cmd == "EditSubproject") && (appState.SubprojectId == subProject.SubprojectId))
+                                                        {
+                                                            @* EDIT SECTION *@
+                                                            <div class="d-flex mb-1">
+                                                                <MudTextField @ref="refSubprojectName"
+                                                                              @bind-Value="subProject.SubprojectName"
+                                                                              Label="section"
+                                                                              Variant="Variant.Text"
+                                                                              Margin="Margin.Dense"
+                                                                              Autocomplete="off"
+                                                                              Adornment="Adornment.End"
+                                                                              AdornmentIcon="@Icons.Material.Filled.Save"
+                                                                              OnAdornmentClick="() => BtnUpdateSubproject(subProject)"
+                                                                              Style="font-family:tahoma;"
+                                                                              Class="my-textfield"/>
+                                                                <button class="btn btn-link" @onclick="() => BtnDeleteSubproject(subProject)">
+                                                                    <img src="/img/icoDelete1.png" width="22" style="margin-left:20px;margin-top:15px;" title="delete section"/>
+                                                                </button>
+                                                                <button class="btn btn-link" @onclick="() => BtnCancel()">
+                                                                    <img src="/img/icoCancel.png" width="20" title="cancel" style="margin-top:15px;"/>
+                                                                </button>
+                                                            </div>
+                                                        }
+                                                        else if ((_cmd == "MoveSectionToNotebook") & (Convert.ToInt32(appState.SubprojectId) == subProject.SubprojectId))
+                                                        {
+                                                            @* MOVE SECTION To A NOTEBOOK *@
+                                                            <div class="d-flex justyfy-content-center align-items-center" style="text-align: left;margin-bottom:15px;">
+                                                                <MudSelect T="int"
+                                                                           @ref="refProjects"
+                                                                           Label="move to"
+                                                                           Value="NotebookId"
+                                                                           ValueChanged="OnNotebookChanged"
+                                                                           Class="w-auto my-select"
+                                                                           Variant="Variant.Text"
+                                                                           Margin="Margin.Dense"
+                                                                           Adornment="Adornment.End"
+                                                                           AdornmentIcon="@Icons.Material.Filled.FolderCopy"
+                                                                           OnAdornmentClick="() => BtnSectionMoveToSelectedNotebook(NotebookId, subProject)"
+                                                                           Style="color:royalblue;width:140px;font-size:small;font-family:tahoma;">
+                                                                    <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
+                                                                    @foreach (var project in lstProjects)
+                                                                    {
+                                                                        <MudSelectItem Value="@project.ProjectId">@project.ProjectName</MudSelectItem>
+                                                                    }
+                                                                </MudSelect>
+                                                                <button class="btn btn-link" Title="cancel" style="margin-left:20px;" @onclick='() => BtnCancel()'>
+                                                                    <img src="/img/icoCancel.png" width="20"/>
+                                                                </button>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            @* SECTION CMD BUTTONS *@
+                                                            <div style="text-align:center">
+                                                                <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Success" Variant="Variant.Text" Direction="Direction.Right">
+                                                                    <MudFabMenuItem Title="edit section ويرايش بخش" StartIcon="@Icons.Material.Filled.BookmarkAdded" Color="Color.Primary" OnClick="() => BtnEditSubproject(subProject.SubprojectId)"/>
+                                                                    <MudFabMenuItem Title="move to another notebook جابجا کردن" StartIcon="@Icons.Material.Filled.MoveDown" Color="Color.Warning" OnClick="() => BtnReplaceSection(subProject.SubprojectId)"/>
+                                                                    <MudFabMenuItem Title="new note يادداشت جديد" StartIcon="@Icons.Material.Filled.PlaylistAdd" Color="Color.Success" OnClick="() => BtnCreateNewSectionNote(subProject)"/>
+                                                                </MudFabMenu>
+                                                            </div>
+                                                            @* 2.3 NOTES *@
+                                                            if (subProject.SubprojectId == Convert.ToInt32(appState.NoteReferenceId))
+                                                            {
+                                                                @foreach (Note notex in lstSPNotes)
+                                                                {
+                                                                    var _noteDirection = ((notex.NoteTags & 1) == 1) ? "text-end" : "text-start";
+                                                                    <div class="mt-3 @_noteDirection">
+                                                                        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                                                            <MudCard Class="mx-0">
+                                                                                <MudCardContent Style="background-color:whitesmoke;">
+                                                                                    <div class="d-flex align-items-center" style="text-align:center; color:rgb(130,7,150); font-weight:bold;font-size:small">
+                                                                                        @if (notex.IsTodo)
+                                                                                        {
+                                                                                            <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px"/>
+                                                                                            @PersianDate(notex.NoteDueDateTime)
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            @PersianDate(notex.NoteDateTime)
+                                                                                        }
+                                                                                    </div>
+                                                                                    <hr/>
+                                                                                    @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId) == notex.NoteId))
+                                                                                    {
+                                                                                        <h6 style="color:indianred;text-align:center;">replace to:</h6>
+                                                                                        @* COMBO Notebooks *@
+                                                                                        <div class="d-flex">
+                                                                                            <MudSelect T="int"
+                                                                                                       @ref="refProjects"
+                                                                                                       Label="Notebook"
+                                                                                                       Value="NotebookId"
+                                                                                                       ValueChanged="OnNotebookChanged"
+                                                                                                       Class="w-auto my-select"
+                                                                                                       Variant="Variant.Text"
+                                                                                                       Margin="Margin.Dense"
+                                                                                                       Style="color:royalblue;width:140px;font-size:small;">
+                                                                                                <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
+                                                                                                @foreach (var project in lstProjects)
+                                                                                                {
+                                                                                                    <MudSelectItem Value="@project.ProjectId">@project.ProjectName</MudSelectItem>
+                                                                                                }
+                                                                                            </MudSelect>
+                                                                                        </div>
+                                                                                        @* COMBO Sections *@
+                                                                                        <div class="d-flex align-content-center align-items-center align-content-md-center">
+                                                                                            <MudSelect T="int"
+                                                                                                       @ref="refSubprojects"
+                                                                                                       Label="Section"
+                                                                                                       Value="SectionId"
+                                                                                                       ValueChanged="OnSectionChanged"
+                                                                                                       Class="w-auto my-select"
+                                                                                                       Variant="Variant.Text"
+                                                                                                       Margin="Margin.Dense"
+                                                                                                       Adornment="Adornment.End"
+                                                                                                       AdornmentIcon="@Icons.Material.Filled.MoveDown"
+                                                                                                       OnAdornmentClick="() => BtnMoveToSelectSection(SectionId, notex.NoteId)"
+                                                                                                       Style="color:royalblue;width:140px;font-size:small;">
+                                                                                                <MudSelectItem Value="0">Select a Section...</MudSelectItem>
+                                                                                                @foreach (var subproject in lstSubprojects)
+                                                                                                {
+                                                                                                    <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem>
+                                                                                                }
+                                                                                            </MudSelect>
+                                                                                            <button class="btn btn-link" Title="cancel" style="margin-left:20px;" @onclick='() => BtnCancel()'>
+                                                                                                <img src="/img/icoCancel.png" width="20"/>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <div style="white-space: pre-wrap; font-weight:normal; font-family:'Segoe UI';font-size:small">
+                                                                                            @if (notex.NoteText.Length > 100)
+                                                                                            {
+                                                                                                <div>
+                                                                                                    @notex.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span>
+                                                                                                </div>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <div style="font-weight:normal;font-family:'Segoe UI'"> @notex.NoteText</div>
+                                                                                            }
+                                                                                        </div>
+                                                                                        <hr>
+                                                                                        @* CMD MENU *@
+                                                                                        <div class="d-flex align-items-center text-start" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
+                                                                                            <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                                                                <MudFabMenuItem Title="edit ويرايش" StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(notex)"/>
+                                                                                                <MudFabMenuItem Title="view نشان داده شود" StartIcon="@Icons.Material.Filled.Notes" Color="Color.Primary" OnClick="() => BtnShowNoteInDialog(notex)"/>
+                                                                                                <MudFabMenuItem Title="copy to quick notes کپي در يادداشت هاي سريع" StartIcon="@Icons.Material.Filled.DriveFileMove" Color="Color.Dark" OnClick="() => BtnCopyToQuickNotes(notex, subProject)"/>
+                                                                                                <MudFabMenuItem Title="move to another section جابجا کردن" StartIcon="@Icons.Material.Filled.MoveDown" Color="Color.Dark" OnClick="() => BtnReplaceNote(notex.NoteId)"/>
+                                                                                                <MudFabMenuItem Title="delete حذف" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(notex)"/>
+                                                                                            </MudFabMenu>
+                                                                                        </div>
+                                                                                    }
+                                                                                </MudCardContent>
+                                                                            </MudCard>
+                                                                        </MudContainer>
+                                                                    </div>
+                                                                }
+
+                                                                @if (lstSPNotes.Count > 0)
+                                                                {
+                                                                    <div style="text-align:center;margin-top:8px;">
+                                                                        <button class="btn btn-link" @onclick="() => BtnCreateNewSectionNote(subProject)">
+                                                                            <img src="/img/icoNewNote3.png" width="28" title="add new note"/>
+                                                                        </button>
+                                                                    </div>
+                                                                }
+                                                            }
+                                                        }
                                                     </div>
                                                 </div>
-                                            }
-                                        else
-                                            {
-                                            @* 2.2 SECTIONS *@
-                                                <div class="accordion" id="accordionSubprojects-@project.ProjectId">
-                                                @foreach (Subproject subProject in project.Subprojects)
-                                                    {
-                                                    var collapseId2 = $"collapse2s{subProject.SubprojectId}";
-                                                    _clpsSP = (appState.NoteReferenceId != subProject.SubprojectId) ? "collapse" : "collapse show";
-                                                        <div class="accordion-item mb-1">
-                                                            <h4 class="accordion-header">
-                                                                <button class="accordion-button collapsed"
-                                                                    type="button"
-                                                                    data-bs-toggle="collapse"
-                                                                    data-bs-target="#@collapseId2"
-                                                                    aria-expanded="true"
-                                                                    aria-controls="@collapseId2" @onclick="() => BtnReadSectionNotes(subProject)">
-                                                                    <button class="btn btn-link">
-                                                                    <img class="pulse-animation" src="img/icoBookmark1.png" width="22" style="margin-right:5px;" />
-                                                                    </button>
-                                                                <h6 style="color:rgb(230,100,100);margin-left:5px;">@subProject.SubprojectName</h6>
-                                                                </button>
-                                                            </h4>
-                                                            <div id="@collapseId2" class="accordion-collapse @_clpsSP" data-bs-parent="#accordionSubprojects-@project.ProjectId">
-                                                                <div class="accordion-body" style="background-color:rgba(252,252,252)">
-                                                                @if ((appState.Cmd == "EditSubproject") && (appState.SubprojectId == subProject.SubprojectId))
-                                                                    {
-                                                                    @* EDIT SECTION *@
-                                                                        <div class="d-flex mb-1">
-                                                                        <MudTextField @ref="refSubprojectName"
-                                                                                      @bind-Value="subProject.SubprojectName"
-                                                                                      Label="section"
-                                                                                      Variant="Variant.Text"
-                                                                                      Margin="Margin.Dense"
-                                                                                      Autocomplete="off"
-                                                                                      Adornment="Adornment.End"
-                                                                                      AdornmentIcon="@Icons.Material.Filled.Save"
-                                                                                      OnAdornmentClick="() => BtnUpdateSubproject(subProject)"
-                                                                                      Style="font-family:tahoma;"
-                                                                                      Class="my-textfield" />
-                                                                            <button class="btn btn-link" @onclick="() => BtnDeleteSubproject(subProject)">
-                                                                            <img src="/img/icoDelete1.png" width="22" style="margin-left:20px;margin-top:15px;" title="delete section" />
-                                                                            </button>
-                                                                            <button class="btn btn-link" @onclick="() => BtnCancel()">
-                                                                            <img src="/img/icoCancel.png" width="20" title="cancel" style="margin-top:15px;" />
-                                                                            </button>
-                                                                        </div>
-                                                                    }
-                                                                else if ((_cmd == "MoveSectionToNotebook") & (Convert.ToInt32(appState.SubprojectId) == subProject.SubprojectId))
-                                                                    {
-                                                                    @* MOVE SECTION To A NOTEBOOK *@
-                                                                        <div class="d-flex justyfy-content-center align-items-center" style="text-align: left;margin-bottom:15px;">
-                                                                            <MudSelect T="int"
-                                                                                   @ref="refProjects"
-                                                                                   Label="move to"
-                                                                                   Value="NotebookId"
-                                                                                   ValueChanged="OnNotebookChanged"
-                                                                                   Class="w-auto my-select"
-                                                                                   Variant="Variant.Text"
-                                                                                   Margin="Margin.Dense"
-                                                                                   Adornment="Adornment.End"
-                                                                                   AdornmentIcon="@Icons.Material.Filled.FolderCopy"
-                                                                                   OnAdornmentClick="() => BtnSectionMoveToSelectedNotebook(NotebookId, subProject)"
-                                                                                   Style="color:royalblue;width:140px;font-size:small;font-family:tahoma;">
-                                                                            <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
-                                                                            @foreach (var project in lstProjects)
-                                                                                {
-                                                                                <MudSelectItem Value="@project.ProjectId">@project.ProjectName</MudSelectItem>
-                                                                                }
-                                                                            </MudSelect>
-                                                                            <button class="btn btn-link" Title="cancel" style="margin-left:20px;" @onclick='() => BtnCancel()'>
-                                                                            <img src="/img/icoCancel.png" width="20" />
-                                                                            </button>
-                                                                        </div>
-                                                                    }
-                                                                else
-                                                                    {
-                                                                    @* SECTION CMD BUTTONS *@
-                                                                        <div style="text-align:center">
-                                                                            <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Success" Variant="Variant.Text" Direction="Direction.Right">
-                                                                            <MudFabMenuItem Title="edit section ويرايش بخش" StartIcon="@Icons.Material.Filled.BookmarkAdded" Color="Color.Primary" OnClick="() => BtnEditSubproject(subProject.SubprojectId)" />
-                                                                            <MudFabMenuItem Title="move to another notebook جابجا کردن" StartIcon="@Icons.Material.Filled.MoveDown" Color="Color.Warning" OnClick="() => BtnReplaceSection(subProject.SubprojectId)" />
-                                                                            <MudFabMenuItem Title="new note يادداشت جديد" StartIcon="@Icons.Material.Filled.PlaylistAdd" Color="Color.Success" OnClick="() => BtnCreateNewSectionNote(subProject)" />
-                                                                            </MudFabMenu>
-                                                                        </div>
-                                                                    @* 2.3 NOTES *@
-                                                                    if (subProject.SubprojectId == Convert.ToInt32(appState.NoteReferenceId))
-                                                                        {
-                                                                        @foreach (Note notex in lstSPNotes)
-                                                                            {
-                                                                            var _noteDirection = ((notex.NoteTags & 1) == 1) ? "text-end" : "text-start";
-                                                                                <div class="mt-3 @_noteDirection">
-                                                                                    <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
-                                                                                        <MudCard Class="mx-0">
-                                                                                            <MudCardContent Style="background-color:whitesmoke;">
-                                                                                                <div class="d-flex align-items-center" style="text-align:center; color:rgb(130,7,150); font-weight:bold;font-size:small">
-                                                                                                @if (notex.IsTodo)
-                                                                                                    {
-                                                                                                    <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
-                                                                                                    @PersianDate(notex.NoteDueDateTime)
-                                                                                                    }
-                                                                                                else
-                                                                                                    {
-                                                                                                    @PersianDate(notex.NoteDateTime)
-                                                                                                    }
-                                                                                                </div>
-                                                                                            <hr />
-                                                                                            @if ((_cmd == "MoveNoteToNotebook") & (Convert.ToInt32(appState.NoteId) == notex.NoteId))
-                                                                                                {
-                                                                                                <h6 style="color:indianred;text-align:center;">replace to:</h6>
-                                                                                                @* COMBO Notebooks *@
-                                                                                                    <div class="d-flex">
-                                                                                                        <MudSelect T="int"
-                                                                                                               @ref="refProjects"
-                                                                                                               Label="Notebook"
-                                                                                                               Value="NotebookId"
-                                                                                                               ValueChanged="OnNotebookChanged"
-                                                                                                               Class="w-auto my-select"
-                                                                                                               Variant="Variant.Text"
-                                                                                                               Margin="Margin.Dense"
-                                                                                                               Style="color:royalblue;width:140px;font-size:small;">
-                                                                                                        <MudSelectItem Value="0">Select a Notebook...</MudSelectItem>
-                                                                                                        @foreach (var project in lstProjects)
-                                                                                                            {
-                                                                                                            <MudSelectItem Value="@project.ProjectId">@project.ProjectName</MudSelectItem>
-                                                                                                            }
-                                                                                                        </MudSelect>
-                                                                                                    </div>
-                                                                                                @* COMBO Sections *@
-                                                                                                    <div class="d-flex align-content-center align-items-center align-content-md-center">
-                                                                                                        <MudSelect T="int"
-                                                                                                               @ref="refSubprojects"
-                                                                                                               Label="Section"
-                                                                                                               Value="SectionId"
-                                                                                                               ValueChanged="OnSectionChanged"
-                                                                                                               Class="w-auto my-select"
-                                                                                                               Variant="Variant.Text"
-                                                                                                               Margin="Margin.Dense"
-                                                                                                               Adornment="Adornment.End"
-                                                                                                               AdornmentIcon="@Icons.Material.Filled.MoveDown"
-                                                                                                               OnAdornmentClick="() => BtnMoveToSelectSection(SectionId, notex.NoteId)"
-                                                                                                               Style="color:royalblue;width:140px;font-size:small;">
-                                                                                                        <MudSelectItem Value="0">Select a Section...</MudSelectItem>
-                                                                                                        @foreach (var subproject in lstSubprojects)
-                                                                                                            {
-                                                                                                            <MudSelectItem Value="@subproject.SubprojectId">@subproject.SubprojectName</MudSelectItem>
-                                                                                                            }
-                                                                                                        </MudSelect>
-                                                                                                        <button class="btn btn-link" Title="cancel" style="margin-left:20px;" @onclick='() => BtnCancel()'>
-                                                                                                        <img src="/img/icoCancel.png" width="20" />
-                                                                                                        </button>
-                                                                                                    </div>
-                                                                                                }
-                                                                                            else
-                                                                                                {
-                                                                                                    <div style="white-space: pre-wrap; font-weight:normal; font-family:'Segoe UI';font-size:small">
-                                                                                                    @if (notex.NoteText.Length > 100)
-                                                                                                        {
-                                                                                                        <div> @notex.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span></div>
-                                                                                                        }
-                                                                                                    else
-                                                                                                        {
-                                                                                                        <div style="font-weight:normal;font-family:'Segoe UI'"> @notex.NoteText</div>
-                                                                                                        }
-                                                                                                    </div>
-                                                                                                <hr>
-                                                                                                @* CMD MENU *@
-                                                                                                    <div class="d-flex align-items-center text-start" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
-                                                                                                        <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
-                                                                                                        <MudFabMenuItem Title="view نشان داده شود" StartIcon="@Icons.Material.Filled.Notes" Color="Color.Primary" OnClick="() => BtnShowNoteInDialog(notex)" />
-                                                                                                        <MudFabMenuItem Title="edit ويرايش" StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(notex)" />
-                                                                                                        <MudFabMenuItem Title="copy to quick notes کپي در يادداشت هاي سريع" StartIcon="@Icons.Material.Filled.DriveFileMove" Color="Color.Dark" OnClick="() => BtnCopyToQuickNotes(notex, subProject)" />
-                                                                                                        <MudFabMenuItem Title="move to another section جابجا کردن" StartIcon="@Icons.Material.Filled.MoveDown" Color="Color.Dark" OnClick="() => BtnReplaceNote(notex.NoteId)" />
-                                                                                                        <MudFabMenuItem Title="delete حذف" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(notex)" />
-                                                                                                        </MudFabMenu>
-                                                                                                    </div>
-                                                                                                }
-                                                                                            </MudCardContent>
-                                                                                        </MudCard>
-                                                                                    </MudContainer>
-                                                                                </div>
-                                                                            }
-                                                                        @if (lstSPNotes.Count > 0)
-                                                                            {
-                                                                                <div style="text-align:center;margin-top:8px;">
-                                                                                    <button class="btn btn-link" @onclick="() => BtnCreateNewSectionNote(subProject)">
-                                                                                    <img src="/img/icoNewNote3.png" width="28" title="add new note" />
-                                                                                    </button>
-                                                                                </div>
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                </div>
-                                            }
+                                            </div>
                                         }
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                @if (appState.Cmd == "AddNewProject")
-                    {
-                    <hr style="color:red" />
-                        <div class="d-flex gap-2 m-3 align-content-center align-items-center">
-                        <MudTextField @ref="refNewProject"
-                                      @bind-Value="project.ProjectName"
-                                      Label="new Notebook"
-                                      Variant="Variant.Text"
-                                      Margin="Margin.Dense"
-                                      Autocomplete="off"
-                                      Adornment="Adornment.End"
-                                      AdornmentIcon="@Icons.Material.Filled.Save"
-                                      OnAdornmentClick="BtnSaveNewProject"
-                                      Style="font-family:tahoma;"
-                                      Class="my-textfield" />
-                            <button class="btn btn-link" name="btnNewCourse" style="margin-left:30px;" @onclick="BtnCancel">
-                            <img src="/img/icoCancel.png" width="20" title="cancel" />
-                            </button>
-                        </div>
-                    }
-                else
-                    {
-                        <div style="max-width:500px; margin: 0 auto;">
-                        <br />
-                            <button class="btn btn-link" @onclick="() => BtnBackToCallingPage()">
-                            <img src="/img/icoList.png" style="width:32px" title="back" />
-                            </button>
-                        @if (user.UserRole == "teacher")
-                            {
-                                <button class="btn btn-link" @onclick="() => BtnGotoReportUserNotes()">
-                                <img src="/img/icoNoteReport.png" style="width:35px" title="goto: quick notes" />
-                                </button>
+                                }
                             }
-                            <button class="btn btn-link" @onclick="BtnAddNewProject">
-                            <img src="/img/icoAddNewNoteBook.png" width="40" title="add new notebook" />
-                            </button>
                         </div>
-                    }
-                <hr style="color:red" />
+                    </div>
                 </div>
-            }
-        <br />
-        </EditForm>
+            </div>
+        }
+        @if (appState.Cmd == "AddNewProject")
+        {
+            <hr style="color:red"/>
+            <div class="d-flex gap-2 m-3 align-content-center align-items-center">
+                <MudTextField @ref="refNewProject"
+                              @bind-Value="project.ProjectName"
+                              Label="new Notebook"
+                              Variant="Variant.Text"
+                              Margin="Margin.Dense"
+                              Autocomplete="off"
+                              Adornment="Adornment.End"
+                              AdornmentIcon="@Icons.Material.Filled.Save"
+                              OnAdornmentClick="BtnSaveNewProject"
+                              Style="font-family:tahoma;"
+                              Class="my-textfield"/>
+                <button class="btn btn-link" name="btnNewCourse" style="margin-left:30px;" @onclick="BtnCancel">
+                    <img src="/img/icoCancel.png" width="20" title="cancel"/>
+                </button>
+            </div>
+        }
+        else
+        {
+            <div style="max-width:500px; margin: 0 auto;">
+                <br/>
+                <button class="btn btn-link" @onclick="() => BtnBackToCallingPage()">
+                    <img src="/img/icoList.png" style="width:32px" title="back"/>
+                </button>
+                @if (user.UserRole == "teacher")
+                {
+                    <button class="btn btn-link" @onclick="() => BtnGotoReportUserNotes()">
+                        <img src="/img/icoNoteReport.png" style="width:35px" title="goto: quick notes"/>
+                    </button>
+                }
+                <button class="btn btn-link" @onclick="BtnAddNewProject">
+                    <img src="/img/icoAddNewNoteBook.png" width="40" title="add new notebook"/>
+                </button>
+            </div>
+        }
+        <hr style="color:red"/>
+        </div>
     }
-    <script>
+    <br/>
+    </EditForm>
+}
+<script>
     window.addEventListener('load', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
-    </script>
+</script>
 
 @code {
     private MudTextField<string> refNewProject;
@@ -594,26 +599,27 @@ else
     string _ShowProjectsMode = "active";
     private DateTime? _date = DateTime.Now;
     private TimeSpan? _time = DateTime.Now.TimeOfDay;
-    public string _clpsP = "";  //collapse Accardion Projects
+    public string _clpsP = ""; //collapse Accardion Projects
     public string _clpsSP = ""; //collapse Accardion Subprojects
 
     //LifeCycleEvents
-    protected override async Task OnInitializedAsync ()
-        {
+    protected override async Task OnInitializedAsync()
+    {
         appState.OnChange += TriggerRender;
         if (Convert.ToInt32(appState.UserLoginStatus) != 1)
-            {
+        {
             Navman.NavigateTo("/Login");
-            }
+        }
+
         var user = new User
-            {
+        {
             UserId = Convert.ToInt32(appState.UserId),
             UserName = appState.UserName,
             UserPass = appState.UserPass,
             UserRole = appState.UserRole
-            };
+        };
         if (user.UserId > 0)
-            {
+        {
             //on second rener, user.UserId will get its value
             appState.SetProjectId(0);
             appState.SetNoteReferenceId(0);
@@ -621,395 +627,444 @@ else
             //lstSPNotes = await feService.Read_Notes (Convert.ToInt32(appState.SubprojectId), 2);
             await BtnReadDueNotes();
             _hasFetched = true;
-            }
         }
-    protected override async Task OnAfterRenderAsync (bool firstRender)
-        {
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
         if (shouldFocusNewProject)
-            {
+        {
             shouldFocusNewProject = false;
             await refNewProject.FocusAsync();
-            }
         }
-    private void TriggerRender ()
-        {
+    }
+
+    private void TriggerRender()
+    {
         InvokeAsync(StateHasChanged);
-        }
-    public void Dispose ()
-        {
+    }
+
+    public void Dispose()
+    {
         appState.OnChange -= TriggerRender;
-        }
+    }
+
     //QuickNote
-    public async Task CreateQuickNote ()
-        {
+    public async Task CreateQuickNote()
+    {
         //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
         appState.SetNoteReferenceId(Convert.ToInt32(appState.UserId)); //for quicknote, NoteReferenceId=UserId
         if (appState.UserRole == "teacher")
-            {
+        {
             appState.SetNoteReferenceType(11);
-            }
+        }
         else if (appState.UserRole == "student")
-            {
+        {
             appState.SetNoteReferenceType(1);
-            }
+        }
         else
-            {
+        {
             appState.SetNoteReferenceType(0);
-            }
+        }
+
         appState.SetCmd("CreateNote");
         StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
         //to handel close event, I added in the Modal_CreateNote: [Parameter] public EventCallback OnClose
-        }
+    }
 
     //Projects (NOTEBOOK)
-    public void BtnAddNewProject ()
-        {
+    public void BtnAddNewProject()
+    {
         if (appState.Cmd != "AddNewProject")
-            {
+        {
             appState.SetCmd("AddNewProject");
             shouldFocusNewProject = true; //flag to tell OnAfterRenderAsync focus on 'txtNewGroup'
-            }
+        }
         else
-            {
+        {
             appState.SetCmd("");
             shouldFocusNewProject = false;
-            }
         }
-    public async Task BtnSaveNewProject ()
-        {
+    }
+
+    public async Task BtnSaveNewProject()
+    {
         //project.ProjectName is bind
         project.UserType = (user.UserRole == "teacher") ? 1 : 2; // UserTypes: 1:Teacher 2:Student
         project.ProjectTags = 1;
         project.UserId = Convert.ToInt32(appState.UserId);
         int result = await feService.Create_Project(project);
         if (result != 0)
-            {
+        {
             appState.SetCmd("");
             // Refresh the list
             var user = new User
-                {
+            {
                 UserId = Convert.ToInt32(appState.UserId),
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
                 UserRole = appState.UserRole
-                };
+            };
             user.UserId = Convert.ToInt32(appState.UserId);
             await GetListOfProjects(user.UserId, _ShowProjectsMode);
             project.ProjectName = ""; //reset input text
             StateHasChanged();
-            }
         }
-    public async Task BtnEditProject (int projectId)
-        {
+    }
+
+    public async Task BtnEditProject(int projectId)
+    {
         appState.SetCmd("EditProject");
         appState.SetProjectId(projectId);
         StateHasChanged();
         await Task.Delay(1);
         await refProjectName.FocusAsync();
-        }
-    public async Task BtnUpdateProject (Project project)
-        {
+    }
+
+    public async Task BtnUpdateProject(Project project)
+    {
         //ProjectName is bind
         project.UserId = Convert.ToInt32(appState.UserId);
         bool result = await feService.Update_Project(project);
         if (result)
-            {
+        {
             appState.SetCmd("");
             // Refresh the list
             var user = new User
-                {
+            {
                 UserId = Convert.ToInt32(appState.UserId),
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
                 UserRole = appState.UserRole
-                };
+            };
             user.UserId = Convert.ToInt32(appState.UserId);
             await GetListOfProjects(user.UserId, _ShowProjectsMode);
             project.ProjectName = ""; //reset input text
             StateHasChanged();
-            }
         }
-    private async Task BtnDeleteProject (int projectId)
-        {
+    }
+
+    private async Task BtnDeleteProject(int projectId)
+    {
         var message = new MarkupString($"<hr><span style='color:indianred'>CAUTION!!!<br><br>Delete</span> notebook <span style='color:royalblue'>{project.ProjectName}</span> ?<br><br><span style='font-weight:bold'>All</span> sections and notes in this notebook<br><br>will be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-            {
+        {
             bool result = await feService.Delete_Project(projectId);
             if (result)
-                {
+            {
                 Snackbar.Add($"notebook and its sections and notes all deleted!", Severity.Info);
                 appState.SetCmd("");
                 //refresh the list
                 var user = new User
-                    {
+                {
                     UserId = Convert.ToInt32(appState.UserId),
                     UserName = appState.UserName,
                     UserPass = appState.UserPass,
                     UserRole = appState.UserRole
-                    };
+                };
                 await GetListOfProjects(user.UserId, _ShowProjectsMode);
                 StateHasChanged();
-                }
+            }
             else
+            {
+                Snackbar.Add($"there are sections in this notebook", Severity.Warning, opt =>
                 {
-                Snackbar.Add($"there are sections in this notebook", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-                }
+                    opt.VisibleStateDuration = 1500;
+                    opt.ShowTransitionDuration = 300;
+                    opt.HideTransitionDuration = 300;
+                });
             }
         }
-    public void BtnUpdateSubprojectTagsInPlace (User stdnt, int flag, bool isChecked)
-        {
+    }
+
+    public void BtnUpdateSubprojectTagsInPlace(User stdnt, int flag, bool isChecked)
+    {
         if (isChecked)
-            {
-            stdnt.UserTags |= flag;
-            }
-        else
-            {
-            stdnt.UserTags &= ~flag;
-            }
-        }
-    public async Task BtnToggleShowProjectsMode ()
         {
+            stdnt.UserTags |= flag;
+        }
+        else
+        {
+            stdnt.UserTags &= ~flag;
+        }
+    }
+
+    public async Task BtnToggleShowProjectsMode()
+    {
         lstSearchedtNotes.Clear();
         switch (_ShowProjectsMode)
-            {
+        {
             case "all":
-                    {
-                    _ShowProjectsMode = "active";
-                    break;
-                    }
-            case "active":
-                    {
-                    _ShowProjectsMode = "inactive";
-                    break;
-                    }
-            case "inactive":
-                    {
-                    _ShowProjectsMode = "all";
-                    break;
-                    }
+            {
+                _ShowProjectsMode = "active";
+                break;
             }
+            case "active":
+            {
+                _ShowProjectsMode = "inactive";
+                break;
+            }
+            case "inactive":
+            {
+                _ShowProjectsMode = "all";
+                break;
+            }
+        }
+
         user.UserId = Convert.ToInt32(appState.UserId);
         await GetListOfProjects(user.UserId, _ShowProjectsMode);
         StateHasChanged();
-        }
-    public async Task GetListOfProjects (int userId, string mode)
-        {
+    }
+
+    public async Task GetListOfProjects(int userId, string mode)
+    {
         lstProjects.Clear();
         lstProjects = await feService.Read_Projects(userId, mode);
-        }
+    }
+
     //SP (SECTION)
-    public async Task BtnAddNewSubproject (int projectId)
-        {
+    public async Task BtnAddNewSubproject(int projectId)
+    {
         if (appState.Cmd != "AddNewSubproject")
-            {
+        {
             appState.SetCmd("AddNewSubproject");
             appState.SetProjectId(projectId);
             await Task.Delay(1);
             await refNewSubproject.FocusAsync();
-            }
-        else
-            {
-            appState.SetCmd("");
-            }
-        StateHasChanged();
         }
-    public async Task BtnSaveNewSubproject (int projectId)
+        else
         {
+            appState.SetCmd("");
+        }
+
+        StateHasChanged();
+    }
+
+    public async Task BtnSaveNewSubproject(int projectId)
+    {
         Subproject subProject = new Subproject() { SubprojectName = txtNewSubprojectTitle, ProjectId = projectId };
         int result = await feService.Create_Subproject(subProject);
         if (result > 0)
-            {
+        {
             Snackbar.Add($"new section : {subProject.SubprojectName} created", Severity.Success);
             // Refresh the list
             var user = new User
-                {
+            {
                 UserId = Convert.ToInt32(appState.UserId),
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
                 UserRole = appState.UserRole
-                };
+            };
             await GetListOfProjects(user.UserId, _ShowProjectsMode);
             appState.SetCmd("");
             StateHasChanged();
-            }
-        else
-            {
-            Snackbar.Add($"failed to create new section", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-            }
         }
-    public async Task BtnEditSubproject (int subProjectId)
+        else
         {
+            Snackbar.Add($"failed to create new section", Severity.Error, opt =>
+            {
+                opt.VisibleStateDuration = 1500;
+                opt.ShowTransitionDuration = 300;
+                opt.HideTransitionDuration = 300;
+            });
+        }
+    }
+
+    public async Task BtnEditSubproject(int subProjectId)
+    {
         appState.SetCmd("EditSubproject");
         appState.SetSubprojectId(subProjectId);
         StateHasChanged();
         await Task.Delay(1);
         await refSubprojectName.FocusAsync();
-        }
-    public async Task BtnUpdateSubproject (Subproject subProject)
-        {
+    }
+
+    public async Task BtnUpdateSubproject(Subproject subProject)
+    {
         appState.SetSubprojectId(subProject.ProjectId);
         bool result = await feService.Update_Subproject(subProject);
         if (result)
-            {
+        {
             appState.SetCmd("");
             // Refresh the list
             var user = new User
-                {
+            {
                 UserId = Convert.ToInt32(appState.UserId),
                 UserName = appState.UserName,
                 UserPass = appState.UserPass,
                 UserRole = appState.UserRole
-                };
+            };
             user.UserId = Convert.ToInt32(appState.UserId);
             await GetListOfProjects(user.UserId, _ShowProjectsMode);
             project.ProjectName = ""; //reset input text
             StateHasChanged();
-            }
         }
-    private async Task BtnDeleteSubproject (Subproject subProject)
-        {
+    }
+
+    private async Task BtnDeleteSubproject(Subproject subProject)
+    {
         appState.SetProjectId(subProject.ProjectId);
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> section <span style='color:royalblue'>{subProject.SubprojectName}</span> ?<br><br><span style='font-weight:bold'>All</span> notes in this section will also be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-            {
+        {
             bool result = await feService.Delete_Subproject(subProject.SubprojectId);
             if (result)
-                {
+            {
                 appState.SetCmd("");
                 // Refresh the list
                 var user = new User
-                    {
+                {
                     UserId = Convert.ToInt32(appState.UserId),
                     UserName = appState.UserName,
                     UserPass = appState.UserPass,
                     UserRole = appState.UserRole
-                    };
+                };
                 await GetListOfProjects(user.UserId, _ShowProjectsMode);
                 project.ProjectName = ""; //reset input text
                 StateHasChanged();
-                }
-            }
-        else
-            {
-            Snackbar.Add($"failed to remove section!", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
             }
         }
-    public void BtnReportSubproject (Subproject subProject)
+        else
         {
+            Snackbar.Add($"failed to remove section!", Severity.Error, opt =>
+            {
+                opt.VisibleStateDuration = 1500;
+                opt.ShowTransitionDuration = 300;
+                opt.HideTransitionDuration = 300;
+            });
+        }
+    }
+
+    public void BtnReportSubproject(Subproject subProject)
+    {
         //Navman.NavigateTo ($"/T_ReportStudents/{mode}/{stdnt.UserId}");
-        }
+    }
+
     //replace section
-    private void BtnReplaceSection (int sectionId)
-        {
+    private void BtnReplaceSection(int sectionId)
+    {
         if (Convert.ToInt32(appState.SubprojectId) == sectionId)
-            {
+        {
             _cmd = (_cmd == "MoveSectionToNotebook") ? "" : "MoveSectionToNotebook";
-            }
+        }
         else
-            {
+        {
             appState.SetSubprojectId(sectionId);
             _cmd = "MoveSectionToNotebook";
-            }
-        StateHasChanged();
         }
-    private async Task BtnSectionMoveToSelectedNotebook (int notebookId, Subproject section)
-        {
+
+        StateHasChanged();
+    }
+
+    private async Task BtnSectionMoveToSelectedNotebook(int notebookId, Subproject section)
+    {
         if (notebookId > 0)
-            {
+        {
             section.ProjectId = notebookId;
             bool result = await feService.Update_SubprojectParent(section);
             if (result)
-                {
+            {
                 Snackbar.Add("section replaced", Severity.Success);
                 _cmd = "";
                 NotebookId = 0;
                 SectionId = 0;
                 await GetListOfProjects(Convert.ToInt32(appState.UserId), _ShowProjectsMode);
                 StateHasChanged();
-                }
-            else
-                {
-                Snackbar.Add("failed", Severity.Warning);
-                }
             }
-        else
+            else
             {
-            Snackbar.Add("select notebook", Severity.Info);
+                Snackbar.Add("failed", Severity.Warning);
             }
         }
-    //SP notes
-    public async Task BtnCreateNewSectionNote (Subproject section)
+        else
         {
+            Snackbar.Add("select notebook", Severity.Info);
+        }
+    }
+
+    //SP notes
+    public async Task BtnCreateNewSectionNote(Subproject section)
+    {
         //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
         if (appState.UserRole == "teacher")
-            {
+        {
             appState.SetNoteReferenceType(12);
-            }
+        }
         else if (appState.UserRole == "student")
-            {
+        {
             appState.SetNoteReferenceType(2);
-            }
+        }
         else
-            {
+        {
             appState.SetNoteReferenceType(0);
-            }
+        }
+
         appState.SetNoteReferenceId(section.SubprojectId);
         appState.SetProjectId(section.ProjectId);
         appState.SetCmd("CreateNote");
         StateHasChanged();
-        }
-    public async Task BtnReadSectionNotes (Subproject subProject)
-        {
+    }
+
+    public async Task BtnReadSectionNotes(Subproject subProject)
+    {
         appState.SetProjectId(subProject.ProjectId);
         if (appState.UserRole == "teacher")
-            {
+        {
             appState.SetNoteReferenceType(12);
-            }
+        }
+
         if (appState.UserRole == "student")
-            {
+        {
             appState.SetNoteReferenceType(2);
-            }
+        }
+
         if (appState.UserRole == "teacher")
-            {
+        {
             appState.SetNoteReferenceType(0);
-            }
+        }
+
         appState.SetNoteReferenceId(subProject.SubprojectId);
         lstSPNotes = await feService.Read_Notes(subProject.SubprojectId, 2, 0);
         StateHasChanged();
-        }
-    public async Task BtnReadDueNotes ()
-        {
+    }
+
+    public async Task BtnReadDueNotes()
+    {
         user.UserTags = Convert.ToInt32(appState.UserTags);
         user.UserId = Convert.ToInt32(appState.UserId);
         if ((user.UserTags & 16) == 16)
-            {
+        {
             lstDueNotes = await feService.Read_DueNotes(user.UserId, ((user.UserTags & 32) == 32) ? 14 : 7);
-            }
+        }
+
         StateHasChanged();
-        }
-    public async Task BtnReadNotebookNotes (Project project)
-        {
-        }
-    public async Task BtnEditNoteInDialog (Note note)
-        {
+    }
+
+    public async Task BtnReadNotebookNotes(Project project)
+    {
+    }
+
+    public async Task BtnEditNoteInDialog(Note note)
+    {
         appState.SetSelectedNoteId(note.NoteId);
         appState.SetNoteReferenceId(note.ReferenceId);
         appState.SetNoteReferenceName(note.ReferenceName);
         if (appState.UserRole == "teacher")
-            {
+        {
             appState.SetNoteReferenceType(12);
-            }
+        }
         else if (appState.UserRole == "student")
-            {
+        {
             appState.SetNoteReferenceType(2);
-            }
+        }
         else
-            {
+        {
             appState.SetNoteReferenceType(0);
-            }
+        }
+
         appState.SetNoteDateTime(note.NoteDateTime.ToString("yyyy-MM-dd HH:mm"));
         appState.SetNoteDueDateTime(note.NoteDueDateTime?.ToString("yyyy-MM-dd HH:mm")); //use ? becuse note.NoteDueDateTime is nullable
         appState.SetNoteText(note.NoteText);
@@ -1020,9 +1075,10 @@ else
         StateHasChanged();
         //After the Modal_CreateNote is closed, HandleModalClose will refresh the list
         //to handel close event, I added in the Modal_CreateNote: [Parameter] public EventCallback OnClose
-        }
-    public async Task BtnShowNoteInDialog (Note note)
-        {
+    }
+
+    public async Task BtnShowNoteInDialog(Note note)
+    {
         appState.SetSelectedNoteId(note.NoteId);
         appState.SetNoteReferenceId(note.ReferenceId);
         appState.SetNoteReferenceType(note.ReferenceType);
@@ -1035,37 +1091,42 @@ else
         appState.SetNoteIsTodo(note.IsTodo);
         appState.SetCmd("ShowNoteInDialog");
         StateHasChanged();
-        }
-    public async Task BtnReadNotesBySearch ()
-        {
+    }
+
+    public async Task BtnReadNotesBySearch()
+    {
         user.UserId = Convert.ToInt32(appState.UserId);
         if (appState.UserRole == "teacher")
-            {
-            lstSearchedtNotes = await feService.Read_NotesBySearchKey(strSearchKey, user.UserId, 12);
-            }
-        if (appState.UserRole == "student")
-            {
-            lstSearchedtNotes = await feService.Read_NotesBySearchKey(strSearchKey, user.UserId, 2);
-            }
-        StateHasChanged();
-        }
-    public async Task BtnCancelSearch ()
         {
+            lstSearchedtNotes = await feService.Read_NotesBySearchKey(strSearchKey, user.UserId, 12);
+        }
+
+        if (appState.UserRole == "student")
+        {
+            lstSearchedtNotes = await feService.Read_NotesBySearchKey(strSearchKey, user.UserId, 2);
+        }
+
+        StateHasChanged();
+    }
+
+    public async Task BtnCancelSearch()
+    {
         strSearchKey = "";
         lstSearchedtNotes.Clear();
         StateHasChanged();
-        }
-    public async Task BtnCopyToQuickNotes (Note note, Subproject subproject)
-        {
+    }
+
+    public async Task BtnCopyToQuickNotes(Note note, Subproject subproject)
+    {
         var message = new MarkupString($"<hr><span style='color:DarkGreen'>COPY</span> this note to Quick-Notes?<br><br><div style='text-align:center'><img src='/img/icoCopyToNoteReport.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-            {
+        {
             //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
             appState.SetProjectId(subproject.ProjectId);
             user.UserRole = appState.UserRole;
             Note newNote = new Note()
-                {
+            {
                 NoteId = 1,
                 ReferenceId = Convert.ToInt32(appState.UserId),
                 ReferenceType = 1,
@@ -1074,225 +1135,269 @@ else
                 NoteText = $"[COPY from NoteBook Section '{subproject.SubprojectName}'] \n" + note.NoteText,
                 NoteTags = note.NoteTags,
                 CreatorId = Convert.ToInt32(appState.UserId)
-                };
+            };
             newNote.ReferenceType = (appState.UserRole == "teacher") ? 11 : 1;
             if (appState.UserRole == "student")
-                {
+            {
                 newNote.NoteTags |= 16; //16:Student-Note
-                }
+            }
+
             int result = await feService.Create_Note(newNote);
             if (result > 0)
-                {
+            {
                 Snackbar.Add("note copied to quick-notes", Severity.Info);
                 user.UserId = Convert.ToInt32(appState.UserId);
                 appState.SetCmd("");
-                }
+            }
             else
+            {
+                Snackbar.Add("failed to copy note", Severity.Error, opt =>
                 {
-                Snackbar.Add("failed to copy note", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-                }
+                    opt.VisibleStateDuration = 1500;
+                    opt.ShowTransitionDuration = 300;
+                    opt.HideTransitionDuration = 300;
+                });
             }
         }
-    public async Task BtnRemoveDueNoteTag (Note note)
-        {
+    }
+
+    public async Task BtnRemoveDueNoteTag(Note note)
+    {
         var message = new MarkupString($"<hr><span style='color:indianred'>Remove</span> Todo tag from this note?<br><br><span style='font-weight:bold'>This note</span> will be a <span style='color:indianred'> simple note</span>!<br><br><div style='text-align:center'><img src='/img/icoOff.png' width='50'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-            {
+        {
             appState.SetNoteReferenceId(note.ReferenceId);
             note.NoteTags &= ~2;
             bool result = await feService.Update_Note(note);
             if (result)
-                {
+            {
                 lstDueNotes = await feService.Read_DueNotes(user.UserId, ((user.UserTags & 32) == 32) ? 14 : 7);
                 StateHasChanged();
-                }
+            }
             else
+            {
+                Snackbar.Add($"failed to clear Todo", Severity.Error, opt =>
                 {
-                Snackbar.Add($"failed to clear Todo", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-                }
+                    opt.VisibleStateDuration = 1500;
+                    opt.ShowTransitionDuration = 300;
+                    opt.HideTransitionDuration = 300;
+                });
             }
         }
-    public async Task BtnDeleteNote (Note note)
-        {
+    }
+
+    public async Task BtnDeleteNote(Note note)
+    {
         var message = new MarkupString($"<hr><span style='color:indianred'>Delete</span> this note?<br><br><span style='font-weight:bold'>This note</span> will be <span style='color:indianred'>deleted</span>!<br><br><div style='text-align:center'><img src='/img/icoDelete1.png' width='70'/></div><br><hr>");
         bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
         if (confirmResult == true)
-            {
+        {
             appState.SetNoteReferenceId(note.ReferenceId);
             bool result = await feService.Delete_Note(note.NoteId);
             if (result)
-                {
+            {
                 Snackbar.Add($"deleted", Severity.Warning);
                 user.UserId = Convert.ToInt32(appState.UserId);
                 await GetListOfProjects(user.UserId, _ShowProjectsMode);
                 Subproject _subProject = new Subproject() { SubprojectId = Convert.ToInt32(note.ReferenceId), ProjectId = Convert.ToInt32(appState.ProjectId) };
                 await BtnReadSectionNotes(_subProject);
                 StateHasChanged();
-                }
+            }
             else
+            {
+                Snackbar.Add($"failed to delete note", Severity.Error, opt =>
                 {
-                Snackbar.Add($"failed to delete note", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-                }
+                    opt.VisibleStateDuration = 1500;
+                    opt.ShowTransitionDuration = 300;
+                    opt.HideTransitionDuration = 300;
+                });
             }
         }
-    public async Task BtnDeleteNotes_______ (int subProjectId)
-        {
+    }
+
+    public async Task BtnDeleteNotes_______(int subProjectId)
+    {
         //delete all subprojects of a Project
         if (0 == 0)
-            {
+        {
             Snackbar.Add($"select a course", Severity.Success);
             return;
-            }
+        }
         else
-            {
+        {
             //bool result = await feService.Delete_SubprojectNote (0, groupId);
             if (0 == 0)
-                {
+            {
                 Snackbar.Add($"all sections in this notebook are removed from the course.", Severity.Info);
                 appState.SetCmd("");
                 StateHasChanged();
-                }
+            }
             else
+            {
+                Snackbar.Add($"students did not removed from the course", Severity.Error, opt =>
                 {
-                Snackbar.Add($"students did not removed from the course", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
-                }
+                    opt.VisibleStateDuration = 1500;
+                    opt.ShowTransitionDuration = 300;
+                    opt.HideTransitionDuration = 300;
+                });
             }
         }
+    }
+
     //replace note
-    private async Task OnNotebookChanged (int newValue)
-        {
+    private async Task OnNotebookChanged(int newValue)
+    {
         NotebookId = newValue;
         SectionId = 0;
         //appState.SetProjectId(newValue);
         await FilterSubprojects(NotebookId);
         StateHasChanged();
-        }
-    private async Task OnSectionChanged (int newValue)
-        {
+    }
+
+    private async Task OnSectionChanged(int newValue)
+    {
         SectionId = newValue;
         //appState.SetSubprojectId(SubprojectId);
         //StateHasChanged();
-        }
-    private async Task FilterSubprojects (int projectId)
-        {
+    }
+
+    private async Task FilterSubprojects(int projectId)
+    {
         lstSubprojects.Clear();
         foreach (Project project in lstProjects)
-            {
+        {
             if (project.ProjectId == projectId)
-                {
-
+            {
                 lstSubprojects = project.Subprojects;
                 return;
-                }
             }
         }
-    private void BtnReplaceNote (int noteId)
-        {
+    }
+
+    private void BtnReplaceNote(int noteId)
+    {
         if (Convert.ToInt32(appState.NoteId) == noteId)
-            {
+        {
             _cmd = (_cmd == "MoveNoteToNotebook") ? "" : "MoveNoteToNotebook";
-            }
+        }
         else
-            {
+        {
             appState.SetNoteId(noteId);
             _cmd = "MoveNoteToNotebook";
-            }
-        StateHasChanged();
         }
-    private async Task BtnMoveToSelectSection (int subprojectId, int noteid)
-        {
+
+        StateHasChanged();
+    }
+
+    private async Task BtnMoveToSelectSection(int subprojectId, int noteid)
+    {
         if (subprojectId > 0)
-            {
+        {
             Note _note = new Note { NoteId = noteid, ReferenceType = (appState.UserRole == "teacher" ? 12 : 2), ReferenceId = subprojectId };
             bool result = await feService.Update_NoteParent(_note);
             if (result)
-                {
+            {
                 Snackbar.Add("note replaced", Severity.Success);
                 _cmd = "";
                 NotebookId = 0;
                 SectionId = 0;
                 await GetListOfProjects(Convert.ToInt32(appState.UserId), _ShowProjectsMode);
                 Subproject _subproj = new Subproject()
-                    {
+                {
                     SubprojectId = subprojectId,
                     ProjectId = 0,
                     SubprojectName = "",
                     SubprojectTags = 0,
                     Notes = new List<Note>()
-                    };
+                };
                 await BtnReadSectionNotes(_subproj);
                 StateHasChanged();
-                }
-            else
-                {
-                Snackbar.Add("failed", Severity.Warning);
-                }
             }
-        else
+            else
             {
-            Snackbar.Add("select notebook and section", Severity.Info, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
+                Snackbar.Add("failed", Severity.Warning);
             }
         }
-    //handle Keys
-    private async Task HandleKey_Searchbox (KeyboardEventArgs e)
+        else
         {
-        if (e.Key == "Enter")
+            Snackbar.Add("select notebook and section", Severity.Info, opt =>
             {
+                opt.VisibleStateDuration = 1500;
+                opt.ShowTransitionDuration = 300;
+                opt.HideTransitionDuration = 300;
+            });
+        }
+    }
+
+    //handle Keys
+    private async Task HandleKey_Searchbox(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
             await BtnReadNotesBySearch();
             return;
-            }
+        }
+
         if (e.Key == "Escape")
-            {
+        {
             strSearchKey = "";
             await InvokeAsync(StateHasChanged);
             await refSearchNote.FocusAsync();
-            }
         }
+    }
+
     //convert date
-    public string PersianDate (DateTimeOffset? dt)
-        {
+    public string PersianDate(DateTimeOffset? dt)
+    {
         if ((Convert.ToInt32(appState.UserTags) & 4) == 4)
-            {
-            return feService.ToPersianDate(dt.ToString());
-            }
-        else
-            {
-            return dt?.ToString("yyyy-MM-dd HH:mm");
-            }
-        }
-    //back
-    public void BtnGotoReportUserNotes ()
         {
+            return feService.ToPersianDate(dt.ToString());
+        }
+        else
+        {
+            return dt?.ToString("yyyy-MM-dd HH:mm");
+        }
+    }
+
+    //back
+    public void BtnGotoReportUserNotes()
+    {
         //if: UserRole is teacher
         //needs: /mode/id
         user.UserId = Convert.ToInt32(appState.UserId);
         Navman.NavigateTo($"/T_ReportNotes/{11}/{user.UserId}");
-        }
-    private async Task HandleModalClose ()
-        {
+    }
+
+    private async Task HandleModalClose()
+    {
         int userId = Convert.ToInt32(appState.UserId);
         await GetListOfProjects(userId, _ShowProjectsMode);
         Subproject _subProject = new Subproject() { SubprojectId = Convert.ToInt32(appState.NoteReferenceId), ProjectId = Convert.ToInt32(appState.ProjectId) };
         await BtnReadSectionNotes(_subProject);
         if (lstSearchedtNotes.Count > 0)
-            {
+        {
             //refresh searched notes, as one of them may be editted
             await BtnReadNotesBySearch();
-            }
-        if ((user.UserTags & 16) == 16)
-            {
-            lstDueNotes = await feService.Read_DueNotes(user.UserId, ((user.UserTags & 32) == 32) ? 14 : 7);
-            }
-        StateHasChanged();
         }
-    public void BtnCancel ()
+
+        if ((user.UserTags & 16) == 16)
         {
+            lstDueNotes = await feService.Read_DueNotes(user.UserId, ((user.UserTags & 32) == 32) ? 14 : 7);
+        }
+
+        StateHasChanged();
+    }
+
+    public void BtnCancel()
+    {
         appState.SetCmd("");
         _cmd = "";
-        }
-    public void BtnBackToCallingPage ()
-        {
-        Navman.NavigateTo(appState.ReturnPage ?? "/Login");
-        }
     }
+
+    public void BtnBackToCallingPage()
+    {
+        Navman.NavigateTo(appState.ReturnPage ?? "/Login");
+    }
+
+}

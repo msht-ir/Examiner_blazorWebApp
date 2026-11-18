@@ -10,2228 +10,2565 @@ using Group = ExaminerS.Models.Group;
 using IContainer = QuestPDF.Infrastructure.IContainer;
 
 namespace ExaminerB.Service
-    {
+{
     public class FeService
-        {
+    {
         private readonly HttpClient _http;
-        public FeService (HttpClient http)
-            {
+
+        public FeService(HttpClient http)
+        {
             _http = http;
-            }
+        }
+
         #region LOGIN
-        public async Task<User?> LoginTeacher (string username, string password)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/LoginTeacher?username={username}", password);
+
+        public async Task<User?> LoginTeacher(string username, string password)
+        {
+            var response = await _http.PostAsJsonAsync($"api/LoginTeacher?username={username}", password);
             if (response.IsSuccessStatusCode)
-                {
-                return await response.Content.ReadFromJsonAsync<User> ();
-                }
-            else
-                {
-                return new User { UserRole = "student" };
-                }
-            }
-        public async Task<User?> LoginStudent (string username, string password)
             {
-            var response = await _http.PostAsJsonAsync ($"api/LoginStudent?username={username}", password);
-            if (response.IsSuccessStatusCode)
-                {
-                return await response.Content.ReadFromJsonAsync<User> ();
-                }
-            else
-                {
-                return new User { UserRole = "student" };
-                }
+                return await response.Content.ReadFromJsonAsync<User>();
             }
+            else
+            {
+                return new User { UserRole = "student" };
+            }
+        }
+
+        public async Task<User?> LoginStudent(string username, string password)
+        {
+            var response = await _http.PostAsJsonAsync($"api/LoginStudent?username={username}", password);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<User>();
+            }
+            else
+            {
+                return new User { UserRole = "student" };
+            }
+        }
+
         #endregion
+
         #region U:usrs
-        public async Task<bool> Create_Teacher (User user)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_Teacher", user);
+
+        public async Task<bool> Create_Teacher(User user)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_Teacher", user);
             if (response.IsSuccessStatusCode)
-                {
+            {
                 return true;
-                }
+            }
             else
-                {
+            {
                 return false;
-                }
             }
-        public async Task<List<User>> Read_Teachers (int departmentId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Read_Teachers", departmentId);
+        }
+
+        public async Task<List<User>> Read_Teachers(int departmentId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Read_Teachers", departmentId);
             if (response.IsSuccessStatusCode)
-                {
-                List<User> lstTeachers = await response.Content.ReadFromJsonAsync<List<User>> ();
+            {
+                List<User> lstTeachers = await response.Content.ReadFromJsonAsync<List<User>>();
                 return lstTeachers;
-                }
-            else
-                {
-                return new List<User> ();
-                }
             }
-        public async Task<List<User>> Read_NewTeachers ()
+            else
             {
-            var response = await _http.PostAsync ("api/Read_NewTeachers", null);
+                return new List<User>();
+            }
+        }
+
+        public async Task<List<User>> Read_NewTeachers()
+        {
+            var response = await _http.PostAsync("api/Read_NewTeachers", null);
             if (response.IsSuccessStatusCode)
-                {
-                List<User> lstNewTeachers = await response.Content.ReadFromJsonAsync<List<User>> ();
+            {
+                List<User> lstNewTeachers = await response.Content.ReadFromJsonAsync<List<User>>();
                 return lstNewTeachers;
-                }
-            else
-                {
-                return new List<User> ();
-                }
             }
-        public async Task<bool> Update_User (User user)
+            else
             {
+                return new List<User>();
+            }
+        }
+
+        public async Task<bool> Update_User(User user)
+        {
             if (user.UserRole == "student")
-                {
-                var response = await _http.PostAsJsonAsync ("api/Update_Student", user);
+            {
+                var response = await _http.PostAsJsonAsync("api/Update_Student", user);
                 return (response.IsSuccessStatusCode) ? true : false;
-                }
+            }
             else
-                {
-                var response = await _http.PostAsJsonAsync ("api/Update_Teacher", user);
+            {
+                var response = await _http.PostAsJsonAsync("api/Update_Teacher", user);
                 return (response.IsSuccessStatusCode) ? true : false;
-                }
             }
-        public async Task<bool> Delete_Teacher (int userId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_Teacher", userId);
+        }
+
+        public async Task<bool> Delete_Teacher(int userId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_Teacher", userId);
             return (response.IsSuccessStatusCode) ? true : false;
-            }
+        }
+
         #endregion
+
         #region S:Students
-        public async Task<int> Create_Student (User student)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_Student", student);
+
+        public async Task<int> Create_Student(User student)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_Student", student);
             //return response.IsSuccessStatusCode ? 1 : 0;
             if (response.IsSuccessStatusCode)
-                {
-                int i = await response.Content.ReadFromJsonAsync<int> ();
+            {
+                int i = await response.Content.ReadFromJsonAsync<int>();
                 return i;
-                }
+            }
             else
-                {
+            {
                 return 0;
-                }
             }
-        public async Task<List<User>> Read_StudentsAll (int departmentId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsAll", departmentId);
+        }
+
+        public async Task<List<User>> Read_StudentsAll(int departmentId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_StudentsAll", departmentId);
             if (response.IsSuccessStatusCode)
-                {
-                List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
-                return lstStudents;
-                }
-            else
-                {
-                return new List<User> ();
-                }
-            }
-        public async Task<List<User>> Read_StudentsByKeyword (int departmentId, string keyword, int getGCEM)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByKeyword?departmentId={departmentId}&getGCEM={getGCEM}", keyword);
+                List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>>();
+                return lstStudents;
+            }
+            else
+            {
+                return new List<User>();
+            }
+        }
+
+        public async Task<List<User>> Read_StudentsByKeyword(int departmentId, string keyword, int getGCEM)
+        {
+            var response =
+                await _http.PostAsJsonAsync($"api/Read_StudentsByKeyword?departmentId={departmentId}&getGCEM={getGCEM}",
+                    keyword);
             if (response.IsSuccessStatusCode)
-                {
-                List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
-                return lstStudents;
-                }
-            else
-                {
-                return new List<User> ();
-                }
-            }
-        public async Task<List<User>> Read_StudentsByGCEMSId (int departmentId, string mode, int Id, int teacherId, int readStudentGCEM)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsByGCEMSId?departmentId={departmentId}&mode={mode}&readStudentGCEM={readStudentGCEM}&teacherId={teacherId}", Id);
+                List<User> lstStudents = await response.Content.ReadFromJsonAsync<List<User>>();
+                return lstStudents;
+            }
+            else
+            {
+                return new List<User>();
+            }
+        }
+
+        public async Task<List<User>> Read_StudentsByGCEMSId(int departmentId, string mode, int Id, int teacherId,
+            int readStudentGCEM)
+        {
+            var response = await _http.PostAsJsonAsync(
+                $"api/Read_StudentsByGCEMSId?departmentId={departmentId}&mode={mode}&readStudentGCEM={readStudentGCEM}&teacherId={teacherId}",
+                Id);
             if (response.IsSuccessStatusCode)
-                {
-                List<User>? lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
+            {
+                List<User>? lstStudents = await response.Content.ReadFromJsonAsync<List<User>>();
                 return lstStudents;
-                }
+            }
             else
-                {
-                return new List<User> ();
-                }
-            }
-        public async Task<bool> Update_Student (User student)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_Student", student);
-            return response.IsSuccessStatusCode ? true : false;
+                return new List<User>();
             }
-        public async Task<bool> Update_StudentTags (User student)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Update_StudentTags", student);
+        }
+
+        public async Task<bool> Update_Student(User student)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_Student", student);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Remove_StudentFromList (int studentId, string mode)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_Students?mode={mode}", studentId);
+        }
+
+        public async Task<bool> Update_StudentTags(User student)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_StudentTags", student);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_Student (int studentId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_Student", studentId);
+        }
+
+        public async Task<bool> Remove_StudentFromList(int studentId, string mode)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_Students?mode={mode}", studentId);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
+        public async Task<bool> Delete_Student(int studentId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_Student", studentId);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region D:Departments
-        public async Task<bool> Create_Department (Department department)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_Department", department);
+
+        public async Task<bool> Create_Department(Department department)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_Department", department);
             if (response.IsSuccessStatusCode)
-                {
+            {
                 return true;
-                }
+            }
             else
-                {
+            {
                 return false;
-                }
             }
-        public async Task<List<Department>> Read_Departments ()
-            {
-            var response = await _http.PostAsync ($"api/Read_departments", null);
+        }
+
+        public async Task<List<Department>> Read_Departments()
+        {
+            var response = await _http.PostAsync($"api/Read_departments", null);
             if (response.IsSuccessStatusCode)
-                {
-                List<Department>? departments = await response.Content.ReadFromJsonAsync<List<Department>> ();
-                return departments ?? new List<Department> ();
-                }
-            else
-                {
-                var errorContent = await response.Content.ReadAsStringAsync ();
-                return new List<Department> ();
-                }
-            }
-        public async Task<Department> Read_Department (int departmentId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Department", departmentId);
+                List<Department>? departments = await response.Content.ReadFromJsonAsync<List<Department>>();
+                return departments ?? new List<Department>();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return new List<Department>();
+            }
+        }
+
+        public async Task<Department> Read_Department(int departmentId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_Department", departmentId);
             if (response.IsSuccessStatusCode)
-                {
-                Department? department = await response.Content.ReadFromJsonAsync<Department> ();
-                return department ?? new Department ();
-                }
-            else
-                {
-                var errorContent = await response.Content.ReadAsStringAsync ();
-                return new Department ();
-                }
-            }
-        public async Task<bool> Update_Department (Department department)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_Department", department);
+                Department? department = await response.Content.ReadFromJsonAsync<Department>();
+                return department ?? new Department();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return new Department();
+            }
+        }
+
+        public async Task<bool> Update_Department(Department department)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_Department", department);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<int> Delete_Department (int departmentId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_Department", departmentId);
+        }
+
+        public async Task<int> Delete_Department(int departmentId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_Department", departmentId);
             if (response.IsSuccessStatusCode)
-                {
-                int i = await response.Content.ReadFromJsonAsync<int> ();
+            {
+                int i = await response.Content.ReadFromJsonAsync<int>();
                 return i;
-                }
-            else
-                {
-                return 0;
-                }
             }
-        #endregion        
+            else
+            {
+                return 0;
+            }
+        }
+
+        #endregion
+
         #region G:Groups
-        public async Task<bool> Create_Group (Group group)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_Group", group);
+
+        public async Task<bool> Create_Group(Group group)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_Group", group);
             if (response.IsSuccessStatusCode)
-                {
+            {
                 return true;
-                }
+            }
             else
-                {
+            {
                 return false;
-                }
             }
-        public async Task<List<Group>> Read_Groups (User user, bool showAllGroups, bool getGroupStudents)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Groups?showAllGroups={showAllGroups}&getGroupStudents={getGroupStudents}", user);
+        }
+
+        public async Task<List<Group>> Read_Groups(User user, bool showAllGroups, bool getGroupStudents)
+        {
+            var response =
+                await _http.PostAsJsonAsync(
+                    $"api/Read_Groups?showAllGroups={showAllGroups}&getGroupStudents={getGroupStudents}", user);
             if (response.IsSuccessStatusCode)
-                {
-                List<Group>? groups = await response.Content.ReadFromJsonAsync<List<Group>> ();
-                return groups ?? new List<Group> ();
-                }
-            else
-                {
-                var errorContent = await response.Content.ReadAsStringAsync ();
-                return new List<Group> ();
-                }
-            }
-        public async Task<Group> Read_Group (int groupId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Group", groupId);
+                List<Group>? groups = await response.Content.ReadFromJsonAsync<List<Group>>();
+                return groups ?? new List<Group>();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return new List<Group>();
+            }
+        }
+
+        public async Task<Group> Read_Group(int groupId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_Group", groupId);
             if (response.IsSuccessStatusCode)
-                {
-                Group? group = await response.Content.ReadFromJsonAsync<Group> ();
-                return group ?? new Group ();
-                }
-            else
-                {
-                var errorContent = await response.Content.ReadAsStringAsync ();
-                return new Group ();
-                }
-            }
-        public async Task<bool> Update_Group (Group group)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_Group", group);
+                Group? group = await response.Content.ReadFromJsonAsync<Group>();
+                return group ?? new Group();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return new Group();
+            }
+        }
+
+        public async Task<bool> Update_Group(Group group)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_Group", group);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<int> Delete_Group (int groupId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_Group", groupId);
+        }
+
+        public async Task<int> Delete_Group(int groupId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_Group", groupId);
             if (response.IsSuccessStatusCode)
-                {
-                int i = await response.Content.ReadFromJsonAsync<int> ();
+            {
+                int i = await response.Content.ReadFromJsonAsync<int>();
                 return i;
-                }
-            else
-                {
-                return 0;
-                }
             }
-        #endregion        
+            else
+            {
+                return 0;
+            }
+        }
+
+        #endregion
+
         #region SG:StudentGroups
-        public async Task<bool> Create_StudentGroups (int groupId, List<int> lstStudentIds)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Create_StudentGroups?groupId={groupId}", lstStudentIds);
+
+        public async Task<bool> Create_StudentGroups(int groupId, List<int> lstStudentIds)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Create_StudentGroups?groupId={groupId}", lstStudentIds);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<List<StudentGroup>> ReadStudentGroups (int Id, string mode, int teacherId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentGroups?mode={mode}, teacherId={teacherId}", Id);
+        }
+
+        public async Task<List<StudentGroup>> ReadStudentGroups(int Id, string mode, int teacherId)
+        {
+            var response =
+                await _http.PostAsJsonAsync($"api/Read_StudentGroups?mode={mode}, teacherId={teacherId}", Id);
             if (response.IsSuccessStatusCode)
-                {
-                List<StudentGroup> lstStudentGroups = await response.Content.ReadFromJsonAsync<List<StudentGroup>> ();
-                return lstStudentGroups ?? new List<StudentGroup> ();
-                }
-            else
-                {
-                return new List<StudentGroup> ();
-                }
-            }
-        public async Task<bool> Delete_StudentGroups (int groupId, List<int> lstStudentIds)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_StudentGroups?groupId={groupId}", lstStudentIds);
-            return response.IsSuccessStatusCode ? true : false;
+                List<StudentGroup> lstStudentGroups = await response.Content.ReadFromJsonAsync<List<StudentGroup>>();
+                return lstStudentGroups ?? new List<StudentGroup>();
             }
+            else
+            {
+                return new List<StudentGroup>();
+            }
+        }
+
+        public async Task<bool> Delete_StudentGroups(int groupId, List<int> lstStudentIds)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_StudentGroups?groupId={groupId}", lstStudentIds);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region C:Courses
-        public async Task<int> Create_Course (Course course)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_Course", course);
+
+        public async Task<int> Create_Course(Course course)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_Course", course);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<List<Course>> Read_Courses (int userId)
-            {
+        }
+
+        public async Task<List<Course>> Read_Courses(int userId)
+        {
             string url = "api/Read_Courses";
-            var response = await _http.PostAsJsonAsync (url, userId);
+            var response = await _http.PostAsJsonAsync(url, userId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Course>? lstCourses = await response.Content.ReadFromJsonAsync<List<Course>> ();
-                return lstCourses ?? new List<Course> ();
-                }
-            else
-                {
-                var errorContent = await response.Content.ReadAsStringAsync ();
-                return new List<Course> ();
-                }
-            }
-        public async Task<Course> Read_Course (int courseId, bool getStudentsList)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Course?getStudentList{getStudentsList}", courseId);
+                List<Course>? lstCourses = await response.Content.ReadFromJsonAsync<List<Course>>();
+                return lstCourses ?? new List<Course>();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return new List<Course>();
+            }
+        }
+
+        public async Task<Course> Read_Course(int courseId, bool getStudentsList)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_Course?getStudentList{getStudentsList}", courseId);
             if (response.IsSuccessStatusCode)
-                {
-                Course? course = await response.Content.ReadFromJsonAsync<Course> ();
-                return course ?? new Course ();
-                }
+            {
+                Course? course = await response.Content.ReadFromJsonAsync<Course>();
+                return course ?? new Course();
+            }
             else
-                {
-                var errorContent = await response.Content.ReadAsStringAsync ();
-                return new Course ();
-                }
-            }
-        public async Task<bool> Update_Course (Course course)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_Course", course);
-            return response.IsSuccessStatusCode ? true : false;
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return new Course();
             }
-        public async Task<bool> Delete_Course (int courseId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_Course", courseId);
+        }
+
+        public async Task<bool> Update_Course(Course course)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_Course", course);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
+        public async Task<bool> Delete_Course(int courseId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_Course", courseId);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region CF:CourseFolders
-        public async Task<int> Create_CourseFolder (CourseFolder courseFolder)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_CourseFolder", courseFolder);
+
+        public async Task<int> Create_CourseFolder(CourseFolder courseFolder)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_CourseFolder", courseFolder);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<List<CourseFolder>> Read_CourseFolders (int courseId, string mode)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_CourseFolders?mode={mode}", courseId);
+        }
+
+        public async Task<List<CourseFolder>> Read_CourseFolders(int courseId, string mode)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_CourseFolders?mode={mode}", courseId);
 
             if (response.IsSuccessStatusCode)
-                {
-                List<CourseFolder> lstCourseFolders = await response.Content.ReadFromJsonAsync<List<CourseFolder>> ();
-                return lstCourseFolders ?? new List<CourseFolder> ();
-                }
+            {
+                List<CourseFolder> lstCourseFolders = await response.Content.ReadFromJsonAsync<List<CourseFolder>>();
+                return lstCourseFolders ?? new List<CourseFolder>();
+            }
             else
-                {
-                return new List<CourseFolder> ();
-                }
-            }
-        public async Task<bool> Update_CourseFolder (CourseFolder courseFolder)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_CourseFolder", courseFolder);
-            return response.IsSuccessStatusCode ? true : false;
+                return new List<CourseFolder>();
             }
-        public async Task<bool> Delete_CourseFolder (int courseFolderId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_CourseFolder", courseFolderId);
+        }
+
+        public async Task<bool> Update_CourseFolder(CourseFolder courseFolder)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_CourseFolder", courseFolder);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
+        public async Task<bool> Delete_CourseFolder(int courseFolderId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_CourseFolder", courseFolderId);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region CT:CourseTopics
-        public async Task<int> Create_CourseTopic (CourseTopic courseTopic)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_CourseTopic", courseTopic);
+
+        public async Task<int> Create_CourseTopic(CourseTopic courseTopic)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_CourseTopic", courseTopic);
             if (response.IsSuccessStatusCode)
-                {
-                var result = await response.Content.ReadFromJsonAsync<int> ();
-                return result;
-                }
-            return 0;
-            }
-        public async Task<List<CourseTopic>> Read_CourseTopics (int courseId)
             {
-            var response = await _http.PostAsJsonAsync ("api/Read_CourseTopics", courseId);
+                var result = await response.Content.ReadFromJsonAsync<int>();
+                return result;
+            }
+
+            return 0;
+        }
+
+        public async Task<List<CourseTopic>> Read_CourseTopics(int courseId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Read_CourseTopics", courseId);
 
             if (response.IsSuccessStatusCode)
-                {
-                List<CourseTopic> lstCourseTopics = await response.Content.ReadFromJsonAsync<List<CourseTopic>> ();
-                return lstCourseTopics ?? new List<CourseTopic> ();
-                }
+            {
+                List<CourseTopic> lstCourseTopics = await response.Content.ReadFromJsonAsync<List<CourseTopic>>();
+                return lstCourseTopics ?? new List<CourseTopic>();
+            }
             else
-                {
-                return new List<CourseTopic> ();
-                }
-            }
-        public async Task<bool> Update_CourseTopic (CourseTopic courseTopic)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_CourseTopic", courseTopic);
-            return response.IsSuccessStatusCode ? true : false;
+                return new List<CourseTopic>();
             }
-        public async Task<bool> Delete_CourseTopic (int courseTopicId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_CourseTopic", courseTopicId);
+        }
+
+        public async Task<bool> Update_CourseTopic(CourseTopic courseTopic)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_CourseTopic", courseTopic);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
+        public async Task<bool> Delete_CourseTopic(int courseTopicId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_CourseTopic", courseTopicId);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region SC:StudentCourses
-        public async Task<bool> Create_StudentCourses (int courseId, List<int> lstStudentIds)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Create_StudentCourses?courseId={courseId}", lstStudentIds);
+
+        public async Task<bool> Create_StudentCourses(int courseId, List<int> lstStudentIds)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Create_StudentCourses?courseId={courseId}", lstStudentIds);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Create_StudentCourse (int studentId, int courseId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Create_StudentCourse?courseId={courseId}", studentId);
+        }
+
+        public async Task<bool> Create_StudentCourse(int studentId, int courseId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Create_StudentCourse?courseId={courseId}", studentId);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<List<StudentCourse>> Read_StudentCourses (string mode, int Id, int teacherId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentCourses?mode={mode}&teacherId={teacherId}", Id);
+        }
+
+        public async Task<List<StudentCourse>> Read_StudentCourses(string mode, int Id, int teacherId)
+        {
+            var response =
+                await _http.PostAsJsonAsync($"api/Read_StudentCourses?mode={mode}&teacherId={teacherId}", Id);
             if (response.IsSuccessStatusCode)
-                {
-                var lstStudentCourses = await response.Content.ReadFromJsonAsync<List<StudentCourse>> ();
-                return lstStudentCourses ?? new List<StudentCourse> ();
-                }
-            return new List<StudentCourse> ();
-            }
-        public async Task<StudentCourse> Read_StudentCourse (int studentCourseId)
             {
-            var response = await _http.PostAsJsonAsync ("api/Read_StudentCourse", studentCourseId);
-            if (response.IsSuccessStatusCode)
-                {
-                var studentCourse = await response.Content.ReadFromJsonAsync<StudentCourse> ();
-                return studentCourse ?? new StudentCourse ();
-                }
-            return new StudentCourse ();
+                var lstStudentCourses = await response.Content.ReadFromJsonAsync<List<StudentCourse>>();
+                return lstStudentCourses ?? new List<StudentCourse>();
             }
+
+            return new List<StudentCourse>();
+        }
+
+        public async Task<StudentCourse> Read_StudentCourse(int studentCourseId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Read_StudentCourse", studentCourseId);
+            if (response.IsSuccessStatusCode)
+            {
+                var studentCourse = await response.Content.ReadFromJsonAsync<StudentCourse>();
+                return studentCourse ?? new StudentCourse();
+            }
+
+            return new StudentCourse();
+        }
+
         //Update
-        public async Task<bool> Update_StudentCourse (StudentCourse studentCourse)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Update_StudentCourse", studentCourse);
+        public async Task<bool> Update_StudentCourse(StudentCourse studentCourse)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Update_StudentCourse", studentCourse);
             if (response.IsSuccessStatusCode)
-                {
-                return true;
-                }
-            else
-                {
-                return false;
-                }
-            }
-        public async Task<bool> Update_StudentCoursesTags (List<int> lstStudentIds, int CourseId, string mode)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Update_StudentCoursesTags?CourseId={CourseId}&mode={mode}", lstStudentIds);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> Update_StudentCoursesTags(List<int> lstStudentIds, int CourseId, string mode)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Update_StudentCoursesTags?CourseId={CourseId}&mode={mode}",
+                lstStudentIds);
             if (response.IsSuccessStatusCode)
-                {
+            {
                 return true;
-                }
+            }
             else
-                {
+            {
                 return false;
-                }
             }
-        public async Task<bool> Delete_StudentCourses (int Id, string mode)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_StudentCourses?mode={mode}", Id);
+        }
+
+        public async Task<bool> Delete_StudentCourses(int Id, string mode)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_StudentCourses?mode={mode}", Id);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_StudentCourse (int studentCourseId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_StudentCourse", studentCourseId);
+        }
+
+        public async Task<bool> Delete_StudentCourse(int studentCourseId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_StudentCourse", studentCourseId);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
         #endregion
+
         #region SCT:StudentCourseTests
-        public async Task<bool> Create_StudentCourseTest (StudentCourseTest studentCoursetest)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_StudentCourseTest", studentCoursetest);
+
+        public async Task<bool> Create_StudentCourseTest(StudentCourseTest studentCoursetest)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_StudentCourseTest", studentCoursetest);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<List<StudentCourseTest>> Read_StudentCourseTests (StudentCourse studentCourse, bool readOptions)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentCourseTests?readOptions={readOptions}", studentCourse);
+        }
+
+        public async Task<List<StudentCourseTest>> Read_StudentCourseTests(StudentCourse studentCourse,
+            bool readOptions)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_StudentCourseTests?readOptions={readOptions}",
+                studentCourse);
             if (response.IsSuccessStatusCode)
-                {
-                var lstStudentCourseTests = await response.Content.ReadFromJsonAsync<List<StudentCourseTest>> ();
-                return lstStudentCourseTests ?? new List<StudentCourseTest> ();
-                }
-            else
-                {
-                return new List<StudentCourseTest> ();
-                }
-            }
-        public async Task<StudentCourseTest> Read_StudentCourseTestRandom (int studentCourseId, bool readOptions, bool retry)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentCourseTestRandom?readOptions={readOptions}&retry={retry}", studentCourseId);
+                var lstStudentCourseTests = await response.Content.ReadFromJsonAsync<List<StudentCourseTest>>();
+                return lstStudentCourseTests ?? new List<StudentCourseTest>();
+            }
+            else
+            {
+                return new List<StudentCourseTest>();
+            }
+        }
+
+        public async Task<StudentCourseTest> Read_StudentCourseTestRandom(int studentCourseId, bool readOptions,
+            bool retry)
+        {
+            var response =
+                await _http.PostAsJsonAsync($"api/Read_StudentCourseTestRandom?readOptions={readOptions}&retry={retry}",
+                    studentCourseId);
             if (response.IsSuccessStatusCode)
-                {
-                var studentCourseTest = await response.Content.ReadFromJsonAsync<StudentCourseTest> ();
-                return studentCourseTest ?? new StudentCourseTest ();
-                }
+            {
+                var studentCourseTest = await response.Content.ReadFromJsonAsync<StudentCourseTest>();
+                return studentCourseTest ?? new StudentCourseTest();
+            }
             else
-                {
-                return new StudentCourseTest ();
-                }
-            }
-        public async Task<bool> Update_StudentCourseTest (StudentCourseTest studentCourseTest, string mode)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Update_StudentCourseTest?mode={mode}", studentCourseTest);
-            return response.IsSuccessStatusCode ? true : false;
+                return new StudentCourseTest();
             }
-        public async Task<bool> Delete_StudentCourseTests (string mode, StudentCourse studentCourse)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_StudentCourseTests?mode={mode}", studentCourse);
+        }
+
+        public async Task<bool> Update_StudentCourseTest(StudentCourseTest studentCourseTest, string mode)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Update_StudentCourseTest?mode={mode}", studentCourseTest);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
+        public async Task<bool> Delete_StudentCourseTests(string mode, StudentCourse studentCourse)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_StudentCourseTests?mode={mode}", studentCourse);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region T:Tests
-        public async Task<int> Create_Test (Test test)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_Test", test);
+
+        public async Task<int> Create_Test(Test test)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_Test", test);
             if (response.IsSuccessStatusCode)
-                {
-                return await response.Content.ReadFromJsonAsync<int> ();
-                }
+            {
+                return await response.Content.ReadFromJsonAsync<int>();
+            }
             else
-                {
+            {
                 return 0;
-                }
             }
-        public async Task<Test> Read_TestByTestId (int testId, bool readOptions)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_TestByTestId?readOptions={readOptions}", testId);
+        }
+
+        public async Task<Test> Read_TestByTestId(int testId, bool readOptions)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_TestByTestId?readOptions={readOptions}", testId);
             if (response.IsSuccessStatusCode)
-                {
-                Test? test = await response.Content.ReadFromJsonAsync<Test> ();
-                return test ?? new Test ();
-                }
-            else
-                {
-                return new Test ();
-                }
-            }
-        public async Task<StudentExamTest> Read_TestByStudentExamTestId (long studentExamTestId, bool readOptions)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_TestByStudentExamTestId?readOptions={readOptions}", studentExamTestId);
+                Test? test = await response.Content.ReadFromJsonAsync<Test>();
+                return test ?? new Test();
+            }
+            else
+            {
+                return new Test();
+            }
+        }
+
+        public async Task<StudentExamTest> Read_TestByStudentExamTestId(long studentExamTestId, bool readOptions)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_TestByStudentExamTestId?readOptions={readOptions}",
+                studentExamTestId);
             if (response.IsSuccessStatusCode)
-                {
-                var studentExamTest = await response.Content.ReadFromJsonAsync<StudentExamTest> ();
-                return studentExamTest ?? new StudentExamTest ();
-                }
-            else
-                {
-                return new StudentExamTest ();
-                }
-            }
-        public async Task<List<Test>> Read_TestsByCourseId (int courseId, int pageNumber, bool readOptions)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_TestsByCourseId?pageNumber={pageNumber}&readOptions={readOptions}", courseId);
+                var studentExamTest = await response.Content.ReadFromJsonAsync<StudentExamTest>();
+                return studentExamTest ?? new StudentExamTest();
+            }
+            else
+            {
+                return new StudentExamTest();
+            }
+        }
+
+        public async Task<List<Test>> Read_TestsByCourseId(int courseId, int pageNumber, bool readOptions)
+        {
+            var response =
+                await _http.PostAsJsonAsync(
+                    $"api/Read_TestsByCourseId?pageNumber={pageNumber}&readOptions={readOptions}", courseId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Test>? lstTests = await response.Content.ReadFromJsonAsync<List<Test>> ();
-                return lstTests ?? new List<Test> ();
-                }
-            else
-                {
-                return new List<Test> ();
-                }
-            }
-        public async Task<List<Test>> Read_TestsByCourseTopicId (int courseTopicId, int pageNumber, bool readOptions)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_TestsByCourseTopicId?pageNumber={pageNumber}&readOptions={readOptions}", courseTopicId);
+                List<Test>? lstTests = await response.Content.ReadFromJsonAsync<List<Test>>();
+                return lstTests ?? new List<Test>();
+            }
+            else
+            {
+                return new List<Test>();
+            }
+        }
+
+        public async Task<int> Get_TotalNumberOfTests(int courseId)
+        {
+            var response = await _http.PostAsJsonAsync(
+                "api/Get_TotalNumberOfTests", courseId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Test>? lstTests = await response.Content.ReadFromJsonAsync<List<Test>> ();
-                return lstTests ?? new List<Test> ();
-                }
-            else
-                {
-                return new List<Test> ();
-                }
-            }
-        public async Task<List<Test>> Read_TestsBySearch (string strSearch, int courseId, bool readOptions)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_TestsBySearch?courseId={courseId}&readOptions={readOptions}", strSearch);
+                return await response.Content.ReadFromJsonAsync<int>();
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public async Task<List<Test>> Read_TestsByCourseTopicId(int courseTopicId, int pageNumber, bool readOptions)
+        {
+            var response = await _http.PostAsJsonAsync(
+                $"api/Read_TestsByCourseTopicId?pageNumber={pageNumber}&readOptions={readOptions}", courseTopicId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Test>? lstTests = await response.Content.ReadFromJsonAsync<List<Test>> ();
-                return lstTests ?? new List<Test> ();
-                }
-            else
-                {
-                return new List<Test> ();
-                }
-            }
-        public async Task<List<Test>> Read_TestsByExamId (int examId, bool readOptions)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_TestsByExamId?readOptions={readOptions}", examId);
+                List<Test>? lstTests = await response.Content.ReadFromJsonAsync<List<Test>>();
+                return lstTests ?? new List<Test>();
+            }
+            else
+            {
+                return new List<Test>();
+            }
+        }
+
+        public async Task<List<Test>> Read_TestsBySearch(string strSearch, int courseId, bool readOptions)
+        {
+            var response =
+                await _http.PostAsJsonAsync($"api/Read_TestsBySearch?courseId={courseId}&readOptions={readOptions}",
+                    strSearch);
             if (response.IsSuccessStatusCode)
-                {
-                List<Test>? lstTests = await response.Content.ReadFromJsonAsync<List<Test>> ();
-                return lstTests ?? new List<Test> ();
-                }
-            else
-                {
-                return new List<Test> ();
-                }
-            }
-        public async Task<List<StudentExamTest>> Read_TestsByStudentExamId (string mode, long studentExamId)
             {
+                List<Test>? lstTests = await response.Content.ReadFromJsonAsync<List<Test>>();
+                return lstTests ?? new List<Test>();
+            }
+            else
+            {
+                return new List<Test>();
+            }
+        }
+
+        public async Task<List<Test>> Read_TestsByExamId(int examId, bool readOptions)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_TestsByExamId?readOptions={readOptions}", examId);
+            if (response.IsSuccessStatusCode)
+            {
+                List<Test>? lstTests = await response.Content.ReadFromJsonAsync<List<Test>>();
+                return lstTests ?? new List<Test>();
+            }
+            else
+            {
+                return new List<Test>();
+            }
+        }
+
+        public async Task<List<StudentExamTest>> Read_TestsByStudentExamId(string mode, long studentExamId)
+        {
             //modes: {withOptions | withoutOptions}
             //use (Uri.EscapeDataString) if must carry: +/- chars : ($"api/ReadStudentExamTests?mode={Uri.EscapeDataString (mode)}&id={id}", null);
-            var response = await _http.PostAsync ($"api/Read_TestsByStudentExamId?mode={mode}&studentexamid={studentExamId}", null);
+            var response =
+                await _http.PostAsync($"api/Read_TestsByStudentExamId?mode={mode}&studentexamid={studentExamId}", null);
             if (response.IsSuccessStatusCode)
-                {
-                var lstStudentExamTests = await response.Content.ReadFromJsonAsync<List<StudentExamTest>> ();
-                return lstStudentExamTests ?? new List<StudentExamTest> ();
-                }
-            else
-                {
-                return new List<StudentExamTest> ();
-                }
-            }
-        public async Task<List<Test>> Read_TestsByStudentCourseId (int studentCourseId, bool readOptions)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_TestsByStudentCourseId?readOptions={readOptions}", studentCourseId);
+                var lstStudentExamTests = await response.Content.ReadFromJsonAsync<List<StudentExamTest>>();
+                return lstStudentExamTests ?? new List<StudentExamTest>();
+            }
+            else
+            {
+                return new List<StudentExamTest>();
+            }
+        }
+
+        public async Task<List<Test>> Read_TestsByStudentCourseId(int studentCourseId, bool readOptions)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_TestsByStudentCourseId?readOptions={readOptions}",
+                studentCourseId);
             if (response.IsSuccessStatusCode)
-                {
-                var studentCourseTest = await response.Content.ReadFromJsonAsync<List<Test>> ();
-                return studentCourseTest ?? new List<Test> ();
-                }
+            {
+                var studentCourseTest = await response.Content.ReadFromJsonAsync<List<Test>>();
+                return studentCourseTest ?? new List<Test>();
+            }
             else
-                {
-                return new List<Test> ();
-                }
-            }
-        public async Task<bool> Update_Test (Test test)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_Test", test);
-            return response.IsSuccessStatusCode ? true : false;
+                return new List<Test>();
             }
-        public async Task<bool> Delete_Test (int testId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_Test", testId);
+        }
+
+        public async Task<bool> Update_Test(Test test)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_Test", test);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> ImportExcelTests (string filePath, int courseId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/ImportExcelTests?courseId={courseId}", filePath);
+        }
+
+        public async Task<bool> Delete_Test(int testId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_Test", testId);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
+        public async Task<bool> ImportExcelTests(string filePath, int courseId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/ImportExcelTests?courseId={courseId}", filePath);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region TO:TestOptions
-        public async Task<int> Create_TestOption (TestOption testOption)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_TestOption", testOption);
+
+        public async Task<int> Create_TestOption(TestOption testOption)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_TestOption", testOption);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<bool> Update_TestOption (TestOption testOption)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Update_TestOption", testOption);
+        }
+
+        public async Task<bool> Update_TestOption(TestOption testOption)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_TestOption", testOption);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_TestOptions (int testId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_TestOptions", testId);
+        }
+
+        public async Task<bool> Delete_TestOptions(int testId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_TestOptions", testId);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_TestOption (int testOptionId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_TestOption", testOptionId);
+        }
+
+        public async Task<bool> Delete_TestOption(int testOptionId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_TestOption", testOptionId);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
         #endregion
+
         #region E:Exams
-        public async Task<int> Create_Exam (Exam exam)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_Exam", exam);
+
+        public async Task<int> Create_Exam(Exam exam)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_Exam", exam);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<List<Exam>> Read_Exams (int courseId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Exams", courseId);
+        }
+
+        public async Task<List<Exam>> Read_Exams(int courseId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_Exams", courseId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Exam>? lstExams = await response.Content.ReadFromJsonAsync<List<Exam>> ();
-                return lstExams ?? new List<Exam> ();
-                }
-            else
-                {
-                return new List<Exam> ();
-                }
-            }
-        public async Task<Exam> Read_Exam (int examId, bool getStudentsList)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Exam?getStudentList={getStudentsList}", examId);
+                List<Exam>? lstExams = await response.Content.ReadFromJsonAsync<List<Exam>>();
+                return lstExams ?? new List<Exam>();
+            }
+            else
+            {
+                return new List<Exam>();
+            }
+        }
+
+        public async Task<Exam> Read_Exam(int examId, bool getStudentsList)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_Exam?getStudentList={getStudentsList}", examId);
             if (response.IsSuccessStatusCode)
-                {
-                Exam? exam = await response.Content.ReadFromJsonAsync<Exam> ();
-                return exam ?? new Exam ();
-                }
+            {
+                Exam? exam = await response.Content.ReadFromJsonAsync<Exam>();
+                return exam ?? new Exam();
+            }
             else
-                {
-                return new Exam ();
-                }
-            }
-        public async Task<bool> Update_Exam (Exam exam)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_Exam", exam);
-            return response.IsSuccessStatusCode ? true : false;
+                return new Exam();
             }
-        public async Task<bool> Delete_Exams (int courseId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_Exams", courseId);
+        }
+
+        public async Task<bool> Update_Exam(Exam exam)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_Exam", exam);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_Exam (int examId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_Exam", examId);
+        }
+
+        public async Task<bool> Delete_Exams(int courseId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_Exams", courseId);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
+        public async Task<bool> Delete_Exam(int examId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_Exam", examId);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region EC:ExamCompositions
-        public async Task<int> Create_ExamComposition (ExamComposition examComposition)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_ExamComposition", examComposition);
+
+        public async Task<int> Create_ExamComposition(ExamComposition examComposition)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_ExamComposition", examComposition);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<List<ExamComposition>> Read_ExamCompositions (int examId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_ExamCompositions", examId);
+        }
+
+        public async Task<List<ExamComposition>> Read_ExamCompositions(int examId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_ExamCompositions", examId);
             if (response.IsSuccessStatusCode)
-                {
-                List<ExamComposition>? lstExamCompositions = await response.Content.ReadFromJsonAsync<List<ExamComposition>> ();
-                return lstExamCompositions ?? new List<ExamComposition> ();
-                }
-            else
-                {
-                return new List<ExamComposition> ();
-                }
-            }
-        public async Task<ExamComposition> Read_ExamComposition (int examCompositionId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_ExamComposition", examCompositionId);
+                List<ExamComposition>? lstExamCompositions =
+                    await response.Content.ReadFromJsonAsync<List<ExamComposition>>();
+                return lstExamCompositions ?? new List<ExamComposition>();
+            }
+            else
+            {
+                return new List<ExamComposition>();
+            }
+        }
+
+        public async Task<ExamComposition> Read_ExamComposition(int examCompositionId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_ExamComposition", examCompositionId);
             if (response.IsSuccessStatusCode)
-                {
-                ExamComposition? examComposition = await response.Content.ReadFromJsonAsync<ExamComposition> ();
-                return examComposition ?? new ExamComposition ();
-                }
+            {
+                ExamComposition? examComposition = await response.Content.ReadFromJsonAsync<ExamComposition>();
+                return examComposition ?? new ExamComposition();
+            }
             else
-                {
-                return new ExamComposition ();
-                }
-            }
-        public async Task<bool> Update_ExamComposition (ExamComposition examComposition)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_ExamComposition", examComposition);
-            return response.IsSuccessStatusCode ? true : false;
+                return new ExamComposition();
             }
-        public async Task<bool> Delete_ExamCompositions (int examId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_Exam", examId);
+        }
+
+        public async Task<bool> Update_ExamComposition(ExamComposition examComposition)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_ExamComposition", examComposition);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_ExamComposition (int examCompositionId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_ExamComposition", examCompositionId);
+        }
+
+        public async Task<bool> Delete_ExamCompositions(int examId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_Exam", examId);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
+        public async Task<bool> Delete_ExamComposition(int examCompositionId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_ExamComposition", examCompositionId);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region ET:ExamTests
-        public async Task<int> Create_ExamTestsByExamComposition (ExamComposition examComposition)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_ExamTestsByExamComposition", examComposition);
+
+        public async Task<int> Create_ExamTestsByExamComposition(ExamComposition examComposition)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_ExamTestsByExamComposition", examComposition);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<int> Create_ExamTest (ExamTest examTest)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_ExamTest", examTest);
+        }
+
+        public async Task<int> Create_ExamTest(ExamTest examTest)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_ExamTest", examTest);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<List<ExamTest>> Read_ExamTests (int examId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_ExamTests", examId);
+        }
+
+        public async Task<List<ExamTest>> Read_ExamTests(int examId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_ExamTests", examId);
             if (response.IsSuccessStatusCode)
-                {
-                List<ExamTest>? lstExamTests = await response.Content.ReadFromJsonAsync<List<ExamTest>> ();
-                return lstExamTests ?? new List<ExamTest> ();
-                }
-            else
-                {
-                return new List<ExamTest> ();
-                }
-            }
-        public async Task<ExamTest> Read_ExamTest (int examTestId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_ExamTest", examTestId);
+                List<ExamTest>? lstExamTests = await response.Content.ReadFromJsonAsync<List<ExamTest>>();
+                return lstExamTests ?? new List<ExamTest>();
+            }
+            else
+            {
+                return new List<ExamTest>();
+            }
+        }
+
+        public async Task<ExamTest> Read_ExamTest(int examTestId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_ExamTest", examTestId);
             if (response.IsSuccessStatusCode)
-                {
-                ExamTest? examTest = await response.Content.ReadFromJsonAsync<ExamTest> ();
-                return examTest ?? new ExamTest ();
-                }
+            {
+                ExamTest? examTest = await response.Content.ReadFromJsonAsync<ExamTest>();
+                return examTest ?? new ExamTest();
+            }
             else
-                {
-                return new ExamTest ();
-                }
-            }
-        public async Task<bool> Update_ExamTest (ExamTest examTest)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_ExamTest", examTest);
-            return response.IsSuccessStatusCode ? true : false;
+                return new ExamTest();
             }
-        public async Task<bool> Delete_ExamTests (int examId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_ExamTests", examId);
+        }
+
+        public async Task<bool> Update_ExamTest(ExamTest examTest)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_ExamTest", examTest);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_ExamTest (ExamTest examTest)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_ExamTest", examTest);
+        }
+
+        public async Task<bool> Delete_ExamTests(int examId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_ExamTests", examId);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
+        public async Task<bool> Delete_ExamTest(ExamTest examTest)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_ExamTest", examTest);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region SE:StudentExams
-        public async Task<int> Create_StudentExams (int examId, List<int> lstStudentIds)
+
+        public async Task<int> Create_StudentExams(int examId, List<int> lstStudentIds)
+        {
+            StudentExam studentExam = new StudentExam()
             {
-            StudentExam studentExam = new StudentExam () { StudentId = 0, ExamId = examId, DateTimeStart = new DateTimeOffset (), DateTimeFinish = new DateTimeOffset (), StudentExamTags = 0, StudentExamPoint = 0 };
-            var response = await _http.PostAsJsonAsync ($"api/Create_StudentExams?examId={examId}", lstStudentIds);
+                StudentId = 0, ExamId = examId, DateTimeStart = new DateTimeOffset(),
+                DateTimeFinish = new DateTimeOffset(), StudentExamTags = 0, StudentExamPoint = 0
+            };
+            var response = await _http.PostAsJsonAsync($"api/Create_StudentExams?examId={examId}", lstStudentIds);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<List<StudentExam>> Read_StudentExams (string mode, int Id, int teacherId)
-            {
+        }
+
+        public async Task<List<StudentExam>> Read_StudentExams(string mode, int Id, int teacherId)
+        {
             try
-                {
+            {
                 //modes: BystudentId, ByExamId
-                var response = await _http.PostAsJsonAsync ($"api/Read_StudentExams?mode={mode}", Id);
+                var response = await _http.PostAsJsonAsync($"api/Read_StudentExams?mode={mode}", Id);
                 if (response.IsSuccessStatusCode)
-                    {
-                    return await response.Content.ReadFromJsonAsync<List<StudentExam>> () ?? new List<StudentExam> ();
-                    }
+                {
+                    return await response.Content.ReadFromJsonAsync<List<StudentExam>>() ?? new List<StudentExam>();
+                }
                 else
-                    {
-                    return new List<StudentExam> ();
-                    }
+                {
+                    return new List<StudentExam>();
                 }
+            }
             catch (Exception ex)
-                {
-                Console.WriteLine ("GetStudentExamService error: " + ex.ToString ());
-                return new List<StudentExam> ();
-                }
-            }
-        public async Task<StudentExam> Read_StudentExam (int studentExamId, bool readInactiveExams)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentExam?readInactiveExams={readInactiveExams}", studentExamId);
+                Console.WriteLine("GetStudentExamService error: " + ex.ToString());
+                return new List<StudentExam>();
+            }
+        }
+
+        public async Task<StudentExam> Read_StudentExam(int studentExamId, bool readInactiveExams)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_StudentExam?readInactiveExams={readInactiveExams}",
+                studentExamId);
             if (response.IsSuccessStatusCode)
-                {
-                StudentExam studentExam = await response.Content.ReadFromJsonAsync<StudentExam> ();
+            {
+                StudentExam studentExam = await response.Content.ReadFromJsonAsync<StudentExam>();
                 return studentExam;
-                }
-            return new StudentExam ();
             }
-        public async Task<List<Note>> Read_ExamSessionNotes (int studentExamId, bool excludeReadNotes)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_ExamSessionNotes?excludeReadNotes={excludeReadNotes}", studentExamId);
+
+            return new StudentExam();
+        }
+
+        public async Task<List<Note>> Read_ExamSessionNotes(int studentExamId, bool excludeReadNotes)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_ExamSessionNotes?excludeReadNotes={excludeReadNotes}",
+                studentExamId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Note> lstExamSessionNotes = await response.Content.ReadFromJsonAsync<List<Note>> ();
+            {
+                List<Note> lstExamSessionNotes = await response.Content.ReadFromJsonAsync<List<Note>>();
                 return lstExamSessionNotes;
-                }
-            return new List<Note> ();
             }
-        public async Task<bool> Update_StudentExam (StudentExam studentExam)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Update_StudentExam", studentExam);
+
+            return new List<Note>();
+        }
+
+        public async Task<bool> Update_StudentExam(StudentExam studentExam)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Update_StudentExam", studentExam);
             if (response.IsSuccessStatusCode)
-                {
-                return true;
-                }
-            else
-                {
-                return false;
-                }
-            }
-        public async Task<bool> Update_StudentsExamTags (string mode, int ExamId)
             {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> Update_StudentsExamTags(string mode, int ExamId)
+        {
             //update StudentExam for All Students having this ExamId
             //modes: startedOn, startedOff, finishedOn, finishedOff, reviewOn, reviewOff
-            var response = await _http.PostAsJsonAsync ($"api/Update_StudentsExamTags?mode={mode}", ExamId);
+            var response = await _http.PostAsJsonAsync($"api/Update_StudentsExamTags?mode={mode}", ExamId);
             if (response.IsSuccessStatusCode)
-                {
-                return true;
-                }
-            else
-                {
-                return false;
-                }
-            }
-        public async Task<bool> Update_StudentExamsTags (List<int> lstStudentIds, int ExamId, string mode)
             {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> Update_StudentExamsTags(List<int> lstStudentIds, int ExamId, string mode)
+        {
             //update StudentExam for  selected Students having this ExamId
             //modes: startedOn, startedOff, finishedOn, finishedOff, reviewOn, reviewOff
-            var response = await _http.PostAsJsonAsync ($"api/Update_StudentExamsTags?ExamId={ExamId}&mode={mode}", lstStudentIds);
+            var response = await _http.PostAsJsonAsync($"api/Update_StudentExamsTags?ExamId={ExamId}&mode={mode}",
+                lstStudentIds);
             if (response.IsSuccessStatusCode)
-                {
-                return true;
-                }
-            else
-                {
-                return false;
-                }
-            }
-        public async Task<bool> Update_StudentExamTags (StudentExam studentExam, string strNewStudentExamTags)
             {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> Update_StudentExamTags(StudentExam studentExam, string strNewStudentExamTags)
+        {
             DateTimeOffset currentDateTime = DateTimeOffset.UtcNow;
             switch (strNewStudentExamTags)
-                {
+            {
                 case "startedOn":
-                        {
-                        studentExam.StudentExamTags = (studentExam.StudentExamTags | 2);
-                        studentExam.DateTimeStart = currentDateTime;
-                        break;
-                        }
+                {
+                    studentExam.StudentExamTags = (studentExam.StudentExamTags | 2);
+                    studentExam.DateTimeStart = currentDateTime;
+                    break;
+                }
                 case "startedOff":
-                        {
-                        studentExam.StudentExamTags = (studentExam.StudentExamTags & ~2);
-                        studentExam.DateTimeStart = new DateTimeOffset ();
-                        break;
-                        }
+                {
+                    studentExam.StudentExamTags = (studentExam.StudentExamTags & ~2);
+                    studentExam.DateTimeStart = new DateTimeOffset();
+                    break;
+                }
                 case "finishedOn":
-                        {
-                        studentExam.StudentExamTags = (studentExam.StudentExamTags | 4);
-                        studentExam.DateTimeFinish = currentDateTime;
-                        break;
-                        }
+                {
+                    studentExam.StudentExamTags = (studentExam.StudentExamTags | 4);
+                    studentExam.DateTimeFinish = currentDateTime;
+                    break;
+                }
                 case "finishedOff":
-                        {
-                        studentExam.StudentExamTags = (studentExam.StudentExamTags & ~4);
-                        studentExam.DateTimeStart = new DateTimeOffset ();
-                        break;
-                        }
+                {
+                    studentExam.StudentExamTags = (studentExam.StudentExamTags & ~4);
+                    studentExam.DateTimeStart = new DateTimeOffset();
+                    break;
+                }
                 case "reviewOn":
-                        {
-                        studentExam.StudentExamTags = (studentExam.StudentExamTags | 8);
-                        studentExam.DateTimeFinish = currentDateTime;
-                        break;
-                        }
+                {
+                    studentExam.StudentExamTags = (studentExam.StudentExamTags | 8);
+                    studentExam.DateTimeFinish = currentDateTime;
+                    break;
+                }
                 case "reviewOff":
-                        {
-                        studentExam.StudentExamTags = (studentExam.StudentExamTags & ~8);
-                        studentExam.DateTimeStart = new DateTimeOffset ();
-                        break;
-                        }
+                {
+                    studentExam.StudentExamTags = (studentExam.StudentExamTags & ~8);
+                    studentExam.DateTimeStart = new DateTimeOffset();
+                    break;
                 }
-            var response = await _http.PostAsJsonAsync ($"api/Update_StudentExamTags", studentExam);
+            }
+
+            var response = await _http.PostAsJsonAsync($"api/Update_StudentExamTags", studentExam);
             if (response.IsSuccessStatusCode)
-                {
+            {
                 return true;
-                }
+            }
             else
-                {
+            {
                 return false;
-                }
             }
-        public async Task<bool> Delete_StudentExamsByStudentId (int studentId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_StudentExamsByStudentId", studentId);
+        }
+
+        public async Task<bool> Delete_StudentExamsByStudentId(int studentId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_StudentExamsByStudentId", studentId);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_StudentExamsByExamId (int examId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_Exam", examId);
+        }
+
+        public async Task<bool> Delete_StudentExamsByExamId(int examId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_Exam", examId);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_StudentExams (int examId, List<int> lstStudentIds)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_StudentExams?examId={examId}", lstStudentIds);
+        }
+
+        public async Task<bool> Delete_StudentExams(int examId, List<int> lstStudentIds)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_StudentExams?examId={examId}", lstStudentIds);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_StudentExam (int studentExamId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_StudentExam", studentExamId);
+        }
+
+        public async Task<bool> Delete_StudentExam(int studentExamId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_StudentExam", studentExamId);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
         #endregion
+
         #region SET:StudentExamTests
-        public async Task<int> Create_StudentExamTest (StudentExamTest studentExamTest)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Create_StudentExamTest", studentExamTest);
+
+        public async Task<int> Create_StudentExamTest(StudentExamTest studentExamTest)
+        {
+            var response = await _http.PostAsJsonAsync("api/Create_StudentExamTest", studentExamTest);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<StudentExamTest> Read_StudentExamTest (long studentExamTestId, bool readOptions)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentExamTest?readOptions={readOptions}", studentExamTestId);
+        }
+
+        public async Task<StudentExamTest> Read_StudentExamTest(long studentExamTestId, bool readOptions)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_StudentExamTest?readOptions={readOptions}",
+                studentExamTestId);
             if (response.IsSuccessStatusCode)
-                {
-                var studentExamTest = await response.Content.ReadFromJsonAsync<StudentExamTest> ();
-                return studentExamTest ?? new StudentExamTest ();
-                }
-            else
-                {
-                return new StudentExamTest ();
-                }
-            }
-        public async Task<List<StudentExamTest>> Read_StudentExamTests (int studentExamId, bool readOptions)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentExamTests?readOptions={readOptions}", studentExamId);
+                var studentExamTest = await response.Content.ReadFromJsonAsync<StudentExamTest>();
+                return studentExamTest ?? new StudentExamTest();
+            }
+            else
+            {
+                return new StudentExamTest();
+            }
+        }
+
+        public async Task<List<StudentExamTest>> Read_StudentExamTests(int studentExamId, bool readOptions)
+        {
+            var response =
+                await _http.PostAsJsonAsync($"api/Read_StudentExamTests?readOptions={readOptions}", studentExamId);
             if (response.IsSuccessStatusCode)
-                {
-                var lstStudentExamTests = await response.Content.ReadFromJsonAsync<List<StudentExamTest>> ();
-                return lstStudentExamTests ?? new List<StudentExamTest> ();
-                }
-            else
-                {
-                return new List<StudentExamTest> ();
-                }
-            }
-        public async Task<List<StudentExamTest>> Read_StudentsExamTest (int examId, int testId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsExamTest?examId={examId}", testId);
+                var lstStudentExamTests = await response.Content.ReadFromJsonAsync<List<StudentExamTest>>();
+                return lstStudentExamTests ?? new List<StudentExamTest>();
+            }
+            else
+            {
+                return new List<StudentExamTest>();
+            }
+        }
+
+        public async Task<List<StudentExamTest>> Read_StudentsExamTest(int examId, int testId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_StudentsExamTest?examId={examId}", testId);
             if (response.IsSuccessStatusCode)
-                {
-                var lstStudentsExamTest = await response.Content.ReadFromJsonAsync<List<StudentExamTest>> ();
-                return lstStudentsExamTest ?? new List<StudentExamTest> ();
-                }
-            else
-                {
-                return new List<StudentExamTest> ();
-                }
-            }
-        public async Task<bool> Update_StudentExamTest (StudentExamTest studentExamTest)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_StudentExamTest", studentExamTest);
+                var lstStudentsExamTest = await response.Content.ReadFromJsonAsync<List<StudentExamTest>>();
+                return lstStudentsExamTest ?? new List<StudentExamTest>();
+            }
+            else
+            {
+                return new List<StudentExamTest>();
+            }
+        }
+
+        public async Task<bool> Update_StudentExamTest(StudentExamTest studentExamTest)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_StudentExamTest", studentExamTest);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Update_StudentExamTestsTags (int studentExamId, int intTags)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Update_StudentExamTestsTags?intTags={intTags}", studentExamId);
+        }
+
+        public async Task<bool> Update_StudentExamTestsTags(int studentExamId, int intTags)
+        {
+            var response =
+                await _http.PostAsJsonAsync($"api/Update_StudentExamTestsTags?intTags={intTags}", studentExamId);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Update_StudentExamTestTags (StudentExamTest tempStudentExamTest)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Update_StudentExamTestTags", tempStudentExamTest);
+        }
+
+        public async Task<bool> Update_StudentExamTestTags(StudentExamTest tempStudentExamTest)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Update_StudentExamTestTags", tempStudentExamTest);
             if (response.IsSuccessStatusCode)
-                {
+            {
                 return true;
-                }
-            else
-                {
-                return false;
-                }
             }
-        public async Task<bool> Update_StudentExamTestAnswerText (long studentExamTestId, string answerText)
+            else
             {
-            StudentExamTest tempTest = new ()
-                {
+                return false;
+            }
+        }
+
+        public async Task<bool> Update_StudentExamTestAnswerText(long studentExamTestId, string answerText)
+        {
+            StudentExamTest tempTest = new()
+            {
                 StudentExamTestId = studentExamTestId,
                 StudentExamTestAns = 1, //set 1 for example (just not 0, unless the test in not considered as answered)
                 StudentExamTestAnsText = answerText
-                };
-            var response = await _http.PostAsJsonAsync ($"api/Update_StudentExamTestAnswer", tempTest);
+            };
+            var response = await _http.PostAsJsonAsync($"api/Update_StudentExamTestAnswer", tempTest);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Update_StudentExamTestAnswer (long studentExamTestId, int answerOptionId)
+        }
+
+        public async Task<bool> Update_StudentExamTestAnswer(long studentExamTestId, int answerOptionId)
+        {
+            StudentExamTest tempTest = new()
             {
-            StudentExamTest tempTest = new ()
-                {
                 StudentExamTestId = studentExamTestId,
                 StudentExamTestAns = answerOptionId
-                };
-            var response = await _http.PostAsJsonAsync ($"api/Update_StudentExamTestAnswer", tempTest);
+            };
+            var response = await _http.PostAsJsonAsync($"api/Update_StudentExamTestAnswer", tempTest);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_StudentExamTests (int studentExamId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_StudentExamTests", studentExamId);
+        }
+
+        public async Task<bool> Delete_StudentExamTests(int studentExamId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_StudentExamTests", studentExamId);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_StudentExamTest (long studentExamTestId)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Delete_StudentExamTest", studentExamTestId);
+        }
+
+        public async Task<bool> Delete_StudentExamTest(long studentExamTestId)
+        {
+            var response = await _http.PostAsJsonAsync("api/Delete_StudentExamTest", studentExamTestId);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> CalculatePoints_StudentExams (int studentexamid)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/ClaculatePoints_StudentExams", studentexamid);
+        }
+
+        public async Task<bool> CalculatePoints_StudentExams(int studentexamid)
+        {
+            var response = await _http.PostAsJsonAsync($"api/ClaculatePoints_StudentExams", studentexamid);
             return (response.IsSuccessStatusCode) ? true : false;
-            }
+        }
+
         #endregion
+
         #region M:Messages
-        public async Task<int> Create_Message (Message message)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Create_Message", message);
+
+        public async Task<int> Create_Message(Message message)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Create_Message", message);
             if (!response.IsSuccessStatusCode)
                 return 0;
-            return await response.Content.ReadFromJsonAsync<int> ();
-            }
-        public async Task<Message> Read_Message (int messageId, bool getStudentMessages)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Message?getStudentMessages={getStudentMessages}", messageId);
+            return await response.Content.ReadFromJsonAsync<int>();
+        }
+
+        public async Task<Message> Read_Message(int messageId, bool getStudentMessages)
+        {
+            var response =
+                await _http.PostAsJsonAsync($"api/Read_Message?getStudentMessages={getStudentMessages}", messageId);
             if (response.IsSuccessStatusCode)
-                {
-                Message? message = await response.Content.ReadFromJsonAsync<Message> ();
-                return message ?? new Message ();
-                }
-            else
-                {
-                return new Message ();
-                }
-            }
-        public async Task<List<Message>> Read_Messages (int userId, bool readAllMessages, bool getStudentMessages)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Messages?readAllMessages={readAllMessages}&getStudentMessages={getStudentMessages}", userId);
+                Message? message = await response.Content.ReadFromJsonAsync<Message>();
+                return message ?? new Message();
+            }
+            else
+            {
+                return new Message();
+            }
+        }
+
+        public async Task<List<Message>> Read_Messages(int userId, bool readAllMessages, bool getStudentMessages)
+        {
+            var response = await _http.PostAsJsonAsync(
+                $"api/Read_Messages?readAllMessages={readAllMessages}&getStudentMessages={getStudentMessages}", userId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Message>? lstMessages = await response.Content.ReadFromJsonAsync<List<Message>> ();
-                return lstMessages ?? new List<Message> ();
-                }
+            {
+                List<Message>? lstMessages = await response.Content.ReadFromJsonAsync<List<Message>>();
+                return lstMessages ?? new List<Message>();
+            }
             else
-                {
-                return new List<Message> ();
-                }
-            }
-        public async Task<bool> Update_Message (Message message)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_Message", message);
+                return new List<Message>();
+            }
+        }
+
+        public async Task<bool> Update_Message(Message message)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_Message", message);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Update_MessageTags (Message message)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Update_MessageTags", message);
+        }
+
+        public async Task<bool> Update_MessageTags(Message message)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_MessageTags", message);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_Messages (string mode, int recipientId)
-            {
+        }
+
+        public async Task<bool> Delete_Messages(string mode, int recipientId)
+        {
             //modes: ByStudentId, ByMessageId, ByStudentMessageId
-            var response = await _http.PostAsJsonAsync ($"api/Delete_Messages?mode={mode}", recipientId);
+            var response = await _http.PostAsJsonAsync($"api/Delete_Messages?mode={mode}", recipientId);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
         #endregion
+
         #region SM:StudentMessages
-        public async Task<bool> Create_StudentMessages (int messageId, List<int> lstStudentIds, bool requestFeedback)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Create_StudentMessages?messageId={messageId}&requestFeedback={requestFeedback}", lstStudentIds);
+
+        public async Task<bool> Create_StudentMessages(int messageId, List<int> lstStudentIds, bool requestFeedback)
+        {
+            var response = await _http.PostAsJsonAsync(
+                $"api/Create_StudentMessages?messageId={messageId}&requestFeedback={requestFeedback}", lstStudentIds);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<List<StudentMessage>> Read_StudentMessages (string mode, int Id, int teacherId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentMessages?mode={mode}&teacherId={teacherId}", Id);
+        }
+
+        public async Task<List<StudentMessage>> Read_StudentMessages(string mode, int Id, int teacherId)
+        {
+            var response =
+                await _http.PostAsJsonAsync($"api/Read_StudentMessages?mode={mode}&teacherId={teacherId}", Id);
             if (response.IsSuccessStatusCode)
-                {
-                List<StudentMessage>? lstMessages = await response.Content.ReadFromJsonAsync<List<StudentMessage>> ();
-                return lstMessages ?? new List<StudentMessage> ();
-                }
-            else
-                {
-                return new List<StudentMessage> ();
-                }
-            }
-        public async Task<StudentMessage> Read_StudentMessage (int studentMessageId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentMessage", studentMessageId);
+                List<StudentMessage>? lstMessages = await response.Content.ReadFromJsonAsync<List<StudentMessage>>();
+                return lstMessages ?? new List<StudentMessage>();
+            }
+            else
+            {
+                return new List<StudentMessage>();
+            }
+        }
+
+        public async Task<StudentMessage> Read_StudentMessage(int studentMessageId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_StudentMessage", studentMessageId);
             if (response.IsSuccessStatusCode)
-                {
-                StudentMessage? studentMessage = await response.Content.ReadFromJsonAsync<StudentMessage> ();
-                return studentMessage ?? new StudentMessage ();
-                }
+            {
+                StudentMessage? studentMessage = await response.Content.ReadFromJsonAsync<StudentMessage>();
+                return studentMessage ?? new StudentMessage();
+            }
             else
-                {
-                return new StudentMessage ();
-                }
-            }
-        public async Task<bool> Update_StudentMessageTags (StudentMessage studentMessage)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_StudentMessageTags", studentMessage);
-            return response.IsSuccessStatusCode ? true : false;
+                return new StudentMessage();
             }
-        public async Task<bool> Update_StudentMessageSetAsRead (StudentMessage studentMessage)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Update_StudentMessagesetAsRead", studentMessage);
+        }
+
+        public async Task<bool> Update_StudentMessageTags(StudentMessage studentMessage)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_StudentMessageTags", studentMessage);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_StudentMessage (int studentMessageId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_StudentMessage", studentMessageId);
+        }
+
+        public async Task<bool> Update_StudentMessageSetAsRead(StudentMessage studentMessage)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_StudentMessagesetAsRead", studentMessage);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_StudentMessagesByMessageId (int messageId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_StudentMessagesByMessageId", messageId);
+        }
+
+        public async Task<bool> Delete_StudentMessage(int studentMessageId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_StudentMessage", studentMessageId);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_StudentMessagesByMessageIdAndStudentId (int messageId, int studentId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_StudentMessagesByMessageIdAndStudentId?studentId={studentId}", messageId);
+        }
+
+        public async Task<bool> Delete_StudentMessagesByMessageId(int messageId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_StudentMessagesByMessageId", messageId);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
+        public async Task<bool> Delete_StudentMessagesByMessageIdAndStudentId(int messageId, int studentId)
+        {
+            var response =
+                await _http.PostAsJsonAsync($"api/Delete_StudentMessagesByMessageIdAndStudentId?studentId={studentId}",
+                    messageId);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region CH:Chats
-        public async Task<int> Create_Chat (Chat chat)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Create_Chat", chat);
+
+        public async Task<int> Create_Chat(Chat chat)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Create_Chat", chat);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<List<Chat>> Read_Chats (int studentId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Chats", studentId);
+        }
+
+        public async Task<List<Chat>> Read_Chats(int studentId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_Chats", studentId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Chat>? lstChats = await response.Content.ReadFromJsonAsync<List<Chat>> ();
-                return lstChats ?? new List<Chat> ();
-                }
-            else
-                {
-                return new List<Chat> ();
-                }
-            }
-        public async Task<List<Chat>> Read_ChatsWithOneMate (int studentId, int mateId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_ChatsWithOneMate?mateId={mateId}", studentId);
+                List<Chat>? lstChats = await response.Content.ReadFromJsonAsync<List<Chat>>();
+                return lstChats ?? new List<Chat>();
+            }
+            else
+            {
+                return new List<Chat>();
+            }
+        }
+
+        public async Task<List<Chat>> Read_ChatsWithOneMate(int studentId, int mateId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_ChatsWithOneMate?mateId={mateId}", studentId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Chat>? lstChats = await response.Content.ReadFromJsonAsync<List<Chat>> ();
-                return lstChats ?? new List<Chat> ();
-                }
-            else
-                {
-                return new List<Chat> ();
-                }
-            }
-        public async Task<bool> Update_Chat (Chat chat)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Update_Chat", chat);
+                List<Chat>? lstChats = await response.Content.ReadFromJsonAsync<List<Chat>>();
+                return lstChats ?? new List<Chat>();
+            }
+            else
+            {
+                return new List<Chat>();
+            }
+        }
+
+        public async Task<bool> Update_Chat(Chat chat)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Update_Chat", chat);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Update_ChatTags (Chat chat)
-            {
+        }
+
+        public async Task<bool> Update_ChatTags(Chat chat)
+        {
             //1:IsRead 2:IsImp 3:IsBookmarked 4:Deleted
-            var response = await _http.PostAsJsonAsync ($"api/Update_ChatTags", chat);
+            var response = await _http.PostAsJsonAsync($"api/Update_ChatTags", chat);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_Chat (int chatId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_Chat", chatId);
+        }
+
+        public async Task<bool> Delete_Chat(int chatId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_Chat", chatId);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
         #endregion
+
         #region CHR:Chatrooms
-        public async Task<int> Create_Chatroom (Chatroom chatroom)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Create_Chatroom", chatroom);
+
+        public async Task<int> Create_Chatroom(Chatroom chatroom)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Create_Chatroom", chatroom);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<List<Chatroom>> Read_Chatrooms (int departmentId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Chatrooms", departmentId);
+        }
+
+        public async Task<List<Chatroom>> Read_Chatrooms(int departmentId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_Chatrooms", departmentId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Chatroom>? lstChatrooms = await response.Content.ReadFromJsonAsync<List<Chatroom>> ();
-                return lstChatrooms ?? new List<Chatroom> ();
-                }
+            {
+                List<Chatroom>? lstChatrooms = await response.Content.ReadFromJsonAsync<List<Chatroom>>();
+                return lstChatrooms ?? new List<Chatroom>();
+            }
             else
-                {
-                return new List<Chatroom> ();
-                }
-            }
-        public async Task<bool> Update_Chatroom (Chatroom chatroom)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Update_Chatroom", chatroom);
-            return response.IsSuccessStatusCode ? true : false;
+                return new List<Chatroom>();
             }
-        public async Task<bool> Delete_Chatroom (int chatroomId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_Chatroom", chatroomId);
+        }
+
+        public async Task<bool> Update_Chatroom(Chatroom chatroom)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Update_Chatroom", chatroom);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
+        public async Task<bool> Delete_Chatroom(int chatroomId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_Chatroom", chatroomId);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region CHRP:ChatroomPosts
-        public async Task<int> Create_ChatroomPost (ChatroomPost chatroomPost)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Create_ChatroomPost", chatroomPost);
+
+        public async Task<int> Create_ChatroomPost(ChatroomPost chatroomPost)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Create_ChatroomPost", chatroomPost);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<List<ChatroomPost>> Read_ChatroomPosts (int chatroomId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_ChatroomPosts", chatroomId);
+        }
+
+        public async Task<List<ChatroomPost>> Read_ChatroomPosts(int chatroomId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_ChatroomPosts", chatroomId);
             if (response.IsSuccessStatusCode)
-                {
-                List<ChatroomPost>? lstChatroomPosts = await response.Content.ReadFromJsonAsync<List<ChatroomPost>> ();
-                return lstChatroomPosts ?? new List<ChatroomPost> ();
-                }
+            {
+                List<ChatroomPost>? lstChatroomPosts = await response.Content.ReadFromJsonAsync<List<ChatroomPost>>();
+                return lstChatroomPosts ?? new List<ChatroomPost>();
+            }
             else
-                {
-                return new List<ChatroomPost> ();
-                }
-            }
-        public async Task<bool> Update_ChatroomPost (ChatroomPost chatroomPost)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Update_ChatroomPost", chatroomPost);
-            return response.IsSuccessStatusCode ? true : false;
+                return new List<ChatroomPost>();
             }
-        public async Task<bool> Delete_ChatroomPost (int chatroomPostId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_ChatroomPost", chatroomPostId);
+        }
+
+        public async Task<bool> Update_ChatroomPost(ChatroomPost chatroomPost)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Update_ChatroomPost", chatroomPost);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
+        public async Task<bool> Delete_ChatroomPost(int chatroomPostId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_ChatroomPost", chatroomPostId);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region P:Projects
-        public async Task<int> Create_Project (Project project)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Create_Project", project);
+
+        public async Task<int> Create_Project(Project project)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Create_Project", project);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<List<Project>> Read_Projects (int userId, string mode)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Projects?mode={mode}", userId);
+        }
+
+        public async Task<List<Project>> Read_Projects(int userId, string mode)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_Projects?mode={mode}", userId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Project>? lstProjects = await response.Content.ReadFromJsonAsync<List<Project>> ();
-                return lstProjects ?? new List<Project> ();
-                }
-            else
-                {
-                return new List<Project> ();
-                }
-            }
-        public async Task<Project> Read_Project (int projectId, bool readNotes)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Project?readNotes={readNotes}", projectId);
+                List<Project>? lstProjects = await response.Content.ReadFromJsonAsync<List<Project>>();
+                return lstProjects ?? new List<Project>();
+            }
+            else
+            {
+                return new List<Project>();
+            }
+        }
+
+        public async Task<Project> Read_Project(int projectId, bool readNotes)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_Project?readNotes={readNotes}", projectId);
             if (response.IsSuccessStatusCode)
-                {
-                Project? project = await response.Content.ReadFromJsonAsync<Project> ();
-                return project ?? new Project ();
-                }
+            {
+                Project? project = await response.Content.ReadFromJsonAsync<Project>();
+                return project ?? new Project();
+            }
             else
-                {
-                return new Project ();
-                }
-            }
-        public async Task<bool> Update_Project (Project project)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_Project", project);
-            return response.IsSuccessStatusCode ? true : false;
+                return new Project();
             }
-        public async Task<bool> Delete_Projects (int userId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_Projects", userId);
+        }
+
+        public async Task<bool> Update_Project(Project project)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_Project", project);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_Project (int projectId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_Project", projectId);
+        }
+
+        public async Task<bool> Delete_Projects(int userId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_Projects", userId);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
+        public async Task<bool> Delete_Project(int projectId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_Project", projectId);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region SP:Subprojects
-        public async Task<int> Create_Subproject (Subproject subProject)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Create_subproject", subProject);
+
+        public async Task<int> Create_Subproject(Subproject subProject)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Create_subproject", subProject);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<List<Subproject>> Read_Subprojects (int projectId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_SubpProjects", projectId);
+        }
+
+        public async Task<List<Subproject>> Read_Subprojects(int projectId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_SubpProjects", projectId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Subproject>? lstSubprojects = await response.Content.ReadFromJsonAsync<List<Subproject>> ();
-                return lstSubprojects ?? new List<Subproject> ();
-                }
-            else
-                {
-                return new List<Subproject> ();
-                }
-            }
-        public async Task<Subproject> Read_Subproject (int subProjectId, bool readNotes)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Subproject?readNotes={readNotes}", subProjectId);
+                List<Subproject>? lstSubprojects = await response.Content.ReadFromJsonAsync<List<Subproject>>();
+                return lstSubprojects ?? new List<Subproject>();
+            }
+            else
+            {
+                return new List<Subproject>();
+            }
+        }
+
+        public async Task<Subproject> Read_Subproject(int subProjectId, bool readNotes)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_Subproject?readNotes={readNotes}", subProjectId);
             if (response.IsSuccessStatusCode)
-                {
-                Subproject? subProject = await response.Content.ReadFromJsonAsync<Subproject> ();
-                return subProject ?? new Subproject ();
-                }
+            {
+                Subproject? subProject = await response.Content.ReadFromJsonAsync<Subproject>();
+                return subProject ?? new Subproject();
+            }
             else
-                {
-                return new Subproject ();
-                }
-            }
-        public async Task<bool> Update_Subproject (Subproject subProject)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_Subproject", subProject);
-            return response.IsSuccessStatusCode ? true : false;
+                return new Subproject();
             }
-        public async Task<bool> Update_SubprojectParent (Subproject subproject)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Update_SubprojectParent", subproject);
+        }
+
+        public async Task<bool> Update_Subproject(Subproject subProject)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_Subproject", subProject);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_Subprojects (int projectId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_Subprojects", projectId);
+        }
+
+        public async Task<bool> Update_SubprojectParent(Subproject subproject)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_SubprojectParent", subproject);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_Subproject (int subProjectId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_Subproject", subProjectId);
+        }
+
+        public async Task<bool> Delete_Subprojects(int projectId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_Subprojects", projectId);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
+        public async Task<bool> Delete_Subproject(int subProjectId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_Subproject", subProjectId);
+            return response.IsSuccessStatusCode ? true : false;
+        }
+
         #endregion
+
         #region N:Note
-        public async Task<int> Create_Note (Note note)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Create_Note", note);
+
+        public async Task<int> Create_Note(Note note)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Create_Note", note);
             return response.IsSuccessStatusCode ? 1 : 0;
-            }
-        public async Task<List<Note>> Read_Notes (int referenceId, int referenceType, int teacherId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Notes?referenceType={referenceType}&teacherid={teacherId}", referenceId);
+        }
+
+        public async Task<List<Note>> Read_Notes(int referenceId, int referenceType, int teacherId)
+        {
+            var response =
+                await _http.PostAsJsonAsync($"api/Read_Notes?referenceType={referenceType}&teacherid={teacherId}",
+                    referenceId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Note>? lstNotes = await response.Content.ReadFromJsonAsync<List<Note>> ();
-                return lstNotes ?? new List<Note> ();
-                }
-            else
-                {
-                return new List<Note> ();
-                }
-            }
-        public async Task<List<Note>> Read_DueNotes (int userId, int nDays)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_DueNotes?nDays={nDays}", userId);
+                List<Note>? lstNotes = await response.Content.ReadFromJsonAsync<List<Note>>();
+                return lstNotes ?? new List<Note>();
+            }
+            else
+            {
+                return new List<Note>();
+            }
+        }
+
+        public async Task<List<Note>> Read_DueNotes(int userId, int nDays)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_DueNotes?nDays={nDays}", userId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Note>? lstDueNotes = await response.Content.ReadFromJsonAsync<List<Note>> ();
-                return lstDueNotes ?? new List<Note> ();
-                }
-            else
-                {
-                return new List<Note> ();
-                }
-            }
-        public async Task<List<Note>> Read_NotesBySearchKey (string searchKey, int parentId, int mode)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_NotesBySearchKey?mode={mode}&searchKey={searchKey}", parentId);
+                List<Note>? lstDueNotes = await response.Content.ReadFromJsonAsync<List<Note>>();
+                return lstDueNotes ?? new List<Note>();
+            }
+            else
+            {
+                return new List<Note>();
+            }
+        }
+
+        public async Task<List<Note>> Read_NotesBySearchKey(string searchKey, int parentId, int mode)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_NotesBySearchKey?mode={mode}&searchKey={searchKey}",
+                parentId);
             if (response.IsSuccessStatusCode)
-                {
-                List<Note>? lstNotes = await response.Content.ReadFromJsonAsync<List<Note>> ();
-                return lstNotes ?? new List<Note> ();
-                }
-            else
-                {
-                return new List<Note> ();
-                }
-            }
-        public async Task<List<User>> Read_StudentsNotes (List<int> lstStudentsIds, int teacherId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_StudentsNotes?teacherid={teacherId}", lstStudentsIds);
+                List<Note>? lstNotes = await response.Content.ReadFromJsonAsync<List<Note>>();
+                return lstNotes ?? new List<Note>();
+            }
+            else
+            {
+                return new List<Note>();
+            }
+        }
+
+        public async Task<List<User>> Read_StudentsNotes(List<int> lstStudentsIds, int teacherId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_StudentsNotes?teacherid={teacherId}", lstStudentsIds);
             if (response.IsSuccessStatusCode)
-                {
-                List<User>? lstStudents = await response.Content.ReadFromJsonAsync<List<User>> ();
-                return lstStudents ?? new List<User> ();
-                }
-            else
-                {
-                return new List<User> ();
-                }
-            }
-        public async Task<Note> Read_Note (int noteId)
             {
-            var response = await _http.PostAsJsonAsync ($"api/Read_Note", noteId);
+                List<User>? lstStudents = await response.Content.ReadFromJsonAsync<List<User>>();
+                return lstStudents ?? new List<User>();
+            }
+            else
+            {
+                return new List<User>();
+            }
+        }
+
+        public async Task<Note> Read_Note(int noteId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Read_Note", noteId);
             if (response.IsSuccessStatusCode)
-                {
-                Note? note = await response.Content.ReadFromJsonAsync<Note> ();
-                return note ?? new Note ();
-                }
-            else
-                {
-                return new Note ();
-                }
-            }
-        public async Task<bool> Update_Note (Note note)
             {
-            var response = await _http.PostAsJsonAsync ("api/Update_Note", note);
+                Note? note = await response.Content.ReadFromJsonAsync<Note>();
+                return note ?? new Note();
+            }
+            else
+            {
+                return new Note();
+            }
+        }
+
+        public async Task<bool> Update_Note(Note note)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_Note", note);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Update_NoteParent (Note note)
-            {
-            var response = await _http.PostAsJsonAsync ("api/Update_NoteParent", note);
+        }
+
+        public async Task<bool> Update_NoteParent(Note note)
+        {
+            var response = await _http.PostAsJsonAsync("api/Update_NoteParent", note);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_Notes (int referenceId, int referenceType)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_Notes?referenceType={referenceType}", referenceId);
+        }
+
+        public async Task<bool> Delete_Notes(int referenceId, int referenceType)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_Notes?referenceType={referenceType}", referenceId);
             return response.IsSuccessStatusCode ? true : false;
-            }
-        public async Task<bool> Delete_Note (int noteId)
-            {
-            var response = await _http.PostAsJsonAsync ($"api/Delete_Note", noteId);
+        }
+
+        public async Task<bool> Delete_Note(int noteId)
+        {
+            var response = await _http.PostAsJsonAsync($"api/Delete_Note", noteId);
             return response.IsSuccessStatusCode ? true : false;
-            }
+        }
+
         #endregion
+
         #region FrontEnd Methods
-        public string ToPersianDate (string? dt)
-            {
+
+        public string ToPersianDate(string? dt)
+        {
             //this method converts miladi to shamsi just for display; actual data on db is miladi-date
             //handle null/empty
-            if (string.IsNullOrWhiteSpace (dt))
+            if (string.IsNullOrWhiteSpace(dt))
                 return "-";
             //TryParse: prevents error on invalid date formats
-            if (!DateTime.TryParse (dt, out DateTime datetime))
-                {
+            if (!DateTime.TryParse(dt, out DateTime datetime))
+            {
                 return "-";
-                }
+            }
+
             //convert to DateTime tehranTime
             //this line adds 3:300 for local time in Iran?  //datetime = datetime.AddHours (3).AddMinutes (30);
-            PersianCalendar pc = new PersianCalendar ();
-            return $"{pc.GetYear (datetime):0000}-" +
-                       $"{pc.GetMonth (datetime):00}-" +
-                       $"{pc.GetDayOfMonth (datetime):00} " +
-                       $"{pc.GetHour (datetime):00}:{pc.GetMinute (datetime):00}";
-            }
+            PersianCalendar pc = new PersianCalendar();
+            return $"{pc.GetYear(datetime):0000}-" +
+                   $"{pc.GetMonth(datetime):00}-" +
+                   $"{pc.GetDayOfMonth(datetime):00} " +
+                   $"{pc.GetHour(datetime):00}:{pc.GetMinute(datetime):00}";
+        }
+
         #endregion
+
         #region Export Excel
-        public byte [] GenerateExcel<T> (List<T> data, string sheetName = "Report")
-            {
-            using var wb = new XLWorkbook ();
-            var ws = wb.Worksheets.Add (sheetName);
-            var properties = typeof (T).GetProperties ();
+
+        public byte[] GenerateExcel<T>(List<T> data, string sheetName = "Report")
+        {
+            using var wb = new XLWorkbook();
+            var ws = wb.Worksheets.Add(sheetName);
+            var properties = typeof(T).GetProperties();
             //add headers
             for (int i = 3; i < properties.Length - 2; i++)
-                {
-                ws.Cell (1, i - 2).Value = properties [i].Name;
-                ws.Cell (1, i - 2).Style.Font.Bold = true;
-                ws.Cell (1, i - 2).Style.Fill.BackgroundColor = XLColor.LightBlue;
-                }
+            {
+                ws.Cell(1, i - 2).Value = properties[i].Name;
+                ws.Cell(1, i - 2).Style.Font.Bold = true;
+                ws.Cell(1, i - 2).Style.Fill.BackgroundColor = XLColor.LightBlue;
+            }
+
             //add rows
             for (int row = 0; row < data.Count; row++)
-                {
+            {
                 for (int col = 3; col < properties.Length - 2; col++)
-                    {
-                    var value = properties [col].GetValue (data [row]);
-                    ws.Cell (row + 2, col - 2).Value = value?.ToString () ?? "";
-                    }
+                {
+                    var value = properties[col].GetValue(data[row]);
+                    ws.Cell(row + 2, col - 2).Value = value?.ToString() ?? "";
                 }
+            }
+
             //auto-fit
-            ws.Columns ().AdjustToContents ();
-            using var stream = new MemoryStream ();
-            wb.SaveAs (stream);
-            return stream.ToArray ();
-            }
+            ws.Columns().AdjustToContents();
+            using var stream = new MemoryStream();
+            wb.SaveAs(stream);
+            return stream.ToArray();
+        }
+
         #endregion
+
         #region Export PDF
-        public byte [] GenerateReportMessageStudentsPdf (List<StudentMessage> lstStudentMessages, string reportType)
-            {
+
+        public byte[] GenerateReportMessageStudentsPdf(List<StudentMessage> lstStudentMessages, string reportType)
+        {
             /* NOTES for developers (1405.07.21):
             New QuestPDF upgrade doesn't automatically use Farsi-fonts. Use standard web-font 'Vazirmatn-Regular.ttf'.
             1- conpy font file into a project folder eg. D:\VS\Examiner\ExaminerB\Resources\Fonts
             2- register the font in program.cs (see there)
             3- use the font as below:
-            page.DefaultTextStyle (x => x 
+            page.DefaultTextStyle (x => x
                         .FontFamily ("Lato", "Vazirmatn")
                         .FontSize (10)); */
             QuestPDF.Settings.License = LicenseType.Community;
-            var report = Document.Create (container =>
+            var report = Document.Create(container =>
+            {
+                container.Page(page =>
                 {
-                    container.Page (page =>
-                        {
-                            page.Size (PageSizes.A4);
-                            page.Margin (1, Unit.Centimetre);
-                            page.PageColor (Colors.White);
-                            page.DefaultTextStyle (x => x
-                                .FontFamily ("Lato", "Vazirmatn")
-                                .FontSize (10));
-                            switch (reportType)
-                                {
-                                case "menuM31":
-                                        {
-                                        //menuM31
-                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Students Received a Message"));
-                                        page.Content ().Element (compose => ComposeContentM3x (compose, lstStudentMessages));
-                                        page.Footer ().Element (ComposeFooter);
-                                        break;
-                                        }
-                                case "menuM32":
-                                        {
-                                        //menuM32
-                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Students Received a Message But Haven't Read"));
-                                        page.Content ().Element (compose => ComposeContentM3x (compose, lstStudentMessages));
-                                        page.Footer ().Element (ComposeFooter);
-                                        break;
-                                        }
-                                case "menuM4x":
-                                        {
-                                        //menuM4x
-                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Messages Sent To Selected Students"));
-                                        page.Content ().Element (compose => ComposeContentM4x (compose, lstStudentMessages));
-                                        page.Footer ().Element (ComposeFooter);
-                                        break;
-                                        }
-                                default:
-                                        {
-                                        return;
-                                        }
-                                }
-                        });
-                });
-            return report.GeneratePdf ();
-            }
-        public byte [] GenerateReportStudentsFolderPdf (List<User> lstReportStudents, string reportType)
-            {
-            /* NOTES for developers (1405.07.21):
-            New QuestPDF upgrade doesn't automatically use Farsi-fonts. Use standard web-font 'Vazirmatn-Regular.ttf'.
-            1- conpy font file into a project folder eg. D:\VS\Examiner\ExaminerB\Resources\Fonts
-            2- register the font in program.cs (see there)
-            3- use the font as below:
-            page.DefaultTextStyle (x => x 
-                        .FontFamily ("Lato", "Vazirmatn")
-                        .FontSize (10)); */
-            QuestPDF.Settings.License = LicenseType.Community;
-            var report = Document.Create (container =>
-                {
-                    container.Page (page =>
-                        {
-                            page.Size (PageSizes.A4);
-                            page.Margin (1, Unit.Centimetre);
-                            page.PageColor (Colors.White);
-                            page.DefaultTextStyle (x => x
-                                .FontFamily ("Lato", "Vazirmatn")
-                                .FontSize (10));
-                            switch (reportType)
-                                {
-                                case "menuM16":
-                                        {
-                                        //menuM31
-                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Students Folders"));
-                                        page.Content ().Element (compose => ComposeContentM1x (compose, lstReportStudents));
-                                        page.Footer ().Element (ComposeFooter);
-                                        break;
-                                        }
-                                default:
-                                        {
-                                        return;
-                                        }
-                                }
-                        });
-                });
-            return report.GeneratePdf ();
-            }
-        public byte [] GenerateReportStudentsNotesPdf (List<User> lstReportStudentsNotes, string reportType)
-            {
-            /* NOTES for developers (1405.07.21):
-            New QuestPDF upgrade doesn't automatically use Farsi-fonts. Use standard web-font 'Vazirmatn-Regular.ttf'.
-            1- conpy font file into a project folder eg. D:\VS\Examiner\ExaminerB\Resources\Fonts
-            2- register the font in program.cs (see there)
-            3- use the font as below:
-            page.DefaultTextStyle (x => x 
-                        .FontFamily ("Lato", "Vazirmatn")
-                        .FontSize (10)); */
-            QuestPDF.Settings.License = LicenseType.Community;
-            var report = Document.Create (container =>
-                {
-                    container.Page (page =>
-                        {
-                            page.Size (PageSizes.A4);
-                            page.Margin (1, Unit.Centimetre);
-                            page.PageColor (Colors.White);
-                            page.DefaultTextStyle (x => x
-                                .FontFamily ("Lato", "Vazirmatn")
-                                .FontSize (10));
-                            switch (reportType)
-                                {
-                                case "cmdS1":
-                                        {
-                                        //menuM31
-                                        page.Header ().Element (compose => ComposeHeader (compose, "Report Students Notes for Selected Students"));
-                                        page.Content ().Element (compose => ComposeContentS1 (compose, lstReportStudentsNotes));
-                                        page.Footer ().Element (ComposeFooter);
-                                        break;
-                                        }
-                                default:
-                                        {
-                                        return;
-                                        }
-                                }
-                        });
-                });
-            return report.GeneratePdf ();
-            }
-        private void ComposeHeader (IContainer container, string title)
-            {
-            var imagePath = Path.Combine (Directory.GetCurrentDirectory (), "wwwroot", "img", "ExaminerJpStyle.png");
-            container.Row (row =>
-            {
-                row.RelativeItem ().Column (column =>
-                {
-                    column.Item ()
-                        .AlignCenter ()
-                        .Width (80)
-                        .Image (imagePath);
-                    column.Item ()
-                        .AlignCenter ()
-                        .Text (title)
-                        .FontSize (10)
-                        .Bold ()
-                        .FontColor (Colors.Grey.Darken2)
-                        .DirectionFromRightToLeft ();
-                    column.Item ()
-                        .AlignCenter ()
-                        .Text ($"{ToPersianDate (DateTime.Now.ToString ())}") //if DateTime.UtcNow is used, 2:30 or 3:30 must be added for Iran (depending on SummerTime)
-                        .FontSize (9)
-                        .FontColor (Colors.Red.Darken1);
-                });
-            });
-            }
-        private void ComposeFooter (IContainer container)
-            {
-            container.AlignCenter ().Text (x =>
-            {
-                x.Span ("صفحه ");
-                x.CurrentPageNumber ();
-                x.Span (" از ");
-                x.TotalPages ();
-            });
-            }
-        private void ComposeContentM1x (IContainer container, List<User> data)
-            {
-            container.PaddingVertical (10).Column (column =>
-            {
-                column.Spacing (10); //space between cards
-                foreach (var student in data)
+                    page.Size(PageSizes.A4);
+                    page.Margin(1, Unit.Centimetre);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x
+                        .FontFamily("Lato", "Vazirmatn")
+                        .FontSize(10));
+                    switch (reportType)
                     {
-                    column.Item ().Element (cardContainer =>
+                        case "menuM31":
+                        {
+                            //menuM31
+                            page.Header().Element(compose =>
+                                ComposeHeader(compose, "Report Students Received a Message"));
+                            page.Content().Element(compose => ComposeContentM3x(compose, lstStudentMessages));
+                            page.Footer().Element(ComposeFooter);
+                            break;
+                        }
+                        case "menuM32":
+                        {
+                            //menuM32
+                            page.Header().Element(compose =>
+                                ComposeHeader(compose, "Report Students Received a Message But Haven't Read"));
+                            page.Content().Element(compose => ComposeContentM3x(compose, lstStudentMessages));
+                            page.Footer().Element(ComposeFooter);
+                            break;
+                        }
+                        case "menuM4x":
+                        {
+                            //menuM4x
+                            page.Header().Element(compose =>
+                                ComposeHeader(compose, "Report Messages Sent To Selected Students"));
+                            page.Content().Element(compose => ComposeContentM4x(compose, lstStudentMessages));
+                            page.Footer().Element(ComposeFooter);
+                            break;
+                        }
+                        default:
+                        {
+                            return;
+                        }
+                    }
+                });
+            });
+            return report.GeneratePdf();
+        }
+
+        public byte[] GenerateReportStudentsFolderPdf(List<User> lstReportStudents, string reportType)
+        {
+            /* NOTES for developers (1405.07.21):
+            New QuestPDF upgrade doesn't automatically use Farsi-fonts. Use standard web-font 'Vazirmatn-Regular.ttf'.
+            1- conpy font file into a project folder eg. D:\VS\Examiner\ExaminerB\Resources\Fonts
+            2- register the font in program.cs (see there)
+            3- use the font as below:
+            page.DefaultTextStyle (x => x
+                        .FontFamily ("Lato", "Vazirmatn")
+                        .FontSize (10)); */
+            QuestPDF.Settings.License = LicenseType.Community;
+            var report = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(1, Unit.Centimetre);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x
+                        .FontFamily("Lato", "Vazirmatn")
+                        .FontSize(10));
+                    switch (reportType)
+                    {
+                        case "menuM16":
+                        {
+                            //menuM31
+                            page.Header().Element(compose => ComposeHeader(compose, "Report Students Folders"));
+                            page.Content().Element(compose => ComposeContentM1x(compose, lstReportStudents));
+                            page.Footer().Element(ComposeFooter);
+                            break;
+                        }
+                        default:
+                        {
+                            return;
+                        }
+                    }
+                });
+            });
+            return report.GeneratePdf();
+        }
+
+        public byte[] GenerateReportStudentsNotesPdf(List<User> lstReportStudentsNotes, string reportType)
+        {
+            /* NOTES for developers (1405.07.21):
+            New QuestPDF upgrade doesn't automatically use Farsi-fonts. Use standard web-font 'Vazirmatn-Regular.ttf'.
+            1- conpy font file into a project folder eg. D:\VS\Examiner\ExaminerB\Resources\Fonts
+            2- register the font in program.cs (see there)
+            3- use the font as below:
+            page.DefaultTextStyle (x => x
+                        .FontFamily ("Lato", "Vazirmatn")
+                        .FontSize (10)); */
+            QuestPDF.Settings.License = LicenseType.Community;
+            var report = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(1, Unit.Centimetre);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x
+                        .FontFamily("Lato", "Vazirmatn")
+                        .FontSize(10));
+                    switch (reportType)
+                    {
+                        case "cmdS1":
+                        {
+                            //menuM31
+                            page.Header().Element(compose =>
+                                ComposeHeader(compose, "Report Students Notes for Selected Students"));
+                            page.Content().Element(compose => ComposeContentS1(compose, lstReportStudentsNotes));
+                            page.Footer().Element(ComposeFooter);
+                            break;
+                        }
+                        default:
+                        {
+                            return;
+                        }
+                    }
+                });
+            });
+            return report.GeneratePdf();
+        }
+
+        private void ComposeHeader(IContainer container, string title)
+        {
+            var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "ExaminerJpStyle.png");
+            container.Row(row =>
+            {
+                row.RelativeItem().Column(column =>
+                {
+                    column.Item()
+                        .AlignCenter()
+                        .Width(80)
+                        .Image(imagePath);
+                    column.Item()
+                        .AlignCenter()
+                        .Text(title)
+                        .FontSize(10)
+                        .Bold()
+                        .FontColor(Colors.Grey.Darken2)
+                        .DirectionFromRightToLeft();
+                    column.Item()
+                        .AlignCenter()
+                        .Text(
+                            $"{ToPersianDate(DateTime.Now.ToString())}") //if DateTime.UtcNow is used, 2:30 or 3:30 must be added for Iran (depending on SummerTime)
+                        .FontSize(9)
+                        .FontColor(Colors.Red.Darken1);
+                });
+            });
+        }
+
+        private void ComposeFooter(IContainer container)
+        {
+            container.AlignCenter().Text(x =>
+            {
+                x.Span("صفحه ");
+                x.CurrentPageNumber();
+                x.Span(" از ");
+                x.TotalPages();
+            });
+        }
+
+        private void ComposeContentM1x(IContainer container, List<User> data)
+        {
+            container.PaddingVertical(10).Column(column =>
+            {
+                column.Spacing(10); //space between cards
+                foreach (var student in data)
+                {
+                    column.Item().Element(cardContainer =>
                     {
                         //CardStyle
                         cardContainer
-                            .Border (1)
-                            .BorderColor (Colors.Grey.Lighten4)
-                            .Background (Colors.Grey.Lighten5)
-                            .Padding (12)
-                            .Column (cardColumn =>
+                            .Border(1)
+                            .BorderColor(Colors.Grey.Lighten4)
+                            .Background(Colors.Grey.Lighten5)
+                            .Padding(12)
+                            .Column(cardColumn =>
                             {
-                                cardColumn.Spacing (8);
-                                cardColumn.Item ()
-                                    .AlignLeft ()
-                                    .Text (text =>
+                                cardColumn.Spacing(8);
+                                cardColumn.Item()
+                                    .AlignLeft()
+                                    .Text(text =>
                                     {
-                                        text.Span (student.UserName + "\r\n")
-                                            .FontSize (14)
-                                            .FontColor (Colors.Black)
-                                            .DirectionFromRightToLeft ();
-                                        text.Span (student.UserNickname + "\r\n")
-                                            .FontSize (12)
-                                            .FontColor (Colors.Black)
-                                            .DirectionFromRightToLeft ();
+                                        text.Span(student.UserName + "\r\n")
+                                            .FontSize(14)
+                                            .FontColor(Colors.Black)
+                                            .DirectionFromRightToLeft();
+                                        text.Span(student.UserNickname + "\r\n")
+                                            .FontSize(12)
+                                            .FontColor(Colors.Black)
+                                            .DirectionFromRightToLeft();
                                         if (student.IsActive)
-                                            {
-                                            text.Span (" #accActive")
-                                            .FontSize (9)
-                                            .FontColor (Colors.Blue.Darken3);
-                                            }
+                                        {
+                                            text.Span(" #accActive")
+                                                .FontSize(9)
+                                                .FontColor(Colors.Blue.Darken3);
+                                        }
+
                                         if (student.CanChangePass)
-                                            {
-                                            text.Span (" #changePass")
-                                            .FontSize (9)
-                                            .FontColor (Colors.Blue.Darken3);
-                                            }
+                                        {
+                                            text.Span(" #changePass")
+                                                .FontSize(9)
+                                                .FontColor(Colors.Blue.Darken3);
+                                        }
+
                                         //GROUPS
                                         if (student.StudentGroups.Count > 0)
-                                            {
+                                        {
                                             //text.Span ("\r\nGroups\r\n").FontSize (14);
-                                            cardColumn.Item ().Table (table =>
+                                            cardColumn.Item().Table(table =>
                                             {
                                                 //1 Define columns
-                                                table.ColumnsDefinition (columns =>
+                                                table.ColumnsDefinition(columns =>
                                                 {
-                                                    columns.ConstantColumn (20);  //row # fix width in points (1 point = 1/72 inch)
-                                                    columns.RelativeColumn (2);   //Groupname --relative width (using sum of all relatives) 
-                                                    columns.RelativeColumn (1);   //DateTimeJoined
+                                                    columns.ConstantColumn(
+                                                        20); //row # fix width in points (1 point = 1/72 inch)
+                                                    columns.RelativeColumn(
+                                                        2); //Groupname --relative width (using sum of all relatives) 
+                                                    columns.RelativeColumn(1); //DateTimeJoined
                                                 });
                                                 //2 Header
-                                                table.Header (header =>
+                                                table.Header(header =>
                                                 {
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                                                        .Text ("#").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                                                        .Text ("Group").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                                                        .Text ("Date/Time Joined").FontSize (9).Bold ();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("#").FontSize(9).Bold();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("Group").FontSize(9).Bold();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("Date/Time Joined").FontSize(9).Bold();
                                                 });
                                                 //3 Body rows
                                                 int index = 0;
                                                 foreach (StudentGroup stGrp in student.StudentGroups)
-                                                    {
+                                                {
                                                     index++;
                                                     var bg = index % 2 == 0 ? Colors.Grey.Lighten5 : Colors.White;
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (index.ToString ()).FontSize (9);
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (stGrp.GroupName).FontSize (9)
-                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (ToPersianDate (stGrp.DateTimeJoined.ToString ())).FontSize (9)
-                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                                                    }
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(index.ToString()).FontSize(9);
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(stGrp.GroupName).FontSize(9)
+                                                        .FontColor(Colors.Red.Darken3).DirectionFromRightToLeft();
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(ToPersianDate(stGrp.DateTimeJoined.ToString()))
+                                                        .FontSize(9)
+                                                        .FontColor(Colors.Red.Darken3).DirectionFromRightToLeft();
+                                                }
                                             });
-                                            }
+                                        }
+
                                         //COURSES
                                         if (student.StudentCourses.Count > 0)
-                                            {
+                                        {
                                             //text.Span ("\r\nCourses\r\n").FontSize (14);
-                                            cardColumn.Item ().Table (table =>
+                                            cardColumn.Item().Table(table =>
                                             {
                                                 //1 Define columns
-                                                table.ColumnsDefinition (columns =>
+                                                table.ColumnsDefinition(columns =>
                                                 {
-                                                    columns.ConstantColumn (20);  //row # fix width in points (1 point = 1/72 inch)
-                                                    columns.RelativeColumn (2);   //Coursename --relative width (using sum of all relatives) 
-                                                    columns.RelativeColumn (1);   //Active
-                                                    columns.RelativeColumn (1);   //Retry
-                                                    columns.RelativeColumn (1);   //Review
-                                                    columns.RelativeColumn (1);   //tests
+                                                    columns.ConstantColumn(
+                                                        20); //row # fix width in points (1 point = 1/72 inch)
+                                                    columns.RelativeColumn(
+                                                        2); //Coursename --relative width (using sum of all relatives) 
+                                                    columns.RelativeColumn(1); //Active
+                                                    columns.RelativeColumn(1); //Retry
+                                                    columns.RelativeColumn(1); //Review
+                                                    columns.RelativeColumn(1); //tests
                                                 });
                                                 //2 Header
-                                                table.Header (header =>
+                                                table.Header(header =>
                                                 {
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4).
-                                                        Text ("#").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4).
-                                                        Text ("Course").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4).
-                                                        Text ("Active").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4).
-                                                        Text ("Retry").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4).
-                                                        Text ("Review").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4).
-                                                        Text ("Tests").FontSize (9).Bold ();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("#")
+                                                        .FontSize(9).Bold();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("Course").FontSize(9).Bold();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("Active").FontSize(9).Bold();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("Retry").FontSize(9).Bold();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("Review").FontSize(9).Bold();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("Tests").FontSize(9).Bold();
                                                 });
                                                 //3 Body rows
                                                 int index = 0;
                                                 foreach (StudentCourse stCrs in student.StudentCourses)
-                                                    {
+                                                {
                                                     index++;
                                                     var bg = index % 2 == 0 ? Colors.Grey.Lighten5 : Colors.White;
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (index.ToString ()).FontSize (9);
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (stCrs.CourseName).FontSize (9)
-                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (stCrs.IsActive ? "Active" : "-").FontSize (9)
-                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (stCrs.Retry ? "Retry" : "-").FontSize (9)
-                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (stCrs.Review ? "Review" : "-").FontSize (9)
-                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (stCrs.CorrectAnswers + " / " + stCrs.NumberOfTests).FontSize (9)
-                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                                                    }
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(index.ToString()).FontSize(9);
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(stCrs.CourseName).FontSize(9)
+                                                        .FontColor(Colors.Red.Darken3).DirectionFromRightToLeft();
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(stCrs.IsActive ? "Active" : "-").FontSize(9)
+                                                        .FontColor(Colors.Red.Darken3).DirectionFromRightToLeft();
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(stCrs.Retry ? "Retry" : "-").FontSize(9)
+                                                        .FontColor(Colors.Red.Darken3).DirectionFromRightToLeft();
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(stCrs.Review ? "Review" : "-").FontSize(9)
+                                                        .FontColor(Colors.Red.Darken3).DirectionFromRightToLeft();
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(stCrs.CorrectAnswers + " / " +
+                                                                         stCrs.NumberOfTests).FontSize(9)
+                                                        .FontColor(Colors.Red.Darken3).DirectionFromRightToLeft();
+                                                }
                                             });
-                                            }
+                                        }
+
                                         //EXAMS
                                         if (student.StudentExams.Count > 0)
-                                            {
+                                        {
                                             //text.Span ("\r\nExams\r\n").FontSize (14);
-                                            cardColumn.Item ().Table (table =>
+                                            cardColumn.Item().Table(table =>
                                             {
                                                 //1 Define columns
-                                                table.ColumnsDefinition (columns =>
+                                                table.ColumnsDefinition(columns =>
                                                 {
-                                                    columns.ConstantColumn (20);  //row # fix width in points (1 point = 1/72 inch)
-                                                    columns.RelativeColumn (2);   //Examname --relative width (using sum of all relatives) 
-                                                    columns.RelativeColumn (2);   //Exam DateTime
-                                                    columns.RelativeColumn (1);   //Exam nTests
-                                                    columns.RelativeColumn (1);   //Exam Time(m)
-                                                    columns.RelativeColumn (2);   //DateTime Started
-                                                    columns.RelativeColumn (2);   //DateTime Finished
-                                                    columns.RelativeColumn (2);   //Point
+                                                    columns.ConstantColumn(
+                                                        20); //row # fix width in points (1 point = 1/72 inch)
+                                                    columns.RelativeColumn(
+                                                        2); //Examname --relative width (using sum of all relatives) 
+                                                    columns.RelativeColumn(2); //Exam DateTime
+                                                    columns.RelativeColumn(1); //Exam nTests
+                                                    columns.RelativeColumn(1); //Exam Time(m)
+                                                    columns.RelativeColumn(2); //DateTime Started
+                                                    columns.RelativeColumn(2); //DateTime Finished
+                                                    columns.RelativeColumn(2); //Point
                                                 });
                                                 //2 Header
-                                                table.Header (header =>
+                                                table.Header(header =>
                                                 {
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                                                        .Text ("#").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                                                        .Text ("Exam").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                                                        .Text ("Date/Time").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                                                        .Text ("Tests").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                                                        .Text ("Time").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                                                        .Text ("Started").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                                                        .Text ("Finished").FontSize (9).Bold ();
-                                                    header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                                                        .Text ("Point").FontSize (9).Bold ();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("#").FontSize(9).Bold();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("Exam").FontSize(9).Bold();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("Date/Time").FontSize(9).Bold();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("Tests").FontSize(9).Bold();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("Time").FontSize(9).Bold();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("Started").FontSize(9).Bold();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("Finished").FontSize(9).Bold();
+                                                    header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                                                        .Text("Point").FontSize(9).Bold();
                                                 });
                                                 //3 Body rows
                                                 int index = 0;
                                                 foreach (StudentExam exm in student.StudentExams)
-                                                    {
+                                                {
                                                     index++;
                                                     var bg = index % 2 == 0 ? Colors.Grey.Lighten5 : Colors.White;
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (index.ToString ()).FontSize (9);
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (exm.ExamTitle).FontSize (9)
-                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (ToPersianDate (exm.ExamDateTime.ToString ())).FontSize (9)
-                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (exm.ExamNTests.ToString ()).FontSize (9)
-                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (exm.ExamDuration.ToString ()).FontSize (9)
-                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (ToPersianDate(exm.DateTimeStart.ToString ())).FontSize (9)
-                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (ToPersianDate(exm.DateTimeFinish.ToString ())).FontSize (9)
-                                                        .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                                                    table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                                                        .Padding (4).Text (exm.StudentExamPoint.ToString ("F2") + "/20").FontSize (9)
-                                                        .FontColor (Colors.Blue.Darken3).DirectionFromRightToLeft ();
-                                                    }
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(index.ToString()).FontSize(9);
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(exm.ExamTitle).FontSize(9)
+                                                        .FontColor(Colors.Red.Darken3).DirectionFromRightToLeft();
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(ToPersianDate(exm.ExamDateTime.ToString()))
+                                                        .FontSize(9)
+                                                        .FontColor(Colors.Red.Darken3).DirectionFromRightToLeft();
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(exm.ExamNTests.ToString()).FontSize(9)
+                                                        .FontColor(Colors.Red.Darken3).DirectionFromRightToLeft();
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(exm.ExamDuration.ToString()).FontSize(9)
+                                                        .FontColor(Colors.Red.Darken3).DirectionFromRightToLeft();
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(ToPersianDate(exm.DateTimeStart.ToString()))
+                                                        .FontSize(9)
+                                                        .FontColor(Colors.Red.Darken3).DirectionFromRightToLeft();
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(ToPersianDate(exm.DateTimeFinish.ToString()))
+                                                        .FontSize(9)
+                                                        .FontColor(Colors.Red.Darken3).DirectionFromRightToLeft();
+                                                    table.Cell().Background(bg).BorderBottom(0.5f)
+                                                        .BorderColor(Colors.Grey.Lighten3)
+                                                        .Padding(4).Text(exm.StudentExamPoint.ToString("F2") + "/20")
+                                                        .FontSize(9)
+                                                        .FontColor(Colors.Blue.Darken3).DirectionFromRightToLeft();
+                                                }
                                             });
-                                            }
+                                        }
                                     });
                             });
                     });
-                    }
+                }
             });
-            }
-        private void ComposeContentM3x (IContainer container, List<StudentMessage> data)
+        }
+
+        private void ComposeContentM3x(IContainer container, List<StudentMessage> data)
+        {
+            container.PaddingVertical(10).Column(column =>
             {
-            container.PaddingVertical (10).Column (column =>
-            {
-                column.Spacing (10);
+                column.Spacing(10);
                 //Header card
-                column.Item ().Element (cardContainer =>
+                column.Item().Element(cardContainer =>
                 {
                     cardContainer
-                        .Border (1)
-                        .BorderColor (Colors.Grey.Lighten4)
-                        .Background (Colors.Yellow.Lighten5)
-                        .Padding (12)
-                        .ShowEntire ()
-                        .Column (cardColumn =>
+                        .Border(1)
+                        .BorderColor(Colors.Grey.Lighten4)
+                        .Background(Colors.Yellow.Lighten5)
+                        .Padding(12)
+                        .ShowEntire()
+                        .Column(cardColumn =>
                         {
-                            cardColumn.Spacing (8);
-                            cardColumn.Item ().AlignLeft ().Text (text =>
+                            cardColumn.Spacing(8);
+                            cardColumn.Item().AlignLeft().Text(text =>
                             {
-                                text.Span (data [0].MessageTitle)
-                                    .FontSize (9)
-                                    .FontColor (Colors.Red.Darken3)
-                                    .DirectionFromRightToLeft ();
-                                text.Span ($"\r\n {ToPersianDate (data [0].DateTimeCreated.ToString ())}  Created  \r\n {ToPersianDate (data [0].DateTimeSent.ToString ())}  Sent")
-                                    .FontSize (9)
-                                    .FontColor (Colors.Green.Darken3)
-                                    .DirectionFromRightToLeft ();
-                                text.Span ($"\r\n \r\n Message: \r\n {data [0].MessageBody.Trim ()}")
-                                    .FontSize (9)
-                                    .FontColor (Colors.Blue.Darken3)
-                                    .DirectionFromRightToLeft ();
+                                text.Span(data[0].MessageTitle)
+                                    .FontSize(9)
+                                    .FontColor(Colors.Red.Darken3)
+                                    .DirectionFromRightToLeft();
+                                text.Span(
+                                        $"\r\n {ToPersianDate(data[0].DateTimeCreated.ToString())}  Created  \r\n {ToPersianDate(data[0].DateTimeSent.ToString())}  Sent")
+                                    .FontSize(9)
+                                    .FontColor(Colors.Green.Darken3)
+                                    .DirectionFromRightToLeft();
+                                text.Span($"\r\n \r\n Message: \r\n {data[0].MessageBody.Trim()}")
+                                    .FontSize(9)
+                                    .FontColor(Colors.Blue.Darken3)
+                                    .DirectionFromRightToLeft();
                             });
                         });
                 });
                 //Table of students
-                column.Item ().Table (table =>
+                column.Item().Table(table =>
                 {
                     //1 Define columns
-                    table.ColumnsDefinition (columns =>
+                    table.ColumnsDefinition(columns =>
                     {
-                        columns.ConstantColumn (20);  //row # fix width in points (1 point = 1/72 inch)
-                        columns.RelativeColumn (2);   //Username --relative width (using sum of all relatives) 
-                        columns.RelativeColumn (3);   //Name
-                        columns.RelativeColumn (2);   //Read
-                        columns.RelativeColumn (1);   //Bookmarked
-                        columns.RelativeColumn (1);   //Deleted
-                        columns.RelativeColumn (1);   //Answer
+                        columns.ConstantColumn(20); //row # fix width in points (1 point = 1/72 inch)
+                        columns.RelativeColumn(2); //Username --relative width (using sum of all relatives) 
+                        columns.RelativeColumn(3); //Name
+                        columns.RelativeColumn(2); //Read
+                        columns.RelativeColumn(1); //Bookmarked
+                        columns.RelativeColumn(1); //Deleted
+                        columns.RelativeColumn(1); //Answer
                     });
                     //2 Header
-                    table.Header (header =>
+                    table.Header(header =>
                     {
-                        header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                            .Text ("#").FontSize (9).Bold ();
-                        header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                            .Text ("Username").FontSize (9).Bold ();
-                        header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                            .Text ("Display Name").FontSize (9).Bold ();
-                        header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                            .Text ("Read").FontSize (9).Bold ();
-                        header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                            .Text ("Bkmrkd").FontSize (9).Bold ();
-                        header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                            .Text ("Del").FontSize (9).Bold ();
-                        header.Cell ().Background (Colors.Grey.Lighten3).Padding (4)
-                            .Text ("Ans").FontSize (9).Bold ();
+                        header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                            .Text("#").FontSize(9).Bold();
+                        header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                            .Text("Username").FontSize(9).Bold();
+                        header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                            .Text("Display Name").FontSize(9).Bold();
+                        header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                            .Text("Read").FontSize(9).Bold();
+                        header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                            .Text("Bkmrkd").FontSize(9).Bold();
+                        header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                            .Text("Del").FontSize(9).Bold();
+                        header.Cell().Background(Colors.Grey.Lighten3).Padding(4)
+                            .Text("Ans").FontSize(9).Bold();
                     });
                     //3 Body rows
                     int index = 0;
                     foreach (var item in data)
-                        {
+                    {
                         index++;
                         var bg = index % 2 == 0 ? Colors.Grey.Lighten5 : Colors.White;
-                        table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                            .Padding (4).Text (index.ToString ()).FontSize (9);
-                        table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                            .Padding (4).Text (item.StudentName).FontSize (9)
-                            .FontColor (Colors.Red.Darken3).DirectionFromRightToLeft ();
-                        table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                            .Padding (4).Text (item.StudentNickname).FontSize (9)
-                            .FontColor (Colors.Blue.Darken3);
+                        table.Cell().Background(bg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten3)
+                            .Padding(4).Text(index.ToString()).FontSize(9);
+                        table.Cell().Background(bg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten3)
+                            .Padding(4).Text(item.StudentName).FontSize(9)
+                            .FontColor(Colors.Red.Darken3).DirectionFromRightToLeft();
+                        table.Cell().Background(bg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten3)
+                            .Padding(4).Text(item.StudentNickname).FontSize(9)
+                            .FontColor(Colors.Blue.Darken3);
                         //Read date-time
-                        var readCell = table.Cell ().Background (bg)
-                            .BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3).Padding (4);
+                        var readCell = table.Cell().Background(bg)
+                            .BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten3).Padding(4);
                         if ((item.StudentMessageTags & 1) == 1)
-                            readCell.Text (ToPersianDate (item.DateTimeRead.ToString ()))
-                                .FontSize (9).FontColor (Colors.Black);
+                            readCell.Text(ToPersianDate(item.DateTimeRead.ToString()))
+                                .FontSize(9).FontColor(Colors.Black);
                         else
-                            readCell.Text ("not read")
-                                .FontSize (9).FontColor (Colors.Red.Lighten2);
+                            readCell.Text("not read")
+                                .FontSize(9).FontColor(Colors.Red.Lighten2);
                         //Bkmrkd
-                        table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                            .Padding (4)
-                            .Text ((item.StudentMessageTags & 2) == 2 ? "BK" : "-")
-                            .FontSize (9);
+                        table.Cell().Background(bg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten3)
+                            .Padding(4)
+                            .Text((item.StudentMessageTags & 2) == 2 ? "BK" : "-")
+                            .FontSize(9);
                         //Del
-                        table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                            .Padding (4)
-                            .Text ((item.StudentMessageTags & 4) == 4 ? "D" : "-")
-                            .FontSize (9);
+                        table.Cell().Background(bg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten3)
+                            .Padding(4)
+                            .Text((item.StudentMessageTags & 4) == 4 ? "D" : "-")
+                            .FontSize(9);
                         //Ans
                         var answer = (item.StudentMessageTags & 16) == 16 ? "YES"
-                                   : (item.StudentMessageTags & 32) == 32 ? "NO"
-                                   : "-";
-                        table.Cell ().Background (bg).BorderBottom (0.5f).BorderColor (Colors.Grey.Lighten3)
-                            .Padding (4).Text (answer).FontSize (9);
-                        }
+                            : (item.StudentMessageTags & 32) == 32 ? "NO"
+                            : "-";
+                        table.Cell().Background(bg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten3)
+                            .Padding(4).Text(answer).FontSize(9);
+                    }
                 });
             });
-            }
-        private void ComposeContentM4x (IContainer container, List<StudentMessage> data)
+        }
+
+        private void ComposeContentM4x(IContainer container, List<StudentMessage> data)
+        {
+            container.PaddingVertical(10).Column(column =>
             {
-            container.PaddingVertical (10).Column (column =>
-            {
-                column.Spacing (10); //space between cards
-                column.Item ().Element (cardContainer =>
+                column.Spacing(10); //space between cards
+                column.Item().Element(cardContainer =>
                 {
                     //CardStyle
                     cardContainer
-                        .Border (1)
-                        .BorderColor (Colors.Grey.Lighten4)
-                        .Background (Colors.Yellow.Lighten5)
-                        .Padding (12)
-                        .ShowEntire ()
-                        .Column (cardColumn =>
+                        .Border(1)
+                        .BorderColor(Colors.Grey.Lighten4)
+                        .Background(Colors.Yellow.Lighten5)
+                        .Padding(12)
+                        .ShowEntire()
+                        .Column(cardColumn =>
                         {
-                            cardColumn.Spacing (8);
-                            cardColumn.Item ()
-                                .AlignLeft ()
-                                .Text (text =>
+                            cardColumn.Spacing(8);
+                            cardColumn.Item()
+                                .AlignLeft()
+                                .Text(text =>
                                 {
-                                    text.Span ("username: " + data [0].StudentName + "\r\n")
-                                        .FontSize (9)
-                                        .FontColor (Colors.Red.Darken3)
-                                        .DirectionFromRightToLeft ();
-                                    text.Span ("display name: " + data [0].StudentNickname)
-                                        .FontSize (9)
-                                        .FontColor (Colors.Blue.Darken3)
-                                        .DirectionFromRightToLeft ();
+                                    text.Span("username: " + data[0].StudentName + "\r\n")
+                                        .FontSize(9)
+                                        .FontColor(Colors.Red.Darken3)
+                                        .DirectionFromRightToLeft();
+                                    text.Span("display name: " + data[0].StudentNickname)
+                                        .FontSize(9)
+                                        .FontColor(Colors.Blue.Darken3)
+                                        .DirectionFromRightToLeft();
                                 });
                         });
                 });
 
                 foreach (var item in data)
-                    {
-                    column.Item ().Element (cardContainer =>
+                {
+                    column.Item().Element(cardContainer =>
                     {
                         //CardStyle
                         cardContainer
-                            .Border (1)
-                            .BorderColor (Colors.Grey.Lighten4)
-                            .Background (Colors.Grey.Lighten5)
-                            .Padding (12)
-                            .ShowEntire ()
-                            .Column (cardColumn =>
+                            .Border(1)
+                            .BorderColor(Colors.Grey.Lighten4)
+                            .Background(Colors.Grey.Lighten5)
+                            .Padding(12)
+                            .ShowEntire()
+                            .Column(cardColumn =>
                             {
-                                cardColumn.Spacing (8);
-                                cardColumn.Item ()
-                                    .AlignLeft ()
-                                    .Text (text =>
+                                cardColumn.Spacing(8);
+                                cardColumn.Item()
+                                    .AlignLeft()
+                                    .Text(text =>
                                     {
-                                        text.Span (item.MessageTitle + "\r\n")
-                                            .FontSize (9)
-                                            .FontColor (Colors.Red.Darken3)
-                                            .DirectionFromRightToLeft ();
-                                        text.Span ($"\r\n{ToPersianDate (item.DateTimeCreated.ToString ())}  Created  \r\n{ToPersianDate (item.DateTimeSent.ToString ())}  Sent\r\n")
-                                            .FontSize (9)
-                                            .FontColor (Colors.Black)
-                                            .DirectionFromRightToLeft ();
+                                        text.Span(item.MessageTitle + "\r\n")
+                                            .FontSize(9)
+                                            .FontColor(Colors.Red.Darken3)
+                                            .DirectionFromRightToLeft();
+                                        text.Span(
+                                                $"\r\n{ToPersianDate(item.DateTimeCreated.ToString())}  Created  \r\n{ToPersianDate(item.DateTimeSent.ToString())}  Sent\r\n")
+                                            .FontSize(9)
+                                            .FontColor(Colors.Black)
+                                            .DirectionFromRightToLeft();
                                         if ((item.StudentMessageTags & 1) == 1)
-                                            {
-                                            text.Span ($"{ToPersianDate (item.DateTimeRead.ToString ())}  Read\r\n")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Black)
-                                                .DirectionFromRightToLeft ();
-                                            }
+                                        {
+                                            text.Span($"{ToPersianDate(item.DateTimeRead.ToString())}  Read\r\n")
+                                                .FontSize(9)
+                                                .FontColor(Colors.Black)
+                                                .DirectionFromRightToLeft();
+                                        }
                                         else
-                                            {
-                                            text.Span ("  not read\r\n")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Red.Lighten2)
-                                                .DirectionFromRightToLeft ();
-                                            }
+                                        {
+                                            text.Span("  not read\r\n")
+                                                .FontSize(9)
+                                                .FontColor(Colors.Red.Lighten2)
+                                                .DirectionFromRightToLeft();
+                                        }
+
                                         if ((item.StudentMessageTags & 16) == 16)
-                                            {
-                                            text.Span ("  --Yes")
-                                            .FontColor (Colors.Blue.Darken1);
-                                            }
+                                        {
+                                            text.Span("  --Yes")
+                                                .FontColor(Colors.Blue.Darken1);
+                                        }
+
                                         if ((item.StudentMessageTags & 32) == 32)
-                                            {
-                                            text.Span ("  --No")
-                                            .FontColor (Colors.Red.Lighten1);
-                                            }
+                                        {
+                                            text.Span("  --No")
+                                                .FontColor(Colors.Red.Lighten1);
+                                        }
+
                                         if ((item.StudentMessageTags & 2) == 2)
-                                            {
-                                            text.Span ("  --bookmaked");
-                                            }
+                                        {
+                                            text.Span("  --bookmaked");
+                                        }
+
                                         if ((item.StudentMessageTags & 4) == 4)
-                                            {
-                                            text.Span ("  --deleted")
-                                            .FontColor (Colors.Grey.Darken1);
-                                            }
+                                        {
+                                            text.Span("  --deleted")
+                                                .FontColor(Colors.Grey.Darken1);
+                                        }
                                     });
                             });
                     });
-
-
-
-
-
-
-
-                    }
+                }
             });
-            }
-        private void ComposeContentS1 (IContainer container, List<User> data)
+        }
+
+        private void ComposeContentS1(IContainer container, List<User> data)
+        {
+            container.PaddingVertical(10).Column(column =>
             {
-            container.PaddingVertical (10).Column (column =>
-            {
-                column.Spacing (10); //space between cards
+                column.Spacing(10); //space between cards
                 foreach (var student in data)
-                    {
+                {
                     if (student.StudentNotes.Count > 0)
-                        {
-                        column.Item ().Element (cardContainer =>
+                    {
+                        column.Item().Element(cardContainer =>
                         {
                             //CardStyle
                             cardContainer
-                                .Border (1)
-                                .BorderColor (Colors.Grey.Lighten4)
-                                .Background (Colors.Grey.Lighten5)
-                                .Padding (12)
-                                .Column (cardColumn =>
+                                .Border(1)
+                                .BorderColor(Colors.Grey.Lighten4)
+                                .Background(Colors.Grey.Lighten5)
+                                .Padding(12)
+                                .Column(cardColumn =>
                                 {
-                                    cardColumn.Spacing (8);
-                                    cardColumn.Item ()
-                                        .AlignLeft ()
-                                        .Text (text =>
+                                    cardColumn.Spacing(8);
+                                    cardColumn.Item()
+                                        .AlignLeft()
+                                        .Text(text =>
                                         {
                                             //NOTESS
-                                            text.Span (student.StudentNotes [0].ReferenceName + "\r\n")
-                                            .FontSize (9)
-                                            .FontColor (Colors.Red.Darken3)
-                                            .DirectionFromRightToLeft ();
+                                            text.Span(student.StudentNotes[0].ReferenceName + "\r\n")
+                                                .FontSize(9)
+                                                .FontColor(Colors.Red.Darken3)
+                                                .DirectionFromRightToLeft();
                                             foreach (Note stNt in student.StudentNotes)
-                                                {
-                                                text.Span ("created at: ")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Black)
-                                                .DirectionFromRightToLeft ();
-                                                text.Span (ToPersianDate (stNt.NoteDateTime.ToString ()) + "\r\n")
-                                                .FontSize (9)
-                                                .FontColor (Colors.Red.Darken3)
-                                                .DirectionFromRightToLeft ();
-                                                text.Span (stNt.NoteText)
-                                                .FontSize (9)
-                                                .FontColor (Colors.Blue.Darken3)
-                                                .DirectionFromRightToLeft ();
-                                                text.Span ("\r\n");
-                                                }
+                                            {
+                                                text.Span("created at: ")
+                                                    .FontSize(9)
+                                                    .FontColor(Colors.Black)
+                                                    .DirectionFromRightToLeft();
+                                                text.Span(ToPersianDate(stNt.NoteDateTime.ToString()) + "\r\n")
+                                                    .FontSize(9)
+                                                    .FontColor(Colors.Red.Darken3)
+                                                    .DirectionFromRightToLeft();
+                                                text.Span(stNt.NoteText)
+                                                    .FontSize(9)
+                                                    .FontColor(Colors.Blue.Darken3)
+                                                    .DirectionFromRightToLeft();
+                                                text.Span("\r\n");
+                                            }
                                         });
                                 });
                         });
-                        }
                     }
+                }
             });
-            }
-        #endregion
         }
+
+        #endregion
     }
+}

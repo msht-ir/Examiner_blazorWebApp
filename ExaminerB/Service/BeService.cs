@@ -8,307 +8,331 @@ using Department = ExaminerS.Models.Department;
 using Group = ExaminerS.Models.Group;
 
 namespace ExaminerB.Services2Backend
-    {
+{
     public class BeService : BeIService
-        {
+    {
         private readonly IConfiguration _config;
-        public BeService (IConfiguration config) => _config = config;
+        public BeService(IConfiguration config) => _config = config;
+
         #region Login
-        public async Task<User?> LoginTeacherAsync (string username, string password)
-            {
-            string? connString = _config.GetConnectionString ("cnni");
+
+        public async Task<User?> LoginTeacherAsync(string username, string password)
+        {
+            string? connString = _config.GetConnectionString("cnni");
             string sql = "dbo.sp_LoginTeacher";
-            using SqlConnection cnn = new (connString);
-            User userOut = new ();
+            using SqlConnection cnn = new(connString);
+            User userOut = new();
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@usr", username);
-                cmd.Parameters.AddWithValue ("@pwd", password);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-                while (await reader.ReadAsync ())
+                cmd.Parameters.AddWithValue("@usr", username);
+                cmd.Parameters.AddWithValue("@pwd", password);
+                SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    if ((username.ToLower() == reader.GetString(2).ToLower()) && (password == reader.GetString(3)))
                     {
-                    if ((username.ToLower () == reader.GetString (2).ToLower ()) && (password == reader.GetString (3)))
-                        {
-                        userOut.UserId = reader.GetInt32 (0);
-                        userOut.DepartmentId = reader.GetInt32 (1);
-                        userOut.UserName = reader.GetString (2);
-                        userOut.UserPass = reader.GetString (3);
-                        userOut.UserNickname = reader.GetString (4);
+                        userOut.UserId = reader.GetInt32(0);
+                        userOut.DepartmentId = reader.GetInt32(1);
+                        userOut.UserName = reader.GetString(2);
+                        userOut.UserPass = reader.GetString(3);
+                        userOut.UserNickname = reader.GetString(4);
                         userOut.UserRole = "teacher";
-                        userOut.UserTags = reader.GetInt32 (5);
-                        }
+                        userOut.UserTags = reader.GetInt32(5);
                     }
-                await cnn.CloseAsync ();
+                }
+
+                await cnn.CloseAsync();
 
                 if (userOut.UserId > 0)
-                    {
-                    await LogAsync (userOut.UserId, cnn);
-                    return userOut;
-                    }
-                return null;
-                }
-            catch (Exception ex)
                 {
-                Console.WriteLine ("LoginAsTeacher error: " + ex.Message);
-                cnn.Close ();
-                return null;
+                    await LogAsync(userOut.UserId, cnn);
+                    return userOut;
                 }
+
+                return null;
             }
-        public async Task<User?> LoginStudentAsync (string username, string password)
+            catch (Exception ex)
             {
-            string? connString = _config.GetConnectionString ("cnni");
+                Console.WriteLine("LoginAsTeacher error: " + ex.Message);
+                cnn.Close();
+                return null;
+            }
+        }
+
+        public async Task<User?> LoginStudentAsync(string username, string password)
+        {
+            string? connString = _config.GetConnectionString("cnni");
             string sql = "dbo.sp_LoginStudent";
-            using SqlConnection cnn = new (connString);
-            User userOut = new ();
+            using SqlConnection cnn = new(connString);
+            User userOut = new();
             try
-                {
-                await cnn.OpenAsync ();
-                using SqlCommand cmd = new (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                using SqlCommand cmd = new(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentname", username);
-                cmd.Parameters.AddWithValue ("@studentpass", password);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-                while (await reader.ReadAsync ())
+                cmd.Parameters.AddWithValue("@studentname", username);
+                cmd.Parameters.AddWithValue("@studentpass", password);
+                SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    if ((username.ToLower() == reader.GetString(2).ToLower()) && (password == reader.GetString(3)))
                     {
-                    if ((username.ToLower () == reader.GetString (2).ToLower ()) && (password == reader.GetString (3)))
-                        {
-                        userOut.UserId = reader.GetInt32 (0);
-                        userOut.DepartmentId = reader.GetInt32 (1);
-                        userOut.UserName = reader.GetString (2);
-                        userOut.UserPass = reader.GetString (3);
+                        userOut.UserId = reader.GetInt32(0);
+                        userOut.DepartmentId = reader.GetInt32(1);
+                        userOut.UserName = reader.GetString(2);
+                        userOut.UserPass = reader.GetString(3);
                         userOut.UserRole = "student";
-                        userOut.UserTags = reader.GetInt32 (4);
-                        userOut.UserNickname = reader.GetString (5);
-                        }
+                        userOut.UserTags = reader.GetInt32(4);
+                        userOut.UserNickname = reader.GetString(5);
                     }
+                }
+
                 if (userOut.UserId > 0)
-                    {
-                    await cnn.CloseAsync (); //logout because LogAsync tries to open cnn itset 
-                    await LogAsync (userOut.UserId, cnn);
+                {
+                    await cnn.CloseAsync(); //logout because LogAsync tries to open cnn itset 
+                    await LogAsync(userOut.UserId, cnn);
                     return userOut;
-                    }
-                return new User ();
                 }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("*BeService: LoginAsStudent error: \n" + ex.Message);
-                return new User ();
-                }
+
+                return new User();
             }
-        public async Task LogAsync (int userId, SqlConnection cnn)
+            catch (Exception ex)
             {
+                Console.WriteLine("*BeService: LoginAsStudent error: \n" + ex.Message);
+                return new User();
+            }
+        }
+
+        public async Task LogAsync(int userId, SqlConnection cnn)
+        {
             string sql = "dbo.sp_Log";
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new (sql, cnn);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@userid", userId);
-            cmd.Parameters.AddWithValue ("@userlogtext", 21);
-            await cmd.ExecuteNonQueryAsync ();
-            }
+            cmd.Parameters.AddWithValue("@userid", userId);
+            cmd.Parameters.AddWithValue("@userlogtext", 21);
+            await cmd.ExecuteNonQueryAsync();
+        }
+
         #endregion
+
         #region U:Usrs
-        public async Task<bool> Create_TeacherAsync (User teacher)
-            {
+
+        public async Task<bool> Create_TeacherAsync(User teacher)
+        {
             string sql = "dbo.sp_CreateTeacher";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
             try
-                {
-                using SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                using SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@usrname", teacher.UserName);
-                cmd.Parameters.AddWithValue ("@usrpass", teacher.UserPass);
-                cmd.Parameters.AddWithValue ("@usrnickname", teacher.UserNickname);
-                cmd.Parameters.AddWithValue ("@usremail", teacher.UserEmail);
-                await cnn.OpenAsync ();
-                await cmd.ExecuteScalarAsync ();
-                await cnn.CloseAsync ();
+                cmd.Parameters.AddWithValue("@usrname", teacher.UserName);
+                cmd.Parameters.AddWithValue("@usrpass", teacher.UserPass);
+                cmd.Parameters.AddWithValue("@usrnickname", teacher.UserNickname);
+                cmd.Parameters.AddWithValue("@usremail", teacher.UserEmail);
+                await cnn.OpenAsync();
+                await cmd.ExecuteScalarAsync();
+                await cnn.CloseAsync();
                 return true;
-                }
+            }
             catch (Exception)
-                {
-                await cnn.CloseAsync ();
+            {
+                await cnn.CloseAsync();
                 return false;
-                }
             }
-        public async Task<List<User>> Read_TeachersAsync (int departmentId)
-            {
-            var users = new List<User> ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            using SqlCommand cmd = new ("dbo.sp_ReadTeachers", cnn); // -- ORDER BY usrNickName
+        }
+
+        public async Task<List<User>> Read_TeachersAsync(int departmentId)
+        {
+            var users = new List<User>();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            using SqlCommand cmd = new("dbo.sp_ReadTeachers", cnn); // -- ORDER BY usrNickName
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("departmentid", departmentId);
-            await cnn.OpenAsync ();
-            using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            while (await reader.ReadAsync ())
-                {
-                users.Add (new User
-                    {
-                    UserId = reader.GetInt32 (0),
-                    DepartmentId = reader.GetInt32 (1),
-                    UserName = reader.GetString (2),
-                    UserPass = reader.GetString (3),
-                    UserNickname = reader.GetString (4),
-                    UserEmail = reader.GetString (5),
-                    UserTags = Convert.ToInt32 (reader.GetInt32 (6))
-                    });
-                }
-            return users;
-            }
-        public async Task<List<User>> Read_NewTeachersAsync ()
+            cmd.Parameters.AddWithValue("departmentid", departmentId);
+            await cnn.OpenAsync();
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
             {
-            var users = new List<User> ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            using SqlCommand cmd = new ("dbo.sp_ReadNewTeachers", cnn); // -- ORDER BY usrNickName
+                users.Add(new User
+                {
+                    UserId = reader.GetInt32(0),
+                    DepartmentId = reader.GetInt32(1),
+                    UserName = reader.GetString(2),
+                    UserPass = reader.GetString(3),
+                    UserNickname = reader.GetString(4),
+                    UserEmail = reader.GetString(5),
+                    UserTags = Convert.ToInt32(reader.GetInt32(6))
+                });
+            }
+
+            return users;
+        }
+
+        public async Task<List<User>> Read_NewTeachersAsync()
+        {
+            var users = new List<User>();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            using SqlCommand cmd = new("dbo.sp_ReadNewTeachers", cnn); // -- ORDER BY usrNickName
             cmd.CommandType = CommandType.StoredProcedure;
-            await cnn.OpenAsync ();
-            using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            while (await reader.ReadAsync ())
-                {
-                users.Add (new User
-                    {
-                    UserId = reader.GetInt32 (0),
-                    DepartmentId = reader.GetInt32 (1),
-                    UserName = reader.GetString (2),
-                    UserPass = reader.GetString (3),
-                    UserNickname = reader.GetString (4),
-                    UserEmail = reader.GetString (5),
-                    UserTags = Convert.ToInt32 (reader.GetInt32 (6))
-                    });
-                }
-            return users;
-            }
-        public async Task<bool> Update_TeacherAsync (User user)
+            await cnn.OpenAsync();
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
             {
+                users.Add(new User
+                {
+                    UserId = reader.GetInt32(0),
+                    DepartmentId = reader.GetInt32(1),
+                    UserName = reader.GetString(2),
+                    UserPass = reader.GetString(3),
+                    UserNickname = reader.GetString(4),
+                    UserEmail = reader.GetString(5),
+                    UserTags = Convert.ToInt32(reader.GetInt32(6))
+                });
+            }
+
+            return users;
+        }
+
+        public async Task<bool> Update_TeacherAsync(User user)
+        {
             string sql = "dbo.sp_UpdateTeacher";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@departmentid", user.DepartmentId);
-                cmd.Parameters.AddWithValue ("@usrname", user.UserName);
-                cmd.Parameters.AddWithValue ("@usrpass", user.UserPass);
-                cmd.Parameters.AddWithValue ("@usrnickname", user.UserNickname);
-                cmd.Parameters.AddWithValue ("@usremail", user.UserEmail);
-                cmd.Parameters.AddWithValue ("@usertags", user.UserTags);
-                cmd.Parameters.AddWithValue ("@userid", user.UserId);
-                await cmd.ExecuteNonQueryAsync ();
+                cmd.Parameters.AddWithValue("@departmentid", user.DepartmentId);
+                cmd.Parameters.AddWithValue("@usrname", user.UserName);
+                cmd.Parameters.AddWithValue("@usrpass", user.UserPass);
+                cmd.Parameters.AddWithValue("@usrnickname", user.UserNickname);
+                cmd.Parameters.AddWithValue("@usremail", user.UserEmail);
+                cmd.Parameters.AddWithValue("@usertags", user.UserTags);
+                cmd.Parameters.AddWithValue("@userid", user.UserId);
+                await cmd.ExecuteNonQueryAsync();
                 return true;
-                }
+            }
             catch (Exception ex)
-                {
+            {
                 return false;
-                }
             }
-        public async Task<bool> Delete_TeacherAsync (int userId)
-            {
+        }
+
+        public async Task<bool> Delete_TeacherAsync(int userId)
+        {
             string sql = "dbo.sp_DeleteTeacher";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@teacherid", userId);
-            await cmd.ExecuteNonQueryAsync ();
+            cmd.Parameters.AddWithValue("@teacherid", userId);
+            await cmd.ExecuteNonQueryAsync();
             return true;
-            }
+        }
+
         #endregion
+
         #region S:Students
-        public async Task<int> Create_StudentAsync (User student)
-            {
+
+        public async Task<int> Create_StudentAsync(User student)
+        {
             string sql = @"dbo.sp_CreateStudent";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add ("@departmentid", SqlDbType.Int).Value = student.DepartmentId;
-                cmd.Parameters.Add ("@studentname", SqlDbType.NVarChar, 50).Value = student.UserName;
-                cmd.Parameters.Add ("@studentpass", SqlDbType.NVarChar, 50).Value = student.UserPass;
-                cmd.Parameters.Add ("@studentnickname", SqlDbType.NVarChar, 50).Value = student.UserNickname;
-                cmd.Parameters.Add ("@studenttags", SqlDbType.Int).Value = student.UserTags;
-                int i = (int) await cmd.ExecuteScalarAsync ();
+                cmd.Parameters.Add("@departmentid", SqlDbType.Int).Value = student.DepartmentId;
+                cmd.Parameters.Add("@studentname", SqlDbType.NVarChar, 50).Value = student.UserName;
+                cmd.Parameters.Add("@studentpass", SqlDbType.NVarChar, 50).Value = student.UserPass;
+                cmd.Parameters.Add("@studentnickname", SqlDbType.NVarChar, 50).Value = student.UserNickname;
+                cmd.Parameters.Add("@studenttags", SqlDbType.Int).Value = student.UserTags;
+                int i = (int)await cmd.ExecuteScalarAsync();
                 return i;
-                }
+            }
             catch (Exception ex)
-                {
-                await cnn.CloseAsync ();
-                Console.WriteLine ($"DB error: {ex.Message}");
+            {
+                await cnn.CloseAsync();
+                Console.WriteLine($"DB error: {ex.Message}");
                 return 0;
-                }
             }
-        public async Task<List<User>> Read_StudentsAllAsync (int departmentId)
-            {
-            List<User> lstStudents = new List<User> ();
+        }
+
+        public async Task<List<User>> Read_StudentsAllAsync(int departmentId)
+        {
+            List<User> lstStudents = new List<User>();
             string sql = "dbo.sp_ReadStudentsAll";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@departmentid", departmentId);
-            await cnn.OpenAsync ();
-            using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            while (await reader.ReadAsync ())
-                {
-                lstStudents.Add (new User
-                    {
-                    UserId = reader.GetInt32 (0),
-                    DepartmentId = reader.GetInt32 (1),
-                    UserName = reader.GetString (2),
-                    UserPass = reader.GetString (3),
-                    UserNickname = reader.GetString (4),
-                    UserTags = reader.GetInt32 (5),
-                    UserRole = "-",
-                    StudentGroups = new List<StudentGroup> (),
-                    StudentCourses = new List<StudentCourse> (),
-                    StudentExams = new List<StudentExam> (),
-                    StudentMessages = new List<StudentMessage> (),
-                    StudentNotes = new List<Note> ()
-                    });
-                }
-            return lstStudents;
-            }
-        public async Task<List<User>> Read_StudentsByKeywordAsync (int departmentId, string keyword, int readStudentGCEM)
+            cmd.Parameters.AddWithValue("@departmentid", departmentId);
+            await cnn.OpenAsync();
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
             {
-            keyword = "%" + keyword + "%";
-            List<User> lstStudents = new List<User> ();
-            string sql = "dbo.sp_ReadStudentsByKeyword";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new (sql, cnn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@departmentid", departmentId);
-            cmd.Parameters.Add ("@keyword", SqlDbType.NVarChar, 200).Value = keyword;
-            await cnn.OpenAsync ();
-            using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            while (await reader.ReadAsync ())
+                lstStudents.Add(new User
                 {
-                lstStudents.Add (new User
-                    {
-                    UserId = reader.GetInt32 (0),
-                    DepartmentId = reader.GetInt32 (1),
-                    UserName = reader.GetString (2),
-                    UserPass = reader.GetString (3),
-                    UserNickname = reader.GetString (4),
-                    UserTags = reader.GetInt32 (5),
+                    UserId = reader.GetInt32(0),
+                    DepartmentId = reader.GetInt32(1),
+                    UserName = reader.GetString(2),
+                    UserPass = reader.GetString(3),
+                    UserNickname = reader.GetString(4),
+                    UserTags = reader.GetInt32(5),
                     UserRole = "-",
-                    StudentGroups = new List<StudentGroup> (),
-                    StudentCourses = new List<StudentCourse> (),
-                    StudentExams = new List<StudentExam> (),
-                    StudentMessages = new List<StudentMessage> (),
-                    StudentNotes = new List<Note> ()
-                    });
-                }
+                    StudentGroups = new List<StudentGroup>(),
+                    StudentCourses = new List<StudentCourse>(),
+                    StudentExams = new List<StudentExam>(),
+                    StudentMessages = new List<StudentMessage>(),
+                    StudentNotes = new List<Note>()
+                });
+            }
+
+            return lstStudents;
+        }
+
+        public async Task<List<User>> Read_StudentsByKeywordAsync(int departmentId, string keyword, int readStudentGCEM)
+        {
+            keyword = "%" + keyword + "%";
+            List<User> lstStudents = new List<User>();
+            string sql = "dbo.sp_ReadStudentsByKeyword";
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new(sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@departmentid", departmentId);
+            cmd.Parameters.Add("@keyword", SqlDbType.NVarChar, 200).Value = keyword;
+            await cnn.OpenAsync();
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                lstStudents.Add(new User
+                {
+                    UserId = reader.GetInt32(0),
+                    DepartmentId = reader.GetInt32(1),
+                    UserName = reader.GetString(2),
+                    UserPass = reader.GetString(3),
+                    UserNickname = reader.GetString(4),
+                    UserTags = reader.GetInt32(5),
+                    UserRole = "-",
+                    StudentGroups = new List<StudentGroup>(),
+                    StudentCourses = new List<StudentCourse>(),
+                    StudentExams = new List<StudentExam>(),
+                    StudentMessages = new List<StudentMessage>(),
+                    StudentNotes = new List<Note>()
+                });
+            }
+
             //to read StudentGroups in mode 'ByStudentId' teacher id is required!
             //if ((readStudentGCEM & 1) == 1)
             //    {
@@ -318,3834 +342,4183 @@ namespace ExaminerB.Services2Backend
             //        }
             //    }
             if ((readStudentGCEM & 2) == 2)
-                {
-                foreach (User student in lstStudents)
-                    {
-                    student.StudentCourses = await Read_StudentCoursesAsync ("S", student.UserId, 0);
-                    }
-                }
-            if ((readStudentGCEM & 4) == 4)
-                {
-                foreach (User student in lstStudents)
-                    {
-                    student.StudentExams = await Read_StudentExamsAsync ("ByStudentIdAndTeacherId", student.UserId, 0);
-                    }
-                }
-            if ((readStudentGCEM & 8) == 8)
-                {
-                foreach (User student in lstStudents)
-                    {
-                    student.StudentMessages = await Read_StudentMessagesAsync ("S", student.UserId, 0);
-                    }
-                }
-            return lstStudents;
-            }
-        public async Task<List<User>> Read_StudentsByGCEMSIdAsync (int departmentId, string mode, int Id, int teacherId, int readStudentGCEM)
             {
-            //read list of Students by {G/C/E/M}Id
-            List<User> lstStudents = new List<User> ();
-            string sql = "dbo.sp_ReadStudentsByGCEMSId";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            try
+                foreach (User student in lstStudents)
                 {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+                    student.StudentCourses = await Read_StudentCoursesAsync("S", student.UserId, 0);
+                }
+            }
+
+            if ((readStudentGCEM & 4) == 4)
+            {
+                foreach (User student in lstStudents)
+                {
+                    student.StudentExams = await Read_StudentExamsAsync("ByStudentIdAndTeacherId", student.UserId, 0);
+                }
+            }
+
+            if ((readStudentGCEM & 8) == 8)
+            {
+                foreach (User student in lstStudents)
+                {
+                    student.StudentMessages = await Read_StudentMessagesAsync("S", student.UserId, 0);
+                }
+            }
+
+            return lstStudents;
+        }
+
+        public async Task<List<User>> Read_StudentsByGCEMSIdAsync(int departmentId, string mode, int Id, int teacherId,
+            int readStudentGCEM)
+        {
+            //read list of Students by {G/C/E/M}Id
+            List<User> lstStudents = new List<User>();
+            string sql = "dbo.sp_ReadStudentsByGCEMSId";
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            try
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@departmentid", departmentId);
-                cmd.Parameters.AddWithValue ("@mode", mode);
-                cmd.Parameters.AddWithValue ("@id", Id);
-                var reader = await cmd.ExecuteReaderAsync ();
-                while (await reader.ReadAsync ())
-                    {
+                cmd.Parameters.AddWithValue("@departmentid", departmentId);
+                cmd.Parameters.AddWithValue("@mode", mode);
+                cmd.Parameters.AddWithValue("@id", Id);
+                var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
                     var student = new User
-                        {
-                        UserId = reader.GetInt32 (0),
-                        UserName = reader.GetString (1),
-                        UserPass = reader.GetString (2),
-                        UserNickname = reader.GetString (3),
-                        UserTags = reader.GetInt32 (4),
-                        UserRole = "-",
-                        StudentGroups = new List<StudentGroup> (),
-                        StudentCourses = new List<StudentCourse> (),
-                        StudentExams = new List<StudentExam> (),
-                        StudentMessages = new List<StudentMessage> (),
-                        StudentNotes = new List<Note> ()
-                        };
-                    lstStudents.Add (student);
-                    }
-                if ((readStudentGCEM & 1) == 1)
                     {
+                        UserId = reader.GetInt32(0),
+                        UserName = reader.GetString(1),
+                        UserPass = reader.GetString(2),
+                        UserNickname = reader.GetString(3),
+                        UserTags = reader.GetInt32(4),
+                        UserRole = "-",
+                        StudentGroups = new List<StudentGroup>(),
+                        StudentCourses = new List<StudentCourse>(),
+                        StudentExams = new List<StudentExam>(),
+                        StudentMessages = new List<StudentMessage>(),
+                        StudentNotes = new List<Note>()
+                    };
+                    lstStudents.Add(student);
+                }
+
+                if ((readStudentGCEM & 1) == 1)
+                {
                     //read studentGroups 
                     foreach (User student in lstStudents)
-                        {
-                        student.StudentGroups = await Read_StudentGroupsAsync (student.UserId, "ByStudentId", teacherId);
-                        }
-                    }
-                if ((readStudentGCEM & 2) == 2)
                     {
+                        student.StudentGroups = await Read_StudentGroupsAsync(student.UserId, "ByStudentId", teacherId);
+                    }
+                }
+
+                if ((readStudentGCEM & 2) == 2)
+                {
                     //read studentCourses 
                     foreach (User student in lstStudents)
-                        {
-                        student.StudentCourses = await Read_StudentCoursesAsync ("X", student.UserId, teacherId);
-                        }
-                    }
-                if ((readStudentGCEM & 4) == 4)
                     {
+                        student.StudentCourses = await Read_StudentCoursesAsync("X", student.UserId, teacherId);
+                    }
+                }
+
+                if ((readStudentGCEM & 4) == 4)
+                {
                     //read studentExams 
                     foreach (User student in lstStudents)
-                        {
-                        student.StudentExams = await Read_StudentExamsAsync ("ByStudentIdAndTeacherId", student.UserId, teacherId);
-                        }
-                    }
-                if ((readStudentGCEM & 8) == 8)
                     {
+                        student.StudentExams =
+                            await Read_StudentExamsAsync("ByStudentIdAndTeacherId", student.UserId, teacherId);
+                    }
+                }
+
+                if ((readStudentGCEM & 8) == 8)
+                {
                     //read studentMessages 
                     foreach (User student in lstStudents)
-                        {
-                        student.StudentMessages = await Read_StudentMessagesAsync ("S", student.UserId, teacherId);
-                        }
+                    {
+                        student.StudentMessages = await Read_StudentMessagesAsync("S", student.UserId, teacherId);
                     }
+                }
+
                 return lstStudents;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("----- BE: Read_StudentsByGCEMSIdAsync : \n" + ex.ToString ());
-                return new List<User> ();
-                }
             }
-        public async Task<bool> Update_StudentAsync (User student)
+            catch (Exception ex)
             {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+                Console.WriteLine("----- BE: Read_StudentsByGCEMSIdAsync : \n" + ex.ToString());
+                return new List<User>();
+            }
+        }
+
+        public async Task<bool> Update_StudentAsync(User student)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_UpdateStudent";
-            await cnn.OpenAsync ();
-            var cmd = new SqlCommand (sql, cnn);
+            await cnn.OpenAsync();
+            var cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentid", student.UserId);
-            cmd.Parameters.AddWithValue ("@studentname", student.UserName);
-            cmd.Parameters.AddWithValue ("@studentpass", student.UserPass);
-            cmd.Parameters.AddWithValue ("@studentnickname", student.UserNickname);
-            cmd.Parameters.AddWithValue ("@studenttags", student.UserTags);
-            await cmd.ExecuteNonQueryAsync ();
+            cmd.Parameters.AddWithValue("@studentid", student.UserId);
+            cmd.Parameters.AddWithValue("@studentname", student.UserName);
+            cmd.Parameters.AddWithValue("@studentpass", student.UserPass);
+            cmd.Parameters.AddWithValue("@studentnickname", student.UserNickname);
+            cmd.Parameters.AddWithValue("@studenttags", student.UserTags);
+            await cmd.ExecuteNonQueryAsync();
             return true;
-            }
-        public async Task<bool> Update_StudentTagsAsync (User student)
-            {
+        }
+
+        public async Task<bool> Update_StudentTagsAsync(User student)
+        {
             //tags: 1:Active 2:ChangePass            
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_UpdateStudentTags";
-            await cnn.OpenAsync ();
-            var cmd = new SqlCommand (sql, cnn);
+            await cnn.OpenAsync();
+            var cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studenttags", student.UserTags);
-            cmd.Parameters.AddWithValue ("@studentid", student.UserId);
-            await cmd.ExecuteNonQueryAsync ();
+            cmd.Parameters.AddWithValue("@studenttags", student.UserTags);
+            cmd.Parameters.AddWithValue("@studentid", student.UserId);
+            await cmd.ExecuteNonQueryAsync();
             return true;
-            }
-        public async Task<bool> Remove_StudentFromListAsync (int studentId, string mode)
-            {
-            List<User> lstStudents = new List<User> ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
+        }
+
+        public async Task<bool> Remove_StudentFromListAsync(int studentId, string mode)
+        {
+            List<User> lstStudents = new List<User>();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
             string sql = "dbo.sp_RemoveStudentFromList";
-            var cmd = new SqlCommand (sql, cnn);
+            var cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentid", studentId);
-            cmd.Parameters.AddWithValue ("@mode", mode);
-            await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@studentid", studentId);
+            cmd.Parameters.AddWithValue("@mode", mode);
+            await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Delete_StudentAsync (int studentId)
-            {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+        }
+
+        public async Task<bool> Delete_StudentAsync(int studentId)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_DeleteStudent";
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentid", studentId);
-            cmd.ExecuteNonQuery ();
+            cmd.Parameters.AddWithValue("@studentid", studentId);
+            cmd.ExecuteNonQuery();
             return true;
-            }
+        }
+
         #endregion
+
         #region D:Departments
-        public async Task<int> Create_DepartmentAsync (Department department)
-            {
+
+        public async Task<int> Create_DepartmentAsync(Department department)
+        {
             string sql = "dbo.sp_CreateDepartment";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@departmentname", department.DepartmentName);
-            cmd.Parameters.AddWithValue ("@departmentinfo", department.DepartmentInfo);
-            int i = (int) await cmd.ExecuteScalarAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@departmentname", department.DepartmentName);
+            cmd.Parameters.AddWithValue("@departmentinfo", department.DepartmentInfo);
+            int i = (int)await cmd.ExecuteScalarAsync();
+            await cnn.CloseAsync();
             return i;
-            }
-        public async Task<List<Department>> Read_DepartmentsAsync ()
-            {
-            List<Department> lstDepartments = new List<Department> ();
+        }
+
+        public async Task<List<Department>> Read_DepartmentsAsync()
+        {
+            List<Department> lstDepartments = new List<Department>();
             string sql = "dbo.sp_ReadDepartments";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                using (var reader = await cmd.ExecuteReaderAsync ())
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
                     {
-                    while (await reader.ReadAsync ())
-                        {
                         var department = new Department
-                            {
-                            DepartmentId = reader.GetInt32 (0),
-                            DepartmentName = reader.GetString (1),
-                            DepartmentInfo = reader.GetString (2)
-                            };
-                        lstDepartments.Add (department);
-                        }
+                        {
+                            DepartmentId = reader.GetInt32(0),
+                            DepartmentName = reader.GetString(1),
+                            DepartmentInfo = reader.GetString(2)
+                        };
+                        lstDepartments.Add(department);
                     }
+                }
+
                 return lstDepartments;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
-                return new List<Department> ();
-                }
             }
-        public async Task<Department> Read_DepartmentAsync (int departmentId)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
+                return new List<Department>();
+            }
+        }
+
+        public async Task<Department> Read_DepartmentAsync(int departmentId)
+        {
             //ModelState.Clear (); // disables auto validation
-            Department department = new Department ();
+            Department department = new Department();
             string sql = "dbo.sp_ReadDepartment";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@departmentid", departmentId);
-                using (var reader = await cmd.ExecuteReaderAsync ())
+                cmd.Parameters.AddWithValue("@departmentid", departmentId);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
                     {
-                    while (await reader.ReadAsync ())
-                        {
-                        department.DepartmentId = reader.GetInt32 (0);
-                        department.DepartmentName = reader.GetString (1);
-                        department.DepartmentInfo = reader.GetString (2);
-                        }
+                        department.DepartmentId = reader.GetInt32(0);
+                        department.DepartmentName = reader.GetString(1);
+                        department.DepartmentInfo = reader.GetString(2);
                     }
+                }
+
                 return department;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
-                return new Department ();
-                }
             }
-        public async Task<bool> Update_DepartmentAsync (Department department)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
+                return new Department();
+            }
+        }
+
+        public async Task<bool> Update_DepartmentAsync(Department department)
+        {
             string sql = "dbo.sp_UpdateDepartment";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@departmentid", department.DepartmentId);
-                cmd.Parameters.AddWithValue ("@departmentname", department.DepartmentName);
-                cmd.Parameters.AddWithValue ("@departmentinfo", department.DepartmentInfo);
-                await cmd.ExecuteNonQueryAsync ();
-                return true;
-                }
-            catch
-                {
-                await cnn.CloseAsync ();
-                return false;
-                }
-            }
-        public async Task<int> Delete_DepartmentAsync (int departmentId)
             {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@departmentid", department.DepartmentId);
+                cmd.Parameters.AddWithValue("@departmentname", department.DepartmentName);
+                cmd.Parameters.AddWithValue("@departmentinfo", department.DepartmentInfo);
+                await cmd.ExecuteNonQueryAsync();
+                return true;
+            }
+            catch
+            {
+                await cnn.CloseAsync();
+                return false;
+            }
+        }
+
+        public async Task<int> Delete_DepartmentAsync(int departmentId)
+        {
             string sql = "dbo.sp_DeleteDepartment";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@departmentid", departmentId);
-            int i = (int) cmd.ExecuteNonQuery ();
+            cmd.Parameters.AddWithValue("@departmentid", departmentId);
+            int i = (int)cmd.ExecuteNonQuery();
             return i;
-            }
+        }
+
         #endregion
+
         #region G:Groups
-        public async Task<int> Create_GroupAsync (Group group)
-            {
+
+        public async Task<int> Create_GroupAsync(Group group)
+        {
             string sql = "dbo.sp_CreateGroup";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@groupname", group.GroupName);
-            cmd.Parameters.AddWithValue ("@userid", group.UserId);
-            int i = (int) await cmd.ExecuteScalarAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@groupname", group.GroupName);
+            cmd.Parameters.AddWithValue("@userid", group.UserId);
+            int i = (int)await cmd.ExecuteScalarAsync();
+            await cnn.CloseAsync();
             return i;
-            }
-        public async Task<List<Group>> Read_GroupsAsync (User user, bool showAllGroups, bool getGroupStudents)
-            {
-            List<Group> lstGroups = new List<Group> ();
+        }
+
+        public async Task<List<Group>> Read_GroupsAsync(User user, bool showAllGroups, bool getGroupStudents)
+        {
+            List<Group> lstGroups = new List<Group>();
             string sql = "dbo.sp_ReadGroups";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@UserId", user.UserId);
-                cmd.Parameters.AddWithValue ("@ShowAllGroups", showAllGroups);
-                using (var reader = await cmd.ExecuteReaderAsync ())
+                cmd.Parameters.AddWithValue("@UserId", user.UserId);
+                cmd.Parameters.AddWithValue("@ShowAllGroups", showAllGroups);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
                     {
-                    while (await reader.ReadAsync ())
-                        {
                         var group = new Group
-                            {
-                            GroupId = reader.GetInt32 (0),
-                            GroupName = reader.GetString (1),
-                            UserId = reader.GetInt32 (2),
-                            GroupTags = reader.GetInt32 (3),
-                            Students = new List<StudentGroup> (),
-                            };
-                        lstGroups.Add (group);
-                        }
+                        {
+                            GroupId = reader.GetInt32(0),
+                            GroupName = reader.GetString(1),
+                            UserId = reader.GetInt32(2),
+                            GroupTags = reader.GetInt32(3),
+                            Students = new List<StudentGroup>(),
+                        };
+                        lstGroups.Add(group);
                     }
+                }
+
                 if (getGroupStudents)
-                    {
+                {
                     foreach (Group grp in lstGroups)
-                        {
-                        grp.Students = await Read_StudentGroupsAsync (grp.GroupId, "ByGroupid", user.UserId);
-                        }
+                    {
+                        grp.Students = await Read_StudentGroupsAsync(grp.GroupId, "ByGroupid", user.UserId);
                     }
+                }
+
                 return lstGroups;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
-                return new List<Group> ();
-                }
             }
-        public async Task<Group> Read_GroupAsync (int groupId)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
+                return new List<Group>();
+            }
+        }
+
+        public async Task<Group> Read_GroupAsync(int groupId)
+        {
             //ModelState.Clear (); // disables auto validation
-            Group group = new Group ();
+            Group group = new Group();
             string sql = "dbo.sp_ReadGroup";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@groupid", groupId);
-                using (var reader = await cmd.ExecuteReaderAsync ())
+                cmd.Parameters.AddWithValue("@groupid", groupId);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
                     {
-                    while (await reader.ReadAsync ())
-                        {
-                        group.GroupId = reader.GetInt32 (0);
-                        group.GroupName = reader.GetString (1);
-                        group.UserId = reader.GetInt32 (2);
-                        group.GroupTags = reader.GetInt32 (3);
-                        group.Students = new List<StudentGroup> ();
-                        }
+                        group.GroupId = reader.GetInt32(0);
+                        group.GroupName = reader.GetString(1);
+                        group.UserId = reader.GetInt32(2);
+                        group.GroupTags = reader.GetInt32(3);
+                        group.Students = new List<StudentGroup>();
                     }
-                group.Students = await Read_StudentGroupsAsync (groupId, "ByGroupId", 0); //in mode 'ByGroupId' userId is not used: 0 is dummy
+                }
+
+                group.Students =
+                    await Read_StudentGroupsAsync(groupId, "ByGroupId",
+                        0); //in mode 'ByGroupId' userId is not used: 0 is dummy
                 return group;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
-                return new Group ();
-                }
             }
-        public async Task<bool> Update_GroupAsync (Group group)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
+                return new Group();
+            }
+        }
+
+        public async Task<bool> Update_GroupAsync(Group group)
+        {
             string sql = "dbo.sp_UpdateGroup";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@groupname", group.GroupName);
-                cmd.Parameters.AddWithValue ("@groupid", group.GroupId);
-                cmd.Parameters.AddWithValue ("@grouptags", group.GroupTags);
-                await cmd.ExecuteNonQueryAsync ();
+                cmd.Parameters.AddWithValue("@groupname", group.GroupName);
+                cmd.Parameters.AddWithValue("@groupid", group.GroupId);
+                cmd.Parameters.AddWithValue("@grouptags", group.GroupTags);
+                await cmd.ExecuteNonQueryAsync();
                 return true;
-                }
+            }
             catch
-                {
-                await cnn.CloseAsync ();
+            {
+                await cnn.CloseAsync();
                 return false;
-                }
             }
-        public async Task<int> Delete_GroupAsync (int groupId)
-            {
+        }
+
+        public async Task<int> Delete_GroupAsync(int groupId)
+        {
             string sql = "dbo.sp_DeleteGroup";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@groupid", groupId);
-            int i = (int) cmd.ExecuteNonQuery ();
+            cmd.Parameters.AddWithValue("@groupid", groupId);
+            int i = (int)cmd.ExecuteNonQuery();
             return i;
-            }
+        }
+
         #endregion
+
         #region SG:StudentGroups
-        public async Task<bool> Create_StudentGroupsAsync (int groupId, List<int> lstStudentIds)
-            {
+
+        public async Task<bool> Create_StudentGroupsAsync(int groupId, List<int> lstStudentIds)
+        {
             string sql = "dbo.sp_CreateStudentGroups";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
             foreach (int st in lstStudentIds)
-                {
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentid", st);
-                cmd.Parameters.AddWithValue ("@groupid", groupId);
-                cmd.Parameters.AddWithValue ("@studentgrouptags", 1);
-                int i = (int) cmd.ExecuteNonQuery ();
-                }
-            await cnn.CloseAsync ();
-            return true;
-            }
-        public async Task<List<StudentGroup>> Read_StudentGroupsAsync (int Id, string mode, int teacherId)
             {
+                SqlCommand cmd = new SqlCommand(sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@studentid", st);
+                cmd.Parameters.AddWithValue("@groupid", groupId);
+                cmd.Parameters.AddWithValue("@studentgrouptags", 1);
+                int i = (int)cmd.ExecuteNonQuery();
+            }
+
+            await cnn.CloseAsync();
+            return true;
+        }
+
+        public async Task<List<StudentGroup>> Read_StudentGroupsAsync(int Id, string mode, int teacherId)
+        {
             //read SG records
-            List<StudentGroup> lstStudentGroups = new List<StudentGroup> ();
+            List<StudentGroup> lstStudentGroups = new List<StudentGroup>();
             string sql = "dbo.sp_ReadStudentGroups";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@mode", mode);
-                cmd.Parameters.AddWithValue ("@id", Id);
-                cmd.Parameters.AddWithValue ("@teacherId", teacherId);
-                using (var reader = await cmd.ExecuteReaderAsync ())
+                cmd.Parameters.AddWithValue("@mode", mode);
+                cmd.Parameters.AddWithValue("@id", Id);
+                cmd.Parameters.AddWithValue("@teacherId", teacherId);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
                     {
-                    while (await reader.ReadAsync ())
-                        {
                         var studentGroup = new StudentGroup
-                            {
-                            StudentGroupId = reader.GetInt32 (0),
-                            StudentId = reader.GetInt32 (1),
-                            GroupId = reader.GetInt32 (2),
-                            DateTimeJoined = reader.GetDateTimeOffset (3),
-                            StudentGroupTags = reader.GetInt32 (4),
-                            GroupName = reader.GetString (5),
-                            StudentName = reader.GetString (6),
-                            StudentNickname = reader.GetString (7),
-                            StudentTags = reader.GetInt32 (8),
-                            };
-                        lstStudentGroups.Add (studentGroup);
-                        }
+                        {
+                            StudentGroupId = reader.GetInt32(0),
+                            StudentId = reader.GetInt32(1),
+                            GroupId = reader.GetInt32(2),
+                            DateTimeJoined = reader.GetDateTimeOffset(3),
+                            StudentGroupTags = reader.GetInt32(4),
+                            GroupName = reader.GetString(5),
+                            StudentName = reader.GetString(6),
+                            StudentNickname = reader.GetString(7),
+                            StudentTags = reader.GetInt32(8),
+                        };
+                        lstStudentGroups.Add(studentGroup);
                     }
+                }
+
                 return lstStudentGroups;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("be service: Read_StudentGroupsAsync -- error: \n" + ex.ToString ());
-                return new List<StudentGroup> ();
-                }
             }
-        public async Task<bool> Delete_StudentGroupsAsync (int groupId, List<int> lstStudentIds)
+            catch (Exception ex)
             {
+                Console.WriteLine("be service: Read_StudentGroupsAsync -- error: \n" + ex.ToString());
+                return new List<StudentGroup>();
+            }
+        }
+
+        public async Task<bool> Delete_StudentGroupsAsync(int groupId, List<int> lstStudentIds)
+        {
             string sql = "dbo.sp_DeleteStudentGroups";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
             foreach (int st in lstStudentIds)
-                {
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentid", st);
-                cmd.Parameters.AddWithValue ("@groupid", groupId);
-                int i = (int) cmd.ExecuteNonQuery ();
-                }
-            await cnn.CloseAsync ();
-            return true;
+                cmd.Parameters.AddWithValue("@studentid", st);
+                cmd.Parameters.AddWithValue("@groupid", groupId);
+                int i = (int)cmd.ExecuteNonQuery();
             }
+
+            await cnn.CloseAsync();
+            return true;
+        }
+
         //Update Tags , Delete SG
+
         #endregion
+
         #region C:Courses
-        public async Task<int> Create_CourseAsync (Course course)
-            {
+
+        public async Task<int> Create_CourseAsync(Course course)
+        {
             string sql = "dbo.sp_CreateCourse"; //get ID of newly added record
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@userid", course.UserId);
-            cmd.Parameters.AddWithValue ("@coursename", course.CourseName);
-            int i = (int) cmd.ExecuteScalar ();
+            cmd.Parameters.AddWithValue("@userid", course.UserId);
+            cmd.Parameters.AddWithValue("@coursename", course.CourseName);
+            int i = (int)cmd.ExecuteScalar();
             return i;
-            }
-        public async Task<List<Course>> Read_CoursesAsync (int userId)
-            {
-            List<Course> lstCourses = new List<Course> ();
+        }
+
+        public async Task<List<Course>> Read_CoursesAsync(int userId)
+        {
+            List<Course> lstCourses = new List<Course>();
             string sql = "dbo.sp_ReadCourses";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@userid", userId);
-                var reader = await cmd.ExecuteReaderAsync ();
-                while (await reader.ReadAsync ())
+                cmd.Parameters.AddWithValue("@userid", userId);
+                var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    lstCourses.Add(new Course
                     {
-                    lstCourses.Add (new Course
-                        {
-                        CourseId = reader.GetInt32 (0),
+                        CourseId = reader.GetInt32(0),
                         UserId = userId,
-                        CourseName = reader.GetString (2),
-                        CourseUnits = reader.GetInt32 (3),
-                        CourseRtl = reader.GetBoolean (4),
-                        CourseTopics = new List<CourseTopic> (),
-                        CourseFolders = new List<CourseFolder> (),
-                        Students = new List<StudentCourse> ()
-                        });
-                    }
+                        CourseName = reader.GetString(2),
+                        CourseUnits = reader.GetInt32(3),
+                        CourseRtl = reader.GetBoolean(4),
+                        CourseTopics = new List<CourseTopic>(),
+                        CourseFolders = new List<CourseFolder>(),
+                        Students = new List<StudentCourse>()
+                    });
+                }
+
                 foreach (Course crs in lstCourses)
-                    {
-                    var crsTopic = await Read_CourseTopicsAsync (crs.CourseId);
+                {
+                    var crsTopic = await Read_CourseTopicsAsync(crs.CourseId);
                     if (crsTopic != null)
-                        {
+                    {
                         crs.CourseTopics = crsTopic;
-                        }
-                    var crsFolder = await Read_CourseFoldersAsync (crs.CourseId, "all");
+                    }
+
+                    var crsFolder = await Read_CourseFoldersAsync(crs.CourseId, "all");
                     if (crsFolder != null)
-                        {
+                    {
                         crs.CourseFolders = crsFolder;
-                        }
                     }
-                return lstCourses;
                 }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("C02 - Error\n" + ex.ToString ());
+
                 return lstCourses;
-                }
             }
-        public async Task<Course> Read_CourseAsync (int courseId, bool getStudentCourses)
+            catch (Exception ex)
             {
-            Course course = new Course ();
+                Console.WriteLine("C02 - Error\n" + ex.ToString());
+                return lstCourses;
+            }
+        }
+
+        public async Task<Course> Read_CourseAsync(int courseId, bool getStudentCourses)
+        {
+            Course course = new Course();
             string sql = "dbo.sp_ReadCourse";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@courseid", courseId);
-                var reader = await cmd.ExecuteReaderAsync ();
-                while (await reader.ReadAsync ())
-                    {
-                    course.CourseId = reader.GetInt32 (0);
-                    course.UserId = reader.GetInt32 (1);
-                    course.CourseName = reader.GetString (2);
-                    course.CourseUnits = reader.GetInt32 (3);
-                    course.CourseRtl = reader.GetBoolean (4);
-                    course.CourseTopics = new List<CourseTopic> ();
-                    course.CourseFolders = new List<CourseFolder> ();
-                    course.Students = new List<StudentCourse> ();
-                    }
-                var crsTopic = await Read_CourseTopicsAsync (course.CourseId);
+                cmd.Parameters.AddWithValue("@courseid", courseId);
+                var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    course.CourseId = reader.GetInt32(0);
+                    course.UserId = reader.GetInt32(1);
+                    course.CourseName = reader.GetString(2);
+                    course.CourseUnits = reader.GetInt32(3);
+                    course.CourseRtl = reader.GetBoolean(4);
+                    course.CourseTopics = new List<CourseTopic>();
+                    course.CourseFolders = new List<CourseFolder>();
+                    course.Students = new List<StudentCourse>();
+                }
+
+                var crsTopic = await Read_CourseTopicsAsync(course.CourseId);
                 if (crsTopic != null)
-                    {
+                {
                     course.CourseTopics = crsTopic;
-                    }
-                var crsFolder = await Read_CourseFoldersAsync (course.CourseId, "all");
+                }
+
+                var crsFolder = await Read_CourseFoldersAsync(course.CourseId, "all");
                 if (crsFolder != null)
-                    {
+                {
                     course.CourseFolders = crsFolder;
-                    }
+                }
+
                 if (getStudentCourses)
-                    {
-                    var crsStudents = await Read_StudentCoursesAsync ("C", course.CourseId, 0);
+                {
+                    var crsStudents = await Read_StudentCoursesAsync("C", course.CourseId, 0);
                     if (crsStudents != null)
-                        {
+                    {
                         course.Students = crsStudents;
-                        }
                     }
-                return course;
                 }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("C02 - Error\n" + ex.ToString ());
+
                 return course;
-                }
             }
-        public async Task<bool> Update_CourseAsync (Course course)
+            catch (Exception ex)
             {
+                Console.WriteLine("C02 - Error\n" + ex.ToString());
+                return course;
+            }
+        }
+
+        public async Task<bool> Update_CourseAsync(Course course)
+        {
             string sql = "dbo.sp_UpdateCourse";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@coursename", course.CourseName);
-            cmd.Parameters.AddWithValue ("@courseid", course.CourseId);
-            int i = cmd.ExecuteNonQuery ();
+            cmd.Parameters.AddWithValue("@coursename", course.CourseName);
+            cmd.Parameters.AddWithValue("@courseid", course.CourseId);
+            int i = cmd.ExecuteNonQuery();
             return true;
-            }
-        public async Task<bool> Delete_CourseAsync (int courseId)
-            {
+        }
+
+        public async Task<bool> Delete_CourseAsync(int courseId)
+        {
             string sql = "dbo.sp_DeleteCourse";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@courseid", courseId);
-            int i = await cmd.ExecuteNonQueryAsync ();
+            cmd.Parameters.AddWithValue("@courseid", courseId);
+            int i = await cmd.ExecuteNonQueryAsync();
             return true;
-            }
+        }
+
         #endregion
+
         #region CF:CourseFolders
-        public async Task<int> Create_CourseFolderAsync (CourseFolder courseFolder)
-            {
+
+        public async Task<int> Create_CourseFolderAsync(CourseFolder courseFolder)
+        {
             string sql = "dbo.sp_CreateCourseFolder"; //get ID of newly added record
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@courseid", courseFolder.CourseId);
-            cmd.Parameters.AddWithValue ("@coursefoldertitle", courseFolder.CourseFolderTitle);
-            cmd.Parameters.AddWithValue ("@coursefolderurl", courseFolder.CourseFolderUrl);
-            cmd.Parameters.AddWithValue ("@coursefolderactive", courseFolder.CourseFolderActive);
-            int i = (int) cmd.ExecuteScalar ();
+            cmd.Parameters.AddWithValue("@courseid", courseFolder.CourseId);
+            cmd.Parameters.AddWithValue("@coursefoldertitle", courseFolder.CourseFolderTitle);
+            cmd.Parameters.AddWithValue("@coursefolderurl", courseFolder.CourseFolderUrl);
+            cmd.Parameters.AddWithValue("@coursefolderactive", courseFolder.CourseFolderActive);
+            int i = (int)cmd.ExecuteScalar();
             return i;
-            }
-        public async Task<List<CourseFolder>> Read_CourseFoldersAsync (int courseId, string mode)
-            {
-            List<CourseFolder> lstCourseFolders = new ();
+        }
+
+        public async Task<List<CourseFolder>> Read_CourseFoldersAsync(int courseId, string mode)
+        {
+            List<CourseFolder> lstCourseFolders = new();
             string sql = "dbo.sp_ReadCourseFolders";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@courseId", courseId);
-                cmd.Parameters.AddWithValue ("@mode", mode);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+                cmd.Parameters.AddWithValue("@courseId", courseId);
+                cmd.Parameters.AddWithValue("@mode", mode);
+                SqlDataReader reader = await cmd.ExecuteReaderAsync();
                 int i = 0;
-                lstCourseFolders.Clear ();
-                while (await reader.ReadAsync ())
-                    {
+                lstCourseFolders.Clear();
+                while (await reader.ReadAsync())
+                {
                     i++;
-                    lstCourseFolders.Add (new CourseFolder
-                        {
-                        CourseFolderId = reader.GetInt32 (0),
+                    lstCourseFolders.Add(new CourseFolder
+                    {
+                        CourseFolderId = reader.GetInt32(0),
                         CourseId = courseId,
-                        CourseFolderTitle = reader.GetString (2),
-                        CourseFolderUrl = reader.GetString (3),
-                        CourseFolderActive = reader.GetBoolean (4)
-                        });
-                    }
+                        CourseFolderTitle = reader.GetString(2),
+                        CourseFolderUrl = reader.GetString(3),
+                        CourseFolderActive = reader.GetBoolean(4)
+                    });
+                }
+
                 return lstCourseFolders;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("Error: " + ex.ToString ());
-                return new List<CourseFolder> ();
-                }
             }
-        public async Task<bool> Update_CourseFolderAsync (CourseFolder courseFolder)
+            catch (Exception ex)
             {
+                Console.WriteLine("Error: " + ex.ToString());
+                return new List<CourseFolder>();
+            }
+        }
+
+        public async Task<bool> Update_CourseFolderAsync(CourseFolder courseFolder)
+        {
             string sql = "dbo.sp_UpdateCourseFolder";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@coursefoldertitle", courseFolder.CourseFolderTitle);
-            cmd.Parameters.AddWithValue ("@coursefolderurl", courseFolder.CourseFolderUrl);
-            cmd.Parameters.AddWithValue ("@coursefolderactive", courseFolder.CourseFolderActive);
-            cmd.Parameters.AddWithValue ("@coursefolderid", courseFolder.CourseFolderId);
-            int i = cmd.ExecuteNonQuery ();
+            cmd.Parameters.AddWithValue("@coursefoldertitle", courseFolder.CourseFolderTitle);
+            cmd.Parameters.AddWithValue("@coursefolderurl", courseFolder.CourseFolderUrl);
+            cmd.Parameters.AddWithValue("@coursefolderactive", courseFolder.CourseFolderActive);
+            cmd.Parameters.AddWithValue("@coursefolderid", courseFolder.CourseFolderId);
+            int i = cmd.ExecuteNonQuery();
             return true;
-            }
-        public async Task<bool> Delete_CourseFolderAsync (int courseFolderId)
-            {
+        }
+
+        public async Task<bool> Delete_CourseFolderAsync(int courseFolderId)
+        {
             string sql = @"dbo.sp_DeleteCourseFolder";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@coursefolderid", courseFolderId);
-            int i = cmd.ExecuteNonQuery ();
+            cmd.Parameters.AddWithValue("@coursefolderid", courseFolderId);
+            int i = cmd.ExecuteNonQuery();
             return (i > 0) ? true : false;
-            }
+        }
+
         #endregion
+
         #region CT:CourseTopics
-        public async Task<int> Create_CourseTopicAsync (CourseTopic courseTopic)
-            {
+
+        public async Task<int> Create_CourseTopicAsync(CourseTopic courseTopic)
+        {
             string sql = "dbo.sp_CreateCourseTopic"; //get ID of newly added record
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@courseid", courseTopic.CourseId);
-            cmd.Parameters.AddWithValue ("@coursetopictitle", courseTopic.CourseTopicTitle);
-            int i = (int) cmd.ExecuteScalar ();
+            cmd.Parameters.AddWithValue("@courseid", courseTopic.CourseId);
+            cmd.Parameters.AddWithValue("@coursetopictitle", courseTopic.CourseTopicTitle);
+            int i = (int)cmd.ExecuteScalar();
             return i;
-            }
-        public async Task<List<CourseTopic>> Read_CourseTopicsAsync (int courseId)
-            {
-            List<CourseTopic> lstCourseTopics = new ();
+        }
+
+        public async Task<List<CourseTopic>> Read_CourseTopicsAsync(int courseId)
+        {
+            List<CourseTopic> lstCourseTopics = new();
             string sql = "dbo.sp_ReadCourseTopics";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@courseid", courseId);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
+                cmd.Parameters.AddWithValue("@courseid", courseId);
+                SqlDataReader reader = await cmd.ExecuteReaderAsync();
                 int i = 0;
-                lstCourseTopics.Clear ();
-                while (await reader.ReadAsync ())
-                    {
+                lstCourseTopics.Clear();
+                while (await reader.ReadAsync())
+                {
                     i++;
-                    lstCourseTopics.Add (new CourseTopic
-                        {
-                        CourseTopicId = reader.GetInt32 (0),
+                    lstCourseTopics.Add(new CourseTopic
+                    {
+                        CourseTopicId = reader.GetInt32(0),
                         CourseId = courseId,
-                        CourseTopicTitle = reader.GetString (2)
-                        });
-                    }
+                        CourseTopicTitle = reader.GetString(2)
+                    });
+                }
+
                 return lstCourseTopics;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("Error: " + ex.ToString ());
-                return new List<CourseTopic> ();
-                }
             }
-        public async Task<bool> Update_CourseTopicAsync (CourseTopic courseTopic)
+            catch (Exception ex)
             {
+                Console.WriteLine("Error: " + ex.ToString());
+                return new List<CourseTopic>();
+            }
+        }
+
+        public async Task<bool> Update_CourseTopicAsync(CourseTopic courseTopic)
+        {
             string sql = "dbo.sp_UpdateCourseTopic";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@coursetopictitle", courseTopic.CourseTopicTitle);
-            cmd.Parameters.AddWithValue ("@id", courseTopic.CourseTopicId);
-            int i = cmd.ExecuteNonQuery ();
+            cmd.Parameters.AddWithValue("@coursetopictitle", courseTopic.CourseTopicTitle);
+            cmd.Parameters.AddWithValue("@id", courseTopic.CourseTopicId);
+            int i = cmd.ExecuteNonQuery();
             return true;
-            }
-        public async Task<bool> Delete_CourseTopicAsync (int courseTopicId)
-            {
+        }
+
+        public async Task<bool> Delete_CourseTopicAsync(int courseTopicId)
+        {
             string sql = "dbo.sp_DeleteCourseTopic";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@coursetopicid", courseTopicId);
-            int i = cmd.ExecuteNonQuery ();
+            cmd.Parameters.AddWithValue("@coursetopicid", courseTopicId);
+            int i = cmd.ExecuteNonQuery();
             return (i > 0) ? true : false;
-            }
+        }
+
         #endregion
+
         #region SC:StudentCourses
-        public async Task<bool> Create_StudentCoursesAsync (int courseId, List<int> lstStudentIds)
-            {
+
+        public async Task<bool> Create_StudentCoursesAsync(int courseId, List<int> lstStudentIds)
+        {
             string sql = "dbo.sp_CreateStudentCourses";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
             foreach (int st in lstStudentIds)
-                {
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentid", st);
-                cmd.Parameters.AddWithValue ("@courseid", courseId);
-                cmd.Parameters.AddWithValue ("@studentcoursetags", 3);
-                int i = (int) cmd.ExecuteNonQuery ();
-                }
-            await cnn.CloseAsync ();
-            return true;
-            }
-        public async Task<bool> Create_StudentCourseAsync (int studentId, int courseId)
             {
+                SqlCommand cmd = new SqlCommand(sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@studentid", st);
+                cmd.Parameters.AddWithValue("@courseid", courseId);
+                cmd.Parameters.AddWithValue("@studentcoursetags", 3);
+                int i = (int)cmd.ExecuteNonQuery();
+            }
+
+            await cnn.CloseAsync();
+            return true;
+        }
+
+        public async Task<bool> Create_StudentCourseAsync(int studentId, int courseId)
+        {
             string sql = "dbo.sp_CreateStudentCourse";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentid", studentId);
-            cmd.Parameters.AddWithValue ("@courseid", courseId);
-            int i = await cmd.ExecuteNonQueryAsync ();
+            cmd.Parameters.AddWithValue("@studentid", studentId);
+            cmd.Parameters.AddWithValue("@courseid", courseId);
+            int i = await cmd.ExecuteNonQueryAsync();
             return true;
-            }
-        public async Task<List<StudentCourse>> Read_StudentCoursesAsync (string mode, int Id, int teacherId)
-            {
+        }
+
+        public async Task<List<StudentCourse>> Read_StudentCoursesAsync(string mode, int Id, int teacherId)
+        {
             //read SC records for one Student
-            List<StudentCourse> lstStudentCourses = new List<StudentCourse> ();
+            List<StudentCourse> lstStudentCourses = new List<StudentCourse>();
             string sql = "dbo.sp_ReadStudentCourses";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@mode", mode);
-                cmd.Parameters.AddWithValue ("@id", Id);
-                cmd.Parameters.AddWithValue ("@teacherid", teacherId);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-                while (await reader.ReadAsync ())
-                    {
-                    lstStudentCourses.Add (new StudentCourse
-                        {
-                        StudentCourseId = reader.GetInt32 (0),
-                        StudentId = reader.GetInt32 (1),
-                        CourseId = reader.GetInt32 (2),
-                        CourseName = reader.GetString (3),
-                        StudentName = reader.GetString (4),
-                        StudentNickname = reader.GetString (5),
-                        NumberOfTests = reader.GetInt32 (6),
-                        CorrectAnswers = reader.GetInt32 (7),
-                        StudentCourseTags = reader.GetInt32 (8)
-                        });
-                    }
-                await cnn.CloseAsync ();
-                }
-            catch (Exception ex)
+                cmd.Parameters.AddWithValue("@mode", mode);
+                cmd.Parameters.AddWithValue("@id", Id);
+                cmd.Parameters.AddWithValue("@teacherid", teacherId);
+                SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
-                Console.WriteLine ("Error in: region SC: StudentCourses: " + ex);
-                await cnn.CloseAsync ();
+                    lstStudentCourses.Add(new StudentCourse
+                    {
+                        StudentCourseId = reader.GetInt32(0),
+                        StudentId = reader.GetInt32(1),
+                        CourseId = reader.GetInt32(2),
+                        CourseName = reader.GetString(3),
+                        StudentName = reader.GetString(4),
+                        StudentNickname = reader.GetString(5),
+                        NumberOfTests = reader.GetInt32(6),
+                        CorrectAnswers = reader.GetInt32(7),
+                        StudentCourseTags = reader.GetInt32(8)
+                    });
                 }
+
+                await cnn.CloseAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in: region SC: StudentCourses: " + ex);
+                await cnn.CloseAsync();
+            }
+
             return lstStudentCourses;
-            }
-        public async Task<StudentCourse> Read_StudentCourseAsync (int studentCourseId)
-            {
-            StudentCourse studentCourse = new StudentCourse ();
+        }
+
+        public async Task<StudentCourse> Read_StudentCourseAsync(int studentCourseId)
+        {
+            StudentCourse studentCourse = new StudentCourse();
             string sql = "dbo.sp_ReadStudentCourse";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseId);
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
+                cmd.Parameters.AddWithValue("@studentcourseid", studentCourseId);
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
                     {
-                    while (await reader.ReadAsync ())
-                        {
-                        studentCourse.StudentCourseId = reader.GetInt32 (0);
-                        studentCourse.StudentId = reader.GetInt32 (1);
-                        studentCourse.CourseId = reader.GetInt32 (2);
-                        studentCourse.CourseName = reader.GetString (3);
-                        studentCourse.NumberOfTests = reader.GetInt32 (4);
-                        studentCourse.CorrectAnswers = reader.GetInt32 (5);
-                        }
+                        studentCourse.StudentCourseId = reader.GetInt32(0);
+                        studentCourse.StudentId = reader.GetInt32(1);
+                        studentCourse.CourseId = reader.GetInt32(2);
+                        studentCourse.CourseName = reader.GetString(3);
+                        studentCourse.NumberOfTests = reader.GetInt32(4);
+                        studentCourse.CorrectAnswers = reader.GetInt32(5);
                     }
                 }
+            }
             catch (Exception ex)
-                {
-                Console.WriteLine (ex);
-                await cnn.CloseAsync ();
-                }
+            {
+                Console.WriteLine(ex);
+                await cnn.CloseAsync();
+            }
+
             return studentCourse;
-            }
-        public async Task<bool> Update_StudentCourseAsync (StudentCourse studentCourse)
-            {
+        }
+
+        public async Task<bool> Update_StudentCourseAsync(StudentCourse studentCourse)
+        {
             string sql = "dbo.sp_UpdateStudentCourse";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@numberoftests", studentCourse.NumberOfTests);
-            cmd.Parameters.AddWithValue ("@correctanswers", studentCourse.CorrectAnswers);
-            cmd.Parameters.AddWithValue ("@studentcoursetags", studentCourse.StudentCourseTags);
-            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourse.StudentCourseId);
-            int i = await cmd.ExecuteNonQueryAsync ();
+            cmd.Parameters.AddWithValue("@numberoftests", studentCourse.NumberOfTests);
+            cmd.Parameters.AddWithValue("@correctanswers", studentCourse.CorrectAnswers);
+            cmd.Parameters.AddWithValue("@studentcoursetags", studentCourse.StudentCourseTags);
+            cmd.Parameters.AddWithValue("@studentcourseid", studentCourse.StudentCourseId);
+            int i = await cmd.ExecuteNonQueryAsync();
             return (i > 0) ? true : false;
-            }
-        public async Task<bool> Update_StudentCoursesTagsAsync (List<int> lstStudentIds, int courseId, string mode)
-            {
+        }
+
+        public async Task<bool> Update_StudentCoursesTagsAsync(List<int> lstStudentIds, int courseId, string mode)
+        {
             int i = 0;
-            string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
+            string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
             string sql = "dbo.sp_UpdateStudentCoursesTags";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
             foreach (int studentId in lstStudentIds)
-                {
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentid", studentId);
-                cmd.Parameters.AddWithValue ("@courseid", courseId);
-                cmd.Parameters.AddWithValue ("@mode", mode);
-                i = await cmd.ExecuteNonQueryAsync ();
-                }
-            return (i > 0) ? true : false;
-            }
-        public async Task<bool> Delete_StudentCoursesAsync (int id, string mode)
             {
+                SqlCommand cmd = new SqlCommand(sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@studentid", studentId);
+                cmd.Parameters.AddWithValue("@courseid", courseId);
+                cmd.Parameters.AddWithValue("@mode", mode);
+                i = await cmd.ExecuteNonQueryAsync();
+            }
+
+            return (i > 0) ? true : false;
+        }
+
+        public async Task<bool> Delete_StudentCoursesAsync(int id, string mode)
+        {
             bool result = true;
             string sql = "dbo.sp_DeleteStudentCourses";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
             try
-                {
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@id", id);
-                cmd.Parameters.AddWithValue ("@mode", mode);
-                int i = cmd.ExecuteNonQuery ();
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.Parameters.AddWithValue("@mode", mode);
+                int i = cmd.ExecuteNonQuery();
                 if (i < 0)
-                    {
+                {
                     result = false;
-                    }
                 }
+            }
             catch (Exception ex)
-                {
+            {
                 result = false;
-                }
-            await cnn.CloseAsync ();
+            }
+
+            await cnn.CloseAsync();
             return result;
-            }
-        public async Task<bool> Delete_StudentCourseAsync (int studentCourseId)
-            {
+        }
+
+        public async Task<bool> Delete_StudentCourseAsync(int studentCourseId)
+        {
             string sql = "dbo.sp_DeleteStudentCourse";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseId);
-            await cmd.ExecuteNonQueryAsync ();
+            cmd.Parameters.AddWithValue("@studentcourseid", studentCourseId);
+            await cmd.ExecuteNonQueryAsync();
             return true;
-            }
+        }
+
         #endregion
+
         #region SCT:StudentCourseTests
-        public async Task<bool> Create_StudentCourseTestAsync (StudentCourseTest studentCourseTest)
-            {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+
+        public async Task<bool> Create_StudentCourseTestAsync(StudentCourseTest studentCourseTest)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_CreateStudentCourseTest";
-            await cnn.OpenAsync ();
-            var cmd = new SqlCommand (sql, cnn);
+            await cnn.OpenAsync();
+            var cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@userans", studentCourseTest.UserAns.ToString ());
-            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId.ToString ());
-            cmd.Parameters.AddWithValue ("@testid", studentCourseTest.TestId.ToString ());
-            cmd.Parameters.AddWithValue ("@testkey", studentCourseTest.TestKey.ToString ());
-            await cmd.ExecuteNonQueryAsync ();
+            cmd.Parameters.AddWithValue("@userans", studentCourseTest.UserAns.ToString());
+            cmd.Parameters.AddWithValue("@studentcourseid", studentCourseTest.StudentCourseId.ToString());
+            cmd.Parameters.AddWithValue("@testid", studentCourseTest.TestId.ToString());
+            cmd.Parameters.AddWithValue("@testkey", studentCourseTest.TestKey.ToString());
+            await cmd.ExecuteNonQueryAsync();
             return true;
-            }
-        public async Task<List<StudentCourseTest>> Read_StudentCourseTestsAsync (StudentCourse studentCourse, bool readOptions)
-            {
-            List<StudentCourseTest> lstStudentCourseTests = new ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+        }
+
+        public async Task<List<StudentCourseTest>> Read_StudentCourseTestsAsync(StudentCourse studentCourse,
+            bool readOptions)
+        {
+            List<StudentCourseTest> lstStudentCourseTests = new();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_ReadStudentCourseTests";
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new (sql, cnn);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourse.StudentCourseId);
+            cmd.Parameters.AddWithValue("@studentcourseid", studentCourse.StudentCourseId);
             try
+            {
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                 {
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
-                    {
                     int index = 0;
-                    while (await reader.ReadAsync ())
-                        {
+                    while (await reader.ReadAsync())
+                    {
                         var sct = new StudentCourseTest
-                            {
-                            StudentCourseId = reader.GetInt32 (0),
-                            TestId = reader.GetInt32 (1),
-                            TestTitle = reader.GetString (2),
-                            TestType = reader.GetInt32 (3),
-                            CourseTopicId = reader.GetInt32 (4),
-                            CourseTopicTitle = reader.GetString (5),
-                            TestTags = reader.GetInt32 (6),
-                            TestLevel = reader.GetInt32 (7),
-                            TestKey = reader.GetInt32 (8),
-                            UserAns = reader.GetInt32 (9),
-                            DateTime = reader.GetDateTimeOffset (10),
+                        {
+                            StudentCourseId = reader.GetInt32(0),
+                            TestId = reader.GetInt32(1),
+                            TestTitle = reader.GetString(2),
+                            TestType = reader.GetInt32(3),
+                            CourseTopicId = reader.GetInt32(4),
+                            CourseTopicTitle = reader.GetString(5),
+                            TestTags = reader.GetInt32(6),
+                            TestLevel = reader.GetInt32(7),
+                            TestKey = reader.GetInt32(8),
+                            UserAns = reader.GetInt32(9),
+                            DateTime = reader.GetDateTimeOffset(10),
                             TestIndex = ++index,
-                            TestOptions = new List<TestOption> ()
-                            };
-                        lstStudentCourseTests.Add (sct);
-                        }
+                            TestOptions = new List<TestOption>()
+                        };
+                        lstStudentCourseTests.Add(sct);
                     }
+                }
+
                 if (readOptions)
-                    {
+                {
                     foreach (StudentCourseTest t in lstStudentCourseTests)
-                        {
-                        t.TestOptions = await Read_TestOptionsAsync (t.TestId, cnn);
-                        }
+                    {
+                        t.TestOptions = await Read_TestOptionsAsync(t.TestId, cnn);
                     }
+                }
+
                 return lstStudentCourseTests;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
-                return new List<StudentCourseTest> ();
-                }
             }
-        public async Task<StudentCourseTest> Read_StudentCourseTestRandomAsync (int studentCourseId, bool readOptions, bool retry)
+            catch (Exception ex)
             {
-            StudentCourseTest studentCourseTest = new StudentCourseTest ();
+                Console.WriteLine(ex.ToString());
+                return new List<StudentCourseTest>();
+            }
+        }
+
+        public async Task<StudentCourseTest> Read_StudentCourseTestRandomAsync(int studentCourseId, bool readOptions,
+            bool retry)
+        {
+            StudentCourseTest studentCourseTest = new StudentCourseTest();
             string sql = "dbo.sp_ReadStudentCourseTestRandom";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseId);
-            cmd.Parameters.AddWithValue ("@retry", retry);
+            cmd.Parameters.AddWithValue("@studentcourseid", studentCourseId);
+            cmd.Parameters.AddWithValue("@retry", retry);
             try
-                {
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
-                    {
-                    int index = 0;
-                    while (await reader.ReadAsync ())
-                        {
-                        studentCourseTest.StudentCourseId = reader.GetInt32 (0);
-                        studentCourseTest.TestId = reader.GetInt32 (1);
-                        studentCourseTest.TestTitle = reader.GetString (2);
-                        studentCourseTest.TestType = reader.GetInt32 (3);
-                        studentCourseTest.CourseTopicId = reader.GetInt32 (4);
-                        studentCourseTest.CourseTopicTitle = reader.GetString (5);
-                        studentCourseTest.TestTags = reader.GetInt32 (6);
-                        studentCourseTest.TestLevel = reader.GetInt32 (7);
-                        studentCourseTest.TestIndex = ++index;
-                        studentCourseTest.TestOptions = new List<TestOption> ();
-                        }
-                    }
-                if (readOptions)
-                    {
-                    studentCourseTest.TestOptions = await Read_TestOptionsAsync (studentCourseTest.TestId, cnn);
-                    }
-                return studentCourseTest;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
-                return new StudentCourseTest ();
-                }
-            }
-        public async Task<bool> Update_StudentCourseTestAsync (StudentCourseTest studentCourseTest, string mode)
             {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
+                    int index = 0;
+                    while (await reader.ReadAsync())
+                    {
+                        studentCourseTest.StudentCourseId = reader.GetInt32(0);
+                        studentCourseTest.TestId = reader.GetInt32(1);
+                        studentCourseTest.TestTitle = reader.GetString(2);
+                        studentCourseTest.TestType = reader.GetInt32(3);
+                        studentCourseTest.CourseTopicId = reader.GetInt32(4);
+                        studentCourseTest.CourseTopicTitle = reader.GetString(5);
+                        studentCourseTest.TestTags = reader.GetInt32(6);
+                        studentCourseTest.TestLevel = reader.GetInt32(7);
+                        studentCourseTest.TestIndex = ++index;
+                        studentCourseTest.TestOptions = new List<TestOption>();
+                    }
+                }
+
+                if (readOptions)
+                {
+                    studentCourseTest.TestOptions = await Read_TestOptionsAsync(studentCourseTest.TestId, cnn);
+                }
+
+                return studentCourseTest;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return new StudentCourseTest();
+            }
+        }
+
+        public async Task<bool> Update_StudentCourseTestAsync(StudentCourseTest studentCourseTest, string mode)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_UpdateStudentCourseTest";
-            await cnn.OpenAsync ();
-            var cmd = new SqlCommand (sql, cnn);
+            await cnn.OpenAsync();
+            var cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseTest.StudentCourseId);
-            cmd.Parameters.AddWithValue ("@testid", studentCourseTest.TestId);
-            cmd.Parameters.AddWithValue ("@testkey", studentCourseTest.TestKey);
-            cmd.Parameters.AddWithValue ("@userans", studentCourseTest.UserAns);
-            cmd.Parameters.AddWithValue ("@mode", mode);
-            await cmd.ExecuteNonQueryAsync ();
+            cmd.Parameters.AddWithValue("@studentcourseid", studentCourseTest.StudentCourseId);
+            cmd.Parameters.AddWithValue("@testid", studentCourseTest.TestId);
+            cmd.Parameters.AddWithValue("@testkey", studentCourseTest.TestKey);
+            cmd.Parameters.AddWithValue("@userans", studentCourseTest.UserAns);
+            cmd.Parameters.AddWithValue("@mode", mode);
+            await cmd.ExecuteNonQueryAsync();
             return true;
             //update counts
-            }
-        public async Task<bool> Delete_StudentCourseTestsAsync (string mode, StudentCourse studentCourse)
-            {
+        }
+
+        public async Task<bool> Delete_StudentCourseTestsAsync(string mode, StudentCourse studentCourse)
+        {
             string sql = "dbo.sp_DeleteStudentCourseTests";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentcourseid", studentCourse.StudentCourseId);
-                cmd.Parameters.AddWithValue ("@mode", mode);
-                cmd.ExecuteNonQuery ();
-                await cnn.CloseAsync ();
+                cmd.Parameters.AddWithValue("@studentcourseid", studentCourse.StudentCourseId);
+                cmd.Parameters.AddWithValue("@mode", mode);
+                cmd.ExecuteNonQuery();
+                await cnn.CloseAsync();
                 return true;
-                }
+            }
             catch (Exception ex)
-                {
-                Console.WriteLine ($"ERROR in: BeServ-C14_Delete_StudentCourseTestsAsync \n --- mode: {mode}\n courseId:{studentCourse.CourseId}\n student:{studentCourse.StudentId}\n" + ex);
+            {
+                Console.WriteLine(
+                    $"ERROR in: BeServ-C14_Delete_StudentCourseTestsAsync \n --- mode: {mode}\n courseId:{studentCourse.CourseId}\n student:{studentCourse.StudentId}\n" +
+                    ex);
                 return false;
-                }
             }
+        }
+
         #endregion
+
         #region T:Tests
-        public async Task<int> Create_TestAsync (Test test)
-            {
+
+        public async Task<int> Create_TestAsync(Test test)
+        {
             string sql = "dbo.sp_CreateTest"; //get ID of newly added record
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@courseid", test.CourseId);
-            cmd.Parameters.AddWithValue ("@topicid", test.TopicId);
-            cmd.Parameters.AddWithValue ("@testtitle", test.TestTitle);
-            cmd.Parameters.AddWithValue ("@testtype", test.TestType);
-            cmd.Parameters.AddWithValue ("@testlevel", test.TestLevel);
-            cmd.Parameters.AddWithValue ("@testtags", test.TestTags);
-            int i = (int) await cmd.ExecuteScalarAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@courseid", test.CourseId);
+            cmd.Parameters.AddWithValue("@topicid", test.TopicId);
+            cmd.Parameters.AddWithValue("@testtitle", test.TestTitle);
+            cmd.Parameters.AddWithValue("@testtype", test.TestType);
+            cmd.Parameters.AddWithValue("@testlevel", test.TestLevel);
+            cmd.Parameters.AddWithValue("@testtags", test.TestTags);
+            int i = (int)await cmd.ExecuteScalarAsync();
+            await cnn.CloseAsync();
             foreach (TestOption tstOption in test.TestOptions)
-                {
+            {
                 tstOption.TestId = i;
-                int r = await Create_TestOptionAsync (tstOption);
-                }
+                int r = await Create_TestOptionAsync(tstOption);
+            }
+
             return i;
-            }
-        public async Task<Test> Read_TestByTestIdAsync (int testId, bool readOptions)
-            {
-            Test test = new Test ();
+        }
+
+        public async Task<Test> Read_TestByTestIdAsync(int testId, bool readOptions)
+        {
+            Test test = new Test();
             string sql = "sp_ReadTestByTestId";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@testid", testId);
-            using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
-                {
-                while (await reader.ReadAsync ())
-                    {
-                    test.TestId = reader.GetInt32 (0);
-                    test.CourseId = reader.GetInt32 (1);
-                    test.TopicId = reader.GetInt32 (2);
-                    test.TestTitle = reader.GetString (3);
-                    test.TestType = reader.GetInt32 (4);
-                    test.TestLevel = reader.GetInt32 (5);
-                    test.TestTags = reader.GetInt32 (6);
-                    test.TestOptions = new List<TestOption> ();
-                    }
-                }
-            if (readOptions)
-                {
-                //with existing open cnn
-                test.TestOptions = await Read_TestOptionsAsync (test.TestId, cnn);
-                }
-            return test;
-            }
-        public async Task<Test> Read_TestByStudentExamTestIdAsync (long studentExamTestId, bool readOptions)
+            cmd.Parameters.AddWithValue("@testid", testId);
+            using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
             {
-            Test test = new Test ();
+                while (await reader.ReadAsync())
+                {
+                    test.TestId = reader.GetInt32(0);
+                    test.CourseId = reader.GetInt32(1);
+                    test.TopicId = reader.GetInt32(2);
+                    test.TestTitle = reader.GetString(3);
+                    test.TestType = reader.GetInt32(4);
+                    test.TestLevel = reader.GetInt32(5);
+                    test.TestTags = reader.GetInt32(6);
+                    test.TestOptions = new List<TestOption>();
+                }
+            }
+
+            if (readOptions)
+            {
+                //with existing open cnn
+                test.TestOptions = await Read_TestOptionsAsync(test.TestId, cnn);
+            }
+
+            return test;
+        }
+
+        public async Task<Test> Read_TestByStudentExamTestIdAsync(long studentExamTestId, bool readOptions)
+        {
+            Test test = new Test();
             string sql = "dbo.sp_ReadTestByStudentExamTestId";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@testid", studentExamTestId);
-            using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
-                {
-                while (await reader.ReadAsync ())
-                    {
-                    test.TestId = reader.GetInt32 (0);
-                    test.CourseId = reader.GetInt32 (1);
-                    test.TopicId = reader.GetInt32 (2);
-                    test.TestTitle = reader.GetString (3);
-                    test.TestType = reader.GetInt32 (4);
-                    test.TestLevel = reader.GetInt32 (5);
-                    test.TestTags = reader.GetInt32 (6);
-                    test.TestOptions = new List<TestOption> ();
-                    }
-                }
-            if (readOptions)
-                {
-                //with existing open cnn
-                test.TestOptions = await Read_TestOptionsAsync (test.TestId, cnn);
-                }
-            return test;
-            }
-        public async Task<List<Test>> Read_TestsByCourseIdAsync (int courseId, int pageNumber, bool readOptions)
+            cmd.Parameters.AddWithValue("@testid", studentExamTestId);
+            using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
             {
+                while (await reader.ReadAsync())
+                {
+                    test.TestId = reader.GetInt32(0);
+                    test.CourseId = reader.GetInt32(1);
+                    test.TopicId = reader.GetInt32(2);
+                    test.TestTitle = reader.GetString(3);
+                    test.TestType = reader.GetInt32(4);
+                    test.TestLevel = reader.GetInt32(5);
+                    test.TestTags = reader.GetInt32(6);
+                    test.TestOptions = new List<TestOption>();
+                }
+            }
+
+            if (readOptions)
+            {
+                //with existing open cnn
+                test.TestOptions = await Read_TestOptionsAsync(test.TestId, cnn);
+            }
+
+            return test;
+        }
+
+        public async Task<List<Test>> Read_TestsByCourseIdAsync(int courseId, int pageNumber, bool readOptions)
+        {
             int pageSize = 20;
             int offset = (pageNumber - 1) * pageSize;
-            List<Test> lstTests = new List<Test> ();
+            List<Test> lstTests = new List<Test>();
             string sql = "dbo.sp_ReadTestsByCourseId";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@courseid", courseId);
-            cmd.Parameters.AddWithValue ("@offset", offset);
-            cmd.Parameters.AddWithValue ("@pagesize", pageSize);
-            using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
+            cmd.Parameters.AddWithValue("@courseid", courseId);
+            cmd.Parameters.AddWithValue("@offset", offset);
+            cmd.Parameters.AddWithValue("@pagesize", pageSize);
+            using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
                 {
-                while (await reader.ReadAsync ())
+                    lstTests.Add(new Test
                     {
-                    lstTests.Add (new Test
-                        {
-                        TestId = reader.GetInt32 (0),
-                        CourseId = reader.GetInt32 (1),
-                        TopicId = reader.GetInt32 (2),
-                        TestTitle = reader.GetString (3),
-                        TestType = reader.GetInt32 (4),
-                        TestLevel = reader.GetInt32 (5),
-                        TestTags = reader.GetInt32 (6)
-                        });
-                    }
+                        TestId = reader.GetInt32(0),
+                        CourseId = reader.GetInt32(1),
+                        TopicId = reader.GetInt32(2),
+                        TestTitle = reader.GetString(3),
+                        TestType = reader.GetInt32(4),
+                        TestLevel = reader.GetInt32(5),
+                        TestTags = reader.GetInt32(6)
+                    });
                 }
+            }
+
             if (readOptions)
-                {
+            {
                 //with existing open cnn
                 foreach (Test test in lstTests)
-                    {
-                    test.TestOptions = await Read_TestOptionsAsync (test.TestId, cnn);
-                    }
+                {
+                    test.TestOptions = await Read_TestOptionsAsync(test.TestId, cnn);
                 }
-            return lstTests;
             }
-        public async Task<List<Test>> Read_TestsByCourseTopicIdAsync (int courseTopicId, int pageNumber, bool readOptions)
-            {
+
+            return lstTests;
+        }
+
+        public async Task<int> Get_TotalNumberOfTestsAsync(int courseId)
+        {
+            string sql = "dbo.sp_ReadTotalNumberOftests";
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@courseid", courseId);
+            var t = (int)await cmd.ExecuteScalarAsync();
+            return t;
+        }
+
+        public async Task<List<Test>> Read_TestsByCourseTopicIdAsync(int courseTopicId, int pageNumber,
+            bool readOptions)
+        {
             int pageSize = 20;
             int offset = (pageNumber - 1) * pageSize;
-            List<Test> lstCourseTopicTests = new List<Test> ();
+            List<Test> lstCourseTopicTests = new List<Test>();
             string sql = "dbo.sp_ReadTestsByCourseTopicId";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@topicid", courseTopicId);
-            cmd.Parameters.AddWithValue ("@offset", offset);
-            cmd.Parameters.AddWithValue ("@pagesize", pageSize);
-            using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
+            cmd.Parameters.AddWithValue("@topicid", courseTopicId);
+            cmd.Parameters.AddWithValue("@offset", offset);
+            cmd.Parameters.AddWithValue("@pagesize", pageSize);
+            using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
                 {
-                while (await reader.ReadAsync ())
+                    lstCourseTopicTests.Add(new Test
                     {
-                    lstCourseTopicTests.Add (new Test
-                        {
-                        TestId = reader.GetInt32 (0),
-                        CourseId = reader.GetInt32 (1),
-                        TopicId = reader.GetInt32 (2),
-                        TestTitle = reader.GetString (3),
-                        TestType = reader.GetInt32 (4),
-                        TestLevel = reader.GetInt32 (5),
-                        TestTags = reader.GetInt32 (6)
-                        });
-                    }
+                        TestId = reader.GetInt32(0),
+                        CourseId = reader.GetInt32(1),
+                        TopicId = reader.GetInt32(2),
+                        TestTitle = reader.GetString(3),
+                        TestType = reader.GetInt32(4),
+                        TestLevel = reader.GetInt32(5),
+                        TestTags = reader.GetInt32(6)
+                    });
                 }
+            }
+
             if (readOptions)
-                {
+            {
                 //with existing open cnn
                 foreach (Test test in lstCourseTopicTests)
-                    {
-                    test.TestOptions = await Read_TestOptionsAsync (test.TestId, cnn);
-                    }
+                {
+                    test.TestOptions = await Read_TestOptionsAsync(test.TestId, cnn);
                 }
-            return lstCourseTopicTests;
             }
-        public async Task<List<Test>> Read_TestsBySearchAsync (string strSearch, int courseId, bool readOptions)
-            {
-            List<Test> lstCourseTopicTests = new List<Test> ();
+
+            return lstCourseTopicTests;
+        }
+
+        public async Task<List<Test>> Read_TestsBySearchAsync(string strSearch, int courseId, bool readOptions)
+        {
+            List<Test> lstCourseTopicTests = new List<Test>();
             strSearch = $"%{strSearch}%";
             string sql = "dbo.sp_ReadTestsBySearch";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.Add ("@strSearch", SqlDbType.NVarChar, 200).Value = strSearch;
-            cmd.Parameters.AddWithValue ("@courseid", courseId);
-            using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
+            cmd.Parameters.Add("@strSearch", SqlDbType.NVarChar, 200).Value = strSearch;
+            cmd.Parameters.AddWithValue("@courseid", courseId);
+            using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
                 {
-                while (await reader.ReadAsync ())
+                    lstCourseTopicTests.Add(new Test
                     {
-                    lstCourseTopicTests.Add (new Test
-                        {
-                        TestId = reader.GetInt32 (0),
-                        CourseId = reader.GetInt32 (1),
-                        TopicId = reader.GetInt32 (2),
-                        TestTitle = reader.GetString (3),
-                        TestType = reader.GetInt32 (4),
-                        TestLevel = reader.GetInt32 (5),
-                        TestTags = reader.GetInt32 (6)
-                        });
-                    }
+                        TestId = reader.GetInt32(0),
+                        CourseId = reader.GetInt32(1),
+                        TopicId = reader.GetInt32(2),
+                        TestTitle = reader.GetString(3),
+                        TestType = reader.GetInt32(4),
+                        TestLevel = reader.GetInt32(5),
+                        TestTags = reader.GetInt32(6)
+                    });
                 }
+            }
+
             if (readOptions)
-                {
+            {
                 //with existing open cnn
                 foreach (Test test in lstCourseTopicTests)
-                    {
-                    test.TestOptions = await Read_TestOptionsAsync (test.TestId, cnn);
-                    }
+                {
+                    test.TestOptions = await Read_TestOptionsAsync(test.TestId, cnn);
                 }
-            return lstCourseTopicTests;
             }
-        public async Task<List<Test>> Read_TestsByExamIdAsync (int examId, bool readOptions)
-            {
-            List<Test> lstExamTests = new List<Test> ();
+
+            return lstCourseTopicTests;
+        }
+
+        public async Task<List<Test>> Read_TestsByExamIdAsync(int examId, bool readOptions)
+        {
+            List<Test> lstExamTests = new List<Test>();
             string sql = "dbo.sp_ReadTestsByExamId";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examid", examId);
-            using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
+            cmd.Parameters.AddWithValue("@examid", examId);
+            using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
                 {
-                while (await reader.ReadAsync ())
+                    lstExamTests.Add(new Test
                     {
-                    lstExamTests.Add (new Test
-                        {
-                        TestId = reader.GetInt32 (0),
-                        CourseId = reader.GetInt32 (1),
-                        TopicId = reader.GetInt32 (2),
-                        TestTitle = reader.GetString (3),
-                        TestType = reader.GetInt32 (4),
-                        TestLevel = reader.GetInt32 (5),
-                        TestTags = reader.GetInt32 (6)
-                        });
-                    }
+                        TestId = reader.GetInt32(0),
+                        CourseId = reader.GetInt32(1),
+                        TopicId = reader.GetInt32(2),
+                        TestTitle = reader.GetString(3),
+                        TestType = reader.GetInt32(4),
+                        TestLevel = reader.GetInt32(5),
+                        TestTags = reader.GetInt32(6)
+                    });
                 }
+            }
+
             if (readOptions)
-                {
+            {
                 //with existing open cnn
                 foreach (Test test in lstExamTests)
-                    {
-                    test.TestOptions = await Read_TestOptionsAsync (test.TestId, cnn);
-                    }
+                {
+                    test.TestOptions = await Read_TestOptionsAsync(test.TestId, cnn);
                 }
-            return lstExamTests;
             }
-        public async Task<List<Test>> Read_TestsByStudentExamIdAsync (int studentExamId, bool readOptions)
-            {
-            List<Test> lstStudentExamTests = new List<Test> ();
+
+            return lstExamTests;
+        }
+
+        public async Task<List<Test>> Read_TestsByStudentExamIdAsync(int studentExamId, bool readOptions)
+        {
+            List<Test> lstStudentExamTests = new List<Test>();
             string sql = "dbo.sp_ReadTestsByStudentExamId";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
-            using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
+            cmd.Parameters.AddWithValue("@studentexamid", studentExamId);
+            using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
                 {
-                while (await reader.ReadAsync ())
+                    lstStudentExamTests.Add(new Test
                     {
-                    lstStudentExamTests.Add (new Test
-                        {
-                        TestId = reader.GetInt32 (0),
-                        CourseId = reader.GetInt32 (1),
-                        TopicId = reader.GetInt32 (2),
-                        TestTitle = reader.GetString (3),
-                        TestType = reader.GetInt32 (4),
-                        TestLevel = reader.GetInt32 (5),
-                        TestTags = reader.GetInt32 (6)
-                        });
-                    }
+                        TestId = reader.GetInt32(0),
+                        CourseId = reader.GetInt32(1),
+                        TopicId = reader.GetInt32(2),
+                        TestTitle = reader.GetString(3),
+                        TestType = reader.GetInt32(4),
+                        TestLevel = reader.GetInt32(5),
+                        TestTags = reader.GetInt32(6)
+                    });
                 }
+            }
+
             if (readOptions)
-                {
+            {
                 //with existing open cnn
                 foreach (Test test in lstStudentExamTests)
-                    {
-                    test.TestOptions = await Read_TestOptionsAsync (test.TestId, cnn);
-                    }
+                {
+                    test.TestOptions = await Read_TestOptionsAsync(test.TestId, cnn);
                 }
-            return lstStudentExamTests;
             }
-        public async Task<List<Test>> Read_TestsByStudentCourseIdAsync (int studentCourseId, bool readOptions)
-            {
-            List<Test> lstStudentCourseTests = new List<Test> ();
+
+            return lstStudentExamTests;
+        }
+
+        public async Task<List<Test>> Read_TestsByStudentCourseIdAsync(int studentCourseId, bool readOptions)
+        {
+            List<Test> lstStudentCourseTests = new List<Test>();
             string sql = "dbo.sp_ReadTestsByStudentCourseId";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentcourseid", studentCourseId);
-            using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
+            cmd.Parameters.AddWithValue("@studentcourseid", studentCourseId);
+            using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
                 {
-                while (await reader.ReadAsync ())
+                    lstStudentCourseTests.Add(new Test
                     {
-                    lstStudentCourseTests.Add (new Test
-                        {
-                        TestId = reader.GetInt32 (0),
-                        CourseId = reader.GetInt32 (1),
-                        TopicId = reader.GetInt32 (2),
-                        TestTitle = reader.GetString (3),
-                        TestType = reader.GetInt32 (4),
-                        TestLevel = reader.GetInt32 (5),
-                        TestTags = reader.GetInt32 (6)
-                        });
-                    }
+                        TestId = reader.GetInt32(0),
+                        CourseId = reader.GetInt32(1),
+                        TopicId = reader.GetInt32(2),
+                        TestTitle = reader.GetString(3),
+                        TestType = reader.GetInt32(4),
+                        TestLevel = reader.GetInt32(5),
+                        TestTags = reader.GetInt32(6)
+                    });
                 }
+            }
+
             if (readOptions)
-                {
+            {
                 //with existing open cnn
                 foreach (Test test in lstStudentCourseTests)
-                    {
-                    test.TestOptions = await Read_TestOptionsAsync (test.TestId, cnn);
-                    }
+                {
+                    test.TestOptions = await Read_TestOptionsAsync(test.TestId, cnn);
                 }
+            }
+
             return lstStudentCourseTests;
-            }
-        public async Task<bool> Update_TestAsync (Test test)
-            {
+        }
+
+        public async Task<bool> Update_TestAsync(Test test)
+        {
             string sql = "dbo.sp_UpdateTest";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@courseid", test.CourseId);
-            cmd.Parameters.AddWithValue ("@topicid", test.TopicId);
-            cmd.Parameters.AddWithValue ("@testtitle", test.TestTitle);
-            cmd.Parameters.AddWithValue ("@testtype", test.TestType);
-            cmd.Parameters.AddWithValue ("@testlevel", test.TestLevel);
-            cmd.Parameters.AddWithValue ("@testtags", test.TestTags);
-            cmd.Parameters.AddWithValue ("@testid", test.TestId);
-            await cmd.ExecuteNonQueryAsync ();
+            cmd.Parameters.AddWithValue("@courseid", test.CourseId);
+            cmd.Parameters.AddWithValue("@topicid", test.TopicId);
+            cmd.Parameters.AddWithValue("@testtitle", test.TestTitle);
+            cmd.Parameters.AddWithValue("@testtype", test.TestType);
+            cmd.Parameters.AddWithValue("@testlevel", test.TestLevel);
+            cmd.Parameters.AddWithValue("@testtags", test.TestTags);
+            cmd.Parameters.AddWithValue("@testid", test.TestId);
+            await cmd.ExecuteNonQueryAsync();
             return true;
-            }
-        public async Task<bool> Delete_TestAsync (int testId)
-            {
+        }
+
+        public async Task<bool> Delete_TestAsync(int testId)
+        {
             string sql = "dbo.sp_DeleteTest";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@testid", testId);
-            int i = await cmd.ExecuteNonQueryAsync ();
+            cmd.Parameters.AddWithValue("@testid", testId);
+            int i = await cmd.ExecuteNonQueryAsync();
             return true;
-            }
-        public async Task<bool> ImportExcelTestsAsync (string filePath, int courseId)
-            {
-            CourseTopic topic = new CourseTopic ();
-            List<TestOption> lstOptions = new List<TestOption> ();
-            TestOption option = new TestOption ();
-            Test test = new Test ();
+        }
+
+        public async Task<bool> ImportExcelTestsAsync(string filePath, int courseId)
+        {
+            CourseTopic topic = new CourseTopic();
+            List<TestOption> lstOptions = new List<TestOption>();
+            TestOption option = new TestOption();
+            Test test = new Test();
             test.CourseId = courseId;
             try
+            {
+                using (IXLWorkbook WB = new XLWorkbook(filePath))
                 {
-                using (IXLWorkbook WB = new XLWorkbook (filePath))
-                    {
-                    var WS0 = WB.Worksheets.ElementAtOrDefault (0);
+                    var WS0 = WB.Worksheets.ElementAtOrDefault(0);
                     int iRow = 0;
                     //Excel columns: {1:Test, 2:testRTL, 3:optRTL, 4:nOpt, 5-9:opt1-5Texts, 10:Ans, 11:forceLast 12:Level 13:Topic} 
-                    foreach (IXLRow Rowx in WS0.Rows ())
-                        {
+                    foreach (IXLRow Rowx in WS0.Rows())
+                    {
                         iRow = iRow + 1;
                         if (iRow > 1)
+                        {
+                            test.TestTitle = WS0.Cell(iRow, 1).Value.ToString();
+                            test.TestTags = 0; //initialize to 0
+                            if (WS0.Cell(iRow, 2).Value.ToString().ToLower() == "y")
                             {
-                            test.TestTitle = WS0.Cell (iRow, 1).Value.ToString ();
-                            test.TestTags = 0;//initialize to 0
-                            if (WS0.Cell (iRow, 2).Value.ToString ().ToLower () == "y")
-                                {
                                 test.TestTags = 1;
-                                }
-                            if (WS0.Cell (iRow, 3).Value.ToString ().ToLower () == "y")
-                                {
+                            }
+
+                            if (WS0.Cell(iRow, 3).Value.ToString().ToLower() == "y")
+                            {
                                 test.TestTags = test.TestTags + 2;
-                                }
-                            test.TestType = Convert.ToInt32 (WS0.Cell (iRow, 4).Value.ToString ());   //nOpts
-                            test.TestLevel = Convert.ToInt32 (WS0.Cell (iRow, 12).Value.ToString ()); //TestLevel
-                            topic.CourseTopicTitle = Strings.Left (WS0.Cell (iRow, 13).Value.ToString (), 30).Trim (); //Topic
+                            }
+
+                            test.TestType = Convert.ToInt32(WS0.Cell(iRow, 4).Value.ToString()); //nOpts
+                            test.TestLevel = Convert.ToInt32(WS0.Cell(iRow, 12).Value.ToString()); //TestLevel
+                            topic.CourseTopicTitle =
+                                Strings.Left(WS0.Cell(iRow, 13).Value.ToString(), 30).Trim(); //Topic
                             //test.TopicId = await Read_CourseTopicsAsync (topic);
                             if (test.TopicId == 0)
-                                {
-                                test.TopicId = await Create_CourseTopicAsync (topic);
-                                }
+                            {
+                                test.TopicId = await Create_CourseTopicAsync(topic);
+                            }
+
                             //save Test
-                            test.TestId = await Create_TestAsync (test);
+                            test.TestId = await Create_TestAsync(test);
                             //Options
-                            lstOptions.Clear ();
+                            lstOptions.Clear();
                             for (int col = 5; col <= 9; col++)
-                                {
-                                lstOptions.Add (new TestOption { TestOptionTitle = WS0.Cell (iRow, col).Value.ToString () });
-                                }
-                            int answ = Convert.ToInt32 (WS0.Cell (iRow, 10).Value.ToString () ?? "0");
-                            lstOptions [answ - 1].TestOptionTags = 2; //IsAns
-                            int forceLast = Convert.ToInt32 (WS0.Cell (iRow, 11).Value.ToString () ?? "0");
+                            {
+                                lstOptions.Add(
+                                    new TestOption { TestOptionTitle = WS0.Cell(iRow, col).Value.ToString() });
+                            }
+
+                            int answ = Convert.ToInt32(WS0.Cell(iRow, 10).Value.ToString() ?? "0");
+                            lstOptions[answ - 1].TestOptionTags = 2; //IsAns
+                            int forceLast = Convert.ToInt32(WS0.Cell(iRow, 11).Value.ToString() ?? "0");
                             if (forceLast != 0)
-                                {
-                                lstOptions [forceLast - 1].TestOptionTags += 1; //ForceLast
-                                }
+                            {
+                                lstOptions[forceLast - 1].TestOptionTags += 1; //ForceLast
+                            }
+
                             //Save options
                             for (int i = 0; i < test.TestType; i++)
-                                {
-                                int addOpt = await Create_TestOptionAsync (lstOptions [i]);
+                            {
+                                int addOpt = await Create_TestOptionAsync(lstOptions[i]);
                                 if (addOpt != 0)
-                                    {
-                                    }
+                                {
                                 }
                             }
                         }
                     }
                 }
+            }
             catch (Exception ex)
-                {
-                Console.WriteLine ("Error in:[ImportExcel] \n" + ex.ToString ());
-                }
+            {
+                Console.WriteLine("Error in:[ImportExcel] \n" + ex.ToString());
+            }
+
             return true;
-            }
+        }
+
         #endregion
+
         #region TO:TestOptions
-        public async Task<int> Create_TestOptionAsync (TestOption testOption)
-            {
+
+        public async Task<int> Create_TestOptionAsync(TestOption testOption)
+        {
             string sql = "dbo.sp_CreateTestOption"; //get ID of newly added record
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@testid", testOption.TestId);
-            cmd.Parameters.AddWithValue ("@testoptiontitle", testOption.TestOptionTitle);
-            cmd.Parameters.AddWithValue ("@testoptiontags", testOption.TestOptionTags);
-            int r = (int) await cmd.ExecuteScalarAsync ();
+            cmd.Parameters.AddWithValue("@testid", testOption.TestId);
+            cmd.Parameters.AddWithValue("@testoptiontitle", testOption.TestOptionTitle);
+            cmd.Parameters.AddWithValue("@testoptiontags", testOption.TestOptionTags);
+            int r = (int)await cmd.ExecuteScalarAsync();
             return r;
-            }
-        public async Task<List<TestOption>> Read_TestOptionsAsync (int testId, SqlConnection cnn)
-            {
+        }
+
+        public async Task<List<TestOption>> Read_TestOptionsAsync(int testId, SqlConnection cnn)
+        {
             //TestOptions are collected by DTOs: {4:Tests, 8:ExamTests, 12:StudentExamTests, 14:StudentExamTests}
-            Random random = new Random ();
-            List<TestOption> lstTestOptions = new List<TestOption> ();
+            Random random = new Random();
+            List<TestOption> lstTestOptions = new List<TestOption>();
             string sql = "dbo.sp_ReadTestOptions";
             try
-                {
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@testid", testId);
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
+                cmd.Parameters.AddWithValue("@testid", testId);
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
                     {
-                    while (await reader.ReadAsync ())
+                        lstTestOptions.Add(new TestOption
                         {
-                        lstTestOptions.Add (new TestOption
-                            {
-                            TestOptionId = reader.GetInt32 (0),
-                            TestId = reader.GetInt32 (1),
-                            TestOptionTitle = reader.GetString (2),
-                            TestOptionTags = reader.GetInt32 (3)
-                            });
-                        }
+                            TestOptionId = reader.GetInt32(0),
+                            TestId = reader.GetInt32(1),
+                            TestOptionTitle = reader.GetString(2),
+                            TestOptionTags = reader.GetInt32(3)
+                        });
                     }
+                }
+
                 //shuffle
                 int Nshuffle = lstTestOptions.Count; //shuffle all options
                 TestOption tmpx;
-                TestOption tmp1 = new TestOption ();
+                TestOption tmp1 = new TestOption();
                 for (int p = 0; p < lstTestOptions.Count; p++)
+                {
+                    if ((lstTestOptions[p].TestOptionTags & 1) == 1)
                     {
-                    if ((lstTestOptions [p].TestOptionTags & 1) == 1)
-                        {
-                        tmpx = lstTestOptions [p];
+                        tmpx = lstTestOptions[p];
                         //send ForceLast to last position
-                        tmp1 = lstTestOptions [lstTestOptions.Count - 1];
-                        lstTestOptions [lstTestOptions.Count - 1] = tmpx;
-                        lstTestOptions [p] = tmp1;
+                        tmp1 = lstTestOptions[lstTestOptions.Count - 1];
+                        lstTestOptions[lstTestOptions.Count - 1] = tmpx;
+                        lstTestOptions[p] = tmp1;
                         Nshuffle = lstTestOptions.Count - 1;
                         break;
-                        }
                     }
+                }
+
                 //do shuffle
                 int rnd = 0;
                 for (int i = Nshuffle - 1; i > 0; i--)
-                    {
-                    int j = random.Next (0, i + 1);
-                    var temp = lstTestOptions [i];
-                    lstTestOptions [i] = lstTestOptions [j];
-                    lstTestOptions [j] = temp;
-                    }
-                return lstTestOptions;
-                }
-            catch (Exception ex)
                 {
-                Console.WriteLine ("Error in BEService C05: Create_TestOptionsAsync: " + ex);
-                return new List<TestOption> ();
+                    int j = random.Next(0, i + 1);
+                    var temp = lstTestOptions[i];
+                    lstTestOptions[i] = lstTestOptions[j];
+                    lstTestOptions[j] = temp;
                 }
+
+                return lstTestOptions;
             }
-        public async Task<TestOption> Read_TestOptionAsync (int testOptionId, SqlConnection cnn)
+            catch (Exception ex)
             {
-            TestOption testOption = new TestOption ();
+                Console.WriteLine("Error in BEService C05: Create_TestOptionsAsync: " + ex);
+                return new List<TestOption>();
+            }
+        }
+
+        public async Task<TestOption> Read_TestOptionAsync(int testOptionId, SqlConnection cnn)
+        {
+            TestOption testOption = new TestOption();
             string sql = "dbo.sp_ReadTestOption";
             try
-                {
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@testoptionid", testOptionId.ToString ());
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
+                cmd.Parameters.AddWithValue("@testoptionid", testOptionId.ToString());
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
                     {
-                    while (await reader.ReadAsync ())
-                        {
-                        testOption.TestOptionId = reader.GetInt32 (0);
-                        testOption.TestId = reader.GetInt32 (1);
-                        testOption.TestOptionTitle = reader.GetString (2);
-                        testOption.TestOptionTags = reader.GetInt32 (3);
-                        }
-                    return testOption;
+                        testOption.TestOptionId = reader.GetInt32(0);
+                        testOption.TestId = reader.GetInt32(1);
+                        testOption.TestOptionTitle = reader.GetString(2);
+                        testOption.TestOptionTags = reader.GetInt32(3);
                     }
+
+                    return testOption;
                 }
+            }
             catch (Exception ex)
-                {
-                Console.WriteLine ("Error in BEService C05: Create_TestOptionsAsync: " + ex);
-                return new TestOption ();
-                }
-            }
-        public async Task<bool> Update_TestOptionAsync (TestOption testOption)
             {
+                Console.WriteLine("Error in BEService C05: Create_TestOptionsAsync: " + ex);
+                return new TestOption();
+            }
+        }
+
+        public async Task<bool> Update_TestOptionAsync(TestOption testOption)
+        {
             string sql = "dbo.sp_UpdateTestOption";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@testid", testOption.TestId);
-            cmd.Parameters.AddWithValue ("@testoptiontitle", testOption.TestOptionTitle);
-            cmd.Parameters.AddWithValue ("@testoptiontags", testOption.TestOptionTags);
-            cmd.Parameters.AddWithValue ("@testoptionid", testOption.TestOptionId);
-            int i = await cmd.ExecuteNonQueryAsync ();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
+            cmd.Parameters.AddWithValue("@testid", testOption.TestId);
+            cmd.Parameters.AddWithValue("@testoptiontitle", testOption.TestOptionTitle);
+            cmd.Parameters.AddWithValue("@testoptiontags", testOption.TestOptionTags);
+            cmd.Parameters.AddWithValue("@testoptionid", testOption.TestOptionId);
+            int i = await cmd.ExecuteNonQueryAsync();
             return true;
-            }
-        public async Task<bool> Delete_TestOptionsAsync (int testId)
-            {
+        }
+
+        public async Task<bool> Delete_TestOptionsAsync(int testId)
+        {
             string sql = "dbo.sp_DeleteTestOptions";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@testoptionid", testId);
-            int i = await cmd.ExecuteNonQueryAsync ();
+            cmd.Parameters.AddWithValue("@testoptionid", testId);
+            int i = await cmd.ExecuteNonQueryAsync();
             return true;
-            }
-        public async Task<bool> Delete_TestOptionAsync (int testOptionId)
-            {
+        }
+
+        public async Task<bool> Delete_TestOptionAsync(int testOptionId)
+        {
             string sql = "dbo.sp_DeleteTestOption";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@testoptionid", testOptionId);
-            int i = await cmd.ExecuteNonQueryAsync ();
+            cmd.Parameters.AddWithValue("@testoptionid", testOptionId);
+            int i = await cmd.ExecuteNonQueryAsync();
             return true;
-            }
+        }
+
         #endregion
+
         #region E:Exams
-        public async Task<int> Create_ExamAsync (Exam exam)
-            {
+
+        public async Task<int> Create_ExamAsync(Exam exam)
+        {
             string sql = "dbo.sp_CreateExam"; //get ID of newly added record
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@courseid", exam.CourseId);
-            cmd.Parameters.AddWithValue ("@examtitle", exam.ExamTitle);
-            cmd.Parameters.AddWithValue ("@examdatetime", exam.ExamDateTime);
-            cmd.Parameters.AddWithValue ("@examduration", exam.ExamDuration);
-            cmd.Parameters.AddWithValue ("@examntests", exam.ExamNTests);
-            cmd.Parameters.AddWithValue ("@examtags", exam.ExamTags);
-            await cnn.OpenAsync ();
-            int i = (int) await cmd.ExecuteScalarAsync ();
+            cmd.Parameters.AddWithValue("@courseid", exam.CourseId);
+            cmd.Parameters.AddWithValue("@examtitle", exam.ExamTitle);
+            cmd.Parameters.AddWithValue("@examdatetime", exam.ExamDateTime);
+            cmd.Parameters.AddWithValue("@examduration", exam.ExamDuration);
+            cmd.Parameters.AddWithValue("@examntests", exam.ExamNTests);
+            cmd.Parameters.AddWithValue("@examtags", exam.ExamTags);
+            await cnn.OpenAsync();
+            int i = (int)await cmd.ExecuteScalarAsync();
             return i;
-            }
-        public async Task<List<Exam>> Read_ExamsAsync (int courseId)
-            {
-            List<Exam> lstExams = new List<Exam> ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new ("dbo.sp_ReadExams", cnn);
+        }
+
+        public async Task<List<Exam>> Read_ExamsAsync(int courseId)
+        {
+            List<Exam> lstExams = new List<Exam>();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new("dbo.sp_ReadExams", cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@courseid", courseId);
-            await cnn.OpenAsync ();
-            using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            while (await reader.ReadAsync ())
+            cmd.Parameters.AddWithValue("@courseid", courseId);
+            await cnn.OpenAsync();
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                lstExams.Add(new Exam
                 {
-                lstExams.Add (new Exam
-                    {
-                    ExamId = reader.GetInt32 (0),
-                    CourseId = reader.GetInt32 (1),
-                    ExamTitle = reader.GetString (2),
-                    ExamDateTime = reader.GetDateTimeOffset (3),
-                    ExamDuration = reader.GetInt32 (4),
-                    ExamNTests = reader.GetInt32 (5),
-                    ExamTags = reader.GetInt32 (6)
-                    });
-                }
+                    ExamId = reader.GetInt32(0),
+                    CourseId = reader.GetInt32(1),
+                    ExamTitle = reader.GetString(2),
+                    ExamDateTime = reader.GetDateTimeOffset(3),
+                    ExamDuration = reader.GetInt32(4),
+                    ExamNTests = reader.GetInt32(5),
+                    ExamTags = reader.GetInt32(6)
+                });
+            }
+
             return lstExams;
-            }
-        public async Task<Exam> Read_ExamAsync (int examId, bool getStudentsList)
-            {
-            Exam exam = new Exam ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new ("dbo.sp_ReadExam", cnn);
+        }
+
+        public async Task<Exam> Read_ExamAsync(int examId, bool getStudentsList)
+        {
+            Exam exam = new Exam();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new("dbo.sp_ReadExam", cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examid", examId);
-            await cnn.OpenAsync ();
-            using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            while (await reader.ReadAsync ())
-                {
-                exam.ExamId = reader.GetInt32 (0);
-                exam.CourseId = reader.GetInt32 (1);
-                exam.ExamTitle = reader.GetString (2);
-                exam.ExamDateTime = reader.GetDateTimeOffset (3);
-                exam.ExamDuration = reader.GetInt32 (4);
-                exam.ExamNTests = reader.GetInt32 (5);
-                exam.ExamTags = reader.GetInt32 (6);
-                exam.Students = new List<StudentExam> ();
+            cmd.Parameters.AddWithValue("@examid", examId);
+            await cnn.OpenAsync();
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                exam.ExamId = reader.GetInt32(0);
+                exam.CourseId = reader.GetInt32(1);
+                exam.ExamTitle = reader.GetString(2);
+                exam.ExamDateTime = reader.GetDateTimeOffset(3);
+                exam.ExamDuration = reader.GetInt32(4);
+                exam.ExamNTests = reader.GetInt32(5);
+                exam.ExamTags = reader.GetInt32(6);
+                exam.Students = new List<StudentExam>();
                 //get students
                 if (getStudentsList)
-                    {
-                    var lstStudents = await Read_StudentExamsAsync ("ByExamId", exam.ExamId, 0);
+                {
+                    var lstStudents = await Read_StudentExamsAsync("ByExamId", exam.ExamId, 0);
                     if (lstStudents != null)
-                        {
+                    {
                         exam.Students = lstStudents;
-                        }
                     }
                 }
+            }
+
             return exam;
-            }
-        public async Task<bool> Update_ExamAsync (Exam exam)
-            {
+        }
+
+        public async Task<bool> Update_ExamAsync(Exam exam)
+        {
             string sql = "dbo.sp_UpdateExam";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@courseid", exam.CourseId);
-            cmd.Parameters.AddWithValue ("@examtitle", exam.ExamTitle);
-            cmd.Parameters.AddWithValue ("@examdatetime", exam.ExamDateTime);
-            cmd.Parameters.AddWithValue ("@examduration", exam.ExamDuration);
-            cmd.Parameters.AddWithValue ("@examntests", exam.ExamNTests);
-            cmd.Parameters.AddWithValue ("@examtags", exam.ExamTags);
-            cmd.Parameters.AddWithValue ("@examid", exam.ExamId);
-            await cnn.OpenAsync ();
-            await cmd.ExecuteReaderAsync ();
+            cmd.Parameters.AddWithValue("@courseid", exam.CourseId);
+            cmd.Parameters.AddWithValue("@examtitle", exam.ExamTitle);
+            cmd.Parameters.AddWithValue("@examdatetime", exam.ExamDateTime);
+            cmd.Parameters.AddWithValue("@examduration", exam.ExamDuration);
+            cmd.Parameters.AddWithValue("@examntests", exam.ExamNTests);
+            cmd.Parameters.AddWithValue("@examtags", exam.ExamTags);
+            cmd.Parameters.AddWithValue("@examid", exam.ExamId);
+            await cnn.OpenAsync();
+            await cmd.ExecuteReaderAsync();
             return true;
-            }
-        public async Task<bool> Delete_ExamsAsync (int courseId)
-            {
+        }
+
+        public async Task<bool> Delete_ExamsAsync(int courseId)
+        {
             string sql = @"dbo.sp_DeleteExams";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@courseid", courseId);
-            await cnn.OpenAsync ();
-            await cmd.ExecuteReaderAsync ();
+            cmd.Parameters.AddWithValue("@courseid", courseId);
+            await cnn.OpenAsync();
+            await cmd.ExecuteReaderAsync();
             return true;
-            }
-        public async Task<bool> Delete_ExamAsync (int examId)
-            {
+        }
+
+        public async Task<bool> Delete_ExamAsync(int examId)
+        {
             string sql = "dbo.sp_DeleteExam";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examid", examId);
-            await cnn.OpenAsync ();
-            await cmd.ExecuteNonQueryAsync ();
+            cmd.Parameters.AddWithValue("@examid", examId);
+            await cnn.OpenAsync();
+            await cmd.ExecuteNonQueryAsync();
             return true;
-            }
+        }
+
         #endregion
+
         #region EC:ExamCompositions
-        public async Task<int> Create_ExamCompositionAsync (ExamComposition examComposition)
-            {
+
+        public async Task<int> Create_ExamCompositionAsync(ExamComposition examComposition)
+        {
             string sql = "dbo.sp_CreateExamComposition"; //get ID of newly added record
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examid", examComposition.ExamId);
-            cmd.Parameters.AddWithValue ("@topicid", examComposition.TopicId);
-            cmd.Parameters.AddWithValue ("@topicntests", examComposition.TopicNTests);
-            cmd.Parameters.AddWithValue ("@testslevelfrom", examComposition.TestsLevelFrom);
-            cmd.Parameters.AddWithValue ("@testslevelto", examComposition.TestsLevelTo);
-            await cnn.OpenAsync ();
-            int i = (int) await cmd.ExecuteScalarAsync ();
+            cmd.Parameters.AddWithValue("@examid", examComposition.ExamId);
+            cmd.Parameters.AddWithValue("@topicid", examComposition.TopicId);
+            cmd.Parameters.AddWithValue("@topicntests", examComposition.TopicNTests);
+            cmd.Parameters.AddWithValue("@testslevelfrom", examComposition.TestsLevelFrom);
+            cmd.Parameters.AddWithValue("@testslevelto", examComposition.TestsLevelTo);
+            await cnn.OpenAsync();
+            int i = (int)await cmd.ExecuteScalarAsync();
             return i;
-            }
-        public async Task<List<ExamComposition>> Read_ExamCompositionsAsync (int examId)
-            {
-            List<ExamComposition> lstExamComposition = new List<ExamComposition> ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new ("dbo.sp_ReadExamCompositions", cnn);
+        }
+
+        public async Task<List<ExamComposition>> Read_ExamCompositionsAsync(int examId)
+        {
+            List<ExamComposition> lstExamComposition = new List<ExamComposition>();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new("dbo.sp_ReadExamCompositions", cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examid", examId);
-            await cnn.OpenAsync ();
-            using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            while (await reader.ReadAsync ())
+            cmd.Parameters.AddWithValue("@examid", examId);
+            await cnn.OpenAsync();
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                lstExamComposition.Add(new ExamComposition
                 {
-                lstExamComposition.Add (new ExamComposition
-                    {
-                    ExamCompositionId = reader.GetInt32 (0),
-                    ExamId = reader.GetInt32 (1),
-                    TopicId = reader.GetInt32 (2),
-                    TopicNTests = reader.GetInt32 (3),
-                    TestsLevelFrom = reader.GetInt32 (4),
-                    TestsLevelTo = reader.GetInt32 (5)
-                    });
-                }
+                    ExamCompositionId = reader.GetInt32(0),
+                    ExamId = reader.GetInt32(1),
+                    TopicId = reader.GetInt32(2),
+                    TopicNTests = reader.GetInt32(3),
+                    TestsLevelFrom = reader.GetInt32(4),
+                    TestsLevelTo = reader.GetInt32(5)
+                });
+            }
+
             return lstExamComposition;
-            }
-        public async Task<ExamComposition> Read_ExamCompositionAsync (int examCompositionId)
-            {
-            ExamComposition examComposition = new ExamComposition ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new ("dbo.sp_ReadExamComposition", cnn);
+        }
+
+        public async Task<ExamComposition> Read_ExamCompositionAsync(int examCompositionId)
+        {
+            ExamComposition examComposition = new ExamComposition();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new("dbo.sp_ReadExamComposition", cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examcompositionid", examCompositionId);
-            await cnn.OpenAsync ();
-            using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            while (await reader.ReadAsync ())
-                {
-                examComposition.ExamCompositionId = reader.GetInt32 (0);
-                examComposition.ExamId = reader.GetInt32 (1);
-                examComposition.TopicId = reader.GetInt32 (2);
-                examComposition.TopicNTests = reader.GetInt32 (3);
-                examComposition.TestsLevelFrom = reader.GetInt32 (4);
-                examComposition.TestsLevelTo = reader.GetInt32 (5);
-                }
+            cmd.Parameters.AddWithValue("@examcompositionid", examCompositionId);
+            await cnn.OpenAsync();
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                examComposition.ExamCompositionId = reader.GetInt32(0);
+                examComposition.ExamId = reader.GetInt32(1);
+                examComposition.TopicId = reader.GetInt32(2);
+                examComposition.TopicNTests = reader.GetInt32(3);
+                examComposition.TestsLevelFrom = reader.GetInt32(4);
+                examComposition.TestsLevelTo = reader.GetInt32(5);
+            }
+
             return examComposition;
-            }
-        public async Task<bool> Update_ExamCompositionAsync (ExamComposition examComposition)
-            {
+        }
+
+        public async Task<bool> Update_ExamCompositionAsync(ExamComposition examComposition)
+        {
             string sql = "dbo.sp_UpdateExamComposition";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examid", examComposition.ExamId);
-            cmd.Parameters.AddWithValue ("@topicid", examComposition.TopicId);
-            cmd.Parameters.AddWithValue ("@topicntests", examComposition.TopicNTests);
-            cmd.Parameters.AddWithValue ("@testslevelfrom", examComposition.TestsLevelFrom);
-            cmd.Parameters.AddWithValue ("@testslevelto", examComposition.TestsLevelTo);
-            cmd.Parameters.AddWithValue ("@examcompositionid", examComposition.ExamCompositionId);
-            await cnn.OpenAsync ();
-            await cmd.ExecuteReaderAsync ();
+            cmd.Parameters.AddWithValue("@examid", examComposition.ExamId);
+            cmd.Parameters.AddWithValue("@topicid", examComposition.TopicId);
+            cmd.Parameters.AddWithValue("@topicntests", examComposition.TopicNTests);
+            cmd.Parameters.AddWithValue("@testslevelfrom", examComposition.TestsLevelFrom);
+            cmd.Parameters.AddWithValue("@testslevelto", examComposition.TestsLevelTo);
+            cmd.Parameters.AddWithValue("@examcompositionid", examComposition.ExamCompositionId);
+            await cnn.OpenAsync();
+            await cmd.ExecuteReaderAsync();
             return true;
-            }
-        public async Task<bool> Delete_ExamCompositionsAsync (int examId)
-            {
+        }
+
+        public async Task<bool> Delete_ExamCompositionsAsync(int examId)
+        {
             string sql = "dbo.sp_DeleteExamCompositions";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examid", examId);
-            await cnn.OpenAsync ();
-            await cmd.ExecuteReaderAsync ();
+            cmd.Parameters.AddWithValue("@examid", examId);
+            await cnn.OpenAsync();
+            await cmd.ExecuteReaderAsync();
             return true;
-            }
-        public async Task<bool> Delete_ExamCompositionAsync (int examCompositionId)
-            {
+        }
+
+        public async Task<bool> Delete_ExamCompositionAsync(int examCompositionId)
+        {
             string sql = "dbo.sp_DeleteExamComposition";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examcompositionid", examCompositionId);
-            await cnn.OpenAsync ();
-            await cmd.ExecuteReaderAsync ();
+            cmd.Parameters.AddWithValue("@examcompositionid", examCompositionId);
+            await cnn.OpenAsync();
+            await cmd.ExecuteReaderAsync();
             return true;
-            }
+        }
+
         #endregion
+
         #region ET:ExamTests
-        public async Task<int> Create_ExamTestsByExamCompositionAsync (ExamComposition examComposition)
-            {
-            List<int> lstTestIds = new List<int> ();
+
+        public async Task<int> Create_ExamTestsByExamCompositionAsync(ExamComposition examComposition)
+        {
+            List<int> lstTestIds = new List<int>();
             string sql = "dbo.sp_CreateExamTestsByExamComposition";
-            string? connString = _config.GetConnectionString ("cnni");
-            using (SqlConnection cnn = new (connString))
-                {
-                using SqlCommand cmd = new (sql, cnn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@ntests", examComposition.TopicNTests);
-                cmd.Parameters.AddWithValue ("@topicid", examComposition.TopicId);
-                cmd.Parameters.AddWithValue ("@testlevelfrom", examComposition.TestsLevelFrom);
-                cmd.Parameters.AddWithValue ("@testlevelto", examComposition.TestsLevelTo);
-                await cnn.OpenAsync ();
-                var reader = await cmd.ExecuteReaderAsync ();
-                while (await reader.ReadAsync ())
-                    {
-                    lstTestIds.Add (reader.GetInt32 (0));
-                    }
-                }
-            ExamTest examTest = new ExamTest { ExamId = examComposition.ExamId, TestId = 0, PercentCorrect = 0, PercentIncorrect = 0, PercentHelped = 0 };
-            foreach (int testId in lstTestIds)
-                {
-                examTest.TestId = testId;
-                await Create_ExamTestAsync (examTest);
-                }
-            return 1;
-            }
-        public async Task<int> Create_ExamTestAsync (ExamTest examTest)
+            string? connString = _config.GetConnectionString("cnni");
+            using (SqlConnection cnn = new(connString))
             {
+                using SqlCommand cmd = new(sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ntests", examComposition.TopicNTests);
+                cmd.Parameters.AddWithValue("@topicid", examComposition.TopicId);
+                cmd.Parameters.AddWithValue("@testlevelfrom", examComposition.TestsLevelFrom);
+                cmd.Parameters.AddWithValue("@testlevelto", examComposition.TestsLevelTo);
+                await cnn.OpenAsync();
+                var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    lstTestIds.Add(reader.GetInt32(0));
+                }
+            }
+
+            ExamTest examTest = new ExamTest
+            {
+                ExamId = examComposition.ExamId, TestId = 0, PercentCorrect = 0, PercentIncorrect = 0, PercentHelped = 0
+            };
+            foreach (int testId in lstTestIds)
+            {
+                examTest.TestId = testId;
+                await Create_ExamTestAsync(examTest);
+            }
+
+            return 1;
+        }
+
+        public async Task<int> Create_ExamTestAsync(ExamTest examTest)
+        {
             string sql = "dbo.sp_CreateExamTest"; //get ID of newly added record
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examid", examTest.ExamId);
-            cmd.Parameters.AddWithValue ("@testid", examTest.TestId);
-            cmd.Parameters.AddWithValue ("@percentcorrect", examTest.PercentCorrect);
-            cmd.Parameters.AddWithValue ("@percentincorrect", examTest.PercentIncorrect);
-            cmd.Parameters.AddWithValue ("@percenthelped", examTest.PercentHelped);
-            await cnn.OpenAsync ();
-            int i = (int) await cmd.ExecuteScalarAsync ();
+            cmd.Parameters.AddWithValue("@examid", examTest.ExamId);
+            cmd.Parameters.AddWithValue("@testid", examTest.TestId);
+            cmd.Parameters.AddWithValue("@percentcorrect", examTest.PercentCorrect);
+            cmd.Parameters.AddWithValue("@percentincorrect", examTest.PercentIncorrect);
+            cmd.Parameters.AddWithValue("@percenthelped", examTest.PercentHelped);
+            await cnn.OpenAsync();
+            int i = (int)await cmd.ExecuteScalarAsync();
             //update number of tests
             return i;
-            }
-        public async Task<List<ExamTest>> Read_ExamTestsAsync (int examId)
-            {
-            List<ExamTest> lstExamTests = new List<ExamTest> ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new ("dbo.sp_ReadExamTests", cnn);
+        }
+
+        public async Task<List<ExamTest>> Read_ExamTestsAsync(int examId)
+        {
+            List<ExamTest> lstExamTests = new List<ExamTest>();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new("dbo.sp_ReadExamTests", cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examid", examId);
-            await cnn.OpenAsync ();
-            using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            while (await reader.ReadAsync ())
+            cmd.Parameters.AddWithValue("@examid", examId);
+            await cnn.OpenAsync();
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                lstExamTests.Add(new ExamTest
                 {
-                lstExamTests.Add (new ExamTest
-                    {
-                    ExamTestId = reader.GetInt32 (0),
-                    ExamId = reader.GetInt32 (1),
-                    TestId = reader.GetInt32 (2),
-                    PercentCorrect = reader.GetInt32 (3),
-                    PercentIncorrect = reader.GetInt32 (4),
-                    PercentHelped = reader.GetInt32 (5)
-                    });
-                }
+                    ExamTestId = reader.GetInt32(0),
+                    ExamId = reader.GetInt32(1),
+                    TestId = reader.GetInt32(2),
+                    PercentCorrect = reader.GetInt32(3),
+                    PercentIncorrect = reader.GetInt32(4),
+                    PercentHelped = reader.GetInt32(5)
+                });
+            }
+
             return lstExamTests;
-            }
-        public async Task<ExamTest> Read_ExamTestAsync (int examTestId)
-            {
-            ExamTest examTest = new ExamTest ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new ("dbo.sp_ReadExamTest", cnn);
+        }
+
+        public async Task<ExamTest> Read_ExamTestAsync(int examTestId)
+        {
+            ExamTest examTest = new ExamTest();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new("dbo.sp_ReadExamTest", cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examtestid", examTestId);
-            await cnn.OpenAsync ();
-            using SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            while (await reader.ReadAsync ())
-                {
-                examTest.ExamTestId = reader.GetInt32 (0);
-                examTest.ExamId = reader.GetInt32 (1);
-                examTest.TestId = reader.GetInt32 (2);
-                examTest.PercentCorrect = reader.GetInt32 (3);
-                examTest.PercentIncorrect = reader.GetInt32 (4);
-                examTest.PercentHelped = reader.GetInt32 (5);
-                }
+            cmd.Parameters.AddWithValue("@examtestid", examTestId);
+            await cnn.OpenAsync();
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                examTest.ExamTestId = reader.GetInt32(0);
+                examTest.ExamId = reader.GetInt32(1);
+                examTest.TestId = reader.GetInt32(2);
+                examTest.PercentCorrect = reader.GetInt32(3);
+                examTest.PercentIncorrect = reader.GetInt32(4);
+                examTest.PercentHelped = reader.GetInt32(5);
+            }
+
             return examTest;
-            }
-        public async Task<bool> Update_ExamTestAsync (ExamTest examTest)
-            {
+        }
+
+        public async Task<bool> Update_ExamTestAsync(ExamTest examTest)
+        {
             string sql = "dbo.sp_UpdateExamTest";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examid", examTest.ExamId);
-            cmd.Parameters.AddWithValue ("@testid", examTest.TestId);
-            cmd.Parameters.AddWithValue ("@percentcorrect", examTest.PercentCorrect);
-            cmd.Parameters.AddWithValue ("@percentincorrect", examTest.PercentIncorrect);
-            cmd.Parameters.AddWithValue ("@percenthelped", examTest.PercentHelped);
-            cmd.Parameters.AddWithValue ("@examtestid", examTest.ExamTestId);
-            await cnn.OpenAsync ();
-            await cmd.ExecuteReaderAsync ();
+            cmd.Parameters.AddWithValue("@examid", examTest.ExamId);
+            cmd.Parameters.AddWithValue("@testid", examTest.TestId);
+            cmd.Parameters.AddWithValue("@percentcorrect", examTest.PercentCorrect);
+            cmd.Parameters.AddWithValue("@percentincorrect", examTest.PercentIncorrect);
+            cmd.Parameters.AddWithValue("@percenthelped", examTest.PercentHelped);
+            cmd.Parameters.AddWithValue("@examtestid", examTest.ExamTestId);
+            await cnn.OpenAsync();
+            await cmd.ExecuteReaderAsync();
             return true;
-            }
-        public async Task<bool> Delete_ExamTestsAsync (int examId)
-            {
+        }
+
+        public async Task<bool> Delete_ExamTestsAsync(int examId)
+        {
             string sql = "dbo.sp_DeleteExamTests";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examid", examId);
-            await cnn.OpenAsync ();
-            await cmd.ExecuteReaderAsync ();
+            cmd.Parameters.AddWithValue("@examid", examId);
+            await cnn.OpenAsync();
+            await cmd.ExecuteReaderAsync();
             return true;
-            }
-        public async Task<bool> Delete_ExamTestAsync (ExamTest examTest)
-            {
+        }
+
+        public async Task<bool> Delete_ExamTestAsync(ExamTest examTest)
+        {
             string sql = "dbo.sp_DeleteExamTest";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            using SqlCommand cmd = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@testid", examTest.TestId);
-            await cnn.OpenAsync ();
-            await cmd.ExecuteReaderAsync ();
+            cmd.Parameters.AddWithValue("@testid", examTest.TestId);
+            await cnn.OpenAsync();
+            await cmd.ExecuteReaderAsync();
             return true;
-            }
+        }
+
         #endregion
+
         #region SE:StudentExams
-        public async Task<bool> Create_StudentExamsAsync (int examId, List<int> lstStudentIds)
-            {
-            Random random = new Random ();
+
+        public async Task<bool> Create_StudentExamsAsync(int examId, List<int> lstStudentIds)
+        {
+            Random random = new Random();
             string sql = "";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
             foreach (int studentId in lstStudentIds)
-                {
+            {
                 //1 Add a record to: StudentExams
                 sql = "dbo.sp_CreateStudentExams";
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentid", studentId);
-                cmd.Parameters.AddWithValue ("@examid", examId);
-                cmd.Parameters.AddWithValue ("@studentexamtags", 1);
-                cmd.Parameters.AddWithValue ("@studentexampoint", 0);
-                int newStudentExamId = (int) await cmd.ExecuteScalarAsync ();
+                cmd.Parameters.AddWithValue("@studentid", studentId);
+                cmd.Parameters.AddWithValue("@examid", examId);
+                cmd.Parameters.AddWithValue("@studentexamtags", 1);
+                cmd.Parameters.AddWithValue("@studentexampoint", 0);
+                int newStudentExamId = (int)await cmd.ExecuteScalarAsync();
                 //2 read exam tests
-                List<Test> lstExamTests = new List<Test> ();
-                lstExamTests = await Read_TestsByExamIdAsync (examId, true);
+                List<Test> lstExamTests = new List<Test>();
+                lstExamTests = await Read_TestsByExamIdAsync(examId, true);
                 //3 shuffle tests into: lstExamTests
                 int rnd = 0;
                 for (int k = 0; k < lstExamTests.Count; k++)
-                    {
-                    rnd = random.Next (k, (lstExamTests.Count));
-                    Test tmpTest = lstExamTests [rnd];
-                    lstExamTests [rnd] = lstExamTests [k];
-                    lstExamTests [k] = tmpTest;
-                    }
+                {
+                    rnd = random.Next(k, (lstExamTests.Count));
+                    Test tmpTest = lstExamTests[rnd];
+                    lstExamTests[rnd] = lstExamTests[k];
+                    lstExamTests[k] = tmpTest;
+                }
+
                 //4 options
                 foreach (Test tst in lstExamTests)
-                    {
-                    StudentExamTest est = new StudentExamTest ();
+                {
+                    StudentExamTest est = new StudentExamTest();
                     /*NOTICE:
                       If Read_TestOptions is called multiple times in rapid succession (as it is inside the loop over lstExamTests),
                       the Random constructor will use the same seed (based on system time), resulting in identical shuffles of lstTestOptions.
                       So even though you're calling Read_TestOptions(testId) for different tests, the shuffled list ends up in the same order,
                       and the key option (tag 2) is always in the same position, likely the first one found.
                       to fix, use a shared Random instance: pass a single Random object to Read_TestOptions */
-                    await Read_TestOptionsAsync (tst.TestId, cnn);
+                    await Read_TestOptionsAsync(tst.TestId, cnn);
                     est.StudentId = studentId;
                     est.StudentExamId = newStudentExamId;
                     est.TestId = tst.TestId;
-                    est.Opt1Id = (tst.TestOptions.Count > 0) ? (tst.TestOptions [0].TestOptionId) : 0;
-                    est.Opt2Id = (tst.TestOptions.Count > 1) ? (tst.TestOptions [1].TestOptionId) : 0;
-                    est.Opt3Id = (tst.TestOptions.Count > 2) ? (tst.TestOptions [2].TestOptionId) : 0;
-                    est.Opt4Id = (tst.TestOptions.Count > 3) ? (tst.TestOptions [3].TestOptionId) : 0;
-                    est.Opt5Id = (tst.TestOptions.Count > 4) ? (tst.TestOptions [4].TestOptionId) : 0;
+                    est.Opt1Id = (tst.TestOptions.Count > 0) ? (tst.TestOptions[0].TestOptionId) : 0;
+                    est.Opt2Id = (tst.TestOptions.Count > 1) ? (tst.TestOptions[1].TestOptionId) : 0;
+                    est.Opt3Id = (tst.TestOptions.Count > 2) ? (tst.TestOptions[2].TestOptionId) : 0;
+                    est.Opt4Id = (tst.TestOptions.Count > 3) ? (tst.TestOptions[3].TestOptionId) : 0;
+                    est.Opt5Id = (tst.TestOptions.Count > 4) ? (tst.TestOptions[4].TestOptionId) : 0;
                     foreach (TestOption opt in tst.TestOptions)
-                        {
+                    {
                         if ((opt.TestOptionTags & 2) == 2)
-                            {
+                        {
                             est.StudentExamTestKey = opt.TestOptionId;
-                            }
                         }
+                    }
+
                     //insert into ExamSheets
                     string sql2 = "dbo.sp_CreateStudentExamTests";
-                    var cmd2 = new Microsoft.Data.SqlClient.SqlCommand (sql2, cnn);
+                    var cmd2 = new Microsoft.Data.SqlClient.SqlCommand(sql2, cnn);
                     cmd2.CommandType = CommandType.StoredProcedure;
-                    cmd2.Parameters.AddWithValue ("@studentexamid", newStudentExamId);
-                    cmd2.Parameters.AddWithValue ("@testid", est.TestId);
-                    cmd2.Parameters.AddWithValue ("@opt1id", est.Opt1Id);
-                    cmd2.Parameters.AddWithValue ("@opt2id", est.Opt2Id);
-                    cmd2.Parameters.AddWithValue ("@opt3id", est.Opt3Id);
-                    cmd2.Parameters.AddWithValue ("@opt4id", est.Opt4Id);
-                    cmd2.Parameters.AddWithValue ("@opt5id", est.Opt5Id);
-                    cmd2.Parameters.AddWithValue ("@key", est.StudentExamTestKey);
-                    await cmd2.ExecuteNonQueryAsync ();
-                    }
+                    cmd2.Parameters.AddWithValue("@studentexamid", newStudentExamId);
+                    cmd2.Parameters.AddWithValue("@testid", est.TestId);
+                    cmd2.Parameters.AddWithValue("@opt1id", est.Opt1Id);
+                    cmd2.Parameters.AddWithValue("@opt2id", est.Opt2Id);
+                    cmd2.Parameters.AddWithValue("@opt3id", est.Opt3Id);
+                    cmd2.Parameters.AddWithValue("@opt4id", est.Opt4Id);
+                    cmd2.Parameters.AddWithValue("@opt5id", est.Opt5Id);
+                    cmd2.Parameters.AddWithValue("@key", est.StudentExamTestKey);
+                    await cmd2.ExecuteNonQueryAsync();
                 }
-            await cnn.CloseAsync ();
-            return true;
             }
-        public async Task<List<StudentExam>> Read_StudentExamsAsync (string mode, int Id, int teacherId)
-            {
+
+            await cnn.CloseAsync();
+            return true;
+        }
+
+        public async Task<List<StudentExam>> Read_StudentExamsAsync(string mode, int Id, int teacherId)
+        {
             int i = 0;
-            List<StudentExam> lstStudentsExam = new ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            List<StudentExam> lstStudentsExam = new();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_ReadStudentExams";
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@mode", mode);
-                cmd.Parameters.AddWithValue ("@id", Id);
-                cmd.Parameters.AddWithValue ("@teacherid", teacherId);
-                var reader = await cmd.ExecuteReaderAsync ();
-                while (await reader.ReadAsync ())
-                    {
-                    i++;
-                    var exam = new StudentExam ();
-                    exam.StudentExamId = reader.GetInt32 (0);
-                    exam.StudentId = reader.GetInt32 (1);
-                    exam.StudentName = reader.GetString (2);
-                    exam.StudentNickname = reader.GetString (3);
-                    exam.CourseId = reader.GetInt32 (4);
-                    exam.CourseName = reader.GetString (5);
-                    exam.ExamId = reader.GetInt32 (6);
-                    exam.ExamIndex = i;
-                    exam.ExamTitle = reader.GetString (7);
-                    exam.ExamDateTime = reader.GetDateTimeOffset (8);
-                    exam.ExamDuration = reader.GetInt32 (9);
-                    exam.ExamNTests = reader.GetInt32 (10);
-                    exam.ExamTags = reader.GetInt32 (11);
-                    exam.DateTimeStart = reader.GetDateTimeOffset (12);
-                    exam.DateTimeFinish = reader.GetDateTimeOffset (13);
-                    exam.StudentExamTags = reader.GetInt32 (14);
-                    exam.StudentExamPoint = reader.GetDecimal (15);
-                    lstStudentsExam.Add (exam);
-                    }
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("in be StudentExams: \n" + ex.ToString ());
-                }
-            await cnn.CloseAsync ();
-            return lstStudentsExam;
-            }
-        public async Task<StudentExam> Read_StudentExamAsync (int studentExamId, bool readInactiveExams)
             {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@mode", mode);
+                cmd.Parameters.AddWithValue("@id", Id);
+                cmd.Parameters.AddWithValue("@teacherid", teacherId);
+                var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    i++;
+                    var exam = new StudentExam();
+                    exam.StudentExamId = reader.GetInt32(0);
+                    exam.StudentId = reader.GetInt32(1);
+                    exam.StudentName = reader.GetString(2);
+                    exam.StudentNickname = reader.GetString(3);
+                    exam.CourseId = reader.GetInt32(4);
+                    exam.CourseName = reader.GetString(5);
+                    exam.ExamId = reader.GetInt32(6);
+                    exam.ExamIndex = i;
+                    exam.ExamTitle = reader.GetString(7);
+                    exam.ExamDateTime = reader.GetDateTimeOffset(8);
+                    exam.ExamDuration = reader.GetInt32(9);
+                    exam.ExamNTests = reader.GetInt32(10);
+                    exam.ExamTags = reader.GetInt32(11);
+                    exam.DateTimeStart = reader.GetDateTimeOffset(12);
+                    exam.DateTimeFinish = reader.GetDateTimeOffset(13);
+                    exam.StudentExamTags = reader.GetInt32(14);
+                    exam.StudentExamPoint = reader.GetDecimal(15);
+                    lstStudentsExam.Add(exam);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("in be StudentExams: \n" + ex.ToString());
+            }
+
+            await cnn.CloseAsync();
+            return lstStudentsExam;
+        }
+
+        public async Task<StudentExam> Read_StudentExamAsync(int studentExamId, bool readInactiveExams)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_ReadStudentExam ";
             try
-                {
-                var exam = new StudentExam ();
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                var exam = new StudentExam();
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
-                cmd.Parameters.AddWithValue ("@readinactiveexams", readInactiveExams);
-                using (var reader = await cmd.ExecuteReaderAsync ())
+                cmd.Parameters.AddWithValue("@studentexamid", studentExamId);
+                cmd.Parameters.AddWithValue("@readinactiveexams", readInactiveExams);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
                     {
-                    while (await reader.ReadAsync ())
-                        {
-                        exam.StudentExamId = reader.GetInt32 (0);
-                        exam.StudentId = reader.GetInt32 (1);
-                        exam.StudentName = reader.GetString (2);
-                        exam.StudentNickname = reader.GetString (3);
-                        exam.CourseId = reader.GetInt32 (4);
-                        exam.CourseName = reader.GetString (5);
-                        exam.ExamId = reader.GetInt32 (6);
+                        exam.StudentExamId = reader.GetInt32(0);
+                        exam.StudentId = reader.GetInt32(1);
+                        exam.StudentName = reader.GetString(2);
+                        exam.StudentNickname = reader.GetString(3);
+                        exam.CourseId = reader.GetInt32(4);
+                        exam.CourseName = reader.GetString(5);
+                        exam.ExamId = reader.GetInt32(6);
                         exam.ExamIndex = 0;
-                        exam.ExamTitle = reader.GetString (7);
-                        exam.ExamDateTime = reader.GetDateTimeOffset (8);
-                        exam.ExamDuration = reader.GetInt32 (9);
-                        exam.ExamNTests = reader.GetInt32 (10);
-                        exam.ExamTags = reader.GetInt32 (11);
-                        exam.DateTimeStart = reader.GetDateTimeOffset (12);
-                        exam.DateTimeFinish = reader.GetDateTimeOffset (13);
-                        exam.StudentExamTags = reader.GetInt32 (14);
-                        exam.StudentExamPoint = reader.GetDecimal (15);
-                        exam.StudentExamTests = new List<StudentExamTest> ();
-                        }
+                        exam.ExamTitle = reader.GetString(7);
+                        exam.ExamDateTime = reader.GetDateTimeOffset(8);
+                        exam.ExamDuration = reader.GetInt32(9);
+                        exam.ExamNTests = reader.GetInt32(10);
+                        exam.ExamTags = reader.GetInt32(11);
+                        exam.DateTimeStart = reader.GetDateTimeOffset(12);
+                        exam.DateTimeFinish = reader.GetDateTimeOffset(13);
+                        exam.StudentExamTags = reader.GetInt32(14);
+                        exam.StudentExamPoint = reader.GetDecimal(15);
+                        exam.StudentExamTests = new List<StudentExamTest>();
                     }
-                exam.StudentExamTests = await Read_StudentExamTestsAsync (exam.StudentExamId, true, cnn);
+                }
+
+                exam.StudentExamTests = await Read_StudentExamTestsAsync(exam.StudentExamId, true, cnn);
                 return exam;
-                }
+            }
             catch (Exception ex)
-                {
-                Console.WriteLine ("BeService: Read_StudentExam ERROR: \n" + ex.ToString ());
-                }
-            return new StudentExam ();
-            }
-        public async Task<List<Note>> Read_ExamSessionNotesAsync (int studentExamId, bool excludeReadNotes)
             {
+                Console.WriteLine("BeService: Read_StudentExam ERROR: \n" + ex.ToString());
+            }
+
+            return new StudentExam();
+        }
+
+        public async Task<List<Note>> Read_ExamSessionNotesAsync(int studentExamId, bool excludeReadNotes)
+        {
             //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
-            List<Note> lstNotes = new List<Note> ();
+            List<Note> lstNotes = new List<Note>();
             string sql = "dbo.sp_ReadExamSessionNotes";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
-            cmd.Parameters.AddWithValue ("@excludereadnotes", excludeReadNotes);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            lstNotes.Clear ();
-            while (await reader.ReadAsync ())
-                {
-                Note note = new Note ();
-                note.NoteId = reader.GetInt32 (0);
-                note.ReferenceId = reader.GetInt32 (1);
-                note.ReferenceType = reader.GetInt32 (2);
-                note.NoteDateTime = reader.GetDateTimeOffset (3);
-                note.NoteDueDateTime = reader.GetDateTimeOffset (4);
-                note.NoteText = reader.GetString (5);
-                note.NoteTags = reader.GetInt32 (6);
-                note.ReferenceName = reader.GetString (7);
-                lstNotes.Add (note);
-                }
-            await cnn.CloseAsync ();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
+            cmd.Parameters.AddWithValue("@studentexamid", studentExamId);
+            cmd.Parameters.AddWithValue("@excludereadnotes", excludeReadNotes);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            lstNotes.Clear();
+            while (await reader.ReadAsync())
+            {
+                Note note = new Note();
+                note.NoteId = reader.GetInt32(0);
+                note.ReferenceId = reader.GetInt32(1);
+                note.ReferenceType = reader.GetInt32(2);
+                note.NoteDateTime = reader.GetDateTimeOffset(3);
+                note.NoteDueDateTime = reader.GetDateTimeOffset(4);
+                note.NoteText = reader.GetString(5);
+                note.NoteTags = reader.GetInt32(6);
+                note.ReferenceName = reader.GetString(7);
+                lstNotes.Add(note);
+            }
+
+            await cnn.CloseAsync();
             return lstNotes;
-            }
-        public async Task<bool> Update_StudentExamAsync (StudentExam studentExam)
-            {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+        }
+
+        public async Task<bool> Update_StudentExamAsync(StudentExam studentExam)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_UpdateStudentExam";
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentid", studentExam.StudentId);
-            cmd.Parameters.AddWithValue ("@examid", studentExam.ExamId);
-            cmd.Parameters.AddWithValue ("@datetimestart", studentExam.DateTimeStart);
-            cmd.Parameters.AddWithValue ("@datetimefinish", studentExam.DateTimeFinish);
-            cmd.Parameters.AddWithValue ("@studentexamtags", studentExam.StudentExamTags);
-            cmd.Parameters.AddWithValue ("@studentexampoint", studentExam.StudentExamPoint);
-            cmd.Parameters.AddWithValue ("@studentexamid", studentExam.StudentExamId);
-            cmd.ExecuteNonQuery ();
+            cmd.Parameters.AddWithValue("@studentid", studentExam.StudentId);
+            cmd.Parameters.AddWithValue("@examid", studentExam.ExamId);
+            cmd.Parameters.AddWithValue("@datetimestart", studentExam.DateTimeStart);
+            cmd.Parameters.AddWithValue("@datetimefinish", studentExam.DateTimeFinish);
+            cmd.Parameters.AddWithValue("@studentexamtags", studentExam.StudentExamTags);
+            cmd.Parameters.AddWithValue("@studentexampoint", studentExam.StudentExamPoint);
+            cmd.Parameters.AddWithValue("@studentexamid", studentExam.StudentExamId);
+            cmd.ExecuteNonQuery();
             return true;
-            }
-        public async Task<bool> Update_StudentsExamTagsAsync (string mode, int examId)
-            {
+        }
+
+        public async Task<bool> Update_StudentsExamTagsAsync(string mode, int examId)
+        {
             //Update tags of StudentExams for all student having this ExamId
             //modes: startedOn, startedOff, finishedOn, finishedOff, reviewOn, reviewOff  --see also feServices
-            string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
+            string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
             string sql = "dbo.sp_UpdateStudentsExamTags";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@examid", examId);
-                cmd.Parameters.AddWithValue ("@mode", mode);
-                cmd.Parameters.AddWithValue ("@currentdatetime", currentDateTime);
-                int c = cmd.ExecuteNonQuery ();
-                await cnn.CloseAsync ();
-                //get list of students have this exam
-                List<StudentExam> lstStudentsExams = await Read_StudentExamsAsync ("ByExamid", examId, 0);
-                foreach (StudentExam stdntex in lstStudentsExams)
-                    {
-                    if (stdntex.DateTimeFinish.ToString ().Length > 0)
-                        {
-                        bool result = await CalculatePoints_StudentExamsAsync (stdntex.StudentExamId);
-                        }
-                    }
-                return true;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("Error in: SetTags \n" + ex.ToString ());
-                await cnn.CloseAsync ();
-                return false;
-                }
-            }
-        public async Task<bool> Update_StudentExamsTagsAsync (List<int> lstStudentIds, int examId, string mode)
             {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@examid", examId);
+                cmd.Parameters.AddWithValue("@mode", mode);
+                cmd.Parameters.AddWithValue("@currentdatetime", currentDateTime);
+                int c = cmd.ExecuteNonQuery();
+                await cnn.CloseAsync();
+                //get list of students have this exam
+                List<StudentExam> lstStudentsExams = await Read_StudentExamsAsync("ByExamid", examId, 0);
+                foreach (StudentExam stdntex in lstStudentsExams)
+                {
+                    if (stdntex.DateTimeFinish.ToString().Length > 0)
+                    {
+                        bool result = await CalculatePoints_StudentExamsAsync(stdntex.StudentExamId);
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in: SetTags \n" + ex.ToString());
+                await cnn.CloseAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> Update_StudentExamsTagsAsync(List<int> lstStudentIds, int examId, string mode)
+        {
             //modes (see: _sp in DB): activeOn, activeOff, startedOn, startedOff, finishedOn, finishedOff, reviewOn, reviewOff
             int i = 0;
-            string currentDateTime = DateTime.Now.ToString ("yyyy-MM-dd HH:mm");
+            string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
             string sql = "dbo.sp_UpdateStudentExamsTags";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
             foreach (int studentId in lstStudentIds)
-                {
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentid", studentId);
-                cmd.Parameters.AddWithValue ("@examid", examId);
-                cmd.Parameters.AddWithValue ("@currentdatetime", currentDateTime);
-                cmd.Parameters.AddWithValue ("@mode", mode);
-                i = await cmd.ExecuteNonQueryAsync ();
-                }
-            return (i > 0) ? true : false;
-            }
-        public async Task<bool> Update_StudentExamTagsAsync (StudentExam tempStudentExam)
             {
+                SqlCommand cmd = new SqlCommand(sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@studentid", studentId);
+                cmd.Parameters.AddWithValue("@examid", examId);
+                cmd.Parameters.AddWithValue("@currentdatetime", currentDateTime);
+                cmd.Parameters.AddWithValue("@mode", mode);
+                i = await cmd.ExecuteNonQueryAsync();
+            }
+
+            return (i > 0) ? true : false;
+        }
+
+        public async Task<bool> Update_StudentExamTagsAsync(StudentExam tempStudentExam)
+        {
             //Update tags of one StudentExam
             string sql = "dbo.sp_UpdateStudentExamTags";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentexamtags", tempStudentExam.StudentExamTags);
-                cmd.Parameters.AddWithValue ("@datetimestart", tempStudentExam.DateTimeStart);
-                cmd.Parameters.AddWithValue ("@datetimefinish", tempStudentExam.DateTimeFinish);
-                cmd.Parameters.AddWithValue ("@studentexamid", tempStudentExam.StudentExamId);
-                int c = cmd.ExecuteNonQuery ();
-                await cnn.CloseAsync ();
-                if (tempStudentExam.DateTimeFinish.ToString ().Length > 0)
-                    {
-                    bool result = await CalculatePoints_StudentExamsAsync (tempStudentExam.StudentExamId);
-                    }
-                return true;
-                }
-            catch (Exception ex)
+                cmd.Parameters.AddWithValue("@studentexamtags", tempStudentExam.StudentExamTags);
+                cmd.Parameters.AddWithValue("@datetimestart", tempStudentExam.DateTimeStart);
+                cmd.Parameters.AddWithValue("@datetimefinish", tempStudentExam.DateTimeFinish);
+                cmd.Parameters.AddWithValue("@studentexamid", tempStudentExam.StudentExamId);
+                int c = cmd.ExecuteNonQuery();
+                await cnn.CloseAsync();
+                if (tempStudentExam.DateTimeFinish.ToString().Length > 0)
                 {
-                Console.WriteLine ("Error in: SetTagStarted \n" + ex.ToString ());
-                await cnn.CloseAsync ();
-                return false;
+                    bool result = await CalculatePoints_StudentExamsAsync(tempStudentExam.StudentExamId);
                 }
+
+                return true;
             }
-        public async Task<bool> Delete_StudentExamsByStudentIdAsync (int studentId)
+            catch (Exception ex)
             {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+                Console.WriteLine("Error in: SetTagStarted \n" + ex.ToString());
+                await cnn.CloseAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> Delete_StudentExamsByStudentIdAsync(int studentId)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_DeleteStudentExamsByStudentId";
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentid", studentId);
-            cmd.ExecuteNonQuery ();
+            cmd.Parameters.AddWithValue("@studentid", studentId);
+            cmd.ExecuteNonQuery();
             return true;
-            }
-        public async Task<bool> Delete_StudentExamsByExamIdAsync (int examId)
-            {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+        }
+
+        public async Task<bool> Delete_StudentExamsByExamIdAsync(int examId)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_DeleteStudentExamsByExamId";
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examid", examId);
-            cmd.ExecuteNonQuery ();
+            cmd.Parameters.AddWithValue("@examid", examId);
+            cmd.ExecuteNonQuery();
             return true;
-            }
-        public async Task<bool> Delete_StudentExamsAsync (int examId, List<int>lstStudentIds)
-            {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+        }
+
+        public async Task<bool> Delete_StudentExamsAsync(int examId, List<int> lstStudentIds)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_DeletetudentExamByStudentIdAndExamId";
             foreach (int studentId in lstStudentIds)
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@examid", examId);
-                cmd.Parameters.AddWithValue ("@studentid", studentId);
-                cmd.ExecuteNonQuery ();
-                await cnn.CloseAsync ();
-                }
-            return true;
-            }
-        public async Task<bool> Delete_StudentExamAsync (int studentExamId)
             {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@examid", examId);
+                cmd.Parameters.AddWithValue("@studentid", studentId);
+                cmd.ExecuteNonQuery();
+                await cnn.CloseAsync();
+            }
+
+            return true;
+        }
+
+        public async Task<bool> Delete_StudentExamAsync(int studentExamId)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_DeleteStudentExam";
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
-            cmd.ExecuteNonQuery ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@studentexamid", studentExamId);
+            cmd.ExecuteNonQuery();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> CalculatePoints_StudentExamsAsync (int studentexamid)
-            {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+        }
+
+        public async Task<bool> CalculatePoints_StudentExamsAsync(int studentexamid)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
+            {
                 string sql = "dbo.sp_CalculatePointsStudentExams";
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentexamid", studentexamid);
-                cmd.ExecuteNonQuery ();
+                cmd.Parameters.AddWithValue("@studentexamid", studentexamid);
+                cmd.ExecuteNonQuery();
                 return true;
-                }
+            }
             catch (Exception ex)
-                {
-                await cnn.CloseAsync ();
-                Console.WriteLine (ex.ToString ());
+            {
+                await cnn.CloseAsync();
+                Console.WriteLine(ex.ToString());
                 return false;
-                }
             }
+        }
+
         #endregion
+
         #region SET:StudentExamTests
-        public async Task<int> Create_StudentExamTestAsync (StudentExamTest studentExamTest)
-            {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+
+        public async Task<int> Create_StudentExamTestAsync(StudentExamTest studentExamTest)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_CreateStudentExamTest";
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentexamid", studentExamTest.StudentExamId);
-            cmd.Parameters.AddWithValue ("@testid", studentExamTest.TestId);
-            cmd.Parameters.AddWithValue ("@opt1id", studentExamTest.Opt1Id);
-            cmd.Parameters.AddWithValue ("@opt2id", studentExamTest.Opt2Id);
-            cmd.Parameters.AddWithValue ("@opt3id", studentExamTest.Opt3Id);
-            cmd.Parameters.AddWithValue ("@opt4id", studentExamTest.Opt4Id);
-            cmd.Parameters.AddWithValue ("@opt5id", studentExamTest.Opt5Id);
-            cmd.Parameters.AddWithValue ("@Studentexamtestkey", studentExamTest.StudentExamTestKey);
-            cmd.Parameters.AddWithValue ("@Studentexamtestans", studentExamTest.StudentExamTestAns);
-            cmd.Parameters.AddWithValue ("@Studentexamtestanstext", studentExamTest.StudentExamTestAns);
-            cmd.Parameters.AddWithValue ("@Studentexamtesttags", studentExamTest.StudentExamTestTags);
-            int i = (int) await cmd.ExecuteScalarAsync ();
+            cmd.Parameters.AddWithValue("@studentexamid", studentExamTest.StudentExamId);
+            cmd.Parameters.AddWithValue("@testid", studentExamTest.TestId);
+            cmd.Parameters.AddWithValue("@opt1id", studentExamTest.Opt1Id);
+            cmd.Parameters.AddWithValue("@opt2id", studentExamTest.Opt2Id);
+            cmd.Parameters.AddWithValue("@opt3id", studentExamTest.Opt3Id);
+            cmd.Parameters.AddWithValue("@opt4id", studentExamTest.Opt4Id);
+            cmd.Parameters.AddWithValue("@opt5id", studentExamTest.Opt5Id);
+            cmd.Parameters.AddWithValue("@Studentexamtestkey", studentExamTest.StudentExamTestKey);
+            cmd.Parameters.AddWithValue("@Studentexamtestans", studentExamTest.StudentExamTestAns);
+            cmd.Parameters.AddWithValue("@Studentexamtestanstext", studentExamTest.StudentExamTestAns);
+            cmd.Parameters.AddWithValue("@Studentexamtesttags", studentExamTest.StudentExamTestTags);
+            int i = (int)await cmd.ExecuteScalarAsync();
             return i;
-            }
-        public async Task<List<StudentExamTest>> Read_StudentExamTestsAsync (int studentExamId, bool readOptions)
-            {
-            List<StudentExamTest> lstStudentExamTests = new ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+        }
+
+        public async Task<List<StudentExamTest>> Read_StudentExamTestsAsync(int studentExamId, bool readOptions)
+        {
+            List<StudentExamTest> lstStudentExamTests = new();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_ReadStudentExamTests";
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new (sql, cnn);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
+            cmd.Parameters.AddWithValue("@studentexamid", studentExamId);
             try
-                {
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
-                    {
-                    int index = 0;
-                    while (await reader.ReadAsync ())
-                        {
-                        lstStudentExamTests.Add (new StudentExamTest
-                            {
-                            StudentExamTestId = reader.GetInt64 (0),
-                            StudentId = reader.GetInt32 (1),
-                            StudentExamId = reader.GetInt32 (2),
-                            TestId = reader.GetInt32 (3),
-                            TestTitle = reader.GetString (4),
-                            TestType = reader.GetInt32 (5),
-                            CourseTopicId = reader.GetInt32 (6),
-                            CourseTopicTitle = reader.GetString (7),
-                            TestTags = reader.GetInt32 (8),
-                            TestLevel = reader.GetInt32 (9),
-                            Opt1Id = reader.GetInt32 (10),
-                            Opt2Id = reader.GetInt32 (11),
-                            Opt3Id = reader.GetInt32 (12),
-                            Opt4Id = reader.GetInt32 (13),
-                            Opt5Id = reader.GetInt32 (14),
-                            StudentExamTestKey = reader.GetInt32 (15),
-                            StudentExamTestAns = reader.GetInt32 (16),
-                            StudentExamTestAnsText = reader.GetString (17),
-                            StudentExamTestTags = reader.GetInt32 (18),
-                            TestIndex = ++index,
-                            TestOptions = new List<TestOption> ()
-                            });
-                        }
-                    }
-                if (readOptions)
-                    {
-                    foreach (StudentExamTest t in lstStudentExamTests)
-                        {
-                        int [] optIds = { t.Opt1Id, t.Opt2Id, t.Opt3Id, t.Opt4Id, t.Opt5Id };
-                        for (int j = 0; j < t.TestType && j < 5; j++)
-                            {
-                            t.TestOptions.Add (await Read_TestOptionAsync (optIds [j], cnn));
-                            }
-                        }
-                    }
-                return lstStudentExamTests;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
-                return new List<StudentExamTest> ();
-                }
-            }
-        public async Task<List<StudentExamTest>> Read_StudentExamTestsAsync (int studentExamId, bool readOptions, SqlConnection cnn)
             {
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
+                    int index = 0;
+                    while (await reader.ReadAsync())
+                    {
+                        lstStudentExamTests.Add(new StudentExamTest
+                        {
+                            StudentExamTestId = reader.GetInt64(0),
+                            StudentId = reader.GetInt32(1),
+                            StudentExamId = reader.GetInt32(2),
+                            TestId = reader.GetInt32(3),
+                            TestTitle = reader.GetString(4),
+                            TestType = reader.GetInt32(5),
+                            CourseTopicId = reader.GetInt32(6),
+                            CourseTopicTitle = reader.GetString(7),
+                            TestTags = reader.GetInt32(8),
+                            TestLevel = reader.GetInt32(9),
+                            Opt1Id = reader.GetInt32(10),
+                            Opt2Id = reader.GetInt32(11),
+                            Opt3Id = reader.GetInt32(12),
+                            Opt4Id = reader.GetInt32(13),
+                            Opt5Id = reader.GetInt32(14),
+                            StudentExamTestKey = reader.GetInt32(15),
+                            StudentExamTestAns = reader.GetInt32(16),
+                            StudentExamTestAnsText = reader.GetString(17),
+                            StudentExamTestTags = reader.GetInt32(18),
+                            TestIndex = ++index,
+                            TestOptions = new List<TestOption>()
+                        });
+                    }
+                }
+
+                if (readOptions)
+                {
+                    foreach (StudentExamTest t in lstStudentExamTests)
+                    {
+                        int[] optIds = { t.Opt1Id, t.Opt2Id, t.Opt3Id, t.Opt4Id, t.Opt5Id };
+                        for (int j = 0; j < t.TestType && j < 5; j++)
+                        {
+                            t.TestOptions.Add(await Read_TestOptionAsync(optIds[j], cnn));
+                        }
+                    }
+                }
+
+                return lstStudentExamTests;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return new List<StudentExamTest>();
+            }
+        }
+
+        public async Task<List<StudentExamTest>> Read_StudentExamTestsAsync(int studentExamId, bool readOptions,
+            SqlConnection cnn)
+        {
             //this [overload] is called from another method with an open cnn (see method parameters)
-            List<StudentExamTest> lstStudentExamTests = new ();
+            List<StudentExamTest> lstStudentExamTests = new();
             string sql = "sp_ReadStudentExamTests";
-            using SqlCommand cmd = new (sql, cnn);
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
+            cmd.Parameters.AddWithValue("@studentexamid", studentExamId);
             try
+            {
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                 {
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
-                    {
                     int index = 0;
-                    while (await reader.ReadAsync ())
-                        {
+                    while (await reader.ReadAsync())
+                    {
                         var est = new StudentExamTest
-                            {
-                            StudentExamTestId = reader.GetInt64 (0),
-                            StudentId = reader.GetInt32 (1),
-                            StudentExamId = reader.GetInt32 (2),
-                            TestId = reader.GetInt32 (3),
-                            TestTitle = reader.GetString (4),
-                            TestType = reader.GetInt32 (5),
-                            CourseTopicId = reader.GetInt32 (6),
-                            CourseTopicTitle = reader.GetString (7),
-                            TestTags = reader.GetInt32 (8),
-                            TestLevel = reader.GetInt32 (9),
-                            Opt1Id = reader.GetInt32 (10),
-                            Opt2Id = reader.GetInt32 (11),
-                            Opt3Id = reader.GetInt32 (12),
-                            Opt4Id = reader.GetInt32 (13),
-                            Opt5Id = reader.GetInt32 (14),
-                            StudentExamTestKey = reader.GetInt32 (15),
-                            StudentExamTestAns = reader.GetInt32 (16),
-                            StudentExamTestAnsText = reader.GetString (17),
-                            StudentExamTestTags = reader.GetInt32 (18),
+                        {
+                            StudentExamTestId = reader.GetInt64(0),
+                            StudentId = reader.GetInt32(1),
+                            StudentExamId = reader.GetInt32(2),
+                            TestId = reader.GetInt32(3),
+                            TestTitle = reader.GetString(4),
+                            TestType = reader.GetInt32(5),
+                            CourseTopicId = reader.GetInt32(6),
+                            CourseTopicTitle = reader.GetString(7),
+                            TestTags = reader.GetInt32(8),
+                            TestLevel = reader.GetInt32(9),
+                            Opt1Id = reader.GetInt32(10),
+                            Opt2Id = reader.GetInt32(11),
+                            Opt3Id = reader.GetInt32(12),
+                            Opt4Id = reader.GetInt32(13),
+                            Opt5Id = reader.GetInt32(14),
+                            StudentExamTestKey = reader.GetInt32(15),
+                            StudentExamTestAns = reader.GetInt32(16),
+                            StudentExamTestAnsText = reader.GetString(17),
+                            StudentExamTestTags = reader.GetInt32(18),
                             TestIndex = ++index,
-                            TestOptions = new List<TestOption> ()
-                            };
-                        lstStudentExamTests.Add (est);
-                        }
+                            TestOptions = new List<TestOption>()
+                        };
+                        lstStudentExamTests.Add(est);
                     }
+                }
+
                 if (readOptions)
-                    {
+                {
                     foreach (StudentExamTest t in lstStudentExamTests)
-                        {
-                        int [] optIds = { t.Opt1Id, t.Opt2Id, t.Opt3Id, t.Opt4Id, t.Opt5Id };
+                    {
+                        int[] optIds = { t.Opt1Id, t.Opt2Id, t.Opt3Id, t.Opt4Id, t.Opt5Id };
                         for (int j = 0; j < t.TestType && j < 5; j++)
-                            {
-                            t.TestOptions.Add (await Read_TestOptionAsync (optIds [j], cnn));
-                            }
+                        {
+                            t.TestOptions.Add(await Read_TestOptionAsync(optIds[j], cnn));
                         }
                     }
+                }
+
                 return lstStudentExamTests;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
-                return new List<StudentExamTest> ();
-                }
             }
-        public async Task<StudentExamTest> Read_StudentExamTestAsync (long studentExamTestId, bool readOptions)
+            catch (Exception ex)
             {
-            StudentExamTest studentExamTest = new StudentExamTest ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+                Console.WriteLine(ex.ToString());
+                return new List<StudentExamTest>();
+            }
+        }
+
+        public async Task<StudentExamTest> Read_StudentExamTestAsync(long studentExamTestId, bool readOptions)
+        {
+            StudentExamTest studentExamTest = new StudentExamTest();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_ReadStudentExamTest";
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new (sql, cnn);
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentexamtestid", studentExamTestId);
+            cmd.Parameters.AddWithValue("@studentexamtestid", studentExamTestId);
             try
+            {
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                 {
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
-                    {
                     int index = 0;
-                    while (await reader.ReadAsync ())
-                        {
-                        studentExamTest.StudentExamTestId = reader.GetInt64 (0);
-                        studentExamTest.StudentId = reader.GetInt32 (1);
-                        studentExamTest.StudentExamId = reader.GetInt32 (2);
-                        studentExamTest.TestId = reader.GetInt32 (3);
-                        studentExamTest.TestTitle = reader.GetString (4);
-                        studentExamTest.TestType = reader.GetInt32 (5);
-                        studentExamTest.CourseTopicId = reader.GetInt32 (6);
-                        studentExamTest.CourseTopicTitle = reader.GetString (7);
-                        studentExamTest.TestTags = reader.GetInt32 (8);
-                        studentExamTest.TestLevel = reader.GetInt32 (9);
-                        studentExamTest.Opt1Id = reader.GetInt32 (10);
-                        studentExamTest.Opt2Id = reader.GetInt32 (11);
-                        studentExamTest.Opt3Id = reader.GetInt32 (12);
-                        studentExamTest.Opt4Id = reader.GetInt32 (13);
-                        studentExamTest.Opt5Id = reader.GetInt32 (14);
-                        studentExamTest.StudentExamTestKey = reader.GetInt32 (15);
-                        studentExamTest.StudentExamTestAns = reader.GetInt32 (16);
-                        studentExamTest.StudentExamTestAnsText = reader.GetString (17);
-                        studentExamTest.StudentExamTestTags = reader.GetInt32 (18);
+                    while (await reader.ReadAsync())
+                    {
+                        studentExamTest.StudentExamTestId = reader.GetInt64(0);
+                        studentExamTest.StudentId = reader.GetInt32(1);
+                        studentExamTest.StudentExamId = reader.GetInt32(2);
+                        studentExamTest.TestId = reader.GetInt32(3);
+                        studentExamTest.TestTitle = reader.GetString(4);
+                        studentExamTest.TestType = reader.GetInt32(5);
+                        studentExamTest.CourseTopicId = reader.GetInt32(6);
+                        studentExamTest.CourseTopicTitle = reader.GetString(7);
+                        studentExamTest.TestTags = reader.GetInt32(8);
+                        studentExamTest.TestLevel = reader.GetInt32(9);
+                        studentExamTest.Opt1Id = reader.GetInt32(10);
+                        studentExamTest.Opt2Id = reader.GetInt32(11);
+                        studentExamTest.Opt3Id = reader.GetInt32(12);
+                        studentExamTest.Opt4Id = reader.GetInt32(13);
+                        studentExamTest.Opt5Id = reader.GetInt32(14);
+                        studentExamTest.StudentExamTestKey = reader.GetInt32(15);
+                        studentExamTest.StudentExamTestAns = reader.GetInt32(16);
+                        studentExamTest.StudentExamTestAnsText = reader.GetString(17);
+                        studentExamTest.StudentExamTestTags = reader.GetInt32(18);
                         studentExamTest.TestIndex = ++index;
-                        studentExamTest.TestOptions = new List<TestOption> ();
-                        }
+                        studentExamTest.TestOptions = new List<TestOption>();
                     }
+                }
+
                 if (readOptions)
+                {
+                    int[] optIds =
                     {
-                    int [] optIds = { studentExamTest.Opt1Id, studentExamTest.Opt2Id, studentExamTest.Opt3Id, studentExamTest.Opt4Id, studentExamTest.Opt5Id };
+                        studentExamTest.Opt1Id, studentExamTest.Opt2Id, studentExamTest.Opt3Id, studentExamTest.Opt4Id,
+                        studentExamTest.Opt5Id
+                    };
                     for (int j = 0; j < studentExamTest.TestType && j < 5; j++)
-                        {
-                        studentExamTest.TestOptions.Add (await Read_TestOptionAsync (optIds [j], cnn));
-                        }
-                    }
-                return studentExamTest;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
-                return new StudentExamTest ();
-                }
-            }
-        public async Task<List<StudentExamTest>> Read_StudentsExamTestAsync (int examId, int testId)
-            {
-            List<StudentExamTest> lstStudentExamTests = new ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            string sql = "dbo.sp_ReadStudentsExamTest";
-            await cnn.OpenAsync ();
-            using SqlCommand cmd = new (sql, cnn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@examid", examId);
-            cmd.Parameters.AddWithValue ("@testid", testId);
-            try
-                {
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync ())
                     {
-                    int index = 0;
-                    while (await reader.ReadAsync ())
-                        {
-                        lstStudentExamTests.Add (new StudentExamTest
-                            {
-                            StudentExamTestId = reader.GetInt64 (0),
-                            StudentId = reader.GetInt32 (1),
-                            StudentExamId = reader.GetInt32 (2),
-                            TestId = reader.GetInt32 (3),
-                            TestTitle = reader.GetString (4),
-                            TestType = reader.GetInt32 (5),
-                            CourseTopicId = reader.GetInt32 (6),
-                            CourseTopicTitle = reader.GetString (7),
-                            TestTags = reader.GetInt32 (8),
-                            TestLevel = reader.GetInt32 (9),
-                            Opt1Id = reader.GetInt32 (10),
-                            Opt2Id = reader.GetInt32 (11),
-                            Opt3Id = reader.GetInt32 (12),
-                            Opt4Id = reader.GetInt32 (13),
-                            Opt5Id = reader.GetInt32 (14),
-                            StudentExamTestKey = reader.GetInt32 (15),
-                            StudentExamTestAns = reader.GetInt32 (16),
-                            StudentExamTestAnsText = reader.GetString (17),
-                            StudentExamTestTags = reader.GetInt32 (18),
-                            TestIndex = ++index,
-                            TestOptions = new List<TestOption> ()
-                            });
-                        }
+                        studentExamTest.TestOptions.Add(await Read_TestOptionAsync(optIds[j], cnn));
                     }
-                return lstStudentExamTests;
                 }
+
+                return studentExamTest;
+            }
             catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
-                return new List<StudentExamTest> ();
-                }
-            }
-        public async Task<bool> Update_StudentExamTestAsync (StudentExamTest studentExamTest)
             {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            string sql = "dbo.sp_UpdateStudentExamTest";
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+                Console.WriteLine(ex.ToString());
+                return new StudentExamTest();
+            }
+        }
+
+        public async Task<List<StudentExamTest>> Read_StudentsExamTestAsync(int examId, int testId)
+        {
+            List<StudentExamTest> lstStudentExamTests = new();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            string sql = "dbo.sp_ReadStudentsExamTest";
+            await cnn.OpenAsync();
+            using SqlCommand cmd = new(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentid", studentExamTest.StudentId);
-            cmd.Parameters.AddWithValue ("@studentexamid", studentExamTest.StudentExamId);
-            cmd.Parameters.AddWithValue ("@testid", studentExamTest.TestId);
-            cmd.Parameters.AddWithValue ("@opt1id", studentExamTest.Opt1Id);
-            cmd.Parameters.AddWithValue ("@opt2id", studentExamTest.Opt2Id);
-            cmd.Parameters.AddWithValue ("@opt3id", studentExamTest.Opt3Id);
-            cmd.Parameters.AddWithValue ("@opt4id", studentExamTest.Opt4Id);
-            cmd.Parameters.AddWithValue ("@opt5id", studentExamTest.Opt5Id);
-            cmd.Parameters.AddWithValue ("@studentexamtestkey", studentExamTest.StudentExamTestKey);
-            cmd.Parameters.AddWithValue ("@studentexamtestans", studentExamTest.StudentExamTestAns);
-            cmd.Parameters.AddWithValue ("@studentexamtestanstext", studentExamTest.StudentExamTestAnsText);
-            cmd.Parameters.AddWithValue ("@studentexamtesttags", studentExamTest.StudentExamTestTags);
-            cmd.ExecuteNonQuery ();
-            return true;
-            }
-        public async Task<bool> Update_StudentExamTestsTagsAsync (StudentExamTest tempStudentExamTest)
+            cmd.Parameters.AddWithValue("@examid", examId);
+            cmd.Parameters.AddWithValue("@testid", testId);
+            try
             {
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
+                    int index = 0;
+                    while (await reader.ReadAsync())
+                    {
+                        lstStudentExamTests.Add(new StudentExamTest
+                        {
+                            StudentExamTestId = reader.GetInt64(0),
+                            StudentId = reader.GetInt32(1),
+                            StudentExamId = reader.GetInt32(2),
+                            TestId = reader.GetInt32(3),
+                            TestTitle = reader.GetString(4),
+                            TestType = reader.GetInt32(5),
+                            CourseTopicId = reader.GetInt32(6),
+                            CourseTopicTitle = reader.GetString(7),
+                            TestTags = reader.GetInt32(8),
+                            TestLevel = reader.GetInt32(9),
+                            Opt1Id = reader.GetInt32(10),
+                            Opt2Id = reader.GetInt32(11),
+                            Opt3Id = reader.GetInt32(12),
+                            Opt4Id = reader.GetInt32(13),
+                            Opt5Id = reader.GetInt32(14),
+                            StudentExamTestKey = reader.GetInt32(15),
+                            StudentExamTestAns = reader.GetInt32(16),
+                            StudentExamTestAnsText = reader.GetString(17),
+                            StudentExamTestTags = reader.GetInt32(18),
+                            TestIndex = ++index,
+                            TestOptions = new List<TestOption>()
+                        });
+                    }
+                }
+
+                return lstStudentExamTests;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return new List<StudentExamTest>();
+            }
+        }
+
+        public async Task<bool> Update_StudentExamTestAsync(StudentExamTest studentExamTest)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            string sql = "dbo.sp_UpdateStudentExamTest";
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@studentid", studentExamTest.StudentId);
+            cmd.Parameters.AddWithValue("@studentexamid", studentExamTest.StudentExamId);
+            cmd.Parameters.AddWithValue("@testid", studentExamTest.TestId);
+            cmd.Parameters.AddWithValue("@opt1id", studentExamTest.Opt1Id);
+            cmd.Parameters.AddWithValue("@opt2id", studentExamTest.Opt2Id);
+            cmd.Parameters.AddWithValue("@opt3id", studentExamTest.Opt3Id);
+            cmd.Parameters.AddWithValue("@opt4id", studentExamTest.Opt4Id);
+            cmd.Parameters.AddWithValue("@opt5id", studentExamTest.Opt5Id);
+            cmd.Parameters.AddWithValue("@studentexamtestkey", studentExamTest.StudentExamTestKey);
+            cmd.Parameters.AddWithValue("@studentexamtestans", studentExamTest.StudentExamTestAns);
+            cmd.Parameters.AddWithValue("@studentexamtestanstext", studentExamTest.StudentExamTestAnsText);
+            cmd.Parameters.AddWithValue("@studentexamtesttags", studentExamTest.StudentExamTestTags);
+            cmd.ExecuteNonQuery();
+            return true;
+        }
+
+        public async Task<bool> Update_StudentExamTestsTagsAsync(StudentExamTest tempStudentExamTest)
+        {
             //tags: 1:Visited 2:Bookmarked 4:Answered 8:Helped 16:Revised 32:Reported
             string sql = "dbo.sp_UpdateStudentExamTestsTags";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                var cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentexamtesttags", tempStudentExamTest.StudentExamTestTags);
-                cmd.Parameters.AddWithValue ("@studentexamid", tempStudentExamTest.StudentExamId);
-                await cmd.ExecuteNonQueryAsync ();
-                return true;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
-                return false;
-                }
-            }
-        public async Task<bool> Update_StudentExamTestTagsAsync (StudentExamTest tempStudentExamTest)
             {
+                await cnn.OpenAsync();
+                var cmd = new SqlCommand(sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@studentexamtesttags", tempStudentExamTest.StudentExamTestTags);
+                cmd.Parameters.AddWithValue("@studentexamid", tempStudentExamTest.StudentExamId);
+                await cmd.ExecuteNonQueryAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+        }
+
+        public async Task<bool> Update_StudentExamTestTagsAsync(StudentExamTest tempStudentExamTest)
+        {
             //tags: 1:Visited 2:Bookmarked 4:Answered 8:Helped 16:Revised 32:Reported
             string sql = "dbo.sp_UpdateStudentExamTestTags";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                var cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentExamTestTags", tempStudentExamTest.StudentExamTestTags);
-                cmd.Parameters.AddWithValue ("@StudentExamTestid", tempStudentExamTest.StudentExamTestId);
-                await cmd.ExecuteNonQueryAsync ();
-                return true;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
-                return false;
-                }
-            }
-        public async Task<bool> Update_StudentExamTestAnswerAsync (StudentExamTest tempStudentExamTest)
             {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+                await cnn.OpenAsync();
+                var cmd = new SqlCommand(sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@studentExamTestTags", tempStudentExamTest.StudentExamTestTags);
+                cmd.Parameters.AddWithValue("@StudentExamTestid", tempStudentExamTest.StudentExamTestId);
+                await cmd.ExecuteNonQueryAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+        }
+
+        public async Task<bool> Update_StudentExamTestAnswerAsync(StudentExamTest tempStudentExamTest)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_UpdateStudentExamTestAnswer";
             int mode = 0;
             mode = (tempStudentExamTest.StudentExamTestAns == 0) ? 0 : 1;
             try
-                {
-                await cnn.OpenAsync ();
-                var cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                var cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@answid", tempStudentExamTest.StudentExamTestAns);
-                cmd.Parameters.AddWithValue ("@answtext", tempStudentExamTest.StudentExamTestAnsText);
-                cmd.Parameters.AddWithValue ("@studentexamtestid", tempStudentExamTest.StudentExamTestId);
-                cmd.Parameters.AddWithValue ("@mode", mode);
-                await cmd.ExecuteNonQueryAsync ();
-                await cnn.CloseAsync ();
+                cmd.Parameters.AddWithValue("@answid", tempStudentExamTest.StudentExamTestAns);
+                cmd.Parameters.AddWithValue("@answtext", tempStudentExamTest.StudentExamTestAnsText);
+                cmd.Parameters.AddWithValue("@studentexamtestid", tempStudentExamTest.StudentExamTestId);
+                cmd.Parameters.AddWithValue("@mode", mode);
+                await cmd.ExecuteNonQueryAsync();
+                await cnn.CloseAsync();
                 return true;
-                }
+            }
             catch (Exception ex)
-                {
-                await cnn.CloseAsync ();
+            {
+                await cnn.CloseAsync();
                 return false;
-                }
             }
-        public async Task<bool> Delete_StudentExamTestsAsync (int studentExamId)
-            {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+        }
+
+        public async Task<bool> Delete_StudentExamTestsAsync(int studentExamId)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_DeleteStudentExamTests";
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentexamid", studentExamId);
-            cmd.ExecuteNonQuery ();
+            cmd.Parameters.AddWithValue("@studentexamid", studentExamId);
+            cmd.ExecuteNonQuery();
             return true;
-            }
-        public async Task<bool> Delete_StudentExamTestAsync (long studentExamTestId)
-            {
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+        }
+
+        public async Task<bool> Delete_StudentExamTestAsync(long studentExamTestId)
+        {
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             string sql = "dbo.sp_DeleteStudentExamTest";
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentexamtestid", studentExamTestId);
-            cmd.ExecuteNonQuery ();
+            cmd.Parameters.AddWithValue("@studentexamtestid", studentExamTestId);
+            cmd.ExecuteNonQuery();
             return true;
-            }
+        }
+
         #endregion
+
         #region M:Messages
-        public async Task<int> Create_MessageAsync (Message message)
-            {
+
+        public async Task<int> Create_MessageAsync(Message message)
+        {
             if (message.MessageBody.Length < 4000)
-                {
+            {
                 try
-                    {
-                    string? connString = _config.GetConnectionString ("cnni");
-                    using SqlConnection cnn = new (connString);
-                    string sql = "dbo.sp_CreateMessage";
-                    await cnn.OpenAsync ();
-                    SqlCommand cmd = new SqlCommand (sql, cnn);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue ("@userid", message.UserId);
-                    cmd.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
-                    cmd.Parameters.AddWithValue ("@messagebody", message.MessageBody);
-                    int newMessageId = (int) await cmd.ExecuteScalarAsync ();
-                    await cnn.CloseAsync ();
-                    return newMessageId;
-                    }
-                catch (Exception ex)
-                    {
-                    Console.WriteLine ($"be error (create message failed):\n{ex}");
-                    return 0;
-                    }
-                }
-            else
                 {
+                    string? connString = _config.GetConnectionString("cnni");
+                    using SqlConnection cnn = new(connString);
+                    string sql = "dbo.sp_CreateMessage";
+                    await cnn.OpenAsync();
+                    SqlCommand cmd = new SqlCommand(sql, cnn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@userid", message.UserId);
+                    cmd.Parameters.AddWithValue("@messagetitle", message.MessageTitle);
+                    cmd.Parameters.AddWithValue("@messagebody", message.MessageBody);
+                    int newMessageId = (int)await cmd.ExecuteScalarAsync();
+                    await cnn.CloseAsync();
+                    return newMessageId;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"be error (create message failed):\n{ex}");
+                    return 0;
+                }
+            }
+            else
+            {
                 //msg_body > 4000 chars!
                 return 0;
-                }
             }
-        public async Task<Message> Read_MessageAsync (int messageId, bool getStudentMessages)
-            {
+        }
+
+        public async Task<Message> Read_MessageAsync(int messageId, bool getStudentMessages)
+        {
             string sql = "dbo.sp_ReadMessage";
-            Message message = new Message ();
-            List<StudentMessage> lstStudentMessages = new List<StudentMessage> ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            Message message = new Message();
+            List<StudentMessage> lstStudentMessages = new List<StudentMessage>();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@messageid", messageId);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-                while (await reader.ReadAsync ())
-                    {
-                    message.MessageId = reader.GetInt32 (0);
-                    message.UserId = reader.GetInt32 (1);
-                    message.DateTimeCreated = reader.GetDateTimeOffset (2);
-                    message.MessageTitle = reader.GetString (3);
-                    message.MessageBody = reader.GetString (4);
-                    message.MessageTags = reader.GetInt32 (5);
-                    message.Students = new List<StudentMessage> ();
-                    }
-                await cnn.CloseAsync ();
+                cmd.Parameters.AddWithValue("@messageid", messageId);
+                SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    message.MessageId = reader.GetInt32(0);
+                    message.UserId = reader.GetInt32(1);
+                    message.DateTimeCreated = reader.GetDateTimeOffset(2);
+                    message.MessageTitle = reader.GetString(3);
+                    message.MessageBody = reader.GetString(4);
+                    message.MessageTags = reader.GetInt32(5);
+                    message.Students = new List<StudentMessage>();
+                }
+
+                await cnn.CloseAsync();
                 if (getStudentMessages)
-                    {
-                    lstStudentMessages = await Read_StudentMessagesAsync ("M", message.MessageId, 0);
+                {
+                    lstStudentMessages = await Read_StudentMessagesAsync("M", message.MessageId, 0);
                     message.Students = lstStudentMessages;
-                    }
+                }
+
                 return message;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("Error: " + ex.ToString ());
-                await cnn.CloseAsync ();
-                return new Message ();
-                }
             }
-        public async Task<List<Message>> Read_MessagesAsync (int userId, bool readAllMessages, bool getStudentMessages)
+            catch (Exception ex)
             {
-            List<Message> lstMessages = new List<Message> ();
+                Console.WriteLine("Error: " + ex.ToString());
+                await cnn.CloseAsync();
+                return new Message();
+            }
+        }
+
+        public async Task<List<Message>> Read_MessagesAsync(int userId, bool readAllMessages, bool getStudentMessages)
+        {
+            List<Message> lstMessages = new List<Message>();
             string sql = "dbo.sp_ReadMessages";
-            Message message = new Message ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            Message message = new Message();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@userid", userId);
-                cmd.Parameters.AddWithValue ("@readAllMessages", readAllMessages);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-                while (await reader.ReadAsync ())
+                cmd.Parameters.AddWithValue("@userid", userId);
+                cmd.Parameters.AddWithValue("@readAllMessages", readAllMessages);
+                SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    lstMessages.Add(new Message
                     {
-                    lstMessages.Add (new Message
-                        {
-                        MessageId = reader.GetInt32 (0),
-                        UserId = reader.GetInt32 (1),
-                        DateTimeCreated = reader.GetDateTimeOffset (2),
-                        MessageTitle = reader.GetString (3),
-                        MessageBody = reader.GetString (4),
-                        MessageTags = reader.GetInt32 (5),
-                        Students = new List<StudentMessage> ()
-                        });
-                    }
-                await cnn.CloseAsync ();
+                        MessageId = reader.GetInt32(0),
+                        UserId = reader.GetInt32(1),
+                        DateTimeCreated = reader.GetDateTimeOffset(2),
+                        MessageTitle = reader.GetString(3),
+                        MessageBody = reader.GetString(4),
+                        MessageTags = reader.GetInt32(5),
+                        Students = new List<StudentMessage>()
+                    });
+                }
+
+                await cnn.CloseAsync();
                 if (getStudentMessages)
-                    {
+                {
                     foreach (Message msg in lstMessages)
-                        {
-                        msg.Students = await Read_StudentMessagesAsync ("M", msg.MessageId, 0);
-                        }
+                    {
+                        msg.Students = await Read_StudentMessagesAsync("M", msg.MessageId, 0);
                     }
+                }
+
                 return lstMessages;
-                }
+            }
             catch (Exception ex)
-                {
-                Console.WriteLine ("Error: " + ex.ToString ());
-                await cnn.CloseAsync ();
-                return new List<Message> ();
-                }
-            }
-        public async Task<bool> Update_MessageAsync (Message message)
             {
+                Console.WriteLine("Error: " + ex.ToString());
+                await cnn.CloseAsync();
+                return new List<Message>();
+            }
+        }
+
+        public async Task<bool> Update_MessageAsync(Message message)
+        {
             string sql = "dbo.sp_UpdateMessage";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@messageid", message.MessageId);
-            cmd.Parameters.AddWithValue ("@datetimecreated", DateTime.Now.ToString ("yyyy-MM-dd HH:mm"));
-            cmd.Parameters.AddWithValue ("@messagetitle", message.MessageTitle);
-            cmd.Parameters.AddWithValue ("@messagebody", message.MessageBody);
-            cmd.Parameters.AddWithValue ("@messagetags", message.MessageTags);
-            int i = cmd.ExecuteNonQuery ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@messageid", message.MessageId);
+            cmd.Parameters.AddWithValue("@datetimecreated", DateTime.Now.ToString("yyyy-MM-dd HH:mm"));
+            cmd.Parameters.AddWithValue("@messagetitle", message.MessageTitle);
+            cmd.Parameters.AddWithValue("@messagebody", message.MessageBody);
+            cmd.Parameters.AddWithValue("@messagetags", message.MessageTags);
+            int i = cmd.ExecuteNonQuery();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Update_MessageTagsAsync (Message message)
-            {
+        }
+
+        public async Task<bool> Update_MessageTagsAsync(Message message)
+        {
             string sql = "dbo.sp_UpdateMessageTags";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@messageid", message.MessageId);
-            cmd.Parameters.AddWithValue ("@messagetags", message.MessageTags);
-            int i = cmd.ExecuteNonQuery ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@messageid", message.MessageId);
+            cmd.Parameters.AddWithValue("@messagetags", message.MessageTags);
+            int i = cmd.ExecuteNonQuery();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Delete_MessagesAsync (string mode, int recipientId)
-            {
+        }
+
+        public async Task<bool> Delete_MessagesAsync(string mode, int recipientId)
+        {
             try
-                {
-                string sql = "dbo.sp_DeleteMessages";
-                string? connString = _config.GetConnectionString ("cnni");
-                using SqlConnection cnn = new (connString);
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@mode", mode);
-                cmd.Parameters.AddWithValue ("@recipientid", recipientId);
-                int i = cmd.ExecuteNonQuery ();
-                await cnn.CloseAsync ();
-                return (i > 0) ? true : false;
-                }
-            catch (Exception x)
-                {
-                Console.WriteLine (x.ToString ());
-                return (false);
-                }
-            }
-        #endregion
-        #region SM:StudentMessages
-        public async Task<bool> Create_StudentMessagesAsync (int messageId, List<int> lstStudentIds, bool requestFeedback)
             {
+                string sql = "dbo.sp_DeleteMessages";
+                string? connString = _config.GetConnectionString("cnni");
+                using SqlConnection cnn = new(connString);
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@mode", mode);
+                cmd.Parameters.AddWithValue("@recipientid", recipientId);
+                int i = cmd.ExecuteNonQuery();
+                await cnn.CloseAsync();
+                return (i > 0) ? true : false;
+            }
+            catch (Exception x)
+            {
+                Console.WriteLine(x.ToString());
+                return (false);
+            }
+        }
+
+        #endregion
+
+        #region SM:StudentMessages
+
+        public async Task<bool> Create_StudentMessagesAsync(int messageId, List<int> lstStudentIds,
+            bool requestFeedback)
+        {
             int _tags = requestFeedback ? 8 : 0;
             string sql = "dbo.sp_CreateStudentMessages";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
             foreach (int st in lstStudentIds)
-                {
-                SqlCommand cmd = new SqlCommand (sql, cnn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentid", st);
-                cmd.Parameters.AddWithValue ("@messageid", messageId);
-                cmd.Parameters.AddWithValue ("@studentmessagetags", _tags);
-                int i = (int) cmd.ExecuteNonQuery ();
-                }
-            await cnn.CloseAsync ();
-            return true;
-            }
-        public async Task<List<StudentMessage>> Read_StudentMessagesAsync (string mode, int Id, int teacherId)
             {
-            /* 
-             (see _sp for updates)      -   +Bk    -Del    +Del   Unread  Recent  Feedback       
-             ByStudentId                S    Sb     Si      Sd     Su      Sr      Sf     
-             ByStudentIdAndTeacherId    X    Xb     Xi      Xd     Xu      Xr      Xf     
-             ByTeacherId                T    Tb     Ti      Td     Tu      Tr      Tf       
-             ByMessageId                M                     
+                SqlCommand cmd = new SqlCommand(sql, cnn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@studentid", st);
+                cmd.Parameters.AddWithValue("@messageid", messageId);
+                cmd.Parameters.AddWithValue("@studentmessagetags", _tags);
+                int i = (int)cmd.ExecuteNonQuery();
+            }
+
+            await cnn.CloseAsync();
+            return true;
+        }
+
+        public async Task<List<StudentMessage>> Read_StudentMessagesAsync(string mode, int Id, int teacherId)
+        {
+            /*
+             (see _sp for updates)      -   +Bk    -Del    +Del   Unread  Recent  Feedback
+             ByStudentId                S    Sb     Si      Sd     Su      Sr      Sf
+             ByStudentIdAndTeacherId    X    Xb     Xi      Xd     Xu      Xr      Xf
+             ByTeacherId                T    Tb     Ti      Td     Tu      Tr      Tf
+             ByMessageId                M
              */
-            List<StudentMessage> lstStudentMessages = new List<StudentMessage> ();
-            Message message = new Message ();
+            List<StudentMessage> lstStudentMessages = new List<StudentMessage>();
+            Message message = new Message();
             string sql = "dbo.sp_ReadStudentMessages";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@mode", mode);
-                cmd.Parameters.AddWithValue ("@id", Id);
-                cmd.Parameters.AddWithValue ("@teacherid", teacherId);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-                lstStudentMessages.Clear ();
-                while (await reader.ReadAsync ())
+                cmd.Parameters.AddWithValue("@mode", mode);
+                cmd.Parameters.AddWithValue("@id", Id);
+                cmd.Parameters.AddWithValue("@teacherid", teacherId);
+                SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                lstStudentMessages.Clear();
+                while (await reader.ReadAsync())
+                {
+                    lstStudentMessages.Add(new StudentMessage
                     {
-                    lstStudentMessages.Add (new StudentMessage
-                        {
-                        StudentMessageId = reader.GetInt32 (0),
-                        MessageId = reader.GetInt32 (1),
-                        StudentId = reader.GetInt32 (2),
-                        StudentName = reader.GetString (3),
-                        StudentNickname = reader.GetString (4),
-                        MessageTitle = reader.GetString (5),
-                        MessageBody = reader.GetString (6),
-                        DateTimeCreated = reader.GetDateTimeOffset (7),
-                        DateTimeSent = reader.GetDateTimeOffset (8),
-                        DateTimeRead = reader.GetDateTimeOffset (9),
-                        StudentMessageTags = reader.GetInt32 (10)
-                        });
-                    }
-                await cnn.CloseAsync ();
+                        StudentMessageId = reader.GetInt32(0),
+                        MessageId = reader.GetInt32(1),
+                        StudentId = reader.GetInt32(2),
+                        StudentName = reader.GetString(3),
+                        StudentNickname = reader.GetString(4),
+                        MessageTitle = reader.GetString(5),
+                        MessageBody = reader.GetString(6),
+                        DateTimeCreated = reader.GetDateTimeOffset(7),
+                        DateTimeSent = reader.GetDateTimeOffset(8),
+                        DateTimeRead = reader.GetDateTimeOffset(9),
+                        StudentMessageTags = reader.GetInt32(10)
+                    });
+                }
+
+                await cnn.CloseAsync();
                 return lstStudentMessages;
-                }
-            catch (Exception ex)
-                {
-                Console.WriteLine ("Error: " + ex.ToString ());
-                await cnn.CloseAsync ();
-                return new List<StudentMessage> ();
-                }
             }
-        public async Task<StudentMessage> Read_StudentMessageAsync (int studentMessageId)
+            catch (Exception ex)
             {
-            StudentMessage studentMessage = new StudentMessage ();
+                Console.WriteLine("Error: " + ex.ToString());
+                await cnn.CloseAsync();
+                return new List<StudentMessage>();
+            }
+        }
+
+        public async Task<StudentMessage> Read_StudentMessageAsync(int studentMessageId)
+        {
+            StudentMessage studentMessage = new StudentMessage();
             string sql = "dbo.sp_ReadStudentMessage";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             try
-                {
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+            {
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@studentmessageid", studentMessageId);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-                while (await reader.ReadAsync ())
-                    {
-                    studentMessage.StudentMessageId = reader.GetInt32 (0);
-                    studentMessage.MessageId = reader.GetInt32 (1);
-                    studentMessage.StudentId = reader.GetInt32 (2);
-                    studentMessage.StudentName = reader.GetString (3);
-                    studentMessage.StudentNickname = reader.GetString (4);
-                    studentMessage.MessageTitle = reader.GetString (5);
-                    studentMessage.MessageBody = reader.GetString (6);
-                    studentMessage.DateTimeCreated = reader.GetDateTimeOffset (7);
-                    studentMessage.DateTimeSent = reader.GetDateTimeOffset (8);
-                    studentMessage.DateTimeRead = reader.GetDateTimeOffset (9);
-                    studentMessage.StudentMessageTags = reader.GetInt32 (10);
-                    }
-                await cnn.CloseAsync ();
-                return studentMessage;
-                }
-            catch (Exception ex)
+                cmd.Parameters.AddWithValue("@studentmessageid", studentMessageId);
+                SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
-                Console.WriteLine ("Error: " + ex.ToString ());
-                await cnn.CloseAsync ();
-                return new StudentMessage ();
+                    studentMessage.StudentMessageId = reader.GetInt32(0);
+                    studentMessage.MessageId = reader.GetInt32(1);
+                    studentMessage.StudentId = reader.GetInt32(2);
+                    studentMessage.StudentName = reader.GetString(3);
+                    studentMessage.StudentNickname = reader.GetString(4);
+                    studentMessage.MessageTitle = reader.GetString(5);
+                    studentMessage.MessageBody = reader.GetString(6);
+                    studentMessage.DateTimeCreated = reader.GetDateTimeOffset(7);
+                    studentMessage.DateTimeSent = reader.GetDateTimeOffset(8);
+                    studentMessage.DateTimeRead = reader.GetDateTimeOffset(9);
+                    studentMessage.StudentMessageTags = reader.GetInt32(10);
                 }
+
+                await cnn.CloseAsync();
+                return studentMessage;
             }
-        public async Task<bool> Update_StudentMessageTagsAsync (StudentMessage studentMessage)
+            catch (Exception ex)
             {
+                Console.WriteLine("Error: " + ex.ToString());
+                await cnn.CloseAsync();
+                return new StudentMessage();
+            }
+        }
+
+        public async Task<bool> Update_StudentMessageTagsAsync(StudentMessage studentMessage)
+        {
             string sql = "dbo.sp_UpdateStudentMessageTags";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentmessagetags", studentMessage.StudentMessageTags);
-            cmd.Parameters.AddWithValue ("@studentmessageid", studentMessage.StudentMessageId);
-            int i = cmd.ExecuteNonQuery ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@studentmessagetags", studentMessage.StudentMessageTags);
+            cmd.Parameters.AddWithValue("@studentmessageid", studentMessage.StudentMessageId);
+            int i = cmd.ExecuteNonQuery();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Update_StudentMessageSetAsReadAsync (StudentMessage studentMessage)
-            {
+        }
+
+        public async Task<bool> Update_StudentMessageSetAsReadAsync(StudentMessage studentMessage)
+        {
             string sql = "dbo.sp_UpdateStudentMessageSetAsRead";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentmessageid", studentMessage.StudentMessageId);
-            int i = cmd.ExecuteNonQuery ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@studentmessageid", studentMessage.StudentMessageId);
+            int i = cmd.ExecuteNonQuery();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Delete_StudentMessageAsync (int studentMessageId)
-            {
+        }
+
+        public async Task<bool> Delete_StudentMessageAsync(int studentMessageId)
+        {
             //delete a single StudentMessage by Id 
             string sql = "dbo.sp_DeleteStudentMessage";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@studentmessageid", studentMessageId);
-            int i = cmd.ExecuteNonQuery ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@studentmessageid", studentMessageId);
+            int i = cmd.ExecuteNonQuery();
+            await cnn.CloseAsync();
             return (i > 0) ? true : false;
-            }
-        public async Task<bool> Delete_StudentMessagesByMessageIdAsync (int messageId)
-            {
+        }
+
+        public async Task<bool> Delete_StudentMessagesByMessageIdAsync(int messageId)
+        {
             //delete all StudentMessages sent from a Message by MessageId  
             string sql = "dbo.sp_DeleteStudentMessagesByMessageId";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@messageid", messageId);
-            int i = cmd.ExecuteNonQuery ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@messageid", messageId);
+            int i = cmd.ExecuteNonQuery();
+            await cnn.CloseAsync();
             return (i > 0) ? true : false;
-            }
-        public async Task<bool> Delete_StudentMessagesByMessageIdAndStudentIdAsync (int messageId, int studentId)
-            {
+        }
+
+        public async Task<bool> Delete_StudentMessagesByMessageIdAndStudentIdAsync(int messageId, int studentId)
+        {
             //delete StudentMessage(s) by MessageId, StudentsId 
             string sql = "dbo.sp_DeleteStudentMessagesByMessageIdAndStudentId";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@messageid", messageId);
-            cmd.Parameters.AddWithValue ("@studentid", studentId);
-            int i = cmd.ExecuteNonQuery ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@messageid", messageId);
+            cmd.Parameters.AddWithValue("@studentid", studentId);
+            int i = cmd.ExecuteNonQuery();
+            await cnn.CloseAsync();
             return (i > 0) ? true : false;
-            }
+        }
+
         #endregion
+
         #region CH:Chat
-        public async Task<int> Create_ChatAsync (Chat chat)
-            {
+
+        public async Task<int> Create_ChatAsync(Chat chat)
+        {
             string sql = "dbo.sp_CreateChat";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@fromid", chat.FromId);
-            cmd.Parameters.AddWithValue ("@toid", chat.ToId);
-            cmd.Parameters.AddWithValue ("@chattext", chat.ChatText);
-            cmd.Parameters.AddWithValue ("@chattags", chat.ChatTags);
-            int i = (int) await cmd.ExecuteScalarAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@fromid", chat.FromId);
+            cmd.Parameters.AddWithValue("@toid", chat.ToId);
+            cmd.Parameters.AddWithValue("@chattext", chat.ChatText);
+            cmd.Parameters.AddWithValue("@chattags", chat.ChatTags);
+            int i = (int)await cmd.ExecuteScalarAsync();
+            await cnn.CloseAsync();
             return i;
-            }
-        public async Task<List<Chat>> Read_ChatsAsync (int studentId)
-            {
+        }
+
+        public async Task<List<Chat>> Read_ChatsAsync(int studentId)
+        {
             // 1 Get list of chat mates
-            List<int> lstMateIds = new List<int> ();
+            List<int> lstMateIds = new List<int>();
             string sql = "dbo.sp_ReadChatmates";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            using SqlCommand cmd1 = new (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            using SqlCommand cmd1 = new(sql, cnn);
             cmd1.CommandType = CommandType.StoredProcedure;
-            cmd1.Parameters.AddWithValue ("@meId", studentId);
-            using SqlDataReader reader1 = await cmd1.ExecuteReaderAsync ();
-            while (await reader1.ReadAsync ())
-                {
-                lstMateIds.Add (reader1.GetInt32 (0));
-                }
-            await reader1.CloseAsync ();
+            cmd1.Parameters.AddWithValue("@meId", studentId);
+            using SqlDataReader reader1 = await cmd1.ExecuteReaderAsync();
+            while (await reader1.ReadAsync())
+            {
+                lstMateIds.Add(reader1.GetInt32(0));
+            }
+
+            await reader1.CloseAsync();
             // 2 Get last message for each chat mate
-            List<Chat> lstChats = new List<Chat> ();
+            List<Chat> lstChats = new List<Chat>();
             foreach (int mateId in lstMateIds)
-                {
+            {
                 sql = "dbo.sp_ReadChats";
-                using SqlCommand cmd2 = new (sql, cnn);
+                using SqlCommand cmd2 = new(sql, cnn);
                 cmd2.CommandType = CommandType.StoredProcedure;
-                cmd2.Parameters.AddWithValue ("@meid", studentId);
-                cmd2.Parameters.AddWithValue ("@mateid", mateId);
-                using SqlDataReader reader2 = await cmd2.ExecuteReaderAsync ();
-                while (await reader2.ReadAsync ())
+                cmd2.Parameters.AddWithValue("@meid", studentId);
+                cmd2.Parameters.AddWithValue("@mateid", mateId);
+                using SqlDataReader reader2 = await cmd2.ExecuteReaderAsync();
+                while (await reader2.ReadAsync())
+                {
+                    lstChats.Add(new Chat
                     {
-                    lstChats.Add (new Chat
-                        {
-                        ChatId = reader2.GetInt32 (0),
-                        FromId = reader2.GetInt32 (1),
-                        ToId = reader2.GetInt32 (2),
-                        DateTimeSent = reader2.GetDateTimeOffset (3),
-                        ChatText = reader2.GetString (4),
-                        ChatTags = reader2.GetInt32 (5),
-                        FromName = reader2.GetString (6),
-                        ToName = reader2.GetString (7)
-                        });
-                    }
-                await reader2.CloseAsync ();
+                        ChatId = reader2.GetInt32(0),
+                        FromId = reader2.GetInt32(1),
+                        ToId = reader2.GetInt32(2),
+                        DateTimeSent = reader2.GetDateTimeOffset(3),
+                        ChatText = reader2.GetString(4),
+                        ChatTags = reader2.GetInt32(5),
+                        FromName = reader2.GetString(6),
+                        ToName = reader2.GetString(7)
+                    });
                 }
-            await cnn.CloseAsync ();
+
+                await reader2.CloseAsync();
+            }
+
+            await cnn.CloseAsync();
             // Sort: 
             lstChats = lstChats
-            .OrderByDescending (chat => chat.DateTimeSent)
-            .ToList ();
+                .OrderByDescending(chat => chat.DateTimeSent)
+                .ToList();
             return lstChats;
-            }
-        public async Task<List<Chat>> Read_ChatsWithOneMateAsync (int studentId, int mateId)
-            {
-            List<Chat> lstChats = new List<Chat> ();
+        }
+
+        public async Task<List<Chat>> Read_ChatsWithOneMateAsync(int studentId, int mateId)
+        {
+            List<Chat> lstChats = new List<Chat>();
             string sql = @"dbo.sp_ReadChatsWithOneMate";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@meid", studentId);
-            cmd.Parameters.AddWithValue ("@mateid", mateId);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            lstChats.Clear ();
-            while (await reader.ReadAsync ())
+            cmd.Parameters.AddWithValue("@meid", studentId);
+            cmd.Parameters.AddWithValue("@mateid", mateId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            lstChats.Clear();
+            while (await reader.ReadAsync())
+            {
+                lstChats.Add(new Chat
                 {
-                lstChats.Add (new Chat
-                    {
-                    ChatId = reader.GetInt32 (0),
-                    FromId = reader.GetInt32 (1),
-                    ToId = reader.GetInt32 (2),
-                    DateTimeSent = reader.GetDateTimeOffset (3),
-                    ChatText = reader.GetString (4),
-                    ChatTags = reader.GetInt32 (5),
-                    FromName = reader.GetString (6),
-                    ToName = reader.GetString (7)
-                    });
-                }
-            await cnn.CloseAsync ();
+                    ChatId = reader.GetInt32(0),
+                    FromId = reader.GetInt32(1),
+                    ToId = reader.GetInt32(2),
+                    DateTimeSent = reader.GetDateTimeOffset(3),
+                    ChatText = reader.GetString(4),
+                    ChatTags = reader.GetInt32(5),
+                    FromName = reader.GetString(6),
+                    ToName = reader.GetString(7)
+                });
+            }
+
+            await cnn.CloseAsync();
             return lstChats;
-            }
-        public async Task<bool> Update_ChatAsync (Chat chat)
-            {
+        }
+
+        public async Task<bool> Update_ChatAsync(Chat chat)
+        {
             string sql = "dbo.sp_UpdateChat";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@fromid", chat.FromId);
-            cmd.Parameters.AddWithValue ("@toid", chat.ToId);
-            cmd.Parameters.AddWithValue ("@datetimesent", chat.DateTimeSent);
-            cmd.Parameters.AddWithValue ("@chattext", chat.ChatText);
-            cmd.Parameters.AddWithValue ("@chattags", chat.ChatTags);
-            cmd.Parameters.AddWithValue ("@chatid", chat.ChatId);
-            await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@fromid", chat.FromId);
+            cmd.Parameters.AddWithValue("@toid", chat.ToId);
+            cmd.Parameters.AddWithValue("@datetimesent", chat.DateTimeSent);
+            cmd.Parameters.AddWithValue("@chattext", chat.ChatText);
+            cmd.Parameters.AddWithValue("@chattags", chat.ChatTags);
+            cmd.Parameters.AddWithValue("@chatid", chat.ChatId);
+            await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Update_ChatTagsAsync (Chat chat)
-            {
+        }
+
+        public async Task<bool> Update_ChatTagsAsync(Chat chat)
+        {
             //1:IsRead 2:IsImp 3:IsBookmarked 4:Deleted
             string sql = "dbo.sp_UpdateChatTags";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@chattags", chat.ChatTags);
-            cmd.Parameters.AddWithValue ("@chatid", chat.ChatId);
-            await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@chattags", chat.ChatTags);
+            cmd.Parameters.AddWithValue("@chatid", chat.ChatId);
+            await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Delete_ChatAsync (int chatId)
-            {
+        }
+
+        public async Task<bool> Delete_ChatAsync(int chatId)
+        {
             string sql = "dbo.sp_DeleteChat";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@chatid", chatId);
-            await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@chatid", chatId);
+            await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
+        }
+
         #endregion
+
         #region CHR:Chatroom
-        public async Task<int> Create_ChatroomAsync (Chatroom chatroom)
-            {
+
+        public async Task<int> Create_ChatroomAsync(Chatroom chatroom)
+        {
             string sql = "dbo.sp_CreateChatroom";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@chatroomdepartmentid", chatroom.ChatroomDepartmentId);
-            cmd.Parameters.AddWithValue ("@chatroomadminid", chatroom.ChatroomAdminId);
-            cmd.Parameters.AddWithValue ("@chatroomname", chatroom.ChatroomName);
-            cmd.Parameters.AddWithValue ("@chatroomterms", chatroom.ChatroomTerms);
-            int i = (int) await cmd.ExecuteScalarAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@chatroomdepartmentid", chatroom.ChatroomDepartmentId);
+            cmd.Parameters.AddWithValue("@chatroomadminid", chatroom.ChatroomAdminId);
+            cmd.Parameters.AddWithValue("@chatroomname", chatroom.ChatroomName);
+            cmd.Parameters.AddWithValue("@chatroomterms", chatroom.ChatroomTerms);
+            int i = (int)await cmd.ExecuteScalarAsync();
+            await cnn.CloseAsync();
             return i;
-            }
-        public async Task<List<Chatroom>> Read_ChatroomsAsync (int departmentId)
-            {
+        }
+
+        public async Task<List<Chatroom>> Read_ChatroomsAsync(int departmentId)
+        {
             string sql = "dbo.sp_ReadChatrooms";
-            List<Chatroom> lstChatrooms = new List<Chatroom> ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            List<Chatroom> lstChatrooms = new List<Chatroom>();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@departmentid", departmentId);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            while (await reader.ReadAsync ())
+            cmd.Parameters.AddWithValue("@departmentid", departmentId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                lstChatrooms.Add(new Chatroom
                 {
-                lstChatrooms.Add (new Chatroom
-                    {
-                    ChatroomId = reader.GetInt32 (0),
-                    ChatroomDepartmentId = reader.GetInt32 (1),
-                    ChatroomAdminId = reader.GetInt32 (2),
-                    ChatroomName = reader.GetString (3),
-                    ChatroomTerms = reader.GetString (4),
-                    ChatroomAdminName = reader.GetString (5)
-                    });
-                }
-            await reader.CloseAsync ();
-            await cnn.CloseAsync ();
+                    ChatroomId = reader.GetInt32(0),
+                    ChatroomDepartmentId = reader.GetInt32(1),
+                    ChatroomAdminId = reader.GetInt32(2),
+                    ChatroomName = reader.GetString(3),
+                    ChatroomTerms = reader.GetString(4),
+                    ChatroomAdminName = reader.GetString(5)
+                });
+            }
+
+            await reader.CloseAsync();
+            await cnn.CloseAsync();
             return lstChatrooms;
-            }
-        public async Task<bool> Update_ChatroomAsync (Chatroom chatroom)
-            {
+        }
+
+        public async Task<bool> Update_ChatroomAsync(Chatroom chatroom)
+        {
             string sql = "dbo.sp_UpdateChatroom";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@chatroomdepartmentid", chatroom.ChatroomDepartmentId);
-            cmd.Parameters.AddWithValue ("@chatroomadminid", chatroom.ChatroomAdminId);
-            cmd.Parameters.AddWithValue ("@chatroomname", chatroom.ChatroomName);
-            cmd.Parameters.AddWithValue ("@chatroomterms", chatroom.ChatroomTerms);
-            cmd.Parameters.AddWithValue ("@chatroomid", chatroom.ChatroomId);
-            await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@chatroomdepartmentid", chatroom.ChatroomDepartmentId);
+            cmd.Parameters.AddWithValue("@chatroomadminid", chatroom.ChatroomAdminId);
+            cmd.Parameters.AddWithValue("@chatroomname", chatroom.ChatroomName);
+            cmd.Parameters.AddWithValue("@chatroomterms", chatroom.ChatroomTerms);
+            cmd.Parameters.AddWithValue("@chatroomid", chatroom.ChatroomId);
+            await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Delete_ChatroomAsync (int chatroomId)
-            {
+        }
+
+        public async Task<bool> Delete_ChatroomAsync(int chatroomId)
+        {
             string sql = "dbo.sp_DeleteChatroom";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@chatroomid", chatroomId);
-            await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@chatroomid", chatroomId);
+            await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
+        }
+
         #endregion
+
         #region CHRP:ChatroomPost
-        public async Task<int> Create_ChatroomPostAsync (ChatroomPost chatroomPost)
-            {
+
+        public async Task<int> Create_ChatroomPostAsync(ChatroomPost chatroomPost)
+        {
             try
-                {
+            {
                 string sql = "dbo.sp_CreateChatroomPost";
-                string? connString = _config.GetConnectionString ("cnni");
-                using SqlConnection cnn = new (connString);
-                await cnn.OpenAsync ();
-                SqlCommand cmd = new SqlCommand (sql, cnn);
+                string? connString = _config.GetConnectionString("cnni");
+                using SqlConnection cnn = new(connString);
+                await cnn.OpenAsync();
+                SqlCommand cmd = new SqlCommand(sql, cnn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue ("@chatroomid", chatroomPost.ChatroomId);
-                cmd.Parameters.AddWithValue ("@senderid", chatroomPost.SenderId);
-                cmd.Parameters.AddWithValue ("@posttext", chatroomPost.PostText);
-                int i = (int) await cmd.ExecuteScalarAsync ();
-                await cnn.CloseAsync ();
+                cmd.Parameters.AddWithValue("@chatroomid", chatroomPost.ChatroomId);
+                cmd.Parameters.AddWithValue("@senderid", chatroomPost.SenderId);
+                cmd.Parameters.AddWithValue("@posttext", chatroomPost.PostText);
+                int i = (int)await cmd.ExecuteScalarAsync();
+                await cnn.CloseAsync();
                 return i;
-                }
+            }
             catch (Exception ex)
-                {
-                Console.WriteLine (ex.ToString ());
+            {
+                Console.WriteLine(ex.ToString());
                 throw;
-                }
             }
-        public async Task<List<ChatroomPost>> Read_ChatroomPostsAsync (int chatroomId)
-            {
-            List<ChatroomPost> lstChatroomPosts = new List<ChatroomPost> ();
+        }
+
+        public async Task<List<ChatroomPost>> Read_ChatroomPostsAsync(int chatroomId)
+        {
+            List<ChatroomPost> lstChatroomPosts = new List<ChatroomPost>();
             string sql = @"dbo.sp_ReadChatroomPosts";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@chatroomid", chatroomId);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            lstChatroomPosts.Clear ();
-            while (await reader.ReadAsync ())
+            cmd.Parameters.AddWithValue("@chatroomid", chatroomId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            lstChatroomPosts.Clear();
+            while (await reader.ReadAsync())
+            {
+                lstChatroomPosts.Add(new ChatroomPost
                 {
-                lstChatroomPosts.Add (new ChatroomPost
-                    {
-                    ChatroomPostId = reader.GetInt32 (0),
-                    ChatroomId = reader.GetInt32 (1),
-                    SenderId = reader.GetInt32 (2),
-                    SenderName = reader.GetString (3),
-                    PostDateTime = reader.GetDateTimeOffset (4),
-                    PostText = reader.GetString (5),
-                    PostTags = reader.GetInt32 (6)
-                    });
-                }
-            await reader.CloseAsync ();
-            await cnn.CloseAsync ();
+                    ChatroomPostId = reader.GetInt32(0),
+                    ChatroomId = reader.GetInt32(1),
+                    SenderId = reader.GetInt32(2),
+                    SenderName = reader.GetString(3),
+                    PostDateTime = reader.GetDateTimeOffset(4),
+                    PostText = reader.GetString(5),
+                    PostTags = reader.GetInt32(6)
+                });
+            }
+
+            await reader.CloseAsync();
+            await cnn.CloseAsync();
             return lstChatroomPosts;
-            }
-        public async Task<bool> Update_ChatroomPostAsync (ChatroomPost chatroomPost)
-            {
+        }
+
+        public async Task<bool> Update_ChatroomPostAsync(ChatroomPost chatroomPost)
+        {
             string sql = "dbo.sp_UpdateChatroomPost";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@posttext", chatroomPost.PostText);
-            cmd.Parameters.AddWithValue ("@chatroompostid", chatroomPost.ChatroomPostId);
-            await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@posttext", chatroomPost.PostText);
+            cmd.Parameters.AddWithValue("@chatroompostid", chatroomPost.ChatroomPostId);
+            await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Delete_ChatroomPostAsync (int chatroomPostId)
-            {
+        }
+
+        public async Task<bool> Delete_ChatroomPostAsync(int chatroomPostId)
+        {
             string sql = "dbo.sp_DeleteChatroomPost";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@chatroompostid", chatroomPostId);
-            await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@chatroompostid", chatroomPostId);
+            await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
+        }
+
         #endregion
+
         #region P:Projects
-        public async Task<int> Create_ProjectAsync (Project project)
-            {
+
+        public async Task<int> Create_ProjectAsync(Project project)
+        {
             string sql = "dbo.sp_CreateProject";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             //Create
-            await cnn.OpenAsync ();
-            SqlCommand cmd2 = new SqlCommand (sql, cnn);
+            await cnn.OpenAsync();
+            SqlCommand cmd2 = new SqlCommand(sql, cnn);
             cmd2.CommandType = CommandType.StoredProcedure;
-            cmd2.Parameters.AddWithValue ("@userid", project.UserId);
-            cmd2.Parameters.AddWithValue ("@usertype", project.UserType);
-            cmd2.Parameters.AddWithValue ("@projectname", project.ProjectName);
-            cmd2.Parameters.AddWithValue ("@projecttags", project.ProjectTags);
-            await cmd2.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd2.Parameters.AddWithValue("@userid", project.UserId);
+            cmd2.Parameters.AddWithValue("@usertype", project.UserType);
+            cmd2.Parameters.AddWithValue("@projectname", project.ProjectName);
+            cmd2.Parameters.AddWithValue("@projecttags", project.ProjectTags);
+            await cmd2.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return 1;
-            }
-        public async Task<List<Project>> Read_ProjectsAsync (int userId, string mode)
-            {
-            List<Project> lstProjects = new List<Project> ();
+        }
+
+        public async Task<List<Project>> Read_ProjectsAsync(int userId, string mode)
+        {
+            List<Project> lstProjects = new List<Project>();
             string sql = "dbo.sp_ReadProjects";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@userid", userId);
-            cmd.Parameters.AddWithValue ("@mode", mode);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            lstProjects.Clear ();
-            while (await reader.ReadAsync ())
+            cmd.Parameters.AddWithValue("@userid", userId);
+            cmd.Parameters.AddWithValue("@mode", mode);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            lstProjects.Clear();
+            while (await reader.ReadAsync())
+            {
+                lstProjects.Add(new Project
                 {
-                lstProjects.Add (new Project
-                    {
-                    ProjectId = reader.GetInt32 (0),
-                    UserId = reader.GetInt32 (1),
-                    UserType = reader.GetInt32 (2),
-                    ProjectName = reader.GetString (3),
-                    ProjectTags = reader.GetInt32 (4),
-                    Subprojects = new List<Subproject> ()
-                    });
-                }
-            await cnn.CloseAsync ();
+                    ProjectId = reader.GetInt32(0),
+                    UserId = reader.GetInt32(1),
+                    UserType = reader.GetInt32(2),
+                    ProjectName = reader.GetString(3),
+                    ProjectTags = reader.GetInt32(4),
+                    Subprojects = new List<Subproject>()
+                });
+            }
+
+            await cnn.CloseAsync();
             foreach (Project prj in lstProjects)
-                {
-                prj.Subprojects = await Read_SubprojectsAsync (prj.ProjectId, false);
-                }
+            {
+                prj.Subprojects = await Read_SubprojectsAsync(prj.ProjectId, false);
+            }
+
             return lstProjects;
-            }
-        public async Task<Project> Read_ProjectAsync (int projectId)
-            {
+        }
+
+        public async Task<Project> Read_ProjectAsync(int projectId)
+        {
             string sql = "dbo.sp_ReadProject";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@projectid", projectId);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            Project project = new Project ();
-            while (await reader.ReadAsync ())
-                {
-                project.ProjectId = reader.GetInt32 (0);
-                project.UserId = reader.GetInt32 (1);
-                project.UserId = reader.GetInt32 (2);
-                project.ProjectName = reader.GetString (3);
-                project.ProjectTags = reader.GetInt32 (4);
-                project.Subprojects = new List<Subproject> ();
-                }
-            await cnn.CloseAsync ();
-            project.Subprojects = await Read_SubprojectsAsync (project.ProjectId, false);
+            cmd.Parameters.AddWithValue("@projectid", projectId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            Project project = new Project();
+            while (await reader.ReadAsync())
+            {
+                project.ProjectId = reader.GetInt32(0);
+                project.UserId = reader.GetInt32(1);
+                project.UserId = reader.GetInt32(2);
+                project.ProjectName = reader.GetString(3);
+                project.ProjectTags = reader.GetInt32(4);
+                project.Subprojects = new List<Subproject>();
+            }
+
+            await cnn.CloseAsync();
+            project.Subprojects = await Read_SubprojectsAsync(project.ProjectId, false);
             return project;
-            }
-        public async Task<bool> Update_ProjectAsync (Project project)
-            {
+        }
+
+        public async Task<bool> Update_ProjectAsync(Project project)
+        {
             string sql = "dbo.sp_UpdateProject";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@projectname", project.ProjectName);
-            cmd.Parameters.AddWithValue ("@projecttags", project.ProjectTags);
-            cmd.Parameters.AddWithValue ("@projectid", project.ProjectId);
-            await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@projectname", project.ProjectName);
+            cmd.Parameters.AddWithValue("@projecttags", project.ProjectTags);
+            cmd.Parameters.AddWithValue("@projectid", project.ProjectId);
+            await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Delete_ProjectAsync (int projectId)
-            {
+        }
+
+        public async Task<bool> Delete_ProjectAsync(int projectId)
+        {
             string sql = @"dbo.sp_DeleteProject";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@projectid", projectId);
-            await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@projectid", projectId);
+            await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
+        }
+
         #endregion
+
         #region SP:Subprojects
-        public async Task<int> Create_SubprojectAsync (Subproject subProject)
-            {
+
+        public async Task<int> Create_SubprojectAsync(Subproject subProject)
+        {
             string sql = "dbo.sp_CreateSubproject";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
             //Create
-            await cnn.OpenAsync ();
-            SqlCommand cmd2 = new SqlCommand (sql, cnn);
+            await cnn.OpenAsync();
+            SqlCommand cmd2 = new SqlCommand(sql, cnn);
             cmd2.CommandType = CommandType.StoredProcedure;
-            cmd2.Parameters.AddWithValue ("@projectid", subProject.ProjectId);
-            cmd2.Parameters.AddWithValue ("@subprojectname", subProject.SubprojectName);
-            await cmd2.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd2.Parameters.AddWithValue("@projectid", subProject.ProjectId);
+            cmd2.Parameters.AddWithValue("@subprojectname", subProject.SubprojectName);
+            await cmd2.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return 1;
-            }
-        public async Task<List<Subproject>> Read_SubprojectsAsync (int projectId, bool readNotes)
-            {
-            List<Subproject> lstSubprojects = new List<Subproject> ();
+        }
+
+        public async Task<List<Subproject>> Read_SubprojectsAsync(int projectId, bool readNotes)
+        {
+            List<Subproject> lstSubprojects = new List<Subproject>();
             string sql = "dbo.sp_ReadSubprojects";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@projectid", projectId);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            lstSubprojects.Clear ();
-            while (await reader.ReadAsync ())
+            cmd.Parameters.AddWithValue("@projectid", projectId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            lstSubprojects.Clear();
+            while (await reader.ReadAsync())
+            {
+                lstSubprojects.Add(new Subproject
                 {
-                lstSubprojects.Add (new Subproject
-                    {
-                    SubprojectId = reader.GetInt32 (0),
-                    ProjectId = reader.GetInt32 (1),
-                    SubprojectName = reader.GetString (2),
-                    Notes = new List<Note> ()
-                    });
-                }
-            await cnn.CloseAsync ();
+                    SubprojectId = reader.GetInt32(0),
+                    ProjectId = reader.GetInt32(1),
+                    SubprojectName = reader.GetString(2),
+                    Notes = new List<Note>()
+                });
+            }
+
+            await cnn.CloseAsync();
             if (readNotes)
-                {
+            {
                 foreach (Subproject subprj in lstSubprojects)
-                    {
-                    subprj.Notes = await Read_NotesAsync (subprj.SubprojectId, 2, 0);
-                    }
+                {
+                    subprj.Notes = await Read_NotesAsync(subprj.SubprojectId, 2, 0);
                 }
+            }
+
             return lstSubprojects;
-            }
-        public async Task<Subproject> Read_SubprojectAsync (int subProjectId, bool readNotes)
-            {
+        }
+
+        public async Task<Subproject> Read_SubprojectAsync(int subProjectId, bool readNotes)
+        {
             string sql = "dbo.sp_ReadSubproject";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@subprojectid", subProjectId);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            Subproject subProject = new Subproject ();
-            while (await reader.ReadAsync ())
-                {
-                subProject.SubprojectId = reader.GetInt32 (0);
-                subProject.ProjectId = reader.GetInt32 (1);
-                subProject.SubprojectName = reader.GetString (2);
-                subProject.Notes = new List<Note> ();
-                }
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@subprojectid", subProjectId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            Subproject subProject = new Subproject();
+            while (await reader.ReadAsync())
+            {
+                subProject.SubprojectId = reader.GetInt32(0);
+                subProject.ProjectId = reader.GetInt32(1);
+                subProject.SubprojectName = reader.GetString(2);
+                subProject.Notes = new List<Note>();
+            }
+
+            await cnn.CloseAsync();
             if (readNotes)
-                {
-                subProject.Notes = await Read_NotesAsync (subProject.SubprojectId, 1, 0);
-                }
+            {
+                subProject.Notes = await Read_NotesAsync(subProject.SubprojectId, 1, 0);
+            }
+
             return subProject;
-            }
-        public async Task<bool> Update_SubprojectAsync (Subproject subProject)
-            {
+        }
+
+        public async Task<bool> Update_SubprojectAsync(Subproject subProject)
+        {
             string sql = "dbo.sp_UpdateSubproject";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@subprojectname", subProject.SubprojectName);
-            cmd.Parameters.AddWithValue ("@subprojecttags", subProject.SubprojectTags);
-            cmd.Parameters.AddWithValue ("@subprojectid", subProject.SubprojectId);
-            await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@subprojectname", subProject.SubprojectName);
+            cmd.Parameters.AddWithValue("@subprojecttags", subProject.SubprojectTags);
+            cmd.Parameters.AddWithValue("@subprojectid", subProject.SubprojectId);
+            await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Update_SubprojectParentAsync (Subproject subProject)
-            {
+        }
+
+        public async Task<bool> Update_SubprojectParentAsync(Subproject subProject)
+        {
             string sql = "dbo.sp_UpdateSubprojectParent";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@projectid", subProject.ProjectId);
-            cmd.Parameters.AddWithValue ("@subprojectid", subProject.SubprojectId);
-            await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@projectid", subProject.ProjectId);
+            cmd.Parameters.AddWithValue("@subprojectid", subProject.SubprojectId);
+            await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Delete_SubprojectAsync (int subProjectId)
-            {
+        }
+
+        public async Task<bool> Delete_SubprojectAsync(int subProjectId)
+        {
             string sql = "dbo.sp_DeleteSubproject";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@subprojectid", subProjectId);
-            int i = await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@subprojectid", subProjectId);
+            int i = await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
+        }
+
         #endregion
+
         #region N:Notes
-        public async Task<int> Create_NoteAsync (Note note)
-            {
+
+        public async Task<int> Create_NoteAsync(Note note)
+        {
             string sql = "dbo.sp_CreateNote";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd2 = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd2 = new SqlCommand(sql, cnn);
             cmd2.CommandType = CommandType.StoredProcedure;
-            cmd2.Parameters.AddWithValue ("@referenceid", note.ReferenceId);
-            cmd2.Parameters.AddWithValue ("@referencetype", note.ReferenceType);
-            cmd2.Parameters.AddWithValue ("@notedatetime", note.NoteDateTime);
-            cmd2.Parameters.AddWithValue ("@noteduedatetime", (object) note.NoteDueDateTime ?? DBNull.Value);
-            cmd2.Parameters.AddWithValue ("@notetext", note.NoteText);
-            cmd2.Parameters.AddWithValue ("@notetags", note.NoteTags);
-            cmd2.Parameters.AddWithValue ("@creatorid", note.CreatorId);
-            await cmd2.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd2.Parameters.AddWithValue("@referenceid", note.ReferenceId);
+            cmd2.Parameters.AddWithValue("@referencetype", note.ReferenceType);
+            cmd2.Parameters.AddWithValue("@notedatetime", note.NoteDateTime);
+            cmd2.Parameters.AddWithValue("@noteduedatetime", (object)note.NoteDueDateTime ?? DBNull.Value);
+            cmd2.Parameters.AddWithValue("@notetext", note.NoteText);
+            cmd2.Parameters.AddWithValue("@notetags", note.NoteTags);
+            cmd2.Parameters.AddWithValue("@creatorid", note.CreatorId);
+            await cmd2.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return 1;
-            }
-        public async Task<List<Note>> Read_NotesAsync (int referenceId, int referenceType, int teacherId)
-            {
+        }
+
+        public async Task<List<Note>> Read_NotesAsync(int referenceId, int referenceType, int teacherId)
+        {
             //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
             string sql = "dbo.sp_ReadNotes";
-            List<Note> lstNotes = new List<Note> ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            List<Note> lstNotes = new List<Note>();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@referenceid", referenceId);
-            cmd.Parameters.AddWithValue ("@referencetype", referenceType);
-            cmd.Parameters.AddWithValue ("@teacherid", teacherId);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            lstNotes.Clear ();
-            while (await reader.ReadAsync ())
-                {
-                Note note = new Note ();
-                note.NoteId = reader.GetInt32 (0);
-                note.ReferenceId = reader.GetInt32 (1);
-                note.ReferenceType = reader.GetInt32 (2);
-                note.NoteDateTime = reader.GetDateTimeOffset (3);
-                note.NoteDueDateTime = reader.GetDateTimeOffset (4);
-                note.NoteText = reader.GetString (5);
-                note.CreatorId = reader.GetInt32 (6);
-                note.NoteTags = reader.GetInt32 (7);
-                note.ReferenceName = reader.GetString (8);
-                lstNotes.Add (note);
-                }
-            await cnn.CloseAsync ();
-            return lstNotes;
-            }
-        public async Task<List<Note>> Read_DueNotesAsync (int userId, int nDays)
+            cmd.Parameters.AddWithValue("@referenceid", referenceId);
+            cmd.Parameters.AddWithValue("@referencetype", referenceType);
+            cmd.Parameters.AddWithValue("@teacherid", teacherId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            lstNotes.Clear();
+            while (await reader.ReadAsync())
             {
+                Note note = new Note();
+                note.NoteId = reader.GetInt32(0);
+                note.ReferenceId = reader.GetInt32(1);
+                note.ReferenceType = reader.GetInt32(2);
+                note.NoteDateTime = reader.GetDateTimeOffset(3);
+                note.NoteDueDateTime = reader.GetDateTimeOffset(4);
+                note.NoteText = reader.GetString(5);
+                note.CreatorId = reader.GetInt32(6);
+                note.NoteTags = reader.GetInt32(7);
+                note.ReferenceName = reader.GetString(8);
+                lstNotes.Add(note);
+            }
+
+            await cnn.CloseAsync();
+            return lstNotes;
+        }
+
+        public async Task<List<Note>> Read_DueNotesAsync(int userId, int nDays)
+        {
             //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
             string sql = "dbo.sp_ReadNotesDue";
-            List<Note> lstDueNotes = new List<Note> ();
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            List<Note> lstDueNotes = new List<Note>();
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@creatorid", userId);
-            cmd.Parameters.AddWithValue ("@days", nDays);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            lstDueNotes.Clear ();
-            while (await reader.ReadAsync ())
-                {
-                Note note = new Note ();
-                note.NoteId = reader.GetInt32 (0);
-                note.ReferenceId = reader.GetInt32 (1);
-                note.ReferenceType = reader.GetInt32 (2);
-                note.NoteDateTime = reader.GetDateTimeOffset (3);
-                note.NoteDueDateTime = reader.GetDateTimeOffset (4);
-                note.NoteText = reader.GetString (5);
-                note.CreatorId = reader.GetInt32 (6);
-                note.NoteTags = reader.GetInt32 (7);
+            cmd.Parameters.AddWithValue("@creatorid", userId);
+            cmd.Parameters.AddWithValue("@days", nDays);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            lstDueNotes.Clear();
+            while (await reader.ReadAsync())
+            {
+                Note note = new Note();
+                note.NoteId = reader.GetInt32(0);
+                note.ReferenceId = reader.GetInt32(1);
+                note.ReferenceType = reader.GetInt32(2);
+                note.NoteDateTime = reader.GetDateTimeOffset(3);
+                note.NoteDueDateTime = reader.GetDateTimeOffset(4);
+                note.NoteText = reader.GetString(5);
+                note.CreatorId = reader.GetInt32(6);
+                note.NoteTags = reader.GetInt32(7);
                 //note.ReferenceName = reader.GetString (8);
-                lstDueNotes.Add (note);
-                }
-            await cnn.CloseAsync ();
+                lstDueNotes.Add(note);
+            }
+
+            await cnn.CloseAsync();
             return lstDueNotes;
-            }
-        public async Task<List<Note>> Read_NotesBySearchKeyAsync (string searchKey, int parentId, int mode)
-            {
+        }
+
+        public async Task<List<Note>> Read_NotesBySearchKeyAsync(string searchKey, int parentId, int mode)
+        {
             searchKey = "%" + searchKey + "%";
-            List<Note> lstNotes = new List<Note> ();
+            List<Note> lstNotes = new List<Note>();
             string sql = @"dbo.sp_ReadNotesBySearchKey";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@keyword", searchKey);
-            cmd.Parameters.AddWithValue ("@referenceid", parentId);
-            cmd.Parameters.AddWithValue ("@referencetype", mode);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            lstNotes.Clear ();
-            while (await reader.ReadAsync ())
-                {
-                Note note = new Note ();
-                note.NoteId = reader.GetInt32 (0);
-                note.ReferenceId = reader.GetInt32 (1);
-                note.ReferenceType = reader.GetInt32 (2);
-                note.NoteDateTime = reader.GetDateTimeOffset (3);
-                note.NoteDueDateTime = reader.GetDateTimeOffset (4);
-                note.NoteText = reader.GetString (5);
-                note.CreatorId = reader.GetInt32 (6);
-                note.NoteTags = reader.GetInt32 (7);
-                note.ReferenceName = reader.GetString (8);
-                lstNotes.Add (note);
-                }
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@keyword", searchKey);
+            cmd.Parameters.AddWithValue("@referenceid", parentId);
+            cmd.Parameters.AddWithValue("@referencetype", mode);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            lstNotes.Clear();
+            while (await reader.ReadAsync())
+            {
+                Note note = new Note();
+                note.NoteId = reader.GetInt32(0);
+                note.ReferenceId = reader.GetInt32(1);
+                note.ReferenceType = reader.GetInt32(2);
+                note.NoteDateTime = reader.GetDateTimeOffset(3);
+                note.NoteDueDateTime = reader.GetDateTimeOffset(4);
+                note.NoteText = reader.GetString(5);
+                note.CreatorId = reader.GetInt32(6);
+                note.NoteTags = reader.GetInt32(7);
+                note.ReferenceName = reader.GetString(8);
+                lstNotes.Add(note);
+            }
+
+            await cnn.CloseAsync();
             return lstNotes;
-            }
-        public async Task<List<User>> Read_StudentsNotesAsync (List<int> lstStudentsIds, int teacherId)
-            {
-            List<User> lstStudents = new List<User> ();
+        }
+
+        public async Task<List<User>> Read_StudentsNotesAsync(List<int> lstStudentsIds, int teacherId)
+        {
+            List<User> lstStudents = new List<User>();
             foreach (int sid in lstStudentsIds)
-                {
-                User st = new User ();
-                st.StudentNotes = await Read_NotesAsync (sid, 13, teacherId);
-                lstStudents.Add (st);
-                }
+            {
+                User st = new User();
+                st.StudentNotes = await Read_NotesAsync(sid, 13, teacherId);
+                lstStudents.Add(st);
+            }
+
             return lstStudents;
-            }
-        public async Task<Note> Read_NoteAsync (int noteId)
-            {
+        }
+
+        public async Task<Note> Read_NoteAsync(int noteId)
+        {
             string sql = "dbo.sp_ReadNote";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@noteid", noteId);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync ();
-            Note note = new Note ();
-            while (await reader.ReadAsync ())
-                {
-                note.NoteId = reader.GetInt32 (0);
-                note.ReferenceId = reader.GetInt32 (1);
-                note.ReferenceType = reader.GetInt32 (2);
-                note.NoteDateTime = reader.GetDateTimeOffset (3);
-                note.NoteDueDateTime = reader.GetDateTimeOffset (4);
-                note.NoteText = reader.GetString (5);
-                note.CreatorId = reader.GetInt32 (6);
-                note.NoteTags = reader.GetInt32 (7);
-                note.ReferenceName = reader.GetString (8);
-                }
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@noteid", noteId);
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            Note note = new Note();
+            while (await reader.ReadAsync())
+            {
+                note.NoteId = reader.GetInt32(0);
+                note.ReferenceId = reader.GetInt32(1);
+                note.ReferenceType = reader.GetInt32(2);
+                note.NoteDateTime = reader.GetDateTimeOffset(3);
+                note.NoteDueDateTime = reader.GetDateTimeOffset(4);
+                note.NoteText = reader.GetString(5);
+                note.CreatorId = reader.GetInt32(6);
+                note.NoteTags = reader.GetInt32(7);
+                note.ReferenceName = reader.GetString(8);
+            }
+
+            await cnn.CloseAsync();
             return note;
-            }
-        public async Task<bool> Update_NoteAsync (Note note)
-            {
+        }
+
+        public async Task<bool> Update_NoteAsync(Note note)
+        {
             string sql = "dbo.sp_UpdateNote";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@referenceid", note.ReferenceId);
-            cmd.Parameters.AddWithValue ("@referencetype", note.ReferenceType);
-            cmd.Parameters.AddWithValue ("@notedatetime", note.NoteDateTime);
-            cmd.Parameters.AddWithValue ("@noteduedatetime", (object) note.NoteDueDateTime ?? DBNull.Value); //null cannot be saved to DB, use DBNull instead!
-            cmd.Parameters.AddWithValue ("@notetext", note.NoteText);
-            cmd.Parameters.AddWithValue ("@notetags", note.NoteTags); //1:rtl 2:done 4:shared 8:readonly
-            cmd.Parameters.AddWithValue ("@noteid", note.NoteId);
-            await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@referenceid", note.ReferenceId);
+            cmd.Parameters.AddWithValue("@referencetype", note.ReferenceType);
+            cmd.Parameters.AddWithValue("@notedatetime", note.NoteDateTime);
+            cmd.Parameters.AddWithValue("@noteduedatetime",
+                (object)note.NoteDueDateTime ?? DBNull.Value); //null cannot be saved to DB, use DBNull instead!
+            cmd.Parameters.AddWithValue("@notetext", note.NoteText);
+            cmd.Parameters.AddWithValue("@notetags", note.NoteTags); //1:rtl 2:done 4:shared 8:readonly
+            cmd.Parameters.AddWithValue("@noteid", note.NoteId);
+            await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Update_NoteParentAsync (Note note)
-            {
+        }
+
+        public async Task<bool> Update_NoteParentAsync(Note note)
+        {
             string sql = "dbo.sp_UpdateNoteParent";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@referenceid", note.ReferenceId);
-            cmd.Parameters.AddWithValue ("@referencetype", note.ReferenceType);
-            cmd.Parameters.AddWithValue ("@noteid", note.NoteId);
-            await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@referenceid", note.ReferenceId);
+            cmd.Parameters.AddWithValue("@referencetype", note.ReferenceType);
+            cmd.Parameters.AddWithValue("@noteid", note.NoteId);
+            await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Delete_NotesAsync (int referenceId, int referenceType)
-            {
+        }
+
+        public async Task<bool> Delete_NotesAsync(int referenceId, int referenceType)
+        {
             //ReferenceTypes 1:quicknote(s) 2:SectNote(s) 11:quicknote(t) 12:SectNote(t) 13:StudentNote(t) 14:GroupNote(t) 15:CourseNote(t) 16:ExamNote(t) 17:StudentExamNote(t)
             string sql = "dbo.sp_DeleteNotes";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@referenceid", referenceId);
-            cmd.Parameters.AddWithValue ("@referencetype", referenceType);
-            int i = await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
+            cmd.Parameters.AddWithValue("@referenceid", referenceId);
+            cmd.Parameters.AddWithValue("@referencetype", referenceType);
+            int i = await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
             return true;
-            }
-        public async Task<bool> Delete_NoteAsync (int noteId)
-            {
-            string sql = "dbo.sp_DeleteNote";
-            string? connString = _config.GetConnectionString ("cnni");
-            using SqlConnection cnn = new SqlConnection (connString);
-            await cnn.OpenAsync ();
-            SqlCommand cmd = new SqlCommand (sql, cnn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue ("@noteid", noteId);
-            int i = await cmd.ExecuteNonQueryAsync ();
-            await cnn.CloseAsync ();
-            return true;
-            }
-        #endregion
         }
+
+        public async Task<bool> Delete_NoteAsync(int noteId)
+        {
+            string sql = "dbo.sp_DeleteNote";
+            string? connString = _config.GetConnectionString("cnni");
+            using SqlConnection cnn = new SqlConnection(connString);
+            await cnn.OpenAsync();
+            SqlCommand cmd = new SqlCommand(sql, cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@noteid", noteId);
+            int i = await cmd.ExecuteNonQueryAsync();
+            await cnn.CloseAsync();
+            return true;
+        }
+
+        #endregion
     }
+}

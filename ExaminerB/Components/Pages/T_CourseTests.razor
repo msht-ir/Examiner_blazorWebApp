@@ -18,46 +18,46 @@
 @using OfficeOpenXml;
 
 @if (!_hasFetched)
-    {
-    <_ScanSheets />
-    }
+{
+    <_ScanSheets/>
+}
 else
-    {
-        <div style="text-align:center">
+{
+    <div style="text-align:center">
         <h3>@appState.CourseName</h3>
-        <hr />
-        </div>
-        <EditForm Model="lstCourseTests" style="max-width:600px; margin: 0 auto;">
+        <hr/>
+    </div>
+    <EditForm Model="lstCourseTests" style="max-width:600px; margin: 0 auto;">
         @if (appState.Cmd == "readexcelworksheets")
-            {
-            <br />
-                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
-                    <MudCard Class="mx-0">
-                        <MudCardContent Style="background-color:whitesmoke;">
-                            <div>
-                            <br />
-                            <img src="/img/icoExcel1.png" width="28" style="margin-right:10px;" />
-                            <InputFile OnChange="HandleFileSelected" title="Refer to Examiner guide for correct Excel format" />
-                            </div>
-                        <br /><br />
-                        <hr />
-                            <div style="text-align:center">
-                            <MudIconButton Icon="@Icons.Material.Filled.HelpCenter" Color="Color.Tertiary" Size="Size.Large" OnClick="BtnHelpSignupNewTeacher" Title="how to import tests from excel" />
-                            <MudIconButton Icon="@Icons.Material.Filled.Cancel" Color="Color.Primary" Size="Size.Large" OnClick="BtnCancel" Title="cancel" />
-                            </div>
-                        </MudCardContent>
-                    </MudCard>
-                </MudContainer>
-            }
+        {
+            <br/>
+            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                <MudCard Class="mx-0">
+                    <MudCardContent Style="background-color:whitesmoke;">
+                        <div>
+                            <br/>
+                            <img src="/img/icoExcel1.png" width="28" style="margin-right:10px;"/>
+                            <InputFile OnChange="HandleFileSelected" title="Refer to Examiner guide for correct Excel format"/>
+                        </div>
+                        <br/><br/>
+                        <hr/>
+                        <div style="text-align:center">
+                            <MudIconButton Icon="@Icons.Material.Filled.HelpCenter" Color="Color.Tertiary" Size="Size.Large" OnClick="BtnHelpSignupNewTeacher" Title="how to import tests from excel"/>
+                            <MudIconButton Icon="@Icons.Material.Filled.Cancel" Color="Color.Primary" Size="Size.Large" OnClick="BtnCancel" Title="cancel"/>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudContainer>
+        }
         else if (appState.Cmd == "importexcelworksheets")
-            {
-            <br />
-                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
-                    <MudCard Class="mx-0">
-                        <MudCardContent Style="background-color:whitesmoke;">
-                        <br />
-                            <div class="d-flex">
-                                <MudSelect T="string"
+        {
+            <br/>
+            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                <MudCard Class="mx-0">
+                    <MudCardContent Style="background-color:whitesmoke;">
+                        <br/>
+                        <div class="d-flex">
+                            <MudSelect T="string"
                                        @ref="refWorksheets"
                                        Label="Worksheet"
                                        Value="WorksheetName"
@@ -67,40 +67,38 @@ else
                                        Margin="Margin.Dense"
                                        Style="font-size:small;">
                                 @foreach (string ws in lstWorksheets)
-                                    {
+                                {
                                     <MudSelectItem Value="@ws">@ws</MudSelectItem>
-                                    }
-                                </MudSelect>
-                                <button class="btn btn-link" Title="import from excel" @onclick="() => ReadExcelAsync()">
-                                <img src="/img/icoGo1.png" width="36" />
-                                </button>
-                            </div>
-                        <br /><br />
-                        <hr />
-                            <div style="text-align:center">
-                                <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnCancel">
-                                <img src="/img/icoCancel.png" width="24" />
-                                </button>
-                            </div>
-                        </MudCardContent>
-                    </MudCard>
-                </MudContainer>
-            }
+                                }
+                            </MudSelect>
+                            <button class="btn btn-link" Title="import from excel" @onclick="() => ReadExcelAsync()">
+                                <img src="/img/icoGo1.png" width="36"/>
+                            </button>
+                        </div>
+                        <br/><br/>
+                        <hr/>
+                        <div style="text-align:center">
+                            <button class="btn btn-link" style="margin-right:20px;" @onclick="BtnCancel">
+                                <img src="/img/icoCancel.png" width="24"/>
+                            </button>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudContainer>
+        }
         else
-            {
-                <button class="btn btn-link" @onclick="BtnBack">
-                <img src="/img/icoBack3.png" width="40" title="back" />
-                </button>
-                <button class="btn btn-link" @onclick="BtnImportFromExcelFile">
-                <img src="/img/icoExcel1.png" width="28" title="import tests from excel" />
-                </button>
-                <button class="btn btn-link" @onclick="() => BtnAddNewTest()">
-                <img src="/img/icoAdd0.png" width="24" title="add a new test" />
-                </button>
-            <hr style="border-color:red" />
+        {
+            <div class="d-flex align-items-center text-start" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
+                <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                    <MudFabMenuItem StartIcon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary" OnClick="BtnBack"/>
+                    <MudFabMenuItem StartIcon="@Icons.Material.Filled.UploadFile" Color="Color.Success" OnClick="BtnImportFromExcelFile"/>
+                    <MudFabMenuItem StartIcon="@Icons.Material.Filled.AddBox" Color="Color.Warning" OnClick="() => BtnAddNewTest()"/>
+                </MudFabMenu>
+            </div>
+            @* <hr style="border-color:red"/> *@
             <h3>@course.CourseName</h3>
             @* SEARCH *@
-                <div class="d-flex gap-2 mb-3 pt-1 pb-1" tabindex="0 ">
+            <div class="d-flex gap-2 mb-3 pt-1 pb-1" tabindex="0 ">
                 <MudTextField @ref="txtSearch"
                               @bind-Value="strSearch"
                               OnKeyDown="HandleKey_Searchbox"
@@ -112,11 +110,11 @@ else
                               AdornmentIcon="@Icons.Material.Filled.Search"
                               OnAdornmentClick="BtnReadTestsBySearch"
                               Style="font-family:tahoma"
-                              Class="my-textfield" />
-                </div>
-                <div class="d-flex gap-4 mb-3 align-items-center align-content-center" tabindex="1">
+                              Class="my-textfield"/>
+            </div>
+            <div class="d-flex gap-4 mb-3 align-items-center align-content-center" tabindex="1">
                 @* Autocomplete *@
-                    <MudAutocomplete T="int"
+                <MudAutocomplete T="int"
                                  @ref="refCourseTopics"
                                  @bind-Value="_courseTopicId"
                                  Label="Topic"
@@ -128,13 +126,13 @@ else
                                  AdornmentIcon="@Icons.Material.Filled.List"
                                  OnAdornmentClick="ReadCourseTopicTests"
                                  style="font-family:tahoma;text-align:right;font-size:small;color:royalblue;">
-                        <ItemTemplate Context="courseTopicId">
-                            <span style="font-family:tahoma; font-size:small; text-align:right; display:block;">
+                    <ItemTemplate Context="courseTopicId">
+                        <span style="font-family:tahoma; font-size:small; text-align:right; display:block;">
                             @GetCourseTopicName(courseTopicId)
-                            </span>
-                        </ItemTemplate>
-                    </MudAutocomplete>
-                    <div class="d-flex align-items-center align-content-center" tabindex="1">
+                        </span>
+                    </ItemTemplate>
+                </MudAutocomplete>
+                <div class="d-flex align-items-center align-content-center" tabindex="1">
                     @* Paginate *@
                     <MudNumericField T="int"
                                      @ref="refPageNumber"
@@ -144,69 +142,71 @@ else
                                      Margin="Margin.Dense" Autocomplete="off"
                                      Adornment="Adornment.End"
                                      AdornmentIcon="@Icons.Material.Filled.List"
-                                     OnAdornmentClick="async ()=> await BtnReadTestsPaginated(intPendingPageNumber)"
+                                     OnAdornmentClick="async () => await BtnReadTestsPaginated(intPendingPageNumber)"
                                      Class="my-textfield"
                                      style="padding-left:10px;padding-right:20px;max-width:180px; "
-                                     Min="1" />
-                    </div>
+                                     Min="1"
+                                     Max="@(totalNumberOfTests / 20 + 1)"/>
                 </div>
+            </div>
 
             @* List of tests *@
-            <hr style="color:red;margin-top:40px;" />
-                <div class="d-flex gap-4 justify-content-center" style="margin-top:15px">
-                <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="Color.Primary" Size="Size.Medium" OnClick="BtnSelectAllTests" Title="Select All" />
-                <MudIconButton Icon="@Icons.Material.Filled.Rule" Color="Color.Primary" Size="Size.Medium" OnClick="BtnInvertSelection" Title="Invert Selection" />
-                </div>
+            <hr style="color:red;margin-top:40px;"/>
+            <div class="d-flex gap-4 justify-content-center" style="margin-top:15px">
+                <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="Color.Primary" Size="Size.Medium" OnClick="BtnSelectAllTests" Title="Select All"/>
+                <MudIconButton Icon="@Icons.Material.Filled.Rule" Color="Color.Primary" Size="Size.Medium" OnClick="BtnInvertSelection" Title="Invert Selection"/>
+            </div>
             i = (intPageNumber - 1) * 20; //important: see pageSize in BackendService
             @foreach (var tst in lstxTests)
-                {
+            {
                 int localId = tst.TestId;
-                    <MudContainer Class="mt-2 px-0">
-                        <MudCard Class="mx-0">
-                            <MudCardContent Style="background-color:whitesmoke;">
-                                @{
+                <MudContainer Class="mt-2 px-0">
+                    <MudCard Class="mx-0">
+                        <MudCardContent Style="background-color:whitesmoke;">
+                            @{
                                 string testRtlStatus = ((tst.TestTags & 1) == 1) ? "direction:rtl;text-align:right;" : "";
                                 string optRtlStatus = ((tst.TestTags & 2) == 2) ? "direction:rtl;text-align:right;" : "";
                                 i++;
-                                }
+                            }
                             <div style="font-weight:bold; @testRtlStatus">@i - @tst.TestTitle</div>
-                                <div style="@testRtlStatus display:flex; align-items:center; gap:2px;">
-                                <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected" />
-                                    <button class="btn btn-link" style="@testRtlStatus" @onclick="() => BtnEditCourseTest(tst.TestId)">
-                                    <img src="/img/icoEditPen.png" title="Eedit test" alt="Edit" width="18px" />
-                                    </button>
-                                </div>
+                            <div style="@testRtlStatus display:flex; align-items:center; gap:2px;">
+                                <input class="form-check-input" style="margin-left:5px;margin-right:5px;" type="checkbox" @bind="tst.IsSelected"/>
+                                <button class="btn btn-link" style="@testRtlStatus" @onclick="() => BtnEditCourseTest(tst.TestId)">
+                                    <img src="/img/icoEditPen.png" title="Eedit test" alt="Edit" width="18px"/>
+                                </button>
+                            </div>
                             @* Show-TestOptions *@
                             @foreach (var opt in tst.TestOptions)
-                                {
+                            {
                                 if ((opt.TestOptionId == tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
-                                    {
+                                {
                                     <div style="color:blue; @optRtlStatus"> - @opt.TestOptionTitle</div>
-                                    }
-                                else if ((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
-                                    {
-                                    <div style="color:black; @optRtlStatus"> - @opt.TestOptionTitle</div>
-                                    }
                                 }
-                            </MudCardContent>
-                        </MudCard>
-                    </MudContainer>
-                }
-                <div id="loadingOverlay" class="d-none">
-                    <div class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 z-3 d-flex justify-content-center align-items-center">
-                        <div class="text-center bg-white p-4 rounded shadow">
+                                else if ((opt.TestOptionId != tst.StudentExamTestKey) & (opt.TestOptionId != tst.StudentExamTestAns))
+                                {
+                                    <div style="color:black; @optRtlStatus"> - @opt.TestOptionTitle</div>
+                                }
+                            }
+                        </MudCardContent>
+                    </MudCard>
+                </MudContainer>
+            }
+
+            <div id="loadingOverlay" class="d-none">
+                <div class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 z-3 d-flex justify-content-center align-items-center">
+                    <div class="text-center bg-white p-4 rounded shadow">
                         <div class="spinner-border text-primary mb-3" role="status"></div>
                         <p class="mb-0 fw-semibold">Please wait, processing...</p>
-                        </div>
                     </div>
                 </div>
-            <hr style="color:red" />
-                <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
-                    <MudCard Class="mx-0">
-                        <MudCardContent Style="background-color:whitesmoke;">
+            </div>
+            <hr style="color:red"/>
+            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                <MudCard Class="mx-0">
+                    <MudCardContent Style="background-color:whitesmoke;">
                         <div style="font-weight:bold;color:royalblue;padding-bottom:5px;">Add selected tests to:</div>
-                            <div class="d-flex mb-3 align-content-center align-items-center justify-content-center" ">
-                                <MudSelect T="int"
+                        <div class="d-flex mb-3 align-content-center align-items-center justify-content-center" ">
+                            <MudSelect T="int"
                                        Label="Exam"
                                        @bind-Value="intExamId"
                                        Class="w-auto my-select"
@@ -218,56 +218,58 @@ else
                                        Style="color:royalblue;width:140px;font-size:small;padding-top:10px;">
                                 <MudSelectItem Value="0">Select an Exam...</MudSelectItem>
                                 @foreach (Exam exam in lstExams)
-                                    {
-                                    <MudSelectItem Value="@exam.ExamId"><span style="font-size:smaller;font-family:'Segoe UI'">@exam.ExamTitle</span></MudSelectItem>
-                                    }
-                                </MudSelect>
-                            </div>
-                            <div class="d-flex m-4 gap-1 align-items-center align-content-center justify-content-center" style="text-align: center;">
-                                <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnEditExam">
-                                <img src="/img/icoFolderE.png" width="26" title="show exam page" />
-                                </button>
-                            </div>
-                        </MudCardContent>
-                    </MudCard>
-                </MudContainer>
-                <div style="max-width:500px; margin: 0 auto; text-align:center;">
-                <br />
-                    <button class="btn btn-link" @onclick="BtnBack">
-                    <img src="/img/icoBack3.png" width="40" />
-                    </button>
-                </div>
-            }
-        </EditForm>
-    }
+                                {
+                                    <MudSelectItem Value="@exam.ExamId">
+                                        <span style="font-size:smaller;font-family:'Segoe UI'">@exam.ExamTitle</span>
+                                    </MudSelectItem>
+                                }
+                            </MudSelect>
+                        </div>
+                        <div class="d-flex m-4 gap-1 align-items-center align-content-center justify-content-center" style="text-align: center;">
+                            <button class="btn btn-link pulse-hover" type="submit" @onclick="BtnEditExam">
+                                <img src="/img/icoFolderE.png" width="26" title="show exam page"/>
+                            </button>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudContainer>
+            <div style="max-width:500px; margin: 0 auto; text-align:center;">
+                <br/>
+                <button class="btn btn-link" @onclick="BtnBack">
+                    <img src="/img/icoBack3.png" width="40"/>
+                </button>
+            </div>
+        }
+    </EditForm>
+}
 @if (_cmd == "guide")
-    {
-    <hr />
-    <_GuideImportTests />
-    <br />
-        <div class="d-flex justify-content-center">
-            <MudButton Variant="Variant.Filled"
+{
+    <hr/>
+    <_GuideImportTests/>
+    <br/>
+    <div class="d-flex justify-content-center">
+        <MudButton Variant="Variant.Filled"
                    EndIcon="@Icons.Material.Filled.CheckCircle"
                    Size="Size.Small"
                    OnClick="@(() => BtnCancelGuide())"
                    Style="color:dimgray;">
             Ok
-            </MudButton>
-        </div>
-    }
+        </MudButton>
+    </div>
+}
 
-    <script>
+<script>
     function showLoading() {
         document.getElementById("loadingOverlay").style.display = "block";
         document.querySelectorAll("button").forEach(btn => btn.disabled = true);
     }
-    </script>
-    <script>
+</script>
+<script>
     document.getElementById("txtSearch").focus();
-    </script>
-    <script>
-    window.addEventListener('load', () => {window.scrollTo({ top: 0, behavior: 'smooth' });});
-    </script>
+</script>
+<script>
+    window.addEventListener('load', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+</script>
 
 @code {
     IBrowserFile? excelFile;
@@ -282,6 +284,7 @@ else
     List<StudentExamTest> lstxTests = new List<StudentExamTest>();
     List<CourseTopic> lstCourseTopics = new List<CourseTopic>();
     Course course = new Course();
+    public int totalNumberOfTests = 0;
     private string WorksheetName = "";
     public string strSearch = "";
     public int intPageNumber = 1;
@@ -294,64 +297,72 @@ else
     public bool _hasFetched = false;
 
     //LifeCycleEvents
-    protected override async Task OnInitializedAsync ()
-        {
+    protected override async Task OnInitializedAsync()
+    {
         _hasFetched = false;
         appState.OnChange += TriggerRender;
         if (Convert.ToInt32(appState.UserLoginStatus) != 1)
-            {
+        {
             Navman.NavigateTo("/Login");
-            }
+        }
+
         lstCourseTopics = await feService.Read_CourseTopics(Convert.ToInt32(appState.CourseId));
         course.CourseId = Convert.ToInt32(appState.CourseId);
         switch (appState.Cmd)
-            {
+        {
             case "ListCourseTests":
-                    {
-                    _courseTopicId = 0;
-                    intPageNumber = 1;
-                    await BtnReadTestsPaginated(1);
-                    break;
-                    }
-            case "ListCourseTopicTests":
-                    {
-                    _courseTopicId = Convert.ToInt32(appState.CourseTopicId);
-                    intPageNumber = 1;
-                    await BtnReadTestsPaginated(1);
-                    break;
-                    }
+            {
+                _courseTopicId = 0;
+                intPageNumber = 1;
+                await BtnReadTestsPaginated(1);
+                totalNumberOfTests = await feService.Get_TotalNumberOfTests(course.CourseId);
+                break;
             }
+            case "ListCourseTopicTests":
+            {
+                _courseTopicId = Convert.ToInt32(appState.CourseTopicId);
+                intPageNumber = 1;
+                await BtnReadTestsPaginated(1);
+                break;
+            }
+        }
+
         lstExams.Clear();
         lstExams = await feService.Read_Exams(course.CourseId);
         intExamId = (Convert.ToInt32(appState.ExamId) > 0) ? Convert.ToInt32(appState.ExamId) : 0; //makes combo select the exam if any
         _hasFetched = true;
-        }
-    private void TriggerRender ()
-        {
+    }
+
+    private void TriggerRender()
+    {
         InvokeAsync(StateHasChanged);
-        }
-    public void Dispose ()
-        {
+    }
+
+    public void Dispose()
+    {
         appState.OnChange -= TriggerRender;
-        }
+    }
+
     //SEARCH
-    private async Task HandleKey_Searchbox (KeyboardEventArgs e)
-        {
+    private async Task HandleKey_Searchbox(KeyboardEventArgs e)
+    {
         if ((e.Key == "Enter") && (strSearch.Trim().Length >= 3))
-            {
+        {
             appState.SetMessage("EnterKeyIsPressedForSearch");
             await BtnReadTestsBySearch();
             return;
-            }
+        }
+
         if (e.Key == "Escape")
-            {
+        {
             strSearch = "";
             await InvokeAsync(StateHasChanged);
             await txtSearch.FocusAsync();
-            }
         }
-    public async Task BtnReadTestsBySearch ()
-        {
+    }
+
+    public async Task BtnReadTestsBySearch()
+    {
         intPendingPageNumber = 1;
         i = 0;
         int courseId = Convert.ToInt32(appState.CourseId);
@@ -359,10 +370,11 @@ else
         lstCourseTests = await feService.Read_TestsBySearch(strSearch.Trim(), courseId, false);
         appState.SetMessage(""); //cancel flag: 'Enter is pressed for search'  (see: BtnCancel)
         PutTestsListIntoWorkingList();
-        }
+    }
+
     //Autocomplete and Pagination
-    private async Task<IEnumerable<int>> SearchCourseTopics (string value, CancellationToken ct)
-        {
+    private async Task<IEnumerable<int>> SearchCourseTopics(string value, CancellationToken ct)
+    {
         // If nothing is typed, return all or a subset
         intPageNumber = 1;
         intPendingPageNumber = 1;
@@ -372,158 +384,176 @@ else
         return lstCourseTopics
             .Where(x => x.CourseTopicTitle.Contains(value, StringComparison.InvariantCultureIgnoreCase))
             .Select(x => x.CourseTopicId);
-        }
-    private string GetCourseTopicName (int id)
-        {
+    }
+
+    private string GetCourseTopicName(int id)
+    {
         if (id == 0)
             return "";
         var courseTopic = lstCourseTopics.FirstOrDefault(a => a.CourseTopicId == id);
         return courseTopic != null ? $"{courseTopic.CourseTopicTitle}" : "";
-        }
-    private async Task ReadCourseTopicTests ()
-        {
+    }
+
+    private async Task ReadCourseTopicTests()
+    {
         intPendingPageNumber = 1;
         intPageNumber = 1;
         await BtnReadTestsPaginated(1);
         await Task.Delay(1);
         await refCourseTopics.FocusAsync();
         StateHasChanged();
-        }
-    public async Task BtnReadTestsPaginated (int newPage)
-        {
+    }
+
+    public async Task BtnReadTestsPaginated(int newPage)
+    {
         strSearch = "";
         intPageNumber = newPage;
         lstCourseTests.Clear();
         if (_courseTopicId == 0)
-            {
-            lstCourseTests = await feService.Read_TestsByCourseId(course.CourseId, intPageNumber, true);
-            }
-        else if (_courseTopicId >= 1)
-            {
-            lstCourseTests = await feService.Read_TestsByCourseTopicId(_courseTopicId, intPageNumber, true);
-            }
-        PutTestsListIntoWorkingList();
-        }
-    //btns
-    public void BtnAddNewTest ()
         {
+            lstCourseTests = await feService.Read_TestsByCourseId(course.CourseId, intPageNumber, true);
+        }
+        else if (_courseTopicId >= 1)
+        {
+            lstCourseTests = await feService.Read_TestsByCourseTopicId(_courseTopicId, intPageNumber, true);
+        }
+
+        PutTestsListIntoWorkingList();
+    }
+
+    //btns
+    public void BtnAddNewTest()
+    {
+        appState.SetReturnPage("/T_CourseTests");
         appState.SetCmd("AddNewTest");
         Navman.NavigateTo("/T_CourseTest");
-        }
-    public void PutTestsListIntoWorkingList ()
-        {
+    }
+
+    public void PutTestsListIntoWorkingList()
+    {
         lstxTests.Clear();
         foreach (Test tst in lstCourseTests)
-            {
+        {
             lstxTests.Add(new StudentExamTest()
                 {
-                StudentExamId = tst.CourseId,
-                TestId = tst.TestId,
-                StudentExamTestKey = 0,
-                StudentExamTestAns = 0,
-                TestIndex = 0,
-                TestTitle = tst.TestTitle,
-                TestType = tst.TestType,
-                CourseTopicId = tst.TopicId,
-                CourseTopicTitle = "",
-                TestTags = tst.TestTags,
-                TestLevel = tst.TestLevel,
-                TestOptions = tst.TestOptions
+                    StudentExamId = tst.CourseId,
+                    TestId = tst.TestId,
+                    StudentExamTestKey = 0,
+                    StudentExamTestAns = 0,
+                    TestIndex = 0,
+                    TestTitle = tst.TestTitle,
+                    TestType = tst.TestType,
+                    CourseTopicId = tst.TopicId,
+                    CourseTopicTitle = "",
+                    TestTags = tst.TestTags,
+                    TestLevel = tst.TestLevel,
+                    TestOptions = tst.TestOptions
                 }
             );
-            }
+        }
+
         //find and set key
         foreach (StudentExamTest t in lstxTests)
-            {
+        {
             foreach (TestOption opt in t.TestOptions)
-                {
+            {
                 if (opt.TestOptionTags >= 2)
-                    {
+                {
                     t.StudentExamTestKey = opt.TestOptionId;
                     break;
-                    }
                 }
             }
         }
-    public void BtnEditCourseTest (int testId)
-        {
+    }
+
+    public void BtnEditCourseTest(int testId)
+    {
         appState.SetTestId(testId);
         appState.SetReturnPage("/T_CourseTests");
         Navman.NavigateTo("/T_CourseTest");
-        }
+    }
+
     //selection
-    public async Task BtnSelectAllTests ()
-        {
+    public async Task BtnSelectAllTests()
+    {
         foreach (StudentExamTest test in lstxTests)
-            {
+        {
             test.IsSelected = true;
-            }
-        StateHasChanged();
         }
-    public async Task BtnInvertSelection ()
-        {
+
+        StateHasChanged();
+    }
+
+    public async Task BtnInvertSelection()
+    {
         foreach (StudentExamTest test in lstxTests)
-            {
-            test.IsSelected = (test.IsSelected) ? false : true;
-            }
-        StateHasChanged();
-        }
-    //add to exam
-    public async Task BtnAddSelectedTestsToAnExam ()
         {
+            test.IsSelected = (test.IsSelected) ? false : true;
+        }
+
+        StateHasChanged();
+    }
+
+    //add to exam
+    public async Task BtnAddSelectedTestsToAnExam()
+    {
         if (intExamId <= 0)
-            {
+        {
             Snackbar.Add("select an exam", Severity.Info);
             //await JS.InvokeVoidAsync ("alert", "");
-            }
+        }
         else
-            {
+        {
             var selectedIds = lstxTests
                 .Where(t => t.IsSelected)
                 .Select(t => t.TestId)
                 .ToList();
             int testCount = 0;
             foreach (int intTestId in selectedIds)
-                {
+            {
                 ExamTest examTest = new ExamTest() { ExamId = intExamId, TestId = intTestId };
                 int result = await feService.Create_ExamTest(examTest);
                 if (result > 0)
-                    {
+                {
                     testCount++;
-                    }
                 }
+            }
+
             //appState.SetCmd ("coursetests");
             StateHasChanged();
             Snackbar.Add($"\n\n{testCount} tests added to the exam", Severity.Success); //{Severity.Warning .Error | .Info | .Success} --needs: @inject ISnackbar Snackbar
             //old code: await JS.InvokeVoidAsync ("alert", $"\n\n{testCount} Tests was added to the Exam Successfully")
-            }
         }
-    public async Task BtnEditExam ()
-        {
+    }
+
+    public async Task BtnEditExam()
+    {
         if (intExamId > 0)
-            {
+        {
             Navman.NavigateTo($"/T_Exam/{intExamId}");
-            }
+        }
         else
-            {
+        {
             Snackbar.Add("select an exam", Severity.Info);
             //await JS.InvokeVoidAsync ("alert", "");
-            }
         }
+    }
+
     //excel
-    public void BtnImportFromExcelFile ()
-        {
+    public void BtnImportFromExcelFile()
+    {
         appState.SetCmd("readexcelworksheets");
-        }
-    private async Task HandleFileSelected (InputFileChangeEventArgs e)
-        {
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
         /*
         method 1: Save excel file to server folder
         mothod 2: Parse directly in memory
         method 3: EPPlus package (fast!)
         */
         try
-            {
+        {
             _hasFetched = false;
             excelFile = e.File;
             ExcelPackage.License.SetNonCommercialPersonal("Majid SharifiTehrani"); //for non commertial use of package EPPlus
@@ -541,46 +571,48 @@ else
             Snackbar.Add("Excel worksheets listed", Severity.Success);
             appState.SetCmd("importexcelworksheets");
             _hasFetched = true;
-            }
+        }
         catch (Exception ex)
-            {
+        {
             Console.WriteLine($"--------Error\n{ex}");
             appState.SetCmd("");
             _hasFetched = true;
             return;
-            }
         }
-    private async Task OnWorksheetChanged (string newValue)
-        {
+    }
+
+    private async Task OnWorksheetChanged(string newValue)
+    {
         WorksheetName = newValue;
         await Task.Delay(1);
         await refWorksheets.FocusAsync();
         StateHasChanged();
-        }
-    private async Task ReadExcelAsync ()
-        {
+    }
+
+    private async Task ReadExcelAsync()
+    {
         if (WorksheetName == "")
-            {
+        {
             Snackbar.Add("select a worksheet", Severity.Warning);
             return;
-            }
+        }
         else
-            {
+        {
             _hasFetched = false;
             var message = new MarkupString($"<hr>CONFIRM: <br><br>Tests in the <span style='color:indianred'>Selected</span><span style='color:royalblue'> Excel Worksheet</span> will be imported <br><br><span style='font-weight:bold'>Duplicate tests</span><br>are imported without warning! <span style='color:indianred'><br><br>Continue .... </span>?<br><br><div style='text-align:center'><img src='/img/icoExcel1.png' width='70'/></div><br><hr>");
             bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
             if (confirmResult == true)
-                {
+            {
                 _hasFetched = false;
                 stream.Position = 0;
                 try
-                    {
+                {
                     List<CourseTopic> lstCourseTopics = await feService.Read_CourseTopics(course.CourseId);
                     using var wb = new XLWorkbook(stream);
                     var worksheet = wb.Worksheet($"{WorksheetName}");
                     //ExcelColumns: 1:Topic 2:Question 3:nOpts 4-8:Opts 9:Ans 10:ForceLast 11:TestRtl 12:OptRtl 13:Level
                     foreach (var row in worksheet.RowsUsed().Skip(1)) //skip header
-                        {
+                    {
                         Test test = new Test();
                         test.CourseId = course.CourseId;
                         test.TopicId = 0;
@@ -597,83 +629,93 @@ else
                         test.TestOptions = new List<TestOption>();
                         //Topic handling
                         string crsTestTopic = row.Cell(1).GetString().Trim();
-                        crsTestTopic = crsTestTopic.Length > 30 ? crsTestTopic [..30] : crsTestTopic;
+                        crsTestTopic = crsTestTopic.Length > 30 ? crsTestTopic[..30] : crsTestTopic;
                         var existingTopic = lstCourseTopics.FirstOrDefault(t => string.Equals(t.CourseTopicTitle, crsTestTopic, StringComparison.OrdinalIgnoreCase));
                         if (existingTopic != null)
-                            {
+                        {
                             test.TopicId = existingTopic.CourseTopicId;
-                            }
+                        }
                         else
-                            {
+                        {
                             CourseTopic newCourseTopic = new CourseTopic { CourseId = course.CourseId, CourseTopicTitle = crsTestTopic };
                             test.TopicId = await feService.Create_CourseTopic(newCourseTopic);
                             newCourseTopic.CourseTopicId = test.TopicId;
                             lstCourseTopics.Add(newCourseTopic);
-                            }
+                        }
+
                         //Options
                         for (int col = 4; col < test.TestType + 4; col++)
-                            {
+                        {
                             var strOpt = row.Cell(col).GetString();
                             test.TestOptions.Add(new TestOption { TestOptionTitle = strOpt, TestId = 1 }); //initialize TestId here and set the value when test is saved to DB
-                            }
+                        }
+
                         //Answer
                         int answ = row.Cell(9).GetValue<int>();
                         if (answ > 0 && answ <= test.TestOptions?.Count)
-                            {
-                            test.TestOptions [answ - 1].TestOptionTags = 2; //2:IsAns
-                            }
+                        {
+                            test.TestOptions[answ - 1].TestOptionTags = 2; //2:IsAns
+                        }
+
                         //ForceLast
                         int forceLast = row.Cell(10).GetValue<int>();
                         if (forceLast > 0 && forceLast <= test.TestOptions?.Count)
-                            {
-                            test.TestOptions [forceLast - 1].TestOptionTags += 1; //1:ForceLast
-                            }
+                        {
+                            test.TestOptions[forceLast - 1].TestOptionTags += 1; //1:ForceLast
+                        }
+
                         //Create New Test+Options
                         test.TestId = await feService.Create_Test(test);
-                        }
                     }
+                }
                 catch (Exception ex)
-                    {
+                {
                     Console.WriteLine($"Error in [ImportExcel]: {ex}");
-                    }
+                }
+
                 lstWorksheets.Clear();
                 lstCourseTests.Clear();
                 lstCourseTests = await feService.Read_TestsByCourseId(Convert.ToInt32(appState.CourseId), intPageNumber, false);
-                lstCourseTopics = await feService.Read_CourseTopics (Convert.ToInt32 (appState.CourseId));
+                lstCourseTopics = await feService.Read_CourseTopics(Convert.ToInt32(appState.CourseId));
                 Snackbar.Add("data imported", Severity.Success);
                 _hasFetched = true;
                 appState.SetCmd("");
-                }
-            }
-        }
-    //Guide
-    public void BtnHelpSignupNewTeacher ()
-        {
-        _cmd = _cmd == "guide" ? "" : "guide";
-        StateHasChanged();
-        }
-    public void BtnCancelGuide ()
-        {
-        _cmd = "";
-        StateHasChanged();
-        }
-    //Exit
-    public void BtnCancel ()
-        {
-        lstWorksheets.Clear();
-        WorksheetName = "";
-        appState.SetCmd("");
-        }
-    public void BtnBack ()
-        {
-        Navman.NavigateTo("/T_Courses");
-        if (appState.Message == "EnterKeyIsPressedForSearch")
-            {
-            txtSearch.FocusAsync();
-            }
-        else
-            {
-            Navman.NavigateTo("/T_Courses");
             }
         }
     }
+
+    //Guide
+    public void BtnHelpSignupNewTeacher()
+    {
+        _cmd = _cmd == "guide" ? "" : "guide";
+        StateHasChanged();
+    }
+
+    public void BtnCancelGuide()
+    {
+        _cmd = "";
+        StateHasChanged();
+    }
+
+    //Exit
+    public void BtnCancel()
+    {
+        lstWorksheets.Clear();
+        WorksheetName = "";
+        appState.SetCmd("");
+    }
+
+    public void BtnBack()
+    {
+        Navman.NavigateTo("/T_Courses");
+        if (appState.Message == "EnterKeyIsPressedForSearch")
+        {
+            txtSearch.FocusAsync();
+        }
+        else
+        {
+            Navman.NavigateTo("/T_Courses");
+        }
+    }
+
+}
