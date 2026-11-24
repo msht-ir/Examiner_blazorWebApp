@@ -109,11 +109,11 @@ else
                                     else
                                         {
                                             <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
-                                                <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
-                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Primary" OnClick="() => BtnShowNoteInDialog(notex)" />
-                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(notex)" />
-                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.DriveFileMove" Color="Color.Dark" OnClick="() => BtnMoveNote(notex.NoteId)" />
-                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(notex.NoteId)" />
+                                                <MudFabMenu OpenOnMouseHover="false" StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Primary" OnClick="() => BtnShowNoteInDialog(notex)" Title="show note" />
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(notex)" Title="edit" />
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.DriveFileMove" Color="Color.Dark" OnClick="() => BtnMoveNote(notex.NoteId)" Title="move to notebook" />
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(notex.NoteId)" Title="delete" />
                                                 </MudFabMenu>
                                             </div>
                                         }
@@ -185,11 +185,11 @@ else
                                     else
                                         {
                                             <div class="d-flex align-items-center" style="color:indianred; font-weight:bold;font-size:small">
-                                                <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
-                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Primary" OnClick="() => BtnShowNoteInDialog(notex)" />
-                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(notex)" />
-                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.DriveFileMove" Color="Color.Dark" OnClick="() => BtnMoveNote(notex.NoteId)" />
-                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(notex.NoteId)" />
+                                                <MudFabMenu OpenOnMouseHover="false" StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Primary" OnClick="() => BtnShowNoteInDialog(notex)" Title="show note" />
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(notex)" Title="edit" />
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.DriveFileMove" Color="Color.Dark" OnClick="() => BtnMoveNote(notex.NoteId)" Title="move to notebook" />
+                                                <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(notex.NoteId)" Title="delete" />
                                                 </MudFabMenu>
                                             </div>
                                         }
@@ -220,7 +220,7 @@ else
             </button>
         </div>
     }
-    @* <script>
+@* <script>
     window.scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
     </script> *@
 

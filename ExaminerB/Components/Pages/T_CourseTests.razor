@@ -89,10 +89,10 @@ else
         else
         {
             <div class="d-flex align-items-center text-start" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
-                <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
-                    <MudFabMenuItem StartIcon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary" OnClick="BtnBack"/>
-                    <MudFabMenuItem StartIcon="@Icons.Material.Filled.UploadFile" Color="Color.Success" OnClick="BtnImportFromExcelFile"/>
+                <MudFabMenu OpenOnMouseHover="false" StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
                     <MudFabMenuItem StartIcon="@Icons.Material.Filled.AddBox" Color="Color.Warning" OnClick="() => BtnAddNewTest()"/>
+                    <MudFabMenuItem StartIcon="@Icons.Material.Filled.UploadFile" Color="Color.Success" OnClick="BtnImportFromExcelFile"/>
+                    <MudFabMenuItem StartIcon="@Icons.Material.Filled.ExitToApp" Color="Color.Primary" OnClick="BtnBack" />
                 </MudFabMenu>
             </div>
             @* <hr style="border-color:red"/> *@

@@ -37,7 +37,7 @@
                     else
                         {
                             <div class="d-flex gap-2 align-items-center justify-content-Left">
-                                <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                <MudFabMenu OpenOnMouseHover="false" StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
                                 <MudFabMenuItem StartIcon="@Icons.Material.Filled.AddComment" Color="Color.Success" Title="Add new chat item" OnClick=" BtnCreateChatroomPost" />
                                 <MudFabMenuItem StartIcon="@Icons.Material.Filled.Refresh" Color="Color.Primary" Title="Refresh" OnClick=" ReadChatroomPosts" />
                                 <MudFabMenuItem StartIcon="@Icons.Material.Filled.FormatSize" Color="Color.Warning" Title="Font Size  تغيير انداز فونت" OnClick=" BtnChangeFontSize" />
@@ -100,7 +100,7 @@
                                                 {
                                                 <hr />
                                                     <div style="text-align:center">
-                                                        <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Warning" Variant="Variant.Text" Direction="Direction.Right">
+                                                        <MudFabMenu OpenOnMouseHover="false" StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Warning" Variant="Variant.Text" Direction="Direction.Right">
                                                         <MudFabMenuItem StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Title="edit" OnClick="() => BtnEditChatroomPost(chatroomPost.ChatroomPostId)" />
                                                         <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" Title="delete" OnClick="() => BtnDeleteChatroomPost(chatroomPost.ChatroomPostId)" />
                                                         </MudFabMenu>
@@ -118,7 +118,7 @@
                         <br />
                         <br />
                             <div class="d-flex gap-2 align-items-center justify-content-Left">
-                                <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                <MudFabMenu OpenOnMouseHover="false" StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
                                 <MudFabMenuItem StartIcon="@Icons.Material.Filled.Refresh" Color="Color.Primary" Title="Refresh" OnClick=" ReadChatroomPosts" />
                                 <MudFabMenuItem StartIcon="@Icons.Material.Filled.FormatSize" Color="Color.Warning" Title="Font Size  تغيير انداز فونت" OnClick=" BtnChangeFontSize" />
                                 <MudFabMenuItem StartIcon="@Icons.Material.Filled.ExitToApp" Color="Color.Secondary" Title="Back" OnClick="BtnCancel" />

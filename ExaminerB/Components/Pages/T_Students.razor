@@ -28,10 +28,10 @@ else
             <p style="font-size:large;font-style:italic;color:rgb(220,220,220)">@appState.UserNickname</p>
             </div>
         <h2 style="color:royalblue; font-style:italic">Students</h2>
-        @* SECTION 1 ---- SOURCES *@
+        @* SECTION 1/2 ---- SOURCES *@
         @* ROW-1 *@
             <div style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; align-items:flex-start; margin-bottom:25px;">
-            @* SEARCH - NEW.STUDENT - IMPORT *@
+            @* SEARCH | NEW.STUDENT | IMPORT *@
                 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0" Style="flex:1 1 430px; min-width:0; max-width:100%;">
                     <MudCard style="min-width:440px;max-width:860px;">
                         <MudCardContent Style="background-color:rgba(249,249,249);">
@@ -906,7 +906,7 @@ else
                     </MudCard>
                 </MudContainer>
             </div>
-        @* SECTION 2 ---- LIST STUDENTS RESULTS *@
+        @* SECTION 2/2 ---- LIST STUDENTS RESULTS *@
         @if (lstStudents.Count > 0)
             {
                 <div style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; align-items:flex-start; margin-top:25px; width:100%;">
@@ -957,7 +957,7 @@ else
                             else
                                 {
                                     <div class="d-flex gap-2" style="min-width:0; flex-wrap:wrap;margin-top:25px;margin-bottom:5px">
-                                        <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                        <MudFabMenu OpenOnMouseHover="false" StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
                                         <MudFabMenuItem Title="Select all انتخاب همه" StartIcon="@Icons.Material.Filled.DoneAll" Color="Color.Primary" OnClick="BtnSelectAllStudents" />
                                         <MudFabMenuItem Title="Invert Selection انتخاب ها برعکس شود" StartIcon="@Icons.Material.Filled.Rule" Color="Color.Warning" OnClick="BtnInvertSelection" />
                                         <MudFabMenuItem Title="list of notes for selected students گزارش يادداشت هاي داشجويان انتخاب شده" StartIcon="@Icons.Material.Filled.MenuBook" Color="Color.Secondary" OnClick="BtnReportStudentsNotesOfSelectedStudentsAsPdf" />
@@ -2110,7 +2110,7 @@ else
             if (student.IsSelected)
                 {
                 lstStudentIds.Add(student.UserId);
-                _countS++;
+                //_countS++; --already counted! see above.
                 student.IsSelected = false;
                 }
             }

@@ -231,7 +231,7 @@
                         </div>
                     </div>
                 </div>
-            @* --- 3/6 STUDENT MESSAGES *@
+            @* --- 3/8 STUDENT MESSAGES *@
                 <div class="accordion-item mb-2">
                     <h4 class="accordion-header">
                         <button class="accordion-button collapsed" type="button"
@@ -356,7 +356,7 @@
                                                                 </div>
                                                             <hr style="color:gray" />
                                                                 <div style="text-align:left">
-                                                                    <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                                    <MudFabMenu OpenOnMouseHover="false" StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
                                                                     <MudFabMenuItem StartIcon="@Icons.Material.Filled.FormatSize" Color="Color.Primary" Title=@((_help) ? "change font" : "") OnClick="() => BtnCangeFont(studentMessage.MessageId)" />
                                                                     @* IsBookmarked? *@
                                                                     @if ((studentMessage.StudentMessageTags & 2) == 2)
@@ -391,7 +391,7 @@
                         </div>
                     </div>
                 </div>
-            @* --- 4/6 STUDENT CHATS *@
+            @* --- 4/8 STUDENT CHATS *@
                 <div class="accordion-item mb-2">
                     <h4 class="accordion-header">
                         <button class="accordion-button collapsed" type="button"
@@ -510,7 +510,7 @@
                         </div>
                     </div>
                 </div>
-            @* --- 5/6 FORUMS *@
+            @* --- 5/8 FORUMS *@
                 <div class="accordion-item mb-2">
                     <h4 class="accordion-header">
                         <button class="accordion-button collapsed" type="button"
@@ -538,8 +538,6 @@
                                 <div>
                                     <p style="text-align:center;font-size:x-small;">
                                     ايجاد يک انجمن براي طرح موضوع، تبادل نظر و گفتگو
-                                    <br />
-                                    قوانين: ورود دانشجويان به همه انجمن ها براي مطالعه و تبادل نظر آزاد است
                                     <br />
                                     ادمين مي تواند انجمن خود و هر دانشجو مي تواند پست هاي خودش را حذف کند
                                     <br />
@@ -627,7 +625,7 @@
                         </div>
                     </div>
                 </div>
-            @* --- 6/6 STUDENT NOTES *@
+            @* --- 6/8 STUDENT NOTES *@
                 <div class="accordion-item mb-2">
                     <h4 class="accordion-header">
                         <button class="accordion-button collapsed" type="button"
@@ -653,11 +651,11 @@
                         <div class="accordion-body" style="background-color:white">
                             <div id="T3">
                                 <div style="text-align:center">
-                                    <button class="btn btn-link pulse-hover" @onclick="GotoNotebooks">
-                                    <img src="/img/icoNoteBook.png" width="42" title="notebooks دفترچه يادداشت" />
-                                    </button>
                                     <button class="btn btn-link align-items-center" Title="add quick note افزودن يادداشت جديد" @onclick="CreateNote">
-                                    <img class="pulse-animation" src="/img/icoEditPenNew.png" width="28" />
+                                    <img class="pulse-animation" src="/img/icoEditPenNew.png" width="24" />
+                                    </button>
+                                    <button class="btn btn-link pulse-hover" @onclick="GotoNotebooks">
+                                    <img src="/img/icoNoteBook.png" width="38" title="notebooks دفترچه يادداشت" />
                                     </button>
                                 </div>
                             @* LIST NOTES *@
@@ -697,7 +695,7 @@
                                                         </div>
                                                     <hr />
                                                         <div class="d-flex gap-2 align-items-center justify-content-center">
-                                                            <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                            <MudFabMenu OpenOnMouseHover="false" StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
                                                             <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Success" OnClick="() => BtnShowNoteInDialog(notex)" />
                                                             <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(notex)" />
                                                             <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(notex.NoteId)" />
@@ -738,7 +736,7 @@
                                                         </div>
                                                     <hr />
                                                         <div class="d-flex gap-2 align-items-center justify-content-Left">
-                                                            <MudFabMenu StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                            <MudFabMenu OpenOnMouseHover="false" StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
                                                             <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Primary" OnClick="() => BtnShowNoteInDialog(notex)" />
                                                             <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(notex)" />
                                                             <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(notex.NoteId)" />
@@ -754,7 +752,7 @@
                         </div>
                     </div>
                 </div>
-            @* --- 7/x GAMES *@
+            @* --- 7/8 ToDo Notes *@
                 <div class="accordion-item mb-2">
                     <h4 class="accordion-header">
                         <button class="accordion-button collapsed" type="button"
@@ -762,6 +760,81 @@
                             data-bs-target="#CollapseId7"
                             aria-expanded="false"
                             aria-controls="CollapseId7" style="background-color:WhiteSmoke">
+                            <h4>
+                            <img class="pulse-hover" src="/img/icoClock2.png" width="30" style="margin-right:10px;" title="يادآوري" />
+                            <span style="color:rgb(82, 109, 117)">reminders <span style="font-size:x-small;color:indianred">@((student.UserTags & 32) == 32 ? "(\u00B1 7 days)" : "(\u00B1 3 days)")</span> </span>
+                            </h4>
+                        </button>
+                    </h4>
+                @if (appState.Clps == "TD")
+                    {
+                    _clps = "collapse show";
+                    }
+                else
+                    {
+                    _clps = "collapse";
+                    }
+                    <div id="CollapseId7" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
+                        <div class="accordion-body" style="background-color:white">
+                            <div id="T3">
+                            @foreach (Note dueNotex in lstDueNotes)
+                                {
+                                var _noteDirection = ((dueNotex.NoteTags & 1) == 1) ? "text-end" : "text-start";
+                                    <div class="mt-3 @_noteDirection">
+                                        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2 px-0">
+                                            <MudCard Class="mx-0">
+                                                <MudCardContent Style="background-color:whitesmoke;">
+                                                    <div class="d-flex align-items-center" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
+                                                    @if (dueNotex.IsTodo)
+                                                        {
+                                                        <img class="pulse-hover" src="/img/icoClock2.png" width="20" style="margin-right:7px" />
+                                                        @PersianDate(dueNotex.NoteDueDateTime)
+                                                        }
+                                                    else
+                                                        {
+                                                        @PersianDate(dueNotex.NoteDateTime)
+                                                        }
+                                                    </div>
+                                                <hr />
+                                                    <div style="white-space: pre-wrap; font-weight:normal; font-family:'Segoe UI';font-size:small">
+                                                    @if (dueNotex.NoteText.Length > 100)
+                                                        {
+                                                            <div>
+                                                            @dueNotex.NoteText.Substring(0, 100) <span style="font-size:xx-small;font-weight:bold;color:indianred">[...]</span>
+                                                            </div>
+                                                        }
+                                                    else
+                                                        {
+                                                        <div style="font-weight:normal;font-family:'Segoe UI'"> @dueNotex.NoteText</div>
+                                                        }
+                                                    </div>
+                                                <hr>
+                                                @* TodoNotes Buttons *@
+                                                    <div class="d-flex align-items-center text-start" style="text-align:center; color:indianred; font-weight:bold;font-size:small">
+                                                        <MudFabMenu OpenOnMouseHover="false" StartIcon="@Icons.Material.Outlined.Menu" Size="Size.Medium" Color="Color.Dark" Variant="Variant.Text" Direction="Direction.Right">
+                                                        <MudFabMenuItem StartIcon="@Icons.Material.Filled.EditNote" Color="Color.Primary" OnClick="() => BtnEditNoteInDialog(dueNotex)" />
+                                                        <MudFabMenuItem StartIcon="@Icons.Material.Filled.Notes" Color="Color.Dark" OnClick="() => BtnShowNoteInDialog(dueNotex)" />
+                                                        <MudFabMenuItem StartIcon="@Icons.Material.Filled.AlarmOn" Color="Color.Warning" OnClick="() => BtnRemoveDueNoteTag(dueNotex)" />
+                                                        <MudFabMenuItem StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" OnClick="() => BtnDeleteNote(dueNotex.NoteId)" />
+                                                        </MudFabMenu>
+                                                    </div>
+                                                </MudCardContent>
+                                            </MudCard>
+                                        </MudContainer>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @* --- 8/8 GAMES *@
+                <div class="accordion-item mb-2">
+                    <h4 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#CollapseId8"
+                            aria-expanded="false"
+                            aria-controls="CollapseId8" style="background-color:WhiteSmoke">
                             <h4>
                             <img class="pulse-hover" src="/img/icoCalcs.png" width="30" style="margin-right:10px;" title="سرگرمي بازي با اعداد" />
                             <span style="color:rgb(82, 109, 117)">entertainment </span><span style="font-weight:bold;font-size:x-small;color:indianred"></span>
@@ -776,7 +849,7 @@
                     {
                     _clps = "collapse";
                     }
-                    <div id="CollapseId7" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
+                    <div id="CollapseId8" class="accordion-collapse @_clps" data-bs-parent="#accordionStudent">
                         <div class="accordion-body" style="background-color:white">
                             <div id="T3">
                                 <div style="text-align:center">
@@ -814,8 +887,8 @@
                         </div>
                     </div>
                 </div>
+            <hr style="color:red;margin-top:50px;" />
             @* <MudSwitch @bind-Value="_help" Label="help" Color="Color.Primary" Dense="true" title="هنگام عبور ماوس، راهنمايي کن"></MudSwitch> *@
-            <hr />
                 <div class="d-flex gap-4 justify-content-center" style="text-align:center; margin-top:30px;max-width:500px;">
                     <MudButton Variant="Variant.Filled"
                            EndIcon="@Icons.Material.Filled.VpnKey"
@@ -850,6 +923,7 @@
     public List<Chatroom> lstChatrooms = new List<Chatroom>();
     public List<User> lstStudents = new List<User>();
     public List<Note> lstNotes = new List<Note>();
+    public List<Note> lstDueNotes = new List<Note>();
     public string? strRunningPoint = "";
     private bool _hasFetched = false;
     private bool hasScrolled = false;
@@ -885,6 +959,7 @@
             await ReadChatList();
             await ReadChatroomList();
             await ReadNoteList();
+            await BtnReadDueNotes();
             if (appState.Cmd == "showAlertsOnExamsAndNewChats")
                 {
                 //show alerts on first pageLoad (after Login)
@@ -1342,10 +1417,10 @@
                 {
                 Snackbar.Add($"deleted", Severity.Warning, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 student.UserId = Convert.ToInt32(appState.UserId);
-                // _hasFetched = false;
                 lstNotes.Clear();
                 lstNotes = await feService.Read_Notes(student.UserId, 1, 0);
-                // _hasFetched = true;
+                lstDueNotes.Clear();
+                lstDueNotes = await feService.Read_DueNotes(student.UserId, ((student.UserTags & 32) == 32) ? 14 : 7);
                 appState.SetCmd("");
                 StateHasChanged();
                 }
@@ -1354,6 +1429,42 @@
                 Snackbar.Add($"failed to delete note", Severity.Error, opt => { opt.VisibleStateDuration = 1500; opt.ShowTransitionDuration = 300; opt.HideTransitionDuration = 300; });
                 }
             }
+        }
+    public async Task BtnRemoveDueNoteTag (Note note)
+        {
+        appState.SetClps("TD");
+        var message = new MarkupString($"<hr><span style='color:indianred'>Remove</span> Todo tag from this note?<br><br><span style='font-weight:bold'>This note</span> will be a <span style='color:indianred'> simple note</span>!<br><br><div style='text-align:center'><img src='/img/icoOff.png' width='50'/></div><br><hr>");
+        bool? confirmResult = await DialogService.ShowMessageBoxAsync(title: "Confirm", markupMessage: message, yesText: "Yes", cancelText: "No");
+        if (confirmResult == true)
+            {
+            appState.SetNoteReferenceId(note.ReferenceId);
+            note.NoteTags &= ~2;
+            bool result = await feService.Update_Note(note);
+            if (result)
+                {
+                lstDueNotes = await feService.Read_DueNotes(student.UserId, ((student.UserTags & 32) == 32) ? 14 : 7);
+                StateHasChanged();
+                }
+            else
+                {
+                Snackbar.Add($"failed to clear Todo", Severity.Error, opt =>
+                {
+                    opt.VisibleStateDuration = 1500;
+                    opt.ShowTransitionDuration = 300;
+                    opt.HideTransitionDuration = 300;
+                });
+                }
+            }
+        }
+    public async Task BtnReadDueNotes ()
+        {
+        student.UserTags = Convert.ToInt32(appState.UserTags);
+        student.UserId = Convert.ToInt32(appState.UserId);
+        if ((student.UserTags & 16) == 16)
+            {
+            lstDueNotes = await feService.Read_DueNotes(student.UserId, ((student.UserTags & 32) == 32) ? 14 : 7);
+            }
+        StateHasChanged();
         }
     //Games
     public void BtnGame (string _game)
